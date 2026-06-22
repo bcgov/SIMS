@@ -1,29 +1,24 @@
+import {
+  AppsV1Api,
+  BatchV1Api,
+  CustomObjectsApi,
+  KubeConfig,
+  V1Deployment,
+  V1Job,
+} from "@kubernetes/client-node";
 import type {
-  DeploymentResource,
   ImageStreamResource,
-  JobResource,
-  OpenShiftApiClient,
-  OpenShiftResponse,
-  OpenShiftRestClientModule,
   OpenshiftClientOptions,
-} from "../models/openshift.model";
-
-const openshiftRestClient =
-  require("openshift-rest-client") as OpenShiftRestClientModule;
-
-async function requestBody<T>(
-  request: Promise<OpenShiftResponse<T>>,
-): Promise<T> {
-  const response = await request;
-  return response.body;
-}
+} from "../models/openshift.model.ts";
 
 /**
  * SIMS OpenShift client wrapper used by image-pruner operations.
  */
 export class OpenshiftClient {
   private constructor(
-    private readonly client: OpenShiftApiClient,
+    private readonly appsApi: AppsV1Api,
+    private readonly batchApi: BatchV1Api,
+    private readonly customApi: CustomObjectsApi,
     private readonly options: OpenshiftClientOptions,
   ) {}
 
@@ -35,45 +30,44 @@ export class OpenshiftClient {
   static async create(
     options: OpenshiftClientOptions,
   ): Promise<OpenshiftClient> {
-    const { openShiftUrl, licensePlate, saToken } = options.config;
-    const clusterName = openShiftUrl.replace(/(^\w+:|^)\/\//, "");
+    const { openShiftUrl, saToken } = options.config;
 
-    const client = await openshiftRestClient.OpenshiftClient({
-      loadSpecFromCluster: false,
-      config: {
-        apiVersion: "v1",
-        kind: "Config",
-        clusters: [
-          {
-            name: clusterName,
-            cluster: {
-              server: openShiftUrl,
-            },
+    const kc = new KubeConfig();
+    kc.loadFromOptions({
+      clusters: [
+        {
+          name: "cluster",
+          cluster: {
+            server: openShiftUrl,
+            skipTLSVerify: true,
           },
-        ],
-        users: [
-          {
-            name: `${licensePlate}-user`,
-            user: {
-              token: saToken,
-            },
+        },
+      ],
+      users: [
+        {
+          name: "user",
+          user: {
+            token: saToken,
           },
-        ],
-        contexts: [
-          {
-            name: `${clusterName}/${licensePlate}-context`,
-            context: {
-              cluster: clusterName,
-              user: `${licensePlate}-user`,
-            },
+        },
+      ],
+      contexts: [
+        {
+          name: "context",
+          context: {
+            cluster: "cluster",
+            user: "user",
           },
-        ],
-        "current-context": `${clusterName}/${licensePlate}-context`,
-        preferences: {},
-      },
+        },
+      ],
+      currentContext: "context",
     });
 
-    return new OpenshiftClient(client, options);
+    const appsApi = kc.makeApiClient(AppsV1Api);
+    const batchApi = kc.makeApiClient(BatchV1Api);
+    const customApi = kc.makeApiClient(CustomObjectsApi);
+
+    return new OpenshiftClient(appsApi, batchApi, customApi, options);
   }
 
   /**
@@ -82,13 +76,11 @@ export class OpenshiftClient {
    * @param name The name of the deployment.
    * @returns The deployment resource.
    */
-  async getDeployment(
-    namespace: string,
-    name: string,
-  ): Promise<DeploymentResource> {
-    return requestBody(
-      this.client.apis.apps.v1.namespaces(namespace).deployments(name).get(),
-    );
+  async getDeployment(namespace: string, name: string): Promise<V1Deployment> {
+    return await this.appsApi.readNamespacedDeployment({
+      name,
+      namespace,
+    });
   }
 
   /**
@@ -97,10 +89,11 @@ export class OpenshiftClient {
    * @param name The name of the job.
    * @returns The job resource.
    */
-  async getJob(namespace: string, name: string): Promise<JobResource> {
-    return requestBody(
-      this.client.apis.batch.v1.namespaces(namespace).jobs(name).get(),
-    );
+  async getJob(namespace: string, name: string): Promise<V1Job> {
+    return await this.batchApi.readNamespacedJob({
+      name,
+      namespace,
+    });
   }
 
   /**
@@ -113,9 +106,13 @@ export class OpenshiftClient {
     namespace: string,
     name: string,
   ): Promise<ImageStreamResource> {
-    return requestBody(
-      this.client.apis.image.v1.namespaces(namespace).imagestreams(name).get(),
-    );
+    return await this.customApi.getNamespacedCustomObject({
+      group: "image.openshift.io",
+      version: "v1",
+      namespace,
+      plural: "imagestreams",
+      name,
+    });
   }
 
   /**
@@ -130,10 +127,13 @@ export class OpenshiftClient {
     imageStreamName: string,
     tag: string,
   ): Promise<void> {
-    await this.client.apis.image.v1
-      .namespaces(namespace)
-      .imagestreamtags(`${imageStreamName}:${tag}`)
-      .delete();
+    await this.customApi.deleteNamespacedCustomObject({
+      group: "image.openshift.io",
+      version: "v1",
+      namespace,
+      plural: "imagestreamtags",
+      name: `${imageStreamName}:${tag}`,
+    });
   }
 
   /**

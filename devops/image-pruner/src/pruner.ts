@@ -1,23 +1,30 @@
-import { config as loadDotEnv } from "dotenv";
-import { OpenshiftClient } from "./clients/openshift.client";
-import type { PruneConfig } from "./models/prune.model";
+import { OpenshiftClient } from "./clients/openshift.client.ts";
+import type { PruneConfig } from "./models/prune.model.ts";
 import type {
   ImageStreamResource,
   ImageStreamTag,
-} from "./models/openshift.model";
-
-loadDotEnv();
+} from "./models/openshift.model.ts";
+import {
+  extractImageStreamName,
+  extractImageTagName,
+  getTagCreatedAt,
+  getTagCreatedAtTimestamp,
+} from "./utils/image.utils.ts";
 
 /**
  * Prunes stale OpenShift ImageStream tags for configured deployments and jobs.
  */
-class ImagePruner {
+export class ImagePruner {
   constructor(
     private readonly config: PruneConfig,
     private readonly openshiftClient: OpenshiftClient,
   ) {}
 
-  async run(): Promise<void> {
+  /**
+   * Prunes stale ImageStream tags for the configured deployments and jobs, based on the provided configuration.
+   * @returns A promise that resolves when the pruning process is complete.
+   */
+  async pruneImages(): Promise<void> {
     console.log("Starting image tag pruning...");
     console.table([
       { setting: "Environment", value: this.config.environment },
@@ -111,7 +118,7 @@ class ImagePruner {
       this.config.appNamespace,
       deploymentName,
     );
-    const image = deployment.spec.template.spec.containers[0]?.image;
+    const image = deployment.spec?.template?.spec?.containers[0]?.image;
     if (!image) {
       throw new Error("No container image found on deployment.");
     }
@@ -143,7 +150,7 @@ class ImagePruner {
       this.config.appNamespace,
       jobName,
     );
-    const image = job.spec.template.spec.containers[0]?.image;
+    const image = job.spec?.template.spec?.containers[0]?.image;
     if (!image) {
       throw new Error("No container image found on job.");
     }
@@ -238,129 +245,3 @@ class ImagePruner {
     }
   }
 }
-
-/**
- * Extracts the ImageStream name from a full image reference string.
- * For example, "registry.apps.gold/ns/db-migrations-sims:main-12345"
- * returns "db-migrations-sims".
- * @param image The full image reference string.
- * @returns The ImageStream name portion of the image reference.
- */
-export function extractImageStreamName(image: string): string {
-  const parts = image.split(/[/:]/);
-  if (parts.length < 2) {
-    throw new Error(`Cannot extract ImageStream name from image: ${image}.`);
-  }
-
-  return parts.at(-2) || "";
-}
-
-/**
- * Extracts the image tag name from a full image reference string.
- * @param image The full image reference string.
- * @returns The image tag name.
- */
-export function extractImageTagName(image: string): string {
-  const imageWithoutDigest = image.split("@")[0];
-  const lastColon = imageWithoutDigest.lastIndexOf(":");
-  if (lastColon === -1 || lastColon === imageWithoutDigest.length - 1) {
-    throw new Error(`Cannot extract image tag from image: ${image}.`);
-  }
-
-  return imageWithoutDigest.slice(lastColon + 1);
-}
-
-function getTagCreatedAt(tag: ImageStreamTag): string {
-  return tag.items?.[0]?.created ?? "unknown";
-}
-
-function getTagCreatedAtTimestamp(tag: ImageStreamTag): number {
-  const createdAt = getTagCreatedAt(tag);
-  const createdAtTimestamp = Date.parse(createdAt);
-  if (Number.isNaN(createdAtTimestamp)) {
-    console.warn(
-      `Invalid creation timestamp for tag ${tag.tag}: ${createdAt}. Treating as oldest.`,
-    );
-    return 0;
-  }
-
-  return createdAtTimestamp;
-}
-
-/**
- * Loads and validates the pruner configuration from environment variables and command line arguments.
- * @returns The validated prune configuration.
- */
-function loadConfig(): PruneConfig {
-  const environment = process.env.ENVIRONMENT;
-  const saToken = process.env.SA_TOKEN;
-  const openShiftUrl = process.env.OPENSHIFT_URL?.replace(/\/$/, "");
-  const licensePlate = process.env.LICENSE_PLATE;
-
-  if (!saToken) {
-    throw new Error("Missing required environment variable: SA_TOKEN.");
-  }
-  if (!openShiftUrl) {
-    throw new Error("Missing required environment variable: OPENSHIFT_URL.");
-  }
-  if (!licensePlate) {
-    throw new Error("Missing required environment variable: LICENSE_PLATE.");
-  }
-  if (!environment) {
-    throw new Error("Missing required environment variable: ENVIRONMENT.");
-  }
-  if (!["dev", "test", "prod"].includes(environment)) {
-    throw new Error(
-      `ENVIRONMENT must be one of: dev, test, prod. Got: ${environment}.`,
-    );
-  }
-
-  const minTags = Number.parseInt(process.env.MIN_TAGS ?? "2", 10);
-  if (Number.isNaN(minTags) || minTags < 0) {
-    throw new Error(
-      `MIN_TAGS must be a non-negative integer. Got: ${process.env.MIN_TAGS}.`,
-    );
-  }
-
-  return {
-    saToken,
-    openShiftUrl,
-    licensePlate,
-    toolsNamespace: `${licensePlate}-tools`,
-    appNamespace: `${licensePlate}-${environment}`,
-    environment,
-    applications: (process.env.APPLICATIONS ?? "")
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean),
-    ocJobs: (process.env.OCJOBS ?? "")
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean),
-    prefix: process.env.PREFIX ?? "main",
-    minTags,
-    dryRun: !process.argv.includes("--confirm"),
-  };
-}
-
-/**
- * Script main execution method.
- */
-(async () => {
-  try {
-    const config = loadConfig();
-    const openshiftClient = await OpenshiftClient.create({
-      config: {
-        openShiftUrl: config.openShiftUrl,
-        licensePlate: config.licensePlate,
-        saToken: config.saToken,
-      },
-    });
-
-    const pruner = new ImagePruner(config, openshiftClient);
-    await pruner.run();
-  } catch (error: unknown) {
-    console.error("Image tag pruning failed:", error);
-    process.exit(1);
-  }
-})();

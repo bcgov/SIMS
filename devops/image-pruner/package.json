@@ -3,13 +3,14 @@
     "description": "Prunes stale OpenShift ImageStream tags for StudentAid environments.",
     "version": "1.0.0",
     "private": true,
+    "type": "module",
     "scripts": {
         "dry-run": "tsx src/main.ts",
         "prune": "tsx src/main.ts --confirm"
     },
     "dependencies": {
-        "dotenv": "^16.6.1",
-        "openshift-rest-client": "^10.0.0"
+        "@kubernetes/client-node": "^1.4.0",
+        "dotenv": "^16.6.1"
     },
     "devDependencies": {
         "@types/node": "^25.9.3",
