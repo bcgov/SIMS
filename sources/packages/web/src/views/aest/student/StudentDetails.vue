@@ -21,8 +21,6 @@
           :key="item.label"
           :to="item.command()"
           :prepend-icon="item.icon"
-          :ripple="false"
-          class="font-weight-bold"
         />
       </v-tabs>
     </template>

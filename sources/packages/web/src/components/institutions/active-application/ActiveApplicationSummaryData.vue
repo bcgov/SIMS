@@ -1,24 +1,26 @@
 <template>
-  <v-card class="mt-5">
-    <v-container :fluid="true">
-      <body-header
-        title="Applications"
-        :records-count="applicationsListAndCount.count"
-      >
-        <template #actions>
-          <v-text-field
-            density="compact"
-            label="Search name or application #"
-            variant="outlined"
-            v-model="searchCriteria"
-            data-cy="searchCriteria"
-            @keyup.enter="searchActiveApplications"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-          >
-          </v-text-field>
-        </template>
-      </body-header>
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Applications"
+          :records-count="applicationsListAndCount.count"
+        >
+          <template #actions>
+            <v-text-field
+              density="compact"
+              label="Search name or application #"
+              variant="outlined"
+              v-model="searchCriteria"
+              data-cy="searchCriteria"
+              @keyup.enter="searchActiveApplications"
+              prepend-inner-icon="mdi-magnify"
+              hide-details="auto"
+            >
+            </v-text-field>
+          </template>
+        </body-header>
+      </template>
       <content-group>
         <toggle-content
           :toggled="!applicationsListAndCount.count && !loading"
@@ -76,8 +78,8 @@
           </v-data-table-server>
         </toggle-content>
       </content-group>
-    </v-container>
-  </v-card>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

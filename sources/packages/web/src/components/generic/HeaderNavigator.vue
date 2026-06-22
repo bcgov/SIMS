@@ -23,7 +23,7 @@
         <slot name="sub-title-details"></slot>
       </span>
     </v-col>
-    <v-col class="d-flex justify-end">
+    <v-col class="d-flex justify-end" v-if="$slots.buttons">
       <div>
         <slot name="buttons"></slot>
       </div>

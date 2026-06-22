@@ -3,11 +3,11 @@
     <v-app-bar color="white">
       <b-c-logo subtitle="Student Application" @click="logoClick" />
       <v-spacer />
-      <v-btn-toggle
+      <v-btn-group
         selected-class="active-btn label-bold"
-        v-model="toggleNav"
         v-if="!smallScreen"
         class="navigation-btn float-left"
+        :rounded="false"
       >
         <v-btn
           v-if="hasAuthenticatedStudentAccount"
@@ -92,7 +92,7 @@
             </template>
           </v-list>
         </v-menu>
-      </v-btn-toggle>
+      </v-btn-group>
       <v-app-bar-nav-icon
         variant="text"
         @click.stop="drawer = !drawer"
@@ -148,7 +148,6 @@ export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
   setup() {
     const { isFormSubmissionEnabled } = useFeatureToggles();
-    const toggleNav = ref();
     const { executeLogout } = useAuth();
     const router = useRouter();
     const { isAuthenticated } = useAuth();
@@ -284,7 +283,6 @@ export default defineComponent({
       StudentRoutesConst,
       ClientIdType,
       hasAuthenticatedStudentAccount,
-      toggleNav,
       smallScreen,
       drawer,
       showNavigationDrawer,

@@ -12,11 +12,9 @@
           v-for="item in tabItems"
           :key="item.label"
           :to="item.command()"
-          :ripple="false"
-          ><div>
-            <span class="label-bold"> {{ item.label }} </span>
-          </div>
-        </v-tab>
+          :text="item.label"
+          class="label-bold"
+        />
       </v-tabs>
     </template>
     <router-view />

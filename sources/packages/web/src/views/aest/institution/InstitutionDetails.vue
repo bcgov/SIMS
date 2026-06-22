@@ -22,15 +22,12 @@
       <v-tabs :model="tab" stacked color="primary"
         ><v-tab
           v-for="item in items"
-          :key="item"
+          :key="item.label"
           :value="item.value"
           :to="item.command()"
-          :ripple="false"
-          ><div>
-            <v-icon start :icon="item.icon" class="px-1"></v-icon>
-            <span class="mx-2 label-bold"> {{ item.label }} </span>
-          </div>
-        </v-tab>
+          :text="item.label"
+          :prepend-icon="item.icon"
+        />
       </v-tabs>
     </template>
     <router-view />

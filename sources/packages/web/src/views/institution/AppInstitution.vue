@@ -2,10 +2,10 @@
   <IdleTimeChecker :client-id-type="ClientIdType.Institution">
     <v-app-bar color="white">
       <b-c-logo subtitle="Institutions" />
-      <v-btn-toggle
+      <v-btn-group
         selected-class="active-btn label-bold"
-        v-model="toggleNav"
         class="navigation-btn float-left"
+        :rounded="false"
       >
         <v-btn
           v-if="isAuthenticatedInstitutionUser"
@@ -59,7 +59,7 @@
             </template>
           </v-list>
         </v-menu>
-      </v-btn-toggle>
+      </v-btn-group>
     </v-app-bar>
     <router-view name="sidebar"></router-view>
     <v-main class="body-background">
@@ -78,12 +78,11 @@ import { useAuth } from "@/composables";
 import BCLogo from "@/components/generic/BCLogo.vue";
 import "@/assets/css/institution.scss";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
-import { ref, defineComponent } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   components: { BCLogo, IdleTimeChecker },
   setup() {
-    const toggleNav = ref();
     const { executeLogout } = useAuth();
     const { isAdmin, isAuthenticated, isAuthenticatedInstitutionUser } =
       useInstitutionAuth();
@@ -105,7 +104,6 @@ export default defineComponent({
       logoff,
       InstitutionRoutesConst,
       ClientIdType,
-      toggleNav,
     };
   },
 });

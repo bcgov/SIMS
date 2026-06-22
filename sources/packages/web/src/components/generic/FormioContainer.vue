@@ -1,11 +1,11 @@
 <template>
   <formio
-    :formName="formName"
+    :form-name="formName"
     :data="formData"
-    :readOnly="readOnly"
+    :read-only="readOnly"
     :is-data-ready="isDataReady"
     @loaded="formLoaded"
-    @customEvent="formCustomEvent"
+    @custom-event="formCustomEvent"
     @render="formRender"
     @changed="formChanged"
   ></formio>

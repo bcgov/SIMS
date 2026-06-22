@@ -4,27 +4,21 @@
       <header-navigator
         :title="locationName"
         data-cy="reportAChangeHeader"
-        subTitle="Report a Change"
+        sub-title="Report a Change"
       />
     </template>
     <template #tab-header>
       <v-tabs v-model="tab" stacked color="primary">
         <v-tab
           :value="ActiveApplicationTab.AvailableToReportTab"
-          :ripple="false"
-        >
-          <span class="label-bold" data-cy="availableToReportTab">
-            Available to report
-          </span>
-        </v-tab>
+          text="Available to report"
+          class="label-bold"
+        />
         <v-tab
           :value="ActiveApplicationTab.UnavailableToReportTab"
-          :ripple="false"
-        >
-          <span class="label-bold" data-cy="unavailableToReportTab">
-            Unavailable to report
-          </span>
-        </v-tab>
+          text="Unavailable to report"
+          class="label-bold"
+        />
       </v-tabs>
     </template>
     <v-window v-model="tab">
@@ -33,7 +27,7 @@
         :eager="false"
       >
         <active-application-summary-data
-          :locationId="locationId"
+          :location-id="locationId"
           :archived="false"
         />
       </v-window-item>
@@ -42,7 +36,7 @@
         :eager="false"
       >
         <active-application-summary-data
-          :locationId="locationId"
+          :location-id="locationId"
           :archived="true"
         />
       </v-window-item>
@@ -71,7 +65,7 @@ export default defineComponent({
 
   setup(props) {
     const { getLocationName } = useInstitutionState();
-    const tab = ref("active-application-tab");
+    const tab = ref(ActiveApplicationTab.AvailableToReportTab);
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);

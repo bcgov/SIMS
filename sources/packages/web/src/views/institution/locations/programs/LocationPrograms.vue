@@ -7,111 +7,118 @@
         sub-title="Programs"
       />
     </template>
-    <body-header title="All programs" :records-count="programAndCount?.count">
-      <template #actions>
-        <div class="d-flex justify-end">
-          <v-btn
-            v-if="!isReadOnlyUser(locationId)"
-            color="primary"
-            @click="goToAddNewProgram()"
-            data-cy="createProgram"
-            prepend-icon="fa:fa fa-plus-circle"
-          >
-            Create program
-          </v-btn>
-        </div>
-      </template>
-    </body-header>
-    <search-table
-      v-model="searchBox"
-      search-label="Search Program name or SABC program code or CIP"
-      :loading="loading"
-      @search="searchProgramTable"
-    >
-      <template #append-search>
-        <v-btn-toggle
-          :model-value="selectedStatuses"
-          @update:model-value="handleStatusChange"
-          multiple
-          density="compact"
-          class="flex-wrap btn-toggle"
-          selected-class="selected-btn-toggle"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="All programs"
+          :records-count="programAndCount?.count"
         >
-          <v-btn rounded="xl" :value="ALL_STATUS" color="primary" class="mx-2"
-            >All</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            :value="ProgramStatus.Approved"
-            color="primary"
-            class="mr-2"
-            >Approved</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            :value="ProgramStatus.Pending"
-            color="primary"
-            class="mr-2"
-            >Pending</v-btn
-          >
-          <v-btn
-            rounded="xl"
-            :value="ProgramStatus.Declined"
-            color="primary"
-            class="mr-2"
-            >Declined</v-btn
-          >
-          <v-btn rounded="xl" :value="INACTIVE_PROGRAM" color="primary"
-            >Inactive</v-btn
-          >
-        </v-btn-toggle>
-      </template>
-      <toggle-content
-        :toggled="!programAndCount?.count"
-        message="You don't have programs yet"
-      >
-        <v-data-table-server
-          v-if="programAndCount?.count"
-          :headers="ProgramSummaryHeaders"
-          :items="programAndCount?.results"
-          :items-length="programAndCount?.count"
-          :loading="loading"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          v-model:sort-by="sortBy"
-          :mobile="isMobile"
-          @update:options="paginationAndSortEvent"
-        >
-          <template #item="{ item }">
-            <tr>
-              <td>{{ item.programName }}</td>
-              <td>
-                {{ item.credentialTypeToDisplay }}
-              </td>
-              <td>{{ item.cipCode }}</td>
-              <td>{{ emptyStringFiller(item.sabcCode) }}</td>
-              <td data-cy="programStudyPeriods">
-                {{ item.totalOfferings }}
-              </td>
-              <td data-cy="programStatus">
-                <status-chip-program
-                  :status="item.programStatus"
-                  :is-active="item.isActive && !item.isExpired"
-                ></status-chip-program>
-              </td>
-              <td>
-                <v-btn
-                  color="primary"
-                  @click="goToViewProgram(item.programId)"
-                  data-cy="viewProgram"
-                  >View</v-btn
-                >
-              </td>
-            </tr>
+          <template #actions>
+            <div class="d-flex justify-end">
+              <v-btn
+                v-if="!isReadOnlyUser(locationId)"
+                color="primary"
+                @click="goToAddNewProgram()"
+                data-cy="createProgram"
+                prepend-icon="fa:fa fa-plus-circle"
+              >
+                Create program
+              </v-btn>
+            </div>
           </template>
-        </v-data-table-server>
-      </toggle-content>
-    </search-table>
+        </body-header>
+      </template>
+      <search-table
+        v-model="searchBox"
+        search-label="Search Program name or SABC program code or CIP"
+        :loading="loading"
+        @search="searchProgramTable"
+      >
+        <template #append-search>
+          <v-btn-toggle
+            :model-value="selectedStatuses"
+            @update:model-value="handleStatusChange"
+            multiple
+            density="compact"
+            class="flex-wrap btn-toggle"
+            selected-class="selected-btn-toggle"
+          >
+            <v-btn rounded="xl" :value="ALL_STATUS" color="primary" class="mx-2"
+              >All</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Approved"
+              color="primary"
+              class="mr-2"
+              >Approved</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Pending"
+              color="primary"
+              class="mr-2"
+              >Pending</v-btn
+            >
+            <v-btn
+              rounded="xl"
+              :value="ProgramStatus.Declined"
+              color="primary"
+              class="mr-2"
+              >Declined</v-btn
+            >
+            <v-btn rounded="xl" :value="INACTIVE_PROGRAM" color="primary"
+              >Inactive</v-btn
+            >
+          </v-btn-toggle>
+        </template>
+        <toggle-content
+          :toggled="!programAndCount?.count"
+          message="You don't have programs yet"
+        >
+          <v-data-table-server
+            v-if="programAndCount?.count"
+            :headers="ProgramSummaryHeaders"
+            :items="programAndCount?.results"
+            :items-length="programAndCount?.count"
+            :loading="loading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            v-model:sort-by="sortBy"
+            :mobile="isMobile"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #item="{ item }">
+              <tr>
+                <td>{{ item.programName }}</td>
+                <td>
+                  {{ item.credentialTypeToDisplay }}
+                </td>
+                <td>{{ item.cipCode }}</td>
+                <td>{{ emptyStringFiller(item.sabcCode) }}</td>
+                <td data-cy="programStudyPeriods">
+                  {{ item.totalOfferings }}
+                </td>
+                <td data-cy="programStatus">
+                  <status-chip-program
+                    :status="item.programStatus"
+                    :is-active="item.isActive && !item.isExpired"
+                  ></status-chip-program>
+                </td>
+                <td>
+                  <v-btn
+                    color="primary"
+                    @click="goToViewProgram(item.programId)"
+                    data-cy="viewProgram"
+                    >View</v-btn
+                  >
+                </td>
+              </tr>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </search-table>
+    </body-header-container>
   </full-page-container>
 </template>
 

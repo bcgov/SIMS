@@ -54,7 +54,7 @@ export default createVuetify({
       elevation: 1,
       color: "secondary",
       "aria-label": "Account",
-      class: "mr-5 nav-item-label",
+      class: "mr-5 nav-item-label ml-2",
     },
   },
   theme: {
