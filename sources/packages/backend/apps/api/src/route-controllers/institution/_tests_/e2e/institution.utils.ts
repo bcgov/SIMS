@@ -7,6 +7,11 @@ import { CANADA_COUNTRY_CODE, BC_PROVINCE_CODE } from "@sims/sims-db/constant";
 import { InstitutionProfileAPIInDTO } from "../../models/institution.dto";
 
 /**
+ * International country code to test the international institutions.
+ */
+export const INTERNATIONAL_COUNTRY_CODE = "AF";
+
+/**
  * Get the institution profile payload.
  * @returns institution profile payload.
  */
