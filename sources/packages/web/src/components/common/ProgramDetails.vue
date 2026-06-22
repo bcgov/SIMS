@@ -8,6 +8,7 @@
             :is-active="
               educationProgram.isActive && !educationProgram.isExpired
             "
+            data-cy="programStatus"
           ></status-chip-program>
         </template>
         <template #actions>
