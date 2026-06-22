@@ -7,39 +7,35 @@
         sub-title="Edit Offering"
       >
         <template #buttons>
-          <v-row class="p-0 m-0">
-            <v-menu
-              v-if="hasExistingApplication && !isReadOnlyUser(locationId)"
-            >
-              <template #activator="{ props }">
-                <v-btn
-                  class="ml-2"
-                  color="primary"
-                  prepend-icon="fa:fa fa-chevron-circle-down"
-                  v-bind="props"
-                  >Edit Actions</v-btn
-                >
-              </template>
-              <v-list
-                active-class="active-list-item"
-                density="compact"
-                bg-color="default"
+          <v-menu v-if="hasExistingApplication && !isReadOnlyUser(locationId)">
+            <template #activator="{ props }">
+              <v-btn
+                class="ml-2"
                 color="primary"
+                prepend-icon="fa:fa fa-chevron-circle-down"
+                v-bind="props"
+                >Edit Actions</v-btn
               >
-                <template v-for="(item, index) in items" :key="index">
-                  <v-list-item :value="index" class="my-2">
-                    <v-list-item-title @click="item.command">
-                      <span class="label-bold">{{ item.label }}</span>
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-divider-inset-opaque
-                    v-if="index < items.length - 1"
-                    :key="index"
-                  ></v-divider-inset-opaque>
-                </template>
-              </v-list>
-            </v-menu>
-          </v-row>
+            </template>
+            <v-list
+              active-class="active-list-item"
+              density="compact"
+              bg-color="default"
+              color="primary"
+            >
+              <template v-for="(item, index) in items" :key="index">
+                <v-list-item :value="index" class="my-2">
+                  <v-list-item-title @click="item.command">
+                    <span class="label-bold">{{ item.label }}</span>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-divider-inset-opaque
+                  v-if="index < items.length - 1"
+                  :key="index"
+                ></v-divider-inset-opaque>
+              </template>
+            </v-list>
+          </v-menu>
         </template>
       </header-navigator>
     </template>

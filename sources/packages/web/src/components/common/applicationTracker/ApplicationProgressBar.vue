@@ -1,76 +1,75 @@
 <template>
-  <v-card class="p-4">
-    <template
+  <body-header-container
+    :enable-card-view="true"
+    title="Track your application"
+    v-if="
+      applicationProgressDetails.applicationStatus !==
+      ApplicationStatus.Cancelled
+    "
+  >
+    <stepper-progress-bar
+      :progress-bar-value="trackerApplicationStatus"
+      :progress-step-labels="applicationTrackerLabels"
+      :progress-bar-color="trackFillColor"
+      :initial-step-size="thumbSize"
+      :disabled="disabled"
+      :progress-label-icon="statusIconDetails.statusIcon"
+      :progress-label-icon-color="statusIconDetails.statusType"
+    />
+    <draft
+      :are-application-actions-allowed="areApplicationActionsAllowed"
+      @edit-application="$emit('editApplication')"
       v-if="
-        applicationProgressDetails.applicationStatus !==
-        ApplicationStatus.Cancelled
+        applicationProgressDetails.applicationStatus === ApplicationStatus.Draft
       "
-    >
-      <body-header title="Track your application" />
-      <stepper-progress-bar
-        :progress-bar-value="trackerApplicationStatus"
-        :progress-step-labels="applicationTrackerLabels"
-        :progress-bar-color="trackFillColor"
-        :initial-step-size="thumbSize"
-        :disabled="disabled"
-        :progress-label-icon="statusIconDetails.statusIcon"
-        :progress-label-icon-color="statusIconDetails.statusType"
-      />
-      <draft
-        :are-application-actions-allowed="areApplicationActionsAllowed"
-        @edit-application="$emit('editApplication')"
-        v-if="
-          applicationProgressDetails.applicationStatus ===
-          ApplicationStatus.Draft
-        "
-      />
-      <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
-      <submitted
-        v-else-if="
-          applicationProgressDetails.applicationStatus ===
-          ApplicationStatus.Submitted
-        "
-      />
-      <in-progress
-        v-else-if="
-          applicationProgressDetails.applicationStatus ===
-          ApplicationStatus.InProgress
-        "
-        :application-id="applicationId"
-        :are-application-actions-allowed="areApplicationActionsAllowed"
-        :student-id="studentId"
-      />
-      <assessment
-        v-else-if="
-          applicationProgressDetails.applicationStatus ===
-          ApplicationStatus.Assessment
-        "
-        :assessment-trigger-type="
-          applicationProgressDetails.assessmentTriggerType!
-        "
-        :are-application-actions-allowed="areApplicationActionsAllowed"
-        @go-to-notice-of-assessment="goToNoticeOfAssessment"
-      />
-      <enrolment
-        v-else-if="
-          applicationProgressDetails.applicationStatus ===
-          ApplicationStatus.Enrolment
-        "
-        :application-id="applicationId"
-        :student-id="studentId"
-      />
-      <completed
-        :are-application-actions-allowed="areApplicationActionsAllowed"
-        v-else-if="
-          applicationProgressDetails.applicationStatus ===
-          ApplicationStatus.Completed
-        "
-        :application-id="applicationId"
-        :student-id="studentId"
-      />
-    </template>
+    />
+    <!-- The below components are checked with applicationStatusTracker[trackerApplicationStatus], so that in future if we need to see the previous, it can be easily attained just by removing readonly param from the v-slider or by adding a simple logic. -->
+    <submitted
+      v-else-if="
+        applicationProgressDetails.applicationStatus ===
+        ApplicationStatus.Submitted
+      "
+    />
+    <in-progress
+      v-else-if="
+        applicationProgressDetails.applicationStatus ===
+        ApplicationStatus.InProgress
+      "
+      :application-id="applicationId"
+      :are-application-actions-allowed="areApplicationActionsAllowed"
+      :student-id="studentId"
+    />
+    <assessment
+      v-else-if="
+        applicationProgressDetails.applicationStatus ===
+        ApplicationStatus.Assessment
+      "
+      :assessment-trigger-type="
+        applicationProgressDetails.assessmentTriggerType!
+      "
+      :are-application-actions-allowed="areApplicationActionsAllowed"
+      @go-to-notice-of-assessment="goToNoticeOfAssessment"
+    />
+    <enrolment
+      v-else-if="
+        applicationProgressDetails.applicationStatus ===
+        ApplicationStatus.Enrolment
+      "
+      :application-id="applicationId"
+      :student-id="studentId"
+    />
+    <completed
+      :are-application-actions-allowed="areApplicationActionsAllowed"
+      v-else-if="
+        applicationProgressDetails.applicationStatus ===
+        ApplicationStatus.Completed
+      "
+      :application-id="applicationId"
+      :student-id="studentId"
+    />
+  </body-header-container>
+  <v-card class="p-4" v-else>
     <cancelled
-      v-else
       :application-id="applicationId"
       :cancelled-date="applicationProgressDetails.applicationStatusUpdatedOn"
     />

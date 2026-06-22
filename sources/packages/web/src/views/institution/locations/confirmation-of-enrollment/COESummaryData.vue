@@ -6,7 +6,7 @@
           <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
         </template>
         <template #actions>
-          <v-row class="justify-end">
+          <v-row class="justify-end" density="compact">
             <v-col cols="auto">
               <v-btn-toggle
                 v-model="intensityFilter"

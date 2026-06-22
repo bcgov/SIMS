@@ -1,25 +1,24 @@
 <template>
   <v-card elevation="2" class="mx-auto mt-12" max-width="670px" outlined>
     <v-card-text>
-      <template v-if="isMobile">
-        <v-row no-gutters>
-          <v-col md="9">
-            <h1 class="category-header-large primary-color">
-              {{ props.title }}
-            </h1>
-            <p>
-              <slot name="subtitle">{{ props.subtitle }}</slot>
-            </p>
-          </v-col>
-          <v-col><slot name="image" /></v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12">
+      <v-row no-gutters density="compact">
+        <v-col cols="12" md="9">
+          <body-header-container>
+            <template #header>
+              <body-header :title="props.title" header-size="large">
+                <template #subtitle>
+                  <span>
+                    <slot name="subtitle">{{ props.subtitle }}</slot>
+                  </span>
+                </template>
+              </body-header>
+            </template>
             <content-group>
-              <h2 class="category-header-medium primary-color mb-2">
-                {{ props.loginAreaTitle }}
-              </h2>
-              <p>{{ props.loginAreaText }}</p>
+              <body-header-container
+                :title="props.loginAreaTitle"
+                :sub-title="props.loginAreaText"
+                header-size="medium"
+              />
               <v-btn
                 color="primary"
                 @click="login"
@@ -28,36 +27,11 @@
                 {{ props.loginAreaButton }}
               </v-btn>
             </content-group>
-          </v-col>
-        </v-row>
-      </template>
-      <template v-else>
-        <v-row no-gutters density="compact">
-          <v-col md="9">
-            <h1 class="category-header-large primary-color mb-0">
-              {{ props.title }}
-            </h1>
-            <p class="my-2">
-              <slot name="subtitle">{{ props.subtitle }}</slot>
-            </p>
-            <content-group>
-              <h2 class="category-header-medium primary-color m-0 p-0">
-                {{ props.loginAreaTitle }}
-              </h2>
-              <p>{{ props.loginAreaText }}</p>
-              <v-btn
-                color="primary"
-                @click="login"
-                prepend-icon="fa:fa fa-user"
-              >
-                {{ props.loginAreaButton }}
-              </v-btn>
-            </content-group>
-          </v-col>
-          <v-col cols="3" align-self="end"><slot name="image" /></v-col>
-        </v-row>
-      </template>
-      <v-row>
+          </body-header-container>
+        </v-col>
+        <v-col cols="12" md="3" align-self="end"><slot name="image" /></v-col>
+      </v-row>
+      <v-row v-if="$slots['banner-message']">
         <v-col cols="12">
           <slot name="banner-message" />
         </v-col>
@@ -67,10 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from "vuetify";
-
-const { smAndDown: isMobile } = useDisplay();
-
 const props = defineProps<{
   title: string;
   subtitle: string;
