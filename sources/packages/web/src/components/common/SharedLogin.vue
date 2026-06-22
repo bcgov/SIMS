@@ -34,26 +34,31 @@
       <template v-else>
         <v-row no-gutters density="compact">
           <v-col md="9">
-            <body-header-container
-              :title="props.title"
-              :sub-title="props.subtitle"
-            >
+            <body-header-container>
+              <template #header>
+                <body-header :title="props.title" header-size="large">
+                  <template #subtitle>
+                    <span>
+                      <slot name="subtitle">{{ props.subtitle }}</slot>
+                    </span>
+                  </template>
+                </body-header>
+              </template>
+              <content-group>
+                <body-header-container
+                  :title="props.loginAreaTitle"
+                  :sub-title="props.loginAreaText"
+                  header-size="medium"
+                />
+                <v-btn
+                  color="primary"
+                  @click="login"
+                  prepend-icon="fa:fa fa-user"
+                >
+                  {{ props.loginAreaButton }}
+                </v-btn>
+              </content-group>
             </body-header-container>
-            <content-group>
-              <body-header-container
-                :title="props.loginAreaTitle"
-                :sub-title="props.loginAreaText"
-                header-size="medium"
-              >
-              </body-header-container>
-              <v-btn
-                color="primary"
-                @click="login"
-                prepend-icon="fa:fa fa-user"
-              >
-                {{ props.loginAreaButton }}
-              </v-btn>
-            </content-group>
           </v-col>
           <v-col cols="3" align-self="end"><slot name="image" /></v-col>
         </v-row>
