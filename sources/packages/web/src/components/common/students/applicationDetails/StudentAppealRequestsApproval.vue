@@ -38,7 +38,7 @@
     @submitted="$emit('submitted', $event)"
   >
     <template #approval-actions="{ submit }" v-if="!readOnly">
-      <v-row justify="center" class="m-2">
+      <v-row class="m-2 justify-center">
         <v-btn
           color="primary"
           variant="outlined"

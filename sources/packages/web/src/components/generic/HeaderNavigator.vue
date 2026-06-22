@@ -1,5 +1,5 @@
 <template>
-  <v-row align="end" class="mb-1 user-select-none">
+  <v-row class="mb-1 user-select-none align-end">
     <v-col>
       <slot name="title">
         <div v-if="routeLocation || backTarget" class="header-title">

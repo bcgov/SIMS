@@ -7,8 +7,8 @@
       :dot-color="history.statusColor"
       size="x-small"
     >
-      <v-sheet color="grey-lighten-4 p-3" rounded class="content-footer">
-        <h4 class="text-body-2">
+      <v-sheet color="grey-lighten-4 p-2" rounded class="content-footer">
+        <h4 class="text-body-medium my-0">
           <strong class="secondary-color-light">
             Saved as {{ history.decisionStatus }} on
             {{ getISODateHourMinuteString(history.decisionDate) }}

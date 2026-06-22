@@ -3,7 +3,7 @@
   <error-summary :errors="errors" />
   <content-group class="mb-3">
     <v-row no-gutters>
-      <v-row align="center" no-gutters>
+      <v-row class="align-center" no-gutters>
         <v-col cols="12">
           <!-- This slot holds the BCeID basic(plain text)/business(dropdown) and readonly views(plain readonly text input). -->
           <slot name="user-name" :form-model="formModel" />

@@ -1,6 +1,6 @@
 <template>
   <div v-if="toggled">
-    <v-row justify="center" class="mt-1">
+    <v-row class="mt-1 justify-center">
       <slot name="image">
         <v-img
           height="150"
@@ -9,7 +9,7 @@
         />
       </slot>
     </v-row>
-    <v-row justify="center" class="mt-2">
+    <v-row class="mt-2 justify-center">
       <slot name="message">
         <h3 class="muted-content-strong">{{ message }}</h3>
       </slot>

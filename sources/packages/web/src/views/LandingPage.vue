@@ -43,7 +43,7 @@
             rel="noopener noreferrer"
           >
             <v-card-text>
-              <v-row align="center">
+              <v-row class="align-center">
                 <v-col cols="12" sm="3" class="d-flex justify-center">
                   <v-img
                     min-height="150"
@@ -94,7 +94,7 @@
         >
           <v-card border="1" flat href="/institution/login">
             <v-card-text>
-              <v-row align="center">
+              <v-row class="align-center">
                 <v-col cols="12" sm="3" class="d-flex justify-center">
                   <v-img
                     min-height="150"

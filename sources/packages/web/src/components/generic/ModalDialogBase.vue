@@ -9,7 +9,7 @@
     :content-class="showFullScreen ? 'modal-dialog-fullscreen' : undefined"
   >
     <v-card
-      elevation="10"
+      elevation="4"
       :max-width="showFullScreen ? undefined : maxWidth"
       :min-width="showFullScreen ? undefined : minWidth"
       class="modal-height"
