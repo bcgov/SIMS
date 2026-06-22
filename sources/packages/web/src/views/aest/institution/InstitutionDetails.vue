@@ -19,8 +19,8 @@
       </header-navigator>
     </template>
     <template #tab-header>
-      <v-tabs :model="tab" stacked color="primary"
-        ><v-tab
+      <v-tabs :model="tab" stacked color="primary" grow show-arrows="always">
+        <v-tab
           v-for="item in items"
           :key="item.label"
           :value="item.value"

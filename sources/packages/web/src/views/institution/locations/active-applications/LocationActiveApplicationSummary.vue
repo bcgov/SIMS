@@ -8,16 +8,14 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs v-model="tab" stacked color="primary">
+      <v-tabs v-model="tab" color="primary">
         <v-tab
           :value="ActiveApplicationTab.AvailableToReportTab"
           text="Available to report"
-          class="label-bold"
         />
         <v-tab
           :value="ActiveApplicationTab.UnavailableToReportTab"
           text="Unavailable to report"
-          class="label-bold"
         />
       </v-tabs>
     </template>

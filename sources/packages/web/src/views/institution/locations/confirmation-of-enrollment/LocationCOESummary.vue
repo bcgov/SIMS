@@ -8,16 +8,11 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs v-model="tab" stacked color="primary">
-        <v-tab
-          text="Confirm enrolment"
-          :value="COETab.ConfirmEnrollmentTab"
-          class="label-bold"
-        />
+      <v-tabs v-model="tab" color="primary">
+        <v-tab text="Confirm enrolment" :value="COETab.ConfirmEnrollmentTab" />
         <v-tab
           text="Upcoming and Previous Enrolments"
           :value="COETab.UpcomingEnrollmentTab"
-          class="label-bold"
         /> </v-tabs
     ></template>
     <v-window v-model="tab">

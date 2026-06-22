@@ -7,13 +7,12 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs stacked color="primary"
+      <v-tabs color="primary"
         ><v-tab
           v-for="item in tabItems"
           :key="item.label"
           :to="item.command()"
           :text="item.label"
-          class="label-bold"
         />
       </v-tabs>
     </template>

@@ -50,7 +50,6 @@
             v-for="submission in filteredSubmissions"
             :key="submission.id"
             variant="elevated"
-            :ripple="false"
             @click="
               canViewFormSubmittedData &&
               submission.canViewFormSubmittedData !== false
