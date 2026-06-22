@@ -66,6 +66,5 @@ try {
   const pruner = new ImagePruner(config, openshiftClient);
   await pruner.pruneImages();
 } catch (error: unknown) {
-  console.error("Image tag pruning failed:", error);
-  process.exit(1);
+  throw new Error("Image tag pruning failed", { cause: error });
 }
