@@ -16,6 +16,10 @@ import {
   BC_PROVINCE_CODE,
   INSTITUTION_TYPE_BC_PUBLIC,
 } from "@sims/sims-db/constant";
+import {
+  getInstitutionProfilePayload,
+  INTERNATIONAL_COUNTRY_CODE,
+} from "./institution.utils";
 
 describe("InstitutionAESTController(e2e)-createInstitution", () => {
   let app: INestApplication;
@@ -149,6 +153,34 @@ describe("InstitutionAESTController(e2e)-createInstitution", () => {
       organizationStatus: payload.organizationStatus,
       medicalSchoolStatus: null,
     });
+  });
+
+  it("Should create international institution when province is provided as empty string.", async () => {
+    // Arrange
+    const payload = {
+      ...getInstitutionProfilePayload(),
+      legalOperatingName: "Create Institution legal operating name",
+    };
+    payload.country = INTERNATIONAL_COUNTRY_CODE;
+    payload.province = "";
+    const endpoint = "/aest/institution";
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    let institutionId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        institutionId = response.body.id;
+      });
+    const isInstitutionSaved = await db.institution.exists({
+      where: { id: institutionId },
+    });
+    expect(isInstitutionSaved).toBe(true);
   });
 
   it("Should throw bad request error when country is not Canada and medical status is not provided.", async () => {
