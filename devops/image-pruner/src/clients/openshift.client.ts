@@ -2,11 +2,11 @@ import type {
   DeploymentResource,
   ImageStreamResource,
   JobResource,
-  OpenShiftClient,
+  OpenShiftApiClient,
   OpenShiftResponse,
   OpenShiftRestClientModule,
+  OpenshiftClientOptions,
 } from "../models/openshift.model";
-import type { PruneConfig } from "../models/prune.model";
 
 const openshiftRestClient =
   require("openshift-rest-client") as OpenShiftRestClientModule;
@@ -19,117 +19,128 @@ async function requestBody<T>(
 }
 
 /**
- * Creates an OpenShift client instance.
- * @param config The prune configuration.
- * @returns The OpenShift client instance.
+ * SIMS OpenShift client wrapper used by image-pruner operations.
  */
-export async function createOpenShiftClient(
-  config: PruneConfig,
-): Promise<OpenShiftClient> {
-  const clusterName = config.openShiftUrl.replace(/(^\w+:|^)\/\//, "");
+export class OpenshiftClient {
+  private constructor(
+    private readonly client: OpenShiftApiClient,
+    private readonly options: OpenshiftClientOptions,
+  ) {}
 
-  return openshiftRestClient.OpenshiftClient({
-    loadSpecFromCluster: false,
-    config: {
-      apiVersion: "v1",
-      kind: "Config",
-      clusters: [
-        {
-          name: clusterName,
-          cluster: {
-            server: config.openShiftUrl,
+  /**
+   * Creates an OpenShift client instance.
+   * @param options The client initialization options.
+   * @returns The initialized SIMS OpenShift client wrapper.
+   */
+  static async create(
+    options: OpenshiftClientOptions,
+  ): Promise<OpenshiftClient> {
+    const { openShiftUrl, licensePlate, saToken } = options.config;
+    const clusterName = openShiftUrl.replace(/(^\w+:|^)\/\//, "");
+
+    const client = await openshiftRestClient.OpenshiftClient({
+      loadSpecFromCluster: false,
+      config: {
+        apiVersion: "v1",
+        kind: "Config",
+        clusters: [
+          {
+            name: clusterName,
+            cluster: {
+              server: openShiftUrl,
+            },
           },
-        },
-      ],
-      users: [
-        {
-          name: `${config.licensePlate}-user`,
-          user: {
-            token: config.saToken,
+        ],
+        users: [
+          {
+            name: `${licensePlate}-user`,
+            user: {
+              token: saToken,
+            },
           },
-        },
-      ],
-      contexts: [
-        {
-          name: `${clusterName}/${config.licensePlate}-context`,
-          context: {
-            cluster: clusterName,
-            user: `${config.licensePlate}-user`,
+        ],
+        contexts: [
+          {
+            name: `${clusterName}/${licensePlate}-context`,
+            context: {
+              cluster: clusterName,
+              user: `${licensePlate}-user`,
+            },
           },
-        },
-      ],
-      "current-context": `${clusterName}/${config.licensePlate}-context`,
-      preferences: {},
-    },
-  });
-}
+        ],
+        "current-context": `${clusterName}/${licensePlate}-context`,
+        preferences: {},
+      },
+    });
 
-/**
- * Retrieves a deployment resource from the OpenShift cluster.
- * @param client The OpenShift client instance.
- * @param namespace The namespace of the deployment.
- * @param name The name of the deployment.
- * @returns The deployment resource.
- */
-export async function getDeployment(
-  client: OpenShiftClient,
-  namespace: string,
-  name: string,
-): Promise<DeploymentResource> {
-  return requestBody(
-    client.apis.apps.v1.namespaces(namespace).deployments(name).get(),
-  );
-}
-/**
- * Retrieves a job resource from the OpenShift cluster.
- * @param client The OpenShift client instance.
- * @param namespace The namespace of the job.
- * @param name The name of the job.
- * @returns The job resource.
- */
-export async function getJob(
-  client: OpenShiftClient,
-  namespace: string,
-  name: string,
-): Promise<JobResource> {
-  return requestBody(
-    client.apis.batch.v1.namespaces(namespace).jobs(name).get(),
-  );
-}
+    return new OpenshiftClient(client, options);
+  }
 
-/**
- * Retrieves an image stream resource from the OpenShift cluster.
- * @param client The OpenShift client instance.
- * @param namespace The namespace of the image stream.
- * @param name The name of the image stream.
- * @returns The image stream resource.
- */
-export async function getImageStream(
-  client: OpenShiftClient,
-  namespace: string,
-  name: string,
-): Promise<ImageStreamResource> {
-  return requestBody(
-    client.apis.image.v1.namespaces(namespace).imagestreams(name).get(),
-  );
-}
+  /**
+   * Retrieves a deployment resource from the OpenShift cluster.
+   * @param namespace The namespace of the deployment.
+   * @param name The name of the deployment.
+   * @returns The deployment resource.
+   */
+  async getDeployment(
+    namespace: string,
+    name: string,
+  ): Promise<DeploymentResource> {
+    return requestBody(
+      this.client.apis.apps.v1.namespaces(namespace).deployments(name).get(),
+    );
+  }
 
-/**
- * Deletes an image stream tag from the OpenShift cluster.
- * @param client The OpenShift client instance.
- * @param namespace The namespace of the image stream.
- * @param imageStreamName The name of the image stream.
- * @param tag The tag to delete.
- * @returns A promise that resolves when the tag is deleted.
- */
-export async function deleteImageStreamTag(
-  client: OpenShiftClient,
-  namespace: string,
-  imageStreamName: string,
-  tag: string,
-): Promise<void> {
-  await client.apis.image.v1
-    .namespaces(namespace)
-    .imagestreamtags(`${imageStreamName}:${tag}`)
-    .delete();
+  /**
+   * Retrieves a job resource from the OpenShift cluster.
+   * @param namespace The namespace of the job.
+   * @param name The name of the job.
+   * @returns The job resource.
+   */
+  async getJob(namespace: string, name: string): Promise<JobResource> {
+    return requestBody(
+      this.client.apis.batch.v1.namespaces(namespace).jobs(name).get(),
+    );
+  }
+
+  /**
+   * Retrieves an image stream resource from the OpenShift cluster.
+   * @param namespace The namespace of the image stream.
+   * @param name The name of the image stream.
+   * @returns The image stream resource.
+   */
+  async getImageStream(
+    namespace: string,
+    name: string,
+  ): Promise<ImageStreamResource> {
+    return requestBody(
+      this.client.apis.image.v1.namespaces(namespace).imagestreams(name).get(),
+    );
+  }
+
+  /**
+   * Deletes an image stream tag from the OpenShift cluster.
+   * @param namespace The namespace of the image stream.
+   * @param imageStreamName The image stream name.
+   * @param tag The tag to delete.
+   * @returns A promise that resolves when deletion completes.
+   */
+  async deleteImageStreamTag(
+    namespace: string,
+    imageStreamName: string,
+    tag: string,
+  ): Promise<void> {
+    await this.client.apis.image.v1
+      .namespaces(namespace)
+      .imagestreamtags(`${imageStreamName}:${tag}`)
+      .delete();
+  }
+
+  /**
+   * Returns the configured OpenShift API URL.
+   * @returns The OpenShift API URL.
+   */
+  get openShiftUrl(): string {
+    return this.options.config.openShiftUrl;
+  }
 }

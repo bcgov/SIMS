@@ -1,41 +1,242 @@
+import { config as loadDotEnv } from "dotenv";
+import { OpenshiftClient } from "./clients/openshift.client";
 import type { PruneConfig } from "./models/prune.model";
 import type {
-  OpenShiftClient,
-  ImageStreamTag,
   ImageStreamResource,
+  ImageStreamTag,
 } from "./models/openshift.model";
-import {
-  deleteImageStreamTag,
-  getDeployment,
-  getImageStream,
-  getJob,
-} from "./clients/openshift.client";
 
-interface PrunerRuntimeContext {
-  client: OpenShiftClient;
-  config: PruneConfig;
-}
-
-let runtimeContext: PrunerRuntimeContext | undefined;
+loadDotEnv();
 
 /**
- * Initializes the module-level runtime context for pruning.
- * @param client The initialized OpenShift client.
- * @param config The pruning configuration.
+ * Prunes stale OpenShift ImageStream tags for configured deployments and jobs.
  */
-export function initializePruner(
-  client: OpenShiftClient,
-  config: PruneConfig,
-): void {
-  runtimeContext = { client, config };
-}
+class ImagePruner {
+  constructor(
+    private readonly config: PruneConfig,
+    private readonly openshiftClient: OpenshiftClient,
+  ) {}
 
-function getRuntimeContext(): PrunerRuntimeContext {
-  if (!runtimeContext) {
-    throw new Error("Pruner context is not initialized.");
+  async run(): Promise<void> {
+    console.log("Starting image tag pruning...");
+    console.table([
+      { setting: "Environment", value: this.config.environment },
+      { setting: "License plate", value: this.config.licensePlate },
+      {
+        setting: "Apps",
+        value: this.config.applications.join(", ") || "(none)",
+      },
+      { setting: "Jobs", value: this.config.ocJobs.join(", ") || "(none)" },
+      { setting: "Tag prefix", value: this.config.prefix },
+      { setting: "Min prefix tags", value: String(this.config.minTags) },
+      { setting: "Dry run", value: String(this.config.dryRun) },
+    ]);
+
+    for (const application of this.config.applications) {
+      await this.pruneDeploymentApp(application);
+    }
+
+    for (const job of this.config.ocJobs) {
+      await this.pruneJobApp(job);
+    }
+
+    console.log("\n" + "=".repeat(80));
+    console.log(
+      `Image tag pruning completed. ${this.config.dryRun ? "DRY RUN - NO CHANGES WERE MADE TO THE CLUSTER!" : ""}`,
+    );
+    console.log("\n" + "=".repeat(80));
   }
 
-  return runtimeContext;
+  private async pruneDeploymentApp(appName: string): Promise<void> {
+    let deployedTag: ImageStreamTag | undefined;
+    let imageStream: ImageStreamResource | undefined;
+
+    try {
+      ({ deployedTag, imageStream } = await this.getDeploymentTag(appName));
+    } catch (error) {
+      console.warn(
+        `Skipping ${appName} (deployment not found or inaccessible):`,
+        error,
+      );
+      return;
+    }
+
+    if (!deployedTag || !imageStream) {
+      console.warn(
+        `Skipping ${appName} (deployed tag was not found on ImageStream).`,
+      );
+      return;
+    }
+
+    await this.pruneTags(imageStream, deployedTag, appName);
+  }
+
+  private async pruneJobApp(appName: string): Promise<void> {
+    let deployedTag: ImageStreamTag | undefined;
+    let imageStream: ImageStreamResource | undefined;
+
+    try {
+      ({ deployedTag, imageStream } = await this.getJobTag(appName));
+    } catch (error) {
+      console.warn(
+        `Skipping ${appName} (job not found or inaccessible):`,
+        error,
+      );
+      return;
+    }
+
+    if (!deployedTag || !imageStream) {
+      console.warn(
+        `Skipping ${appName} (deployed tag was not found on ImageStream).`,
+      );
+      return;
+    }
+
+    await this.pruneTags(
+      imageStream,
+      deployedTag,
+      imageStream.metadata.name || "",
+    );
+  }
+
+  private async getDeploymentTag(appName: string): Promise<{
+    deployedTag: ImageStreamTag | undefined;
+    imageStream: ImageStreamResource;
+  }> {
+    const deploymentName = `${this.config.environment}-${appName}`;
+
+    console.log(`\nProcessing deployment: ${deploymentName}`);
+
+    const deployment = await this.openshiftClient.getDeployment(
+      this.config.appNamespace,
+      deploymentName,
+    );
+    const image = deployment.spec.template.spec.containers[0]?.image;
+    if (!image) {
+      throw new Error("No container image found on deployment.");
+    }
+
+    const deployedTagName = extractImageTagName(image);
+
+    console.log(`Deployed image tag: ${deployedTagName}`);
+
+    const imageStream = await this.openshiftClient.getImageStream(
+      this.config.toolsNamespace,
+      appName,
+    );
+    const deployedTag = imageStream.status?.tags?.find(
+      (tag) => tag.tag === deployedTagName,
+    );
+
+    return { deployedTag, imageStream };
+  }
+
+  private async getJobTag(appName: string): Promise<{
+    deployedTag: ImageStreamTag | undefined;
+    imageStream: ImageStreamResource;
+  }> {
+    const jobName = `${this.config.environment}-${appName}`;
+
+    console.log(`\nProcessing job: ${jobName}`);
+
+    const job = await this.openshiftClient.getJob(
+      this.config.appNamespace,
+      jobName,
+    );
+    const image = job.spec.template.spec.containers[0]?.image;
+    if (!image) {
+      throw new Error("No container image found on job.");
+    }
+
+    const imageStreamName = extractImageStreamName(image);
+    const deployedTagName = extractImageTagName(image);
+
+    console.log(
+      `ImageStream: ${imageStreamName}, deployed image tag: ${deployedTagName}`,
+    );
+
+    const imageStream = await this.openshiftClient.getImageStream(
+      this.config.toolsNamespace,
+      imageStreamName,
+    );
+    const tags = imageStream.status?.tags ?? [];
+    const deployedTag = tags.find((tag) => tag.tag === deployedTagName);
+
+    return { deployedTag, imageStream };
+  }
+
+  private async pruneTags(
+    imageStream: ImageStreamResource,
+    deployedTag: ImageStreamTag,
+    appIdentifier: string,
+  ): Promise<void> {
+    const oldPrefixTags = imageStream.status?.tags
+      ?.filter(
+        (tag) =>
+          tag.tag.startsWith(this.config.prefix) && /.*-\d+$/.test(tag.tag),
+      )
+      .filter((tag) => tag.tag !== deployedTag.tag)
+      .sort(
+        (left, right) =>
+          getTagCreatedAtTimestamp(left) - getTagCreatedAtTimestamp(right),
+      );
+
+    const prefixTagsToDelete =
+      oldPrefixTags?.slice(
+        0,
+        Math.max(0, oldPrefixTags.length - this.config.minTags),
+      ) ?? [];
+
+    const featureTagsToDelete: ImageStreamTag[] =
+      imageStream.status?.tags?.filter(
+        (tag) =>
+          !tag.tag.startsWith(this.config.prefix) && !tag.tag.startsWith("v"),
+      ) ?? [];
+
+    if (featureTagsToDelete.length === 0 && prefixTagsToDelete.length === 0) {
+      console.log("No tags to delete.");
+      return;
+    }
+
+    for (const tag of prefixTagsToDelete) {
+      console.log(
+        `  ${appIdentifier}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
+      );
+      await this.deleteTag(tag, imageStream);
+    }
+
+    for (const tag of featureTagsToDelete) {
+      console.log(
+        `  ${appIdentifier}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
+      );
+      await this.deleteTag(tag, imageStream);
+    }
+
+    console.log(
+      `  Total of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
+    );
+  }
+
+  private async deleteTag(
+    tag: ImageStreamTag,
+    imageStream: ImageStreamResource,
+  ): Promise<void> {
+    const namespace = this.config.toolsNamespace;
+    const imageStreamName = imageStream.metadata.name;
+    if (!namespace || !imageStreamName) {
+      throw new Error(
+        `Missing namespace or image stream for tag deletion: ${tag.tag}.`,
+      );
+    }
+
+    if (!this.config.dryRun) {
+      await this.openshiftClient.deleteImageStreamTag(
+        namespace,
+        imageStreamName,
+        tag.tag,
+      );
+    }
+  }
 }
 
 /**
@@ -86,225 +287,80 @@ function getTagCreatedAtTimestamp(tag: ImageStreamTag): number {
   return createdAtTimestamp;
 }
 
-async function getDeploymentTag(appName: string): Promise<{
-  deployedTag: ImageStreamTag | undefined;
-  imageStream: ImageStreamResource;
-}> {
-  try {
-    const { client, config } = getRuntimeContext();
-    const deploymentName = `${config.environment}-${appName}`;
+/**
+ * Loads and validates the pruner configuration from environment variables and command line arguments.
+ * @returns The validated prune configuration.
+ */
+function loadConfig(): PruneConfig {
+  const environment = process.env.ENVIRONMENT;
+  const saToken = process.env.SA_TOKEN;
+  const openShiftUrl = process.env.OPENSHIFT_URL?.replace(/\/$/, "");
+  const licensePlate = process.env.LICENSE_PLATE;
 
-    console.log(`\nProcessing deployment: ${deploymentName}`);
-
-    const deployment = await getDeployment(
-      client,
-      config.appNamespace,
-      deploymentName,
-    );
-    const image = deployment.spec.template.spec.containers[0]?.image;
-    if (!image) {
-      throw new Error("No container image found on deployment.");
-    }
-
-    const deployedTagName = extractImageTagName(image);
-
-    console.log(`Deployed image tag: ${deployedTagName}`);
-
-    const imageStream = await getImageStream(
-      client,
-      config.toolsNamespace,
-      appName,
-    );
-    const deployedTag = imageStream.status?.tags?.find(
-      (tag) => tag.tag === deployedTagName,
-    );
-    return { deployedTag, imageStream };
-  } catch (error) {
+  if (!saToken) {
+    throw new Error("Missing required environment variable: SA_TOKEN.");
+  }
+  if (!openShiftUrl) {
+    throw new Error("Missing required environment variable: OPENSHIFT_URL.");
+  }
+  if (!licensePlate) {
+    throw new Error("Missing required environment variable: LICENSE_PLATE.");
+  }
+  if (!environment) {
+    throw new Error("Missing required environment variable: ENVIRONMENT.");
+  }
+  if (!["dev", "test", "prod"].includes(environment)) {
     throw new Error(
-      `Skipping ${appName} (deployment not found or inaccessible): ${error}`,
+      `ENVIRONMENT must be one of: dev, test, prod. Got: ${environment}.`,
     );
   }
-}
 
-async function getJobTag(appName: string): Promise<{
-  deployedTag: ImageStreamTag | undefined;
-  imageStream: ImageStreamResource;
-}> {
-  try {
-    const { client, config } = getRuntimeContext();
-    const jobName = `${config.environment}-${appName}`;
-
-    console.log(`\nProcessing job: ${jobName}`);
-
-    const job = await getJob(client, config.appNamespace, jobName);
-    const image = job.spec.template.spec.containers[0]?.image;
-    if (!image) {
-      throw new Error("No container image found on job.");
-    }
-
-    const imageStreamName = extractImageStreamName(image);
-    const deployedTagName = extractImageTagName(image);
-
-    console.log(
-      `ImageStream: ${imageStreamName}, deployed image tag: ${deployedTagName}`,
-    );
-
-    const imageStream = await getImageStream(
-      client,
-      config.toolsNamespace,
-      imageStreamName,
-    );
-    const tags = imageStream.status?.tags ?? [];
-    const deployedTag = tags.find((tag) => tag.tag === deployedTagName);
-    return { deployedTag, imageStream };
-  } catch (error) {
+  const minTags = Number.parseInt(process.env.MIN_TAGS ?? "2", 10);
+  if (Number.isNaN(minTags) || minTags < 0) {
     throw new Error(
-      `Skipping ${appName} (job not found or inaccessible): ${error}`,
+      `MIN_TAGS must be a non-negative integer. Got: ${process.env.MIN_TAGS}.`,
     );
   }
+
+  return {
+    saToken,
+    openShiftUrl,
+    licensePlate,
+    toolsNamespace: `${licensePlate}-tools`,
+    appNamespace: `${licensePlate}-${environment}`,
+    environment,
+    applications: (process.env.APPLICATIONS ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean),
+    ocJobs: (process.env.OCJOBS ?? "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean),
+    prefix: process.env.PREFIX ?? "main",
+    minTags,
+    dryRun: !process.argv.includes("--confirm"),
+  };
 }
 
 /**
- * Deletes a single ImageStream tag via the OpenShift REST API.
- * In dry-run mode, skips the actual deletion.
- * @param tag The tag name to delete.
- * @param imageStream The parent image stream that owns the tag.
- * @returns A promise that resolves when the tag deletion step completes.
+ * Script main execution method.
  */
-export async function deleteTag(
-  tag: ImageStreamTag,
-  imageStream: ImageStreamResource,
-): Promise<void> {
-  const { client, config } = getRuntimeContext();
-  const namespace = config.toolsNamespace;
-  const imageStreamName = imageStream.metadata.name;
-  if (!namespace || !imageStreamName) {
-    throw new Error(
-      `Missing namespace or image stream for tag deletion: ${tag.tag}.`,
-    );
-  }
-
-  if (!config.dryRun) {
-    await deleteImageStreamTag(client, namespace, imageStreamName, tag.tag);
-  }
-}
-
-async function pruneTags(
-  imageStream: ImageStreamResource,
-  deployedTag: ImageStreamTag,
-  appIdentifier: string,
-): Promise<void> {
-  const { config } = getRuntimeContext();
-
-  const oldPrefixTags = imageStream.status?.tags
-    ?.filter(
-      // Filter tags that match the prefix (main-*)
-      (tag) => tag.tag.startsWith(config.prefix) && /.*-\d+$/.test(tag.tag),
-    )
-    .filter(
-      // Exclude the currently deployed tag.
-      (tag) => tag.tag !== deployedTag.tag,
-    )
-    .sort(
-      // Sort by creation date ascending (oldest first)
-      (left, right) =>
-        getTagCreatedAtTimestamp(left) - getTagCreatedAtTimestamp(right),
-    );
-
-  // Select tags to delete, keeping at least `config.minTags` most recent ones.
-  const prefixTagsToDelete =
-    oldPrefixTags?.slice(
-      0,
-      Math.max(0, oldPrefixTags.length - config.minTags),
-    ) ?? [];
-
-  // Select tags to delete that don't match the prefix (main-*) and don't look like release tags (v*).
-  // These have no retention policy and will be deleted regardless of age
-  const featureTagsToDelete: ImageStreamTag[] =
-    imageStream.status?.tags?.filter(
-      (tag) => !tag.tag.startsWith(config.prefix) && !tag.tag.startsWith("v"),
-    ) ?? [];
-
-  if (featureTagsToDelete.length === 0 && prefixTagsToDelete.length === 0) {
-    console.log("No tags to delete.");
-    return;
-  }
-
-  for (const tag of prefixTagsToDelete) {
-    console.log(
-      `  ${appIdentifier}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
-    );
-    await deleteTag(tag, imageStream);
-  }
-
-  for (const tag of featureTagsToDelete) {
-    console.log(
-      `  ${appIdentifier}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
-    );
-    await deleteTag(tag, imageStream);
-  }
-
-  console.log(
-    `  Total of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
-  );
-}
-
-/**
- * Prunes old ImageStream tags for a Deployment-backed application.
- * Deletes prefix tags (e.g., main-*) older than the currently deployed tag
- * (minus a configurable safety buffer) and all feature branch tags.
- * @param appName The application name matching both the ImageStream name and the Deployment name suffix.
- * @returns A promise that resolves when deployment tag pruning completes.
- */
-export async function pruneDeploymentApp(appName: string): Promise<void> {
-  let deployedTag: ImageStreamTag | undefined;
-  let imageStream: ImageStreamResource | undefined;
-
+(async () => {
   try {
-    ({ deployedTag, imageStream } = await getDeploymentTag(appName));
-  } catch (error) {
-    console.warn(
-      `Skipping ${appName} (deployment not found or inaccessible):`,
-      error,
-    );
-    return;
+    const config = loadConfig();
+    const openshiftClient = await OpenshiftClient.create({
+      config: {
+        openShiftUrl: config.openShiftUrl,
+        licensePlate: config.licensePlate,
+        saToken: config.saToken,
+      },
+    });
+
+    const pruner = new ImagePruner(config, openshiftClient);
+    await pruner.run();
+  } catch (error: unknown) {
+    console.error("Image tag pruning failed:", error);
+    process.exit(1);
   }
-
-  if (!deployedTag || !imageStream) {
-    console.warn(
-      `Skipping ${appName} (deployed tag was not found on ImageStream).`,
-    );
-    return;
-  }
-
-  await pruneTags(imageStream, deployedTag, appName);
-}
-
-/**
- * Prunes old ImageStream tags for a Job-backed application.
- * Uses the same logic as pruneDeploymentApp but reads the deployed tag
- * from an OpenShift Job resource instead of a Deployment. The ImageStream name
- * is also derived from the job's container image, since it may differ from
- * the job name.
- * @param appName The application name matching the Job name suffix.
- * @returns A promise that resolves when job tag pruning completes.
- */
-export async function pruneJobApp(appName: string): Promise<void> {
-  let deployedTag: ImageStreamTag | undefined;
-  let imageStream: ImageStreamResource | undefined;
-
-  try {
-    ({ deployedTag, imageStream } = await getJobTag(appName));
-  } catch (error) {
-    console.warn(`Skipping ${appName} (job not found or inaccessible):`, error);
-    return;
-  }
-
-  if (!deployedTag || !imageStream) {
-    console.warn(
-      `Skipping ${appName} (deployed tag was not found on ImageStream).`,
-    );
-    return;
-  }
-  await pruneTags(imageStream, deployedTag, imageStream.metadata.name || "");
-}
+})();

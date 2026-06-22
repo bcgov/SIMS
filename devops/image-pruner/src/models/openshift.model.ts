@@ -219,9 +219,20 @@ export interface OpenShiftClientOptions {
 }
 
 /**
+ * Options required to initialize the SIMS OpenShift client wrapper.
+ */
+export interface OpenshiftClientOptions {
+  config: {
+    openShiftUrl: string;
+    licensePlate: string;
+    saToken: string;
+  };
+}
+
+/**
  * OpenShift client interface, representing the methods available for interacting with the OpenShift API, including retrieving deployments, jobs, image streams, and deleting image stream tags.
  */
-export interface OpenShiftClient {
+export interface OpenShiftApiClient {
   apis: {
     apps: {
       v1: {
@@ -252,5 +263,5 @@ export interface OpenShiftClient {
  * OpenShift REST client module definition, representing the structure of the module used to create an OpenShift client instance, including the method for creating the client with the specified options.
  */
 export interface OpenShiftRestClientModule {
-  OpenshiftClient(options: OpenShiftClientOptions): Promise<OpenShiftClient>;
+  OpenshiftClient(options: OpenShiftClientOptions): Promise<OpenShiftApiClient>;
 }
