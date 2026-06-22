@@ -1,20 +1,11 @@
 name: Prune Images
-run-name: Pruning all but the most recent ${{ inputs.minTags }} tags prior to what is deployed in ${{ inputs.environment }}
+run-name: Pruning all but the most recent ${{ inputs.minTags }} tags prior to what is deployed in dev, version tags are not pruned.
 permissions:
   contents: read
 
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        type: choice
-        description: "Environment"
-        required: true
-        options:
-          - dev
-          - test
-          - prod
-        default: "dev"
       applications:
         description: "Comma separated list of application Image Streams to prune"
         required: true
@@ -57,7 +48,7 @@ jobs:
           SA_TOKEN: ${{ secrets.SA_TOKEN }}
           OPENSHIFT_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
           LICENSE_PLATE: ${{ vars.OPENSHIFT_LICENSE_PLATE }}
-          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
+          ENVIRONMENT: "dev"
           APPLICATIONS: ${{ inputs.applications || 'web-sims, api-sims, queue-consumers-sims, workers-sims' }}
           OCJOBS: ${{ inputs.ocjobs || 'migrations-job' }}
           PREFIX: ${{ inputs.prefix || 'main' }}
