@@ -1,24 +1,13 @@
 services:
-  camunda-data-init:
-    image: camunda/camunda:8.9.2
-    user: "0:0"
-    entrypoint:
-      [
-        "/bin/sh",
-        "-c",
-        "chown -R 1001:1001 /usr/local/camunda/camunda-data && chmod 775 /usr/local/camunda/camunda-data",
-      ]
-    volumes:
-      - camunda-data:/usr/local/camunda/camunda-data
-    restart: "no"
-  orchestration:
-    image: camunda/camunda:8.9.2
-    container_name: orchestration
+  zeebe:
+    image: camunda/camunda:${CAMUNDA_PLATFORM_VERSION}
+    container_name: zeebe-test
     ports:
       - "26500:26500"
       - "9600:9600"
-    mem_limit: 1g
-    restart: always
+    configs:
+      - source: orchestration-config
+        target: /usr/local/camunda/config/application.yaml
     healthcheck:
       test:
         [
@@ -29,16 +18,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-    # volumes:
-    #   - camunda:/usr/local/camunda/data
-    #   - camunda-data:/usr/local/camunda/camunda-data
-    #   - ./driver-lib:/driver-lib:ro
-    configs:
-      - source: orchestration-config
-        target: /usr/local/camunda/config/application.yaml
-    depends_on:
-      camunda-data-init:
-        condition: service_completed_successfully
   workflow:
     image: workflow-${PROJECT_NAME}:${BUILD_REF}-${BUILD_ID}
     container_name: workers-${PROJECT_NAME}-${BUILD_REF}-${BUILD_ID}
@@ -47,46 +26,26 @@ services:
       dockerfile: ./workflow/Dockerfile.dev
     environment:
       - NODE_ENV=docker
-      - ZEEBE_GRPC_ADDRESS=grpc://orchestration:26500
+      - ZEEBE_GRPC_ADDRESS=grpc://zeebe:26500
       - CAMUNDA_OAUTH_DISABLED=${CAMUNDA_OAUTH_DISABLED}
       - ZEEBE_CLIENT_MAX_RETRIES=20
     restart: always
     depends_on:
-      - orchestration
-volumes:
-  camunda-data:
-
+      - zeebe
 configs:
   orchestration-config:
     content: |
-      management.endpoints.configprops.show-values: always
+      spring:
+        profiles:
+          # This sets the 'standalone' profile which is required to run just Zeebe without secondary storage.
+          active: broker,standalone
       camunda:
-        backup:
-          webapps:
-            enabled: false
-        system:
-          cpu-thread-count: "3"
-          io-thread-count: "3"
-        security:
-          authentication:
-            method: "basic"
-            unprotectedApi: true
-          authorizations:
-            enabled: false
-          initialization:
-            users:
-              - username: "demo"
-                password: "demo"
-                name: "Demo User"
-                email: "demo@demo.com"
-            defaultRoles.admin.users:
-              - "demo"
         data:
           secondary-storage:
-            type: rdbms
-            rdbms:
-              url: jdbc:h2:file:./camunda-data/h2db
-              username: sa
-              password:
-              flushInterval: PT0.5S
-              queueSize: 1000
+            type: none
+        security:
+          authentication:
+            method: basic
+            unprotected-api: true
+          authorizations:
+            enabled: false
