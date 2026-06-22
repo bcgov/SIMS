@@ -10,7 +10,7 @@
 # See docker-compose-full.yaml for a configuration that also includes Optimize, Identity, Keycloak, Web Modeler, and Console.
 services:
   camunda-data-init:
-    image: camunda/camunda:${CAMUNDA_VERSION}
+    image: camunda/camunda:${CAMUNDA_PLATFORM_VERSION}
     user: "0:0"
     entrypoint:
       [
@@ -23,7 +23,7 @@ services:
     restart: "no"
 
   orchestration: # Consolidated Zeebe + Operate + Tasklist - https://docs.camunda.io/docs/self-managed/setup/deploy/other/docker/#zeebe
-    image: camunda/camunda:${CAMUNDA_VERSION}
+    image: camunda/camunda:${CAMUNDA_PLATFORM_VERSION}
     container_name: orchestration
     ports:
       - "26500:26500"
