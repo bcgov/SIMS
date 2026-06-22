@@ -315,8 +315,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * Once SSR or SSRN are present in the student account, any of the
    * above mentioned restrictions will create a new SSRN restriction
    * (if one is not present or active yet).
-   * 'Student withdrew from program' will always create a new WTHD restriction
-   * if one is not present or active yet.
+   * 'Student withdrew from program' will always create a new WTHD restriction.
    * @param scholasticStandingData scholastic standing data.
    * @param studentId student id.
    * @param auditUserId user that should be considered the one that is
@@ -404,24 +403,12 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     ) {
-      // Check for "WTHD" restriction since it should always be created if one is not present and active.
+      // Check for "WTHD" restriction since it affects SSR/SSRN creation.
       const hasActiveWTHD = existingRestrictions.some(
         (studentRestriction) =>
           studentRestriction.restriction.restrictionCode ===
             RestrictionCode.WTHD && studentRestriction.isActive,
       );
-      // Check if "WTHD" restriction is already present for the student,
-      // if not, then create a new one.
-      if (!hasActiveWTHD) {
-        const wthdRestriction =
-          await this.studentRestrictionSharedService.createRestrictionToSave(
-            studentId,
-            RestrictionCode.WTHD,
-            auditUserId,
-            applicationId,
-          );
-        restrictions.push(wthdRestriction);
-      }
       // Check if an SSR or SSRN was created for the student.
       const createdSSROrSSRN = restrictions.some((studentRestriction) =>
         SCHOLASTIC_ESCALATION_RESTRICTIONS.includes(
@@ -440,6 +427,15 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
           );
         restrictions.push(ssrRestriction);
       }
+      // Always create a new "WTHD" restriction.
+      const wthdRestriction =
+        await this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.WTHD,
+          auditUserId,
+          applicationId,
+        );
+      restrictions.push(wthdRestriction);
     }
     return restrictions;
   }

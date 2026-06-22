@@ -78,6 +78,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 18,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 15,
+        fullTimeWithdrawalsCount: 0,
       });
   });
 
@@ -120,6 +121,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 15,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        fullTimeWithdrawalsCount: 0,
       });
   });
 });

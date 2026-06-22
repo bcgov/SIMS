@@ -80,6 +80,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 17,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        fullTimeWithdrawalsCount: 0,
       });
   });
 
@@ -130,6 +131,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         .expect({
           fullTimeLifetimeUnsuccessfulCompletionWeeks: 5,
           partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+          fullTimeWithdrawalsCount: 0,
         });
     },
   );

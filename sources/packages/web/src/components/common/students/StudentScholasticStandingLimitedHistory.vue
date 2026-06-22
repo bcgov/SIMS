@@ -1,5 +1,5 @@
 <template>
-  <body-header-container :enableCardView="true">
+  <body-header-container :enable-card-view="true">
     <template #header>
       <body-header title="Scholastic Standing Limited History" />
     </template>
@@ -17,38 +17,37 @@
         {{
           scholasticStandingSummary.fullTimeLifetimeUnsuccessfulCompletionWeeks
         }}
+      </p>
+      <p class="label-bold-normal">
+        Number of full-time withdrawals from study:
+        {{ scholasticStandingSummary.fullTimeWithdrawalsCount }}
       </p></content-group
     >
   </body-header-container>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import { ScholasticStandingSummaryDetailsAPIOutDTO } from "@/services/http/dto";
 import { ScholasticStandingService } from "@/services/ScholasticStandingService";
-import { defineComponent, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
-export default defineComponent({
-  props: {
-    studentId: {
-      type: Number,
-      required: false,
-    },
-    showPartTimeSummary: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-  },
-  setup(props) {
-    const scholasticStandingSummary = ref(
-      {} as ScholasticStandingSummaryDetailsAPIOutDTO,
-    );
-    onMounted(async () => {
-      scholasticStandingSummary.value =
-        await ScholasticStandingService.shared.getScholasticStandingSummary({
-          studentId: props.studentId,
-        });
+interface Props {
+  studentId?: number;
+  showPartTimeSummary?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  studentId: undefined,
+  showPartTimeSummary: true,
+});
+
+const scholasticStandingSummary = ref(
+  {} as ScholasticStandingSummaryDetailsAPIOutDTO,
+);
+
+onMounted(async () => {
+  scholasticStandingSummary.value =
+    await ScholasticStandingService.shared.getScholasticStandingSummary({
+      studentId: props.studentId,
     });
-    return { scholasticStandingSummary };
-  },
 });
 </script>

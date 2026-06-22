@@ -439,6 +439,25 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
+   * Get a count of active student restrictions by their codes.
+   * @param studentId student ID.
+   * @param restrictionCodes restriction codes.
+   * @returns count of student restrictions.
+   */
+  async countActiveRestrictionByCodes(
+    studentId: number,
+    restrictionCodes: string[],
+  ): Promise<number> {
+    return this.repo.count({
+      where: {
+        isActive: true,
+        student: { id: studentId },
+        restriction: { restrictionCode: In(restrictionCodes) },
+      },
+    });
+  }
+
+  /**
    * Verify if the student has a valid SIN to apply to the particular offering.
    * The SIN number must be a permanent one or a temporary with expiry date later
    * then the end date of the offering.
