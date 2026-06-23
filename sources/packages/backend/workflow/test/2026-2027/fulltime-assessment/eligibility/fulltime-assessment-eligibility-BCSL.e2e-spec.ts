@@ -128,8 +128,8 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
       },
       expectedData: {
         expectedAssessmentEligibility: true, // Need > $1
-        expectedInstitutionEligibility: false,
-        expectedAwardEligibility: false,
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: true,
       },
     },
     {
