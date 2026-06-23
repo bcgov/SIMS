@@ -175,7 +175,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       });
   });
 
-  it("Should return full time withdrawals count for the provided student as a part of the student scholastic summary when the student has one active and one inactive WTHD restrictions.", async () => {
+  it("Should return full time withdrawals count for the provided student as a part of the student scholastic summary when the student has two active and one inactive WTHD restrictions.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const application = await saveFakeApplication(db.dataSource, {
@@ -187,29 +187,42 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
         restrictionCode: RestrictionCode.WTHD,
       },
     });
-    // Create one active and one inactive WTHD restriction for the student.
-    await saveFakeStudentRestriction(
-      db.dataSource,
-      {
-        student,
-        application,
-        restriction,
-      },
-      {
-        isActive: true,
-      },
-    );
-    await saveFakeStudentRestriction(
-      db.dataSource,
-      {
-        student,
-        application,
-        restriction,
-      },
-      {
-        isActive: false,
-      },
-    );
+    // Create two active and one inactive WTHD restriction for the student.
+    await Promise.all([
+      saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: true,
+        },
+      ),
+      saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: true,
+        },
+      ),
+      saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: false,
+        },
+      ),
+    ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -222,7 +235,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 0,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
-        fullTimeWithdrawalsCount: 1,
+        fullTimeWithdrawalsCount: 2,
       });
   });
 });

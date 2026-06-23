@@ -6,6 +6,8 @@ import {
   saveFakeApplication,
   saveFakeStudent,
   saveFakeSFASIndividual,
+  RestrictionCode,
+  saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -68,6 +70,24 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
         unsuccessfulCompletion: 12,
       },
     });
+    const restriction = await db.restriction.findOne({
+      where: {
+        restrictionCode: RestrictionCode.WTHD,
+      },
+    });
+    // Add an active WTHD restriction for the student.
+    await saveFakeStudentRestriction(
+      db.dataSource,
+      {
+        student,
+        application: fullTimeApplication,
+        restriction,
+      },
+      {
+        isActive: true,
+      },
+    );
+
     const endpoint = `/aest/scholastic-standing/summary/student/${student.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     // Act/Assert
@@ -78,7 +98,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 18,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 15,
-        fullTimeWithdrawalsCount: 0,
+        fullTimeWithdrawalsCount: 1,
       });
   });
 
