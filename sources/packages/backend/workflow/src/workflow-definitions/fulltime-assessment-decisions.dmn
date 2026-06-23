@@ -4709,7 +4709,7 @@
           <text>false</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1x5dtkr">
-          <text>false</text>
+          <text>true</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0zgl4u2">
           <text>true</text>
@@ -4721,6 +4721,45 @@
           <text>true</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_17svkhh">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ao5krd">
+        <description>BC Private profit institutions</description>
+        <inputEntry id="UnaryTests_1dahpxk">
+          <text>"CA"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05benez">
+          <text>"BC"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_18374eh">
+          <text>"private"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0agp0go">
+          <text>"profit"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1vq5ntn">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1r2cskb">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_02mcelt">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1xkg89w">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0uoiheh">
+          <text>false</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_09q5kgl">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0ea1atr">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1yjrq6i">
           <text>true</text>
         </outputEntry>
       </rule>
