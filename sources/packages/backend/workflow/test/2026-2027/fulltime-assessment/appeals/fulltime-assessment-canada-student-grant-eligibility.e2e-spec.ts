@@ -36,7 +36,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-canada-student-g
 
         assessmentEligibilityBCAG: false,
         institutionEligibilityBCAG: false,
-        awardEligibilityBCAG: false,
+        awardEligibilityBCAG: true,
 
         assessmentEligibilityBCAG2Year: true,
         awardEligibilityBCAG2Year: false,
@@ -87,7 +87,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-canada-student-g
 
         assessmentEligibilityBCAG: false,
         institutionEligibilityBCAG: false,
-        awardEligibilityBCAG: false,
+        awardEligibilityBCAG: true,
 
         assessmentEligibilityBCAG2Year: true,
         awardEligibilityBCAG2Year: false,
