@@ -475,10 +475,11 @@ export const StudentApplicationsSimplifiedSummaryHeaders = [
 ];
 
 /**
- * Student application summary headers for Student users.
+ * Student application summary headers for student users only.
  */
 export const StudentApplicationsExtendedSummaryHeaders = [
   { title: "Application Number", sortable: true, key: "applicationNumber" },
+  { title: "Submitted", sortable: false, key: "submitted" },
   { title: "Study Period", sortable: false, key: "studyStartPeriod" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Actions", sortable: false, key: "actions" },
