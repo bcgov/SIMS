@@ -2,11 +2,7 @@
   <IdleTimeChecker :client-id-type="ClientIdType.Institution">
     <v-app-bar color="white">
       <b-c-logo subtitle="Institutions" />
-      <v-btn-group
-        selected-class="active-btn label-bold"
-        class="navigation-btn float-left"
-        :rounded="false"
-      >
+      <v-btn-group class="navigation-btn" :rounded="false">
         <v-btn
           v-if="isAuthenticatedInstitutionUser"
           class="nav-item-label"

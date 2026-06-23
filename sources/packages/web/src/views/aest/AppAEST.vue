@@ -2,12 +2,7 @@
   <idle-time-checker :client-id-type="ClientIdType.AEST">
     <v-app-bar color="white">
       <b-c-logo :subtitle="MINISTRY_NAME"></b-c-logo>
-      <v-btn-group
-        selected-class="active-btn label-bold"
-        class="navigation-btn float-left"
-        variant="plain"
-        :rounded="false"
-      >
+      <v-btn-group class="navigation-btn" :rounded="false">
         <check-permission-role :role="Role.AESTCreateInstitution">
           <template #="{ notAllowed }">
             <v-btn

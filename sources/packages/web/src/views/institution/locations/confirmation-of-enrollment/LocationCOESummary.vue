@@ -72,7 +72,7 @@ export default defineComponent({
   },
   setup(props) {
     const { getLocationName } = useInstitutionState();
-    const tab = ref("coe-tab");
+    const tab = ref(COETab.ConfirmEnrollmentTab);
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);

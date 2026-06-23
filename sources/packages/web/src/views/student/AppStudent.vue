@@ -3,12 +3,7 @@
     <v-app-bar color="white">
       <b-c-logo subtitle="Student Application" @click="logoClick" />
       <v-spacer />
-      <v-btn-group
-        selected-class="active-btn label-bold"
-        v-if="!smallScreen"
-        class="navigation-btn float-left"
-        :rounded="false"
-      >
+      <v-btn-group v-if="!smallScreen" class="navigation-btn" :rounded="false">
         <v-btn
           v-if="hasAuthenticatedStudentAccount"
           class="nav-item-label"
