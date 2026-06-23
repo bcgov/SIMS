@@ -10,7 +10,7 @@
         message="No applications are currently available."
       >
         <v-data-table-server
-          :headers="applicationsSummaryHeaders"
+          :headers="StudentApplicationsSimplifiedSummaryHeaders"
           :items="applicationsAndCount.results"
           :items-per-page="DEFAULT_PAGE_LIMIT"
           :items-per-page-options="ITEMS_PER_PAGE"
@@ -160,7 +160,7 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       loading,
       StudentApplicationFields,
-      applicationsSummaryHeaders: StudentApplicationsSimplifiedSummaryHeaders,
+      StudentApplicationsSimplifiedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
       mapOfferingIntensity,

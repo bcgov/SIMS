@@ -27,7 +27,7 @@ describe("StudentAESTController(e2e)-getStudentApplicationSummary", () => {
     recentActiveProgramYear = await getRecentActiveProgramYear(db);
   });
 
-  it("Should use original submission date in descending order as default tie-breaker when application statuses are the same.", async () => {
+  it("Should use original submission date in descending order as the secondary sort when application statuses are the same.", async () => {
     // Arrange
     const olderSubmittedDate = addDays(-2);
     const newerSubmittedDate = addDays(-1);
@@ -43,12 +43,6 @@ describe("StudentAESTController(e2e)-getStudentApplicationSummary", () => {
       {
         programYear: recentActiveProgramYear,
         student: olderSubmittedApplication.student,
-        institution:
-          olderSubmittedApplication.currentAssessment.offering
-            .institutionLocation.institution,
-        institutionLocation:
-          olderSubmittedApplication.currentAssessment.offering
-            .institutionLocation,
       },
       { submittedDate: newerSubmittedDate },
     );
@@ -63,42 +57,46 @@ describe("StudentAESTController(e2e)-getStudentApplicationSummary", () => {
       .get(endpoint)
       .auth(aestUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .expect({
-        results: [
-          {
-            id: newerSubmittedApplication.id,
-            applicationNumber: newerSubmittedApplication.applicationNumber,
-            isArchived: false,
-            studyStartPeriod:
-              newerSubmittedApplication.currentAssessment.offering
-                .studyStartDate,
-            studyEndPeriod:
-              newerSubmittedApplication.currentAssessment.offering.studyEndDate,
-            status: ApplicationStatus.Submitted,
-            parentApplicationId: newerSubmittedApplication.id,
-            submittedDate: newerSubmittedDate.toISOString(),
-            lastSubmittedDate: newerSubmittedDate.toISOString(),
-            isChangeRequestAllowedForPY: true,
-            offeringIntensity: newerSubmittedApplication.offeringIntensity,
-          },
-          {
-            id: olderSubmittedApplication.id,
-            applicationNumber: olderSubmittedApplication.applicationNumber,
-            isArchived: false,
-            studyStartPeriod:
-              olderSubmittedApplication.currentAssessment.offering
-                .studyStartDate,
-            studyEndPeriod:
-              olderSubmittedApplication.currentAssessment.offering.studyEndDate,
-            status: ApplicationStatus.Submitted,
-            parentApplicationId: olderSubmittedApplication.id,
-            submittedDate: olderSubmittedDate.toISOString(),
-            lastSubmittedDate: olderSubmittedDate.toISOString(),
-            isChangeRequestAllowedForPY: true,
-            offeringIntensity: olderSubmittedApplication.offeringIntensity,
-          },
-        ],
-        count: 2,
+      .expect(({ body }) => {
+        expect(body).toStrictEqual({
+          results: [
+            {
+              id: newerSubmittedApplication.id,
+              applicationNumber: newerSubmittedApplication.applicationNumber,
+              isArchived: false,
+              studyStartPeriod:
+                newerSubmittedApplication.currentAssessment.offering
+                  .studyStartDate,
+              studyEndPeriod:
+                newerSubmittedApplication.currentAssessment.offering
+                  .studyEndDate,
+              status: ApplicationStatus.Submitted,
+              parentApplicationId: newerSubmittedApplication.id,
+              submittedDate: newerSubmittedDate.toISOString(),
+              lastSubmittedDate: newerSubmittedDate.toISOString(),
+              isChangeRequestAllowedForPY: true,
+              offeringIntensity: newerSubmittedApplication.offeringIntensity,
+            },
+            {
+              id: olderSubmittedApplication.id,
+              applicationNumber: olderSubmittedApplication.applicationNumber,
+              isArchived: false,
+              studyStartPeriod:
+                olderSubmittedApplication.currentAssessment.offering
+                  .studyStartDate,
+              studyEndPeriod:
+                olderSubmittedApplication.currentAssessment.offering
+                  .studyEndDate,
+              status: ApplicationStatus.Submitted,
+              parentApplicationId: olderSubmittedApplication.id,
+              submittedDate: olderSubmittedDate.toISOString(),
+              lastSubmittedDate: olderSubmittedDate.toISOString(),
+              isChangeRequestAllowedForPY: true,
+              offeringIntensity: olderSubmittedApplication.offeringIntensity,
+            },
+          ],
+          count: 2,
+        });
       });
   });
 
