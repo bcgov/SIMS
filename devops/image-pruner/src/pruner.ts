@@ -260,7 +260,7 @@ export class ImagePruner {
     }
 
     console.log(
-      `\tTotal of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
+      `\tTotal of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) ${this.config.dryRun ? "to be deleted" : "deleted"}.`,
     );
     if (failedTagDeletions > 0) {
       console.log(`\tTotal of ${failedTagDeletions} tag deletion(s) failed.`);
