@@ -9,7 +9,7 @@ import {
 import type {
   ImageStreamResource,
   OpenshiftClientOptions,
-} from "../models/openshift.model.ts";
+} from "../models/openshift.model";
 
 /**
  * SIMS OpenShift client wrapper used by image-pruner operations.
@@ -77,7 +77,7 @@ export class OpenshiftClient {
    * @returns The deployment resource.
    */
   async getDeployment(namespace: string, name: string): Promise<V1Deployment> {
-    return await this.appsApi.readNamespacedDeployment({
+    return this.appsApi.readNamespacedDeployment({
       name,
       namespace,
     });
@@ -90,7 +90,7 @@ export class OpenshiftClient {
    * @returns The job resource.
    */
   async getJob(namespace: string, name: string): Promise<V1Job> {
-    return await this.batchApi.readNamespacedJob({
+    return this.batchApi.readNamespacedJob({
       name,
       namespace,
     });
@@ -106,7 +106,7 @@ export class OpenshiftClient {
     namespace: string,
     name: string,
   ): Promise<ImageStreamResource> {
-    return await this.customApi.getNamespacedCustomObject({
+    return this.customApi.getNamespacedCustomObject({
       group: "image.openshift.io",
       version: "v1",
       namespace,

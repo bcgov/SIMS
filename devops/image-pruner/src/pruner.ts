@@ -1,15 +1,15 @@
-import { OpenshiftClient } from "./clients/openshift.client.ts";
-import type { PruneConfig } from "./models/prune.model.ts";
+import { OpenshiftClient } from "./clients/openshift.client";
+import type { PruneConfig } from "./models/prune.model";
 import type {
   ImageStreamResource,
   ImageStreamTag,
-} from "./models/openshift.model.ts";
+} from "./models/openshift.model";
 import {
   extractImageStreamName,
   extractImageTagName,
   getTagCreatedAt,
   getTagCreatedAtTimestamp,
-} from "./utils/image.utils.ts";
+} from "./utils/image.utils";
 
 /**
  * Prunes stale OpenShift ImageStream tags for configured deployments and jobs.
@@ -47,13 +47,16 @@ export class ImagePruner {
       await this.pruneJobApp(job);
     }
 
-    console.log("\n" + "=".repeat(80));
     console.log(
       `Image tag pruning completed. ${this.config.dryRun ? "DRY RUN - NO CHANGES WERE MADE TO THE CLUSTER!" : ""}`,
     );
-    console.log("\n" + "=".repeat(80));
   }
 
+  /**
+   * Prunes stale ImageStream tags for a deployment application.
+   * @param appName The name of the deployment application.
+   * @returns A promise that resolves when the pruning process is complete.
+   */
   private async pruneDeploymentApp(appName: string): Promise<void> {
     let deployedTag: ImageStreamTag | undefined;
     let imageStream: ImageStreamResource | undefined;
@@ -75,9 +78,18 @@ export class ImagePruner {
       return;
     }
 
-    await this.pruneTags(imageStream, deployedTag, appName);
+    try {
+      await this.pruneTags(imageStream, deployedTag, appName);
+    } catch (error) {
+      console.warn(`Skipping remaining tags for ${appName}:`, error);
+    }
   }
 
+  /**
+   * Prunes stale ImageStream tags for a job application.
+   * @param appName The name of the job application.
+   * @returns A promise that resolves when the pruning process is complete.
+   */
   private async pruneJobApp(appName: string): Promise<void> {
     let deployedTag: ImageStreamTag | undefined;
     let imageStream: ImageStreamResource | undefined;
@@ -99,13 +111,22 @@ export class ImagePruner {
       return;
     }
 
-    await this.pruneTags(
-      imageStream,
-      deployedTag,
-      imageStream.metadata.name || "",
-    );
+    try {
+      await this.pruneTags(
+        imageStream,
+        deployedTag,
+        imageStream.metadata.name || "",
+      );
+    } catch (error) {
+      console.warn(`Skipping remaining tags for ${appName}:`, error);
+    }
   }
 
+  /**
+   * Retrieves the deployed ImageStream tag for a deployment application.
+   * @param appName The name of the deployment application.
+   * @returns A promise that resolves with the deployed tag and image stream.
+   */
   private async getDeploymentTag(appName: string): Promise<{
     deployedTag: ImageStreamTag | undefined;
     imageStream: ImageStreamResource;
@@ -138,6 +159,11 @@ export class ImagePruner {
     return { deployedTag, imageStream };
   }
 
+  /**
+   * Retrieves the deployed ImageStream tag for a job application.
+   * @param appName The name of the job application.
+   * @returns A promise that resolves with the deployed tag and image stream.
+   */
   private async getJobTag(appName: string): Promise<{
     deployedTag: ImageStreamTag | undefined;
     imageStream: ImageStreamResource;
@@ -205,25 +231,46 @@ export class ImagePruner {
       return;
     }
 
+    let failedTagDeletions = 0;
+
     for (const tag of prefixTagsToDelete) {
       console.log(
-        `  ${appIdentifier}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
+        `\t${appIdentifier}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
       );
-      await this.deleteTag(tag, imageStream);
+      try {
+        await this.deleteTag(tag, imageStream);
+      } catch (error) {
+        failedTagDeletions += 1;
+        console.warn(`\tFailed to delete tag ${tag.tag}:`, error);
+      }
     }
 
     for (const tag of featureTagsToDelete) {
       console.log(
-        `  ${appIdentifier}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
+        `\t${appIdentifier}:${tag.tag} (Feature tag, created ${getTagCreatedAt(tag)})`,
       );
-      await this.deleteTag(tag, imageStream);
+      try {
+        await this.deleteTag(tag, imageStream);
+      } catch (error) {
+        failedTagDeletions += 1;
+        console.warn(`\tFailed to delete tag ${tag.tag}:`, error);
+      }
     }
 
     console.log(
-      `  Total of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
+      `\tTotal of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) deleted.`,
     );
+    if (failedTagDeletions > 0) {
+      console.log(`\tTotal of ${failedTagDeletions} tag deletion(s) failed.`);
+    }
   }
 
+  /**
+   * Deletes a specific ImageStream tag from the OpenShift cluster.
+   * @param tag The ImageStream tag to delete.
+   * @param imageStream The ImageStream resource containing the tag.
+   * @returns A promise that resolves when the deletion is complete.
+   */
   private async deleteTag(
     tag: ImageStreamTag,
     imageStream: ImageStreamResource,

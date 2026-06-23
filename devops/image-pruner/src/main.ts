@@ -1,7 +1,7 @@
 import { config as loadDotEnv } from "dotenv";
-import { OpenshiftClient } from "./clients/openshift.client.ts";
-import { ImagePruner } from "./pruner.ts";
-import type { PruneConfig } from "./models/prune.model.ts";
+import { OpenshiftClient } from "./clients/openshift.client";
+import { ImagePruner } from "./pruner";
+import type { PruneConfig } from "./models/prune.model";
 
 const DEFAULT_ENVIRONMENT = "dev";
 const DEFAULT_APPLICATIONS = [

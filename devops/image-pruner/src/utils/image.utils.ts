@@ -1,4 +1,4 @@
-import type { ImageStreamTag } from "../models/openshift.model.ts";
+import type { ImageStreamTag } from "../models/openshift.model";
 
 /**
  * Extracts the ImageStream name from a full image reference string.
@@ -22,7 +22,7 @@ export function extractImageStreamName(image: string): string {
  * @returns The image tag name.
  */
 export function extractImageTagName(image: string): string {
-  const imageWithoutDigest = image.split("@")[0];
+  const [imageWithoutDigest] = image.split("@");
   const lastColon = imageWithoutDigest.lastIndexOf(":");
   if (lastColon === -1 || lastColon === imageWithoutDigest.length - 1) {
     throw new Error(`Cannot extract image tag from image: ${image}.`);
