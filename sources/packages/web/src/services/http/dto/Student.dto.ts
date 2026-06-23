@@ -181,7 +181,7 @@ export interface ApplicationSummaryAPIOutDTO {
    */
   submittedDate?: Date;
   /**
-   * Active application version submission date.
+   * Active current application version submission date.
    */
   lastSubmittedDate?: Date;
   /**
