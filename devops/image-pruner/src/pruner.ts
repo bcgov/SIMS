@@ -221,10 +221,12 @@ export class ImagePruner {
       ) ?? [];
 
     const featureTagsToDelete: ImageStreamTag[] =
-      imageStream.status?.tags?.filter(
-        (tag) =>
-          !tag.tag.startsWith(this.config.prefix) && !tag.tag.startsWith("v"),
-      ) ?? [];
+      imageStream.status?.tags
+        ?.filter((tag) => tag.tag !== deployedTag.tag)
+        .filter(
+          (tag) =>
+            !tag.tag.startsWith(this.config.prefix) && !tag.tag.startsWith("v"),
+        ) ?? [];
 
     if (featureTagsToDelete.length === 0 && prefixTagsToDelete.length === 0) {
       console.log("No tags to delete.");
