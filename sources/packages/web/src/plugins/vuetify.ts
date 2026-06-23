@@ -52,7 +52,6 @@ export default createVuetify({
       icon: "fa:fa fa-user",
       variant: "outlined",
       elevation: 1,
-      color: "secondary",
       "aria-label": "Account",
       class: "mr-5 nav-item-label ml-2",
     },
