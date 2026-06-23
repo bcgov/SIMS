@@ -28,13 +28,8 @@
         src="@/assets/images/person-standing-with-laptop.svg"
       />
     </template>
-    <template #banner-message>
-      <banner
-        v-if="errorMessage"
-        class="mt-2"
-        :type="BannerTypes.Error"
-        :summary="errorMessage"
-      />
+    <template #banner-message v-if="errorMessage">
+      <banner class="mt-2" :type="BannerTypes.Error" :summary="errorMessage" />
     </template>
   </shared-login>
 </template>

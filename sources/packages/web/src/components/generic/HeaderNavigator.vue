@@ -24,7 +24,9 @@
       </span>
     </v-col>
     <v-col class="d-flex justify-end">
-      <slot name="buttons"></slot>
+      <div>
+        <slot name="buttons"></slot>
+      </div>
     </v-col>
   </v-row>
 </template>

@@ -3,38 +3,36 @@
     <template #header>
       <header-navigator
         title="Accounts"
-        subTitle="View request"
-        :routeLocation="pendingAccountsRoute"
+        sub-title="View request"
+        :route-location="pendingAccountsRoute"
       >
         <template #buttons>
-          <v-row class="p-0 m-0">
-            <check-permission-role
-              :role="Role.StudentApproveDeclineAccountRequests"
-            >
-              <template #="{ notAllowed }">
-                <v-btn
-                  color="primary"
-                  class="mr-2"
-                  variant="outlined"
-                  @click="declineStudentAccount"
-                  :disabled="notAllowed"
-                  >Deny request</v-btn
-                >
-                <v-btn
-                  color="primary"
-                  @click="createStudentAccount"
-                  :disabled="notAllowed"
-                  >Create student account</v-btn
-                >
-              </template>
-            </check-permission-role>
-          </v-row>
+          <check-permission-role
+            :role="Role.StudentApproveDeclineAccountRequests"
+          >
+            <template #="{ notAllowed }">
+              <v-btn
+                color="primary"
+                class="mr-2"
+                variant="outlined"
+                @click="declineStudentAccount"
+                :disabled="notAllowed"
+                >Deny request</v-btn
+              >
+              <v-btn
+                color="primary"
+                @click="createStudentAccount"
+                :disabled="notAllowed"
+                >Create student account</v-btn
+              >
+            </template>
+          </check-permission-role>
         </template>
       </header-navigator>
     </template>
     <student-profile-form
       :processing="processing"
-      :formModel="initialData"
+      :form-model="initialData"
       :is-data-ready="isDataReady"
       @loaded="formLoaded"
     />
@@ -45,16 +43,16 @@
       <confirm-modal
         title="Create student account"
         text="Attention: Approved account requests are final and cannot be deactivated. Please ensure all supporting documentation has been carefully reviewed prior to approval."
-        okLabel="Create account now"
+        ok-label="Create account now"
         ref="createStudentAccountModal"
-        :disablePrimaryButton="notAllowed"
+        :disable-primary-button="notAllowed"
       ></confirm-modal>
       <confirm-modal
         title="Deny request for a student account"
         text="Attention: Denied account requests are final and cannot be reactivated. Students will need to start over with the Basic BCeID account application process."
         ref="declineStudentAccountModal"
-        okLabel="Deny request now"
-        :disablePrimaryButton="notAllowed"
+        ok-label="Deny request now"
+        :disable-primary-button="notAllowed"
       ></confirm-modal>
     </template>
   </check-permission-role>

@@ -3,40 +3,44 @@
     <template #header>
       <header-navigator
         title="Manage institution"
-        subTitle="Manage Designations"
+        sub-title="Manage Designations"
         data-cy="manageDesignationHeader"
       />
     </template>
-    <body-header
-      title="Designation requests"
-      :recordsCount="designations.length"
-    >
-      <template #subtitle>
-        Ensure you have an approved designation to administer financial aid to
-        students.
-        <tooltip-icon
-          >You must have the role of a Legal Signing Authority to request a
-          designation.</tooltip-icon
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Designation requests"
+          :records-count="designations.length"
         >
+          <template #subtitle>
+            Ensure you have an approved designation to administer financial aid
+            to students.
+            <tooltip-icon
+              >You must have the role of a Legal Signing Authority to request a
+              designation.</tooltip-icon
+            >
+          </template>
+          <template #actions>
+            <v-btn
+              class="float-right"
+              color="primary"
+              data-cy="requestDesignation"
+              @click="goToRequestDesignation()"
+              prepend-icon="fa:fa fa-bell-concierge"
+              :disabled="!isLegalSigningAuthority"
+              >Request designation</v-btn
+            >
+          </template>
+        </body-header>
       </template>
 
-      <template #actions>
-        <v-btn
-          class="ml-2 float-right"
-          color="primary"
-          data-cy="requestDesignation"
-          @click="goToRequestDesignation()"
-          prepend-icon="fa:fa fa-bell-concierge"
-          :disabled="!isLegalSigningAuthority"
-          >Request designation</v-btn
-        >
-      </template>
-    </body-header>
-    <designation-agreement-summary
-      :designations="designations"
-      toggleMessage="You don't have any agreements yet"
-      @viewDesignation="goToViewDesignation"
-    />
+      <designation-agreement-summary
+        :designations="designations"
+        toggle-message="You don't have any agreements yet"
+        @view-designation="goToViewDesignation"
+      />
+    </body-header-container>
   </full-page-container>
 </template>
 
