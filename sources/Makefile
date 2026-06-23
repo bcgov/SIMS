@@ -74,10 +74,10 @@ export CRA_PROGRAM_AREA_CODE := $(or $(CRA_PROGRAM_AREA_CODE), )
 export CRA_ENVIRONMENT_CODE := $(or $(CRA_ENVIRONMENT_CODE), )
 # Versions used by camunda-docker compose-core.yml during the make camunda.
 # Versions upgraded following the combination available at https://github.com/camunda/camunda-distributions/releases
-export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.7.8)
+export CAMUNDA_CONNECTORS_VERSION := $(or $(CAMUNDA_CONNECTORS_VERSION), 8.9.5)
 # Operate, Zeebe, and tasklist shares the same version below.
-export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.7.12)
-export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 8.17.10)
+export CAMUNDA_PLATFORM_VERSION := $(or $(CAMUNDA_PLATFORM_VERSION), 8.9.9)
+export ELASTIC_VERSION := $(or $(ELASTIC_VERSION), 9.2.8)
 # Camunda default values for local development.
 export CAMUNDA_OAUTH_DISABLED := $(or $(CAMUNDA_OAUTH_DISABLED), true)
 export ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS := $(or $(ZEEBE_GRPC_WORKER_LONGPOLL_SECONDS), 45)
@@ -221,12 +221,12 @@ camunda: create-docker-local-network
 	@echo "- Use user and password as 'demo' to login to Operate."
 	@echo "- Use Zeebe address env variable as 'ZEEBE_GRPC_ADDRESS=grpc://localhost:26500' to connect to the local environment."
 	@echo "- Use endpoint http://localhost:26500 to deploy to the local environment from the desktop modeler."
-	@docker compose -f camunda-docker-compose-core.yml up -d
+	@docker compose -f camunda-docker-compose.yml up -d
 
 # Stops Camunda locally.
 camunda-stop:
 	@echo "Stopping Camunda locally..."
-	@docker compose -f camunda-docker-compose-core.yml down
+	@docker compose -f camunda-docker-compose.yml down
 
 # Deploy Camunda definitions locally
 deploy-camunda-definitions:
