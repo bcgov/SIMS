@@ -255,6 +255,10 @@ export class ApplicationSummaryAPIOutDTO {
    */
   submittedDate?: Date;
   /**
+   * Active current application version submission date.
+   */
+  lastSubmittedDate?: Date;
+  /**
    * Indicates if the application is able to use the
    * change request feature. Other conditions may apply.
    */

@@ -27,6 +27,16 @@
               emptyStringFiller(getISODateHourMinuteString(item.submittedDate))
             }}
           </template>
+          <template #[`item.lastSubmitted`]="{ item }">
+            {{
+              emptyStringFiller(
+                getISODateHourMinuteString(item.lastSubmittedDate),
+              )
+            }}
+          </template>
+          <template #[`item.offeringIntensity`]="{ item }">
+            {{ mapOfferingIntensity(item.offeringIntensity) }}
+          </template>
           <template #[`item.studyStartPeriod`]="{ item }">
             {{
               dateOnlyLongPeriodString(
@@ -65,7 +75,7 @@ import {
   DataTableSortByOrder,
 } from "@/types";
 import { ApplicationService } from "@/services/ApplicationService";
-import { useFormatters } from "@/composables";
+import { useFormatters, useOffering } from "@/composables";
 import StatusChipApplication from "@/components/generic/StatusChipApplication.vue";
 import {
   ApplicationSummaryAPIOutDTO,
@@ -90,6 +100,7 @@ export default defineComponent({
   setup(props) {
     const loading = ref(false);
     const { mobile: isMobile } = useDisplay();
+    const { mapOfferingIntensity } = useOffering();
     const applicationsAndCount = ref(
       {} as PaginatedResultsAPIOutDTO<ApplicationSummaryAPIOutDTO>,
     );
@@ -152,6 +163,7 @@ export default defineComponent({
       StudentApplicationsSimplifiedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
+      mapOfferingIntensity,
     };
   },
 });

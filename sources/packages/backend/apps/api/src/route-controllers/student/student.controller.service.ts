@@ -385,7 +385,7 @@ export class StudentControllerService {
    * @param application application to be converted to a DTO.
    * @returns application DTO in a summary format.
    */
-  private transformToApplicationSummaryDTO = (
+  private readonly transformToApplicationSummaryDTO = (
     application: Application,
   ): ApplicationSummaryAPIOutDTO => {
     const offering = application.currentAssessment?.offering;
@@ -398,6 +398,7 @@ export class StudentControllerService {
       status: application.applicationStatus,
       parentApplicationId: application.parentApplication.id,
       submittedDate: application.parentApplication.submittedDate,
+      lastSubmittedDate: application.submittedDate,
       isChangeRequestAllowedForPY: allowApplicationChangeRequest(
         application.programYear,
       ),

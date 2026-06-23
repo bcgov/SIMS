@@ -1,8 +1,8 @@
 <template>
   <tab-container>
     <student-applications-simplified-summary
-      :studentId="studentId"
-      @goToApplication="goToApplication"
+      :student-id="studentId"
+      @go-to-application="goToApplication"
     />
   </tab-container>
 </template>

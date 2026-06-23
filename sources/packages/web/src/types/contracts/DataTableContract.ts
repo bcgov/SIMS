@@ -466,7 +466,9 @@ export const CASInvoiceHeaders = [
  */
 export const StudentApplicationsSimplifiedSummaryHeaders = [
   { title: "Application Number", sortable: true, key: "applicationNumber" },
-  { title: "Submitted", sortable: false, key: "submitted" },
+  { title: "Original submission", sortable: false, key: "submitted" },
+  { title: "Last submission", sortable: false, key: "lastSubmitted" },
+  { title: "Intensity", sortable: false, key: "offeringIntensity" },
   { title: "Study Period", sortable: false, key: "studyStartPeriod" },
   { title: "Status", sortable: true, key: "status" },
   { title: "Actions", sortable: false, key: "actions" },
