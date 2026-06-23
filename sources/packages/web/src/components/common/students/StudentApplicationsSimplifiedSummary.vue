@@ -63,12 +63,11 @@
 </template>
 
 <script lang="ts">
-import { onMounted, ref, defineComponent, computed } from "vue";
+import { onMounted, ref, defineComponent } from "vue";
 import {
   DEFAULT_PAGE_LIMIT,
   StudentApplicationFields,
   StudentApplicationsSimplifiedSummaryHeaders,
-  StudentApplicationsSimplifiedSummaryMinistryHeaders,
   ITEMS_PER_PAGE,
   DataTableOptions,
   PaginationOptions,
@@ -97,11 +96,6 @@ export default defineComponent({
       required: false,
       default: undefined,
     },
-    isMinistryView: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
   setup(props) {
     const loading = ref(false);
@@ -115,11 +109,6 @@ export default defineComponent({
       dateOnlyLongPeriodString,
       emptyStringFiller,
     } = useFormatters();
-    const applicationsSummaryHeaders = computed(() =>
-      props.isMinistryView
-        ? StudentApplicationsSimplifiedSummaryMinistryHeaders
-        : StudentApplicationsSimplifiedSummaryHeaders,
-    );
     const DEFAULT_SORT_FIELD = StudentApplicationFields.Status;
     const currentPagination: PaginationOptions = {
       page: DEFAULT_DATATABLE_PAGE_NUMBER,
@@ -171,7 +160,7 @@ export default defineComponent({
       ITEMS_PER_PAGE,
       loading,
       StudentApplicationFields,
-      applicationsSummaryHeaders,
+      applicationsSummaryHeaders: StudentApplicationsSimplifiedSummaryHeaders,
       isMobile,
       paginationAndSortEvent,
       mapOfferingIntensity,
