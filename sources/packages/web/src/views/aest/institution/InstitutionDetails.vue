@@ -57,7 +57,7 @@ export default defineComponent({
       {
         label: "Profile",
         value: "profile-tab",
-        icon: "fa:far fa-address-book",
+        icon: "fa:fas fa-address-book",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_PROFILE,
           params: { institutionId: props.institutionId },
@@ -66,7 +66,7 @@ export default defineComponent({
       {
         label: "Programs",
         value: "programs",
-        icon: "fa:far fa-folder-open",
+        icon: "fa:fas fa-folder-open",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_PROGRAMS,
           params: { institutionId: props.institutionId },
@@ -75,7 +75,7 @@ export default defineComponent({
       {
         label: "Locations",
         value: "locations-tab",
-        icon: "mdi-map-marker-outline",
+        icon: "fa:fas fa-location-pin",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_LOCATIONS,
           params: { institutionId: props.institutionId },
@@ -84,7 +84,7 @@ export default defineComponent({
       {
         label: "Users",
         value: "users-tab",
-        icon: "fa:far fa-user",
+        icon: "fa:fas fa-user",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_USERS,
           params: { institutionId: props.institutionId },
@@ -93,7 +93,7 @@ export default defineComponent({
       {
         label: "Designations",
         value: "designation-tab",
-        icon: "fa:far fa-bookmark",
+        icon: "fa:fas fa-bookmark",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_DESIGNATION,
           params: { institutionId: props.institutionId },
@@ -102,7 +102,7 @@ export default defineComponent({
       {
         label: "Restrictions",
         value: "restrictions-tab",
-        icon: "fa:far fa-times-circle",
+        icon: "fa:fas fa-times-circle",
         command: () => ({
           name: AESTRoutesConst.INSTITUTION_RESTRICTIONS,
           params: { institutionId: props.institutionId },
