@@ -6,7 +6,6 @@
     <template #tab-header>
       <v-tabs color="primary" grow>
         <v-tab
-          class="label-bold"
           prepend-icon="fa:fas fa-inbox"
           text="Submissions"
           :to="{
@@ -16,7 +15,6 @@
           value="form-selector"
         />
         <v-tab
-          class="label-bold"
           prepend-icon="fa:fas fa-clock-rotate-left"
           text="History"
           :to="{

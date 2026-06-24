@@ -204,12 +204,6 @@ strong {
   background-color: $banner-background-warning !important;
 }
 
-// Active class for nav bar.
-.navigation-btn .active-btn {
-  color: $brand-blue !important;
-  background-color: $color-white !important;
-}
-
 // Btn toggle groups for nav bar adjustment.
 .navigation-btn.v-btn-group {
   min-width: fit-content;

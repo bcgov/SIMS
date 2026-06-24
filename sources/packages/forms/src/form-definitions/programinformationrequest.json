@@ -19,7 +19,6 @@
       ],
       "content": "<span class=\"category-header-large primary-color mr-2\">{{ data.studentFullName }}</span> <span class=\"fa fa-circle formio-status-chip {{ data.programInfoRequestStatus }} mt-1\">{{ data.pirStatus }}</span>",
       "refreshOnChange": true,
-      "customClass": "mt-5",
       "key": "html16",
       "type": "htmlelement",
       "input": false,

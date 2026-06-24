@@ -1,52 +1,54 @@
 <template>
-  <v-card class="mt-5">
-    <v-container :fluid="true">
-      <body-header :title="header" :records-count="disbursements.count">
-        <template #subtitle>
-          <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
-        </template>
-        <template #actions>
-          <v-row class="justify-end" density="compact">
-            <v-col cols="auto">
-              <v-btn-toggle
-                v-model="intensityFilter"
-                density="compact"
-                class="btn-toggle"
-                selected-class="selected-btn-toggle"
-                @update:model-value="resetPageAndLoadEnrollments"
-              >
-                <v-btn
-                  rounded="xl"
-                  color="primary"
-                  :value="IntensityFilter.All"
-                  class="mr-2"
-                  >All</v-btn
+  <tab-container>
+    <body-header-container>
+      <template #header>
+        <body-header :title="header" :records-count="disbursements.count">
+          <template #subtitle>
+            <slot name="coeSummarySubtitle">{{ coeSummarySubtitle }}</slot>
+          </template>
+          <template #actions>
+            <v-row class="justify-end" density="compact">
+              <v-col cols="auto">
+                <v-btn-toggle
+                  v-model="intensityFilter"
+                  density="compact"
+                  class="btn-toggle"
+                  selected-class="selected-btn-toggle"
+                  @update:model-value="resetPageAndLoadEnrollments"
                 >
-                <v-btn
-                  v-for="intensity in Object.values(OfferingIntensity)"
-                  :key="intensity"
-                  rounded="xl"
-                  color="primary"
-                  :value="intensity"
-                  class="mr-2"
-                  >{{ mapOfferingIntensity(intensity) }}</v-btn
-                >
-              </v-btn-toggle>
-            </v-col>
-            <v-col>
-              <v-text-field
-                density="compact"
-                label="Search by name or application number"
-                variant="outlined"
-                v-model="searchQuery"
-                @keyup.enter="resetPageAndLoadEnrollments"
-                prepend-inner-icon="mdi-magnify"
-                hide-details="auto"
-              />
-            </v-col>
-          </v-row>
-        </template>
-      </body-header>
+                  <v-btn
+                    rounded="xl"
+                    color="primary"
+                    :value="IntensityFilter.All"
+                    class="mr-2"
+                    >All</v-btn
+                  >
+                  <v-btn
+                    v-for="intensity in Object.values(OfferingIntensity)"
+                    :key="intensity"
+                    rounded="xl"
+                    color="primary"
+                    :value="intensity"
+                    class="mr-2"
+                    >{{ mapOfferingIntensity(intensity) }}</v-btn
+                  >
+                </v-btn-toggle>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  density="compact"
+                  label="Search by name or application number"
+                  variant="outlined"
+                  v-model="searchQuery"
+                  @keyup.enter="resetPageAndLoadEnrollments"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto"
+                />
+              </v-col>
+            </v-row>
+          </template>
+        </body-header>
+      </template>
       <content-group>
         <toggle-content
           :toggled="!enrollmentsLoading && !disbursements.count"
@@ -101,8 +103,8 @@
           </v-data-table-server>
         </toggle-content>
       </content-group>
-    </v-container>
-  </v-card>
+    </body-header-container>
+  </tab-container>
 </template>
 
 <script lang="ts">

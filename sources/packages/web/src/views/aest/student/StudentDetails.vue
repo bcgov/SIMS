@@ -21,8 +21,6 @@
           :key="item.label"
           :to="item.command()"
           :prepend-icon="item.icon"
-          :ripple="false"
-          class="font-weight-bold"
         />
       </v-tabs>
     </template>
@@ -63,7 +61,7 @@ export default defineComponent({
     const items = computed(() => [
       {
         label: "Profile",
-        icon: "fa:far fa-address-book",
+        icon: "fa:fas fa-address-book",
         command: () => ({
           name: AESTRoutesConst.STUDENT_PROFILE,
           params: { studentId: props.studentId },
@@ -74,7 +72,7 @@ export default defineComponent({
         ? [
             {
               label: "Disability",
-              icon: "fa:fa fa-universal-access",
+              icon: "fa:fas fa-universal-access",
               command: () => ({
                 name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
                 params: { studentId: props.studentId },
@@ -84,7 +82,7 @@ export default defineComponent({
         : []),
       {
         label: "Applications",
-        icon: "fa:far fa-folder-open",
+        icon: "fa:fas fa-folder-open",
         command: () => ({
           name: AESTRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId: props.studentId },
@@ -100,7 +98,7 @@ export default defineComponent({
       },
       {
         label: "Restrictions",
-        icon: "fa:far fa-times-circle",
+        icon: "fa:fas fa-times-circle",
         command: () => ({
           name: AESTRoutesConst.STUDENT_RESTRICTION,
           params: { studentId: props.studentId },
@@ -108,7 +106,7 @@ export default defineComponent({
       },
       {
         label: "File Uploads",
-        icon: "fa:far fa-file-alt",
+        icon: "fa:fas fa-file-alt",
         command: () => ({
           name: AESTRoutesConst.STUDENT_FILE_UPLOADS,
           params: { studentId: props.studentId },
@@ -116,7 +114,7 @@ export default defineComponent({
       },
       {
         label: "Social insurance number",
-        icon: "fa:far fa-check-square",
+        icon: "fa:fas fa-check-square",
         command: () => ({
           name: AESTRoutesConst.SIN_MANAGEMENT,
           params: { studentId: props.studentId },
@@ -124,7 +122,7 @@ export default defineComponent({
       },
       {
         label: "CAS Supplier Information",
-        icon: "fa:fa fa-calculator",
+        icon: "fa:fas fa-calculator",
         command: () => ({
           name: AESTRoutesConst.CAS_SUPPLIER_MANAGEMENT,
           params: { studentId: props.studentId },
@@ -132,7 +130,7 @@ export default defineComponent({
       },
       {
         label: "Balances",
-        icon: "fa:fa fa-circle-dollar-to-slot",
+        icon: "fa:fas fa-circle-dollar-to-slot",
         command: () => ({
           name: AESTRoutesConst.STUDENT_BALANCES,
           params: { studentId: props.studentId },
@@ -140,7 +138,7 @@ export default defineComponent({
       },
       {
         label: "MSFAA",
-        icon: "fa:fa fa-file-signature",
+        icon: "fa:fas fa-file-signature",
         command: () => ({
           name: AESTRoutesConst.STUDENT_MSFAA,
           params: { studentId: props.studentId },
@@ -148,7 +146,7 @@ export default defineComponent({
       },
       {
         label: "Notes",
-        icon: "fa:fa fa-sticky-note",
+        icon: "fa:fas fa-sticky-note",
         command: () => ({
           name: AESTRoutesConst.STUDENT_NOTES,
           params: { studentId: props.studentId },

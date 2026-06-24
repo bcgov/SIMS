@@ -1,15 +1,12 @@
 <template>
-  <v-container>
-    <v-btn
-      color="primary"
-      class="float-right"
-      :disabled="!hasValidSIN"
-      @click="goToStudentApplication()"
-      prepend-icon="fa:fa fa-edit"
-    >
-      Start New Application
-    </v-btn>
-  </v-container>
+  <v-btn
+    color="primary"
+    :disabled="!hasValidSIN"
+    @click="goToStudentApplication()"
+    prepend-icon="fa:fa fa-edit"
+  >
+    Start New Application
+  </v-btn>
 </template>
 <script lang="ts">
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";

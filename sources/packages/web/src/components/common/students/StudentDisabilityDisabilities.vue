@@ -16,7 +16,7 @@
         @delete-disability="deleteDisability(index)"
       />
     </v-expansion-panels>
-    <v-row class="mt-2" v-if="!readOnly" justify="end">
+    <v-row class="mt-2 justify-end" v-if="!readOnly">
       <v-col cols="auto">
         <v-btn
           prepend-icon="fas fa-plus"
