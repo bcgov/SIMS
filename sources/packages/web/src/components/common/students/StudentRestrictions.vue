@@ -178,7 +178,8 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  emits: ["restrictions-updated"],
+  setup(props, { emit }) {
     const studentRestrictions = ref<RestrictionSummaryAPIOutDTO[]>([]);
     const { dateOnlyLongString } = useFormatters();
     const showModal = ref(false);
@@ -259,6 +260,7 @@ export default defineComponent({
         );
         await loadStudentRestrictions();
         snackBar.success("The restriction has been added to student.");
+        emit("restrictions-updated");
         return true;
       } catch {
         snackBar.error("Unexpected error while adding the restriction.");
@@ -284,6 +286,7 @@ export default defineComponent({
         );
         snackBar.success("Restriction deleted.");
         await loadStudentRestrictions();
+        emit("restrictions-updated");
         return true;
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {

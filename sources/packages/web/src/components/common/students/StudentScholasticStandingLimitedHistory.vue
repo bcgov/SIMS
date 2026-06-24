@@ -45,9 +45,17 @@ const scholasticStandingSummary = ref(
 );
 
 onMounted(async () => {
+  await loadSummary();
+});
+
+const loadSummary = async () => {
   scholasticStandingSummary.value =
     await ScholasticStandingService.shared.getScholasticStandingSummary({
       studentId: props.studentId,
     });
+};
+
+defineExpose({
+  loadSummary,
 });
 </script>
