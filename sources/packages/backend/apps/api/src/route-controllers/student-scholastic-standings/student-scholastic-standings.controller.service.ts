@@ -96,7 +96,7 @@ export class ScholasticStandingControllerService {
       this.studentScholasticStandingsService.getScholasticStandingSummary(
         studentId,
       ),
-      this.studentRestrictionService.countActiveRestrictionByCodes(studentId, [
+      this.studentRestrictionService.countRestrictionByCodes(studentId, [
         RestrictionCode.WTHD,
       ]),
     ]);

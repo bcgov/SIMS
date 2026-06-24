@@ -26,7 +26,6 @@ import { E2EDataSources, RestrictionCode } from "@sims/test-utils";
  * - `isActive` option for specifying if the student restriction is active.
  * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
- * - `resolvedAt` option for specifying the resolved date of the student restriction.
  * @returns persisted student restriction.
  */
 export function createFakeStudentRestriction(
@@ -38,12 +37,7 @@ export function createFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: {
-    isActive?: boolean;
-    updatedAt?: Date;
-    deletedAt?: Date;
-    resolvedAt?: Date;
-  },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): StudentRestriction {
   const studentRestriction = new StudentRestriction();
   studentRestriction.student = relations.student;
@@ -55,7 +49,6 @@ export function createFakeStudentRestriction(
   studentRestriction.creator = relations?.creator;
   studentRestriction.updatedAt = options?.updatedAt;
   studentRestriction.deletedAt = options?.deletedAt;
-  studentRestriction.resolvedAt = options?.resolvedAt;
   return studentRestriction;
 }
 
@@ -73,7 +66,6 @@ export function createFakeStudentRestriction(
  * - `isActive` option for specifying if the student restriction is active.
  * - `updatedAt` option for specifying the updated date of the student restriction.
  * - `deletedAt` option for specifying if the student restriction is deleted.
- * - `resolvedAt` option for specifying the resolved date of the student restriction.
  * @returns a persisted fake student restriction.
  */
 export async function saveFakeStudentRestriction(
@@ -86,12 +78,7 @@ export async function saveFakeStudentRestriction(
     resolutionNote?: Note;
     creator?: User;
   },
-  options?: {
-    isActive?: boolean;
-    updatedAt?: Date;
-    deletedAt?: Date;
-    resolvedAt?: Date;
-  },
+  options?: { isActive?: boolean; updatedAt?: Date; deletedAt?: Date },
 ): Promise<StudentRestriction> {
   const [restrictionNote, resolutionNote] = await saveFakeStudentNotes(
     dataSource,

@@ -439,18 +439,17 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * Get a count of active student restrictions by their codes.
+   * Get a count of student restrictions by their codes.
    * @param studentId student ID.
    * @param restrictionCodes restriction codes.
    * @returns count of student restrictions.
    */
-  async countActiveRestrictionByCodes(
+  async countRestrictionByCodes(
     studentId: number,
     restrictionCodes: string[],
   ): Promise<number> {
     return this.repo.count({
       where: {
-        isActive: true,
         student: { id: studentId },
         restriction: { restrictionCode: In(restrictionCodes) },
       },

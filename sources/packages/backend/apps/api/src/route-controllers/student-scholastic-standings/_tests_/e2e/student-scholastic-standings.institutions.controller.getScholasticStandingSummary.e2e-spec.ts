@@ -175,7 +175,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       });
   });
 
-  it("Should return full time withdrawals count for the provided student as a part of the student scholastic summary when the student has two active and one inactive WTHD restrictions.", async () => {
+  it("Should return full time withdrawals count for the provided student as a part of the student scholastic summary when the student has one active, one inactive and one deleted WTHD restrictions.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const application = await saveFakeApplication(db.dataSource, {
@@ -187,7 +187,6 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
         restrictionCode: RestrictionCode.WTHD,
       },
     });
-    // Create two active and one inactive WTHD restriction for the student.
     await Promise.all([
       saveFakeStudentRestriction(
         db.dataSource,
@@ -208,7 +207,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
           restriction,
         },
         {
-          isActive: true,
+          isActive: false,
         },
       ),
       saveFakeStudentRestriction(
@@ -220,6 +219,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
         },
         {
           isActive: false,
+          deletedAt: new Date(),
         },
       ),
     ]);

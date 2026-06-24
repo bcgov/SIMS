@@ -133,8 +133,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
           restriction,
         },
         {
-          isActive: true,
-          resolvedAt: new Date(),
+          isActive: false,
         },
       );
       // Mock the user received in the token.
