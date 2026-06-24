@@ -3,14 +3,13 @@
     <template #header>
       <header-navigator title="Applications" sub-title="My Applications">
         <template #buttons>
-          <start-application :class="{ 'mb-2': isMobile }" />
+          <start-application />
         </template>
       </header-navigator>
     </template>
     <v-row>
       <v-col cols="12" :class="{ 'pa-0': isMobile }">
         <student-applications-extended-summary
-          :dense="isMobile"
           @edit-application-action="editApplicationAction"
           @change-application-action="changeApplicationAction"
           @open-confirm-cancel="confirmCancelApplication"

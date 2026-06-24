@@ -2,11 +2,7 @@
   <idle-time-checker :client-id-type="ClientIdType.AEST">
     <v-app-bar color="white">
       <b-c-logo :subtitle="MINISTRY_NAME"></b-c-logo>
-      <v-btn-toggle
-        selected-class="active-btn label-bold"
-        v-model="toggleNav"
-        class="navigation-btn float-left"
-      >
+      <v-btn-group class="navigation-btn" :rounded="false">
         <check-permission-role :role="Role.AESTCreateInstitution">
           <template #="{ notAllowed }">
             <v-btn
@@ -23,11 +19,9 @@
               variant="text"
               prepend-icon="fa:far fa-edit"
               :disabled="notAllowed"
-              @click="
-                $router.push({
-                  name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
-                })
-              "
+              :to="{
+                name: AESTRoutesConst.INSTITUTION_PROFILE_CREATE,
+              }"
               >Create institution</v-btn
             >
           </template>
@@ -48,7 +42,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      </v-btn-toggle>
+      </v-btn-group>
     </v-app-bar>
     <router-view name="sidebar"></router-view>
     <v-main class="body-background">
@@ -66,7 +60,7 @@ import BCLogo from "@/components/generic/BCLogo.vue";
 import IdleTimeChecker from "@/components/common/IdleTimeChecker.vue";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
-import { ref, defineComponent } from "vue";
+import { defineComponent } from "vue";
 import { MINISTRY_NAME } from "@/constants/message-constants";
 
 export default defineComponent({
@@ -74,7 +68,6 @@ export default defineComponent({
   setup() {
     const { executeLogout } = useAuth();
     const { isAuthenticated } = useAuth();
-    const toggleNav = ref();
     const logoff = async () => {
       await executeLogout(ClientIdType.AEST);
     };
@@ -90,7 +83,6 @@ export default defineComponent({
       ClientIdType,
       AESTRoutesConst,
       Role,
-      toggleNav,
       MINISTRY_NAME,
     };
   },

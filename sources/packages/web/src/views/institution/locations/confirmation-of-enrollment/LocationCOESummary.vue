@@ -3,44 +3,31 @@
     <template #header>
       <header-navigator
         :title="locationName"
-        subTitle="Confirmation Of Enrolment"
+        sub-title="Confirmation Of Enrolment"
         data-cy="confirmationOfEnrolmentHeader"
       />
     </template>
     <template #tab-header>
-      <v-tabs v-model="tab" stacked color="primary">
-        <v-tab :value="COETab.ConfirmEnrollmentTab" :ripple="false">
-          <div>
-            <v-icon start icon="fa:far fa-check-square"></v-icon>
-            <span class="label-bold" data-cy="confirmEnrolmentTab">
-              Confirm enrolment
-            </span>
-          </div>
-        </v-tab>
-
-        <v-tab :value="COETab.UpcomingEnrollmentTab" :ripple="false">
-          <div>
-            <v-icon start icon="fa:far fa-folder-open" class="px-1"></v-icon>
-            <span class="label-bold" data-cy="upcomingEnrolmentTab">
-              Upcoming and Previous Enrolments
-            </span>
-          </div>
-        </v-tab>
-      </v-tabs></template
-    >
+      <v-tabs v-model="tab" color="primary">
+        <v-tab text="Confirm enrolment" :value="COETab.ConfirmEnrollmentTab" />
+        <v-tab
+          text="Upcoming and Previous Enrolments"
+          :value="COETab.UpcomingEnrollmentTab"
+        /> </v-tabs
+    ></template>
     <v-window v-model="tab">
       <v-window-item :value="COETab.ConfirmEnrollmentTab" :eager="false">
         <c-o-e-summary-data
-          :locationId="locationId"
-          :enrollmentPeriod="EnrollmentPeriod.Current"
+          :location-id="locationId"
+          :enrollment-period="EnrollmentPeriod.Current"
           header="Available to confirm enrolment"
-          subTitle="Confirm enrolment so that funding can be dispersed."
+          sub-title="Confirm enrolment so that funding can be dispersed."
         />
       </v-window-item>
       <v-window-item :value="COETab.UpcomingEnrollmentTab" :eager="false">
         <c-o-e-summary-data
-          :locationId="locationId"
-          :enrollmentPeriod="EnrollmentPeriod.Upcoming"
+          :location-id="locationId"
+          :enrollment-period="EnrollmentPeriod.Upcoming"
           header="Upcoming and Previous Enrolments"
         >
           <template #coeSummarySubtitle>
@@ -85,7 +72,7 @@ export default defineComponent({
   },
   setup(props) {
     const { getLocationName } = useInstitutionState();
-    const tab = ref("coe-tab");
+    const tab = ref(COETab.ConfirmEnrollmentTab);
 
     const locationName = computed(() => {
       return getLocationName(props.locationId);

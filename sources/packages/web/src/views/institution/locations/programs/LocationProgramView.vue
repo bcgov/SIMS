@@ -1,5 +1,5 @@
 <template>
-  <full-page-container :full-width="true" layout-template="centered">
+  <full-page-container :full-width="true" layout-template="centered-card">
     <template #header>
       <header-navigator
         title="Programs"

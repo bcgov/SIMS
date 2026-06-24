@@ -1,5 +1,5 @@
 <template>
-  <v-row :justify="justify" class="mt-2 mb-1" density="compact">
+  <v-row :class="['mt-2 mb-1', justifyClass]" density="compact">
     <v-btn
       :disabled="processing"
       :color="secondaryButtonColor"
@@ -24,7 +24,7 @@
   </v-row>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 export default defineComponent({
   emits: ["primaryClick", "secondaryClick"],
   props: {
@@ -99,6 +99,12 @@ export default defineComponent({
       required: false,
       default: false,
     },
+  },
+  setup(props) {
+    const justifyClass = computed(() => `justify-${props.justify}`);
+    return {
+      justifyClass,
+    };
   },
 });
 </script>

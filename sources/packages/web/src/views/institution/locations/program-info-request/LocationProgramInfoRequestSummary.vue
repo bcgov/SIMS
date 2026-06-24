@@ -7,101 +7,105 @@
         data-cy="programInformationRequestsHeader"
       />
     </template>
-    <body-header
-      title="Active applications"
-      data-cy="activeApplicationsTab"
-      :records-count="applications.count"
-    >
-      <template #actions>
-        <v-row class="justify-end" density="compact">
-          <v-col cols="auto">
-            <v-btn-toggle
-              v-model="intensityFilter"
-              density="compact"
-              class="btn-toggle"
-              selected-class="selected-btn-toggle"
-              @update:model-value="resetPageAndLoadApplications"
-            >
-              <v-btn
-                rounded="xl"
-                color="primary"
-                :value="IntensityFilter.All"
-                class="mr-2"
-                >All</v-btn
-              >
-              <v-btn
-                v-for="intensity in Object.values(OfferingIntensity)"
-                :key="intensity"
-                rounded="xl"
-                color="primary"
-                :value="intensity"
-                class="mr-2"
-                >{{ mapOfferingIntensity(intensity) }}</v-btn
-              >
-            </v-btn-toggle>
-          </v-col>
-          <v-col>
-            <v-text-field
-              density="compact"
-              label="Search by name or application"
-              variant="outlined"
-              v-model="searchQuery"
-              @keyup.enter="resetPageAndLoadApplications"
-              prepend-inner-icon="mdi-magnify"
-              hide-details="auto"
-              placeholder="Enter name or application"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </template>
-    </body-header>
-    <content-group>
-      <toggle-content
-        :toggled="!applications.count"
-        message="No program information requests found"
-      >
-        <v-data-table-server
-          v-if="applications?.count"
-          :headers="PIRSummaryHeaders"
-          :items="applications.results"
-          :items-length="applications.count"
-          :loading="applicationsLoading"
-          :items-per-page="DEFAULT_PAGE_LIMIT"
-          :items-per-page-options="ITEMS_PER_PAGE"
-          @update:options="paginationAndSortEvent"
+    <body-header-container>
+      <template #header>
+        <body-header
+          title="Active applications"
+          data-cy="activeApplicationsTab"
+          :records-count="applications.count"
         >
-          <template #[`item.submittedDate`]="{ item }">
-            {{ dateOnlyLongString(item.submittedDate) }}
+          <template #actions>
+            <v-row class="justify-end" density="compact">
+              <v-col cols="auto">
+                <v-btn-toggle
+                  v-model="intensityFilter"
+                  density="compact"
+                  class="btn-toggle"
+                  selected-class="selected-btn-toggle"
+                  @update:model-value="resetPageAndLoadApplications"
+                >
+                  <v-btn
+                    rounded="xl"
+                    color="primary"
+                    :value="IntensityFilter.All"
+                    class="mr-2"
+                    >All</v-btn
+                  >
+                  <v-btn
+                    v-for="intensity in Object.values(OfferingIntensity)"
+                    :key="intensity"
+                    rounded="xl"
+                    color="primary"
+                    :value="intensity"
+                    class="mr-2"
+                    >{{ mapOfferingIntensity(intensity) }}</v-btn
+                  >
+                </v-btn-toggle>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  density="compact"
+                  label="Search by name or application"
+                  variant="outlined"
+                  v-model="searchQuery"
+                  @keyup.enter="resetPageAndLoadApplications"
+                  prepend-inner-icon="mdi-magnify"
+                  hide-details="auto"
+                  placeholder="Enter name or application"
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </template>
-          <template #[`item.program`]="{ item }">
-            {{ item.program }}
-          </template>
-          <template #[`item.studyStartPeriod`]="{ item }">
-            {{ dateOnlyLongString(item.studyStartPeriod) }}
-          </template>
-          <template #[`item.studyEndPeriod`]="{ item }">
-            {{ dateOnlyLongString(item.studyEndPeriod) }}
-          </template>
-          <template #[`item.studentNumber`]="{ item }">
-            {{ emptyStringFiller(item.studentNumber) }}
-          </template>
-          <template #[`item.studyIntensity`]="{ item }">
-            {{ mapOfferingIntensity(item.studyIntensity) }}
-          </template>
-          <template #[`item.pirStatus`]="{ item }">
-            <status-chip-program-info-request :status="item.pirStatus" />
-          </template>
-          <template #[`item.actions`]="{ item }">
-            <v-btn
-              color="primary"
-              @click="goToViewApplication(item.applicationId)"
-            >
-              View
-            </v-btn>
-          </template>
-        </v-data-table-server>
-      </toggle-content>
-    </content-group>
+        </body-header>
+      </template>
+      <content-group>
+        <toggle-content
+          :toggled="!applications.count"
+          message="No program information requests found"
+        >
+          <v-data-table-server
+            v-if="applications?.count"
+            :headers="PIRSummaryHeaders"
+            :items="applications.results"
+            :items-length="applications.count"
+            :loading="applicationsLoading"
+            :items-per-page="DEFAULT_PAGE_LIMIT"
+            :items-per-page-options="ITEMS_PER_PAGE"
+            @update:options="paginationAndSortEvent"
+          >
+            <template #[`item.submittedDate`]="{ item }">
+              {{ dateOnlyLongString(item.submittedDate) }}
+            </template>
+            <template #[`item.program`]="{ item }">
+              {{ item.program }}
+            </template>
+            <template #[`item.studyStartPeriod`]="{ item }">
+              {{ dateOnlyLongString(item.studyStartPeriod) }}
+            </template>
+            <template #[`item.studyEndPeriod`]="{ item }">
+              {{ dateOnlyLongString(item.studyEndPeriod) }}
+            </template>
+            <template #[`item.studentNumber`]="{ item }">
+              {{ emptyStringFiller(item.studentNumber) }}
+            </template>
+            <template #[`item.studyIntensity`]="{ item }">
+              {{ mapOfferingIntensity(item.studyIntensity) }}
+            </template>
+            <template #[`item.pirStatus`]="{ item }">
+              <status-chip-program-info-request :status="item.pirStatus" />
+            </template>
+            <template #[`item.actions`]="{ item }">
+              <v-btn
+                color="primary"
+                @click="goToViewApplication(item.applicationId)"
+              >
+                View
+              </v-btn>
+            </template>
+          </v-data-table-server>
+        </toggle-content>
+      </content-group>
+    </body-header-container>
   </full-page-container>
 </template>
 

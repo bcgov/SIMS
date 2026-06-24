@@ -4,7 +4,7 @@
       <header-navigator
         title="Financial Aid Application"
         sub-title="View Request"
-        :routeLocation="goBackRouteParams"
+        :route-location="goBackRouteParams"
       >
         <template
           #buttons
@@ -34,10 +34,8 @@
           v-for="item in items"
           :key="item.label"
           :to="item.command()"
-          :ripple="false"
-        >
-          <span class="label-bold"> {{ item.label }} </span>
-        </v-tab>
+          :text="item.label"
+        />
       </v-tabs>
     </template>
     <router-view />
@@ -101,7 +99,7 @@ export default defineComponent({
         ({
           name: StudentRoutesConst.STUDENT_APPLICATION_DETAILS,
           params: { id: props.applicationId },
-        } as RouteLocationRaw),
+        }) as RouteLocationRaw,
     );
     const items = ref([
       {

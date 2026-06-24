@@ -25,20 +25,23 @@
             :disabled="readOnly"
             hide-details="auto"
           >
-            <template #item="{ props, item }">
+            <template #item="{ props, internalItem }">
               <v-list-item v-bind="props" title="" class="my-2">
-                {{ item.title }}
+                {{ internalItem.title }}
                 <chip-tag
                   color="black"
                   class="float-right"
-                  :label="item.raw.restrictedParty"
+                  :label="internalItem.raw.restrictedParty"
                 />
               </v-list-item>
             </template>
-            <template #selection="{ item }">
+            <template #selection="{ internalItem }">
               <v-list-item title="">
-                {{ item.title }}
-                <chip-tag color="black" :label="item.raw.restrictedParty" />
+                {{ internalItem.title }}
+                <chip-tag
+                  color="black"
+                  :label="internalItem.raw.restrictedParty"
+                />
               </v-list-item>
             </template>
           </v-select>

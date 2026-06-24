@@ -7,16 +7,13 @@
       />
     </template>
     <template #tab-header>
-      <v-tabs stacked color="primary"
+      <v-tabs color="primary"
         ><v-tab
           v-for="item in tabItems"
           :key="item.label"
           :to="item.command()"
-          :ripple="false"
-          ><div>
-            <span class="label-bold"> {{ item.label }} </span>
-          </div>
-        </v-tab>
+          :text="item.label"
+        />
       </v-tabs>
     </template>
     <router-view />

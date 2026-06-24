@@ -46,7 +46,10 @@
               />
               <!-- Users without approval authorization do not need to see any information other than the note above. -->
               <template v-if="decision.canAssessItemDecision">
-                <v-row justify="space-between" class="mt-2 mb-1 mx-0">
+                <v-row
+                  class="mt-2 mb-1 mx-0 justify-space-between"
+                  density="compact"
+                >
                   <v-input
                     v-model="decision.decisionStatus"
                     :rules="[
@@ -99,7 +102,6 @@
                     >
                     <template v-else>
                       <v-btn
-                        class="float-right mr-2"
                         color="primary"
                         variant="outlined"
                         :loading="decision.saveDecisionInProgress"
@@ -107,7 +109,6 @@
                         >Cancel
                       </v-btn>
                       <v-btn
-                        class="float-right"
                         color="primary"
                         :loading="decision.saveDecisionInProgress"
                         @click="saveDecision(decision)"

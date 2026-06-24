@@ -29,7 +29,9 @@
             </content-group>
           </body-header-container>
         </v-col>
-        <v-col cols="12" md="3" align-self="end"><slot name="image" /></v-col>
+        <v-col cols="12" md="3" class="align-self-end"
+          ><slot name="image"
+        /></v-col>
       </v-row>
       <v-row v-if="$slots['banner-message']">
         <v-col cols="12">

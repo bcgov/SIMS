@@ -3,16 +3,16 @@
     <template #header>
       <header-navigator
         title="Report a change"
-        :routeLocation="goBackRouteParams"
-        subTitle="View Application"
+        :route-location="goBackRouteParams"
+        sub-title="View Application"
       />
     </template>
     <scholastic-standing-form
-      :initialData="initialData"
-      :showFooter="true"
-      :showCompleteInfo="true"
+      :initial-data="initialData"
+      :show-footer="true"
+      :show-complete-info="true"
       :processing="processing"
-      :readOnly="isReadOnlyUser(locationId)"
+      :read-only="isReadOnlyUser(locationId)"
       :is-parent-data-ready="isDataReady"
       @submit="submit"
       @cancel="goBack"
@@ -99,7 +99,7 @@ export default defineComponent({
           params: {
             locationId: props.locationId,
           },
-        } as RouteLocationRaw),
+        }) as RouteLocationRaw,
     );
 
     const goBack = () => {

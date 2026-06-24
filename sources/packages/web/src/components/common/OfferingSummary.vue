@@ -1,157 +1,161 @@
 <template>
-  <body-header
-    title="Study period offerings"
-    :records-count="offeringsAndCount.count"
-  >
-    <template #actions>
-      <v-form ref="searchOfferingsForm">
-        <div class="d-flex flex-wrap align-center ga-3">
-          <!-- Search Field -->
-          <v-text-field
-            density="compact"
-            label="Search Offering Name"
-            variant="outlined"
-            v-model="searchBox"
-            data-cy="searchBox"
-            @keyup.enter="searchOfferingTable"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-            class="flex-grow-1"
-          />
-
-          <!-- Date Range Group - stays together -->
-          <div class="d-flex align-center ga-2 flex-grow-1">
-            <v-date-input
-              density="compact"
-              variant="outlined"
-              label="From (Study Start Date)"
-              :input-format="DATE_ONLY_ISO_FORMAT"
-              hide-details="auto"
-              prepend-icon=""
-              append-inner-icon="mdi-calendar"
-              v-model="startDate"
-            />
-            <v-date-input
-              density="compact"
-              variant="outlined"
-              label="To (Study Start Date)"
-              :input-format="DATE_ONLY_ISO_FORMAT"
-              hide-details="auto"
-              prepend-icon=""
-              append-inner-icon="mdi-calendar"
-              v-model="endDate"
-            />
-            <tooltip-icon>
-              This date range allows you to filter by the study start date.
-              <br />
-              To show offerings for a specific program year enter
-              <br />
-              August 1st 20XX in the first entry field and then enter <br />
-              July 31st 20YY where program year is 20XX - 20YY.
-            </tooltip-icon>
-          </div>
-
-          <!-- Search Button -->
-          <v-btn
-            color="primary"
-            data-cy="searchOfferings"
-            @click="searchOfferingTable()"
-          >
-            Search
-          </v-btn>
-
-          <!-- Intensity Filter Group -->
-          <v-btn-toggle
-            v-model="intensityFilter"
-            density="compact"
-            class="btn-toggle"
-            selected-class="selected-btn-toggle"
-            mandatory
-            @click="searchOfferingTable()"
-          >
-            <v-btn
-              rounded="xl"
-              color="primary"
-              value="All"
-              size="small"
-              class="mr-1"
-              >All</v-btn
-            >
-            <v-btn
-              rounded="xl"
-              color="primary"
-              value="Full Time"
-              size="small"
-              class="mr-1"
-              >Full-time</v-btn
-            >
-            <v-btn
-              rounded="xl"
-              color="primary"
-              value="Part Time"
-              size="small"
-              class="mr-1"
-              >Part-time</v-btn
-            >
-          </v-btn-toggle>
-        </div>
-        <!-- Error display at bottom -->
-        <v-input :rules="[isValidSearch()]" hide-details="auto" error />
-      </v-form>
-    </template>
-  </body-header>
-  <content-group>
-    <toggle-content
-      :toggled="!offeringsAndCount.count && !loading"
-      message="No study period offerings found."
-    >
-      <v-data-table-server
-        :headers="OfferingSummaryHeaders"
-        :items="offeringsAndCount?.results"
-        :items-length="offeringsAndCount?.count"
-        :loading="loading"
-        item-value="id"
-        :items-per-page="DEFAULT_PAGE_LIMIT"
-        :items-per-page-options="ITEMS_PER_PAGE"
-        :mobile="isMobile"
-        @update:options="pageSortEvent"
+  <body-header-container>
+    <template #header>
+      <body-header
+        title="Study period offerings"
+        :records-count="offeringsAndCount.count"
       >
-        <template #[`item.name`]="{ item }">
-          {{ item.name }}
+        <template #actions>
+          <v-form ref="searchOfferingsForm">
+            <div class="d-flex flex-wrap align-center ga-3">
+              <!-- Search Field -->
+              <v-text-field
+                density="compact"
+                label="Search Offering Name"
+                variant="outlined"
+                v-model="searchBox"
+                data-cy="searchBox"
+                @keyup.enter="searchOfferingTable"
+                prepend-inner-icon="mdi-magnify"
+                hide-details="auto"
+                class="flex-grow-1"
+              />
+
+              <!-- Date Range Group - stays together -->
+              <div class="d-flex align-center ga-2 flex-grow-1">
+                <v-date-input
+                  density="compact"
+                  variant="outlined"
+                  label="From (Study Start Date)"
+                  :input-format="DATE_ONLY_ISO_FORMAT"
+                  hide-details="auto"
+                  prepend-icon=""
+                  append-inner-icon="mdi-calendar"
+                  v-model="startDate"
+                />
+                <v-date-input
+                  density="compact"
+                  variant="outlined"
+                  label="To (Study Start Date)"
+                  :input-format="DATE_ONLY_ISO_FORMAT"
+                  hide-details="auto"
+                  prepend-icon=""
+                  append-inner-icon="mdi-calendar"
+                  v-model="endDate"
+                />
+                <tooltip-icon>
+                  This date range allows you to filter by the study start date.
+                  <br />
+                  To show offerings for a specific program year enter
+                  <br />
+                  August 1st 20XX in the first entry field and then enter <br />
+                  July 31st 20YY where program year is 20XX - 20YY.
+                </tooltip-icon>
+              </div>
+
+              <!-- Search Button -->
+              <v-btn
+                color="primary"
+                data-cy="searchOfferings"
+                @click="searchOfferingTable()"
+              >
+                Search
+              </v-btn>
+
+              <!-- Intensity Filter Group -->
+              <v-btn-toggle
+                v-model="intensityFilter"
+                density="compact"
+                class="btn-toggle"
+                selected-class="selected-btn-toggle"
+                mandatory
+                @click="searchOfferingTable()"
+              >
+                <v-btn
+                  rounded="xl"
+                  color="primary"
+                  value="All"
+                  size="small"
+                  class="mr-1"
+                  >All</v-btn
+                >
+                <v-btn
+                  rounded="xl"
+                  color="primary"
+                  value="Full Time"
+                  size="small"
+                  class="mr-1"
+                  >Full-time</v-btn
+                >
+                <v-btn
+                  rounded="xl"
+                  color="primary"
+                  value="Part Time"
+                  size="small"
+                  class="mr-1"
+                  >Part-time</v-btn
+                >
+              </v-btn-toggle>
+            </div>
+            <!-- Error display at bottom -->
+            <v-input :rules="[isValidSearch()]" hide-details="auto" error />
+          </v-form>
         </template>
-        <template #[`item.yearOfStudy`]="{ item }">
-          {{ item.yearOfStudy }}
-        </template>
-        <template #[`item.studyStartDate`]="{ item }">
-          {{ item.studyStartDate }}
-        </template>
-        <template #[`item.studyEndDate`]="{ item }">
-          {{ item.studyEndDate }}
-        </template>
-        <template #[`item.offeringIntensity`]="{ item }">
-          {{ mapOfferingIntensity(item.offeringIntensity) }}
-        </template>
-        <template #[`item.offeringDelivered`]="{ item }">
-          <div class="p-text-capitalize">
-            {{ item.offeringDelivered }}
-          </div>
-        </template>
-        <template #[`item.offeringStatus`]="{ item }">
-          <status-chip-offering :status="item.offeringStatus" />
-        </template>
-        <template #[`item.action`]="{ item }">
-          <v-btn
-            color="primary"
-            variant="text"
-            @click="offeringButtonAction(item.id)"
-            append-icon="mdi-pencil-outline"
-          >
-            {{ offeringActionLabel }}
-          </v-btn>
-        </template>
-      </v-data-table-server>
-    </toggle-content>
-  </content-group>
+      </body-header>
+    </template>
+    <content-group>
+      <toggle-content
+        :toggled="!offeringsAndCount.count && !loading"
+        message="No study period offerings found."
+      >
+        <v-data-table-server
+          :headers="OfferingSummaryHeaders"
+          :items="offeringsAndCount?.results"
+          :items-length="offeringsAndCount?.count"
+          :loading="loading"
+          item-value="id"
+          :items-per-page="DEFAULT_PAGE_LIMIT"
+          :items-per-page-options="ITEMS_PER_PAGE"
+          :mobile="isMobile"
+          @update:options="pageSortEvent"
+        >
+          <template #[`item.name`]="{ item }">
+            {{ item.name }}
+          </template>
+          <template #[`item.yearOfStudy`]="{ item }">
+            {{ item.yearOfStudy }}
+          </template>
+          <template #[`item.studyStartDate`]="{ item }">
+            {{ item.studyStartDate }}
+          </template>
+          <template #[`item.studyEndDate`]="{ item }">
+            {{ item.studyEndDate }}
+          </template>
+          <template #[`item.offeringIntensity`]="{ item }">
+            {{ mapOfferingIntensity(item.offeringIntensity) }}
+          </template>
+          <template #[`item.offeringDelivered`]="{ item }">
+            <div class="p-text-capitalize">
+              {{ item.offeringDelivered }}
+            </div>
+          </template>
+          <template #[`item.offeringStatus`]="{ item }">
+            <status-chip-offering :status="item.offeringStatus" />
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              variant="text"
+              @click="offeringButtonAction(item.id)"
+              append-icon="mdi-pencil-outline"
+            >
+              {{ offeringActionLabel }}
+            </v-btn>
+          </template>
+        </v-data-table-server>
+      </toggle-content>
+    </content-group>
+  </body-header-container>
 </template>
 
 <script lang="ts">
