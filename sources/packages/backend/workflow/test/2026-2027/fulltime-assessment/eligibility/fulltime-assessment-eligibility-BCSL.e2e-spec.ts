@@ -136,6 +136,20 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-eligibility-BCSL
       inputData: {
         institutionProvince: Provinces.BritishColumbia,
         institutionCountry: "CA",
+        institutionClassification: InstitutionClassification.Private,
+        institutionOrganizationStatus:
+          InstitutionOrganizationStatus.NotForProfit,
+      },
+      expectedData: {
+        expectedAssessmentEligibility: true, // Need > $1
+        expectedInstitutionEligibility: true,
+        expectedAwardEligibility: true,
+      },
+    },
+    {
+      inputData: {
+        institutionProvince: Provinces.BritishColumbia,
+        institutionCountry: "CA",
         institutionClassification: InstitutionClassification.Public,
         institutionOrganizationStatus:
           InstitutionOrganizationStatus.NotForProfit,
