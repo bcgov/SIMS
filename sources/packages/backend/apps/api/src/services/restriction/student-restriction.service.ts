@@ -394,7 +394,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    */
   async hasAnyActiveRestriction(
     studentId: number,
-    restrictionCodes: string[],
+    restrictionCodes: RestrictionCode[],
     entityManager?: EntityManager,
   ): Promise<boolean> {
     const repo = entityManager?.getRepository(StudentRestriction) ?? this.repo;
@@ -420,7 +420,7 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
    */
   async getRestrictionByCodes(
     studentId: number,
-    restrictionCodes: string[],
+    restrictionCodes: RestrictionCode[],
   ): Promise<StudentRestriction[]> {
     return this.repo.find({
       select: {
@@ -439,19 +439,19 @@ export class StudentRestrictionService extends RecordDataModelService<StudentRes
   }
 
   /**
-   * Get a count of student restrictions by their codes.
+   * Get a count of student restrictions by code.
    * @param studentId student ID.
-   * @param restrictionCodes restriction codes.
-   * @returns count of student restrictions.
+   * @param restrictionCode restriction code.
+   * @returns count of student restrictions for the specified code.
    */
-  async countRestrictionByCodes(
+  async countRestrictionByCode(
     studentId: number,
-    restrictionCodes: string[],
+    restrictionCode: RestrictionCode,
   ): Promise<number> {
     return this.repo.count({
       where: {
         student: { id: studentId },
-        restriction: { restrictionCode: In(restrictionCodes) },
+        restriction: { restrictionCode },
       },
     });
   }

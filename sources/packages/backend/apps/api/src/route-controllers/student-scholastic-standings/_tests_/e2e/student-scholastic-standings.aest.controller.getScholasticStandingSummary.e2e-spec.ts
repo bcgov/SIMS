@@ -71,6 +71,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandingSum
       },
     });
     const restriction = await db.restriction.findOne({
+      select: { id: true },
       where: {
         restrictionCode: RestrictionCode.WTHD,
       },

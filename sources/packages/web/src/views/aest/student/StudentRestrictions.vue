@@ -5,7 +5,8 @@
       :can-add-restrictions="true"
       :can-resolve-restriction="true"
       :can-delete-restriction="true"
-      @restrictions-updated="onRestrictionsUpdated"
+      @restriction-created="restrictionsChanged"
+      @restriction-deleted="restrictionsChanged"
     ></student-restrictions>
     <student-scholastic-standing-limited-history
       ref="scholasticStandingLimitedHistoryComponent"
@@ -28,8 +29,8 @@ defineProps<Props>();
 const scholasticStandingLimitedHistoryComponent =
   ref<InstanceType<typeof StudentScholasticStandingLimitedHistory>>();
 
-const onRestrictionsUpdated = () => {
-  // Reload the scholastic standing limited history when restrictions are updated
+const restrictionsChanged = () => {
+  // Reload the scholastic standing limited history when restrictions are created or deleted.
   scholasticStandingLimitedHistoryComponent.value?.loadSummary();
 };
 </script>

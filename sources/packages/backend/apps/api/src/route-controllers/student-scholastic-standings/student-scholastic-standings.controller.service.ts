@@ -22,7 +22,7 @@ import {
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
   APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
 } from "../../constants";
-import { RestrictionCode } from "@sims/services/restriction/model/restriction.model";
+import { RestrictionCode } from "@sims/services";
 
 /**
  * Scholastic standing controller service.
@@ -84,7 +84,7 @@ export class ScholasticStandingControllerService {
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
-      throw new NotFoundException("Student does not exists.");
+      throw new NotFoundException("Student does not exist.");
     }
     const [
       {
@@ -96,9 +96,10 @@ export class ScholasticStandingControllerService {
       this.studentScholasticStandingsService.getScholasticStandingSummary(
         studentId,
       ),
-      this.studentRestrictionService.countRestrictionByCodes(studentId, [
+      this.studentRestrictionService.countRestrictionByCode(
+        studentId,
         RestrictionCode.WTHD,
-      ]),
+      ),
     ]);
 
     return {

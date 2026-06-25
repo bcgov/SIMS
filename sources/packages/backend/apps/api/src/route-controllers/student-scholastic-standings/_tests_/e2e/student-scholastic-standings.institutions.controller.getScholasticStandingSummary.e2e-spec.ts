@@ -175,7 +175,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       });
   });
 
-  it("Should return full time withdrawals count for the provided student as a part of the student scholastic summary when the student has one active, one inactive and one deleted WTHD restrictions.", async () => {
+  it("Should return full-time withdrawals count for the provided student as a part of the student scholastic summary when the student has one active, one inactive and one deleted WTHD restrictions.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const application = await saveFakeApplication(db.dataSource, {
@@ -183,6 +183,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       student,
     });
     const restriction = await db.restriction.findOne({
+      select: { id: true },
       where: {
         restrictionCode: RestrictionCode.WTHD,
       },

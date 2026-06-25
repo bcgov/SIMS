@@ -19,7 +19,7 @@
         }}
       </p>
       <p class="label-bold-normal">
-        Number of full-time withdrawals from study:
+        Number of Full-time withdrawals from study:
         {{ scholasticStandingSummary.fullTimeWithdrawalsCount }}
       </p></content-group
     >

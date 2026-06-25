@@ -120,6 +120,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         reversedScholasticStanding,
       ]);
       const restriction = await db.restriction.findOne({
+        select: { id: true },
         where: {
           restrictionCode: RestrictionCode.WTHD,
         },
