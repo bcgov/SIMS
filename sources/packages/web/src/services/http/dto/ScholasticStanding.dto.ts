@@ -43,6 +43,7 @@ export interface ScholasticStandingSubmittedDetailsAPIOutDTO
 export interface ScholasticStandingSummaryDetailsAPIOutDTO {
   fullTimeLifetimeUnsuccessfulCompletionWeeks: number;
   partTimeLifetimeUnsuccessfulCompletionWeeks: number;
+  fullTimeWithdrawalsCount: number;
 }
 
 /**

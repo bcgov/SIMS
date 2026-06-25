@@ -1,10 +1,12 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   createFakeStudentScholasticStanding,
   saveFakeApplication,
   saveFakeStudent,
+  saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
@@ -80,6 +82,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 17,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        fullTimeWithdrawalsCount: 0,
       });
   });
 
@@ -116,6 +119,24 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         scholasticStanding,
         reversedScholasticStanding,
       ]);
+      const restriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.WTHD,
+        },
+      });
+      // Add a resolved WTHD restriction for the student that should still be counted.
+      await saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: false,
+        },
+      );
       // Mock the user received in the token.
       await mockJWTUserInfo(appModule, student.user);
       const endpoint = "/students/scholastic-standing/summary";
@@ -130,6 +151,7 @@ describe("StudentScholasticStandingsStudentsController(e2e)-getScholasticStandin
         .expect({
           fullTimeLifetimeUnsuccessfulCompletionWeeks: 5,
           partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+          fullTimeWithdrawalsCount: 1,
         });
     },
   );

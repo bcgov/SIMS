@@ -279,7 +279,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction object(s), that need to be saved.
+   * @returns new student restriction(s), that need to be saved.
    */
   async getScholasticStandingRestrictions(
     scholasticStandingData: ScholasticStanding,
@@ -315,8 +315,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * Once SSR or SSRN are present in the student account, any of the
    * above mentioned restrictions will create a new SSRN restriction
    * (if one is not present or active yet).
-   * 'Student withdrew from program' will always create a new WTHD restriction
-   * if one is not present or active yet.
+   * 'Student withdrew from program' will always create a new WTHD restriction.
    * @param scholasticStandingData scholastic standing data.
    * @param studentId student id.
    * @param auditUserId user that should be considered the one that is
@@ -330,7 +329,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     auditUserId: number,
     applicationId: number,
   ): Promise<StudentRestriction[]> {
-    const restrictions: StudentRestriction[] = [];
+    const newRestrictions: StudentRestriction[] = [];
     if (
       !SCHOLASTIC_RESTRICTION_TYPES_FULL_TIME.includes(
         scholasticStandingData.scholasticStandingChangeType,
@@ -338,7 +337,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
     ) {
       // If the scholastic standing change type is not related to withdrawal
       // or unsuccessful completion then no restrictions are required.
-      return restrictions;
+      return newRestrictions;
     }
     // Get all existing restrictions for the student that potentially will be required
     // to determine the new restriction(s) to be created.
@@ -370,7 +369,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
             auditUserId,
             applicationId,
           );
-        restrictions.push(ssrnRestriction);
+        newRestrictions.push(ssrnRestriction);
       }
     } else if (
       scholasticStandingData.scholasticStandingChangeType ===
@@ -396,34 +395,22 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
             auditUserId,
             applicationId,
           );
-        restrictions.push(ssrRestriction);
-        return restrictions;
+        newRestrictions.push(ssrRestriction);
+        return newRestrictions;
       }
     }
     if (
       scholasticStandingData.scholasticStandingChangeType ===
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram
     ) {
-      // Check for "WTHD" restriction since it should always be created if one is not present and active.
+      // Check for "WTHD" restriction since it affects SSR/SSRN creation.
       const hasActiveWTHD = existingRestrictions.some(
         (studentRestriction) =>
           studentRestriction.restriction.restrictionCode ===
             RestrictionCode.WTHD && studentRestriction.isActive,
       );
-      // Check if "WTHD" restriction is already present for the student,
-      // if not, then create a new one.
-      if (!hasActiveWTHD) {
-        const wthdRestriction =
-          await this.studentRestrictionSharedService.createRestrictionToSave(
-            studentId,
-            RestrictionCode.WTHD,
-            auditUserId,
-            applicationId,
-          );
-        restrictions.push(wthdRestriction);
-      }
       // Check if an SSR or SSRN was created for the student.
-      const createdSSROrSSRN = restrictions.some((studentRestriction) =>
+      const createdSSROrSSRN = newRestrictions.some((studentRestriction) =>
         SCHOLASTIC_ESCALATION_RESTRICTIONS.includes(
           studentRestriction.restriction.restrictionCode as RestrictionCode,
         ),
@@ -438,10 +425,19 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
             auditUserId,
             applicationId,
           );
-        restrictions.push(ssrRestriction);
+        newRestrictions.push(ssrRestriction);
       }
+      // Always create a new "WTHD" restriction.
+      const wthdRestriction =
+        await this.studentRestrictionSharedService.createRestrictionToSave(
+          studentId,
+          RestrictionCode.WTHD,
+          auditUserId,
+          applicationId,
+        );
+      newRestrictions.push(wthdRestriction);
     }
-    return restrictions;
+    return newRestrictions;
   }
 
   /**
@@ -457,7 +453,7 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
    * @param auditUserId user that should be considered the one that is
    * causing the changes.
    * @param applicationId application id.
-   * @returns a new student restriction objects, that need to be saved.
+   * @returns new student restriction(s), that need to be saved.
    */
   private async getPartTimeStudentRestrictions(
     scholasticStandingData: ScholasticStanding,

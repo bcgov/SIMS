@@ -1,11 +1,13 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   createFakeInstitutionLocation,
   createFakeStudentScholasticStanding,
   saveFakeApplication,
   saveFakeStudent,
+  saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
@@ -146,6 +148,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 30,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        fullTimeWithdrawalsCount: 0,
       });
   });
 
@@ -168,6 +171,72 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-getScholasticSta
       .expect({
         fullTimeLifetimeUnsuccessfulCompletionWeeks: 0,
         partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        fullTimeWithdrawalsCount: 0,
+      });
+  });
+
+  it("Should return full-time withdrawals count for the provided student as a part of the student scholastic summary when the student has one active, one inactive and one deleted WTHD restrictions.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const application = await saveFakeApplication(db.dataSource, {
+      institutionLocation: collegeFLocation,
+      student,
+    });
+    const restriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionCode: RestrictionCode.WTHD,
+      },
+    });
+    await Promise.all([
+      saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: true,
+        },
+      ),
+      saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: false,
+        },
+      ),
+      saveFakeStudentRestriction(
+        db.dataSource,
+        {
+          student,
+          application,
+          restriction,
+        },
+        {
+          isActive: false,
+          deletedAt: new Date(),
+        },
+      ),
+    ]);
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = `/institutions/scholastic-standing/summary/student/${student.id}`;
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        fullTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        partTimeLifetimeUnsuccessfulCompletionWeeks: 0,
+        fullTimeWithdrawalsCount: 2,
       });
   });
 });
