@@ -218,7 +218,8 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         await saveFakeInstitutionRestriction(db, {
           restriction: restriction,
           institution:
-            application.currentAssessment.offering.educationProgram.institution,
+            application.currentAssessment.offering.institutionLocation
+              .institution,
         });
         const studentUserToken = await getStudentToken(
           FakeStudentUsersTypes.FakeStudentUserType1,
