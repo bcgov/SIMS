@@ -119,7 +119,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
   async evaluateAcceptAssessment(
     applicationId: number,
   ): Promise<AcceptAssessmentRestrictionsEvaluationResult> {
-    const application = await this.applicationRepo.findOne({
+    const application = await this.applicationRepo.findOneOrFail({
       select: {
         id: true,
         offeringIntensity: true,

@@ -93,12 +93,12 @@ export enum RestrictionActionType {
    */
   StopFullTimeApply = "Stop full-time apply",
   /**
-   * Prevent a student from selecting an institution in a part-time applications.
+   * Prevent a student from selecting an institution in a part-time application.
    * The institution should not be available to select in the part-time application.
    */
   StopPartTimeApplicationSelection = "Stop part-time application selection",
   /**
-   * Prevent a student from selecting an institution in a full-time applications.
+   * Prevent a student from selecting an institution in a full-time application.
    * The institution should not be available to select in the full-time application.
    */
   StopFullTimeApplicationSelection = "Stop full-time application selection",
@@ -164,8 +164,7 @@ export enum FieldRequirementType {
 
 /**
  * Restriction codes that are used for specific UI scenarios,
- * for instance, to display a specific content based in a
- * restriction code.
+ * for instance, to display a specific content based on a restriction code.
  */
 export enum RestrictionCode {
   /**
