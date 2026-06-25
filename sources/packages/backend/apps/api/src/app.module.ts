@@ -44,7 +44,8 @@ import { AppExternalModule } from "./app.external.module";
 import { AccessLoggerMiddleware } from "./middlewares";
 import { TerminusModule } from "@nestjs/terminus";
 import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.module";
-import { json } from "express";
+import { json, Request } from "express";
+import { getClientIPFromRequest } from "./utilities";
 import { JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
@@ -100,6 +101,11 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
         {
           ttl: config.throttleTime,
           limit: config.throttleLimit,
+          getTracker: async (req: Record<string, unknown>): Promise<string> => {
+            return (
+              getClientIPFromRequest(req as unknown as Request) || "unknown-ip"
+            );
+          },
         },
       ],
     }),
