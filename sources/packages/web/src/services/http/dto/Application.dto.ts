@@ -233,6 +233,7 @@ export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
+  acceptAssessmentRestrictions: string[];
 }
 
 export interface ApplicationSupportingUsersAPIOutDTO {

@@ -38,12 +38,12 @@
         v-if="showAcceptAssessmentWarnings"
       >
         <template #content>
-          <ul class="pl-0">
-            <li v-if="eCertValidation.hasEffectiveAviationRestriction">
+          <ul class="pl-0 my-2">
+            <li v-if="acceptValidation.hasEffectiveAviationRestriction">
               You have already been funded for this type of aviation credential
               and are not eligible for additional funding.
             </li>
-            <li v-if="eCertValidation.disabilityStatusNotConfirmed">
+            <li v-if="acceptValidation.disabilityStatusNotConfirmed">
               Your account has not been approved for disability funding. You
               will not be able to accept this assessment until your disability
               status is approved. If you would like to receive all
@@ -52,7 +52,7 @@
               for this application, additional changes to the disability
               question may not be considered.
             </li>
-            <li v-if="eCertValidation.modifiedIndependentStatusNotApproved">
+            <li v-if="acceptValidation.modifiedIndependentStatusNotApproved">
               You have indicated in your application that you should be
               considered a modified independent; however, the modified
               independent status on your student profile is not approved. If you
@@ -60,23 +60,23 @@
               appeal for review. Please use the 'Appeals' menu to start the
               appeal process.
             </li>
-            <li v-if="eCertValidation.msfaaInvalid">
+            <li v-if="acceptValidation.msfaaInvalid">
               Your MSFAA is not valid. Please complete your MSFAA with the
               National Student Loans Centre to move forward with your
               application. Please note, there is a one day delay between signing
               your MSFAA and being able to accept your assessment.
             </li>
-            <li v-if="eCertValidation.hasStopDisbursementRestriction">
+            <li v-if="acceptValidation.hasStopDisbursementRestriction">
               You have restrictions that block funding on your account. Please
               resolve them in order to move forward with your application.
             </li>
             <li
-              v-if="eCertValidation.hasStopDisbursementInstitutionRestriction"
+              v-if="acceptValidation.hasStopDisbursementInstitutionRestriction"
             >
               A restriction at your institution makes your application
               ineligible for funding at this time.
             </li>
-            <li v-if="eCertValidation.noEstimatedAwardAmounts">
+            <li v-if="acceptValidation.noEstimatedAwardAmounts">
               Your application has been assessed and no funding has been
               awarded. If you believe this is an error, please review your
               application to ensure it is accurate or contact
@@ -86,6 +86,11 @@
                 target="_blank"
                 >StudentAid BC</a
               >.
+            </li>
+            <li v-if="acceptValidation.hasInstitutionUnderReview">
+              Your assessment cannot be accepted at this time because the
+              institution associated with your application is currently under
+              review.
             </li>
           </ul>
         </template>
@@ -126,6 +131,7 @@ import {
   ClientIdType,
   BannerTypes,
   ECertFailedValidation,
+  RestrictionCode,
 } from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { useRouter } from "vue-router";
@@ -153,7 +159,7 @@ export default defineComponent({
     const viewOnly = ref(true);
     const currentAssessmentId = ref(0);
     const canAcceptAssessment = ref(false);
-    const eCertValidation = ref({
+    const acceptValidation = ref({
       disabilityStatusNotConfirmed: false,
       modifiedIndependentStatusNotApproved: false,
       msfaaInvalid: false,
@@ -161,6 +167,7 @@ export default defineComponent({
       hasStopDisbursementInstitutionRestriction: false,
       noEstimatedAwardAmounts: false,
       hasEffectiveAviationRestriction: false,
+      hasInstitutionUnderReview: false,
     });
 
     /**
@@ -218,7 +225,7 @@ export default defineComponent({
           props.applicationId,
         );
       canAcceptAssessment.value = warnings.canAcceptAssessment;
-      eCertValidation.value = {
+      acceptValidation.value = {
         disabilityStatusNotConfirmed: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.DisabilityStatusNotConfirmed,
         ),
@@ -247,6 +254,10 @@ export default defineComponent({
         hasEffectiveAviationRestriction:
           warnings.eCertFailedValidationsInfo
             ?.hasEffectiveAviationRestriction ?? false,
+        hasInstitutionUnderReview:
+          warnings.acceptAssessmentRestrictions.includes(
+            RestrictionCode.InstitutionUnderReview,
+          ),
       };
     });
 
@@ -263,7 +274,7 @@ export default defineComponent({
       confirmCancelApplication,
       cancelApplicationModal,
       assessmentDataLoaded,
-      eCertValidation,
+      acceptValidation,
       canAcceptAssessment,
       showAcceptAssessmentWarnings,
     };

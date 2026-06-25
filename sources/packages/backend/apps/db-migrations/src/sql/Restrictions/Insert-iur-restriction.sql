@@ -14,7 +14,12 @@ VALUES
         'IUR',
         'Institution under review.',
         'Institution',
-        ARRAY ['Stop full-time accept assessment', 'Stop part-time accept assessment'] :: sims.restriction_action_types [],
+        ARRAY [
+            'Stop part-time application selection',
+            'Stop full-time application selection',
+            'Stop full-time accept assessment',
+            'Stop part-time accept assessment'
+        ] :: sims.restriction_action_types [],
         'Error' :: sims.restriction_notification_types,
         '{"fieldRequirements":{ "location": "not allowed", "program": "not allowed" }}' :: JSONB
     );

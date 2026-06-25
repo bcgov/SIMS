@@ -21,9 +21,10 @@ import {
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
-import { NoteSharedService } from "@sims/services";
+import { NoteSharedService, RestrictionSharedService } from "@sims/services";
 import { ApplicationService } from "../../services";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { AcceptAssessmentEvaluationResult } from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -35,6 +36,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     private readonly noteSharedService: NoteSharedService,
     private readonly applicationService: ApplicationService,
     private readonly eCertPreValidationService: ECertPreValidationService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -203,15 +205,18 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
-
-    const validationResult =
-      await this.eCertPreValidationService.executePreValidations(
-        assessment.application.id,
-        true,
-      );
-    if (!validationResult.canAcceptAssessment) {
+    // Check if the assessment can be accepted by the student based on the e-Cert validations and institution restrictions.
+    const acceptAssessmentEvaluationResult =
+      await this.evaluateAcceptAssessment(assessment.application.id);
+    if (acceptAssessmentEvaluationResult.hasFailedECertValidations) {
       throw new CustomNamedError(
         "There is at least one e-Cert validation failed preventing the assessment from being accepted.",
+        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+      );
+    }
+    if (acceptAssessmentEvaluationResult.hasAcceptAssessmentRestrictions) {
+      throw new CustomNamedError(
+        "There is at least one institution restriction preventing the assessment from being accepted.",
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }
@@ -228,6 +233,23 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     assessment.modifier = auditUser;
     assessment.updatedAt = now;
     return this.repo.save(assessment);
+  }
+
+  async evaluateAcceptAssessment(
+    applicationId: number,
+  ): Promise<AcceptAssessmentEvaluationResult> {
+    const eCertValidationResultPromise =
+      this.eCertPreValidationService.executePreValidations(applicationId, true);
+    const restrictionResultPromise =
+      this.restrictionSharedService.evaluateAcceptAssessment(applicationId);
+    const [eCertValidationResult, restrictionResult] = await Promise.all([
+      eCertValidationResultPromise,
+      restrictionResultPromise,
+    ]);
+    return new AcceptAssessmentEvaluationResult(
+      eCertValidationResult,
+      restrictionResult,
+    );
   }
 
   /**
