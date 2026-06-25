@@ -3,7 +3,8 @@ import { ECertPreValidatorResult } from "@sims/integrations/services/disbursemen
 import { AcceptAssessmentRestrictionsEvaluationResult } from "@sims/services";
 
 /**
- * Consolidate different evaluation results to determine if a Student Assessment can be accepted by the student.
+ * Consolidate different evaluation results to determine if a
+ * Student Assessment can be accepted by the Student.
  */
 export class AcceptAssessmentEvaluationResult {
   constructor(
@@ -24,31 +25,31 @@ export class AcceptAssessmentEvaluationResult {
 
   /**
    * Consolidated result indicating if the Student Assessment
-   * can be accepted by the student.
+   * can be accepted by the Student.
    */
   readonly canAcceptAssessment: boolean;
   /**
    * Indicates if there are any failed e-Cert validations that would
-   * prevent the Student Assessment from being accepted by the student.
+   * prevent the Student Assessment from being accepted by the Student.
    * This is one of the possible reasons that can prevent the Student
-   * Assessment from being accepted by the student.
+   * Assessment from being accepted by the Student.
    */
   readonly hasFailedECertValidations: boolean;
   /**
    * Indicates if there are any institution restrictions that would prevent
-   * the Student Assessment from being accepted by the student.
+   * the Student Assessment from being accepted by the Student.
    * This is one of the possible reasons that can prevent the Student Assessment
-   * from being accepted by the student.
+   * from being accepted by the Student.
    */
   readonly hasAcceptAssessmentRestrictions: boolean;
   /**
    * Additional information about institution restrictions that would prevent the
-   * Student Assessment from being accepted by the student.
+   * Student Assessment from being accepted by the Student.
    */
   readonly acceptAssessmentRestrictions: string[];
   /**
    * Additional information about the failed e-Cert validations that would prevent
-   * the Student Assessment from being accepted by the student.
+   * the Student Assessment from being accepted by the Student.
    */
   readonly eCertFailedValidations: ReadonlyArray<ECertFailedValidationResult>;
 }

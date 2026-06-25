@@ -1,11 +1,15 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AddRestrictionActionTypeStopAcceptAssessment1782256419912 implements MigrationInterface {
+/**
+ * Migration to add the new restriction action type "Institution under review" to the database.
+ * These actions are intended to be generic and reusable for future restrictions that may be added to the system.
+ */
+export class AddRestrictionActionTypeInstitutionUnderReview1782256419912 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Add-restriction-action-type-stop-accept-assessment.sql",
+        "Add-restriction-action-type-institution-under-review.sql",
         "Types",
       ),
     );
@@ -14,7 +18,7 @@ export class AddRestrictionActionTypeStopAcceptAssessment1782256419912 implement
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-add-restriction-action-type-stop-accept-assessment.sql",
+        "Rollback-add-restriction-action-type-institution-under-review.sql",
         "Types",
       ),
     );

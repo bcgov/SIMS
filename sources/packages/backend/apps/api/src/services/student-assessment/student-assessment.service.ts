@@ -235,6 +235,11 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     return this.repo.save(assessment);
   }
 
+  /**
+   * Consolidates validations from different sources to determine if the assessment can be accepted by the student.
+   * @param applicationId application ID.
+   * @returns result of the evaluation.
+   */
   async evaluateAcceptAssessment(
     applicationId: number,
   ): Promise<AcceptAssessmentEvaluationResult> {

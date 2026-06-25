@@ -34,6 +34,7 @@ import {
 } from "../../services";
 import { StudentUserToken } from "../../auth/userToken.interface";
 import { ApplicationOfferingChangeRequestStatus } from "@sims/sims-db";
+import { CustomNamedError } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -75,11 +76,14 @@ export class AssessmentStudentsController extends BaseController {
    * @param assessmentId assessment id to be confirmed.
    */
   @ApiNotFoundResponse({
-    description: "Not able to find the assessment for the student.",
+    description: "Not able to find the assessment for the Student.",
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Student not found or assessment confirmation failed or an assessment other than the current one may not be approved.",
+      "Application status expected to be 'Assessment' to allow the NOA confirmation, or " +
+      "an assessment other than the current one may not be approved, or " +
+      "there is at least one e-Cert validation failed preventing the assessment from being accepted, or " +
+      "there is at least one institution restriction preventing the assessment from being accepted.",
   })
   @Patch(":assessmentId/confirm-assessment")
   async confirmAssessmentNOA(
@@ -92,15 +96,16 @@ export class AssessmentStudentsController extends BaseController {
         userToken.studentId,
         userToken.userId,
       );
-    } catch (error) {
-      switch (error.name) {
-        case ASSESSMENT_NOT_FOUND:
-          throw new NotFoundException(error.message);
-        case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
-          throw new UnprocessableEntityException(error.message);
-        default:
-          throw error;
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case ASSESSMENT_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
+            throw new UnprocessableEntityException(error.message);
+        }
       }
+      throw error;
     }
   }
 

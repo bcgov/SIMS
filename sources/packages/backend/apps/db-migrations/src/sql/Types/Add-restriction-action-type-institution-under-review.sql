@@ -1,3 +1,4 @@
+-- Create new actions to support the new restriction type "Institution under review" and future restrictions.
 -- Postgres allows adding new types to an enum but it causes issues when the new types added are
 -- used in another query in the same transaction, hence the team decision was to recreate the enums
 -- types when a new item must be added following the same approach already used for rollbacks.
