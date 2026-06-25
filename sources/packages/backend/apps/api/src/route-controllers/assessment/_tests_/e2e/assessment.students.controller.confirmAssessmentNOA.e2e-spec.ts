@@ -5,6 +5,7 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
+  mockJWTUserInfo,
   mockUserLoginInfo,
 } from "../../../../testHelpers";
 import {
@@ -31,6 +32,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   OfferingIntensity,
+  Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
   User,
@@ -38,12 +40,15 @@ import {
 } from "@sims/sims-db";
 import MockDate from "mockdate";
 import { TestingModule } from "@nestjs/testing";
+import { ArrayContains } from "typeorm";
 
 describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
   let sharedMinistryUser: User;
+  let stopAcceptAssessmentFullTimeRestriction: Restriction;
+  let stopAcceptAssessmentPartTimeRestriction: Restriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -53,6 +58,28 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     db = createE2EDataSources(dataSource);
     // Create a Ministry user to b used, for instance, for audit.
     sharedMinistryUser = await db.user.save(createFakeUser());
+
+    [
+      stopAcceptAssessmentFullTimeRestriction,
+      stopAcceptAssessmentPartTimeRestriction,
+    ] = await Promise.all([
+      db.restriction.findOne({
+        select: { id: true },
+        where: {
+          actionType: ArrayContains([
+            RestrictionActionType.StopFullTimeAcceptAssessment,
+          ]),
+        },
+      }),
+      db.restriction.findOne({
+        select: { id: true },
+        where: {
+          actionType: ArrayContains([
+            RestrictionActionType.StopPartTimeAcceptAssessment,
+          ]),
+        },
+      }),
+    ]);
   });
 
   beforeEach(async () => {
@@ -176,6 +203,42 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       });
   });
 
+  [OfferingIntensity.fullTime, OfferingIntensity.partTime].forEach(
+    (intensity) => {
+      it(`Should not allow NOA approval of a ${intensity} application when the current assessment is associated with an institution that has some restriction with an 'Stop accept assessment' action.`, async () => {
+        // Arrange
+        const restriction =
+          intensity === OfferingIntensity.fullTime
+            ? stopAcceptAssessmentFullTimeRestriction
+            : stopAcceptAssessmentPartTimeRestriction;
+        const { application } =
+          await createApplicationAndAssessments(intensity);
+        // Mock user services to return the saved student.
+        await mockJWTUserInfo(appModule, application.student.user);
+        await saveFakeInstitutionRestriction(db, {
+          restriction: restriction,
+          institution:
+            application.currentAssessment.offering.educationProgram.institution,
+        });
+        const studentUserToken = await getStudentToken(
+          FakeStudentUsersTypes.FakeStudentUserType1,
+        );
+        const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+        // Act/Assert
+        await request(app.getHttpServer())
+          .patch(endpoint)
+          .auth(studentUserToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+          .expect({
+            statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+            message:
+              "There is at least one institution restriction preventing the assessment from being accepted.",
+            error: "Unprocessable Entity",
+          });
+      });
+    },
+  );
+
   it(`Should allow NOA approval when the current assessment is blocked by a '${RestrictionActionType.StopPartTimeDisbursement}' restriction but the application has a restriction bypass.`, async () => {
     // Arrange
     const { application } = await createApplicationAndAssessments();
@@ -270,9 +333,12 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
 
   /**
    * Creates an application with two assessments.
+   * @param offeringIntensity optionally provides an offering intensity.
    * @returns Old and new Assessment ID.
    */
-  async function createApplicationAndAssessments(): Promise<{
+  async function createApplicationAndAssessments(
+    offeringIntensity?: OfferingIntensity,
+  ): Promise<{
     currentAssessmentId: number;
     oldAssessmentId: number;
     application: Application;
@@ -297,7 +363,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
         student,
       },
       {
-        offeringIntensity: OfferingIntensity.partTime,
+        offeringIntensity: offeringIntensity ?? OfferingIntensity.partTime,
       },
     );
     const oldAssessment = application.currentAssessment;
