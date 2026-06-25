@@ -14,6 +14,7 @@ import {
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
 } from "./student-assessment.constants";
@@ -217,7 +218,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     if (acceptAssessmentEvaluationResult.hasAcceptAssessmentRestrictions) {
       throw new CustomNamedError(
         "There is at least one institution restriction preventing the assessment from being accepted.",
-        ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
+        ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION,
       );
     }
 

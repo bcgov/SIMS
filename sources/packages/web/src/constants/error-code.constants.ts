@@ -198,3 +198,9 @@ export const FORM_SUBMISSION_PENDING_DECISION =
  * and the decision cannot be saved based on potentially outdated information.
  */
 export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
+
+/**
+ * An assessment cannot be accepted due to an institution restriction.
+ */
+export const ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION =
+  "ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION";

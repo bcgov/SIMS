@@ -87,10 +87,15 @@
                 >StudentAid BC</a
               >.
             </li>
+            <!-- Institution 'Stop accept assessment' restriction messages. -->
             <li v-if="acceptValidation.hasInstitutionUnderReview">
               Your assessment cannot be accepted at this time because the
               institution associated with your application is currently under
               review.
+            </li>
+            <!-- Generic institution restriction message. -->
+            <li v-else-if="acceptValidation.hasInstitutionRestriction">
+              {{ INSTITUTION_RESTRICTED_DEFAULT_MESSAGE }}
             </li>
           </ul>
         </template>
@@ -132,9 +137,14 @@ import {
   BannerTypes,
   ECertFailedValidation,
   RestrictionCode,
+  ApiProcessError,
 } from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
 import { useRouter } from "vue-router";
+import { ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION } from "@/constants";
+
+const INSTITUTION_RESTRICTED_DEFAULT_MESSAGE =
+  "Your assessment cannot be accepted at this time because your institution is currently restricted.";
 
 export default defineComponent({
   components: {
@@ -168,6 +178,7 @@ export default defineComponent({
       noEstimatedAwardAmounts: false,
       hasEffectiveAviationRestriction: false,
       hasInstitutionUnderReview: false,
+      hasInstitutionRestriction: false,
     });
 
     /**
@@ -204,7 +215,15 @@ export default defineComponent({
         );
         viewOnly.value = true;
         snackBar.success("Confirmation of Assessment completed successfully!");
-      } catch {
+      } catch (error: unknown) {
+        if (
+          error instanceof ApiProcessError &&
+          error.errorType ===
+            ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION
+        ) {
+          snackBar.error(INSTITUTION_RESTRICTED_DEFAULT_MESSAGE);
+          return;
+        }
         snackBar.error("An error happened while confirming the assessment.");
       }
     };
@@ -258,6 +277,12 @@ export default defineComponent({
           warnings.acceptAssessmentRestrictions.includes(
             RestrictionCode.InstitutionUnderReview,
           ),
+        /**
+         * Generic institution restriction message to be displayed when some restriction is
+         * present but there is no specific message to be displayed for the restriction.
+         */
+        hasInstitutionRestriction:
+          !!warnings.acceptAssessmentRestrictions.length,
       };
     });
 
@@ -277,6 +302,7 @@ export default defineComponent({
       acceptValidation,
       canAcceptAssessment,
       showAcceptAssessmentWarnings,
+      INSTITUTION_RESTRICTED_DEFAULT_MESSAGE,
     };
   },
 });

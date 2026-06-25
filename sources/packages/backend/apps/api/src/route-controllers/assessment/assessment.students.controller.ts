@@ -14,7 +14,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   AssessmentNOAAPIOutDTO,
   AwardDetailsAPIOutDTO,
@@ -28,6 +28,7 @@ import {
 } from "@nestjs/swagger";
 import { AssessmentControllerService } from "./assessment.controller.service";
 import {
+  ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   ASSESSMENT_NOT_FOUND,
   StudentAssessmentService,
@@ -103,6 +104,10 @@ export class AssessmentStudentsController extends BaseController {
             throw new NotFoundException(error.message);
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:
             throw new UnprocessableEntityException(error.message);
+          case ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;

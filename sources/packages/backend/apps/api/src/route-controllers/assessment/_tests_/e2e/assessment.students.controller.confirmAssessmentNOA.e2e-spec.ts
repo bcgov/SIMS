@@ -35,12 +35,14 @@ import {
   Restriction,
   RestrictionActionType,
   RestrictionBypassBehaviors,
+  RestrictionType,
   User,
   WorkflowData,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
 import { TestingModule } from "@nestjs/testing";
 import { ArrayContains } from "typeorm";
+import { ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION } from "../../../../services";
 
 describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
   let app: INestApplication;
@@ -56,9 +58,9 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
-    // Create a Ministry user to b used, for instance, for audit.
+    // Create a Ministry user to be used, for instance, for audit.
     sharedMinistryUser = await db.user.save(createFakeUser());
-
+    // Find one restriction for each action type for 'Stop accept assessment' to be used in the tests.
     [
       stopAcceptAssessmentFullTimeRestriction,
       stopAcceptAssessmentPartTimeRestriction,
@@ -66,6 +68,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       db.restriction.findOne({
         select: { id: true },
         where: {
+          restrictionType: RestrictionType.Institution,
           actionType: ArrayContains([
             RestrictionActionType.StopFullTimeAcceptAssessment,
           ]),
@@ -74,6 +77,7 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       db.restriction.findOne({
         select: { id: true },
         where: {
+          restrictionType: RestrictionType.Institution,
           actionType: ArrayContains([
             RestrictionActionType.StopPartTimeAcceptAssessment,
           ]),
@@ -231,10 +235,10 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
           .auth(studentUserToken, BEARER_AUTH_TYPE)
           .expect(HttpStatus.UNPROCESSABLE_ENTITY)
           .expect({
-            statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
             message:
               "There is at least one institution restriction preventing the assessment from being accepted.",
-            error: "Unprocessable Entity",
+            errorType:
+              ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION,
           });
       });
     },
