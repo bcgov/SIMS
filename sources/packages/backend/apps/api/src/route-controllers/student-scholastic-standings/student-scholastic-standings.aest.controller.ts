@@ -77,7 +77,7 @@ export class ScholasticStandingAESTController extends BaseController {
    * @returns Scholastic Standing Summary details.
    */
   @Get("summary/student/:studentId")
-  @ApiNotFoundResponse({ description: "Student does not exists." })
+  @ApiNotFoundResponse({ description: "Student does not exist." })
   async getScholasticStandingSummary(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
