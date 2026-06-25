@@ -163,7 +163,9 @@ export enum FieldRequirementType {
 }
 
 /**
- * Restriction codes that are used for specific scenarios.
+ * Restriction codes that are used for specific UI scenarios,
+ * for instance, to display a specific content based in a
+ * restriction code.
  */
 export enum RestrictionCode {
   /**

@@ -69,10 +69,6 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       actionTypes?: RestrictionActionType[];
     },
   ): Promise<InstitutionRestriction[]> {
-    // Change the query to return
-    // Only program restrictions
-    // or only location restrictions where program is null
-    // or only institution restrictions where program and location are null
     const query = this.institutionRestrictionRepo
       .createQueryBuilder("institutionRestriction")
       .select([

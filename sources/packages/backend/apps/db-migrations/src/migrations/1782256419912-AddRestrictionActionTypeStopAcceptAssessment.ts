@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
 /**
- * Migration to add the new restriction action type "Institution under review" to the database.
+ * Migration to add the new restriction action types for the "Institution under review".
  * These actions are intended to be generic and reusable for future restrictions that may be added to the system.
  */
 export class AddRestrictionActionTypeInstitutionUnderReview1782256419912 implements MigrationInterface {
