@@ -5,6 +5,7 @@ import {
 } from "@nestjs/common";
 import {
   ApplicationWithdrawalTextValidationResult,
+  StudentRestrictionService,
   StudentScholasticStandingsService,
   StudentService,
 } from "../../services";
@@ -21,6 +22,7 @@ import {
   APPLICATION_WITHDRAWAL_TEXT_CONTENT_FORMAT_ERROR,
   APPLICATION_WITHDRAWAL_VALIDATION_ERROR,
 } from "../../constants";
+import { RestrictionCode } from "@sims/services";
 
 /**
  * Scholastic standing controller service.
@@ -29,6 +31,7 @@ import {
 export class ScholasticStandingControllerService {
   constructor(
     private readonly studentService: StudentService,
+    private readonly studentRestrictionService: StudentRestrictionService,
     private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
   ) {}
 
@@ -81,19 +84,30 @@ export class ScholasticStandingControllerService {
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
-      throw new NotFoundException("Student does not exists.");
+      throw new NotFoundException("Student does not exist.");
     }
-    const scholasticStandingSummary =
-      await this.studentScholasticStandingsService.getScholasticStandingSummary(
+    const [
+      {
+        fullTimeUnsuccessfulCompletionWeeks,
+        partTimeUnsuccessfulCompletionWeeks,
+      },
+      fullTimeWithdrawalsCount,
+    ] = await Promise.all([
+      this.studentScholasticStandingsService.getScholasticStandingSummary(
         studentId,
-      );
-    const partTimeLifetimeUnsuccessfulCompletionWeeks =
-      scholasticStandingSummary.partTimeUnsuccessfulCompletionWeeks;
-    const fullTimeLifetimeUnsuccessfulCompletionWeeks =
-      scholasticStandingSummary.fullTimeUnsuccessfulCompletionWeeks;
+      ),
+      this.studentRestrictionService.countRestrictionByCode(
+        studentId,
+        RestrictionCode.WTHD,
+      ),
+    ]);
+
     return {
-      fullTimeLifetimeUnsuccessfulCompletionWeeks,
-      partTimeLifetimeUnsuccessfulCompletionWeeks,
+      fullTimeLifetimeUnsuccessfulCompletionWeeks:
+        fullTimeUnsuccessfulCompletionWeeks,
+      partTimeLifetimeUnsuccessfulCompletionWeeks:
+        partTimeUnsuccessfulCompletionWeeks,
+      fullTimeWithdrawalsCount,
     };
   }
 
@@ -104,7 +118,7 @@ export class ScholasticStandingControllerService {
    */
   assertTextValidationsAreValid(
     textValidations: ApplicationWithdrawalTextValidationResult[],
-  ) {
+  ): void {
     const textValidationsErrors = textValidations.filter(
       (textValidation) => textValidation.errors.length,
     );
@@ -136,7 +150,7 @@ export class ScholasticStandingControllerService {
    */
   assertValidationsAreValid(
     validationsResult: ApplicationWithdrawalValidationResult[],
-  ) {
+  ): void {
     const validations = validationsResult.filter(
       (validationResult) =>
         validationResult.errors.length || validationResult.warnings.length,

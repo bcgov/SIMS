@@ -1446,7 +1446,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
       ]);
     });
 
-    it(`Should create an ${RestrictionCode.SSR} restriction when the student withdrew and there is an active ${RestrictionCode.WTHD} restriction.`, async () => {
+    it(`Should create a ${RestrictionCode.WTHD} and an ${RestrictionCode.SSR} restriction when the student withdrew and there is an active ${RestrictionCode.WTHD} restriction.`, async () => {
       // Arrange
       const withdrawalDate = addToDateOnlyString(new Date(), -5, "day");
       const payload = {
@@ -1508,10 +1508,17 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
             restrictionCode: RestrictionCode.WTHD,
           },
         },
+        {
+          id: expect.any(Number),
+          restriction: {
+            id: wthdRestriction.id,
+            restrictionCode: RestrictionCode.WTHD,
+          },
+        },
       ]);
     });
 
-    it(`Should create a ${RestrictionCode.WTHD} and an ${RestrictionCode.SSRN} restriction when the student withdraws and there is an inactive ${RestrictionCode.SSR} restriction.`, async () => {
+    it(`Should create a ${RestrictionCode.WTHD} and an ${RestrictionCode.SSRN} restriction when the student withdrew and there is an inactive ${RestrictionCode.SSR} restriction.`, async () => {
       // Arrange
       const withdrawalDate = addToDateOnlyString(new Date(), -5, "day");
       const payload = {
@@ -1598,7 +1605,7 @@ describe("StudentScholasticStandingsInstitutionsController(e2e)-saveScholasticSt
         restriction: true,
       },
       where: { isActive: true, student: { id: studentId } },
-      order: { restriction: { restrictionCode: "ASC" } },
+      order: { restriction: { restrictionCode: "ASC" }, id: "ASC" },
     });
   }
 });
