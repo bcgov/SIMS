@@ -71,6 +71,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       .expect({
         eCertFailedValidations: [],
         canAcceptAssessment: true,
+        acceptAssessmentRestrictions: [],
       });
   });
 
@@ -134,6 +135,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
+          acceptAssessmentRestrictions: [],
         });
     },
   );
@@ -192,6 +194,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
+          acceptAssessmentRestrictions: [],
         });
     },
   );
@@ -261,6 +264,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
+          acceptAssessmentRestrictions: [],
         });
     },
   );
@@ -341,9 +345,75 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
+          acceptAssessmentRestrictions: [],
         });
     },
   );
+
+  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective restriction on institution with an action to 'Stop accept assessment'.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const msfaaNumber = createFakeMSFAANumber(
+      {
+        student,
+      },
+      {
+        msfaaState: MSFAAStates.Signed,
+        msfaaInitialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student, msfaaNumber },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+        offeringIntensity: OfferingIntensity.fullTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+    // Institution restriction.
+    const restriction = await db.restriction.findOne({
+      select: { id: true, restrictionCode: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        actionType: ArrayContains([
+          RestrictionActionType.StopFullTimeAcceptAssessment,
+        ]),
+      },
+    });
+    const institution =
+      application.currentAssessment.offering.institutionLocation.institution;
+    await saveFakeInstitutionRestriction(db, {
+      restriction,
+      institution,
+    });
+
+    const endpoint = `/students/application/${application.id}/warnings`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        canAcceptAssessment: false,
+        eCertFailedValidations: [],
+        acceptAssessmentRestrictions: [restriction.restrictionCode],
+      });
+  });
 
   it("Should return a failed ecert validations array with no estimated award amounts when no disbursements values are present.", async () => {
     // Arrange
@@ -389,6 +459,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         eCertFailedValidations: [ECertFailedValidation.NoEstimatedAwardAmounts],
         canAcceptAssessment: false,
         eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: false },
+        acceptAssessmentRestrictions: [],
       });
   });
 
@@ -458,6 +529,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
+          acceptAssessmentRestrictions: [],
         });
     },
   );
@@ -532,6 +604,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: true,
           },
+          acceptAssessmentRestrictions: [],
         });
     },
   );

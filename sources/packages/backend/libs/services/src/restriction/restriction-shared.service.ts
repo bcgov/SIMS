@@ -127,16 +127,16 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
           id: true,
           offering: {
             id: true,
-            institutionLocation: { id: true },
-            educationProgram: { id: true, institution: { id: true } },
+            institutionLocation: { id: true, institution: { id: true } },
+            educationProgram: { id: true },
           },
         },
       },
       relations: {
         currentAssessment: {
           offering: {
-            institutionLocation: true,
-            educationProgram: { institution: true },
+            institutionLocation: { institution: true },
+            educationProgram: true,
           },
         },
       },
@@ -146,11 +146,12 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       application.offeringIntensity === OfferingIntensity.fullTime
         ? RestrictionActionType.StopFullTimeAcceptAssessment
         : RestrictionActionType.StopPartTimeAcceptAssessment;
+    const offering = application.currentAssessment.offering;
     const effectiveInstitutionRestrictions =
       await this.getEffectiveInstitutionRestrictions(
-        application.currentAssessment.offering.educationProgram.institution.id,
-        application.currentAssessment.offering.educationProgram.id,
-        application.currentAssessment.offering.id,
+        offering.institutionLocation.institution.id,
+        offering.educationProgram.id,
+        offering.institutionLocation.id,
         { actionTypes: [action] },
       );
     if (effectiveInstitutionRestrictions.length) {
