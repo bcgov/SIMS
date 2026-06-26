@@ -32,6 +32,12 @@
             :items-per-page-options="ITEMS_PER_PAGE"
             :mobile="isMobile"
           >
+            <template #[`item.locationName`]="{ item }">
+              {{ emptyStringFiller(item.locationName) }}
+            </template>
+            <template #[`item.programName`]="{ item }">
+              {{ emptyStringFiller(item.programName) }}
+            </template>
             <template #[`item.description`]="{ item }">
               {{ `${item.restrictionCode} - ${item.description}` }}
             </template>
@@ -126,8 +132,11 @@ export default defineComponent({
     const institutionRestrictions = ref(
       [] as InstitutionRestrictionSummaryAPIOutDTO[],
     );
-    const { dateOnlyLongString, conditionalEmptyStringFiller } =
-      useFormatters();
+    const {
+      dateOnlyLongString,
+      conditionalEmptyStringFiller,
+      emptyStringFiller,
+    } = useFormatters();
     const { updateInstitutionRestrictionState } =
       useInstitutionRestrictionState();
     const showModal = ref(false);
@@ -251,6 +260,7 @@ export default defineComponent({
 
     return {
       dateOnlyLongString,
+      emptyStringFiller,
       conditionalEmptyStringFiller,
       institutionRestrictions,
       RestrictionStatus,

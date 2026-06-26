@@ -298,6 +298,7 @@ export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
+  acceptAssessmentRestrictions: string[];
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

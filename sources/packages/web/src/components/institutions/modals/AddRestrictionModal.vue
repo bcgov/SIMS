@@ -214,7 +214,17 @@ export default defineComponent({
       }
       submittingData.value = true;
       try {
-        const modalClosed = await resolvePromise(formModel);
+        const model = {
+          restrictionId: formModel.restrictionId,
+          noteDescription: formModel.noteDescription,
+          // Ensure locations are only sent if the field is visible and has values.
+          locationIds: formModel.locationIds?.length
+            ? formModel.locationIds
+            : undefined,
+          // Ensure program is only sent if the field is visible and has a value.
+          programId: formModel.programId ?? undefined,
+        };
+        const modalClosed = await resolvePromise(model);
         if (modalClosed) {
           addRestrictionForm.value.reset();
         }

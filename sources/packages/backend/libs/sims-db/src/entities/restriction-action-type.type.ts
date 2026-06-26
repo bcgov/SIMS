@@ -27,6 +27,16 @@ export enum RestrictionActionType {
    */
   StopFullTimeApply = "Stop full-time apply",
   /**
+   * Prevent students from selecting an institution when submitting part-time applications.
+   * The institution should not be available to be selected in the part-time application.
+   */
+  StopPartTimeApplicationEligibility = "Stop part-time application eligibility",
+  /**
+   * Prevent students from selecting an institution when submitting full-time applications.
+   * The institution should not be available to be selected in the full-time application.
+   */
+  StopFullTimeApplicationEligibility = "Stop full-time application eligibility",
+  /**
    * Stop all part-time disbursements of the student.
    */
   StopPartTimeDisbursement = "Stop part-time disbursement",
@@ -34,6 +44,14 @@ export enum RestrictionActionType {
    * Stop all full-time disbursements of the student.
    */
   StopFullTimeDisbursement = "Stop full-time disbursement",
+  /**
+   * Stop the student from accepting part-time assessments.
+   */
+  StopPartTimeAcceptAssessment = "Stop part-time accept assessment",
+  /**
+   * Stop the student from accepting full-time assessments.
+   */
+  StopFullTimeAcceptAssessment = "Stop full-time accept assessment",
   /**
    * Stop the creation of new offerings for the institution.
    */

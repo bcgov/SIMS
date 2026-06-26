@@ -25,6 +25,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
   APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
+  StudentAssessmentService,
 } from "../../services";
 import { IUserToken, StudentUserToken } from "../../auth/userToken.interface";
 import BaseController from "../BaseController";
@@ -70,7 +71,6 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
-import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
@@ -85,7 +85,7 @@ export class ApplicationStudentsController extends BaseController {
     private readonly confirmationOfEnrollmentService: ConfirmationOfEnrollmentService,
     private readonly applicationControllerService: ApplicationControllerService,
     private readonly configService: ConfigService,
-    private readonly eCertPreValidationService: ECertPreValidationService,
+    private readonly studentAssessmentService: StudentAssessmentService,
   ) {
     super();
   }
@@ -167,21 +167,24 @@ export class ApplicationStudentsController extends BaseController {
         "Applications does not exists or the student does not have access to it.",
       );
     }
-    const validationResult =
-      await this.eCertPreValidationService.executePreValidations(
+
+    const acceptAssessmentEvaluationResult =
+      await this.studentAssessmentService.evaluateAcceptAssessment(
         applicationId,
-        true,
       );
-    const eCertFailedValidations = validationResult.failedValidations.map(
-      (failedValidation) => failedValidation.resultType,
-    );
+    const eCertFailedValidations =
+      acceptAssessmentEvaluationResult.eCertFailedValidations.map(
+        (failedValidation) => failedValidation.resultType,
+      );
     return {
       eCertFailedValidations,
-      canAcceptAssessment: validationResult.canAcceptAssessment,
+      canAcceptAssessment: acceptAssessmentEvaluationResult.canAcceptAssessment,
       eCertFailedValidationsInfo:
         this.applicationControllerService.buildECertFailedValidationsInfo(
-          validationResult.failedValidations,
+          acceptAssessmentEvaluationResult.eCertFailedValidations,
         ),
+      acceptAssessmentRestrictions:
+        acceptAssessmentEvaluationResult.acceptAssessmentRestrictions,
     };
   }
 

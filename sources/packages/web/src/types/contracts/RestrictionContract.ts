@@ -93,6 +93,16 @@ export enum RestrictionActionType {
    */
   StopFullTimeApply = "Stop full-time apply",
   /**
+   * Prevent a student from selecting an institution in a part-time application.
+   * The institution should not be available to select in the part-time application.
+   */
+  StopPartTimeApplicationEligibility = "Stop part-time application eligibility",
+  /**
+   * Prevent a student from selecting an institution in a full-time application.
+   * The institution should not be available to select in the full-time application.
+   */
+  StopFullTimeApplicationEligibility = "Stop full-time application eligibility",
+  /**
    * Stop all part-time disbursements of the student.
    */
   StopPartTimeDisbursement = "Stop part-time disbursement",
@@ -100,6 +110,14 @@ export enum RestrictionActionType {
    * Stop all full-time disbursements of the student.
    */
   StopFullTimeDisbursement = "Stop full-time disbursement",
+  /**
+   * Stop the student from accepting part-time assessments.
+   */
+  StopPartTimeAcceptAssessment = "Stop part-time accept assessment",
+  /**
+   * Stop the student from accepting full-time assessments.
+   */
+  StopFullTimeAcceptAssessment = "Stop full-time accept assessment",
   /**
    * Stop the creation of new offerings for the institution.
    */
@@ -142,4 +160,15 @@ export enum FieldRequirementType {
    * The field is not allowed and must not be provided.
    */
   NotAllowed = "not allowed",
+}
+
+/**
+ * Restriction codes that are used for specific UI scenarios,
+ * for instance, to display a specific content based on a restriction code.
+ */
+export enum RestrictionCode {
+  /**
+   * Institution under review.
+   */
+  InstitutionUnderReview = "IUR",
 }
