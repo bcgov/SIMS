@@ -4,6 +4,7 @@
       <header-navigator
         title="Assessments"
         sub-title="View Submission"
+        :back-target="backTarget"
         :route-location="goToAssessmentSummary"
       >
         <template #buttons v-if="showScholasticStandingReversalAction">
@@ -51,6 +52,7 @@ import ScholasticStandingReversalBanner from "@/components/common/students/appli
 import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import {
   AssessmentTriggerType,
+  BackTarget,
   Role,
   StudentScholasticStandingChangeType,
 } from "@/types";
@@ -90,6 +92,11 @@ export default {
     scholasticStandingId: {
       type: Number,
       required: true,
+    },
+    backTarget: {
+      type: Object as () => BackTarget,
+      required: false,
+      default: undefined,
     },
   },
   setup(props) {

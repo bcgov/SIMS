@@ -347,6 +347,32 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             },
           },
           {
+            path: AppRoutes.ScholasticStandingView,
+            name: AESTRoutesConst.SCHOLASTIC_STANDING_VIEW_FROM_RESTRICTIONS,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+              scholasticStandingId: Number.parseInt(
+                route.params.scholasticStandingId as string,
+              ),
+              backTarget: {
+                name: "Student restrictions",
+                to: {
+                  name: AESTRoutesConst.STUDENT_RESTRICTION,
+                  params: {
+                    studentId: route.params.studentId,
+                  },
+                },
+              },
+            }),
+            component: ViewScholasticStanding,
+            meta: {
+              clientType: ClientIdType.AEST,
+            },
+          },
+          {
             path: AppRoutes.StudentAppealRequest,
             name: AESTRoutesConst.STUDENT_APPLICATION_APPEAL_REQUESTS_APPROVAL,
             props: true,

@@ -643,4 +643,35 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         (scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0),
     };
   }
+
+  /**
+   * Get scholastic standing history for a student.
+   * @param studentId student id to retrieve scholastic standing history.
+   * @returns scholastic standing history for the student.
+   */
+  async getScholasticStandings(
+    studentId: number,
+  ): Promise<StudentScholasticStanding[]> {
+    return this.repo
+      .createQueryBuilder("studentScholasticStanding")
+      .select([
+        "studentScholasticStanding.id",
+        "studentScholasticStanding.submittedDate",
+        "studentScholasticStanding.changeType",
+        "studentScholasticStanding.reversalDate",
+        "studentScholasticStanding.submittedData",
+        "nonPunitiveFormSubmissionItem.id",
+        "application.id",
+        "application.applicationNumber",
+      ])
+      .innerJoin("studentScholasticStanding.application", "application")
+      .leftJoin(
+        "studentScholasticStanding.nonPunitiveFormSubmissionItem",
+        "nonPunitiveFormSubmissionItem",
+      )
+      .innerJoin("application.student", "student")
+      .where("student.id = :studentId", { studentId })
+      .orderBy("studentScholasticStanding.submittedDate", "DESC")
+      .getMany();
+  }
 }

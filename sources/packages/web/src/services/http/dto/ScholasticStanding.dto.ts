@@ -1,4 +1,7 @@
-import { AssessmentTriggerType } from "@/types";
+import {
+  AssessmentTriggerType,
+  StudentScholasticStandingChangeType,
+} from "@/types";
 import { ValidationResultAPIOutDTO } from "./Common.dto";
 import { ActiveApplicationDataAPIOutDTO } from "./InstitutionLocation.dto";
 
@@ -44,6 +47,21 @@ export interface ScholasticStandingSummaryDetailsAPIOutDTO {
   fullTimeLifetimeUnsuccessfulCompletionWeeks: number;
   partTimeLifetimeUnsuccessfulCompletionWeeks: number;
   fullTimeWithdrawalsCount: number;
+}
+
+/**
+ * Represents the scholastic standing details item.
+ */
+export interface ScholasticStandingDetailsAPIOutDTO {
+  scholasticStandingId: number;
+  applicationId: number;
+  applicationNumber: string;
+  submittedDate: Date;
+  dateOfWithdrawal?: Date;
+  scholasticStandingChangeType: StudentScholasticStandingChangeType;
+  reversalDate?: Date;
+  nonPunitiveFormSubmissionId?: number;
+  isActive: boolean;
 }
 
 /**
