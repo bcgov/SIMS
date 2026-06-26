@@ -66,7 +66,7 @@ export class ScholasticStandingDetailsAPIOutDTO {
   applicationId: number;
   applicationNumber: string;
   submittedDate: Date;
-  dateOfWithdrawal?: string;
+  dateOfWithdrawal?: Date;
   scholasticStandingChangeType: StudentScholasticStandingChangeType;
   reversalDate?: Date;
   nonPunitiveFormSubmissionId?: number;

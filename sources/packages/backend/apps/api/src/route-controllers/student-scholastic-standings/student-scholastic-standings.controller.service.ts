@@ -113,9 +113,9 @@ export class ScholasticStandingControllerService {
   }
 
   /**
-   * Get scholastic standing history details.
-   * @param studentId student id to retrieve scholastic standing history.
-   * @returns Scholastic standing history details.
+   * Get scholastic standing details.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns Scholastic standing details.
    */
   async getScholasticStandings(
     studentId: number,
@@ -133,7 +133,9 @@ export class ScholasticStandingControllerService {
       applicationId: scholasticStanding.application.id,
       applicationNumber: scholasticStanding.application.applicationNumber,
       submittedDate: scholasticStanding.submittedDate,
-      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal,
+      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal
+        ? new Date(scholasticStanding.submittedData.dateOfWithdrawal)
+        : undefined,
       scholasticStandingChangeType: scholasticStanding.changeType,
       reversalDate: scholasticStanding.reversalDate,
       nonPunitiveFormSubmissionId:

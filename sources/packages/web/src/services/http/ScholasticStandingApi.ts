@@ -2,7 +2,7 @@ import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   ReverseScholasticStandingAPIInDTO,
   ScholasticStandingDataAPIInDTO,
-  ScholasticStandingHistoryAPIOutDTO,
+  ScholasticStandingDetailsAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "@/services/http/dto";
@@ -45,19 +45,19 @@ export class ScholasticStandingApi extends HttpBaseClient {
   }
 
   /**
-   * Get scholastic standing history details for a student.
-   * @param options options for scholastic standing history retrieval.
-   * - `studentId` student id to retrieve scholastic standings.
-   * @returns Scholastic standing history records.
+   * Get Scholastic Standing details for a student.
+   * @param options options for scholastic standing details.
+   * - `studentId` student id to retrieve scholastic standing details.
+   * @returns Scholastic Standing details.
    */
   async getScholasticStandings(options?: {
     studentId?: number;
-  }): Promise<ScholasticStandingHistoryAPIOutDTO[]> {
+  }): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
     let url = "scholastic-standing";
     if (options?.studentId) {
       url += `/student/${options.studentId}`;
     }
-    return this.getCall<ScholasticStandingHistoryAPIOutDTO[]>(
+    return this.getCall<ScholasticStandingDetailsAPIOutDTO[]>(
       this.addClientRoot(url),
     );
   }

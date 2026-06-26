@@ -61,7 +61,6 @@ export interface ScholasticStandingDetailsAPIOutDTO {
   scholasticStandingChangeType: StudentScholasticStandingChangeType;
   reversalDate?: Date;
   nonPunitiveFormSubmissionId?: number;
-  isActive: boolean;
 }
 
 /**

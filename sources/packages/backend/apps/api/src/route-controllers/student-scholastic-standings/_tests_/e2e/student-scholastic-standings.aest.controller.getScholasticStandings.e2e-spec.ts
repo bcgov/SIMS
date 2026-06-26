@@ -107,9 +107,9 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
         applicationNumber: application.applicationNumber,
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-        isActive: true,
       }),
     );
+    expect(firstItem).not.toHaveProperty("reversalDate");
     expect(secondItem).toEqual(
       expect.objectContaining({
         scholasticStandingId: savedScholasticStandings[1].id,
@@ -117,7 +117,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
         applicationNumber: application.applicationNumber,
         scholasticStandingChangeType:
           StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
-        isActive: false,
+        reversalDate: expect.any(String),
       }),
     );
   });

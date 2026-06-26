@@ -75,10 +75,10 @@ export class ScholasticStandingService {
   }
 
   /**
-   * Get scholastic standing history details.
-   * @param options options for the scholastic standing history.
-   * - `studentId` student id to retrieve scholastic standings.
-   * @returns Scholastic standing history records.
+   * Get Scholastic Standing details for a student.
+   * @param options options for scholastic standing details.
+   * - `studentId` student id to retrieve scholastic standing details.
+   * @returns Scholastic Standing details.
    */
   async getScholasticStandings(options?: {
     studentId?: number;
