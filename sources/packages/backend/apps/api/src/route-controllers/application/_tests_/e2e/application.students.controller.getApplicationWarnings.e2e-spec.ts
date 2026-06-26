@@ -373,7 +373,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       appDataSource,
       { student, msfaaNumber },
       {
-        applicationStatus: ApplicationStatus.Completed,
+        applicationStatus: ApplicationStatus.Assessment,
         offeringIntensity: OfferingIntensity.fullTime,
         firstDisbursementInitialValues: {
           coeStatus: COEStatus.completed,
