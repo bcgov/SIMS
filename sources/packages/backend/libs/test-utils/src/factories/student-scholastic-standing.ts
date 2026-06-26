@@ -28,7 +28,8 @@ export function createFakeStudentScholasticStanding(
 ): StudentScholasticStanding {
   const scholasticStanding = new StudentScholasticStanding();
   scholasticStanding.application = relations.application;
-  scholasticStanding.submittedData = {} as unknown;
+  scholasticStanding.submittedData =
+    options?.initialValues?.submittedData ?? {};
   scholasticStanding.submittedDate =
     options?.initialValues?.submittedDate ?? new Date();
   scholasticStanding.submittedBy = relations.submittedBy;

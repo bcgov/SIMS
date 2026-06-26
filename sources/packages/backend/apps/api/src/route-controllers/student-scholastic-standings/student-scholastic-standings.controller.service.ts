@@ -122,7 +122,7 @@ export class ScholasticStandingControllerService {
   ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
     const studentExists = await this.studentService.studentExists(studentId);
     if (!studentExists) {
-      throw new NotFoundException("Student does not exists.");
+      throw new NotFoundException("Student does not exist.");
     }
     const scholasticStandings =
       await this.studentScholasticStandingsService.getScholasticStandings(

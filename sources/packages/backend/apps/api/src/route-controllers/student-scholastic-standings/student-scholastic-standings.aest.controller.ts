@@ -94,7 +94,7 @@ export class ScholasticStandingAESTController extends BaseController {
    */
   @Roles(Role.StudentViewScholasticStandingHistory)
   @Get("student/:studentId")
-  @ApiNotFoundResponse({ description: "Student does not exists." })
+  @ApiNotFoundResponse({ description: "Student does not exist." })
   async getScholasticStandings(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
