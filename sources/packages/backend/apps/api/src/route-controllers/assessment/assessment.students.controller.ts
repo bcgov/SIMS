@@ -81,7 +81,7 @@ export class AssessmentStudentsController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "Application status expected to be 'Assessment' to allow the NOA confirmation, or " +
+      "Application status is expected to be 'Assessment' to allow the NOA confirmation, or " +
       "an assessment other than the current one may not be approved, or " +
       "there is at least one e-Cert validation failed preventing the assessment from being accepted, or " +
       "there is at least one institution restriction preventing the assessment from being accepted.",

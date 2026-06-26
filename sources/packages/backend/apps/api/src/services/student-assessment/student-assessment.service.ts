@@ -195,7 +195,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       assessment.application.applicationStatus !== ApplicationStatus.Assessment
     ) {
       throw new CustomNamedError(
-        `Application status expected to be '${ApplicationStatus.Assessment}' to allow the NOA confirmation.`,
+        `Application status is expected to be '${ApplicationStatus.Assessment}' to allow the NOA confirmation.`,
         ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE,
       );
     }

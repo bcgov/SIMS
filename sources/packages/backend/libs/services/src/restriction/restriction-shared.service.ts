@@ -112,7 +112,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
    * Evaluate if the assessment acceptance is blocked by some institution restriction.
    * Institutions may have restrictions that can prevent students from accepting assessments,
    * till the restriction is removed.
-   * This method does not consider any student restriction, only institution restrictions.
+   * This method does not consider any student restrictions, only institution restrictions.
    * @param applicationId application ID to evaluate the assessment acceptance.
    * @returns the result of the evaluation, indicating if the assessment can be accepted and any restriction codes that block the acceptance.
    */
