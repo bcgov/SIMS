@@ -96,12 +96,12 @@ export enum RestrictionActionType {
    * Prevent a student from selecting an institution in a part-time application.
    * The institution should not be available to select in the part-time application.
    */
-  StopPartTimeApplicationSelection = "Stop part-time application selection",
+  StopPartTimeApplicationEligibility = "Stop part-time application eligibility",
   /**
    * Prevent a student from selecting an institution in a full-time application.
    * The institution should not be available to select in the full-time application.
    */
-  StopFullTimeApplicationSelection = "Stop full-time application selection",
+  StopFullTimeApplicationEligibility = "Stop full-time application eligibility",
   /**
    * Stop all part-time disbursements of the student.
    */

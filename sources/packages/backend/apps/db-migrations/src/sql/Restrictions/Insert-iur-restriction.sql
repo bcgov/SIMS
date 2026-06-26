@@ -15,8 +15,8 @@ VALUES
         'Institution under review.',
         'Institution',
         ARRAY [
-            'Stop part-time application selection',
-            'Stop full-time application selection',
+            'Stop part-time application eligibility',
+            'Stop full-time application eligibility',
             'Stop full-time accept assessment',
             'Stop part-time accept assessment'
         ] :: sims.restriction_action_types [],
