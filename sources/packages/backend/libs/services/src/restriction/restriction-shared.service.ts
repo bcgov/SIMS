@@ -7,7 +7,13 @@ import {
   Restriction,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { Brackets, DataSource, EntityManager, Repository } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  EntityManager,
+  Repository,
+  SelectQueryBuilder,
+} from "typeorm";
 import {
   AcceptAssessmentRestrictionsEvaluationResult,
   RestrictionCode,
@@ -106,6 +112,23 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       });
     }
     return query.getMany();
+  }
+
+  getEffectiveInstitutionRestrictionsQuery(): SelectQueryBuilder<InstitutionRestriction> {
+    return this.institutionRestrictionRepo
+      .createQueryBuilder("institutionRestriction")
+      .select("1")
+      .innerJoin("institutionRestriction.restriction", "restriction")
+      .where("institutionRestriction.isActive = TRUE")
+      .andWhere("institutionRestriction.institution.id = institution.id")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("institutionRestriction.location.id = location.id").orWhere(
+            "institutionRestriction.location.id IS NULL",
+          );
+        }),
+      )
+      .andWhere("restriction.actionType @> :actionTypes");
   }
 
   /**

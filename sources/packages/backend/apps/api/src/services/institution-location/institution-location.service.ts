@@ -3,6 +3,7 @@ import {
   RecordDataModelService,
   InstitutionLocation,
   User,
+  RestrictionActionType,
 } from "@sims/sims-db";
 import { DataSource, In, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
@@ -14,12 +15,14 @@ import {
 import { transformAddressDetails } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { DUPLICATE_INSTITUTION_LOCATION_CODE } from "../../constants";
+import { RestrictionSharedService } from "@sims/services";
 
 @Injectable()
 export class InstitutionLocationService extends RecordDataModelService<InstitutionLocation> {
   constructor(
     dataSource: DataSource,
     private readonly designationAgreementLocationService: DesignationAgreementLocationService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {
     super(dataSource.getRepository(InstitutionLocation));
   }
@@ -160,18 +163,28 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   ): Promise<Partial<InstitutionLocation>[]> {
     const designatedLocationsQuery = this.repo
       .createQueryBuilder("location")
-      .select("location.id")
-      .addSelect("location.name")
-      .orderBy("location.name")
+      .select(["location.id", "location.name"])
+      .innerJoin("location.institution", "institution")
       .where(
         `EXISTS(${this.designationAgreementLocationService
           .getExistsDesignatedLocation()
           .getSql()})`,
-      );
+      )
+      .andWhere(
+        `NOT EXISTS(${this.restrictionSharedService
+          .getEffectiveInstitutionRestrictionsQuery()
+          .getSql()})`,
+      )
+      .orderBy("location.name");
     if (onlyBetaInstitutionLocations) {
       designatedLocationsQuery.andWhere("location.isBeta = true");
     }
-    return designatedLocationsQuery.getMany();
+    return designatedLocationsQuery
+      .setParameter("actionTypes", [
+        RestrictionActionType.StopFullTimeApplicationEligibility,
+        RestrictionActionType.StopPartTimeApplicationEligibility,
+      ])
+      .getMany();
   }
 
   /**
