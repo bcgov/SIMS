@@ -65,6 +65,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
    * for instance, during a PIR process.
    * - `restrictionCode` restriction code.
    * - `actionTypes` restriction action types.
+   * - `limitOne` if true, the query will limit the result to one restriction only.
+   * Useful to act similar to an existence check, without the need to fetch all restrictions.
    * @returns effective institution restrictions.
    */
   getEffectiveInstitutionRestrictions(
@@ -74,6 +76,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       programId?: number;
       restrictionCode?: RestrictionCode;
       actionTypes?: RestrictionActionType[];
+      limitOne?: boolean;
     },
   ): Promise<InstitutionRestriction[]> {
     const query = this.institutionRestrictionRepo
@@ -113,6 +116,9 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       query.andWhere("restriction.actionType @> :actionTypes", {
         actionTypes: options.actionTypes,
       });
+    }
+    if (options?.limitOne) {
+      query.limit(1);
     }
     return query.getMany();
   }

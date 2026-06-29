@@ -396,7 +396,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   /**
    * Check for existing restrictions at the institution and/or location level.
    * Please note, specific program level restrictions are not checked at this level
-   * because the they are also not checked at the PIR completion time.
+   * because they are also not checked at the PIR completion time.
    * @param institutionId institution ID.
    * @param locationId location ID.
    * @param offeringIntensity offering intensity.
@@ -416,6 +416,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         locationId,
         {
           actionTypes: [stopApplicationEligibilityAction],
+          limitOne: true,
         },
       );
     if (institutionRestriction.length) {
