@@ -7,7 +7,7 @@
             v-model="selectedFilter"
             color="primary"
             density="compact"
-            class="btn-toggle"
+            class="float-right btn-toggle"
             selected-class="selected-btn-toggle"
             @update:model-value="onFilterChange"
           >
@@ -38,9 +38,6 @@
         >
           <template #loading>
             <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
-          </template>
-          <template #[`item.applicationNumber`]="{ item }">
-            {{ item.applicationNumber }}
           </template>
           <template #[`item.submittedDate`]="{ item }">
             {{ dateOnlyLongString(item.submittedDate) }}

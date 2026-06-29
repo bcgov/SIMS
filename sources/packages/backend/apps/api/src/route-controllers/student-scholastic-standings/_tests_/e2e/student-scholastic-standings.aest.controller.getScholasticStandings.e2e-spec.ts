@@ -5,39 +5,29 @@ import {
   createFakeStudentScholasticStanding,
   ensureDynamicFormConfigurationExists,
   saveFakeApplication,
-  saveFakeFormSubmissionFromInputTestData,
+  saveFakeFormSubmission,
 } from "@sims/test-utils";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
-  getAESTUser,
 } from "../../../../testHelpers";
 import request from "supertest";
 import {
   DynamicFormType,
-  FormCategory,
-  FormSubmissionDecisionStatus,
-  FormSubmissionStatus,
   StudentScholasticStandingChangeType,
-  User,
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 
 describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let auditUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    auditUser = await getAESTUser(
-      dataSource,
-      AESTGroups.BusinessAdministrators,
-    );
   });
 
   it("Should get scholastic standing details sorted by submitted date DESC when multiple records exist.", async () => {
@@ -49,25 +39,11 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
       db,
       DynamicFormType.NonPunitiveWithdrawal,
     );
-    const savedFormSubmission = await saveFakeFormSubmissionFromInputTestData(
-      db,
-      {
-        student: application.student,
-        formCategory: FormCategory.StudentForm,
-        submissionStatus: FormSubmissionStatus.Completed,
-        ministryAuditUser: auditUser,
-        formSubmissionItems: [
-          {
-            dynamicFormConfiguration,
-            decisions: [
-              {
-                decisionStatus: FormSubmissionDecisionStatus.Approved,
-              },
-            ],
-          },
-        ],
-      },
-    );
+    const savedFormSubmission = await saveFakeFormSubmission(db, {
+      student: application.student,
+      dynamicFormConfiguration,
+    });
+
     const [savedFormSubmissionItem] = savedFormSubmission.formSubmissionItems;
 
     // Withdrawal record with non-punitive form submission.
@@ -117,15 +93,32 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
         },
       },
     );
+    // Student Completed Program Early record.
+    const completedEarlyScholasticStanding =
+      createFakeStudentScholasticStanding(
+        {
+          submittedBy: application.student.user,
+          application,
+        },
+        {
+          initialValues: {
+            changeType:
+              StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+            submittedDate: addDays(-8),
+          },
+        },
+      );
 
     const [
       savedWithdrewScholasticStanding,
       savedDidNotCompleteScholasticStanding,
       savedTransferScholasticStanding,
+      savedCompletedEarlyScholasticStanding,
     ] = await db.studentScholasticStanding.save([
       withdrewScholasticStanding,
       didNotCompleteScholasticStanding,
       transferScholasticStanding,
+      completedEarlyScholasticStanding,
     ]);
 
     const endpoint = `/aest/scholastic-standing/student/${application.student.id}`;
@@ -137,7 +130,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
-        expect(body).toMatchObject([
+        expect(body).toEqual([
           {
             scholasticStandingId: savedDidNotCompleteScholasticStanding.id,
             applicationId: application.id,
@@ -146,6 +139,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
               savedDidNotCompleteScholasticStanding.submittedDate.toISOString(),
             scholasticStandingChangeType:
               savedDidNotCompleteScholasticStanding.changeType,
+            reversalDate: null,
           },
           {
             scholasticStandingId: savedWithdrewScholasticStanding.id,
@@ -153,12 +147,12 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
             applicationNumber: application.applicationNumber,
             submittedDate:
               savedWithdrewScholasticStanding.submittedDate.toISOString(),
-            dateOfWithdrawal: new Date(
+            dateOfWithdrawal:
               savedWithdrewScholasticStanding.submittedData.dateOfWithdrawal,
-            ).toISOString(),
             scholasticStandingChangeType:
               savedWithdrewScholasticStanding.changeType,
             nonPunitiveFormSubmissionId: savedFormSubmissionItem.id,
+            reversalDate: null,
           },
           {
             scholasticStandingId: savedTransferScholasticStanding.id,
@@ -170,6 +164,16 @@ describe("StudentScholasticStandingsAESTController(e2e)-getScholasticStandings."
               savedTransferScholasticStanding.changeType,
             reversalDate:
               savedTransferScholasticStanding.reversalDate?.toISOString(),
+          },
+          {
+            scholasticStandingId: savedCompletedEarlyScholasticStanding.id,
+            applicationId: application.id,
+            applicationNumber: application.applicationNumber,
+            submittedDate:
+              savedCompletedEarlyScholasticStanding.submittedDate.toISOString(),
+            scholasticStandingChangeType:
+              savedCompletedEarlyScholasticStanding.changeType,
+            reversalDate: null,
           },
         ]),
       );

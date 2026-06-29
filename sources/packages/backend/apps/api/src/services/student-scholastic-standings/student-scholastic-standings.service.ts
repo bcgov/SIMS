@@ -652,26 +652,35 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   async getScholasticStandings(
     studentId: number,
   ): Promise<StudentScholasticStanding[]> {
-    return this.repo
-      .createQueryBuilder("studentScholasticStanding")
-      .select([
-        "studentScholasticStanding.id",
-        "studentScholasticStanding.submittedDate",
-        "studentScholasticStanding.changeType",
-        "studentScholasticStanding.reversalDate",
-        "studentScholasticStanding.submittedData",
-        "nonPunitiveFormSubmissionItem.id",
-        "application.id",
-        "application.applicationNumber",
-      ])
-      .innerJoin("studentScholasticStanding.application", "application")
-      .leftJoin(
-        "studentScholasticStanding.nonPunitiveFormSubmissionItem",
-        "nonPunitiveFormSubmissionItem",
-      )
-      .innerJoin("application.student", "student")
-      .where("student.id = :studentId", { studentId })
-      .orderBy("studentScholasticStanding.submittedDate", "DESC")
-      .getMany();
+    return this.repo.find({
+      select: {
+        id: true,
+        submittedDate: true,
+        changeType: true,
+        reversalDate: true,
+        submittedData: true,
+        nonPunitiveFormSubmissionItem: {
+          id: true,
+        },
+        application: {
+          id: true,
+          applicationNumber: true,
+        },
+      },
+      relations: {
+        application: true,
+        nonPunitiveFormSubmissionItem: true,
+      },
+      where: {
+        application: {
+          student: {
+            id: studentId,
+          },
+        },
+      },
+      order: {
+        submittedDate: "DESC",
+      },
+    });
   }
 }

@@ -43,7 +43,7 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { computed, ref } from "vue";
+import { computed, PropType, ref } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -94,7 +94,7 @@ export default {
       required: true,
     },
     backTarget: {
-      type: Object as () => BackTarget,
+      type: Object as PropType<BackTarget>,
       required: false,
       default: undefined,
     },

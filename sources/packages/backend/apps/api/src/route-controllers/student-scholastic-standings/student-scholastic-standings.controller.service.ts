@@ -133,9 +133,7 @@ export class ScholasticStandingControllerService {
       applicationId: scholasticStanding.application.id,
       applicationNumber: scholasticStanding.application.applicationNumber,
       submittedDate: scholasticStanding.submittedDate,
-      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal
-        ? new Date(scholasticStanding.submittedData.dateOfWithdrawal)
-        : undefined,
+      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal,
       scholasticStandingChangeType: scholasticStanding.changeType,
       reversalDate: scholasticStanding.reversalDate,
       nonPunitiveFormSubmissionId:
