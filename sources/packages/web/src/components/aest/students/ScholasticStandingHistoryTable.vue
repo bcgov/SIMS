@@ -46,12 +46,7 @@
             {{ dateOnlyLongString(item.submittedDate) }}
           </template>
           <template #[`item.dateOfWithdrawal`]="{ item }">
-            {{
-              conditionalEmptyStringFiller(
-                !!item.dateOfWithdrawal,
-                dateOnlyLongString(item.dateOfWithdrawal),
-              )
-            }}
+            {{ emptyStringFiller(dateOnlyLongString(item.dateOfWithdrawal)) }}
           </template>
           <template #[`item.scholasticStandingChangeType`]="{ item }">
             {{ getChangeTypeLabel(item.scholasticStandingChangeType!) }}
@@ -100,7 +95,7 @@ const props = defineProps<Props>();
 const { mobile: isMobile } = useDisplay();
 const router = useRouter();
 const snackBar = useSnackBar();
-const { dateOnlyLongString, conditionalEmptyStringFiller } = useFormatters();
+const { dateOnlyLongString, emptyStringFiller } = useFormatters();
 
 const isLoading = ref(false);
 const selectedFilter = ref<FilterType>("all");
@@ -137,11 +132,11 @@ const loadScholasticStandings = async () => {
   try {
     isLoading.value = true;
     scholasticStandings.value =
-      await ScholasticStandingService.shared.getScholasticStandings({
-        studentId: props.studentId,
-      });
+      await ScholasticStandingService.shared.getScholasticStandings(
+        props.studentId,
+      );
   } catch {
-    snackBar.error("Error loading scholastic history.");
+    snackBar.error("Error loading Scholastic History.");
   } finally {
     isLoading.value = false;
   }
