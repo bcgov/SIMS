@@ -46,6 +46,7 @@ export class InstitutionLocationStudentsController extends BaseController {
       offeringIntensity === OfferingIntensity.fullTime &&
       this.configService.allowBetaInstitutionsOnly;
     const locations = await this.locationService.getDesignatedLocations(
+      offeringIntensity,
       onlyBetaInstitutionLocations,
     );
     return locations.map((location) => ({

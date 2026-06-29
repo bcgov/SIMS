@@ -55,6 +55,7 @@ import {
   STUDY_DATE_OVERLAP_ERROR,
 } from "../../utilities";
 import {
+  ACTIVE_INSTITUTION_RESTRICTION,
   INSTITUTION_LOCATION_NOT_VALID,
   OFFERING_NOT_VALID,
 } from "../../constants";
@@ -266,6 +267,10 @@ export class ApplicationStudentsController extends BaseController {
           case INSTITUTION_LOCATION_NOT_VALID:
           case OFFERING_NOT_VALID:
             throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          case ACTIVE_INSTITUTION_RESTRICTION:
+            throw new ForbiddenException(
               new ApiProcessError(error.message, error.name),
             );
           case ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE:

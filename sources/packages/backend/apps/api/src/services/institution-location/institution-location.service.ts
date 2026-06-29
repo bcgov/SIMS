@@ -4,6 +4,7 @@ import {
   InstitutionLocation,
   User,
   RestrictionActionType,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import { DataSource, In, SelectQueryBuilder } from "typeorm";
 import { DesignationAgreementLocationService } from "../designation-agreement/designation-agreement-locations.service";
@@ -155,10 +156,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   /**
    * Gets all locations available and return just
    * a subset of available data.
+   * @param offeringIntensity application offering intensity to load designated locations for.
    * @param onlyBetaInstitutionLocations if true then return only beta institution locations.
    * @returns all locations.
    */
   async getDesignatedLocations(
+    offeringIntensity: OfferingIntensity,
     onlyBetaInstitutionLocations: boolean,
   ): Promise<Partial<InstitutionLocation>[]> {
     const designatedLocationsQuery = this.repo
@@ -170,21 +173,23 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
           .getExistsDesignatedLocation()
           .getSql()})`,
       )
-      .andWhere(
-        `NOT EXISTS(${this.restrictionSharedService
-          .getEffectiveInstitutionRestrictionsQuery()
-          .getSql()})`,
-      )
       .orderBy("location.name");
+    // Create the query to exclude locations that have restrictions that
+    // prevent applications from being created for them.
+    const restrictionActionType =
+      offeringIntensity === OfferingIntensity.fullTime
+        ? RestrictionActionType.StopFullTimeApplicationEligibility
+        : RestrictionActionType.StopPartTimeApplicationEligibility;
+    designatedLocationsQuery.andWhere(
+      `NOT EXISTS(${this.restrictionSharedService.getEffectiveInstitutionRestrictionsExistsQuery(
+        designatedLocationsQuery,
+        [restrictionActionType],
+      )})`,
+    );
     if (onlyBetaInstitutionLocations) {
       designatedLocationsQuery.andWhere("location.isBeta = true");
     }
-    return designatedLocationsQuery
-      .setParameter("actionTypes", [
-        RestrictionActionType.StopFullTimeApplicationEligibility,
-        RestrictionActionType.StopPartTimeApplicationEligibility,
-      ])
-      .getMany();
+    return designatedLocationsQuery.getMany();
   }
 
   /**

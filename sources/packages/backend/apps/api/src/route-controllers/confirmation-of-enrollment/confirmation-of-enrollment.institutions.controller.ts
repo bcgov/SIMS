@@ -177,9 +177,11 @@ export class ConfirmationOfEnrollmentInstitutionsController extends BaseControll
     const institutionREMITRestrictions =
       await this.restrictionSharedService.getEffectiveInstitutionRestrictions(
         applicationLocation.institution.id,
-        applicationProgram.id,
         applicationLocation.id,
-        { restrictionCode: RestrictionCode.REMIT },
+        {
+          programId: applicationProgram.id,
+          restrictionCode: RestrictionCode.REMIT,
+        },
       );
     const canRequestTuitionRemittance = !institutionREMITRestrictions.length;
     const hasOverawardBalancePromise =

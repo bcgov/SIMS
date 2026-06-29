@@ -59,18 +59,19 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
   /**
    * Get the effective institution restrictions for the given institution, program and location.
    * @param institutionId institution id.
-   * @param programId program id.
    * @param locationId location id.
    * @param options options to filter the restrictions.
+   * - `programId` program id. It may not be provided if the program is not available yet,
+   * for instance, during a PIR process.
    * - `restrictionCode` restriction code.
    * - `actionTypes` restriction action types.
    * @returns effective institution restrictions.
    */
   getEffectiveInstitutionRestrictions(
     institutionId: number,
-    programId: number,
     locationId: number,
     options?: {
+      programId?: number;
       restrictionCode?: RestrictionCode;
       actionTypes?: RestrictionActionType[];
     },
@@ -89,18 +90,20 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       })
       .andWhere(
         new Brackets((qb) => {
-          qb.where("institutionRestriction.program.id = :programId", {
-            programId,
-          }).orWhere("institutionRestriction.program.id IS NULL");
-        }),
-      )
-      .andWhere(
-        new Brackets((qb) => {
           qb.where("institutionRestriction.location.id = :locationId", {
             locationId,
           }).orWhere("institutionRestriction.location.id IS NULL");
         }),
       );
+    if (options?.programId) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("institutionRestriction.program.id = :programId", {
+            programId: options.programId,
+          }).orWhere("institutionRestriction.program.id IS NULL");
+        }),
+      );
+    }
     if (options?.restrictionCode) {
       query.andWhere("restriction.restrictionCode = :restrictionCode", {
         restrictionCode: options.restrictionCode,
@@ -114,8 +117,22 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     return query.getMany();
   }
 
-  getEffectiveInstitutionRestrictionsQuery(): SelectQueryBuilder<InstitutionRestriction> {
-    return this.institutionRestrictionRepo
+  /**
+   * Creates a query to be used to determine if there are any effective institution
+   * restrictions for the given institution and location.
+   * The method also injects the required subquery parameters into the parent query builder.
+   * This allows callers to consume only the SQL fragment when composing subqueries.
+   * @param parentQueryBuilder parent query builder that will execute the subquery.
+   * @param actionTypes restriction action types to filter the restrictions.
+   * @returns the EXISTS subquery SQL.
+   */
+  getEffectiveInstitutionRestrictionsExistsQuery(
+    parentQueryBuilder: SelectQueryBuilder<unknown>,
+    actionTypes: RestrictionActionType[],
+  ): string {
+    const actionTypesParam =
+      "effectiveInstitutionRestrictionsExistsActionTypes";
+    const existsQuery = this.institutionRestrictionRepo
       .createQueryBuilder("institutionRestriction")
       .select("1")
       .innerJoin("institutionRestriction.restriction", "restriction")
@@ -128,7 +145,11 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
           );
         }),
       )
-      .andWhere("restriction.actionType @> :actionTypes");
+      .andWhere(`restriction.actionType @> :${actionTypesParam}`)
+      .limit(1)
+      .getQuery();
+    parentQueryBuilder.setParameter(actionTypesParam, actionTypes);
+    return existsQuery;
   }
 
   /**
@@ -173,9 +194,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     const effectiveInstitutionRestrictions =
       await this.getEffectiveInstitutionRestrictions(
         offering.institutionLocation.institution.id,
-        offering.educationProgram.id,
         offering.institutionLocation.id,
-        { actionTypes: [action] },
+        { programId: offering.educationProgram.id, actionTypes: [action] },
       );
     if (effectiveInstitutionRestrictions.length) {
       return {
