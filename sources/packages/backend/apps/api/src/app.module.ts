@@ -24,6 +24,7 @@ import {
   SystemLookupConfigurationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
+import { ClientRouteThrottlerGuard } from "./auth/guards";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
@@ -44,11 +45,10 @@ import { AppExternalModule } from "./app.external.module";
 import { AccessLoggerMiddleware } from "./middlewares";
 import { TerminusModule } from "@nestjs/terminus";
 import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.module";
-import { json, Request } from "express";
-import { getClientIPFromRequest } from "./utilities";
+import { json } from "express";
 import { JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
-import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-configuration";
 import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.models";
 
@@ -97,17 +97,8 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => [
-        {
-          ttl: config.throttleTime,
-          limit: config.throttleLimit,
-          getTracker: async (req: Record<string, unknown>): Promise<string> => {
-            return (
-              getClientIPFromRequest(req as unknown as Request) || "unknown-ip"
-            );
-          },
-        },
-      ],
+      useFactory: (config: ConfigService) =>
+        ClientRouteThrottlerGuard.createThrottlerOptions(config),
     }),
   ],
   controllers: [
@@ -131,7 +122,7 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
     },
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: ClientRouteThrottlerGuard,
     },
   ],
 })

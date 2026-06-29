@@ -5,10 +5,15 @@ import { QueueConsumersModule } from "./queue-consumers.module";
 import { LoggerService } from "@sims/utilities/logger";
 import { SystemUsersService } from "@sims/services";
 import cookieParser from "cookie-parser";
+import { NestExpressApplication } from "@nestjs/platform-express";
 
 (async () => {
-  const app = await NestFactory.create(QueueConsumersModule);
-  const config = app.get<ConfigService>(ConfigService);
+  const app =
+    await NestFactory.create<NestExpressApplication>(QueueConsumersModule);
+  const config = app.get<ConfigService>(ConfigService); 
+
+  // Trust upstream proxy headers to resolve client IP addresses correctly.
+  app.set("trust proxy", 1);
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);

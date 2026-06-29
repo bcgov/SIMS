@@ -1,15 +1,21 @@
 import { Controller, Get } from "@nestjs/common";
 import { UserToken } from "../../../auth/decorators/userToken.decorator";
 import { IUserToken } from "../../../auth/userToken.interface";
-import { Public } from "../../../auth/decorators/public.decorator";
 import {
+  Public,
   Roles,
   Groups,
   RequiresStudentAccount,
   RequiresUserAccount,
   HasLocationAccess,
+  AllowAuthorizedParty,
 } from "../../../auth/decorators";
-import { Role, UserGroups, InstitutionUserTypes } from "../../../auth";
+import {
+  Role,
+  UserGroups,
+  InstitutionUserTypes,
+  AuthorizedParties,
+} from "../../../auth";
 
 /**
  * Controller dedicated to test the functionalities around the authentication layer.
@@ -142,6 +148,21 @@ export class AuthTestController {
   /**
    * Test route used exclusively to test the Throttler Guard limits (failure case)
    * it avoids tests failing due to exceeding the rate limits by other requests.
+   */
+  @Get("/throttle-test/failure")
+  throttleTest(): void {
+    return;
+  }
+}
+
+/**
+ * Controller dedicated to test throttling for AEST-prefixed routes.
+ */
+@AllowAuthorizedParty(AuthorizedParties.aest)
+@Controller("aest/auth-test")
+export class AESTAuthTestController {
+  /**
+   * Test route used exclusively to test AEST throttler limits.
    */
   @Get("/throttle-test/failure")
   throttleTest(): void {

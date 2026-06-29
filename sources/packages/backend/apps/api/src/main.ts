@@ -20,10 +20,7 @@ async function bootstrap() {
   });
 
   // Trust upstream proxy headers to resolve client IP addresses correctly.
-  const trustProxy = process.env.TRUST_PROXY;
-  if (trustProxy?.toLowerCase() === "true") {
-    app.set("trust proxy", 1);
-  }
+  app.set("trust proxy", 1);
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);

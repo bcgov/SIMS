@@ -16,6 +16,8 @@ import {
   S3Configuration,
   QueueDashboardAccess,
   T4AIntegrationConfig,
+  ThrottleConfig,
+  ThrottleSettings,
 } from "./config.models";
 
 @Injectable()
@@ -511,24 +513,94 @@ export class ConfigService {
   }
 
   /**
-   * Gets the throttle time in milliseconds.
-   * @returns throttle time in milliseconds.
+   * Gets all throttle settings for the API.
+   * @returns throttle settings grouped by module route.
    */
-  get throttleTime(): number {
+  get throttleConfig(): ThrottleConfig {
     return this.getCachedConfig(
-      "throttleTimeConfig",
-      +process.env.THROTTLE_TIME || 100,
+      "throttleConfigValue",
+      this.createThrottleConfig(),
     );
   }
 
   /**
-   * Gets the throttle requests limit.
-   * @returns throttle requests limit.
+   * Gets a throttle setting from an environment variable or falls back to a default value.
+   * @param envVariableName throttle environment variable name.
+   * @param defaultValue default value when no environment variable is provided.
+   * @returns throttle setting value.
    */
-  get throttleLimit(): number {
-    return this.getCachedConfig(
-      "throttleLimitConfig",
-      +process.env.THROTTLE_LIMIT || 30,
-    );
+  private getThrottleValueOrDefault(
+    envVariableName: string,
+    defaultValue: number,
+  ): number {
+    const envValue = Number(process.env[envVariableName]);
+    if (Number.isNaN(envValue)) {
+      return defaultValue;
+    }
+    return envValue;
+  }
+
+  /**
+   * Creates throttle settings grouped by API module route.
+   * @returns throttle settings grouped by route.
+   */
+  private createThrottleConfig(): ThrottleConfig {
+    const defaultThrottle = this.getThrottleSettings("THROTTLE_TIME", "THROTTLE_LIMIT", {
+      time: 100,
+      limit: 30,
+    });
+
+    return {
+      default: defaultThrottle,
+      aest: this.getThrottleSettings(
+        "AEST_THROTTLE_TIME",
+        "AEST_THROTTLE_LIMIT",
+        defaultThrottle,
+      ),
+      institutions: this.getThrottleSettings(
+        "INSTITUTIONS_THROTTLE_TIME",
+        "INSTITUTIONS_THROTTLE_LIMIT",
+        defaultThrottle,
+      ),
+      students: this.getThrottleSettings(
+        "STUDENTS_THROTTLE_TIME",
+        "STUDENTS_THROTTLE_LIMIT",
+        defaultThrottle,
+      ),
+      supportingUsers: this.getThrottleSettings(
+        "SUPPORTING_USERS_THROTTLE_TIME",
+        "SUPPORTING_USERS_THROTTLE_LIMIT",
+        defaultThrottle,
+      ),
+      external: this.getThrottleSettings(
+        "EXTERNAL_THROTTLE_TIME",
+        "EXTERNAL_THROTTLE_LIMIT",
+        defaultThrottle,
+      ),
+    };
+  }
+
+  /**
+   * Gets a pair of throttle settings from environment variables.
+   * @param timeEnvVariableName throttle time environment variable name.
+   * @param limitEnvVariableName throttle limit environment variable name.
+   * @param defaultValues default values when no environment variables are provided.
+   * @returns throttle settings pair.
+   */
+  private getThrottleSettings(
+    timeEnvVariableName: string,
+    limitEnvVariableName: string,
+    defaultValues: ThrottleSettings,
+  ): ThrottleSettings {
+    return {
+      time: this.getThrottleValueOrDefault(
+        timeEnvVariableName,
+        defaultValues.time,
+      ),
+      limit: this.getThrottleValueOrDefault(
+        limitEnvVariableName,
+        defaultValues.limit,
+      ),
+    };
   }
 }

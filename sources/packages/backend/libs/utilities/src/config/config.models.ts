@@ -151,3 +151,23 @@ export interface QueueDashboardAccess {
   tokenExpirationSeconds: number;
   baseURL: string;
 }
+
+/**
+ * Represents one throttle settings pair.
+ */
+export interface ThrottleSettings {
+  time: number;
+  limit: number;
+}
+
+/**
+ * Represents all throttle settings available for the API.
+ */
+export interface ThrottleConfig {
+  default: ThrottleSettings;
+  aest: ThrottleSettings;
+  institutions: ThrottleSettings;
+  students: ThrottleSettings;
+  supportingUsers: ThrottleSettings;
+  external: ThrottleSettings;
+}
