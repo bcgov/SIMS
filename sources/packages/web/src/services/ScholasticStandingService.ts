@@ -75,17 +75,14 @@ export class ScholasticStandingService {
   }
 
   /**
-   * Get Scholastic Standing details for a student.
-   * @param options options for scholastic standing details.
-   * - `studentId` student id to retrieve scholastic standing details.
-   * @returns Scholastic Standing details.
+   * Get scholastic standing details for a student.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns scholastic standing details.
    */
-  async getScholasticStandings(options?: {
-    studentId?: number;
-  }): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
-    return ApiClient.ScholasticStandingApi.getScholasticStandings({
-      studentId: options?.studentId,
-    });
+  async getScholasticStandings(
+    studentId: number,
+  ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
+    return ApiClient.ScholasticStandingApi.getScholasticStandings(studentId);
   }
 
   /**

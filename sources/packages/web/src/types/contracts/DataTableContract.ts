@@ -645,7 +645,7 @@ export const StudentRestrictionsHeaders = [
 ];
 
 /**
- * Scholastic Standing history headers.
+ * Scholastic Standing History header.
  */
 export const ScholasticStandingHistoryHeaders = [
   { title: "Application", sortable: false, key: "applicationNumber" },
@@ -653,7 +653,7 @@ export const ScholasticStandingHistoryHeaders = [
   { title: "Withdrawal date", sortable: false, key: "dateOfWithdrawal" },
   { title: "Type", sortable: false, key: "scholasticStandingChangeType" },
   { title: "Tags", sortable: false, key: "tags" },
-  { title: "Actions", sortable: false, key: "action" },
+  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

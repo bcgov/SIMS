@@ -645,9 +645,9 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
   }
 
   /**
-   * Get scholastic standing history for a student.
-   * @param studentId student id to retrieve scholastic standing history.
-   * @returns scholastic standing history for the student.
+   * Get scholastic standing details for a student.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns scholastic standing details for the student.
    */
   async getScholasticStandings(
     studentId: number,

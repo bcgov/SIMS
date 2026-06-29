@@ -45,20 +45,15 @@ export class ScholasticStandingApi extends HttpBaseClient {
   }
 
   /**
-   * Get Scholastic Standing details for a student.
-   * @param options options for scholastic standing details.
-   * - `studentId` student id to retrieve scholastic standing details.
-   * @returns Scholastic Standing details.
+   * Get scholastic standing details for a student.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns scholastic standing details.
    */
-  async getScholasticStandings(options?: {
-    studentId?: number;
-  }): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
-    let url = "scholastic-standing";
-    if (options?.studentId) {
-      url += `/student/${options.studentId}`;
-    }
+  async getScholasticStandings(
+    studentId: number,
+  ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
     return this.getCall<ScholasticStandingDetailsAPIOutDTO[]>(
-      this.addClientRoot(url),
+      this.addClientRoot(`scholastic-standing/student/${studentId}`),
     );
   }
 
