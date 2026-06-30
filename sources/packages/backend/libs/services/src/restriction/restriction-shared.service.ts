@@ -106,6 +106,9 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
           }).orWhere("institutionRestriction.program.id IS NULL");
         }),
       );
+    } else {
+      // If the program is not provided, then only restrictions that are not specific to a program are considered.
+      query.andWhere("institutionRestriction.program.id IS NULL");
     }
     if (options?.restrictionCode) {
       query.andWhere("restriction.restrictionCode = :restrictionCode", {
@@ -125,7 +128,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
 
   /**
    * Creates a query to be used to determine if there are any effective institution
-   * restrictions for the given institution and location.
+   * restrictions for the given institution and location (program specific not considered).
    * The method also injects the required subquery parameters into the parent query builder.
    * This allows callers to consume only the SQL fragment when composing subqueries.
    * @param parentQueryBuilder parent query builder that will execute the subquery.
@@ -151,6 +154,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
           );
         }),
       )
+      .andWhere("institutionRestriction.program.id IS NULL")
       .andWhere(`restriction.actionType @> :${actionTypesParam}`)
       .limit(1)
       .getQuery();

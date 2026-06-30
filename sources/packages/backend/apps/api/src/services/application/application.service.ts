@@ -401,7 +401,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param locationId location ID.
    * @param offeringIntensity offering intensity.
    */
-  async institutionRestrictionCheck(
+  private async institutionRestrictionCheck(
     institutionId: number,
     locationId: number,
     offeringIntensity: OfferingIntensity,

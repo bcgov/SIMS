@@ -104,7 +104,7 @@ export class InstitutionService {
   }
 
   async getLocationsOptionsList(
-    offeringIntensity?: OfferingIntensity,
+    offeringIntensity: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.InstitutionLocation.getOptionsList(offeringIntensity);
   }

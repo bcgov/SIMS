@@ -51,7 +51,7 @@ export function useFormioDropdownLoader() {
   const loadLocations = async (
     form: any,
     dropdownName: string,
-    offeringIntensity?: OfferingIntensity,
+    offeringIntensity: OfferingIntensity,
   ) => {
     return loadDropdown(
       form,
