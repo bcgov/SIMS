@@ -173,7 +173,8 @@ export default defineComponent({
             offeringIntensity,
           );
           const selectedLocationId = getSelectedId(formInstance);
-
+          // The location may be selected and present in the form but it is no longer available to be selected, for instance,
+          // an institution restriction may have been applied and the location is no longer available to the student.
           if (selectedLocationId) {
             // when isReadOnly.value is true, then consider
             // both active and inactive program year.
@@ -184,6 +185,20 @@ export default defineComponent({
               props.programYearId,
               props.isReadOnly,
             );
+          } else {
+            // If the form is editable and no location is selected, then reset the programs and offerings dropdowns.
+            formioUtils.setComponentValue(
+              formInstance,
+              PROGRAMS_DROPDOWN_KEY,
+              "",
+            );
+            formioUtils.setComponentValue(
+              formInstance,
+              OFFERINGS_DROPDOWN_KEY,
+              "",
+            );
+            // No location is selected, so no need to load program description and offerings for location.
+            return;
           }
           const selectedProgramId = formioUtils.getComponentValueByKey(
             formInstance,
