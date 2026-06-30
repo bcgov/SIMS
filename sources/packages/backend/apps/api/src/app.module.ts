@@ -37,7 +37,7 @@ import {
   ZeebeModule,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
-import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
@@ -94,12 +94,15 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
         module: AppExternalModule,
       },
     ]),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) =>
-        ClientRouteThrottlerGuard.createThrottlerOptions(config),
-    }),
+    ThrottlerModule.forRoot([
+      {
+        name: "default",
+        // Throttler settings ttl and limit are set to 0 as placeholders
+        // These values are overridden at runtime based on the controller in ClientRouteThrottlerGuard.
+        ttl: 0,
+        limit: 0,
+      },
+    ]),
   ],
   controllers: [
     HealthController,

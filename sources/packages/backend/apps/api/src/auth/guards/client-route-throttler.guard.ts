@@ -38,29 +38,9 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
     @InjectThrottlerOptions() options: ThrottlerModuleOptions,
     @InjectThrottlerStorage() storageService: ThrottlerStorage,
     protected readonly reflector: Reflector,
-    private readonly appConfig: ConfigService,
+    protected readonly appConfig: ConfigService,
   ) {
     super(options, storageService, reflector);
-  }
-
-  /**
-   * Creates throttler options with a single default throttler. The effective
-   * `ttl` and `limit` for each request are resolved per controller in
-   * `handleRequest`; the values defined here act as the baseline default policy.
-   * @param config app configuration service.
-   * @returns throttler module options.
-   */
-  static createThrottlerOptions(config: ConfigService): ThrottlerModuleOptions {
-    const { throttleConfig } = config;
-    return {
-      throttlers: [
-        {
-          name: "default",
-          ttl: throttleConfig.default.time,
-          limit: throttleConfig.default.limit,
-        },
-      ],
-    };
   }
 
   /**
