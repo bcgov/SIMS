@@ -43,13 +43,13 @@ export class InstitutionLocationApi extends HttpBaseClient {
   }
 
   public async getOptionsList(
-    offeringIntensity: OfferingIntensity,
+    offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
-    return this.getCall<OptionItemAPIOutDTO[]>(
-      this.addClientRoot(
-        `location/options-list?offeringIntensity=${offeringIntensity}`,
-      ),
-    );
+    let url = "location/options-list";
+    if (offeringIntensity) {
+      url = `${url}?offeringIntensity=${offeringIntensity}`;
+    }
+    return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
   }
 
   public async getActiveApplication(
