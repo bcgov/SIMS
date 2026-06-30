@@ -49,7 +49,7 @@
         </body-header>
       </template>
       <content-group>
-        <form-submission-items
+        <FormSubmissionItems
           :submission-items="formSubmissionItems"
           :application-id="applicationId"
           :loading="loadingSubmissionForms"
@@ -66,7 +66,7 @@
               :disable-primary-button="!allFormsLoaded"
             ></footer-buttons>
           </template>
-        </form-submission-items>
+        </FormSubmissionItems>
       </content-group>
     </body-header-container>
   </student-page-container>
