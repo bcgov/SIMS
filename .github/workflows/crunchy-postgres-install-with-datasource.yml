@@ -39,7 +39,7 @@ jobs:
                   echo "::error::You selected 'install-from-datasource' but did not provide a 'datasource_s3_path_name'. Please run the workflow again and provide the S3 path."
                   exit 1
             - name: Checkout Target Branch
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                   ref: ${{ github.ref_name }}
             - name: Install CLI tools from OpenShift Mirror
