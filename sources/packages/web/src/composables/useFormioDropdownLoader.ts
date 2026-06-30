@@ -33,6 +33,18 @@ export function useFormioDropdownLoader() {
         label: item.description,
       }),
     );
+    // If the current value is not in the options, reset the value to empty.
+    // Not validating the current value against the new options will allow the UI to
+    // display the value (usually the ID) of the option instead of a user-friendly label.
+    const currentValue = dropdown.getValue();
+    if (
+      currentValue !== undefined &&
+      currentValue !== null &&
+      currentValue !== "" &&
+      !optionsItems.some((item) => String(item.id) === String(currentValue))
+    ) {
+      dropdown.setValue("");
+    }
     dropdown.redraw();
   };
 

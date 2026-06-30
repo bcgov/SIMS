@@ -31,6 +31,7 @@ import {
   InstitutionLocation,
   StudentAppeal,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
+  RestrictionActionType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -66,11 +67,13 @@ import {
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   EDUCATION_PROGRAM_IS_EXPIRED,
+  ACTIVE_INSTITUTION_RESTRICTION,
 } from "../../constants";
 import {
   SequenceControlService,
   StudentRestrictionSharedService,
   RestrictionCode,
+  RestrictionSharedService,
 } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import {
@@ -113,6 +116,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly notificationService: NotificationService,
     private readonly studentService: StudentService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
+    private readonly restrictionSharedService: RestrictionSharedService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -180,6 +184,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         INSTITUTION_LOCATION_NOT_VALID,
       );
     }
+    // Validate possible institution restrictions.
+    await this.institutionRestrictionCheck(
+      institutionLocation.institution.id,
+      institutionLocation.id,
+      application.offeringIntensity,
+    );
     // Validate beta institution location only if the offering intensity is full-time.
     if (application.offeringIntensity === OfferingIntensity.fullTime) {
       this.validateBetaInstitutionLocation(institutionLocation.isBeta);
@@ -380,6 +390,40 @@ export class ApplicationService extends RecordDataModelService<Application> {
           transactionalEntityManager,
         );
       await transactionalEntityManager.save(restriction);
+    }
+  }
+
+  /**
+   * Check for existing restrictions at the institution and/or location level.
+   * Please note, specific program level restrictions are not checked at this level
+   * because they are also not checked at the PIR completion time.
+   * @param institutionId institution ID.
+   * @param locationId location ID.
+   * @param offeringIntensity offering intensity.
+   */
+  private async institutionRestrictionCheck(
+    institutionId: number,
+    locationId: number,
+    offeringIntensity: OfferingIntensity,
+  ): Promise<void> {
+    const stopApplicationEligibilityAction =
+      offeringIntensity === OfferingIntensity.fullTime
+        ? RestrictionActionType.StopFullTimeApplicationEligibility
+        : RestrictionActionType.StopPartTimeApplicationEligibility;
+    const institutionRestriction =
+      await this.restrictionSharedService.getEffectiveInstitutionRestrictions(
+        institutionId,
+        locationId,
+        {
+          actionTypes: [stopApplicationEligibilityAction],
+          limitOne: true,
+        },
+      );
+    if (institutionRestriction.length) {
+      throw new CustomNamedError(
+        "The application cannot be submitted at this time because the institution associated with your application is currently restricted.",
+        ACTIVE_INSTITUTION_RESTRICTION,
+      );
     }
   }
 

@@ -7,7 +7,13 @@ import {
   Restriction,
   RestrictionActionType,
 } from "@sims/sims-db";
-import { Brackets, DataSource, EntityManager, Repository } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  EntityManager,
+  Repository,
+  SelectQueryBuilder,
+} from "typeorm";
 import {
   AcceptAssessmentRestrictionsEvaluationResult,
   RestrictionCode,
@@ -53,20 +59,24 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
   /**
    * Get the effective institution restrictions for the given institution, program and location.
    * @param institutionId institution id.
-   * @param programId program id.
    * @param locationId location id.
    * @param options options to filter the restrictions.
+   * - `programId` program id. It may not be provided if the program is not available yet,
+   * for instance, during a PIR process.
    * - `restrictionCode` restriction code.
    * - `actionTypes` restriction action types.
+   * - `limitOne` if true, the query will limit the result to one restriction only.
+   * Useful to act similar to an existence check, without the need to fetch all restrictions.
    * @returns effective institution restrictions.
    */
   getEffectiveInstitutionRestrictions(
     institutionId: number,
-    programId: number,
     locationId: number,
     options?: {
+      programId?: number;
       restrictionCode?: RestrictionCode;
       actionTypes?: RestrictionActionType[];
+      limitOne?: boolean;
     },
   ): Promise<InstitutionRestriction[]> {
     const query = this.institutionRestrictionRepo
@@ -83,18 +93,23 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       })
       .andWhere(
         new Brackets((qb) => {
-          qb.where("institutionRestriction.program.id = :programId", {
-            programId,
-          }).orWhere("institutionRestriction.program.id IS NULL");
-        }),
-      )
-      .andWhere(
-        new Brackets((qb) => {
           qb.where("institutionRestriction.location.id = :locationId", {
             locationId,
           }).orWhere("institutionRestriction.location.id IS NULL");
         }),
       );
+    if (options?.programId) {
+      query.andWhere(
+        new Brackets((qb) => {
+          qb.where("institutionRestriction.program.id = :programId", {
+            programId: options.programId,
+          }).orWhere("institutionRestriction.program.id IS NULL");
+        }),
+      );
+    } else {
+      // If the program is not provided, then only restrictions that are not specific to a program are considered.
+      query.andWhere("institutionRestriction.program.id IS NULL");
+    }
     if (options?.restrictionCode) {
       query.andWhere("restriction.restrictionCode = :restrictionCode", {
         restrictionCode: options.restrictionCode,
@@ -105,7 +120,46 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
         actionTypes: options.actionTypes,
       });
     }
+    if (options?.limitOne) {
+      query.limit(1);
+    }
     return query.getMany();
+  }
+
+  /**
+   * Creates a query to be used to determine if there are any effective institution
+   * restrictions for the given institution and location (program specific not considered).
+   * The method also injects the required subquery parameters into the parent query builder.
+   * This allows callers to consume only the SQL fragment when composing subqueries.
+   * @param parentQueryBuilder parent query builder that will execute the subquery.
+   * @param actionTypes restriction action types to filter the restrictions.
+   * @returns the EXISTS subquery SQL.
+   */
+  getEffectiveInstitutionRestrictionsExistsQuery(
+    parentQueryBuilder: SelectQueryBuilder<unknown>,
+    actionTypes: RestrictionActionType[],
+  ): string {
+    const actionTypesParam =
+      "effectiveInstitutionRestrictionsExistsActionTypes";
+    const existsQuery = this.institutionRestrictionRepo
+      .createQueryBuilder("institutionRestriction")
+      .select("1")
+      .innerJoin("institutionRestriction.restriction", "restriction")
+      .where("institutionRestriction.isActive = TRUE")
+      .andWhere("institutionRestriction.institution.id = institution.id")
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where("institutionRestriction.location.id = location.id").orWhere(
+            "institutionRestriction.location.id IS NULL",
+          );
+        }),
+      )
+      .andWhere("institutionRestriction.program.id IS NULL")
+      .andWhere(`restriction.actionType @> :${actionTypesParam}`)
+      .limit(1)
+      .getQuery();
+    parentQueryBuilder.setParameter(actionTypesParam, actionTypes);
+    return existsQuery;
   }
 
   /**
@@ -150,9 +204,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     const effectiveInstitutionRestrictions =
       await this.getEffectiveInstitutionRestrictions(
         offering.institutionLocation.institution.id,
-        offering.educationProgram.id,
         offering.institutionLocation.id,
-        { actionTypes: [action] },
+        { programId: offering.educationProgram.id, actionTypes: [action] },
       );
     if (effectiveInstitutionRestrictions.length) {
       return {
