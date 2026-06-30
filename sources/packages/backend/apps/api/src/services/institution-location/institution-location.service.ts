@@ -173,6 +173,10 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       .orderBy("location.name");
     // Create the query to exclude locations that have restrictions that
     // prevent applications from being created for them.
+    // Currently the actions are specifically for full-time and part-time application eligibility,
+    // but this is reserved for future use. It is not possible to filter location based on the
+    // offering intensity, hence the query will exclude locations that have any of the actions that
+    // prevent applications from being created.
     designatedLocationsQuery.andWhere(
       `NOT EXISTS(${this.restrictionSharedService.getEffectiveInstitutionRestrictionsExistsQuery(
         designatedLocationsQuery,
