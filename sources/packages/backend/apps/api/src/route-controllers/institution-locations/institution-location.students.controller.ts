@@ -38,7 +38,7 @@ export class InstitutionLocationStudentsController extends BaseController {
   @Get("options-list")
   async getOptionsList(
     @Query("offeringIntensity", new ParseEnumQueryPipe(OfferingIntensity))
-    offeringIntensity: OfferingIntensity,
+    offeringIntensity?: OfferingIntensity,
   ): Promise<OptionItemAPIOutDTO[]> {
     // For the context of full-time applications, allow only beta institution locations
     // if the beta flag is enabled.
