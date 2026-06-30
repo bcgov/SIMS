@@ -545,17 +545,28 @@ export class ConfigService {
    * @returns throttle settings grouped by route.
    */
   private createThrottleConfig(): ThrottleConfig {
-    const defaultThrottle = this.getThrottleSettings("THROTTLE_TIME", "THROTTLE_LIMIT", {
-      time: 100,
-      limit: 30,
-    });
+    const defaultThrottle = this.getThrottleSettings(
+      "THROTTLE_TIME",
+      "THROTTLE_LIMIT",
+      {
+        time: 100,
+        limit: 30,
+      },
+    );
+    // AEST and shared (multi-client, high-traffic) endpoints are more permissive
+    // by default, allowing double the default request limit within the same time
+    // window when no specific environment variables are provided.
+    const permissiveThrottle: ThrottleSettings = {
+      time: defaultThrottle.time,
+      limit: defaultThrottle.limit * 2,
+    };
 
     return {
       default: defaultThrottle,
       aest: this.getThrottleSettings(
         "AEST_THROTTLE_TIME",
         "AEST_THROTTLE_LIMIT",
-        defaultThrottle,
+        permissiveThrottle,
       ),
       institutions: this.getThrottleSettings(
         "INSTITUTIONS_THROTTLE_TIME",
@@ -576,6 +587,11 @@ export class ConfigService {
         "EXTERNAL_THROTTLE_TIME",
         "EXTERNAL_THROTTLE_LIMIT",
         defaultThrottle,
+      ),
+      shared: this.getThrottleSettings(
+        "SHARED_THROTTLE_TIME",
+        "SHARED_THROTTLE_LIMIT",
+        permissiveThrottle,
       ),
     };
   }

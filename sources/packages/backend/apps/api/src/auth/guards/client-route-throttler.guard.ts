@@ -1,129 +1,85 @@
 import { ExecutionContext, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import {
-  ThrottlerGuard,
-  ThrottlerModuleOptions,
-} from "@nestjs/throttler";
-import { ConfigService } from "@sims/utilities/config";
-import { ClientTypeBaseRoute } from "../../types";
+import { ThrottlerGuard, ThrottlerModuleOptions } from "@nestjs/throttler";
+import { ConfigService, ThrottleSettings } from "@sims/utilities/config";
 import { AuthorizedParties } from "../authorized-parties.enum";
 import { AUTHORIZED_PARTY_KEY } from "../decorators/authorized-party.decorator";
 
 /**
- * Throttler guard configuration for route-level client modules.
+ * Throttler guard for route-level client modules.
  *
- * It allows each client module to have independent throttle values while
- * preserving a default throttle policy for non-client routes.
+ * The throttler runs before the authentication layer, so the decoded token is
+ * not available at this point. To support independent rate limits per client
+ * type the configuration is resolved from the controller's @AllowAuthorizedParty
+ * decorator instead of the token.
+ *
+ * A single throttler is registered with `ttl` and `limit` resolved at runtime,
+ * collapsing what would otherwise be multiple throttlers each performing their
+ * own reflection check on every request. Controllers without the decorator fall
+ * back to the default throttle policy.
  */
 @Injectable()
 export class ClientRouteThrottlerGuard extends ThrottlerGuard {
   /**
-   * Creates throttler options to allow independent limits per client route.
+   * Creates throttler options with a single throttler whose limits are resolved
+   * per request based on the controller's @AllowAuthorizedParty decorator.
    * @param config app configuration service.
    * @returns throttler module options.
    */
   static createThrottlerOptions(config: ConfigService): ThrottlerModuleOptions {
     const { throttleConfig } = config;
+    const reflector = new Reflector();
+    /**
+     * Resolves the throttle configuration for the current request based on the
+     * controller's authorized parties.
+     *
+     * Since the throttler runs before authentication, the actual authorized
+     * party (azp) of the request is unknown. A client-specific limit can only be
+     * applied with certainty when the controller declares a single authorized
+     * party. Controllers that allow multiple authorized parties are shared,
+     * high-traffic endpoints accessed by different client types, so they use a
+     * dedicated shared policy. Controllers without the decorator fall back to the
+     * generic default policy.
+     */
+    const resolveThrottleConfig = (
+      context: ExecutionContext,
+    ): ThrottleSettings => {
+      const authorizedParties = reflector.get<AuthorizedParties[]>(
+        AUTHORIZED_PARTY_KEY,
+        context.getClass(),
+      );
+      if (authorizedParties?.length > 1) {
+        // Multiple authorized parties are allowed, so the controller is shared and uses the shared throttle policy.
+        // routes include: /dynamic-form-configuration/*, /dynamic-form/*, /system-lookup-configuration/*
+        return throttleConfig.shared;
+      }
+      switch (authorizedParties?.at(0)) {
+        case AuthorizedParties.aest:
+          return throttleConfig.aest;
+        case AuthorizedParties.institution:
+          return throttleConfig.institutions;
+        case AuthorizedParties.student:
+          return throttleConfig.students;
+        case AuthorizedParties.supportingUsers:
+          return throttleConfig.supportingUsers;
+        case AuthorizedParties.external:
+          return throttleConfig.external;
+        default:
+          // No authorized party is declared, so the controller uses the default throttle policy.
+          // routes include: /config
+          return throttleConfig.default;
+      }
+    };
     return {
       throttlers: [
         {
-          // Routes affected: controllers decorated with @AllowAuthorizedParty(AuthorizedParties.aest).
-          name: "aest",
-          ttl: throttleConfig.aest.time,
-          limit: throttleConfig.aest.limit,
-          skipIf: (context: ExecutionContext): boolean =>
-            ClientTypeBaseRoute.AEST !== this.getControllerClientRoute(context),
-        },
-        {
-          // Routes affected: controllers decorated with @AllowAuthorizedParty(AuthorizedParties.institution).
-          name: "institutions",
-          ttl: throttleConfig.institutions.time,
-          limit: throttleConfig.institutions.limit,
-          skipIf: (context: ExecutionContext): boolean =>
-            ClientTypeBaseRoute.Institution !== this.getControllerClientRoute(context),
-        },
-        {
-          // Routes affected: controllers decorated with @AllowAuthorizedParty(AuthorizedParties.student).
-          name: "students",
-          ttl: throttleConfig.students.time,
-          limit: throttleConfig.students.limit,
-          skipIf: (context: ExecutionContext): boolean =>
-            ClientTypeBaseRoute.Student !== this.getControllerClientRoute(context),
-        },
-        {
-          // Routes affected: controllers decorated with @AllowAuthorizedParty(AuthorizedParties.supportingUsers).
-          name: "supportingUsers",
-          ttl: throttleConfig.supportingUsers.time,
-          limit: throttleConfig.supportingUsers.limit,
-          skipIf: (context: ExecutionContext): boolean =>
-            ClientTypeBaseRoute.SupportingUser !== this.getControllerClientRoute(context),
-        },
-        {
-          // Routes affected: controllers decorated with @AllowAuthorizedParty(AuthorizedParties.external).
-          name: "external",
-          ttl: throttleConfig.external.time,
-          limit: throttleConfig.external.limit,
-          skipIf: (context: ExecutionContext): boolean =>
-            ClientTypeBaseRoute.External !== this.getControllerClientRoute(context),
-        },
-        {
-          // Routes affected: all controllers without @AllowAuthorizedParty decorator (for example, /api/config, /api/audit, /api/dynamic-form/*, and /api/system-lookup-configuration/*).
           name: "default",
-          ttl: throttleConfig.default.time,
-          limit: throttleConfig.default.limit,
-          skipIf: (context: ExecutionContext): boolean =>
-            this.getControllerClientRoute(context) !== undefined,
+          ttl: (context: ExecutionContext) =>
+            resolveThrottleConfig(context).time,
+          limit: (context: ExecutionContext) =>
+            resolveThrottleConfig(context).limit,
         },
       ],
     };
-  }
-
-  /**
-   * Gets the client route assigned to the controller handling the request
-   * based on the @AllowAuthorizedParty decorator metadata.
-   * @param context request execution context.
-   * @returns client route or undefined when controller has no @AllowAuthorizedParty decorator.
-   */
-  private static getControllerClientRoute(
-    context: ExecutionContext,
-  ): ClientTypeBaseRoute | undefined {
-    const controller = context.getClass();
-    const reflector = new Reflector();
-    const authorizedParties = reflector.get<AuthorizedParties[]>(
-      AUTHORIZED_PARTY_KEY,
-      controller,
-    );
-
-    if (!authorizedParties?.length) {
-      return undefined;
-    }
-
-    // Map AuthorizedParties to ClientTypeBaseRoute.
-    // The first party is used if multiple are specified.
-    return this.mapAuthorizedPartyToClientRoute(authorizedParties[0]);
-  }
-
-  /**
-   * Maps an AuthorizedParty to its corresponding ClientTypeBaseRoute.
-   * @param authorizedParty The authorized party value from @AllowAuthorizedParty decorator.
-   * @returns The corresponding client route or undefined for unknown parties.
-   */
-  private static mapAuthorizedPartyToClientRoute(
-    authorizedParty: AuthorizedParties,
-  ): ClientTypeBaseRoute | undefined {
-    switch (authorizedParty) {
-      case AuthorizedParties.aest:
-        return ClientTypeBaseRoute.AEST;
-      case AuthorizedParties.institution:
-        return ClientTypeBaseRoute.Institution;
-      case AuthorizedParties.student:
-        return ClientTypeBaseRoute.Student;
-      case AuthorizedParties.supportingUsers:
-        return ClientTypeBaseRoute.SupportingUser;
-      case AuthorizedParties.external:
-        return ClientTypeBaseRoute.External;
-      default:
-        return undefined;
-    }
   }
 }

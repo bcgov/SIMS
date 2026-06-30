@@ -95,8 +95,6 @@ describe("Guards and Decorators - Throttler (e2e)", () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
+    await app?.close();
   });
 });
