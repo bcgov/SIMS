@@ -30,7 +30,11 @@ import {
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "..";
-import { ScholasticStandingReversalService } from "../../services";
+import {
+  ScholasticStandingReversalService,
+  StudentScholasticStandingsService,
+  StudentService,
+} from "../../services";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -51,6 +55,8 @@ export class ScholasticStandingAESTController extends BaseController {
   constructor(
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly scholasticStandingReversalService: ScholasticStandingReversalService,
+    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -98,9 +104,25 @@ export class ScholasticStandingAESTController extends BaseController {
   async getScholasticStandings(
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
-    return this.scholasticStandingControllerService.getScholasticStandings(
-      studentId,
-    );
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exist.");
+    }
+    const scholasticStandings =
+      await this.studentScholasticStandingsService.getScholasticStandings(
+        studentId,
+      );
+    return scholasticStandings.map((scholasticStanding) => ({
+      scholasticStandingId: scholasticStanding.id,
+      applicationId: scholasticStanding.application.id,
+      applicationNumber: scholasticStanding.application.applicationNumber,
+      submittedDate: scholasticStanding.submittedDate,
+      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal,
+      scholasticStandingChangeType: scholasticStanding.changeType,
+      reversalDate: scholasticStanding.reversalDate,
+      nonPunitiveFormSubmissionId:
+        scholasticStanding.nonPunitiveFormSubmissionItem?.id,
+    }));
   }
 
   /**
