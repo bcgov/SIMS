@@ -30,8 +30,8 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
     const { throttleConfig } = config;
     const reflector = new Reflector();
     /**
-     * Resolves the throttle configuration for the current request based on the
-     * controller's authorized parties.
+     * Resolves the throttle configuration for a controller based on its
+     * authorized parties.
      *
      * Since the throttler runs before authentication, the actual authorized
      * party (azp) of the request is unknown. A client-specific limit can only be
@@ -40,13 +40,9 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
      * default policy, which is intentionally permissive as it also covers shared,
      * high-traffic endpoints accessed by different client types.
      */
-    const resolveThrottleConfig = (
-      context: ExecutionContext,
+    const resolvePolicy = (
+      authorizedParties: AuthorizedParties[],
     ): ThrottleSettings => {
-      const authorizedParties = reflector.get<AuthorizedParties[]>(
-        AUTHORIZED_PARTY_KEY,
-        context.getClass(),
-      );
       if (authorizedParties?.length > 1) {
         // Multiple authorized parties are allowed, so the controller is a shared,
         // high-traffic endpoint that uses the permissive default throttle policy.
@@ -69,6 +65,27 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
           // routes include: /config
           return throttleConfig.default;
       }
+    };
+    // Caches the resolved configuration per controller class. The policy depends
+    // only on the controller's static decorator, so it is computed once and
+    // reused for both the ttl and limit resolvers across all requests, avoiding
+    // repeated reflection.
+    const configByController = new WeakMap<object, ThrottleSettings>();
+    const resolveThrottleConfig = (
+      context: ExecutionContext,
+    ): ThrottleSettings => {
+      const controller = context.getClass();
+      const cachedConfig = configByController.get(controller);
+      if (cachedConfig) {
+        return cachedConfig;
+      }
+      const authorizedParties = reflector.get<AuthorizedParties[]>(
+        AUTHORIZED_PARTY_KEY,
+        controller,
+      );
+      const resolvedConfig = resolvePolicy(authorizedParties);
+      configByController.set(controller, resolvedConfig);
+      return resolvedConfig;
     };
     return {
       throttlers: [
