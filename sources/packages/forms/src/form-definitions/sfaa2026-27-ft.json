@@ -1237,7 +1237,6 @@
                       "input": true,
                       "tableView": false,
                       "label": "PIR Summary",
-                      "hideLabel": true,
                       "persistent": false,
                       "components": [
                         {
@@ -3074,25 +3073,25 @@
               "hideLabel": true
             },
             {
-              "key": "disabilityInformationPanelContent",
               "label": "Content",
-              "input": false,
-              "tag": "p",
+              "className": "alert alert-info fa fa-info-circle",
               "attrs": [
                 {
                   "value": "",
                   "attr": ""
                 }
               ],
-              "className": "alert alert-info fa fa-info-circle",
-              "content": "<strong> Info!</strong><br /> Please note you must have your disability status verified by StudentAid BC to receive disability funding. If your disability status has already been verified, no further action is required.\n<br/><br/>\nIf your disability status has not yet been verified by StudentAid BC, you must complete an <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/appendix_8-parttime.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">\nAppendix 8 for Part-Time Students - Disability Programs Application</a> to verify your permanent, or persistent or prolonged disability, and have your disability approved.\n<br/><br/>\nStudents with a permanent disability, or a persistent or prolonged disability may qualify for other programs. Contact the Accessibility Services Coordinator or financial aid office at your school, or visit <a class=\"formio-href\" href=\"https://studentaidbc.ca/\"target=\"_blank\" rel=\"noopener noreferrer\">\nwww.StudentAidBC.ca</a>",
-              "type": "htmlelement",
+              "content": "<strong> Info!</strong>\n<br/>Please note you must have your disability status verified by StudentAid BC to receive disability funding. If your disability status has already been verified, no further action is required.\n<br/><br/>If your disability status has not yet been verified please follow these instructions:\n<ul>\n<li>Download the <a class=\"formio-href\" href=\"https://studentaidbc.ca/sites/all/files/form-library/disability-verification.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Disability Verification Form</a> and take it to a qualified medical assessor for completion.</li>\n<li>Visit the Forms area near the top right of your Student Account main page.</li>\n<li>Select Student Forms > Standard Forms > Disability status application.</li>\n<li>Upload the completed form to the Upload supporting documents area within the Disability status application.</li>\n<li>Complete your Declaration and submit your Disability status application for review.</li>\n</ul>\n<br/>\nStudents with a permanent disability, or persistent or prolonged disability may qualify for other programs. Contact the Accessibility Services Coordinator or financial aid office at your school, or visit <a class=\"formio-href\" href=\"https://studentaidbc.ca/\" target=\"_blank\" rel=\"noopener noreferrer\">\nwww.StudentAidBC.ca</a>.",
+              "refreshOnChange": false,
+              "customClass": "banner-info",
+              "key": "disabilityInformationPanelContent",
               "conditional": {
-                "show": "true",
+                "show": true,
                 "when": "applicationPDPPDStatus",
                 "eq": "yes"
               },
-              "customClass": "banner-info",
+              "type": "htmlelement",
+              "input": false,
               "tableView": false
             }
           ],
