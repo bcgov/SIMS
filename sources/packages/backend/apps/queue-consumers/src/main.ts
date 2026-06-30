@@ -10,7 +10,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 (async () => {
   const app =
     await NestFactory.create<NestExpressApplication>(QueueConsumersModule);
-  const config = app.get<ConfigService>(ConfigService); 
+  const config = app.get<ConfigService>(ConfigService);
 
   // Trust upstream proxy headers to resolve client IP addresses correctly.
   app.set("trust proxy", 1);
