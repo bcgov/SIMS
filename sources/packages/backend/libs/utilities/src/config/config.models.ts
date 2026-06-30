@@ -170,5 +170,4 @@ export interface ThrottleConfig {
   students: ThrottleSettings;
   supportingUsers: ThrottleSettings;
   external: ThrottleSettings;
-  shared: ThrottleSettings;
 }

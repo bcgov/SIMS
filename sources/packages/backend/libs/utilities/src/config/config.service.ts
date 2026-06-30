@@ -545,20 +545,23 @@ export class ConfigService {
    * @returns throttle settings grouped by route.
    */
   private createThrottleConfig(): ThrottleConfig {
+    // The default policy is intentionally permissive, as it also covers shared,
+    // multi-client, high-traffic endpoints accessed by different client types.
     const defaultThrottle = this.getThrottleSettings(
       "THROTTLE_TIME",
       "THROTTLE_LIMIT",
       {
         time: 100,
-        limit: 30,
+        limit: 60,
       },
     );
-    // AEST and shared (multi-client, high-traffic) endpoints are more permissive
-    // by default, allowing double the default request limit within the same time
-    // window when no specific environment variables are provided.
-    const permissiveThrottle: ThrottleSettings = {
+    // Client-specific endpoints (institutions, students, supporting users and
+    // external) use a more restrictive policy by default, allowing half the
+    // default request limit within the same time window when no specific
+    // environment variables are provided.
+    const restrictiveThrottle: ThrottleSettings = {
       time: defaultThrottle.time,
-      limit: defaultThrottle.limit * 2,
+      limit: Math.floor(defaultThrottle.limit / 2),
     };
 
     return {
@@ -566,32 +569,27 @@ export class ConfigService {
       aest: this.getThrottleSettings(
         "AEST_THROTTLE_TIME",
         "AEST_THROTTLE_LIMIT",
-        permissiveThrottle,
+        defaultThrottle,
       ),
       institutions: this.getThrottleSettings(
         "INSTITUTIONS_THROTTLE_TIME",
         "INSTITUTIONS_THROTTLE_LIMIT",
-        defaultThrottle,
+        restrictiveThrottle,
       ),
       students: this.getThrottleSettings(
         "STUDENTS_THROTTLE_TIME",
         "STUDENTS_THROTTLE_LIMIT",
-        defaultThrottle,
+        restrictiveThrottle,
       ),
       supportingUsers: this.getThrottleSettings(
         "SUPPORTING_USERS_THROTTLE_TIME",
         "SUPPORTING_USERS_THROTTLE_LIMIT",
-        defaultThrottle,
+        restrictiveThrottle,
       ),
       external: this.getThrottleSettings(
         "EXTERNAL_THROTTLE_TIME",
         "EXTERNAL_THROTTLE_LIMIT",
-        defaultThrottle,
-      ),
-      shared: this.getThrottleSettings(
-        "SHARED_THROTTLE_TIME",
-        "SHARED_THROTTLE_LIMIT",
-        permissiveThrottle,
+        restrictiveThrottle,
       ),
     };
   }

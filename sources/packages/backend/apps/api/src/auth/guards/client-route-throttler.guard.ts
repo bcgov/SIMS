@@ -36,10 +36,9 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
      * Since the throttler runs before authentication, the actual authorized
      * party (azp) of the request is unknown. A client-specific limit can only be
      * applied with certainty when the controller declares a single authorized
-     * party. Controllers that allow multiple authorized parties are shared,
-     * high-traffic endpoints accessed by different client types, so they use a
-     * dedicated shared policy. Controllers without the decorator fall back to the
-     * generic default policy.
+     * party. Controllers that allow multiple authorized parties (or none) use the
+     * default policy, which is intentionally permissive as it also covers shared,
+     * high-traffic endpoints accessed by different client types.
      */
     const resolveThrottleConfig = (
       context: ExecutionContext,
@@ -49,9 +48,10 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
         context.getClass(),
       );
       if (authorizedParties?.length > 1) {
-        // Multiple authorized parties are allowed, so the controller is shared and uses the shared throttle policy.
-        // routes include: /dynamic-form-configuration/*, /dynamic-form/*, /system-lookup-configuration/*
-        return throttleConfig.shared;
+        // Multiple authorized parties are allowed, so the controller is a shared,
+        // high-traffic endpoint that uses the permissive default throttle policy.
+        // Routes include: /dynamic-form-configuration/*, /dynamic-form/*, /system-lookup-configuration/*, /audit.
+        return throttleConfig.default;
       }
       switch (authorizedParties?.at(0)) {
         case AuthorizedParties.aest:
