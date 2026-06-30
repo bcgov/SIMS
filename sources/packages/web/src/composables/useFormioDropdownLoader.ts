@@ -38,8 +38,10 @@ export function useFormioDropdownLoader() {
     // display the value (usually the ID) of the option instead of a user-friendly label.
     const currentValue = dropdown.getValue();
     if (
-      currentValue &&
-      !optionsItems.some((item) => item.id === currentValue)
+      currentValue !== undefined &&
+      currentValue !== null &&
+      currentValue !== "" &&
+      !optionsItems.some((item) => String(item.id) === String(currentValue))
     ) {
       dropdown.setValue("");
     }
