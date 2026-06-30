@@ -220,7 +220,9 @@ export class ApplicationStudentsController extends BaseController {
   })
   @ApiNotFoundResponse({ description: "Application not found." })
   @ApiForbiddenResponse({
-    description: "You have a restriction on your account.",
+    description:
+      "You have a restriction on your account, or " +
+      "the application cannot be submitted at this time because the institution associated with your application is currently restricted.",
   })
   async submitApplication(
     @Body() payload: SaveApplicationAPIInDTO,

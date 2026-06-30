@@ -421,7 +421,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       );
     if (institutionRestriction.length) {
       throw new CustomNamedError(
-        "The assessment cannot be accepted at this time because the institution is currently restricted.",
+        "The application cannot be submitted at this time because the institution associated with your application is currently restricted.",
         ACTIVE_INSTITUTION_RESTRICTION,
       );
     }
