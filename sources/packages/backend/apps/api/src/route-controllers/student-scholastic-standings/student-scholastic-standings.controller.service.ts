@@ -12,6 +12,7 @@ import {
 import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ScholasticStandingData,
+  ScholasticStandingDetailsAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
@@ -109,6 +110,35 @@ export class ScholasticStandingControllerService {
         partTimeUnsuccessfulCompletionWeeks,
       fullTimeWithdrawalsCount,
     };
+  }
+
+  /**
+   * Get scholastic standing details.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns Scholastic standing details.
+   */
+  async getScholasticStandings(
+    studentId: number,
+  ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exist.");
+    }
+    const scholasticStandings =
+      await this.studentScholasticStandingsService.getScholasticStandings(
+        studentId,
+      );
+    return scholasticStandings.map((scholasticStanding) => ({
+      scholasticStandingId: scholasticStanding.id,
+      applicationId: scholasticStanding.application.id,
+      applicationNumber: scholasticStanding.application.applicationNumber,
+      submittedDate: scholasticStanding.submittedDate,
+      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal,
+      scholasticStandingChangeType: scholasticStanding.changeType,
+      reversalDate: scholasticStanding.reversalDate,
+      nonPunitiveFormSubmissionId:
+        scholasticStanding.nonPunitiveFormSubmissionItem?.id,
+    }));
   }
 
   /**

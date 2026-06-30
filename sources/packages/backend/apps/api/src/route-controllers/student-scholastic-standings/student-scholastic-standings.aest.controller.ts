@@ -25,6 +25,7 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   ReverseScholasticStandingAPIInDTO,
+  ScholasticStandingDetailsAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
@@ -82,6 +83,22 @@ export class ScholasticStandingAESTController extends BaseController {
     @Param("studentId", ParseIntPipe) studentId: number,
   ): Promise<ScholasticStandingSummaryDetailsAPIOutDTO> {
     return this.scholasticStandingControllerService.getScholasticStandingSummary(
+      studentId,
+    );
+  }
+
+  /**
+   * Get scholastic standing details.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns Scholastic standing details.
+   */
+  @Roles(Role.StudentViewScholasticStandingHistory)
+  @Get("student/:studentId")
+  @ApiNotFoundResponse({ description: "Student does not exist." })
+  async getScholasticStandings(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
+    return this.scholasticStandingControllerService.getScholasticStandings(
       studentId,
     );
   }
