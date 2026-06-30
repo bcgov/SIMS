@@ -32,7 +32,7 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
    * only on the controller's static decorator, so it is computed once and
    * reused across all requests, avoiding repeated reflection.
    */
-  private readonly configByController = new WeakMap<object, ThrottleSettings>();
+  private readonly configByController = new Map<object, ThrottleSettings>();
 
   constructor(
     @InjectThrottlerOptions() options: ThrottlerModuleOptions,
