@@ -16,7 +16,7 @@ import {
   S3Configuration,
   QueueDashboardAccess,
   T4AIntegrationConfig,
-  ThrottleConfig,
+  ThrottleOptions,
   ThrottleSettings,
 } from "./config.models";
 
@@ -516,9 +516,9 @@ export class ConfigService {
    * Gets all throttle settings for the API.
    * @returns throttle settings grouped by module route.
    */
-  get throttleConfig(): ThrottleConfig {
+  get throttleOptions(): ThrottleOptions {
     return this.getCachedConfig(
-      "throttleConfigValue",
+      "throttleOptionsConfig",
       this.createThrottleConfig(),
     );
   }
@@ -544,7 +544,7 @@ export class ConfigService {
    * Creates throttle settings grouped by API module route.
    * @returns throttle settings grouped by route.
    */
-  private createThrottleConfig(): ThrottleConfig {
+  private createThrottleConfig(): ThrottleOptions {
     // The default policy is intentionally permissive, as it also covers shared,
     // multi-client, high-traffic endpoints accessed by different client types.
     const defaultThrottle = this.getThrottleSettings(

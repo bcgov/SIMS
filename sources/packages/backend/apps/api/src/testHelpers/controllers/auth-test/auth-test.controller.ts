@@ -169,3 +169,33 @@ export class AESTAuthTestController {
     return;
   }
 }
+
+/**
+ * Controller dedicated to test throttling for institutions-prefixed routes.
+ */
+@AllowAuthorizedParty(AuthorizedParties.institution)
+@Controller("institutions/auth-test")
+export class InstitutionAuthTestController {
+  /**
+   * Test route used exclusively to test institution throttler limits.
+   */
+  @Get("/throttle-test/failure")
+  throttleTest(): void {
+    return;
+  }
+}
+
+/**
+ * Controller dedicated to test throttling for students-prefixed routes.
+ */
+@AllowAuthorizedParty(AuthorizedParties.student)
+@Controller("students/auth-test")
+export class StudentAuthTestController {
+  /**
+   * Test route used exclusively to test student throttler limits.
+   */
+  @Get("/throttle-test/failure")
+  throttleTest(): void {
+    return;
+  }
+}

@@ -156,14 +156,21 @@ export interface QueueDashboardAccess {
  * Represents one throttle settings pair.
  */
 export interface ThrottleSettings {
+  /**
+   * Number of milliseconds that each request will last in storage, mapped to
+   * the throttler's `ttl`.
+   */
   time: number;
+  /**
+   * Maximum number of requests within the `time` (ttl) limit.
+   */
   limit: number;
 }
 
 /**
  * Represents all throttle settings available for the API.
  */
-export interface ThrottleConfig {
+export interface ThrottleOptions {
   default: ThrottleSettings;
   aest: ThrottleSettings;
   institutions: ThrottleSettings;

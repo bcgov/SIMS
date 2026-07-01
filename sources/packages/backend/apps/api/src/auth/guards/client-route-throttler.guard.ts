@@ -97,28 +97,28 @@ export class ClientRouteThrottlerGuard extends ThrottlerGuard {
   private resolvePolicy(
     authorizedParties: AuthorizedParties[],
   ): ThrottleSettings {
-    const { throttleConfig } = this.appConfig;
+    const { throttleOptions } = this.appConfig;
     if (authorizedParties?.length > 1) {
       // Multiple authorized parties are allowed, so the controller is a shared,
       // high-traffic endpoint that uses the permissive default throttle policy.
       // Routes include: /dynamic-form-configuration/*, /dynamic-form/*, /system-lookup-configuration/*, /audit.
-      return throttleConfig.default;
+      return throttleOptions.default;
     }
     switch (authorizedParties?.at(0)) {
       case AuthorizedParties.aest:
-        return throttleConfig.aest;
+        return throttleOptions.aest;
       case AuthorizedParties.institution:
-        return throttleConfig.institutions;
+        return throttleOptions.institutions;
       case AuthorizedParties.student:
-        return throttleConfig.students;
+        return throttleOptions.students;
       case AuthorizedParties.supportingUsers:
-        return throttleConfig.supportingUsers;
+        return throttleOptions.supportingUsers;
       case AuthorizedParties.external:
-        return throttleConfig.external;
+        return throttleOptions.external;
       default:
         // No authorized party is declared, so the controller uses the default throttle policy.
         // Routes include: /config.
-        return throttleConfig.default;
+        return throttleOptions.default;
     }
   }
 }
