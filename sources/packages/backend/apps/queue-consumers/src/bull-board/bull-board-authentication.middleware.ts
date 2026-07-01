@@ -102,9 +102,7 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
     // TODO: reuse some code from API.
     const userAccessLogs: string[] = [];
     const { originalUrl, method } = request;
-    const clientIP =
-      (request.headers["x-forwarded-for"] as string) ??
-      request.socket.remoteAddress;
+    const clientIP = request.ip ?? "unknown-ip";
     const userAccessLog = `Request - ${method} ${originalUrl} From ${clientIP}`;
     userAccessLogs.push(userAccessLog);
     if (options?.userGuid) {
