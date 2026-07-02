@@ -64,10 +64,28 @@ export function useRules() {
     if (dateString) {
       return (
         !!dateString.match(/^\d{4}-\d{2}-\d{2}$/) ||
-        "Expiry end date is not in right format."
+        "Expiry date is not in right format."
       );
     }
-    return "Expiry end date is required.";
+    return "Expiry date is required.";
+  };
+
+  /**
+   * Check if a date string is in the future.
+   * @param dateString date string in YYYY-MM-DD format.
+   * @returns true if the date is in the future, otherwise a validation message.
+   */
+  const checkFutureDateRule = (dateString: string) => {
+    if (!dateString) {
+      return "Expiry date is required.";
+    }
+    const selectedDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate <= today) {
+      return "Expiry date must be a future date.";
+    }
+    return true;
   };
 
   /**
@@ -129,6 +147,7 @@ export function useRules() {
     sinValidationRule,
     checkNotesLengthRule,
     checkStringDateFormatRule,
+    checkFutureDateRule,
     checkNullOrEmptyRule,
     checkOnlyDigitsRule,
     checkLengthRule,

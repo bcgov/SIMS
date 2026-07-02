@@ -5,19 +5,24 @@
         <error-summary :errors="approveProgramForm.errors" />
         <div class="pb-2">
           <span class="label-value"
-            >Outline the reasoning for approving this program. This will be
-            stored in the institution profile notes.</span
+            >Please select the expiry date for the program</span
           >
         </div>
         <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
         <v-text-field
-          label="Effective end date"
+          label="Expiry date"
           class="mt-2"
           type="date"
           v-model="formModel.effectiveEndDate"
           variant="outlined"
-          :rules="[checkStringDateFormatRule]"
+          :rules="[checkFutureDateRule]"
         />
+        <div class="pb-2 mt-4">
+          <span class="label-value"
+            >Outline the reasoning for approving this program. This will be
+            stored in the institution profile notes.</span
+          >
+        </div>
         <v-textarea
           label="Notes"
           placeholder="Long text..."
@@ -67,7 +72,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
+    const { checkNotesLengthRule, checkFutureDateRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
@@ -101,7 +106,7 @@ export default defineComponent({
       approveProgramForm,
       Role,
       checkNotesLengthRule,
-      checkStringDateFormatRule,
+      checkFutureDateRule,
     };
   },
 });
