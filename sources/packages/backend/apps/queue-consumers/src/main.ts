@@ -3,6 +3,7 @@ import { ConfigService } from "@sims/utilities/config";
 import { NestFactory } from "@nestjs/core";
 import { QueueConsumersModule } from "./queue-consumers.module";
 import { LoggerService } from "@sims/utilities/logger";
+import { TRUSTED_PROXY_HOPS } from "@sims/utilities";
 import { SystemUsersService } from "@sims/services";
 import cookieParser from "cookie-parser";
 import { NestExpressApplication } from "@nestjs/platform-express";
@@ -13,7 +14,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
   const config = app.get<ConfigService>(ConfigService);
 
   // Trust upstream proxy headers to resolve client IP addresses correctly.
-  app.set("trust proxy", 1);
+  app.set("trust proxy", TRUSTED_PROXY_HOPS);
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);

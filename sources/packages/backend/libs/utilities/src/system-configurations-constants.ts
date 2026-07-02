@@ -75,3 +75,10 @@ export const FILE_DEFAULT_ENCODING = "latin1";
  * Number of days before the offering study end date to send the COE required notification to students.
  */
 export const STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS = 10;
+
+/**
+ * Number of trusted upstream proxy hops used to resolve the client IP address.
+ * Set to trust the immediate reverse proxy (e.g. the ingress/router) that sits
+ * in front of the application.
+ */
+export const TRUSTED_PROXY_HOPS = 1;
