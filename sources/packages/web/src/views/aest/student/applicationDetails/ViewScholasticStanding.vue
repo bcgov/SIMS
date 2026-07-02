@@ -146,7 +146,8 @@ export default {
           payload,
         );
         snackBar.success("Scholastic standing reversed successfully.");
-        await router.push(goToAssessmentSummary.value);
+        const location = props.backTarget?.to ?? goToAssessmentSummary.value;
+        await router.push(location);
         return true;
       } catch {
         snackBar.error(
