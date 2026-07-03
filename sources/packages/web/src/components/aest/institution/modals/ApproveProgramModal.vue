@@ -8,16 +8,17 @@
             >Please select the expiry date for the program</span
           >
         </div>
-        <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
-        <v-text-field
+        <v-date-input
           label="Expiry date"
           class="mt-2"
-          type="date"
-          v-model="formModel.effectiveEndDate"
           variant="outlined"
-          :rules="[checkFutureDateRule]"
+          :input-format="DATE_ONLY_ISO_FORMAT"
+          prepend-icon=""
+          append-inner-icon="mdi-calendar"
+          v-model="effectiveEndDate"
+          :rules="[(value: Date) => checkFutureDateRule(value, 'Expiry date')]"
         />
-        <div class="pb-2 mt-4">
+        <div class="pb-2">
           <span class="label-value"
             >Outline the reasoning for approving this program. This will be
             stored in the institution profile notes.</span
@@ -25,7 +26,7 @@
         </div>
         <v-textarea
           label="Notes"
-          placeholder="Long text..."
+          placeholder="Describe the reasoning for approving this program..."
           v-model="formModel.approvedNote"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
@@ -50,9 +51,14 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+import { computed, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useRules } from "@/composables";
+import {
+  DATE_ONLY_ISO_FORMAT,
+  useFormatters,
+  useModalDialog,
+  useRules,
+} from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { ApproveProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -73,6 +79,8 @@ export default defineComponent({
   },
   setup() {
     const { checkNotesLengthRule, checkFutureDateRule } = useRules();
+    const { getISODateOnlyString, dateOnlyToLocalDateTimeString } =
+      useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
@@ -81,6 +89,17 @@ export default defineComponent({
       effectiveEndDate: "",
       approvedNote: "",
     } as ApproveProgramAPIInDTO);
+    // Two-way binding between the v-date-input (Date) and the string date
+    // stored in the form model, keeping the model as the single source of truth.
+    const effectiveEndDate = computed<Date | undefined>({
+      get: () =>
+        formModel.effectiveEndDate
+          ? new Date(dateOnlyToLocalDateTimeString(formModel.effectiveEndDate))
+          : undefined,
+      set: (value) => {
+        formModel.effectiveEndDate = value ? getISODateOnlyString(value) : "";
+      },
+    });
 
     const submit = async () => {
       const validationResult = await approveProgramForm.value.validate();
@@ -103,10 +122,12 @@ export default defineComponent({
       showModal,
       cancel,
       formModel,
+      effectiveEndDate,
       approveProgramForm,
       Role,
       checkNotesLengthRule,
       checkFutureDateRule,
+      DATE_ONLY_ISO_FORMAT,
     };
   },
 });

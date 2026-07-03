@@ -9,6 +9,7 @@ import {
   ProgramIntensity,
   AviationProgramCredentialTypes,
 } from "@sims/sims-db";
+import { IsDateAfterToday } from "../../../utilities/class-validation";
 
 /**
  * Education program complete information.
@@ -190,6 +191,7 @@ export class EducationProgramAPIInDTO {
 
 export class ApproveProgramAPIInDTO {
   @IsDateString()
+  @IsDateAfterToday()
   effectiveEndDate: string;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
