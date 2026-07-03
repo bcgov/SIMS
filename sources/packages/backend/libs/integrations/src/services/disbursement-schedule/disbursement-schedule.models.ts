@@ -333,6 +333,7 @@ export class EligibleECertDisbursement {
     readonly maxLifetimeBCLoanAmount: number,
     readonly disabilityDetails: DisabilityDetails,
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
+    readonly hasActiveWithdrawOrTransfer: boolean,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
@@ -536,6 +537,10 @@ export enum ECertFailedValidation {
    * the estimated awards is $0.
    */
   NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
+  /**
+   * Student has active withdraw, non punitive withdraw, or a transfer on their application.
+   */
+  ActiveWithdrawOrTransfer = "ActiveWithdrawOrTransfer",
 }
 
 interface StopDisbursementRestrictionValidationResult {

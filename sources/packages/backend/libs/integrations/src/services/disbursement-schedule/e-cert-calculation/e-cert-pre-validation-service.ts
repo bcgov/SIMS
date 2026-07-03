@@ -21,7 +21,7 @@ import { DataSource } from "typeorm";
 @Injectable()
 export class ECertPreValidationService {
   constructor(
-    private dataSource: DataSource,
+    private readonly dataSource: DataSource,
     private readonly eCertGenerationService: ECertGenerationService,
     private readonly validateDisbursementFullTimeStep: ValidateDisbursementFullTimeStep,
     private readonly validateDisbursementPartTimeStep: ValidateDisbursementPartTimeStep,
