@@ -65,7 +65,7 @@ export function useRules() {
     if (dateString) {
       return (
         !!dateString.match(/^\d{4}-\d{2}-\d{2}$/) ||
-        "Expiry date is not in right format."
+        "Expiry end date is not in right format."
       );
     }
     return "Expiry end date is required.";
@@ -82,7 +82,7 @@ export function useRules() {
       return `${fieldName} is required.`;
     }
     if (!isBeforeDateOnly(new Date(), date)) {
-      return `${fieldName} must be a future date.`;
+      return `${fieldName} must be in the future.`;
     }
     return true;
   };
