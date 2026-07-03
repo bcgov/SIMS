@@ -1678,7 +1678,7 @@
         {
           "label": "Is selected location program restricted (Selected location and program is not eligible for funding)",
           "persistent": false,
-          "calculateValue": "const selectedLocationProgramRestrictions =  data.selectedLocationProgramRestrictions || [];\n\nvalue = selectedLocationProgramRestrictions.some((restriction) =>\n  restriction.restrictionActions.includes(\"Stop part time disbursement\")\n);",
+          "calculateValue": "const selectedLocationProgramRestrictions =  data.selectedLocationProgramRestrictions || [];\n\nvalue = selectedLocationProgramRestrictions.some((restriction) =>\n  restriction.restrictionActions.includes(\"Stop part-time disbursement\")\n);",
           "key": "isSelectedLocationProgramRestricted",
           "type": "hidden",
           "input": true,
