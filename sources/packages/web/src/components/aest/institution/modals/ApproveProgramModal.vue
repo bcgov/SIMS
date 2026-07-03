@@ -27,7 +27,7 @@
         <v-textarea
           label="Notes"
           placeholder="Describe the reasoning for approving this program..."
-          v-model="formModel.approvedNote"
+          v-model="approvedNote"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
           hide-details="auto"
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+import { ref, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
   DATE_ONLY_ISO_FORMAT,
@@ -85,23 +85,21 @@ export default defineComponent({
     >();
     const approveProgramForm = ref({} as VForm);
     const effectiveEndDate = ref<Date>();
-    const formModel = reactive({
-      effectiveEndDate: "",
-      approvedNote: "",
-    } as ApproveProgramAPIInDTO);
+    const approvedNote = ref("");
 
     const submit = async () => {
       const validationResult = await approveProgramForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
-      // Convert the selected date to the ISO date-only string expected by the API.
-      if (effectiveEndDate.value) {
-        formModel.effectiveEndDate = getISODateOnlyString(
-          effectiveEndDate.value,
-        );
-      }
-      resolvePromise(formModel);
+      const payload: ApproveProgramAPIInDTO = {
+        // Convert the selected date to the ISO date-only string expected by the API.
+        effectiveEndDate: effectiveEndDate.value
+          ? getISODateOnlyString(effectiveEndDate.value)
+          : "",
+        approvedNote: approvedNote.value,
+      };
+      resolvePromise(payload);
     };
 
     // Closed the modal dialog.
@@ -116,8 +114,8 @@ export default defineComponent({
       submit,
       showModal,
       cancel,
-      formModel,
       effectiveEndDate,
+      approvedNote,
       approveProgramForm,
       Role,
       checkNotesLengthRule,
