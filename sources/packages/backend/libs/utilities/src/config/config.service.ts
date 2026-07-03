@@ -555,8 +555,8 @@ export class ConfigService {
       "THROTTLE_TIME",
       "THROTTLE_LIMIT",
       {
-        time: 100,
-        limit: 60,
+        time: 1000,
+        limit: 10,
       },
     );
     // Client-specific endpoints (institutions, students, supporting users and
