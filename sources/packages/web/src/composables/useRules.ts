@@ -68,7 +68,7 @@ export function useRules() {
         "Expiry date is not in right format."
       );
     }
-    return "Expiry date is required.";
+    return "Expiry end date is required.";
   };
 
   /**
