@@ -533,11 +533,15 @@ export class ConfigService {
     envVariableName: string,
     defaultValue: number,
   ): number {
-    const envValue = Number(process.env[envVariableName]);
-    if (Number.isNaN(envValue)) {
+    const rawValue = process.env[envVariableName];
+    const parsedValue = Number(rawValue);
+    // A throttle time or limit must be a positive number, so missing, empty,
+    // non-numeric, or non-positive values fall back to the default. This avoids
+    // an empty environment variable being coerced to 0 by Number("").
+    if (!rawValue || Number.isNaN(parsedValue) || parsedValue <= 0) {
       return defaultValue;
     }
-    return envValue;
+    return parsedValue;
   }
 
   /**

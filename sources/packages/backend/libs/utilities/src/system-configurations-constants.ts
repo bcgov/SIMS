@@ -82,3 +82,9 @@ export const STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS = 10;
  * in front of the application.
  */
 export const TRUSTED_PROXY_HOPS = 1;
+
+/**
+ * Express application setting name used to configure the number of trusted
+ * upstream proxy hops.
+ */
+export const TRUST_PROXY_SETTING = "trust proxy";

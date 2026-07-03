@@ -656,25 +656,25 @@ parameters:
   - name: THROTTLE_LIMIT
     value: "30"
   - name: AEST_THROTTLE_TIME
-    required: false
+    value: "10000"
   - name: AEST_THROTTLE_LIMIT
-    required: false
+    value: "30"
   - name: INSTITUTIONS_THROTTLE_TIME
-    required: false
+    value: "10000"
   - name: INSTITUTIONS_THROTTLE_LIMIT
-    required: false
+    value: "15"
   - name: STUDENTS_THROTTLE_TIME
-    required: false
+    value: "10000"
   - name: STUDENTS_THROTTLE_LIMIT
-    required: false
+    value: "15"
   - name: SUPPORTING_USERS_THROTTLE_TIME
-    required: false
+    value: "10000"
   - name: SUPPORTING_USERS_THROTTLE_LIMIT
-    required: false
+    value: "15"
   - name: EXTERNAL_THROTTLE_TIME
-    required: false
+    value: "10000"
   - name: EXTERNAL_THROTTLE_LIMIT
-    required: false
+    value: "15"
   - name: FEATURE_TOGGLES
     required: false
   - name: FORMS_URL

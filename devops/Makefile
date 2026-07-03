@@ -70,6 +70,19 @@ export QUEUE_CONSUMERS_MEMORY_LIMIT := $(or ${QUEUE_CONSUMERS_MEMORY_LIMIT}, 102
 export QUEUE_CONSUMERS_REPLICAS := $(or ${QUEUE_CONSUMERS_REPLICAS}, 2)
 export THROTTLE_TIME := $(or $(THROTTLE_TIME), 10000)
 export THROTTLE_LIMIT := $(or $(THROTTLE_LIMIT), 30)
+# Client-specific throttle settings. AEST mirrors the default policy, while
+# institutions, students, supporting users and external use a more restrictive
+# policy allowing half the default request limit within the same time window.
+export AEST_THROTTLE_TIME := $(or $(AEST_THROTTLE_TIME), 10000)
+export AEST_THROTTLE_LIMIT := $(or $(AEST_THROTTLE_LIMIT), 30)
+export INSTITUTIONS_THROTTLE_TIME := $(or $(INSTITUTIONS_THROTTLE_TIME), 10000)
+export INSTITUTIONS_THROTTLE_LIMIT := $(or $(INSTITUTIONS_THROTTLE_LIMIT), 15)
+export STUDENTS_THROTTLE_TIME := $(or $(STUDENTS_THROTTLE_TIME), 10000)
+export STUDENTS_THROTTLE_LIMIT := $(or $(STUDENTS_THROTTLE_LIMIT), 15)
+export SUPPORTING_USERS_THROTTLE_TIME := $(or $(SUPPORTING_USERS_THROTTLE_TIME), 10000)
+export SUPPORTING_USERS_THROTTLE_LIMIT := $(or $(SUPPORTING_USERS_THROTTLE_LIMIT), 15)
+export EXTERNAL_THROTTLE_TIME := $(or $(EXTERNAL_THROTTLE_TIME), 10000)
+export EXTERNAL_THROTTLE_LIMIT := $(or $(EXTERNAL_THROTTLE_LIMIT), 15)
 export FORMS_PORT := 3001
 # Artifactory server URL.
 export ARTIFACTORY_SERVER_ADDRESS := $(or ${ARTIFACTORY_SERVER_ADDRESS}, artifacts.developer.gov.bc.ca)
@@ -447,6 +460,16 @@ deploy-api:
 	test -n "$(EXTERNAL_IP_WHITELIST)"
 	test -n "$(THROTTLE_TIME)"
 	test -n "$(THROTTLE_LIMIT)"
+	test -n "$(AEST_THROTTLE_TIME)"
+	test -n "$(AEST_THROTTLE_LIMIT)"
+	test -n "$(INSTITUTIONS_THROTTLE_TIME)"
+	test -n "$(INSTITUTIONS_THROTTLE_LIMIT)"
+	test -n "$(STUDENTS_THROTTLE_TIME)"
+	test -n "$(STUDENTS_THROTTLE_LIMIT)"
+	test -n "$(SUPPORTING_USERS_THROTTLE_TIME)"
+	test -n "$(SUPPORTING_USERS_THROTTLE_LIMIT)"
+	test -n "$(EXTERNAL_THROTTLE_TIME)"
+	test -n "$(EXTERNAL_THROTTLE_LIMIT)"
 	test -n "$(FORMS_URL)"
 	@echo "+\n++ Deploying API with tag: $(BUILD_REF)\n+"
 	@oc -n $(NAMESPACE) process -f openshift/api-deploy.yml \
