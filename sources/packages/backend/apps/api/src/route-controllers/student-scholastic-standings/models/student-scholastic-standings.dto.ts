@@ -59,6 +59,20 @@ export class ScholasticStandingSummaryDetailsAPIOutDTO {
 }
 
 /**
+ * Represents a scholastic standing details item for a student.
+ */
+export class ScholasticStandingDetailsAPIOutDTO {
+  scholasticStandingId: number;
+  applicationId: number;
+  applicationNumber: string;
+  submittedDate: Date;
+  dateOfWithdrawal?: string;
+  scholasticStandingChangeType: StudentScholasticStandingChangeType;
+  reversalDate?: Date;
+  nonPunitiveFormSubmissionId?: number;
+}
+
+/**
  * Represents the possible errors that can happen during the
  * application bulk withdrawal and provides a detailed description
  * for every record that has an error.

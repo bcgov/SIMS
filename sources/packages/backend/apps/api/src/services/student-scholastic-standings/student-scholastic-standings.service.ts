@@ -643,4 +643,44 @@ export class StudentScholasticStandingsService extends RecordDataModelService<St
         (scholasticStandingSummaryFullTime?.totalUnsuccessfulWeeks ?? 0),
     };
   }
+
+  /**
+   * Get scholastic standing details for a student.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns scholastic standing details for the student.
+   */
+  async getScholasticStandings(
+    studentId: number,
+  ): Promise<StudentScholasticStanding[]> {
+    return this.repo.find({
+      select: {
+        id: true,
+        submittedDate: true,
+        changeType: true,
+        reversalDate: true,
+        submittedData: true,
+        nonPunitiveFormSubmissionItem: {
+          id: true,
+        },
+        application: {
+          id: true,
+          applicationNumber: true,
+        },
+      },
+      relations: {
+        application: true,
+        nonPunitiveFormSubmissionItem: true,
+      },
+      where: {
+        application: {
+          student: {
+            id: studentId,
+          },
+        },
+      },
+      order: {
+        submittedDate: "DESC",
+      },
+    });
+  }
 }

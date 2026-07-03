@@ -25,11 +25,16 @@ import BaseController from "../BaseController";
 import { ClientTypeBaseRoute } from "../../types";
 import {
   ReverseScholasticStandingAPIInDTO,
+  ScholasticStandingDetailsAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "./models/student-scholastic-standings.dto";
 import { ScholasticStandingControllerService } from "..";
-import { ScholasticStandingReversalService } from "../../services";
+import {
+  ScholasticStandingReversalService,
+  StudentScholasticStandingsService,
+  StudentService,
+} from "../../services";
 import { IUserToken, Role } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -50,6 +55,8 @@ export class ScholasticStandingAESTController extends BaseController {
   constructor(
     private readonly scholasticStandingControllerService: ScholasticStandingControllerService,
     private readonly scholasticStandingReversalService: ScholasticStandingReversalService,
+    private readonly studentScholasticStandingsService: StudentScholasticStandingsService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -84,6 +91,38 @@ export class ScholasticStandingAESTController extends BaseController {
     return this.scholasticStandingControllerService.getScholasticStandingSummary(
       studentId,
     );
+  }
+
+  /**
+   * Get scholastic standing details.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns Scholastic standing details.
+   */
+  @Roles(Role.StudentViewScholasticStandingHistory)
+  @Get("student/:studentId")
+  @ApiNotFoundResponse({ description: "Student does not exist." })
+  async getScholasticStandings(
+    @Param("studentId", ParseIntPipe) studentId: number,
+  ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
+    const studentExists = await this.studentService.studentExists(studentId);
+    if (!studentExists) {
+      throw new NotFoundException("Student does not exist.");
+    }
+    const scholasticStandings =
+      await this.studentScholasticStandingsService.getScholasticStandings(
+        studentId,
+      );
+    return scholasticStandings.map((scholasticStanding) => ({
+      scholasticStandingId: scholasticStanding.id,
+      applicationId: scholasticStanding.application.id,
+      applicationNumber: scholasticStanding.application.applicationNumber,
+      submittedDate: scholasticStanding.submittedDate,
+      dateOfWithdrawal: scholasticStanding.submittedData?.dateOfWithdrawal,
+      scholasticStandingChangeType: scholasticStanding.changeType,
+      reversalDate: scholasticStanding.reversalDate,
+      nonPunitiveFormSubmissionId:
+        scholasticStanding.nonPunitiveFormSubmissionItem?.id,
+    }));
   }
 
   /**

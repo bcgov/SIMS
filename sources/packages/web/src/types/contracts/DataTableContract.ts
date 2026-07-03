@@ -645,6 +645,18 @@ export const StudentRestrictionsHeaders = [
 ];
 
 /**
+ * Scholastic Standing History header.
+ */
+export const ScholasticStandingHistoryHeaders = [
+  { title: "Application", sortable: false, key: "applicationNumber" },
+  { title: "Submitted date", sortable: false, key: "submittedDate" },
+  { title: "Withdrawal date", sortable: false, key: "dateOfWithdrawal" },
+  { title: "Type", sortable: false, key: "scholasticStandingChangeType" },
+  { title: "Tags", sortable: false, key: "tags" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
  * Student File Uploads header.
  */
 export const StudentFileUploadsHeaders = [

@@ -4,6 +4,7 @@
       <header-navigator
         title="Assessments"
         sub-title="View Submission"
+        :back-target="backTarget"
         :route-location="goToAssessmentSummary"
       >
         <template #buttons v-if="showScholasticStandingReversalAction">
@@ -42,7 +43,7 @@
 </template>
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
-import { computed, ref } from "vue";
+import { computed, PropType, ref } from "vue";
 import { RouteLocationRaw, useRouter } from "vue-router";
 import ScholasticStandingForm from "@/components/common/ScholasticStandingForm.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -51,6 +52,7 @@ import ScholasticStandingReversalBanner from "@/components/common/students/appli
 import ScholasticStandingNonPunitiveBanner from "@/components/common/students/applicationDetails/ScholasticStandingNonPunitiveBanner.vue";
 import {
   AssessmentTriggerType,
+  BackTarget,
   Role,
   StudentScholasticStandingChangeType,
 } from "@/types";
@@ -90,6 +92,11 @@ export default {
     scholasticStandingId: {
       type: Number,
       required: true,
+    },
+    backTarget: {
+      type: Object as PropType<BackTarget>,
+      required: false,
+      default: undefined,
     },
   },
   setup(props) {
@@ -139,7 +146,8 @@ export default {
           payload,
         );
         snackBar.success("Scholastic standing reversed successfully.");
-        await router.push(goToAssessmentSummary.value);
+        const location = props.backTarget?.to ?? goToAssessmentSummary.value;
+        await router.push(location);
         return true;
       } catch {
         snackBar.error(

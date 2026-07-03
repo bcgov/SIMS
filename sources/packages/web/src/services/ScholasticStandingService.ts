@@ -4,6 +4,7 @@ import {
   ApplicationBulkWithdrawalValidationResultAPIOutDTO,
   ReverseScholasticStandingAPIInDTO,
   ScholasticStandingDataAPIInDTO,
+  ScholasticStandingDetailsAPIOutDTO,
   ScholasticStandingSubmittedDetailsAPIOutDTO,
   ScholasticStandingSummaryDetailsAPIOutDTO,
 } from "@/services/http/dto";
@@ -71,6 +72,17 @@ export class ScholasticStandingService {
     return ApiClient.ScholasticStandingApi.getScholasticStandingSummary({
       studentId: options?.studentId,
     });
+  }
+
+  /**
+   * Get scholastic standing details for a student.
+   * @param studentId student id to retrieve scholastic standing details.
+   * @returns scholastic standing details.
+   */
+  async getScholasticStandings(
+    studentId: number,
+  ): Promise<ScholasticStandingDetailsAPIOutDTO[]> {
+    return ApiClient.ScholasticStandingApi.getScholasticStandings(studentId);
   }
 
   /**
