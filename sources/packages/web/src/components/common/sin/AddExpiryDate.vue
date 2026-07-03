@@ -9,17 +9,14 @@
             be able to change this.</span
           >
         </div>
-        <v-date-input
+        <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
+        <v-text-field
           label="Expiry date"
           class="mt-2"
+          type="date"
+          v-model="formModel.expiryDate"
           variant="outlined"
-          :input-format="DATE_ONLY_ISO_FORMAT"
-          prepend-icon=""
-          append-inner-icon="mdi-calendar"
-          v-model="expiryDate"
-          :rules="[
-            (value: Date) => checkFutureDateRule(value, 'Expiry date'),
-          ]" />
+          :rules="[checkStringDateFormatRule]" />
         <v-textarea
           hide-details="auto"
           label="Notes"
@@ -47,12 +44,7 @@
 import { PropType, ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import {
-  DATE_ONLY_ISO_FORMAT,
-  useFormatters,
-  useModalDialog,
-  useRules,
-} from "@/composables";
+import { useModalDialog, useRules } from "@/composables";
 import { Role, VForm } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { UpdateSINValidationAPIInDTO } from "@/services/http/dto";
@@ -66,21 +58,18 @@ export default defineComponent({
     },
   },
   setup() {
-    const { checkNotesLengthRule, checkFutureDateRule } = useRules();
-    const { getISODateOnlyString } = useFormatters();
+    const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       UpdateSINValidationAPIInDTO | boolean
     >();
     const addExpiryDateForm = ref({} as VForm);
-    const expiryDate = ref<Date>();
     const formModel = reactive({} as UpdateSINValidationAPIInDTO);
 
     const submit = async () => {
       const validationResult = await addExpiryDateForm.value.validate();
-      if (!validationResult.valid || !expiryDate.value) {
+      if (!validationResult.valid) {
         return;
       }
-      formModel.expiryDate = getISODateOnlyString(expiryDate.value);
       // Copying the payload, as reset is making the formModel properties null.
       const payload = { ...formModel };
       resolvePromise(payload);
@@ -101,10 +90,8 @@ export default defineComponent({
       Role,
       addExpiryDateForm,
       formModel,
-      expiryDate,
       checkNotesLengthRule,
-      checkFutureDateRule,
-      DATE_ONLY_ISO_FORMAT,
+      checkStringDateFormatRule,
     };
   },
 });
