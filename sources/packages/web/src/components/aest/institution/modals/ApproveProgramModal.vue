@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ref, reactive, defineComponent } from "vue";
+import { ref, reactive, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import {
   DATE_ONLY_ISO_FORMAT,
@@ -79,32 +79,27 @@ export default defineComponent({
   },
   setup() {
     const { checkNotesLengthRule, checkFutureDateRule } = useRules();
-    const { getISODateOnlyString, dateOnlyToLocalDateTimeString } =
-      useFormatters();
+    const { getISODateOnlyString } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
     const approveProgramForm = ref({} as VForm);
+    const effectiveEndDate = ref<Date>();
     const formModel = reactive({
       effectiveEndDate: "",
       approvedNote: "",
     } as ApproveProgramAPIInDTO);
-    // Two-way binding between the v-date-input (Date) and the string date
-    // stored in the form model, keeping the model as the single source of truth.
-    const effectiveEndDate = computed<Date | undefined>({
-      get: () =>
-        formModel.effectiveEndDate
-          ? new Date(dateOnlyToLocalDateTimeString(formModel.effectiveEndDate))
-          : undefined,
-      set: (value) => {
-        formModel.effectiveEndDate = value ? getISODateOnlyString(value) : "";
-      },
-    });
 
     const submit = async () => {
       const validationResult = await approveProgramForm.value.validate();
       if (!validationResult.valid) {
         return;
+      }
+      // Convert the selected date to the ISO date-only string expected by the API.
+      if (effectiveEndDate.value) {
+        formModel.effectiveEndDate = getISODateOnlyString(
+          effectiveEndDate.value,
+        );
       }
       resolvePromise(formModel);
     };

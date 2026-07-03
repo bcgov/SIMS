@@ -9,7 +9,8 @@ import {
   ProgramIntensity,
   AviationProgramCredentialTypes,
 } from "@sims/sims-db";
-import { IsDateAfterToday } from "../../../utilities/class-validation";
+import { IsDateAfter } from "../../../utilities/class-validation";
+import { getPSTPDTDateFormatted } from "@sims/utilities";
 
 /**
  * Education program complete information.
@@ -191,7 +192,7 @@ export class EducationProgramAPIInDTO {
 
 export class ApproveProgramAPIInDTO {
   @IsDateString()
-  @IsDateAfterToday()
+  @IsDateAfter(() => getPSTPDTDateFormatted(new Date()), "Expiry date")
   effectiveEndDate: string;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
