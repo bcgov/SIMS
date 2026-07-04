@@ -94,9 +94,7 @@ export default defineComponent({
       }
       const payload: ApproveProgramAPIInDTO = {
         // Convert the selected date to the ISO date-only string expected by the API.
-        effectiveEndDate: effectiveEndDate.value
-          ? getISODateOnlyString(effectiveEndDate.value)
-          : "",
+        effectiveEndDate: getISODateOnlyString(effectiveEndDate.value!),
         approvedNote: approvedNote.value,
       };
       resolvePromise(payload);
