@@ -1,4 +1,4 @@
-import { useValidators } from "@/composables";
+import { useFormatters, useValidators } from "@/composables";
 import { isEmail } from "class-validator";
 
 const NOTES_MAX_CHARACTERS = 500;
@@ -6,6 +6,7 @@ const GIVEN_NAMES_MAX_LENGTH = 100;
 const LAST_NAME_MAX_LENGTH = 100;
 const EMAIL_MAX_LENGTH = 300;
 const { isSINValid, checkMaxCharacters } = useValidators();
+const { isBeforeDateOnly } = useFormatters();
 
 export function useRules() {
   const sinValidationRule = (sin: string) => {
@@ -71,6 +72,22 @@ export function useRules() {
   };
 
   /**
+   * Check if a date is in the future, considering only the date part.
+   * @param date date value to be validated.
+   * @param fieldName friendly field name to be added to the validation message.
+   * @returns true if the date is in the future, otherwise a validation message.
+   */
+  const checkFutureDateRule = (date: Date | string, fieldName = "Date") => {
+    if (!date) {
+      return `${fieldName} is required.`;
+    }
+    if (!isBeforeDateOnly(new Date(), date)) {
+      return `${fieldName} must be in the future.`;
+    }
+    return true;
+  };
+
+  /**
    * Check if a value is truthy and has some length.
    * All values are truthy except false, 0, -0, 0n,
    * "", null, undefined, and NaN.
@@ -129,6 +146,7 @@ export function useRules() {
     sinValidationRule,
     checkNotesLengthRule,
     checkStringDateFormatRule,
+    checkFutureDateRule,
     checkNullOrEmptyRule,
     checkOnlyDigitsRule,
     checkLengthRule,

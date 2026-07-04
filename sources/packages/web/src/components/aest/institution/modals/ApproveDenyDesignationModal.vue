@@ -6,9 +6,10 @@
         <p class="label-value">{{ subTitle }}</p>
         <content-group class="my-3" v-if="showApprovalContent">
           <h4 class="label-bold color-blue">Effective dates</h4>
-          <v-row
-            ><v-col
-              ><v-text-field
+          <v-row>
+            <v-col>
+              <!-- TODO replace text field with v-date-input -->
+              <v-text-field
                 label="Start date"
                 class="mt-2"
                 type="date"
@@ -16,17 +17,22 @@
                 variant="outlined"
                 :rules="[checkStringDateFormatRule]"
                 hide-details="auto"
-            /></v-col>
-            <v-col
-              ><v-text-field
+              />
+            </v-col>
+            <v-col>
+              <!-- TODO replace text field with v-date-input -->
+              <v-text-field
                 label="Expiry date"
                 class="mt-2"
                 type="date"
                 v-model="formModel.endDate"
                 variant="outlined"
                 :rules="[checkStringDateFormatRule]"
-                hide-details="auto" /></v-col></v-row
-          ><v-divider-opaque />
+                hide-details="auto"
+              />
+            </v-col>
+          </v-row>
+          <v-divider-opaque />
           <h4 class="label-bold color-blue">Designate locations</h4>
           <template
             v-for="(item, index) in formModel.locationsDesignations"

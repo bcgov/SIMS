@@ -5,23 +5,29 @@
         <error-summary :errors="approveProgramForm.errors" />
         <div class="pb-2">
           <span class="label-value"
+            >Please select the expiry date for the program</span
+          >
+        </div>
+        <v-date-input
+          label="Expiry date"
+          class="mt-2"
+          variant="outlined"
+          :input-format="DATE_ONLY_ISO_FORMAT"
+          prepend-icon=""
+          append-inner-icon="mdi-calendar"
+          v-model="effectiveEndDate"
+          :rules="[(value: Date) => checkFutureDateRule(value, 'Expiry date')]"
+        />
+        <div class="pb-2">
+          <span class="label-value"
             >Outline the reasoning for approving this program. This will be
             stored in the institution profile notes.</span
           >
         </div>
-        <!-- TODO Date picker is not available in the vuetify 3 version, so temporary usage of textfield and regex-->
-        <v-text-field
-          label="Effective end date"
-          class="mt-2"
-          type="date"
-          v-model="formModel.effectiveEndDate"
-          variant="outlined"
-          :rules="[checkStringDateFormatRule]"
-        />
         <v-textarea
           label="Notes"
-          placeholder="Long text..."
-          v-model="formModel.approvedNote"
+          placeholder="Describe the reasoning for approving this program..."
+          v-model="approvedNote"
           variant="outlined"
           :rules="[checkNotesLengthRule]"
           hide-details="auto"
@@ -45,9 +51,14 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+import { ref, defineComponent } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { useModalDialog, useRules } from "@/composables";
+import {
+  DATE_ONLY_ISO_FORMAT,
+  useFormatters,
+  useModalDialog,
+  useRules,
+} from "@/composables";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { ApproveProgramAPIInDTO } from "@/services/http/dto";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -67,22 +78,26 @@ export default defineComponent({
     },
   },
   setup() {
-    const { checkNotesLengthRule, checkStringDateFormatRule } = useRules();
+    const { checkNotesLengthRule, checkFutureDateRule } = useRules();
+    const { getISODateOnlyString } = useFormatters();
     const { showDialog, showModal, resolvePromise } = useModalDialog<
       ApproveProgramAPIInDTO | boolean
     >();
     const approveProgramForm = ref({} as VForm);
-    const formModel = reactive({
-      effectiveEndDate: "",
-      approvedNote: "",
-    } as ApproveProgramAPIInDTO);
+    const effectiveEndDate = ref<Date>();
+    const approvedNote = ref("");
 
     const submit = async () => {
       const validationResult = await approveProgramForm.value.validate();
       if (!validationResult.valid) {
         return;
       }
-      resolvePromise(formModel);
+      const payload: ApproveProgramAPIInDTO = {
+        // Convert the selected date to the ISO date-only string expected by the API.
+        effectiveEndDate: getISODateOnlyString(effectiveEndDate.value!),
+        approvedNote: approvedNote.value,
+      };
+      resolvePromise(payload);
     };
 
     // Closed the modal dialog.
@@ -97,11 +112,13 @@ export default defineComponent({
       submit,
       showModal,
       cancel,
-      formModel,
+      effectiveEndDate,
+      approvedNote,
       approveProgramForm,
       Role,
       checkNotesLengthRule,
-      checkStringDateFormatRule,
+      checkFutureDateRule,
+      DATE_ONLY_ISO_FORMAT,
     };
   },
 });
