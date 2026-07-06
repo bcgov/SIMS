@@ -73,8 +73,8 @@
             <li
               v-if="acceptValidation.hasStopDisbursementInstitutionRestriction"
             >
-              A restriction at your institution makes your application
-              ineligible for funding at this time.
+              Your application is currently pending further review by StudentAid
+              BC.
             </li>
             <li v-if="acceptValidation.noEstimatedAwardAmounts">
               Your application has been assessed and no funding has been

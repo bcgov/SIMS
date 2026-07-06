@@ -44,7 +44,7 @@ export const ECERT_FAILED_MESSAGES: EcertFailedValidationDetail[] = [
   {
     failedType: ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
     failedMessage:
-      "A restriction at your institution makes your application ineligible for funding at this time.",
+      "Your application is currently pending further review by StudentAid BC.",
   },
   {
     failedType: ECertFailedValidation.LifetimeMaximumCSLP,
