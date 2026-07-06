@@ -2404,7 +2404,7 @@ describe(
       StudentScholasticStandingChangeType.SchoolTransfer,
       StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
     ].forEach((changeType) => {
-      it.only(`Should block the disbursement and log the information when the student has an active ${changeType} scholastic standing event`, async () => {
+      it(`Should block the disbursement and log the information when the student has an active ${changeType} scholastic standing event`, async () => {
         // Arrange
         // Eligible COE basic properties.
         const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2499,7 +2499,7 @@ describe(
       StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
       StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
     ].forEach((changeType) => {
-      it.only(`Should not block the disbursement when the student has an active ${changeType} scholastic standing event`, async () => {
+      it(`Should not block the disbursement when the student has an active ${changeType} scholastic standing event`, async () => {
         // Arrange
         // Eligible COE basic properties.
         const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2573,13 +2573,13 @@ describe(
         expect(header).toContain("100BC  NEW ENTITLEMENT");
         // Validate footer.
         expect(footer.substring(0, 3)).toBe("999");
-        // Check record 1 values.
-        const record1Parsed = new FullTimeCertRecordParser(record1);
-        expect(record1Parsed.hasUser(student.user)).toBe(true);
+        // Check record values.
+        const recordParsed = new FullTimeCertRecordParser(record1);
+        expect(recordParsed.hasUser(student.user)).toBe(true);
       });
     });
 
-    it.only(`Should not block the disbursement when the student has an reversed ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing event`, async () => {
+    it(`Should not block the disbursement when the student has a reversed ${StudentScholasticStandingChangeType.StudentWithdrewFromProgram} scholastic standing event`, async () => {
       // Arrange
       // Eligible COE basic properties.
       const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2655,9 +2655,9 @@ describe(
       expect(header).toContain("100BC  NEW ENTITLEMENT");
       // Validate footer.
       expect(footer.substring(0, 3)).toBe("999");
-      // Check record 1 values.
-      const record1Parsed = new FullTimeCertRecordParser(record1);
-      expect(record1Parsed.hasUser(student.user)).toBe(true);
+      // Check record values.
+      const recordParsed = new FullTimeCertRecordParser(record1);
+      expect(recordParsed.hasUser(student.user)).toBe(true);
     });
 
     describe("Aviation credential full-time applications e-Cert generation", () => {
