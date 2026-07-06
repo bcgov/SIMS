@@ -90,6 +90,26 @@ objects:
                   value: "${THROTTLE_TIME}"
                 - name: THROTTLE_LIMIT
                   value: "${THROTTLE_LIMIT}"
+                - name: AEST_THROTTLE_TIME
+                  value: "${AEST_THROTTLE_TIME}"
+                - name: AEST_THROTTLE_LIMIT
+                  value: "${AEST_THROTTLE_LIMIT}"
+                - name: INSTITUTIONS_THROTTLE_TIME
+                  value: "${INSTITUTIONS_THROTTLE_TIME}"
+                - name: INSTITUTIONS_THROTTLE_LIMIT
+                  value: "${INSTITUTIONS_THROTTLE_LIMIT}"
+                - name: STUDENTS_THROTTLE_TIME
+                  value: "${STUDENTS_THROTTLE_TIME}"
+                - name: STUDENTS_THROTTLE_LIMIT
+                  value: "${STUDENTS_THROTTLE_LIMIT}"
+                - name: SUPPORTING_USERS_THROTTLE_TIME
+                  value: "${SUPPORTING_USERS_THROTTLE_TIME}"
+                - name: SUPPORTING_USERS_THROTTLE_LIMIT
+                  value: "${SUPPORTING_USERS_THROTTLE_LIMIT}"
+                - name: EXTERNAL_THROTTLE_TIME
+                  value: "${EXTERNAL_THROTTLE_TIME}"
+                - name: EXTERNAL_THROTTLE_LIMIT
+                  value: "${EXTERNAL_THROTTLE_LIMIT}"
                 - name: POSTGRES_HOST
                   valueFrom:
                     secretKeyRef:
@@ -632,9 +652,29 @@ parameters:
   - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
     value: "true"
   - name: THROTTLE_TIME
-    value: "10000"
+    value: "1000"
   - name: THROTTLE_LIMIT
     value: "30"
+  - name: AEST_THROTTLE_TIME
+    value: "1000"
+  - name: AEST_THROTTLE_LIMIT
+    value: "20"
+  - name: INSTITUTIONS_THROTTLE_TIME
+    value: "1000"
+  - name: INSTITUTIONS_THROTTLE_LIMIT
+    value: "10"
+  - name: STUDENTS_THROTTLE_TIME
+    value: "1000"
+  - name: STUDENTS_THROTTLE_LIMIT
+    value: "10"
+  - name: SUPPORTING_USERS_THROTTLE_TIME
+    value: "1000"
+  - name: SUPPORTING_USERS_THROTTLE_LIMIT
+    value: "10"
+  - name: EXTERNAL_THROTTLE_TIME
+    value: "1000"
+  - name: EXTERNAL_THROTTLE_LIMIT
+    value: "10"
   - name: FEATURE_TOGGLES
     required: false
   - name: FORMS_URL

@@ -4,7 +4,8 @@ import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { AppModule } from "./app.module";
 import { LoggerService } from "@sims/utilities/logger";
-import { exit } from "process";
+import { TRUST_PROXY_SETTING, TRUSTED_PROXY_HOPS } from "@sims/utilities";
+import { exit } from "node:process";
 import { setGlobalPipes } from "./utilities/auth-utils";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { KeycloakConfig } from "@sims/auth/config";
@@ -18,6 +19,9 @@ async function bootstrap() {
     bufferLogs: true,
     bodyParser: false,
   });
+
+  // Trust upstream proxy headers to resolve client IP addresses correctly.
+  app.set(TRUST_PROXY_SETTING, TRUSTED_PROXY_HOPS);
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);

@@ -16,6 +16,8 @@ import {
   S3Configuration,
   QueueDashboardAccess,
   T4AIntegrationConfig,
+  ThrottleOptions,
+  ThrottleSettings,
 } from "./config.models";
 
 @Injectable()
@@ -511,24 +513,112 @@ export class ConfigService {
   }
 
   /**
-   * Gets the throttle time in milliseconds.
-   * @returns throttle time in milliseconds.
+   * Gets all throttle settings for the API.
+   * @returns throttle settings grouped by module route.
    */
-  get throttleTime(): number {
+  get throttleOptions(): ThrottleOptions {
     return this.getCachedConfig(
-      "throttleTimeConfig",
-      +process.env.THROTTLE_TIME || 100,
+      "throttleOptionsConfig",
+      this.createThrottleConfig(),
     );
   }
 
   /**
-   * Gets the throttle requests limit.
-   * @returns throttle requests limit.
+   * Gets a throttle setting from an environment variable or falls back to a default value.
+   * @param envVariableName throttle environment variable name.
+   * @param defaultValue default value when no environment variable is provided.
+   * @returns throttle setting value.
    */
-  get throttleLimit(): number {
-    return this.getCachedConfig(
-      "throttleLimitConfig",
-      +process.env.THROTTLE_LIMIT || 30,
+  private getThrottleValueOrDefault(
+    envVariableName: string,
+    defaultValue: number,
+  ): number {
+    const rawValue = process.env[envVariableName];
+    const parsedValue = Number(rawValue);
+    // A throttle time or limit must be a positive number, so missing, empty,
+    // non-numeric, or non-positive values fall back to the default. This avoids
+    // an empty environment variable being coerced to 0 by Number("").
+    if (!rawValue || Number.isNaN(parsedValue) || parsedValue <= 0) {
+      return defaultValue;
+    }
+    return parsedValue;
+  }
+
+  /**
+   * Creates throttle settings grouped by API module route.
+   * @returns throttle settings grouped by route.
+   */
+  private createThrottleConfig(): ThrottleOptions {
+    // The default policy is intentionally permissive, as it also covers shared,
+    // multi-client, high-traffic endpoints accessed by different client types.
+    const defaultThrottle = this.getThrottleSettings(
+      "THROTTLE_TIME",
+      "THROTTLE_LIMIT",
+      {
+        time: 1000,
+        limit: 10,
+      },
     );
+    // Client-specific endpoints (institutions, students, supporting users and
+    // external) use a more restrictive policy by default, allowing half the
+    // default request limit within the same time window when no specific
+    // environment variables are provided.
+    const restrictiveThrottle: ThrottleSettings = {
+      time: defaultThrottle.time,
+      limit: Math.floor(defaultThrottle.limit / 2),
+    };
+
+    return {
+      default: defaultThrottle,
+      aest: this.getThrottleSettings(
+        "AEST_THROTTLE_TIME",
+        "AEST_THROTTLE_LIMIT",
+        defaultThrottle,
+      ),
+      institutions: this.getThrottleSettings(
+        "INSTITUTIONS_THROTTLE_TIME",
+        "INSTITUTIONS_THROTTLE_LIMIT",
+        restrictiveThrottle,
+      ),
+      students: this.getThrottleSettings(
+        "STUDENTS_THROTTLE_TIME",
+        "STUDENTS_THROTTLE_LIMIT",
+        restrictiveThrottle,
+      ),
+      supportingUsers: this.getThrottleSettings(
+        "SUPPORTING_USERS_THROTTLE_TIME",
+        "SUPPORTING_USERS_THROTTLE_LIMIT",
+        restrictiveThrottle,
+      ),
+      external: this.getThrottleSettings(
+        "EXTERNAL_THROTTLE_TIME",
+        "EXTERNAL_THROTTLE_LIMIT",
+        restrictiveThrottle,
+      ),
+    };
+  }
+
+  /**
+   * Gets a pair of throttle settings from environment variables.
+   * @param timeEnvVariableName throttle time environment variable name.
+   * @param limitEnvVariableName throttle limit environment variable name.
+   * @param defaultValues default values when no environment variables are provided.
+   * @returns throttle settings pair.
+   */
+  private getThrottleSettings(
+    timeEnvVariableName: string,
+    limitEnvVariableName: string,
+    defaultValues: ThrottleSettings,
+  ): ThrottleSettings {
+    return {
+      time: this.getThrottleValueOrDefault(
+        timeEnvVariableName,
+        defaultValues.time,
+      ),
+      limit: this.getThrottleValueOrDefault(
+        limitEnvVariableName,
+        defaultValues.limit,
+      ),
+    };
   }
 }

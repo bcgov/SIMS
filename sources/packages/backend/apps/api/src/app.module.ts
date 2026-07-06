@@ -24,6 +24,7 @@ import {
   SystemLookupConfigurationController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
+import { ClientRouteThrottlerGuard } from "./auth/guards";
 import { AppAESTModule } from "./app.aest.module";
 import { AppInstitutionsModule } from "./app.institutions.module";
 import { ClientTypeBaseRoute } from "./types";
@@ -36,7 +37,7 @@ import {
   ZeebeModule,
 } from "@sims/services";
 import { LoggerModule } from "@sims/utilities/logger";
-import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
 import { QueueModule } from "@sims/services/queue";
@@ -47,7 +48,7 @@ import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.mod
 import { json } from "express";
 import { JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
-import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-configuration";
 import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.models";
 
@@ -93,16 +94,15 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
         module: AppExternalModule,
       },
     ]),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => [
-        {
-          ttl: config.throttleTime,
-          limit: config.throttleLimit,
-        },
-      ],
-    }),
+    ThrottlerModule.forRoot([
+      {
+        name: "default",
+        // Throttler settings ttl and limit are set to 0 as placeholders
+        // These values are overridden at runtime based on the controller in ClientRouteThrottlerGuard.
+        ttl: 0,
+        limit: 0,
+      },
+    ]),
   ],
   controllers: [
     HealthController,
@@ -125,7 +125,7 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
     },
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: ClientRouteThrottlerGuard,
     },
   ],
 })

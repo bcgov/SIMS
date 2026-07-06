@@ -10,7 +10,6 @@ import BaseController from "../BaseController";
 import { AuditService } from "../../services";
 import { Request } from "express";
 import { AuditAPIInDTO } from "./models/audit.dto";
-import { getClientIPFromRequest } from "../../utilities";
 
 @AllowAuthorizedParty(
   AuthorizedParties.institution,
@@ -38,9 +37,8 @@ export class AuditController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Req() request: Request,
   ): void {
-    const clientIP = getClientIPFromRequest(request);
     this.auditService.audit(
-      clientIP,
+      request.ip,
       userToken.userName,
       payload.event,
       userToken.azp,
