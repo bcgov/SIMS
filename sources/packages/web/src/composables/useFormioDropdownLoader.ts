@@ -34,7 +34,7 @@ export function useFormioDropdownLoader() {
       }),
     );
     // If the current value is not in the options, reset the value to empty.
-    // Not validating the current value against the new options will allow the UI to
+    // Not validating the current value against the new options will cause the UI to
     // display the value (usually the ID) of the option instead of a user-friendly label.
     const currentValue = dropdown.getValue();
     if (
