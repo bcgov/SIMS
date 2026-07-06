@@ -654,27 +654,27 @@ parameters:
   - name: THROTTLE_TIME
     value: "1000"
   - name: THROTTLE_LIMIT
-    value: "10"
+    value: "30"
   - name: AEST_THROTTLE_TIME
     value: "1000"
   - name: AEST_THROTTLE_LIMIT
-    value: "10"
+    value: "20"
   - name: INSTITUTIONS_THROTTLE_TIME
     value: "1000"
   - name: INSTITUTIONS_THROTTLE_LIMIT
-    value: "5"
+    value: "10"
   - name: STUDENTS_THROTTLE_TIME
     value: "1000"
   - name: STUDENTS_THROTTLE_LIMIT
-    value: "5"
+    value: "10"
   - name: SUPPORTING_USERS_THROTTLE_TIME
     value: "1000"
   - name: SUPPORTING_USERS_THROTTLE_LIMIT
-    value: "5"
+    value: "10"
   - name: EXTERNAL_THROTTLE_TIME
     value: "1000"
   - name: EXTERNAL_THROTTLE_LIMIT
-    value: "5"
+    value: "10"
   - name: FEATURE_TOGGLES
     required: false
   - name: FORMS_URL
