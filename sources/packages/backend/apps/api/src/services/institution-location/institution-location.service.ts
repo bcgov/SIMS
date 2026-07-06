@@ -161,6 +161,19 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
   async getDesignatedLocations(
     onlyBetaInstitutionLocations: boolean,
   ): Promise<Partial<InstitutionLocation>[]> {
+    // Create the query to exclude locations that have restrictions that
+    // prevent applications from being created for them.
+    // Currently the actions are specifically for full-time and part-time application eligibility,
+    // but this is reserved for future use. It is not possible to filter location based on the
+    // offering intensity, hence the query will exclude locations that have any of the actions that
+    // prevent applications from being created.
+    const { query: institutionRestrictionsExistsQuery, parameters } =
+      this.restrictionSharedService.getEffectiveInstitutionRestrictionsExistsQuery(
+        [
+          RestrictionActionType.StopFullTimeApplicationEligibility,
+          RestrictionActionType.StopPartTimeApplicationEligibility,
+        ],
+      );
     const designatedLocationsQuery = this.repo
       .createQueryBuilder("location")
       .select(["location.id", "location.name"])
@@ -170,26 +183,12 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
           .getExistsDesignatedLocation()
           .getSql()})`,
       )
+      .andWhere(`NOT EXISTS(${institutionRestrictionsExistsQuery})`)
       .orderBy("location.name");
-    // Create the query to exclude locations that have restrictions that
-    // prevent applications from being created for them.
-    // Currently the actions are specifically for full-time and part-time application eligibility,
-    // but this is reserved for future use. It is not possible to filter location based on the
-    // offering intensity, hence the query will exclude locations that have any of the actions that
-    // prevent applications from being created.
-    designatedLocationsQuery.andWhere(
-      `NOT EXISTS(${this.restrictionSharedService.getEffectiveInstitutionRestrictionsExistsQuery(
-        designatedLocationsQuery,
-        [
-          RestrictionActionType.StopFullTimeApplicationEligibility,
-          RestrictionActionType.StopPartTimeApplicationEligibility,
-        ],
-      )})`,
-    );
     if (onlyBetaInstitutionLocations) {
       designatedLocationsQuery.andWhere("location.isBeta = true");
     }
-    return designatedLocationsQuery.getMany();
+    return designatedLocationsQuery.setParameters(parameters).getMany();
   }
 
   /**

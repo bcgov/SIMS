@@ -3,6 +3,7 @@ import {
   Application,
   InstitutionRestriction,
   OfferingIntensity,
+  QueryAndParamsForExecution,
   RecordDataModelService,
   Restriction,
   RestrictionActionType,
@@ -11,8 +12,8 @@ import {
   Brackets,
   DataSource,
   EntityManager,
+  ObjectLiteral,
   Repository,
-  SelectQueryBuilder,
 } from "typeorm";
 import {
   AcceptAssessmentRestrictionsEvaluationResult,
@@ -129,18 +130,15 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
   /**
    * Creates a query to be used to determine if there are any effective institution
    * restrictions for the given institution and location (program specific not considered).
-   * The method also injects the required subquery parameters into the parent query builder.
    * This allows callers to consume only the SQL fragment when composing subqueries.
-   * @param parentQueryBuilder parent query builder that will execute the subquery.
    * @param actionTypes restriction action types to filter the restrictions.
-   * @returns the EXISTS subquery SQL.
+   * @returns query and parameters to be used in the parent query builder.
    */
   getEffectiveInstitutionRestrictionsExistsQuery(
-    parentQueryBuilder: SelectQueryBuilder<unknown>,
     actionTypes: RestrictionActionType[],
-  ): string {
-    const actionTypesParam =
-      "effectiveInstitutionRestrictionsExistsActionTypes";
+  ): QueryAndParamsForExecution {
+    const parameters = {} as ObjectLiteral;
+    const actionTypesParam = "actionTypesParam";
     const existsQuery = this.institutionRestrictionRepo
       .createQueryBuilder("institutionRestriction")
       .select("1")
@@ -158,8 +156,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       .andWhere(`restriction.actionType @> :${actionTypesParam}`)
       .limit(1)
       .getQuery();
-    parentQueryBuilder.setParameter(actionTypesParam, actionTypes);
-    return existsQuery;
+    parameters[actionTypesParam] = actionTypes;
+    return { query: existsQuery, parameters };
   }
 
   /**
