@@ -2478,7 +2478,7 @@ describe(
           // Assert log messages for the blocked disbursement.
           expect(
             mockedJob.containLogMessages([
-              `Student has an active withdraw, non punitive withdraw, or a transfer on their application.`,
+              `Student has an active withdraw, non-punitive withdraw, or a transfer on their application.`,
               "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
             ]),
           ).toBe(true);

@@ -538,7 +538,7 @@ export enum ECertFailedValidation {
    */
   NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
   /**
-   * Student has active withdraw, non punitive withdraw, or a transfer on their application.
+   * Student has active withdraw, non-punitive withdraw, or a transfer on their application.
    */
   ActiveWithdrawOrTransfer = "ActiveWithdrawOrTransfer",
 }

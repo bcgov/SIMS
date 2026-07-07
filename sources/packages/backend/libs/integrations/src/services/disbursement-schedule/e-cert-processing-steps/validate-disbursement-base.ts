@@ -81,11 +81,11 @@ export abstract class ValidateDisbursementBase {
         resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
       });
     }
-    // When an active withdraw, non punitive withdraw, or a transfer of student exists on an application
+    // When an active withdraw, non-punitive withdraw, or a transfer of student exists on an application
     // create an additional ecert blocker to prevent further funds from going out.
     if (eCertDisbursement.hasActiveWithdrawOrTransfer) {
       log.info(
-        "Student has an active withdraw, non punitive withdraw, or a transfer on their application.",
+        "Student has an active withdraw, non-punitive withdraw, or a transfer on their application.",
       );
       validationResults.push({
         resultType: ECertFailedValidation.ActiveWithdrawOrTransfer,
