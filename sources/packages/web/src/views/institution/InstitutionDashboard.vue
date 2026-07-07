@@ -1,21 +1,19 @@
 <template>
-  <full-page-container
-    :full-width="true"
-    layout-template="centered"
-    data-cy="institutionWelcomePage"
-  >
+  <full-page-container :full-width="true" layout-template="centered">
     <template #alerts>
+      <institution-restriction-banner />
       <announcement-banner dashboard="institution-dashboard" />
     </template>
-    <formio-container formName="institutionWelcomePage" />
+    <formio-container form-name="institutionWelcomePage" />
   </full-page-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import AnnouncementBanner from "@/components/common/AnnouncementBanner.vue";
+import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 
 export default defineComponent({
-  components: { AnnouncementBanner },
+  components: { AnnouncementBanner, InstitutionRestrictionBanner },
 });
 </script>

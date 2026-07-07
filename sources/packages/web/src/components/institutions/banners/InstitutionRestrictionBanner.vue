@@ -1,24 +1,35 @@
 <template>
   <banner
-    v-if="effectiveRestrictionStatus.hasEffectiveRestriction"
+    v-if="restrictionErrorMessages.length"
     class="my-2"
     :type="BannerTypes.Error"
-    header="This program is currently restricted"
+    header="Institution Restricted"
+    :summary-list="restrictionErrorMessages"
+  />
+  <banner
+    v-if="restrictionWarningMessages.length"
+    class="my-2"
+    :type="BannerTypes.Warning"
+    header="Institution Restricted"
+    :summary-list="restrictionWarningMessages"
   />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
 import { useInstitutionRestrictionState } from "@/composables";
+import { RestrictionCode } from "@/types";
 export default defineComponent({
   props: {
     locationId: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
     programId: {
       type: Number,
-      required: true,
+      required: false,
+      default: undefined,
     },
     institutionId: {
       type: Number,
@@ -27,19 +38,49 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { getEffectiveRestrictionStatus, updateInstitutionRestrictionState } =
+    const { getEffectiveRestrictionState, updateInstitutionRestrictionState } =
       useInstitutionRestrictionState();
-    const effectiveRestrictionStatus = getEffectiveRestrictionStatus(() => ({
+    const effectiveRestrictionState = getEffectiveRestrictionState(() => ({
       locationId: props.locationId,
       programId: props.programId,
       institutionId: props.institutionId,
     }));
+
+    const getRestrictionMessages = (restrictionsCodes: string[]) => {
+      const messages = restrictionsCodes.map((code) => {
+        if (code === RestrictionCode.InstitutionUnderReview) {
+          return "Your institution is currently under review.";
+        }
+        return "Your institution has active restrictions.";
+      });
+      return [...new Set(messages)];
+    };
+
+    const restrictionWarningMessages = computed(() => {
+      return getRestrictionMessages(
+        effectiveRestrictionState.value.warningRestrictions.map(
+          (restriction) => restriction.restrictionCode,
+        ),
+      );
+    });
+
+    const restrictionErrorMessages = computed(() => {
+      return getRestrictionMessages(
+        effectiveRestrictionState.value.errorRestrictions.map(
+          (restriction) => restriction.restrictionCode,
+        ),
+      );
+    });
+
     onMounted(
       async () => await updateInstitutionRestrictionState(props.institutionId),
     );
+
     return {
       BannerTypes,
-      effectiveRestrictionStatus,
+      effectiveRestrictionState,
+      restrictionWarningMessages,
+      restrictionErrorMessages,
     };
   },
 });

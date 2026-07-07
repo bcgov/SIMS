@@ -8,12 +8,12 @@
     <template #title>
       <div class="label-bold-normal">{{ header }}</div>
     </template>
-    <v-row>
+    <v-row density="compact" no-gutters>
       <v-col>
         <div class="label-value-normal">
           <slot name="content">{{ summary }}</slot>
           <slot name="content-list" v-if="summaryList">
-            <ul>
+            <ul class="list-indent-compact">
               <li v-for="(item, index) in summaryList" :key="index">
                 {{ item }}
               </li>

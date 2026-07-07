@@ -176,6 +176,7 @@ export class InstitutionActiveRestrictionAPIOutDTO {
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
+  restrictionNotificationType: RestrictionNotificationType;
 }
 
 /**

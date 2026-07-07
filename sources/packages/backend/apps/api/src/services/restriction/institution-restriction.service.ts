@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, Equal, Not, Repository } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  EntityManager,
+  Equal,
+  Not,
+  Repository,
+} from "typeorm";
 import {
   RecordDataModelService,
   InstitutionRestriction,
@@ -70,6 +77,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "restriction.restrictionCode",
         "restriction.description",
         "restriction.actionType",
+        "restriction.notificationType",
         "location.id",
         "location.name",
         "program.id",
@@ -87,9 +95,15 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       );
     }
     if (options?.locationIds?.length) {
-      restrictionsQuery.andWhere("location.id IN (:...locationIds)", {
-        locationIds: options.locationIds,
-      });
+      restrictionsQuery.andWhere(
+        new Brackets((qb) => {
+          // Ensure the user will have access to its specific locations restrictions
+          // or institution scoped restrictions.
+          qb.where("location.id IN (:...locationIds)", {
+            locationIds: options.locationIds,
+          }).orWhere("location.id IS NULL");
+        }),
+      );
     }
     if (options?.excludeNoEffectRestrictions) {
       restrictionsQuery.andWhere(

@@ -124,11 +124,6 @@ export enum RestrictionActionType {
   StopOfferingCreate = "Stop offering create",
 }
 
-export interface EffectiveRestrictionStatus {
-  hasEffectiveRestriction: boolean;
-  canCreateOffering: boolean;
-}
-
 export interface RestrictionDetail {
   restrictionId: number;
   restrictionType: RestrictionType;

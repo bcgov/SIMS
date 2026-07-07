@@ -1,13 +1,29 @@
 import { RestrictionService } from "@/services/RestrictionService";
-import { EffectiveRestrictionStatus, RestrictionActionType } from "@/types";
+import { RestrictionActionType, RestrictionNotificationType } from "@/types";
 import { computed, ComputedRef, MaybeRefOrGetter, ref, toValue } from "vue";
+
+/**
+ * Subset of notification types that will be considered for institutions.
+ */
+export type InstitutionRestrictionNotificationType =
+  | RestrictionNotificationType.Warning
+  | RestrictionNotificationType.Error;
 
 interface InstitutionRestriction {
   programId?: number;
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
+  restrictionNotificationType: InstitutionRestrictionNotificationType;
 }
+
+export interface EffectiveRestrictionState {
+  hasEffectiveRestriction: boolean;
+  errorRestrictions: InstitutionRestriction[];
+  warningRestrictions: InstitutionRestriction[];
+  canCreateOffering: boolean;
+}
+
 interface Params {
   locationId?: number;
   institutionId?: number;
@@ -29,6 +45,8 @@ export function useInstitutionRestrictionState() {
         programId: item.programId,
         restrictionCode: item.restrictionCode,
         restrictionActions: item.restrictionActions,
+        restrictionNotificationType:
+          item.restrictionNotificationType as InstitutionRestrictionNotificationType,
       })),
     );
   };
@@ -52,17 +70,17 @@ export function useInstitutionRestrictionState() {
    * @param params getter parameters.
    * @returns effective restriction status.
    */
-  const getEffectiveRestrictionStatus = (
+  const getEffectiveRestrictionState = (
     params: MaybeRefOrGetter<Params>,
-  ): ComputedRef<EffectiveRestrictionStatus> =>
+  ): ComputedRef<EffectiveRestrictionState> =>
     computed(() => {
       const { locationId, institutionId, programId } = toValue(params);
       const effectiveRestrictions = institutionRestrictionMap.value
         .get(institutionId)
         ?.filter(
           (institutionRestriction) =>
-            institutionRestriction.locationId === locationId &&
-            institutionRestriction.programId === programId,
+            (!locationId || institutionRestriction.locationId === locationId) &&
+            (!programId || institutionRestriction.programId === programId),
         );
       return {
         hasEffectiveRestriction: !!effectiveRestrictions?.length,
@@ -72,12 +90,24 @@ export function useInstitutionRestrictionState() {
               RestrictionActionType.StopOfferingCreate,
             ),
         ),
+        errorRestrictions:
+          effectiveRestrictions?.filter(
+            (effectiveRestriction) =>
+              effectiveRestriction.restrictionNotificationType ===
+              RestrictionNotificationType.Error,
+          ) ?? [],
+        warningRestrictions:
+          effectiveRestrictions?.filter(
+            (effectiveRestriction) =>
+              effectiveRestriction.restrictionNotificationType ===
+              RestrictionNotificationType.Warning,
+          ) ?? [],
       };
     });
 
   return {
     updateInstitutionRestrictionState,
     hasActiveRestriction,
-    getEffectiveRestrictionStatus,
+    getEffectiveRestrictionState,
   };
 }

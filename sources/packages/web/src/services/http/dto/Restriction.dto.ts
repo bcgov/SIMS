@@ -116,6 +116,7 @@ export interface InstitutionActiveRestrictionAPIOutDTO {
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
+  restrictionNotificationType: RestrictionNotificationType;
 }
 
 /**

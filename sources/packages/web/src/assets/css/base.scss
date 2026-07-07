@@ -183,6 +183,12 @@ strong {
   border: 1px solid #e8e8e8;
 }
 
+// Reduces the default left indent of a bullet list.
+.list-indent-compact {
+  margin-top: 4px;
+  padding-left: 0px;
+}
+
 .muted-content-strong {
   color: $color-muted;
   font-weight: $font-weight-bold;

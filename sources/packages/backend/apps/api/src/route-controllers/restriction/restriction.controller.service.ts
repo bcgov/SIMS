@@ -204,6 +204,8 @@ export class RestrictionControllerService {
         locationId: institutionRestriction.location?.id,
         restrictionActions: institutionRestriction.restriction.actionType,
         restrictionCode: institutionRestriction.restriction.restrictionCode,
+        restrictionNotificationType:
+          institutionRestriction.restriction.notificationType,
       })),
     };
   }
