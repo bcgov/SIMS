@@ -116,9 +116,7 @@ export default defineComponent({
       ApproveConfirmEnrollmentModel | boolean
     >();
     const confirmCOE = ref({} as VForm);
-    const formModel = reactive({
-      tuitionRemittanceAmount: 0,
-    } as ApproveConfirmEnrollmentModel);
+    const formModel = reactive({} as ApproveConfirmEnrollmentModel);
 
     // Approve COE and closes the modal.
     const submit = async () => {
