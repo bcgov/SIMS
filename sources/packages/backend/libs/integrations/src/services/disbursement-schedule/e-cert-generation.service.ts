@@ -11,7 +11,6 @@ import {
   StudentRestriction,
   COEStatus,
   StudentAssessment,
-  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
@@ -29,14 +28,6 @@ import { ConfigService } from "@sims/utilities/config";
 interface GroupedStudentActiveRestrictions {
   [studentId: number]: StudentActiveRestriction[];
 }
-
-/**
- * Scholastic standing change types that indicate a withdrawal or transfer.
- */
-const WITHDRAW_OR_TRANSFER_CHANGE_TYPES = [
-  StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-  StudentScholasticStandingChangeType.SchoolTransfer,
-];
 
 /**
  * Manages all the preparation of the disbursements data needed to
@@ -136,6 +127,7 @@ export class ECertGenerationService {
         "programYear.id",
         "programYear.maxLifetimeBCLoanAmount",
         "studentScholasticStanding.id",
+        "studentScholasticStanding.changeType",
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin(
@@ -195,8 +187,7 @@ export class ECertGenerationService {
       .leftJoin(
         "application.studentScholasticStandings",
         "studentScholasticStanding",
-        "studentScholasticStanding.reversalDate IS NULL AND studentScholasticStanding.changeType IN (:...withdrawOrTransferChangeTypes)",
-        { withdrawOrTransferChangeTypes: WITHDRAW_OR_TRANSFER_CHANGE_TYPES },
+        "studentScholasticStanding.reversalDate IS NULL",
       )
       .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
@@ -291,8 +282,6 @@ export class ECertGenerationService {
               application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
                 (bypass) => new ApplicationActiveRestrictionBypass(bypass),
               );
-            const hasActiveWithdrawOrTransfer =
-              application.studentScholasticStandings.length > 0;
             return new EligibleECertDisbursement(
               student.id,
               !!student.sinValidation.isValidSIN,
@@ -305,10 +294,10 @@ export class ECertGenerationService {
               application.programYear.maxLifetimeBCLoanAmount,
               disabilityDetails,
               modifiedIndependentDetails,
-              hasActiveWithdrawOrTransfer,
               groupedStudentRestrictions[student.id],
               restrictionBypasses,
               groupedInstitutionRestrictions[institutionId],
+              application.studentScholasticStandings,
             );
           },
         );

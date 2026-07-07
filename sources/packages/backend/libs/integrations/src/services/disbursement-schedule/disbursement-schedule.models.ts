@@ -14,6 +14,8 @@ import {
   RestrictionActionType,
   RestrictionBypassBehaviors,
   StudentRestriction,
+  StudentScholasticStanding,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 
 export interface DisbursementValue {
@@ -320,6 +322,7 @@ export class EligibleECertDisbursement {
    * steps to have access to the most updated data.
    * @param restrictionBypass all active restrictions bypasses applied to the student application.
    * @param institutionRestrictions all active institution restrictions for the application institution.
+   * @param studentScholasticStandings active scholastic standings for the application.
    */
   constructor(
     readonly studentId: number,
@@ -333,10 +336,10 @@ export class EligibleECertDisbursement {
     readonly maxLifetimeBCLoanAmount: number,
     readonly disabilityDetails: DisabilityDetails,
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
-    readonly hasActiveWithdrawOrTransfer: boolean,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
+    private readonly studentScholasticStandings: StudentScholasticStanding[],
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass
       .filter((bypass) => !!bypass.studentRestrictionId)
@@ -433,6 +436,14 @@ export class EligibleECertDisbursement {
       ...this.getEffectiveInstitutionRestrictions(),
     ];
     return allEffectiveRestrictions;
+  }
+
+  hasActiveStudentScholasticStanding(
+    changeTypes: StudentScholasticStandingChangeType[],
+  ): boolean {
+    return this.studentScholasticStandings.some((standing) =>
+      changeTypes.includes(standing.changeType),
+    );
   }
 }
 

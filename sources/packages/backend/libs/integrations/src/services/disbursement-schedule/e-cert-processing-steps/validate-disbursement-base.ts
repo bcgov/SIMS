@@ -2,6 +2,7 @@ import {
   COEStatus,
   DisabilityStatus,
   RestrictionActionType,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -83,9 +84,14 @@ export abstract class ValidateDisbursementBase {
     }
     // When an active withdraw, non-punitive withdraw, or a transfer of student exists on an application
     // create an additional ecert blocker to prevent further funds from going out.
-    if (eCertDisbursement.hasActiveWithdrawOrTransfer) {
+    if (
+      eCertDisbursement.hasActiveStudentScholasticStanding([
+        StudentScholasticStandingChangeType.SchoolTransfer,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ])
+    ) {
       log.info(
-        "Student has an active withdraw, non-punitive withdraw, or a transfer on their application.",
+        `Student has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
       );
       validationResults.push({
         resultType: ECertFailedValidation.ActiveWithdrawOrTransfer,

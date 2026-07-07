@@ -2405,7 +2405,7 @@ describe(
         StudentScholasticStandingChangeType.SchoolTransfer,
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].forEach((changeType) => {
-        it(`Should block the disbursement and log the information when the student has an active '${changeType}' scholastic standing event.`, async () => {
+        it(`Should block the disbursement and log the information when the student application has an active '${changeType}' scholastic standing event.`, async () => {
           // Arrange
           // Eligible COE basic properties.
           const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2478,7 +2478,7 @@ describe(
           // Assert log messages for the blocked disbursement.
           expect(
             mockedJob.containLogMessages([
-              `Student has an active withdraw, non-punitive withdraw, or a transfer on their application.`,
+              `Student has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
               "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
             ]),
           ).toBe(true);
@@ -2500,7 +2500,7 @@ describe(
         StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
       ].forEach((changeType) => {
-        it(`Should not block the disbursement when the student has an active '${changeType}' scholastic standing event.`, async () => {
+        it(`Should not block the disbursement when the student application has an active '${changeType}' scholastic standing event.`, async () => {
           // Arrange
           // Eligible COE basic properties.
           const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2577,10 +2577,19 @@ describe(
           // Check record values.
           const recordParsed = new FullTimeCertRecordParser(record1);
           expect(recordParsed.hasUser(student.user)).toBe(true);
+          const [disbursement] =
+            application.currentAssessment.disbursementSchedules;
+          const isScheduleSent = await db.disbursementSchedule.exists({
+            where: {
+              id: disbursement.id,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            },
+          });
+          expect(isScheduleSent).toBe(true);
         });
       });
 
-      it(`Should not block the disbursement when the student has a reversed '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}' scholastic standing event.`, async () => {
+      it(`Should not block the disbursement when the student application has a reversed '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}' scholastic standing event.`, async () => {
         // Arrange
         // Eligible COE basic properties.
         const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2659,6 +2668,15 @@ describe(
         // Check record values.
         const recordParsed = new FullTimeCertRecordParser(record1);
         expect(recordParsed.hasUser(student.user)).toBe(true);
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        const isScheduleSent = await db.disbursementSchedule.exists({
+          where: {
+            id: disbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        });
+        expect(isScheduleSent).toBe(true);
       });
     });
 
