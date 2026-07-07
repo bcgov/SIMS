@@ -91,7 +91,7 @@ export abstract class ValidateDisbursementBase {
       ])
     ) {
       log.info(
-        `Student has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
+        `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
       );
       validationResults.push({
         resultType: ECertFailedValidation.ActiveTransferOrWithdraw,

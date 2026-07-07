@@ -2478,7 +2478,7 @@ describe(
           // Assert log messages for the blocked disbursement.
           expect(
             mockedJob.containLogMessages([
-              `Student has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
+              `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
               "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
             ]),
           ).toBe(true);
