@@ -82,7 +82,7 @@ export abstract class ValidateDisbursementBase {
         resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
       });
     }
-    // When an active withdraw, non-punitive withdraw, or a transfer of student exists on an application
+    // When student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application
     // create an additional ecert blocker to prevent further funds from going out.
     if (
       eCertDisbursement.hasActiveStudentScholasticStanding([
@@ -94,7 +94,7 @@ export abstract class ValidateDisbursementBase {
         `Student has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
       );
       validationResults.push({
-        resultType: ECertFailedValidation.ActiveWithdrawOrTransfer,
+        resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
       });
     }
 

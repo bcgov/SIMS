@@ -438,6 +438,11 @@ export class EligibleECertDisbursement {
     return allEffectiveRestrictions;
   }
 
+  /**
+   * Checks if there is an active student scholastic standing for the given change types.
+   * @param changeTypes list of change types to be checked.
+   * @returns true if there is an active student scholastic standing for the given change types, false otherwise.
+   */
   hasActiveStudentScholasticStanding(
     changeTypes: StudentScholasticStandingChangeType[],
   ): boolean {
@@ -549,9 +554,9 @@ export enum ECertFailedValidation {
    */
   NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
   /**
-   * Student has active withdraw, non-punitive withdraw, or a transfer on their application.
+   * Student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application.
    */
-  ActiveWithdrawOrTransfer = "ActiveWithdrawOrTransfer",
+  ActiveTransferOrWithdraw = "ActiveTransferOrWithdraw",
 }
 
 interface StopDisbursementRestrictionValidationResult {
