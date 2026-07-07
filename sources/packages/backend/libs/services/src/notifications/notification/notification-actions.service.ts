@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import {
   base64Encode,
+  CustomNamedError,
   getDateOnlyFormat,
   getPSTPDTDateTime,
 } from "@sims/utilities";
@@ -42,12 +43,14 @@ import {
   MinistryFileProcessingIssueNotification,
   SaveNotificationModel,
   StudentAcceptAssessmentReminderNotification,
+  ProgramSuspensionBlockingApplicationNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
+import { NOTIFICATION_MISSING_EMAIL_CONTACTS } from "@sims/services/constants";
 
 @Injectable()
 export class NotificationActionsService {
@@ -1283,23 +1286,71 @@ export class NotificationActionsService {
     );
   }
 
+  async saveMinistryFormSubmittedNotification(
+    notification: MinistryFormSubmittedNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const auditUser = this.systemUsersService.systemUser;
+    const { templateId, emailContacts } =
+      await this.assertNotificationMessageDetails(
+        NotificationMessageType.MinistryFormSubmitted,
+      );
+    if (!emailContacts?.length) {
+      return;
+    }
+
+    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      userId: auditUser.id,
+      messageType: NotificationMessageType.MinistryFormSubmitted,
+      messagePayload: {
+        email_address: emailContact,
+        template_id: templateId,
+        personalisation: {
+          givenNames: notification.givenNames ?? "",
+          lastName: notification.lastName,
+          birthDate: getDateOnlyFormat(notification.birthDate),
+          studentEmail: notification.email,
+          formCategory: notification.formCategory,
+          formNames: notification.formNames,
+          applicationNumber: notification.applicationNumber ?? "N/A",
+          dateTime: this.getDateTimeOnPSTTimeZone(),
+        },
+      },
+    }));
+    // Save notifications to be sent to the ministry into the notification table.
+    await this.notificationService.saveNotifications(
+      ministryNotificationsToSend,
+      auditUser.id,
+      { entityManager },
+    );
+  }
+
   /**
    * Asserts the notification message details of a notification message.
    * @param notificationMessageTypeId id of the notification message.
+   * @param options assert notification message options.
+   * - `throwOnMissingEmailContacts` when set to true, throw an error if email contacts are missing. Default value is false.
    * @returns notification details of the notification message.
    */
   private async assertNotificationMessageDetails(
     notificationMessageTypeId: NotificationMessageType,
+    options?: { throwOnMissingEmailContacts?: boolean },
   ): Promise<Pick<NotificationMessage, "templateId" | "emailContacts">> {
     const { templateId, emailContacts } =
       await this.notificationMessageService.getNotificationMessageDetails(
         notificationMessageTypeId,
       );
     if (!emailContacts?.length) {
-      this.logger.error(
-        `Email template id ${notificationMessageTypeId} requires a configured email to be sent.`,
-      );
-      return { templateId, emailContacts };
+      const throwOnMissingEmailContacts =
+        options?.throwOnMissingEmailContacts ?? false;
+      const errorMessage = `Notification message ${notificationMessageTypeId} is missing email contacts.`;
+      this.logger.error(errorMessage);
+      if (throwOnMissingEmailContacts) {
+        throw new CustomNamedError(
+          errorMessage,
+          NOTIFICATION_MISSING_EMAIL_CONTACTS,
+        );
+      }
     }
     return { templateId, emailContacts };
   }
@@ -1571,27 +1622,26 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a ministry notification when a student submits a form submission,
-   * using the form category directly from the dynamic form configuration.
+   * Creates a ministry notification when a when a program suspension restriction is blocking an application
+   * at accept assessment or at e-Cert.
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveMinistryFormSubmittedNotification(
-    notification: MinistryFormSubmittedNotification,
+  async saveProgramSuspensionBlockingApplicationNotification(
+    notification: ProgramSuspensionBlockingApplicationNotification,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
-        NotificationMessageType.MinistryFormSubmitted,
+        NotificationMessageType.ProgramSuspensionBlockingApplication,
       );
     if (!emailContacts?.length) {
       return;
     }
-
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
-      messageType: NotificationMessageType.MinistryFormSubmitted,
+      messageType: NotificationMessageType.ProgramSuspensionBlockingApplication,
       messagePayload: {
         email_address: emailContact,
         template_id: templateId,
@@ -1599,11 +1649,11 @@ export class NotificationActionsService {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
           birthDate: getDateOnlyFormat(notification.birthDate),
-          studentEmail: notification.email,
-          formCategory: notification.formCategory,
-          formNames: notification.formNames,
-          applicationNumber: notification.applicationNumber ?? "N/A",
+          studentEmail: notification.studentEmail,
+          applicationNumber: notification.applicationNumber,
           dateTime: this.getDateTimeOnPSTTimeZone(),
+          institutionOperatingName: notification.institutionOperatingName,
+          programName: notification.programName,
         },
       },
     }));
