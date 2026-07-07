@@ -125,6 +125,7 @@ import {
   STUDY_DATE_OVERLAP_ERROR,
   ACTIVE_STUDENT_RESTRICTION,
   APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS,
+  ACTIVE_INSTITUTION_RESTRICTION,
 } from "@/constants";
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
@@ -381,24 +382,24 @@ export default defineComponent({
           name: StudentRoutesConst.STUDENT_APPLICATION_SUMMARY,
         });
       } catch (error: unknown) {
-        let errorLabel = "Unexpected error!";
-        let errorMsg = "An unexpected error has happened.";
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
             case STUDY_DATE_OVERLAP_ERROR:
-              errorLabel = "Invalid submission.";
-              errorMsg = error.message;
+              snackBar.error(`Invalid submission! ${error.message}`);
               break;
             case ACTIVE_STUDENT_RESTRICTION:
-              errorLabel = "Active restriction!";
-              errorMsg = error.message;
+              snackBar.error(`Active restriction! ${error.message}`);
+              break;
+            case ACTIVE_INSTITUTION_RESTRICTION:
+              snackBar.error(error.message);
               break;
             default:
-              errorMsg = error.message;
+              snackBar.error(`Unexpected error! ${error.message}`);
               break;
           }
+          return;
         }
-        snackBar.error(`${errorLabel} ${errorMsg}`);
+        snackBar.error("Unexpected error! An unexpected error has happened.");
       } finally {
         submittingApplication.value = false;
       }

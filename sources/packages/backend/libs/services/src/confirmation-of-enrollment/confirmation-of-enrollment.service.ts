@@ -669,9 +669,11 @@ export class ConfirmationOfEnrollmentService {
     const institutionREMITRestrictions =
       await this.restrictionSharedService.getEffectiveInstitutionRestrictions(
         applicationLocation.institution.id,
-        applicationProgram.id,
         applicationLocation.id,
-        { restrictionCode: RestrictionCode.REMIT },
+        {
+          programId: applicationProgram.id,
+          restrictionCode: RestrictionCode.REMIT,
+        },
       );
     const canRequestTuitionRemittance = !institutionREMITRestrictions.length;
     // If no tuition remittance is set then, it is defaulted to 0.
