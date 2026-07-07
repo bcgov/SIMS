@@ -187,7 +187,7 @@
                 }
               ],
               "key": "columns",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report'\n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'",
               "type": "columns",
               "input": false,
               "tableView": false,
@@ -216,8 +216,9 @@
               "validate": {
                 "required": true
               },
+              "validateWhenHidden": false,
               "key": "offeringIntensity",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Data_Inventory_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests';",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests';",
               "type": "selectboxes",
               "input": true,
               "inputType": "checkbox"
