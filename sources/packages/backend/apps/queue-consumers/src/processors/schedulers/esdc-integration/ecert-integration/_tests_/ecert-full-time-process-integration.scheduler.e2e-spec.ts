@@ -2405,7 +2405,7 @@ describe(
         StudentScholasticStandingChangeType.SchoolTransfer,
         StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
       ].forEach((changeType) => {
-        it(`Should block the disbursement and log the information when the student has an active '${changeType}' scholastic standing event`, async () => {
+        it(`Should block the disbursement and log the information when the student has an active '${changeType}' scholastic standing event.`, async () => {
           // Arrange
           // Eligible COE basic properties.
           const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2500,7 +2500,7 @@ describe(
         StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
         StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
       ].forEach((changeType) => {
-        it(`Should not block the disbursement when the student has an active '${changeType}' scholastic standing event`, async () => {
+        it(`Should not block the disbursement when the student has an active '${changeType}' scholastic standing event.`, async () => {
           // Arrange
           // Eligible COE basic properties.
           const eligibleDisbursement: Partial<DisbursementSchedule> = {
@@ -2580,7 +2580,7 @@ describe(
         });
       });
 
-      it(`Should not block the disbursement when the student has a reversed '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}' scholastic standing event`, async () => {
+      it(`Should not block the disbursement when the student has a reversed '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}' scholastic standing event.`, async () => {
         // Arrange
         // Eligible COE basic properties.
         const eligibleDisbursement: Partial<DisbursementSchedule> = {
