@@ -34,7 +34,7 @@ import {
   saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import { ArrayContains, IsNull, Like, Not } from "typeorm";
+import { ArrayContains, In, IsNull, Like, Not } from "typeorm";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
@@ -85,7 +85,10 @@ describe(
       // Insert fake email contact to send ministry email.
       await db.notificationMessage.update(
         {
-          id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          id: In([
+            NotificationMessageType.MinistryNotificationDisbursementBlocked,
+            NotificationMessageType.ProgramSuspensionBlockingApplication,
+          ]),
         },
         { emailContacts: ["dummy@some.domain"] },
       );

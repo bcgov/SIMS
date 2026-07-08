@@ -2,6 +2,8 @@ import { EntityManager } from "typeorm";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { Notification, NotificationMessageType } from "@sims/sims-db";
+import { CustomNamedError } from "@sims/utilities";
+import { NOTIFICATION_MISSING_EMAIL_CONTACTS } from "@sims/services/constants";
 
 /**
  * Provides a basic structure for creating and
@@ -86,7 +88,20 @@ export abstract class ECertNotification {
       );
       return false;
     }
-    await this.createNotification(eCertDisbursement, entityManager);
+    try {
+      await this.createNotification(eCertDisbursement, entityManager);
+    } catch (error: unknown) {
+      // Log process summary warning to create alerts when email contacts are missing for the notification
+      // without failing the entire process.
+      if (
+        error instanceof CustomNamedError &&
+        error.name === NOTIFICATION_MISSING_EMAIL_CONTACTS
+      ) {
+        notificationLog.warn(error.message);
+        return false;
+      }
+      throw error;
+    }
     notificationLog.info(
       `${this.notificationName} notification created for disbursement ID ${eCertDisbursement.disbursement.id}.`,
     );

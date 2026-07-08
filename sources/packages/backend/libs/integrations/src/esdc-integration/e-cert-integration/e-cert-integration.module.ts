@@ -52,6 +52,7 @@ import { FullTimeECertFileHandler } from "./full-time-e-cert-file-handler";
 import { PartTimeECertFileHandler } from "./part-time-e-cert-file-handler";
 import {
   MinistryBlockedDisbursementNotification,
+  ProgramSuspensionBlockingDisbursementNotification,
   StudentBlockedDisbursementNotification,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-notification";
 
@@ -102,6 +103,7 @@ import {
     ECertPreValidationService,
     MinistryBlockedDisbursementNotification,
     StudentBlockedDisbursementNotification,
+    ProgramSuspensionBlockingDisbursementNotification,
   ],
   exports: [
     FullTimeECertFileHandler,

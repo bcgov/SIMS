@@ -1635,6 +1635,7 @@ export class NotificationActionsService {
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ProgramSuspensionBlockingApplication,
+        { throwOnMissingEmailContacts: true },
       );
     if (!emailContacts?.length) {
       return;
