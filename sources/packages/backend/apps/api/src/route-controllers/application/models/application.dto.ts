@@ -294,11 +294,16 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
   assessmentDate: Date;
 }
 
+export class AcceptAssessmentRestrictionAPIOutDTO {
+  code: string;
+  message?: string;
+}
+
 export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
-  acceptAssessmentRestrictions: string[];
+  acceptAssessmentRestrictions: AcceptAssessmentRestrictionAPIOutDTO[];
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

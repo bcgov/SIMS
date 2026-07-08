@@ -87,15 +87,12 @@
                 >StudentAid BC</a
               >.
             </li>
-            <!-- Institution 'Stop accept assessment' restriction messages. -->
-            <li v-if="acceptValidation.hasInstitutionUnderReview">
-              Your assessment cannot be accepted at this time because the
-              institution associated with your application is currently under
-              review.
-            </li>
-            <!-- Generic institution restriction message. -->
-            <li v-else-if="acceptValidation.hasInstitutionRestriction">
-              {{ INSTITUTION_RESTRICTED_DEFAULT_MESSAGE }}
+            <!-- Institution restrictions. -->
+            <li
+              v-for="restriction in acceptValidation.institutionRestrictionMessages"
+              :key="restriction"
+            >
+              {{ restriction }}
             </li>
           </ul>
         </template>
@@ -128,7 +125,10 @@ import NoticeOfAssessmentFormView from "@/components/common/NoticeOfAssessmentFo
 import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
+import {
+  AcceptAssessmentRestrictionAPIOutDTO,
+  AssessmentNOAAPIOutDTO,
+} from "@/services/http/dto";
 import { computed, defineComponent, onMounted, ref } from "vue";
 import {
   ApplicationStatus,
@@ -136,7 +136,6 @@ import {
   ClientIdType,
   BannerTypes,
   ECertFailedValidation,
-  RestrictionCode,
   ApiProcessError,
 } from "@/types";
 import CancelApplication from "@/components/students/modals/CancelApplication.vue";
@@ -177,8 +176,7 @@ export default defineComponent({
       hasStopDisbursementInstitutionRestriction: false,
       noEstimatedAwardAmounts: false,
       hasEffectiveAviationRestriction: false,
-      hasInstitutionUnderReview: false,
-      hasInstitutionRestriction: false,
+      institutionRestrictionMessages: [] as string[],
     });
 
     /**
@@ -238,6 +236,23 @@ export default defineComponent({
         });
       }
     };
+
+    /**
+     * Get unique institution restriction messages to be displayed to the student.
+     * If a restriction does not have a message, a default message will be used instead.
+     * @param restrictions List of institution restrictions to be evaluated.
+     * @returns list of unique messages to be displayed to the student.
+     */
+    const getInstitutionRestrictionMessages = (
+      restrictions: AcceptAssessmentRestrictionAPIOutDTO[],
+    ) => {
+      const messages = restrictions.map(
+        (restriction) =>
+          restriction.message || INSTITUTION_RESTRICTED_DEFAULT_MESSAGE,
+      );
+      return [...new Set(messages)];
+    };
+
     onMounted(async () => {
       const warnings =
         await StudentAssessmentsService.shared.getApplicationWarnings(
@@ -273,16 +288,9 @@ export default defineComponent({
         hasEffectiveAviationRestriction:
           warnings.eCertFailedValidationsInfo
             ?.hasEffectiveAviationRestriction ?? false,
-        hasInstitutionUnderReview:
-          warnings.acceptAssessmentRestrictions.includes(
-            RestrictionCode.InstitutionUnderReview,
-          ),
-        /**
-         * Generic institution restriction message to be displayed when some restriction is
-         * present but there is no specific message to be displayed for the restriction.
-         */
-        hasInstitutionRestriction:
-          !!warnings.acceptAssessmentRestrictions.length,
+        institutionRestrictionMessages: getInstitutionRestrictionMessages(
+          warnings.acceptAssessmentRestrictions,
+        ),
       };
     });
 

@@ -1,6 +1,9 @@
 import { ECertFailedValidationResult } from "@sims/integrations/services";
 import { ECertPreValidatorResult } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { AcceptAssessmentRestrictionsEvaluationResult } from "@sims/services";
+import {
+  AcceptAssessmentRestriction,
+  AcceptAssessmentRestrictionsEvaluationResult,
+} from "@sims/services";
 
 /**
  * Consolidate different evaluation results to determine if a
@@ -16,7 +19,7 @@ export class AcceptAssessmentEvaluationResult {
       acceptAssessmentRestrictionsEvaluationResult.canAcceptAssessment;
     this.eCertFailedValidations = eCertPreValidatorResult.failedValidations;
     this.acceptAssessmentRestrictions =
-      acceptAssessmentRestrictionsEvaluationResult.restrictionCodes;
+      acceptAssessmentRestrictionsEvaluationResult.restrictions;
     this.hasFailedECertValidations =
       !eCertPreValidatorResult.canAcceptAssessment;
     this.hasAcceptAssessmentRestrictions =
@@ -46,7 +49,7 @@ export class AcceptAssessmentEvaluationResult {
    * Additional information about institution restrictions that would prevent the
    * Student Assessment from being accepted by the Student.
    */
-  readonly acceptAssessmentRestrictions: string[];
+  readonly acceptAssessmentRestrictions: AcceptAssessmentRestriction[];
   /**
    * Additional information about the failed e-Cert validations that would prevent
    * the Student Assessment from being accepted by the Student.

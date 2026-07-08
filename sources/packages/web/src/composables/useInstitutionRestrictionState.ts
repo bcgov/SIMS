@@ -1,5 +1,9 @@
 import { RestrictionService } from "@/services/RestrictionService";
-import { RestrictionActionType, RestrictionNotificationType } from "@/types";
+import {
+  InstitutionRestrictionDisplayScope,
+  RestrictionActionType,
+  RestrictionNotificationType,
+} from "@/types";
 import { computed, ComputedRef, MaybeRefOrGetter, ref, toValue } from "vue";
 
 /**
@@ -9,12 +13,14 @@ export type InstitutionRestrictionNotificationType =
   | RestrictionNotificationType.Warning
   | RestrictionNotificationType.Error;
 
-interface InstitutionRestriction {
+export interface InstitutionRestriction {
   programId?: number;
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
   restrictionNotificationType: InstitutionRestrictionNotificationType;
+  displayScope?: InstitutionRestrictionDisplayScope;
+  bannerMessage?: string;
 }
 
 export interface EffectiveRestrictionState {
@@ -25,6 +31,7 @@ export interface EffectiveRestrictionState {
 }
 
 interface Params {
+  scope: InstitutionRestrictionDisplayScope;
   locationId?: number;
   institutionId?: number;
   programId?: number;
@@ -47,6 +54,8 @@ export function useInstitutionRestrictionState() {
         restrictionActions: item.restrictionActions,
         restrictionNotificationType:
           item.restrictionNotificationType as InstitutionRestrictionNotificationType,
+        displayScope: item.displayScope,
+        bannerMessage: item.bannerMessage,
       })),
     );
   };
@@ -74,7 +83,7 @@ export function useInstitutionRestrictionState() {
     params: MaybeRefOrGetter<Params>,
   ): ComputedRef<EffectiveRestrictionState> =>
     computed(() => {
-      const { locationId, institutionId, programId } = toValue(params);
+      const { scope, locationId, institutionId, programId } = toValue(params);
       const effectiveRestrictions = institutionRestrictionMap.value
         .get(institutionId)
         ?.filter(
@@ -92,15 +101,17 @@ export function useInstitutionRestrictionState() {
         ),
         errorRestrictions:
           effectiveRestrictions?.filter(
-            (effectiveRestriction) =>
-              effectiveRestriction.restrictionNotificationType ===
-              RestrictionNotificationType.Error,
+            (restriction) =>
+              restriction.displayScope === scope &&
+              restriction.restrictionNotificationType ===
+                RestrictionNotificationType.Error,
           ) ?? [],
         warningRestrictions:
           effectiveRestrictions?.filter(
-            (effectiveRestriction) =>
-              effectiveRestriction.restrictionNotificationType ===
-              RestrictionNotificationType.Warning,
+            (restriction) =>
+              restriction.displayScope === scope &&
+              restriction.restrictionNotificationType ===
+                RestrictionNotificationType.Warning,
           ) ?? [],
       };
     });

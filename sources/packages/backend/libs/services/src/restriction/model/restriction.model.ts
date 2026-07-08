@@ -93,6 +93,11 @@ export enum RestrictedParty {
   Institution = "Institution",
 }
 
+export interface AcceptAssessmentRestriction {
+  code: string;
+  message?: string;
+}
+
 /**
  * Evaluate if a student assessment can be accepted by the student based on institution restrictions.
  * Institutions may have restrictions that can prevent students from accepting assessments.
@@ -103,7 +108,7 @@ export interface AcceptAssessmentRestrictionsEvaluationResult {
    */
   canAcceptAssessment: boolean;
   /**
-   * List of restriction codes that prevent the student from accepting the assessment.
+   * List of restrictions that prevent the student from accepting the assessment.
    */
-  restrictionCodes: string[];
+  restrictions: AcceptAssessmentRestriction[];
 }

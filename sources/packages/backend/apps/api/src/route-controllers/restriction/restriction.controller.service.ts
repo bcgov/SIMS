@@ -196,6 +196,7 @@ export class RestrictionControllerService {
           locationIds: options?.authorizedLocationIds,
           isActive: true,
           excludeNoEffectRestrictions: options?.excludeNoEffectRestrictions,
+          includeRestrictionsMetadata: true,
         },
       );
     return {
@@ -206,6 +207,12 @@ export class RestrictionControllerService {
         restrictionCode: institutionRestriction.restriction.restrictionCode,
         restrictionNotificationType:
           institutionRestriction.restriction.notificationType,
+        displayScope:
+          institutionRestriction.restriction.metadata?.institution
+            ?.displayScope,
+        bannerMessage:
+          institutionRestriction.restriction.metadata?.institution?.messages
+            ?.banner,
       })),
     };
   }

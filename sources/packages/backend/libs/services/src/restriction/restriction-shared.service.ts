@@ -208,14 +208,17 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     if (effectiveInstitutionRestrictions.length) {
       return {
         canAcceptAssessment: false,
-        restrictionCodes: effectiveInstitutionRestrictions.map(
-          (restriction) => restriction.restriction.restrictionCode,
-        ),
+        restrictions: effectiveInstitutionRestrictions.map((restriction) => ({
+          code: restriction.restriction.restrictionCode,
+          message:
+            restriction.restriction.metadata?.student?.messages
+              ?.acceptAssessment,
+        })),
       };
     }
     return {
       canAcceptAssessment: true,
-      restrictionCodes: [],
+      restrictions: [],
     };
   }
 }

@@ -1,26 +1,33 @@
 <template>
   <banner
     v-if="restrictionErrorMessages.length"
-    class="my-2"
+    class="mt-2"
     :type="BannerTypes.Error"
-    header="Institution Restricted"
+    :header="bannerTitle"
     :summary-list="restrictionErrorMessages"
   />
   <banner
     v-if="restrictionWarningMessages.length"
-    class="my-2"
+    class="mt-2"
     :type="BannerTypes.Warning"
-    header="Institution Restricted"
+    :header="bannerTitle"
     :summary-list="restrictionWarningMessages"
   />
 </template>
 <script lang="ts">
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent, onMounted, PropType } from "vue";
 import { BannerTypes } from "@/types/contracts/Banner";
-import { useInstitutionRestrictionState } from "@/composables";
-import { RestrictionCode } from "@/types";
+import {
+  InstitutionRestriction,
+  useInstitutionRestrictionState,
+} from "@/composables";
+import { InstitutionRestrictionDisplayScope } from "@/types";
 export default defineComponent({
   props: {
+    scope: {
+      type: String as PropType<InstitutionRestrictionDisplayScope>,
+      required: true,
+    },
     locationId: {
       type: Number,
       required: false,
@@ -41,35 +48,55 @@ export default defineComponent({
     const { getEffectiveRestrictionState, updateInstitutionRestrictionState } =
       useInstitutionRestrictionState();
     const effectiveRestrictionState = getEffectiveRestrictionState(() => ({
+      scope: props.scope,
       locationId: props.locationId,
       programId: props.programId,
       institutionId: props.institutionId,
     }));
 
-    const getRestrictionMessages = (restrictionsCodes: string[]) => {
-      const messages = restrictionsCodes.map((code) => {
-        if (code === RestrictionCode.InstitutionUnderReview) {
-          return "Your institution is currently under review.";
-        }
-        return "Your institution has active restrictions.";
-      });
+    const getDefaultBannerMessage = () => {
+      switch (props.scope) {
+        case InstitutionRestrictionDisplayScope.Institution:
+          return "Your institution has active restrictions.";
+        case InstitutionRestrictionDisplayScope.Location:
+          return "Your location has active restrictions.";
+        case InstitutionRestrictionDisplayScope.Program:
+          return "The program has active restrictions.";
+        default:
+          throw new Error(`Unknown scope: ${props.scope}.`);
+      }
+    };
+
+    const getRestrictionMessages = (restrictions: InstitutionRestriction[]) => {
+      const messages = restrictions.map(
+        (restriction) => restriction.bannerMessage || getDefaultBannerMessage(),
+      );
       return [...new Set(messages)];
     };
 
     const restrictionWarningMessages = computed(() => {
       return getRestrictionMessages(
-        effectiveRestrictionState.value.warningRestrictions.map(
-          (restriction) => restriction.restrictionCode,
-        ),
+        effectiveRestrictionState.value.warningRestrictions,
       );
     });
 
     const restrictionErrorMessages = computed(() => {
       return getRestrictionMessages(
-        effectiveRestrictionState.value.errorRestrictions.map(
-          (restriction) => restriction.restrictionCode,
-        ),
+        effectiveRestrictionState.value.errorRestrictions,
       );
+    });
+
+    const bannerTitle = computed(() => {
+      switch (props.scope) {
+        case InstitutionRestrictionDisplayScope.Institution:
+          return "Institution Restricted";
+        case InstitutionRestrictionDisplayScope.Program:
+          return "Program Restricted";
+        case InstitutionRestrictionDisplayScope.Location:
+          return "Location Restricted";
+        default:
+          throw new Error(`Unknown scope: ${props.scope}.`);
+      }
     });
 
     onMounted(
@@ -81,6 +108,7 @@ export default defineComponent({
       effectiveRestrictionState,
       restrictionWarningMessages,
       restrictionErrorMessages,
+      bannerTitle,
     };
   },
 });

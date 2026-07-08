@@ -167,3 +167,15 @@ export enum RestrictionCode {
    */
   InstitutionUnderReview = "IUR",
 }
+
+/**
+ * Possible visualization scopes for institution restrictions.
+ * This is used to determine where the restriction should be displayed.
+ * For example, if a restriction is only applicable to a specific program,
+ * then it should only be displayed on the program page.
+ */
+export enum InstitutionRestrictionDisplayScope {
+  Institution = "institution",
+  Location = "location",
+  Program = "program",
+}

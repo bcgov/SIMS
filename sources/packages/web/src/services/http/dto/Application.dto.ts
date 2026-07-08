@@ -229,11 +229,16 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
   assessmentDate: Date;
 }
 
+export interface AcceptAssessmentRestrictionAPIOutDTO {
+  code: string;
+  message?: string;
+}
+
 export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
-  acceptAssessmentRestrictions: string[];
+  acceptAssessmentRestrictions: AcceptAssessmentRestrictionAPIOutDTO[];
 }
 
 export interface ApplicationSupportingUsersAPIOutDTO {

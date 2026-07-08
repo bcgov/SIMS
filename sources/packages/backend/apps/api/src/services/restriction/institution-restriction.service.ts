@@ -55,6 +55,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
    * - `isActive` indicates whether to select only active restrictions.
    * - `locationIds` location ids.
    * - `excludeNoEffectRestrictions` indicates whether to exclude restrictions with no effect.
+   * - `includeRestrictionsMetadata` indicates whether to include the restriction metadata in the result.
    * @returns Institution restrictions.
    */
   async getInstitutionRestrictions(
@@ -63,6 +64,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       isActive?: boolean;
       locationIds?: number[];
       excludeNoEffectRestrictions?: boolean;
+      includeRestrictionsMetadata?: boolean;
     },
   ): Promise<InstitutionRestriction[]> {
     const restrictionsQuery = this.repo
@@ -78,6 +80,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "restriction.description",
         "restriction.actionType",
         "restriction.notificationType",
+
         "location.id",
         "location.name",
         "program.id",
@@ -88,6 +91,9 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .leftJoin("institutionRestrictions.location", "location")
       .leftJoin("institutionRestrictions.program", "program")
       .where("institution.id = :institutionId", { institutionId });
+    if (options?.includeRestrictionsMetadata) {
+      restrictionsQuery.addSelect("restriction.metadata");
+    }
     if (options?.isActive !== undefined && options.isActive !== null) {
       restrictionsQuery.andWhere(
         "institutionRestrictions.isActive = :isActive",

@@ -21,5 +21,21 @@ VALUES
             'Stop part-time accept assessment'
         ] :: sims.restriction_action_types [],
         'Error' :: sims.restriction_notification_types,
-        '{"fieldRequirements":{ "location": "not allowed", "program": "not allowed" }}' :: JSONB
+        '{
+            "student": {
+                "messages": {
+                    "acceptAssessment": "Your assessment cannot be accepted at this time because the institution associated with your application is currently under review."
+                }
+            },
+            "institution": {
+                "messages": {
+                    "banner": "Your institution is currently under review."
+                },
+                "displayScope": "institution"
+            },
+            "fieldRequirements": {
+                "program": "not allowed",
+                "location": "not allowed"
+            }
+        }' :: JSONB
     );
