@@ -99,7 +99,9 @@ describe(
       // Insert fake email contact to send ministry email.
       await db.notificationMessage.update(
         {
-          id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          id: In([
+            NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          ]),
         },
         { emailContacts: ["dummy@some.domain"] },
       );
