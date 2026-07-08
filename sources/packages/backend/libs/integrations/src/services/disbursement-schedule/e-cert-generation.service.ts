@@ -126,6 +126,8 @@ export class ECertGenerationService {
         "restrictionBypassInstitutionRestrictionRestriction.restrictionCode",
         "programYear.id",
         "programYear.maxLifetimeBCLoanAmount",
+        "studentScholasticStanding.id",
+        "studentScholasticStanding.changeType",
       ])
       .innerJoin("application.currentAssessment", "currentAssessment")
       .innerJoin(
@@ -181,6 +183,11 @@ export class ECertGenerationService {
       .leftJoin(
         "institutionRestriction.location",
         "institutionRestrictionLocation",
+      )
+      .leftJoin(
+        "application.studentScholasticStandings",
+        "studentScholasticStanding",
+        "studentScholasticStanding.reversalDate IS NULL",
       )
       .where(
         "disbursementSchedule.disbursementScheduleStatus = :disbursementScheduleStatus",
@@ -290,6 +297,7 @@ export class ECertGenerationService {
               groupedStudentRestrictions[student.id],
               restrictionBypasses,
               groupedInstitutionRestrictions[institutionId],
+              application.studentScholasticStandings,
             );
           },
         );

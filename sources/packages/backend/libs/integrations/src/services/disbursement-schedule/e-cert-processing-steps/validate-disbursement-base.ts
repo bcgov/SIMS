@@ -2,6 +2,7 @@ import {
   COEStatus,
   DisabilityStatus,
   RestrictionActionType,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
@@ -81,6 +82,22 @@ export abstract class ValidateDisbursementBase {
         resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
       });
     }
+    // When a student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application,
+    // create an additional eCert blocker to prevent further funds from being disbursed.
+    if (
+      eCertDisbursement.hasActiveStudentScholasticStanding([
+        StudentScholasticStandingChangeType.SchoolTransfer,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ])
+    ) {
+      log.info(
+        `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
+      });
+    }
+
     return validationResults;
   }
 

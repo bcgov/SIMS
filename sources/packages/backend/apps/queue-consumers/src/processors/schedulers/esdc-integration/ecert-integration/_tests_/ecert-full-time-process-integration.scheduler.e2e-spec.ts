@@ -18,6 +18,7 @@ import {
   RestrictionActionType,
   RestrictionBypassBehaviors,
   RestrictionType,
+  StudentScholasticStandingChangeType,
   User,
   WorkflowData,
 } from "@sims/sims-db";
@@ -39,6 +40,7 @@ import {
   saveFakeStudentAssessment,
   saveFakeStudentRestriction,
   RestrictionCode,
+  createFakeStudentScholasticStanding,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, In, IsNull, Like, Not } from "typeorm";
@@ -2397,6 +2399,286 @@ describe(
         expect(scheduleIsPending).toBe(true);
       },
     );
+
+    describe("Scholastic standing impact on full-time applications e-Cert generation", () => {
+      [
+        StudentScholasticStandingChangeType.SchoolTransfer,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ].forEach((changeType) => {
+        it(`Should block the disbursement and log the information when the student application has an active '${changeType}' scholastic standing event.`, async () => {
+          // Arrange
+          // Eligible COE basic properties.
+          const eligibleDisbursement: Partial<DisbursementSchedule> = {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt: new Date(),
+          };
+          // Student with valid SIN.
+          const student = await saveFakeStudent(db.dataSource);
+          // Valid MSFAA Number.
+          const msfaaNumber = await db.msfaaNumber.save(
+            createFakeMSFAANumber(
+              { student },
+              {
+                msfaaState: MSFAAStates.Signed,
+                msfaaInitialValues: {
+                  offeringIntensity: OfferingIntensity.fullTime,
+                },
+              },
+            ),
+          );
+          const application = await saveFakeApplicationDisbursements(
+            db.dataSource,
+            {
+              student,
+              msfaaNumber,
+            },
+            {
+              offeringIntensity: OfferingIntensity.fullTime,
+              applicationStatus: ApplicationStatus.Completed,
+              currentAssessmentInitialValues: {
+                assessmentData: { weeks: 5 } as Assessment,
+                assessmentDate: new Date(),
+              },
+              firstDisbursementInitialValues: {
+                ...eligibleDisbursement,
+                disbursementDate: getISODateOnlyString(addDays(1)),
+              },
+            },
+          );
+          // Scholastic Standing event that blocks disbursement.
+          const scholasticStanding = createFakeStudentScholasticStanding(
+            {
+              submittedBy: sharedMinistryUser,
+              application,
+            },
+            {
+              initialValues: {
+                changeType,
+              },
+            },
+          );
+          await db.studentScholasticStanding.save(scholasticStanding);
+
+          // Queued job.
+          const mockedJob = mockBullJob<void>();
+
+          // Act
+          const result = await processor.processQueue(mockedJob.job);
+
+          // Assert
+          // Assert uploaded file.
+          const uploadedFile = getUploadedFile(sftpClientMock);
+          const uploadedFileName = getUploadedFileName();
+          expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+          // No records should be sent.
+          expect(result).toStrictEqual([
+            `Generated file: ${uploadedFileName}`,
+            "Uploaded records: 0",
+          ]);
+          // Assert log messages for the blocked disbursement.
+          expect(
+            mockedJob.containLogMessages([
+              `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
+              "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+            ]),
+          ).toBe(true);
+          const [disbursement] =
+            application.currentAssessment.disbursementSchedules;
+          // Assert that the disbursement is still in status 'Pending' with date sent null.
+          const scheduleIsPending = await db.disbursementSchedule.exists({
+            where: {
+              id: disbursement.id,
+              dateSent: IsNull(),
+              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            },
+          });
+          expect(scheduleIsPending).toBe(true);
+        });
+      });
+
+      [
+        StudentScholasticStandingChangeType.StudentCompletedProgramEarly,
+        StudentScholasticStandingChangeType.StudentDidNotCompleteProgram,
+      ].forEach((changeType) => {
+        it(`Should not block the disbursement when the student application has an active '${changeType}' scholastic standing event.`, async () => {
+          // Arrange
+          // Eligible COE basic properties.
+          const eligibleDisbursement: Partial<DisbursementSchedule> = {
+            coeStatus: COEStatus.completed,
+            coeUpdatedAt: new Date(),
+          };
+          // Student with valid SIN.
+          const student = await saveFakeStudent(db.dataSource);
+          // Valid MSFAA Number.
+          const msfaaNumber = await db.msfaaNumber.save(
+            createFakeMSFAANumber(
+              { student },
+              {
+                msfaaState: MSFAAStates.Signed,
+                msfaaInitialValues: {
+                  offeringIntensity: OfferingIntensity.fullTime,
+                },
+              },
+            ),
+          );
+          const application = await saveFakeApplicationDisbursements(
+            db.dataSource,
+            {
+              student,
+              msfaaNumber,
+            },
+            {
+              offeringIntensity: OfferingIntensity.fullTime,
+              applicationStatus: ApplicationStatus.Completed,
+              currentAssessmentInitialValues: {
+                assessmentData: { weeks: 5 } as Assessment,
+                assessmentDate: new Date(),
+              },
+              firstDisbursementInitialValues: {
+                ...eligibleDisbursement,
+                disbursementDate: getISODateOnlyString(addDays(1)),
+              },
+            },
+          );
+          // Scholastic Standing event that blocks disbursement.
+          const scholasticStanding = createFakeStudentScholasticStanding(
+            {
+              submittedBy: sharedMinistryUser,
+              application,
+            },
+            {
+              initialValues: {
+                changeType,
+              },
+            },
+          );
+          await db.studentScholasticStanding.save(scholasticStanding);
+
+          // Queued job.
+          const mockedJob = mockBullJob<void>();
+
+          // Act
+          const result = await processor.processQueue(mockedJob.job);
+
+          // Assert
+          // Assert uploaded file.
+          const uploadedFile = getUploadedFile(sftpClientMock);
+          const uploadedFileName = getUploadedFileName();
+          expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+          expect(result).toStrictEqual([
+            `Generated file: ${uploadedFileName}`,
+            "Uploaded records: 1",
+          ]);
+          const [header, record1, footer] = uploadedFile.fileLines;
+          // Validate header.
+          expect(header).toContain("100BC  NEW ENTITLEMENT");
+          // Validate footer.
+          expect(footer.substring(0, 3)).toBe("999");
+          // Check record values.
+          const recordParsed = new FullTimeCertRecordParser(record1);
+          expect(recordParsed.hasUser(student.user)).toBe(true);
+          const [disbursement] =
+            application.currentAssessment.disbursementSchedules;
+          const isScheduleSent = await db.disbursementSchedule.exists({
+            where: {
+              id: disbursement.id,
+              disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+            },
+          });
+          expect(isScheduleSent).toBe(true);
+        });
+      });
+
+      it(`Should not block the disbursement when the student application has a reversed '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}' scholastic standing event.`, async () => {
+        // Arrange
+        // Eligible COE basic properties.
+        const eligibleDisbursement: Partial<DisbursementSchedule> = {
+          coeStatus: COEStatus.completed,
+          coeUpdatedAt: new Date(),
+        };
+        // Student with valid SIN.
+        const student = await saveFakeStudent(db.dataSource);
+        // Valid MSFAA Number.
+        const msfaaNumber = await db.msfaaNumber.save(
+          createFakeMSFAANumber(
+            { student },
+            {
+              msfaaState: MSFAAStates.Signed,
+              msfaaInitialValues: {
+                offeringIntensity: OfferingIntensity.fullTime,
+              },
+            },
+          ),
+        );
+        const application = await saveFakeApplicationDisbursements(
+          db.dataSource,
+          {
+            student,
+            msfaaNumber,
+          },
+          {
+            offeringIntensity: OfferingIntensity.fullTime,
+            applicationStatus: ApplicationStatus.Completed,
+            currentAssessmentInitialValues: {
+              assessmentData: { weeks: 5 } as Assessment,
+              assessmentDate: new Date(),
+            },
+            firstDisbursementInitialValues: {
+              ...eligibleDisbursement,
+              disbursementDate: getISODateOnlyString(addDays(1)),
+            },
+          },
+        );
+        // Scholastic Standing event that blocks disbursement.
+        const scholasticStanding = createFakeStudentScholasticStanding(
+          {
+            submittedBy: sharedMinistryUser,
+            application,
+          },
+          {
+            initialValues: {
+              changeType:
+                StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+              reversalDate: new Date(),
+            },
+          },
+        );
+        await db.studentScholasticStanding.save(scholasticStanding);
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+        // Assert uploaded file.
+        const uploadedFile = getUploadedFile(sftpClientMock);
+        const uploadedFileName = getUploadedFileName();
+        expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
+        expect(result).toStrictEqual([
+          `Generated file: ${uploadedFileName}`,
+          "Uploaded records: 1",
+        ]);
+        const [header, record1, footer] = uploadedFile.fileLines;
+        // Validate header.
+        expect(header).toContain("100BC  NEW ENTITLEMENT");
+        // Validate footer.
+        expect(footer.substring(0, 3)).toBe("999");
+        // Check record values.
+        const recordParsed = new FullTimeCertRecordParser(record1);
+        expect(recordParsed.hasUser(student.user)).toBe(true);
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        const isScheduleSent = await db.disbursementSchedule.exists({
+          where: {
+            id: disbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+        });
+        expect(isScheduleSent).toBe(true);
+      });
+    });
 
     describe("Aviation credential full-time applications e-Cert generation", () => {
       for (const {

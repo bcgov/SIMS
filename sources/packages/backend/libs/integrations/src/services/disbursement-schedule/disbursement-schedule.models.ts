@@ -14,6 +14,8 @@ import {
   RestrictionActionType,
   RestrictionBypassBehaviors,
   StudentRestriction,
+  StudentScholasticStanding,
+  StudentScholasticStandingChangeType,
 } from "@sims/sims-db";
 
 export interface DisbursementValue {
@@ -320,6 +322,7 @@ export class EligibleECertDisbursement {
    * steps to have access to the most updated data.
    * @param restrictionBypass all active restrictions bypasses applied to the student application.
    * @param institutionRestrictions all active institution restrictions for the application institution.
+   * @param studentScholasticStandings active scholastic standings for the application.
    */
   constructor(
     readonly studentId: number,
@@ -336,6 +339,7 @@ export class EligibleECertDisbursement {
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
+    private readonly studentScholasticStandings: StudentScholasticStanding[],
   ) {
     this.studentRestrictionsBypassedIds = this.restrictionBypass
       .filter((bypass) => !!bypass.studentRestrictionId)
@@ -432,6 +436,19 @@ export class EligibleECertDisbursement {
       ...this.getEffectiveInstitutionRestrictions(),
     ];
     return allEffectiveRestrictions;
+  }
+
+  /**
+   * Checks if there is an active student scholastic standing for the given change types.
+   * @param changeTypes list of change types to be checked.
+   * @returns true if there is an active student scholastic standing for the given change types, false otherwise.
+   */
+  hasActiveStudentScholasticStanding(
+    changeTypes: StudentScholasticStandingChangeType[],
+  ): boolean {
+    return this.studentScholasticStandings.some((standing) =>
+      changeTypes.includes(standing.changeType),
+    );
   }
 }
 
@@ -536,6 +553,10 @@ export enum ECertFailedValidation {
    * the estimated awards is $0.
    */
   NoEstimatedAwardAmounts = "NoEstimatedAwardAmounts",
+  /**
+   * Student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application.
+   */
+  ActiveTransferOrWithdraw = "ActiveTransferOrWithdraw",
 }
 
 interface StopDisbursementRestrictionValidationResult {
