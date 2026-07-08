@@ -68,6 +68,7 @@ export default defineComponent({
         }),
       },
       ...(hasRole(Role.StudentEditDisabilityProfile) &&
+      studentDetails.value.disabilityStatus != null &&
       studentDetails.value.disabilityStatus !== DisabilityStatus.NotRequested
         ? [
             {
