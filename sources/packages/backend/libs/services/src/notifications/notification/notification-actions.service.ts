@@ -1639,24 +1639,27 @@ export class NotificationActionsService {
     if (!emailContacts?.length) {
       return;
     }
-    const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
-      userId: auditUser.id,
-      messageType: NotificationMessageType.ProgramSuspensionBlockingApplication,
-      messagePayload: {
-        email_address: emailContact,
-        template_id: templateId,
-        personalisation: {
-          givenNames: notification.givenNames ?? "",
-          lastName: notification.lastName,
-          birthDate: getDateOnlyFormat(notification.birthDate),
-          studentEmail: notification.studentEmail,
-          applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
-          institutionOperatingName: notification.institutionOperatingName,
-          programName: notification.programName,
+    const ministryNotificationsToSend =
+      emailContacts.map<SaveNotificationModel>((emailContact) => ({
+        userId: auditUser.id,
+        messageType:
+          NotificationMessageType.ProgramSuspensionBlockingApplication,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: templateId,
+          personalisation: {
+            givenNames: notification.givenNames ?? "",
+            lastName: notification.lastName,
+            birthDate: getDateOnlyFormat(notification.birthDate),
+            studentEmail: notification.studentEmail,
+            applicationNumber: notification.applicationNumber,
+            dateTime: this.getDateTimeOnPSTTimeZone(),
+            institutionOperatingName: notification.institutionOperatingName,
+            programName: notification.programName,
+          },
+          metadata: notification.metadata,
         },
-      },
-    }));
+      }));
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,

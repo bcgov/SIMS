@@ -3,7 +3,7 @@ import {
   DisbursementBlockedNotification,
   NotificationActionsService,
 } from "@sims/services";
-import { Notification, NotificationMessageType, Student } from "@sims/sims-db";
+import { NotificationMessageType, Student } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 import { ECertNotification } from "../e-cert-notification";
 import { EligibleECertDisbursement } from "../../disbursement-schedule.models";
@@ -29,18 +29,11 @@ export class MinistryBlockedDisbursementNotification extends ECertNotification {
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
   ): Promise<boolean> {
-    const hasNotification = await entityManager
-      .getRepository(Notification)
-      .exists({
-        where: {
-          notificationMessage: {
-            id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
-          },
-          metadata: {
-            disbursementId: eCertDisbursement.disbursement.id,
-          },
-        },
-      });
+    const hasNotification = await this.getExistingDisbursementNotification(
+      NotificationMessageType.MinistryNotificationDisbursementBlocked,
+      eCertDisbursement,
+      entityManager,
+    );
     return !hasNotification;
   }
 

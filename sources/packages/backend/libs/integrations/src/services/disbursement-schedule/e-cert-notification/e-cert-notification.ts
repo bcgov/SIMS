@@ -1,6 +1,7 @@
 import { EntityManager } from "typeorm";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import { ProcessSummary } from "@sims/utilities/logger";
+import { Notification, NotificationMessageType } from "@sims/sims-db";
 
 /**
  * Provides a basic structure for creating and
@@ -35,6 +36,30 @@ export abstract class ECertNotification {
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
   ): Promise<void>;
+
+  /**
+   * Get existing notification of the specified type for the given e-Cert disbursement.
+   * @param notificationMessageType type of the notification message.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns true if the notification exists, false otherwise.
+   */
+  protected async getExistingDisbursementNotification(
+    notificationMessageType: NotificationMessageType,
+    eCertDisbursement: EligibleECertDisbursement,
+    entityManager: EntityManager,
+  ): Promise<boolean> {
+    return entityManager.getRepository(Notification).exists({
+      where: {
+        notificationMessage: {
+          id: notificationMessageType,
+        },
+        metadata: {
+          disbursementId: eCertDisbursement.disbursement.id,
+        },
+      },
+    });
+  }
 
   /**
    * Creates a notification defined by {@link createNotification} if the requirements

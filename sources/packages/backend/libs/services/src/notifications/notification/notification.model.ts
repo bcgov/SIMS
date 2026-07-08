@@ -308,4 +308,5 @@ export interface ProgramSuspensionBlockingApplicationNotification {
   applicationNumber: string;
   institutionOperatingName: string;
   programName: string;
+  metadata: { assessmentId: number } | { disbursementId: number };
 }
