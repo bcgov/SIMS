@@ -8,7 +8,7 @@
     <template #title>
       <div class="label-bold-normal">{{ header }}</div>
     </template>
-    <v-row density="compact" no-gutters>
+    <v-row>
       <v-col>
         <div class="label-value-normal">
           <slot name="content">{{ summary }}</slot>

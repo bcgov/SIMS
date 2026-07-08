@@ -24,10 +24,18 @@ export interface InstitutionRestriction {
 }
 
 export interface EffectiveRestrictionState {
-  hasEffectiveRestriction: boolean;
-  errorRestrictions: InstitutionRestriction[];
-  warningRestrictions: InstitutionRestriction[];
+  /**
+   * Indicates whether the institution can create an offering.
+   */
   canCreateOffering: boolean;
+  /**
+   * Error restrictions for a given scope (location, program, or institution).
+   */
+  errorRestrictions: InstitutionRestriction[];
+  /**
+   * Warning restrictions for a given scope (location, program, or institution).
+   */
+  warningRestrictions: InstitutionRestriction[];
 }
 
 interface Params {
@@ -40,6 +48,21 @@ const institutionRestrictionMap = ref(
   new Map<number | undefined, InstitutionRestriction[]>(),
 );
 export function useInstitutionRestrictionState() {
+  /**
+   * Determine if a scoped identifier matches a restriction identifier.
+   * Restrictions without a specific scope (undefined/null) apply to all scopes.
+   * @param selectedScopeId the identifier of the selected scope (location or program).
+   * @param restrictionScopeId the identifier of the restriction's scope (location or program).
+   * @returns true if the selected scope matches the restriction's scope, or if either is undefined/null.
+   */
+  const matchesRestrictionScope = (
+    selectedScopeId: number | undefined,
+    restrictionScopeId: number | null | undefined,
+  ): boolean =>
+    restrictionScopeId == null ||
+    selectedScopeId == null ||
+    selectedScopeId === restrictionScopeId;
+
   const updateInstitutionRestrictionState = async (institutionId?: number) => {
     const institutionRestrictions =
       await RestrictionService.shared.getActiveInstitutionRestrictions({
@@ -88,11 +111,19 @@ export function useInstitutionRestrictionState() {
         .get(institutionId)
         ?.filter(
           (institutionRestriction) =>
-            (!locationId || institutionRestriction.locationId === locationId) &&
-            (!programId || institutionRestriction.programId === programId),
+            matchesRestrictionScope(
+              locationId,
+              institutionRestriction.locationId,
+            ) ||
+            matchesRestrictionScope(
+              programId,
+              institutionRestriction.programId,
+            ),
         );
+      const scopedRestrictions = effectiveRestrictions?.filter(
+        (restriction) => restriction.displayScope === scope,
+      );
       return {
-        hasEffectiveRestriction: !!effectiveRestrictions?.length,
         canCreateOffering: !effectiveRestrictions?.some(
           (effectiveRestriction) =>
             effectiveRestriction.restrictionActions.includes(
@@ -100,18 +131,16 @@ export function useInstitutionRestrictionState() {
             ),
         ),
         errorRestrictions:
-          effectiveRestrictions?.filter(
+          scopedRestrictions?.filter(
             (restriction) =>
-              restriction.displayScope === scope &&
               restriction.restrictionNotificationType ===
-                RestrictionNotificationType.Error,
+              RestrictionNotificationType.Error,
           ) ?? [],
         warningRestrictions:
-          effectiveRestrictions?.filter(
+          scopedRestrictions?.filter(
             (restriction) =>
-              restriction.displayScope === scope &&
               restriction.restrictionNotificationType ===
-                RestrictionNotificationType.Warning,
+              RestrictionNotificationType.Warning,
           ) ?? [],
       };
     });

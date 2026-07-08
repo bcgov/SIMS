@@ -84,10 +84,7 @@ export class RestrictionInstitutionsController extends BaseController {
     const authorizedLocationIds = userToken.authorizations.getLocationsIds();
     return this.restrictionControllerService.getActiveInstitutionRestrictions(
       institutionId,
-      {
-        authorizedLocationIds,
-        excludeNoEffectRestrictions: true,
-      },
+      { authorizedLocationIds, excludeNoEffectRestrictions: true },
     );
   }
 }

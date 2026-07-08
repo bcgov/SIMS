@@ -127,7 +127,7 @@ export enum ActionEffectiveConditionNames {
  * Possible visualization scopes for institution restrictions.
  * This is used to determine where the restriction should be displayed.
  * For example, if a restriction is only applicable to a specific program,
- * then it should only be displayed on the program page.
+ * then it should only be displayed on a program page.
  */
 export enum InstitutionRestrictionDisplayScope {
   Institution = "institution",

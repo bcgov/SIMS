@@ -240,7 +240,7 @@ export default defineComponent({
     /**
      * Get unique institution restriction messages to be displayed to the student.
      * If a restriction does not have a message, a default message will be used instead.
-     * @param restrictions List of institution restrictions to be evaluated.
+     * @param restrictions list of institution restrictions to be evaluated.
      * @returns list of unique messages to be displayed to the student.
      */
     const getInstitutionRestrictionMessages = (

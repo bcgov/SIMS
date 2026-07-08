@@ -54,6 +54,27 @@ export default defineComponent({
       institutionId: props.institutionId,
     }));
 
+    /**
+     * Banner title based on the scope of the restriction.
+     * @returns The banner title for the given scope.
+     */
+    const bannerTitle = computed(() => {
+      switch (props.scope) {
+        case InstitutionRestrictionDisplayScope.Institution:
+          return "Institution Restricted";
+        case InstitutionRestrictionDisplayScope.Program:
+          return "Program Restricted";
+        case InstitutionRestrictionDisplayScope.Location:
+          return "Location Restricted";
+        default:
+          throw new Error(`Unknown scope: ${props.scope}.`);
+      }
+    });
+
+    /**
+     * Default message for a specific scope when no banner message is provided by the restriction.
+     * @returns The default message for the given scope.
+     */
     const getDefaultBannerMessage = () => {
       switch (props.scope) {
         case InstitutionRestrictionDisplayScope.Institution:
@@ -67,6 +88,12 @@ export default defineComponent({
       }
     };
 
+    /**
+     * Get the default banner message for a specific restriction if no banner message
+     * is provided, ensuring they will not be duplicated.
+     * @param restrictions the list of restrictions to get the banner messages from.
+     * @returns a list of unique banner messages for the given restrictions.
+     */
     const getRestrictionMessages = (restrictions: InstitutionRestriction[]) => {
       const messages = restrictions.map(
         (restriction) => restriction.bannerMessage || getDefaultBannerMessage(),
@@ -84,19 +111,6 @@ export default defineComponent({
       return getRestrictionMessages(
         effectiveRestrictionState.value.errorRestrictions,
       );
-    });
-
-    const bannerTitle = computed(() => {
-      switch (props.scope) {
-        case InstitutionRestrictionDisplayScope.Institution:
-          return "Institution Restricted";
-        case InstitutionRestrictionDisplayScope.Program:
-          return "Program Restricted";
-        case InstitutionRestrictionDisplayScope.Location:
-          return "Location Restricted";
-        default:
-          throw new Error(`Unknown scope: ${props.scope}.`);
-      }
     });
 
     onMounted(
