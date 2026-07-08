@@ -17,7 +17,10 @@ export class ProgramSuspensionBlockingDisbursementNotification extends ECertNoti
   constructor(
     private readonly notificationActionsService: NotificationActionsService,
   ) {
-    super("Program suspension blocking application");
+    super(
+      "Program suspension blocking application",
+      NotificationMessageType.ProgramSuspensionBlockingApplication,
+    );
   }
 
   /**
@@ -39,7 +42,6 @@ export class ProgramSuspensionBlockingDisbursementNotification extends ECertNoti
     // Check if the notification already exists for the given disbursement
     // when there is an effective program suspension restriction.
     const hasNotification = await this.getExistingDisbursementNotification(
-      NotificationMessageType.MinistryNotificationDisbursementBlocked,
       eCertDisbursement,
       entityManager,
     );

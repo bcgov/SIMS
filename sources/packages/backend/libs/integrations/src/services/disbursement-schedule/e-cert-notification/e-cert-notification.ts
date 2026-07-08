@@ -13,8 +13,12 @@ export abstract class ECertNotification {
   /**
    * Initializes a new instance of {@link ECertNotification}.
    * @param notificationName friendly name of the notification for logging
+   * @param notificationMessageType type of the notification message.
    */
-  protected constructor(private readonly notificationName: string) {}
+  protected constructor(
+    private readonly notificationName: string,
+    protected readonly notificationMessageType: NotificationMessageType,
+  ) {}
 
   /**
    * Determines whether a notification should be created or not.
@@ -41,20 +45,18 @@ export abstract class ECertNotification {
 
   /**
    * Get existing notification of the specified type for the given e-Cert disbursement.
-   * @param notificationMessageType type of the notification message.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager entity manager to execute in transaction.
    * @returns true if the notification exists, false otherwise.
    */
   protected async getExistingDisbursementNotification(
-    notificationMessageType: NotificationMessageType,
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
   ): Promise<boolean> {
     return entityManager.getRepository(Notification).exists({
       where: {
         notificationMessage: {
-          id: notificationMessageType,
+          id: this.notificationMessageType,
         },
         metadata: {
           disbursementId: eCertDisbursement.disbursement.id,
@@ -97,7 +99,9 @@ export abstract class ECertNotification {
         error instanceof CustomNamedError &&
         error.name === NOTIFICATION_MISSING_EMAIL_CONTACTS
       ) {
-        notificationLog.warn(error.message);
+        notificationLog.warn(
+          `${this.notificationName} notification cannot be created: ${error.message}`,
+        );
         return false;
       }
       throw error;

@@ -101,6 +101,7 @@ describe(
         {
           id: In([
             NotificationMessageType.MinistryNotificationDisbursementBlocked,
+            NotificationMessageType.ProgramSuspensionBlockingApplication,
           ]),
         },
         { emailContacts: ["dummy@some.domain"] },

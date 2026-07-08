@@ -16,7 +16,10 @@ export class MinistryBlockedDisbursementNotification extends ECertNotification {
   constructor(
     private readonly notificationActionsService: NotificationActionsService,
   ) {
-    super("Ministry Blocked Disbursement");
+    super(
+      "Ministry Blocked Disbursement",
+      NotificationMessageType.MinistryNotificationDisbursementBlocked,
+    );
   }
 
   /**
@@ -30,7 +33,6 @@ export class MinistryBlockedDisbursementNotification extends ECertNotification {
     entityManager: EntityManager,
   ): Promise<boolean> {
     const hasNotification = await this.getExistingDisbursementNotification(
-      NotificationMessageType.MinistryNotificationDisbursementBlocked,
       eCertDisbursement,
       entityManager,
     );

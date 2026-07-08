@@ -26,7 +26,10 @@ export class StudentBlockedDisbursementNotification extends ECertNotification {
   constructor(
     private readonly notificationActionsService: NotificationActionsService,
   ) {
-    super("Student Blocked Disbursement");
+    super(
+      "Student Blocked Disbursement",
+      NotificationMessageType.StudentNotificationDisbursementBlocked,
+    );
   }
 
   /**
@@ -46,8 +49,7 @@ export class StudentBlockedDisbursementNotification extends ECertNotification {
       .addSelect("max(notification.createdAt)", "maxCreatedAt")
       .innerJoin("notification.notificationMessage", "notificationMessage")
       .where("notificationMessage.id = :notificationMessageId", {
-        notificationMessageId:
-          NotificationMessageType.StudentNotificationDisbursementBlocked,
+        notificationMessageId: this.notificationMessageType,
       })
       .andWhere("notification.metadata->>'disbursementId' = :disbursementId", {
         disbursementId: eCertDisbursement.disbursement.id,
