@@ -82,8 +82,8 @@ export abstract class ValidateDisbursementBase {
         resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
       });
     }
-    // When student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application
-    // create an additional ecert blocker to prevent further funds from going out.
+    // When a student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application,
+    // create an additional eCert blocker to prevent further funds from being disbursed.
     if (
       eCertDisbursement.hasActiveStudentScholasticStanding([
         StudentScholasticStandingChangeType.SchoolTransfer,
