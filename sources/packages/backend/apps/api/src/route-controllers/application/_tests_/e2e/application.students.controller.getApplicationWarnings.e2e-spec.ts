@@ -350,7 +350,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     },
   );
 
-  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective restriction on institution with an action to 'Stop accept assessment'.", async () => {
+  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective restriction on institution with an action to Stop accept assessment.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const msfaaNumber = createFakeMSFAANumber(
@@ -411,7 +411,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       .expect({
         canAcceptAssessment: false,
         eCertFailedValidations: [],
-        acceptAssessmentRestrictions: [restriction.restrictionCode],
+        acceptAssessmentRestrictions: [
+          {
+            code: restriction.restrictionCode,
+            message:
+              "Your assessment cannot be accepted at this time because the institution associated with your application is currently under review.",
+          },
+        ],
       });
   });
 

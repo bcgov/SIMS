@@ -80,6 +80,7 @@ describe("RestrictionAESTController(e2e)-getActiveInstitutionRestrictions.", () 
               RestrictionActionType.StopFullTimeDisbursement,
               RestrictionActionType.StopOfferingCreate,
             ],
+            restrictionNotificationType: RestrictionNotificationType.Error,
           },
         ],
       });

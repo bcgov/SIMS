@@ -119,6 +119,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
                 RestrictionActionType.StopFullTimeDisbursement,
                 RestrictionActionType.StopOfferingCreate,
               ],
+              restrictionNotificationType: RestrictionNotificationType.Error,
             },
           ],
         });
@@ -176,6 +177,7 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
                 RestrictionActionType.StopFullTimeDisbursement,
                 RestrictionActionType.StopOfferingCreate,
               ],
+              restrictionNotificationType: RestrictionNotificationType.Error,
             },
           ],
         });
