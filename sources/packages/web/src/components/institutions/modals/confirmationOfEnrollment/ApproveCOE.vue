@@ -10,7 +10,7 @@
           >Confirming enrolment verifies this applicant is attending your
           institution and will allow funding to be disbursed.</span
         >
-        <content-group class="my-3" v-if="canRequestTuitionRemittance">
+        <content-group class="my-3" v-if="props.canRequestTuitionRemittance">
           <v-radio-group
             v-model="formModel.requestedTuitionRemittance"
             class="mt-2 input-unset-display-opacity"
@@ -45,7 +45,7 @@
                     numberRangeRule(
                       v,
                       1,
-                      maxTuitionRemittance,
+                      props.maxTuitionRemittance,
                       'Tuition remittance',
                       formatCurrency,
                     ),
@@ -54,7 +54,7 @@
               <div>
                 <span>Maximum tuition amount: </span>
                 <span class="label-bold">{{
-                  formatCurrency(maxTuitionRemittance)
+                  formatCurrency(props.maxTuitionRemittance)
                 }}</span>
                 <tooltip-icon
                   >This is the maximum amount you can request for this
@@ -62,7 +62,7 @@
                 >
               </div>
               <banner
-                v-if="hasOverawards"
+                v-if="props.hasOverawards"
                 class="mt-4"
                 :type="BannerTypes.Warning"
                 summary="The student has some overaward balance that can impact the tuition remittance requested at disbursement time."
@@ -82,73 +82,46 @@
   </v-form>
 </template>
 
-<script lang="ts">
-import { ref, reactive, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, reactive } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import { ApproveConfirmEnrollmentModel, VForm } from "@/types";
+import type { ApproveConfirmEnrollmentModel, VForm } from "@/types";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { useFormatters, useModalDialog, useRules } from "@/composables";
 import { BannerTypes } from "@/types/contracts/Banner";
 
-export default defineComponent({
-  components: {
-    ModalDialogBase,
-    ErrorSummary,
-  },
-  props: {
-    hasOverawards: {
-      type: Boolean,
-      required: true,
-    },
-    maxTuitionRemittance: {
-      type: Number,
-      required: true,
-    },
-    canRequestTuitionRemittance: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup() {
-    const { formatCurrency } = useFormatters();
-    const { numberRangeRule, checkNullOrEmptyRule } = useRules();
-    const { showDialog, resolvePromise, showModal } = useModalDialog<
-      ApproveConfirmEnrollmentModel | boolean
-    >();
-    const confirmCOE = ref({} as VForm);
-    const formModel = reactive({
-      tuitionRemittanceAmount: 0,
-    } as ApproveConfirmEnrollmentModel);
+interface Props {
+  hasOverawards: boolean;
+  maxTuitionRemittance: number;
+  canRequestTuitionRemittance: boolean;
+}
 
-    // Approve COE and closes the modal.
-    const submit = async () => {
-      const validationResult = await confirmCOE.value.validate();
-      if (!validationResult.valid) {
-        return;
-      }
-      resolvePromise(formModel);
-    };
+const props = defineProps<Props>();
 
-    // Closed the modal dialog.
-    const cancel = () => {
-      confirmCOE.value.reset();
-      confirmCOE.value.resetValidation();
-      resolvePromise(false);
-      formModel.tuitionRemittanceAmount = 0;
-    };
+const { formatCurrency } = useFormatters();
+const { numberRangeRule, checkNullOrEmptyRule } = useRules();
+const { showDialog, resolvePromise, showModal } = useModalDialog<
+  ApproveConfirmEnrollmentModel | boolean
+>();
+const confirmCOE = ref({} as VForm);
+const formModel = reactive({} as ApproveConfirmEnrollmentModel);
 
-    return {
-      confirmCOE,
-      showDialog,
-      submit,
-      cancel,
-      formModel,
-      showModal,
-      BannerTypes,
-      formatCurrency,
-      numberRangeRule,
-      checkNullOrEmptyRule,
-    };
-  },
+// Approves COE and closes the modal.
+const submit = async () => {
+  const validationResult = await confirmCOE.value.validate();
+  if (!validationResult.valid) {
+    return;
+  }
+  resolvePromise(formModel);
+};
+
+// Closes the modal dialog.
+const cancel = () => {
+  confirmCOE.value.reset();
+  resolvePromise(false);
+};
+
+defineExpose({
+  showModal,
 });
 </script>
