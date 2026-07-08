@@ -158,17 +158,6 @@ export enum FieldRequirementType {
 }
 
 /**
- * Restriction codes that are used for specific UI scenarios,
- * for instance, to display a specific content based on a restriction code.
- */
-export enum RestrictionCode {
-  /**
-   * Institution under review.
-   */
-  InstitutionUnderReview = "IUR",
-}
-
-/**
  * Possible visualization scopes for institution restrictions.
  * This is used to determine where the restriction should be displayed.
  * For example, if a restriction is only applicable to a specific program,
