@@ -731,6 +731,7 @@ export class NotificationActionsService {
     const { templateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryNotificationDisbursementBlocked,
+        { throwOnMissingEmailContacts: true },
       );
     if (!emailContacts?.length) {
       return;
