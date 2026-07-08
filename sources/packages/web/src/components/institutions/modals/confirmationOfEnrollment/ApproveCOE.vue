@@ -118,7 +118,6 @@ const submit = async () => {
 // Closes the modal dialog.
 const cancel = () => {
   confirmCOE.value.reset();
-  confirmCOE.value.resetValidation();
   resolvePromise(false);
 };
 
