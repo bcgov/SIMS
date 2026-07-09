@@ -313,6 +313,10 @@ export class EligibleECertDisbursement {
    * @param disabilityDetails students Disability status both from application submitted
    * and the student profile disability status verification.
    * @param modifiedIndependentDetails student's "estranged from parents" information.
+   * @param applicationEligibleDisbursementIndex The index is used to identify if the disbursement is either first or second eligible disbursement
+   * for the application.
+   ** Note: An eligible disbursement means a disbursement that is pending and satisfies all the preliminary conditions
+   ** for e-Cert generation.
    * @param restrictions all active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
@@ -336,6 +340,7 @@ export class EligibleECertDisbursement {
     readonly maxLifetimeBCLoanAmount: number,
     readonly disabilityDetails: DisabilityDetails,
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
+    readonly applicationEligibleDisbursementIndex: 1 | 2,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
