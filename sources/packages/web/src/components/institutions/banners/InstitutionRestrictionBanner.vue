@@ -1,17 +1,11 @@
 <template>
   <banner
-    v-if="restrictionErrorMessages.length"
+    v-for="banner in banners"
+    :key="banner.type"
     class="mt-2"
-    :type="BannerTypes.Error"
+    :type="banner.type"
     :header="bannerTitle"
-    :summary-list="restrictionErrorMessages"
-  />
-  <banner
-    v-if="restrictionWarningMessages.length"
-    class="mt-2"
-    :type="BannerTypes.Warning"
-    :header="bannerTitle"
-    :summary-list="restrictionWarningMessages"
+    :summary-list="banner.summaryList"
   />
 </template>
 <script lang="ts">
@@ -101,16 +95,31 @@ export default defineComponent({
       return [...new Set(messages)];
     };
 
-    const restrictionWarningMessages = computed(() => {
-      return getRestrictionMessages(
-        effectiveRestrictionState.value.warningRestrictions,
-      );
-    });
-
-    const restrictionErrorMessages = computed(() => {
-      return getRestrictionMessages(
-        effectiveRestrictionState.value.errorRestrictions,
-      );
+    /**
+     * Create each banner based on the restriction type and the messages for the given scope.
+     * @returns a list of banners to be displayed for the given scope, if some restrictions exist.
+     */
+    const banners = computed(() => {
+      return [
+        {
+          type: BannerTypes.Error,
+          summaryList: getRestrictionMessages(
+            effectiveRestrictionState.value.errorRestrictions,
+          ),
+        },
+        {
+          type: BannerTypes.Warning,
+          summaryList: getRestrictionMessages(
+            effectiveRestrictionState.value.warningRestrictions,
+          ),
+        },
+        {
+          type: BannerTypes.Info,
+          summaryList: getRestrictionMessages(
+            effectiveRestrictionState.value.noEffectRestrictions,
+          ),
+        },
+      ].filter((banner) => banner.summaryList.length > 0);
     });
 
     onMounted(
@@ -120,8 +129,7 @@ export default defineComponent({
     return {
       BannerTypes,
       effectiveRestrictionState,
-      restrictionWarningMessages,
-      restrictionErrorMessages,
+      banners,
       bannerTitle,
     };
   },

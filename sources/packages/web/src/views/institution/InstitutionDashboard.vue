@@ -4,6 +4,8 @@
       <institution-restriction-banner
         :scope="InstitutionRestrictionDisplayScope.Institution"
       />
+      <!-- Users will be able to retrieve only restrictions for the locations they have access to, 
+       so, not providing a location will ensure all accessible locations are considered. -->
       <institution-restriction-banner
         :scope="InstitutionRestrictionDisplayScope.Location"
       />

@@ -6,19 +6,12 @@ import {
 } from "@/types";
 import { computed, ComputedRef, MaybeRefOrGetter, ref, toValue } from "vue";
 
-/**
- * Subset of notification types that will be considered for institutions.
- */
-export type InstitutionRestrictionNotificationType =
-  | RestrictionNotificationType.Warning
-  | RestrictionNotificationType.Error;
-
 export interface InstitutionRestriction {
   programId?: number;
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
-  restrictionNotificationType: InstitutionRestrictionNotificationType;
+  restrictionNotificationType: RestrictionNotificationType;
   displayScope?: InstitutionRestrictionDisplayScope;
   bannerMessage?: string;
 }
@@ -36,6 +29,11 @@ export interface EffectiveRestrictionState {
    * Warning restrictions for a given scope (location, program, or institution).
    */
   warningRestrictions: InstitutionRestriction[];
+  /**
+   * No effect restrictions for a given scope (location, program, or institution).
+   * Not available for all clients, but can be used to display a banner message for informational purposes.
+   */
+  noEffectRestrictions: InstitutionRestriction[];
 }
 
 interface Params {
@@ -60,8 +58,7 @@ export function useInstitutionRestrictionState() {
         programId: item.programId,
         restrictionCode: item.restrictionCode,
         restrictionActions: item.restrictionActions,
-        restrictionNotificationType:
-          item.restrictionNotificationType as InstitutionRestrictionNotificationType,
+        restrictionNotificationType: item.restrictionNotificationType,
         displayScope: item.displayScope,
         bannerMessage: item.bannerMessage,
       })),
@@ -96,9 +93,9 @@ export function useInstitutionRestrictionState() {
         .get(institutionId)
         ?.filter(
           (institutionRestriction) =>
-            (locationId === institutionRestriction.locationId ||
+            (institutionRestriction.locationId === locationId ||
               !institutionRestriction.locationId) &&
-            (programId === institutionRestriction.programId ||
+            (institutionRestriction.programId === programId ||
               !institutionRestriction.programId),
         );
       const scopedRestrictions = effectiveRestrictions?.filter(
@@ -122,6 +119,12 @@ export function useInstitutionRestrictionState() {
             (restriction) =>
               restriction.restrictionNotificationType ===
               RestrictionNotificationType.Warning,
+          ) ?? [],
+        noEffectRestrictions:
+          scopedRestrictions?.filter(
+            (restriction) =>
+              restriction.restrictionNotificationType ===
+              RestrictionNotificationType.NoEffect,
           ) ?? [],
       };
     });
