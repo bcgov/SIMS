@@ -33,7 +33,7 @@
         </body-header>
       </template>
       <content-group>
-        <FormSubmissionItems
+        <form-submission-items
           :submission-items="formSubmissionItems"
           :loading="loading"
           :read-only="true"
