@@ -7,7 +7,6 @@
     >
       <template #content>
         <error-summary :errors="addRestrictionForm.errors" />
-        <!-- TODO add placeholder for v-select when we have stable vuetify 3.-->
         <v-select
           class="my-4"
           label="Category"

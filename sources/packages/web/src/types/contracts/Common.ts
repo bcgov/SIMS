@@ -86,3 +86,13 @@ export interface SystemLookupEntry {
   lookupKey: string;
   lookupValue: string;
 }
+
+/**
+ * Interface for tab items defined as an array.
+ */
+export interface TabItem {
+  label: string;
+  icon: string;
+  command: () => RouteLocationRaw;
+  show?: () => boolean;
+}
