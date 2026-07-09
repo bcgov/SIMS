@@ -136,30 +136,13 @@ export enum InstitutionRestrictionDisplayScope {
 }
 
 /**
- * Metadata for further information on how this restriction should be affecting institutions.
- * Note: a single restriction can have effects on both institutions and students.
- */
-export interface InstitutionRestrictionMetadata {
-  /**
-   * The display scope of the restriction, which determines where the restriction should be
-   * displayed in the institution's context.
-   * This is applicable for restrictions defined as Error or Warning, since No Effect
-   * restrictions are not displayed to the institution.
-   */
-  displayScope?: InstitutionRestrictionDisplayScope;
-  messages?: {
-    banner?: string;
-  };
-}
-
-/**
  * Metadata for further information on how this restriction should be affecting students.
  * Note: a single restriction can have effects on both institutions and students.
  */
-export interface StudentRestrictionMetadata {
-  messages?: {
-    acceptAssessment?: string;
-  };
+export interface RestrictionMessages {
+  institutionBanner?: string;
+  ministryBanner?: string;
+  studentAcceptAssessment?: string;
 }
 
 /**
@@ -171,11 +154,11 @@ export interface RestrictionMetadata {
    */
   fieldRequirements: Record<string, FieldRequirementType>;
   /**
-   * Institution related information about how this restriction.
+   * Possible scopes for a institution-related restriction.
    */
-  institution?: InstitutionRestrictionMetadata;
+  institutionRestrictionScope?: InstitutionRestrictionDisplayScope;
   /**
    * Student related information about how this restriction.
    */
-  student?: StudentRestrictionMetadata;
+  messages?: RestrictionMessages;
 }

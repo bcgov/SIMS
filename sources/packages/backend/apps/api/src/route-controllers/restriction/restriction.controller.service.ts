@@ -177,6 +177,9 @@ export class RestrictionControllerService {
   /**
    * Get active institution restrictions.
    * @param institutionId institution id.
+   * @param bannerMessage type of banner message to be returned for the restriction.
+   * - `institutionBanner` for institution banner message.
+   * - `ministryBanner` for ministry banner message.
    * @param options options for filtering restrictions.
    * - `authorizedLocationIds` authorized locations for the user.
    * - `excludeNoEffectRestrictions` indicates whether to exclude no effect restrictions.
@@ -184,6 +187,7 @@ export class RestrictionControllerService {
    */
   async getActiveInstitutionRestrictions(
     institutionId: number,
+    bannerMessage: "institutionBanner" | "ministryBanner",
     options?: {
       authorizedLocationIds?: number[];
       excludeNoEffectRestrictions?: boolean;
@@ -208,11 +212,12 @@ export class RestrictionControllerService {
         restrictionNotificationType:
           institutionRestriction.restriction.notificationType,
         displayScope:
-          institutionRestriction.restriction.metadata?.institution
-            ?.displayScope,
+          institutionRestriction.restriction.metadata
+            ?.institutionRestrictionScope,
         bannerMessage:
-          institutionRestriction.restriction.metadata?.institution?.messages
-            ?.banner,
+          institutionRestriction.restriction.metadata?.messages?.[
+            bannerMessage
+          ],
       })),
     };
   }

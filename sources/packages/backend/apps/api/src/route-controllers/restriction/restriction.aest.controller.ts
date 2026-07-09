@@ -326,6 +326,7 @@ export class RestrictionAESTController extends BaseController {
     }
     return this.restrictionControllerService.getActiveInstitutionRestrictions(
       institutionId,
+      "ministryBanner",
     );
   }
 
