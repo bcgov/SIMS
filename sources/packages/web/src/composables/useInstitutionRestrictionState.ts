@@ -39,10 +39,10 @@ export interface EffectiveRestrictionState {
 }
 
 interface Params {
-  scope: InstitutionRestrictionDisplayScope;
   locationId?: number;
   institutionId?: number;
   programId?: number;
+  scope?: InstitutionRestrictionDisplayScope;
 }
 const institutionRestrictionMap = ref(
   new Map<number | undefined, InstitutionRestriction[]>(),
@@ -98,7 +98,7 @@ export function useInstitutionRestrictionState() {
     );
 
   /**
-   * Get the effective institution restriction status for a location and program.
+   * Get the effective institution restriction state for a location and program.
    * @param params getter parameters.
    * @returns effective restriction status.
    */
@@ -106,7 +106,7 @@ export function useInstitutionRestrictionState() {
     params: MaybeRefOrGetter<Params>,
   ): ComputedRef<EffectiveRestrictionState> =>
     computed(() => {
-      const { scope, locationId, institutionId, programId } = toValue(params);
+      const { locationId, institutionId, programId, scope } = toValue(params);
       const effectiveRestrictions = institutionRestrictionMap.value
         .get(institutionId)
         ?.filter(
@@ -121,7 +121,7 @@ export function useInstitutionRestrictionState() {
             ),
         );
       const scopedRestrictions = effectiveRestrictions?.filter(
-        (restriction) => restriction.displayScope === scope,
+        (restriction) => !scope || restriction.displayScope === scope,
       );
       return {
         canCreateOffering: !effectiveRestrictions?.some(
