@@ -1,16 +1,6 @@
 import { RouteLocationRaw } from "vue-router";
 
 /**
- * @deprecated Use MenuItemModel and once MenuModel removed from all delete the MenuModel.
- */
-export interface MenuModel {
-  label: string;
-  icon?: string | string[];
-  command?: () => void;
-  items?: MenuModel[];
-}
-
-/**
  *  Interface for Menu.
  */
 export interface MenuItemModel {
@@ -88,7 +78,7 @@ export interface SystemLookupEntry {
 }
 
 /**
- * Interface for tab items defined as an array.
+ * Tab item used in v-tabs.
  */
 export interface TabItem {
   label: string;
