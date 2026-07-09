@@ -1659,8 +1659,8 @@ export class NotificationActionsService {
             institutionOperatingName: notification.institutionOperatingName,
             programName: notification.programName,
           },
-          metadata: notification.metadata,
         },
+        metadata: notification.metadata,
       }));
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
