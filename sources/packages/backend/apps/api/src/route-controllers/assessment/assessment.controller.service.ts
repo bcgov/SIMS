@@ -291,7 +291,7 @@ export class AssessmentControllerService {
     ) {
       const eligibleDisbursements =
         await this.eCertGenerationService.getEligibleDisbursements({
-          applicationId: assessment.application.id,
+          applicationIds: [assessment.application.id],
           allowNonCompleted: true,
         });
       firstEligibleDisbursement = eligibleDisbursements.find(

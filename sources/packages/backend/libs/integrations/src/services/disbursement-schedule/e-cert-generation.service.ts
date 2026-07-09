@@ -50,7 +50,7 @@ export class ECertGenerationService {
    * execute all calculations steps.
    * @param options query options.
    * - `offeringIntensity`: offering intensity to retrieve the disbursements.
-   * - `applicationId`: restricts the query to a specific application.
+   * - `applicationIds`: restricts the query to specific applications.
    * - `checkDisbursementMinDate`: check only for disbursements that are close
    * to the date to be disbursed and can already be part of an e-Cert.
    * - `allowNonCompleted`: only select completed applications or allow any status.
@@ -58,7 +58,7 @@ export class ECertGenerationService {
    */
   async getEligibleDisbursements(options: {
     offeringIntensity?: OfferingIntensity;
-    applicationId?: number;
+    applicationIds?: number[];
     checkDisbursementMinDate?: boolean;
     allowNonCompleted?: boolean;
   }): Promise<EligibleECertDisbursement[]> {
@@ -213,10 +213,13 @@ export class ECertGenerationService {
         },
       );
     }
-    if (options.applicationId) {
-      eligibleApplicationsQuery.andWhere("application.id = :applicationId", {
-        applicationId: options.applicationId,
-      });
+    if (options.applicationIds?.length) {
+      eligibleApplicationsQuery.andWhere(
+        "application.id IN (:...applicationIds)",
+        {
+          applicationIds: options.applicationIds,
+        },
+      );
     }
     if (options.offeringIntensity) {
       eligibleApplicationsQuery.andWhere(
@@ -254,52 +257,14 @@ export class ECertGenerationService {
     // easier processing along the calculation steps.
     const eligibleDisbursements =
       eligibleApplications.flatMap<EligibleECertDisbursement>((application) => {
-        const workflowData = application.currentAssessment.workflowData;
         return application.currentAssessment.disbursementSchedules.map(
-          (disbursement) => {
-            const student = application.student;
-            const institutionId =
-              application.currentAssessment.offering.institutionLocation
-                .institution.id;
-            if (!groupedInstitutionRestrictions[institutionId]) {
-              const institutionRestrictions =
-                application.currentAssessment.offering.institutionLocation
-                  .institution.restrictions;
-              groupedInstitutionRestrictions[institutionId] =
-                mapInstitutionActiveRestrictions(institutionRestrictions);
-            }
-            const disabilityDetails: DisabilityDetails = {
-              calculatedPDPPDStatus: workflowData.calculatedData.pdppdStatus,
-              studentProfileDisabilityStatus: student.disabilityStatus,
-            };
-            const modifiedIndependentDetails: ModifiedIndependentDetails = {
-              estrangedFromParents:
-                workflowData.studentData.estrangedFromParents,
-              studentProfileModifiedIndependent:
-                student.modifiedIndependentStatus,
-            };
-            const restrictionBypasses =
-              application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
-                (bypass) => new ApplicationActiveRestrictionBypass(bypass),
-              );
-            return new EligibleECertDisbursement(
-              student.id,
-              !!student.sinValidation.isValidSIN,
-              institutionId,
-              application.currentAssessment.id,
-              application.id,
-              application.applicationNumber,
+          (disbursement) =>
+            this.buildEligibleECertDisbursement(
+              application,
               disbursement,
-              application.currentAssessment.offering,
-              application.programYear.maxLifetimeBCLoanAmount,
-              disabilityDetails,
-              modifiedIndependentDetails,
-              groupedStudentRestrictions[student.id],
-              restrictionBypasses,
-              groupedInstitutionRestrictions[institutionId],
-              application.studentScholasticStandings,
-            );
-          },
+              groupedStudentRestrictions,
+              groupedInstitutionRestrictions,
+            ),
         );
       });
     return eligibleDisbursements;
@@ -480,5 +445,64 @@ export class ECertGenerationService {
       .where("studentAssessment.id = :assessmentId", { assessmentId })
       .getRawOne();
     return queryResult?.lifetimeMaximumCSLP ?? 0;
+  }
+
+  /**
+   * Builds the eligible disbursement to be used in the e-Cert generation/validation.
+   * @param application application to which the disbursement belongs.
+   * @param eligibleDisbursement disbursement that is eligible to be part of the e-Cert.
+   * @param groupedStudentRestrictions grouped student restrictions to be used in the e-Cert calculations.
+   * @param groupedInstitutionRestrictions grouped institution restrictions to be used in the e-Cert calculations.
+   * @returns eligible disbursement to be used in the e-Cert generation/validation.
+   */
+  private buildEligibleECertDisbursement(
+    application: Application,
+    eligibleDisbursement: DisbursementSchedule,
+    groupedStudentRestrictions: GroupedStudentActiveRestrictions,
+    groupedInstitutionRestrictions: Record<
+      number,
+      InstitutionActiveRestriction[]
+    >,
+  ): EligibleECertDisbursement {
+    const workflowData = application.currentAssessment.workflowData;
+    const student = application.student;
+    const institutionId =
+      application.currentAssessment.offering.institutionLocation.institution.id;
+    if (!groupedInstitutionRestrictions[institutionId]) {
+      const institutionRestrictions =
+        application.currentAssessment.offering.institutionLocation.institution
+          .restrictions;
+      groupedInstitutionRestrictions[institutionId] =
+        mapInstitutionActiveRestrictions(institutionRestrictions);
+    }
+    const disabilityDetails: DisabilityDetails = {
+      calculatedPDPPDStatus: workflowData.calculatedData.pdppdStatus,
+      studentProfileDisabilityStatus: student.disabilityStatus,
+    };
+    const modifiedIndependentDetails: ModifiedIndependentDetails = {
+      estrangedFromParents: workflowData.studentData.estrangedFromParents,
+      studentProfileModifiedIndependent: student.modifiedIndependentStatus,
+    };
+    const restrictionBypasses =
+      application.restrictionBypasses.map<ApplicationActiveRestrictionBypass>(
+        (bypass) => new ApplicationActiveRestrictionBypass(bypass),
+      );
+    return new EligibleECertDisbursement(
+      student.id,
+      !!student.sinValidation.isValidSIN,
+      institutionId,
+      application.currentAssessment.id,
+      application.id,
+      application.applicationNumber,
+      eligibleDisbursement,
+      application.currentAssessment.offering,
+      application.programYear.maxLifetimeBCLoanAmount,
+      disabilityDetails,
+      modifiedIndependentDetails,
+      groupedStudentRestrictions[student.id],
+      restrictionBypasses,
+      groupedInstitutionRestrictions[institutionId],
+      application.studentScholasticStandings,
+    );
   }
 }

@@ -43,7 +43,7 @@ export class ECertPreValidationService {
   ): Promise<ECertPreValidatorResult> {
     const [firstEligibleDisbursement] =
       await this.eCertGenerationService.getEligibleDisbursements({
-        applicationId,
+        applicationIds: [applicationId],
         allowNonCompleted: allowNonCompleted ?? false,
       });
     if (!firstEligibleDisbursement) {
