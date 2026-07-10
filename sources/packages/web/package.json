@@ -33,9 +33,6 @@
     "vuetify": "^4.1.4",
     "vuex": "^4.1.0"
   },
-  "overrides": {
-    "dompurify": "3.4.11"
-  },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@types/node": "^26.1.1",
