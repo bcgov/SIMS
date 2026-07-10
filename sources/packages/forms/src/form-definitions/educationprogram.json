@@ -262,13 +262,15 @@
               "input": true
             },
             {
-              "label": "National Occupational Classifcation (NOC)",
+              "label": "National Occupational Classification (NOC)",
               "description": "Format (#####) Optional**",
+              "applyMaskOn": "change",
               "tableView": true,
               "validate": {
                 "pattern": "[0-9]{5}",
                 "customMessage": "Incorrect Format"
               },
+              "validateWhenHidden": false,
               "key": "nocCode",
               "logic": [
                 {
