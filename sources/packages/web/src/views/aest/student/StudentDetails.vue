@@ -17,6 +17,7 @@
       <v-tabs color="primary" stacked grow show-arrows="always">
         <v-tab
           v-for="item in items"
+          v-show="item.show?.() ?? true"
           :text="item.label"
           :key="item.label"
           :to="item.command()"
@@ -41,7 +42,7 @@ import { StudentService } from "@/services/StudentService";
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import StudentRestrictionChip from "@/components/generic/StudentRestrictionChip.vue";
 import { AESTStudentProfileAPIOutDTO } from "@/services/http/dto";
-import { DisabilityStatus, Role } from "@/types";
+import { DisabilityStatus, Role, TabItem } from "@/types";
 import useEmitterEvents from "@/composables/useEmitterEvents";
 import { useAuth } from "@/composables";
 
@@ -58,7 +59,7 @@ export default defineComponent({
     const { refreshStudentSearchProfileOn, refreshStudentSearchProfileOff } =
       useEmitterEvents();
     const studentDetails = ref({} as AESTStudentProfileAPIOutDTO);
-    const items = computed(() => [
+    const items = computed<TabItem[]>(() => [
       {
         label: "Profile",
         icon: "fa:fas fa-address-book",
@@ -67,19 +68,19 @@ export default defineComponent({
           params: { studentId: props.studentId },
         }),
       },
-      ...(hasRole(Role.StudentEditDisabilityProfile) &&
-      studentDetails.value.disabilityStatus !== DisabilityStatus.NotRequested
-        ? [
-            {
-              label: "Disability",
-              icon: "fa:fas fa-universal-access",
-              command: () => ({
-                name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
-                params: { studentId: props.studentId },
-              }),
-            },
-          ]
-        : []),
+      {
+        label: "Disability",
+        icon: "fa:fas fa-universal-access",
+        command: () => ({
+          name: AESTRoutesConst.STUDENT_DISABILITY_PROFILE,
+          params: { studentId: props.studentId },
+        }),
+        show: () =>
+          hasRole(Role.StudentEditDisabilityProfile) &&
+          studentDetails.value.disabilityStatus !==
+            DisabilityStatus.NotRequested,
+      },
+
       {
         label: "Applications",
         icon: "fa:fas fa-folder-open",

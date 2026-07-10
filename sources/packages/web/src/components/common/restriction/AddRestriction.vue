@@ -3,13 +3,12 @@
     <modal-dialog-base
       title="Add new restriction"
       :show-dialog="showDialog"
-      min-width="730"
+      :min-width="730"
     >
       <template #content>
         <error-summary :errors="addRestrictionForm.errors" />
-        <!-- TODO add placeholder for v-select when we have stable vuetify 3.-->
         <v-select
-          class="mt-4"
+          class="my-4"
           label="Category"
           density="compact"
           :items="restrictionCategories"
@@ -19,6 +18,7 @@
           :rules="[(v) => !!v || 'Category is required.']"
           hide-details="auto" />
         <v-select
+          class="my-4"
           label="Reason"
           density="compact"
           :items="restrictionReasons"

@@ -39,7 +39,7 @@ export default defineComponent({
     const items = ref([
       {
         label: "Profile",
-        icon: "fa:far fa-address-book",
+        icon: "fa:fas fa-address-book",
         command: () => ({
           name: InstitutionRoutesConst.STUDENT_PROFILE,
           params: { studentId: props.studentId },
@@ -47,7 +47,7 @@ export default defineComponent({
       },
       {
         label: "Applications",
-        icon: "fa:far fa-folder-open",
+        icon: "fa:fas fa-folder-open",
         command: () => ({
           name: InstitutionRoutesConst.STUDENT_APPLICATIONS,
           params: { studentId: props.studentId },
@@ -63,7 +63,7 @@ export default defineComponent({
       },
       {
         label: "Restrictions",
-        icon: "fa:far fa-times-circle",
+        icon: "fa:fas fa-times-circle",
         command: () => ({
           name: InstitutionRoutesConst.STUDENT_RESTRICTIONS,
           params: { studentId: props.studentId },
@@ -71,7 +71,7 @@ export default defineComponent({
       },
       {
         label: "File Uploads",
-        icon: "fa:far fa-file-alt",
+        icon: "fa:fas fa-file-alt",
         command: () => ({
           name: InstitutionRoutesConst.STUDENT_FILE_UPLOADS,
           params: { studentId: props.studentId },
@@ -79,7 +79,7 @@ export default defineComponent({
       },
       {
         label: "Balances",
-        icon: "fa:fa fa-circle-dollar-to-slot",
+        icon: "fa:fas fa-circle-dollar-to-slot",
         command: () => ({
           name: InstitutionRoutesConst.STUDENT_BALANCES,
           params: { studentId: props.studentId },
@@ -87,7 +87,7 @@ export default defineComponent({
       },
       {
         label: "Notes",
-        icon: "fa:fa fa-sticky-note",
+        icon: "fa:fas fa-sticky-note",
         command: () => ({
           name: InstitutionRoutesConst.STUDENT_NOTES,
           params: { studentId: props.studentId },
