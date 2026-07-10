@@ -1,7 +1,7 @@
 <template>
   <banner
     v-for="banner in banners"
-    :key="banner.type"
+    :key="banner.key"
     class="mt-2"
     :type="banner.type"
     :header="bannerTitle"
@@ -101,21 +101,25 @@ export default defineComponent({
      * @returns a list of banners to be displayed for the given scope, if some restrictions exist.
      */
     const banners = computed(() => {
+      let key = 1;
       return [
         {
+          key: key++,
           type: BannerTypes.Error,
           summaryList: getRestrictionMessages(
             effectiveRestrictionState.value.errorRestrictions,
           ),
         },
         {
+          key: key++,
           type: BannerTypes.Warning,
           summaryList: getRestrictionMessages(
             effectiveRestrictionState.value.warningRestrictions,
           ),
         },
         {
-          type: BannerTypes.Info,
+          key: key++,
+          type: BannerTypes.Error,
           summaryList: getRestrictionMessages(
             effectiveRestrictionState.value.noEffectRestrictions,
           ),
