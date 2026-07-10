@@ -29,7 +29,7 @@ jobs:
             OPENSHIFT_CLUSTER_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
         steps:
             - name: Checkout Target Branch
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                   ref: ${{ github.ref_name }}
             - name: Install CLI tools from OpenShift Mirror
