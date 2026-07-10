@@ -4,7 +4,7 @@ import {
   FormSubmissionStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
 } from "@sims/sims-db";
-import { JSON_10KB } from "../../../constants";
+import { JSON_20KB } from "../../../constants";
 import {
   KnownSupplementaryData,
   KnownSupplementaryDataKey,
@@ -205,7 +205,7 @@ export class FormSubmissionItemAPIInDTO {
   @IsPositive()
   dynamicConfigurationId: number;
   @IsDefined()
-  @JsonMaxSize(JSON_10KB)
+  @JsonMaxSize(JSON_20KB)
   formData: KnownSupplementaryData & Record<string, unknown>;
   @IsDefined()
   files: string[];
