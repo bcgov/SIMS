@@ -401,8 +401,9 @@
           "validate": {
             "required": true
           },
+          "validateWhenHidden": false,
           "key": "selectedOffering",
-          "customConditional": "show =!data.denyProgramInformationRequest && (\r\n  // While the PIR is being completed by the user.\r\n  (data.pirStatus === \"Required\" && !data.showCustomOffering)\r\n  // Or when it was completed in some way with a public offering.\r\n  || (data.pirStatus !== \"Required\" && data.offeringType === \"Public\"));\r\n  \r\n",
+          "customConditional": "show =!data.denyProgramInformationRequest;",
           "type": "select",
           "input": true,
           "searchThreshold": 0.3
@@ -439,7 +440,7 @@
           "leftIcon": "fa fa-plus-circle",
           "tableView": false,
           "key": "createOffering",
-          "customConditional": "show = data.isReadOnlyUser !== true && data.selectedProgram;",
+          "customConditional": "show = data.pirStatus === \"Required\" && data.isReadOnlyUser !== true && data.selectedProgram;",
           "type": "button",
           "custom": "form.emit('customEvent', {\n  type: \"routeToCreateOffering\"\n});",
           "input": true
