@@ -1,5 +1,6 @@
 import {
   FieldRequirementType,
+  InstitutionDisplayScope,
   RestrictionActionType,
   RestrictionNotificationType,
   RestrictionType,
@@ -116,6 +117,9 @@ export interface InstitutionActiveRestrictionAPIOutDTO {
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
+  restrictionNotificationType: RestrictionNotificationType;
+  displayScope?: InstitutionDisplayScope;
+  bannerMessage?: string;
 }
 
 /**

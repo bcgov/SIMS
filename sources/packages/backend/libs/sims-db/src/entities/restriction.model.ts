@@ -124,6 +124,28 @@ export enum ActionEffectiveConditionNames {
 }
 
 /**
+ * Possible visualization scopes for institution restrictions.
+ * This is used to determine where the restriction should be displayed.
+ * For example, if a restriction is only applicable to a specific program,
+ * then it should only be displayed on a program page.
+ */
+export enum InstitutionRestrictionDisplayScope {
+  Institution = "institution",
+  Location = "location",
+  Program = "program",
+}
+
+/**
+ * Metadata for further information on how this restriction should be affecting students.
+ * Note: a single restriction can have effects on both institutions and students.
+ */
+export interface RestrictionMessages {
+  institutionBanner?: string;
+  ministryBanner?: string;
+  studentAcceptAssessment?: string;
+}
+
+/**
  * Restriction metadata.
  */
 export interface RestrictionMetadata {
@@ -131,4 +153,12 @@ export interface RestrictionMetadata {
    * The restricted party(student or institution) field requirements for the restriction.
    */
   fieldRequirements: Record<string, FieldRequirementType>;
+  /**
+   * Possible scopes for a institution-related restriction.
+   */
+  institutionRestrictionScope?: InstitutionRestrictionDisplayScope;
+  /**
+   * Student related information about how this restriction.
+   */
+  messages?: RestrictionMessages;
 }

@@ -44,6 +44,7 @@
     </template>
     <template #alerts>
       <institution-restriction-banner
+        :scope="InstitutionRestrictionDisplayScope.Program"
         :location-id="locationId"
         :program-id="programId"
         :institution-id="institutionId"
@@ -69,7 +70,11 @@
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted, computed, defineComponent } from "vue";
-import { ProgramStatus, Role } from "@/types";
+import {
+  InstitutionRestrictionDisplayScope,
+  ProgramStatus,
+  Role,
+} from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import ApproveProgramModal from "@/components/aest/institution/modals/ApproveProgramModal.vue";
 import { ModalDialog, useSnackBar } from "@/composables";
@@ -183,6 +188,7 @@ export default defineComponent({
       declineProgram,
       Role,
       programDataUpdated,
+      InstitutionRestrictionDisplayScope,
     };
   },
 });

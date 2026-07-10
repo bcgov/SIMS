@@ -19,17 +19,20 @@
         }"
       />
     </template>
-    <institution-restriction-banner
-      :location-id="locationId"
-      :program-id="programId"
-    />
+    <template #alerts>
+      <institution-restriction-banner
+        :scope="InstitutionRestrictionDisplayScope.Program"
+        :location-id="locationId"
+        :program-id="programId"
+      />
+    </template>
     <manage-program-and-offering-summary
       :program-id="programId"
       :location-id="locationId"
       :education-program="educationProgram"
       :allow-edit="!isReadOnly"
       :allow-deactivate="!isReadOnly"
-      :can-create-offering="effectiveRestrictionStatus.canCreateOffering"
+      :can-create-offering="effectiveRestrictionState.canCreateOffering"
       @program-data-updated="programDataUpdated"
     />
   </full-page-container>
@@ -47,6 +50,7 @@ import {
   useInstitutionAuth,
   useInstitutionRestrictionState,
 } from "@/composables";
+import { InstitutionRestrictionDisplayScope } from "@/types";
 
 export default defineComponent({
   components: {
@@ -66,9 +70,10 @@ export default defineComponent({
   },
   setup(props) {
     const { isReadOnlyUser } = useInstitutionAuth();
-    const { getEffectiveRestrictionStatus } = useInstitutionRestrictionState();
+    const { getEffectiveRestrictionState } = useInstitutionRestrictionState();
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
-    const effectiveRestrictionStatus = getEffectiveRestrictionStatus(() => ({
+    const effectiveRestrictionState = getEffectiveRestrictionState(() => ({
+      scope: InstitutionRestrictionDisplayScope.Program,
       locationId: props.locationId,
       programId: props.programId,
     }));
@@ -96,7 +101,8 @@ export default defineComponent({
       InstitutionRoutesConst,
       programDataUpdated,
       isReadOnly,
-      effectiveRestrictionStatus,
+      effectiveRestrictionState,
+      InstitutionRestrictionDisplayScope,
     };
   },
 });

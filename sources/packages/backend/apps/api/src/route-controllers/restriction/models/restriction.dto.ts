@@ -14,6 +14,7 @@ import {
   RESTRICTION_CATEGORY_MAX_LENGTH,
   RestrictionActionType,
   FieldRequirementType,
+  InstitutionRestrictionDisplayScope,
 } from "@sims/sims-db";
 
 /**
@@ -176,6 +177,9 @@ export class InstitutionActiveRestrictionAPIOutDTO {
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
+  restrictionNotificationType: RestrictionNotificationType;
+  displayScope?: InstitutionRestrictionDisplayScope;
+  bannerMessage?: string;
 }
 
 /**

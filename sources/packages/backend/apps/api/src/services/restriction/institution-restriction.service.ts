@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, Equal, Not, Repository } from "typeorm";
+import {
+  Brackets,
+  DataSource,
+  EntityManager,
+  Equal,
+  Not,
+  Repository,
+} from "typeorm";
 import {
   RecordDataModelService,
   InstitutionRestriction,
@@ -48,6 +55,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
    * - `isActive` indicates whether to select only active restrictions.
    * - `locationIds` location ids.
    * - `excludeNoEffectRestrictions` indicates whether to exclude restrictions with no effect.
+   * - `includeRestrictionsMetadata` indicates whether to include the restriction metadata in the result.
    * @returns Institution restrictions.
    */
   async getInstitutionRestrictions(
@@ -56,6 +64,7 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       isActive?: boolean;
       locationIds?: number[];
       excludeNoEffectRestrictions?: boolean;
+      includeRestrictionsMetadata?: boolean;
     },
   ): Promise<InstitutionRestriction[]> {
     const restrictionsQuery = this.repo
@@ -70,6 +79,8 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
         "restriction.restrictionCode",
         "restriction.description",
         "restriction.actionType",
+        "restriction.notificationType",
+
         "location.id",
         "location.name",
         "program.id",
@@ -80,6 +91,9 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       .leftJoin("institutionRestrictions.location", "location")
       .leftJoin("institutionRestrictions.program", "program")
       .where("institution.id = :institutionId", { institutionId });
+    if (options?.includeRestrictionsMetadata) {
+      restrictionsQuery.addSelect("restriction.metadata");
+    }
     if (options?.isActive !== undefined && options.isActive !== null) {
       restrictionsQuery.andWhere(
         "institutionRestrictions.isActive = :isActive",
@@ -87,9 +101,15 @@ export class InstitutionRestrictionService extends RecordDataModelService<Instit
       );
     }
     if (options?.locationIds?.length) {
-      restrictionsQuery.andWhere("location.id IN (:...locationIds)", {
-        locationIds: options.locationIds,
-      });
+      restrictionsQuery.andWhere(
+        new Brackets((qb) => {
+          // Ensure the user will have access to its specific locations restrictions
+          // or institution scoped restrictions.
+          qb.where("location.id IN (:...locationIds)", {
+            locationIds: options.locationIds,
+          }).orWhere("location.id IS NULL");
+        }),
+      );
     }
     if (options?.excludeNoEffectRestrictions) {
       restrictionsQuery.andWhere(

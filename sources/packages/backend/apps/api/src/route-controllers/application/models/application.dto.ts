@@ -294,11 +294,25 @@ export class ApplicationAssessmentStatusDetailsAPIOutDTO {
   assessmentDate: Date;
 }
 
+/**
+ * Restriction information for accepting an assessment.
+ */
+export class AcceptAssessmentRestrictionAPIOutDTO {
+  /**
+   * Restriction code.
+   */
+  code: string;
+  /**
+   * Optional message that could be set for the restriction.
+   */
+  message?: string;
+}
+
 export class ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
-  acceptAssessmentRestrictions: string[];
+  acceptAssessmentRestrictions: AcceptAssessmentRestrictionAPIOutDTO[];
 }
 
 export class ApplicationSupportingUsersAPIOutDTO {

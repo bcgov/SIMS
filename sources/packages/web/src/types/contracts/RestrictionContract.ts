@@ -124,11 +124,6 @@ export enum RestrictionActionType {
   StopOfferingCreate = "Stop offering create",
 }
 
-export interface EffectiveRestrictionStatus {
-  hasEffectiveRestriction: boolean;
-  canCreateOffering: boolean;
-}
-
 export interface RestrictionDetail {
   restrictionId: number;
   restrictionType: RestrictionType;
@@ -163,12 +158,13 @@ export enum FieldRequirementType {
 }
 
 /**
- * Restriction codes that are used for specific UI scenarios,
- * for instance, to display a specific content based on a restriction code.
+ * Possible visualization scopes for institution restrictions.
+ * This is used to determine where the restriction should be displayed.
+ * For example, if a restriction is only applicable to a specific program,
+ * then it should only be displayed on a program page.
  */
-export enum RestrictionCode {
-  /**
-   * Institution under review.
-   */
-  InstitutionUnderReview = "IUR",
+export enum InstitutionRestrictionDisplayScope {
+  Institution = "institution",
+  Location = "location",
+  Program = "program",
 }

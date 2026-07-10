@@ -8,7 +8,7 @@
       <slot name="details-header"></slot>
     </div>
     <slot name="alerts"></slot>
-    <v-container fluid>
+    <v-container fluid :class="{ 'pt-0': !!$slots.alerts }">
       <template v-if="layoutTemplate === LayoutTemplates.CenteredCard">
         <v-row class="justify-center">
           <v-card class="mt-4 p-4 w-100" :class="widthClass">

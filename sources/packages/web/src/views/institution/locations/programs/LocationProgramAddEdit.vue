@@ -26,6 +26,7 @@
         </template>
       </banner>
       <institution-restriction-banner
+        :scope="InstitutionRestrictionDisplayScope.Program"
         :location-id="locationId"
         :program-id="programId"
         :institution-id="institutionId"
@@ -54,7 +55,12 @@ import {
   AESTRoutesConst,
 } from "@/constants/routes/RouteConstants";
 import { ref, computed, defineComponent, isReadonly, watchEffect } from "vue";
-import { ApiProcessError, ClientIdType, FormIOForm } from "@/types";
+import {
+  ApiProcessError,
+  ClientIdType,
+  FormIOForm,
+  InstitutionRestrictionDisplayScope,
+} from "@/types";
 import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
 import { AuthService } from "@/services/AuthService";
 import { BannerTypes } from "@/types/contracts/Banner";
@@ -259,6 +265,7 @@ export default defineComponent({
       subTitle,
       BannerTypes,
       processing,
+      InstitutionRestrictionDisplayScope,
     };
   },
 });

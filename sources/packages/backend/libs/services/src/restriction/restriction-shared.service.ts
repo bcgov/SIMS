@@ -86,6 +86,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
         "institutionRestriction.id",
         "restriction.id",
         "restriction.restrictionCode",
+        "restriction.metadata",
       ])
       .innerJoin("institutionRestriction.restriction", "restriction")
       .where("institutionRestriction.isActive = TRUE")
@@ -208,14 +209,16 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     if (effectiveInstitutionRestrictions.length) {
       return {
         canAcceptAssessment: false,
-        restrictionCodes: effectiveInstitutionRestrictions.map(
-          (restriction) => restriction.restriction.restrictionCode,
-        ),
+        restrictions: effectiveInstitutionRestrictions.map((restriction) => ({
+          code: restriction.restriction.restrictionCode,
+          message:
+            restriction.restriction.metadata?.messages?.studentAcceptAssessment,
+        })),
       };
     }
     return {
       canAcceptAssessment: true,
-      restrictionCodes: [],
+      restrictions: [],
     };
   }
 }

@@ -1,21 +1,22 @@
 <template>
-  <full-page-container
-    :full-width="true"
-    layout-template="centered"
-    data-cy="institutionWelcomePage"
-  >
+  <full-page-container :full-width="true" layout-template="centered">
     <template #alerts>
+      <institution-restriction-banner
+        :scope="InstitutionRestrictionDisplayScope.Institution"
+      />
+      <!-- Users will be able to retrieve only restrictions for the locations they have access to, 
+       so, not providing a location will ensure all accessible locations are considered. -->
+      <institution-restriction-banner
+        :scope="InstitutionRestrictionDisplayScope.Location"
+      />
       <announcement-banner dashboard="institution-dashboard" />
     </template>
-    <formio-container formName="institutionWelcomePage" />
+    <formio-container form-name="institutionWelcomePage" />
   </full-page-container>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
 import AnnouncementBanner from "@/components/common/AnnouncementBanner.vue";
-
-export default defineComponent({
-  components: { AnnouncementBanner },
-});
+import { InstitutionRestrictionDisplayScope } from "@/types";
+import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 </script>

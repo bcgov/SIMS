@@ -1,21 +1,52 @@
 import { RestrictionService } from "@/services/RestrictionService";
-import { EffectiveRestrictionStatus, RestrictionActionType } from "@/types";
+import {
+  InstitutionRestrictionDisplayScope,
+  RestrictionActionType,
+  RestrictionNotificationType,
+} from "@/types";
 import { computed, ComputedRef, MaybeRefOrGetter, ref, toValue } from "vue";
 
-interface InstitutionRestriction {
+export interface InstitutionRestriction {
   programId?: number;
   locationId?: number;
   restrictionCode: string;
   restrictionActions: RestrictionActionType[];
+  restrictionNotificationType: RestrictionNotificationType;
+  displayScope?: InstitutionRestrictionDisplayScope;
+  bannerMessage?: string;
 }
+
+export interface EffectiveRestrictionState {
+  /**
+   * Indicates whether the institution can create an offering.
+   */
+  canCreateOffering: boolean;
+  /**
+   * Error restrictions for a given scope (location, program, or institution).
+   */
+  errorRestrictions: InstitutionRestriction[];
+  /**
+   * Warning restrictions for a given scope (location, program, or institution).
+   */
+  warningRestrictions: InstitutionRestriction[];
+  /**
+   * No effect restrictions for a given scope (location, program, or institution).
+   * Not available for all clients, but can be used to display a banner message for informational purposes.
+   */
+  noEffectRestrictions: InstitutionRestriction[];
+}
+
 interface Params {
   locationId?: number;
   institutionId?: number;
   programId?: number;
+  scope?: InstitutionRestrictionDisplayScope;
 }
+
 const institutionRestrictionMap = ref(
   new Map<number | undefined, InstitutionRestriction[]>(),
 );
+
 export function useInstitutionRestrictionState() {
   const updateInstitutionRestrictionState = async (institutionId?: number) => {
     const institutionRestrictions =
@@ -29,6 +60,9 @@ export function useInstitutionRestrictionState() {
         programId: item.programId,
         restrictionCode: item.restrictionCode,
         restrictionActions: item.restrictionActions,
+        restrictionNotificationType: item.restrictionNotificationType,
+        displayScope: item.displayScope,
+        bannerMessage: item.bannerMessage,
       })),
     );
   };
@@ -48,36 +82,58 @@ export function useInstitutionRestrictionState() {
     );
 
   /**
-   * Get the effective institution restriction status for a location and program.
+   * Get the effective institution restriction state for a location and program.
    * @param params getter parameters.
-   * @returns effective restriction status.
+   * @returns effective restriction state.
    */
-  const getEffectiveRestrictionStatus = (
+  const getEffectiveRestrictionState = (
     params: MaybeRefOrGetter<Params>,
-  ): ComputedRef<EffectiveRestrictionStatus> =>
+  ): ComputedRef<EffectiveRestrictionState> =>
     computed(() => {
-      const { locationId, institutionId, programId } = toValue(params);
+      const { locationId, institutionId, programId, scope } = toValue(params);
       const effectiveRestrictions = institutionRestrictionMap.value
         .get(institutionId)
         ?.filter(
           (institutionRestriction) =>
-            institutionRestriction.locationId === locationId &&
-            institutionRestriction.programId === programId,
+            (institutionRestriction.locationId === locationId ||
+              !institutionRestriction.locationId) &&
+            (institutionRestriction.programId === programId ||
+              !institutionRestriction.programId),
         );
+      const scopedRestrictions = effectiveRestrictions?.filter(
+        (restriction) => !scope || restriction.displayScope === scope,
+      );
       return {
-        hasEffectiveRestriction: !!effectiveRestrictions?.length,
         canCreateOffering: !effectiveRestrictions?.some(
           (effectiveRestriction) =>
             effectiveRestriction.restrictionActions.includes(
               RestrictionActionType.StopOfferingCreate,
             ),
         ),
+        errorRestrictions:
+          scopedRestrictions?.filter(
+            (restriction) =>
+              restriction.restrictionNotificationType ===
+              RestrictionNotificationType.Error,
+          ) ?? [],
+        warningRestrictions:
+          scopedRestrictions?.filter(
+            (restriction) =>
+              restriction.restrictionNotificationType ===
+              RestrictionNotificationType.Warning,
+          ) ?? [],
+        noEffectRestrictions:
+          scopedRestrictions?.filter(
+            (restriction) =>
+              restriction.restrictionNotificationType ===
+              RestrictionNotificationType.NoEffect,
+          ) ?? [],
       };
     });
 
   return {
     updateInstitutionRestrictionState,
     hasActiveRestriction,
-    getEffectiveRestrictionStatus,
+    getEffectiveRestrictionState,
   };
 }
