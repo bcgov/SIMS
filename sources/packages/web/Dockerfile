@@ -4,7 +4,7 @@
 # Artifactory registry is passed as a build argument to avoid hardcoding it in the Dockerfile.
 # The default value (docker.io) allows dependabot to resolve and update the base image when an update is available.
 ARG DOCKER_REGISTRY=docker.io
-FROM ${DOCKER_REGISTRY}/node:26.3.0-alpine3.24 AS builder
+FROM ${DOCKER_REGISTRY}/node:26.4.0-alpine3.24 AS builder
 
 # Application Port.
 ENV PORT=3030
