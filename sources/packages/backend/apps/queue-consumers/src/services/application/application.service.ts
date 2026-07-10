@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, Repository } from "typeorm";
+import { Brackets, Repository, SelectQueryBuilder } from "typeorm";
 import {
   Application,
   ApplicationStatus,
@@ -14,6 +14,7 @@ import {
   COEStatus,
   ApplicationEditStatus,
   AssessmentStatus,
+  QueryAndParamsForExecution,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -418,35 +419,17 @@ export class ApplicationService {
    */
   async getApplicationsWithOverdueAssessments(): Promise<Application[]> {
     // Sub query to defined if a notification was already sent to the current assessment.
-    const notificationExistsQuery = this.notificationRepo
-      .createQueryBuilder("notification")
-      .select("1")
-      .innerJoin("notification.notificationMessage", "notificationMessage")
-      .where("notificationMessage.id = :notificationMessageId")
-      .andWhere(
-        "notification.metadata->>'assessmentId' = currentAssessment.id :: text",
-      )
-      .getQuery();
+    const {
+      query: notificationExistsQuery,
+      parameters: notificationExistsParameters,
+    } = this.getNotificationExistsSubQuery(
+      NotificationMessageType.StudentAssessmentReminder,
+      {
+        assessmentMetadata: { parentQueryAssessmentAlias: "currentAssessment" },
+      },
+    );
 
-    const applications = await this.applicationRepo
-      .createQueryBuilder("application")
-      .select([
-        "application.id",
-        "application.applicationNumber",
-        "currentAssessment.id",
-        "student.id",
-        "user.id",
-        "user.firstName",
-        "user.lastName",
-        "user.email",
-      ])
-      .innerJoin("application.currentAssessment", "currentAssessment")
-      .innerJoin("application.student", "student")
-      .innerJoin("student.user", "user")
-      .innerJoin("currentAssessment.offering", "offering")
-      .where("currentAssessment.noaApprovalStatus = :noaApprovalStatus", {
-        noaApprovalStatus: AssessmentStatus.required,
-      })
+    const applications = await this.getPendingAcceptAssessmentBaseQuery()
       .andWhere(
         "currentAssessment.noaApprovalStatusUpdatedOn < NOW() - (:overdueDays * INTERVAL '1 day')",
         {
@@ -454,13 +437,10 @@ export class ApplicationService {
         },
       )
       .andWhere("offering.studyEndDate >= CURRENT_DATE")
-      .andWhere("application.applicationStatus = :applicationStatus", {
-        applicationStatus: ApplicationStatus.Assessment,
-      })
-      .andWhere(`NOT EXISTS (${notificationExistsQuery})`, {
-        notificationMessageId:
-          NotificationMessageType.StudentAssessmentReminder,
-      })
+      .andWhere(
+        `NOT EXISTS (${notificationExistsQuery})`,
+        notificationExistsParameters,
+      )
       .getMany();
 
     const eligibleApplications: Application[] = [];
@@ -475,5 +455,72 @@ export class ApplicationService {
       }
     }, applications);
     return eligibleApplications;
+  }
+
+  /**
+   * Get existing notification sub query for a specific notification message type and options if provided.
+   * @param notificationMessageId notification message type id to check for existing notifications.
+   * @param options optional parameters to customize the sub query, such as assessment parent alias.
+   * - `parentQueryAssessmentAlias` student id for the student.
+   * @returns query and parameters to be used in the parent query builder.
+   */
+  private getNotificationExistsSubQuery(
+    notificationMessageId: NotificationMessageType,
+    options?: {
+      assessmentMetadata?: {
+        parentQueryAssessmentAlias: string;
+      };
+    },
+  ): QueryAndParamsForExecution {
+    const notificationExistsQuery = this.notificationRepo
+      .createQueryBuilder("notification")
+      .select("1")
+      .where("notification.notificationMessage.id = :notificationMessageId");
+    if (options?.assessmentMetadata?.parentQueryAssessmentAlias) {
+      notificationExistsQuery.andWhere(
+        `notification.metadata->>'assessmentId' = ${options.assessmentMetadata.parentQueryAssessmentAlias}.id :: text`,
+      );
+    }
+    return {
+      query: notificationExistsQuery.getQuery(),
+      parameters: { notificationMessageId },
+    };
+  }
+
+  /**
+   * Get pending accept assessment base query to retrieve applications with pending assessment.
+   * @returns base query builder for pending accept assessments.
+   */
+  private getPendingAcceptAssessmentBaseQuery(): SelectQueryBuilder<Application> {
+    return this.applicationRepo
+      .createQueryBuilder("application")
+      .select([
+        "application.id",
+        "application.applicationNumber",
+        "currentAssessment.id",
+        "student.id",
+        "user.id",
+        "user.firstName",
+        "user.lastName",
+        "user.email",
+        "program.id",
+        "program.name",
+        "location.id",
+        "institution.id",
+        "institution.operatingName",
+      ])
+      .innerJoin("application.currentAssessment", "currentAssessment")
+      .innerJoin("application.student", "student")
+      .innerJoin("student.user", "user")
+      .innerJoin("currentAssessment.offering", "offering")
+      .innerJoin("offering.educationProgram", "program")
+      .innerJoin("offering.institutionLocation", "location")
+      .innerJoin("location.institution", "institution")
+      .where("currentAssessment.noaApprovalStatus = :noaApprovalStatus", {
+        noaApprovalStatus: AssessmentStatus.required,
+      })
+      .andWhere("application.applicationStatus = :applicationStatus", {
+        applicationStatus: ApplicationStatus.Assessment,
+      });
   }
 }
