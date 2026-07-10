@@ -1,20 +1,20 @@
 <template>
   <v-alert
-    :type="type"
+    :type="props.type"
     variant="outlined"
     :icon="bannerIcon"
     class="sims-banner"
   >
     <template #title>
-      <div class="label-bold-normal">{{ header }}</div>
+      <div class="label-bold-normal">{{ props.header }}</div>
     </template>
     <v-row>
       <v-col>
         <div class="label-value-normal">
-          <slot name="content">{{ summary }}</slot>
-          <slot name="content-list" v-if="summaryList">
+          <slot name="content">{{ props.summary }}</slot>
+          <slot name="content-list" v-if="props.summaryList">
             <ul class="list-indent-compact">
-              <li v-for="(item, index) in summaryList" :key="index">
+              <li v-for="(item, index) in props.summaryList" :key="index">
                 {{ item }}
               </li>
             </ul>
@@ -25,42 +25,36 @@
     </v-row>
   </v-alert>
 </template>
-<script lang="ts">
+<script setup lang="ts">
 import { BannerTypes } from "@/types/contracts/Banner";
-import { PropType, computed, defineComponent } from "vue";
+import { computed } from "vue";
 
-export default defineComponent({
-  props: {
-    type: {
-      type: String as PropType<BannerTypes>,
-      required: true,
-    },
-    header: {
-      type: String,
-    },
-    summary: {
-      type: String,
-    },
-    summaryList: {
-      type: Array<string>,
-    },
+const props = withDefaults(
+  defineProps<{
+    type: BannerTypes;
+    header?: string;
+    summary?: string;
+    summaryList?: string[];
+  }>(),
+  {
+    header: undefined,
+    summary: undefined,
+    summaryList: undefined,
   },
-  setup(props) {
-    const bannerIcon = computed(() => {
-      switch (props.type) {
-        case BannerTypes.Success:
-          return "fa:fa fa-circle-check";
-        case BannerTypes.Warning:
-          return "fa:fa fa-triangle-exclamation";
-        case BannerTypes.Error:
-          return "fa:fa fa-circle-exclamation";
-        case BannerTypes.Info:
-          return "fa:fa fa-circle-info";
-        default:
-          return "";
-      }
-    });
-    return { bannerIcon };
-  },
+);
+
+const bannerIcon = computed(() => {
+  switch (props.type) {
+    case BannerTypes.Success:
+      return "fa:fa fa-circle-check";
+    case BannerTypes.Warning:
+      return "fa:fa fa-triangle-exclamation";
+    case BannerTypes.Error:
+      return "fa:fa fa-circle-exclamation";
+    case BannerTypes.Info:
+      return "fa:fa fa-circle-info";
+    default:
+      return "";
+  }
 });
 </script>
