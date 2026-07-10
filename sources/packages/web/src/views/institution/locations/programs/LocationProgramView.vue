@@ -32,7 +32,7 @@
       :education-program="educationProgram"
       :allow-edit="!isReadOnly"
       :allow-deactivate="!isReadOnly"
-      :can-create-offering="effectiveRestrictionStatus.canCreateOffering"
+      :can-create-offering="effectiveRestrictionState.canCreateOffering"
       @program-data-updated="programDataUpdated"
     />
   </full-page-container>
@@ -72,7 +72,7 @@ export default defineComponent({
     const { isReadOnlyUser } = useInstitutionAuth();
     const { getEffectiveRestrictionState } = useInstitutionRestrictionState();
     const educationProgram = ref({} as EducationProgramAPIOutDTO);
-    const effectiveRestrictionStatus = getEffectiveRestrictionState(() => ({
+    const effectiveRestrictionState = getEffectiveRestrictionState(() => ({
       scope: InstitutionRestrictionDisplayScope.Program,
       locationId: props.locationId,
       programId: props.programId,
@@ -101,7 +101,7 @@ export default defineComponent({
       InstitutionRoutesConst,
       programDataUpdated,
       isReadOnly,
-      effectiveRestrictionStatus,
+      effectiveRestrictionState,
       InstitutionRestrictionDisplayScope,
     };
   },

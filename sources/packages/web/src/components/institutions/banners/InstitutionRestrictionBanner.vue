@@ -69,7 +69,7 @@ export default defineComponent({
      * Default message for a specific scope when no banner message is provided by the restriction.
      * @returns The default message for the given scope.
      */
-    const getDefaultBannerMessage = () => {
+    const getDefaultBannerMessage = computed(() => {
       switch (props.scope) {
         case InstitutionRestrictionDisplayScope.Institution:
           return "Your institution has active restrictions.";
@@ -80,7 +80,7 @@ export default defineComponent({
         default:
           throw new Error(`Unknown scope: ${props.scope}.`);
       }
-    };
+    });
 
     /**
      * Get the default banner message for a specific restriction if no banner message
@@ -90,7 +90,8 @@ export default defineComponent({
      */
     const getRestrictionMessages = (restrictions: InstitutionRestriction[]) => {
       const messages = restrictions.map(
-        (restriction) => restriction.bannerMessage || getDefaultBannerMessage(),
+        (restriction) =>
+          restriction.bannerMessage || getDefaultBannerMessage.value,
       );
       return [...new Set(messages)];
     };

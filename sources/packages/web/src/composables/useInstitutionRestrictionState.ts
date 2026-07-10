@@ -42,9 +42,11 @@ interface Params {
   programId?: number;
   scope?: InstitutionRestrictionDisplayScope;
 }
+
 const institutionRestrictionMap = ref(
   new Map<number | undefined, InstitutionRestriction[]>(),
 );
+
 export function useInstitutionRestrictionState() {
   const updateInstitutionRestrictionState = async (institutionId?: number) => {
     const institutionRestrictions =
@@ -82,7 +84,7 @@ export function useInstitutionRestrictionState() {
   /**
    * Get the effective institution restriction state for a location and program.
    * @param params getter parameters.
-   * @returns effective restriction status.
+   * @returns effective restriction state.
    */
   const getEffectiveRestrictionState = (
     params: MaybeRefOrGetter<Params>,

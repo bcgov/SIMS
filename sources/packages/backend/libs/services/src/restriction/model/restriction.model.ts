@@ -93,6 +93,9 @@ export enum RestrictedParty {
   Institution = "Institution",
 }
 
+/**
+ * Restriction information preventing a student from accepting an assessment.
+ */
 export interface AcceptAssessmentRestriction {
   code: string;
   message?: string;
