@@ -6,7 +6,7 @@ import {
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 
-const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
+export const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
   ECertFailedValidation.DisabilityStatusNotConfirmed,
   ECertFailedValidation.MSFAACanceled,
   ECertFailedValidation.MSFAANotSigned,
@@ -53,6 +53,10 @@ export class ECertPreValidatorResult {
   }
 }
 
+export interface ApplicationECertPreValidatorResult {
+  applicationId: number;
+  validationResult: ECertPreValidatorResult;
+}
 /**
  * Allow validations to be executed before the e-Cert disbursement time.
  */
@@ -68,6 +72,7 @@ export interface ECertPreValidator {
    * used by {@link ECertProcessStep}.
    * @param log keep it compliant with the required parameters
    * used by {@link ECertProcessStep}.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
    * @returns list of failed validations, otherwise an empty array if
    * no blocking conditions were found.
    */
@@ -75,5 +80,6 @@ export interface ECertPreValidator {
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
+    targetValidations?: ECertFailedValidation[],
   ): Promise<ECertPreValidatorResult>;
 }

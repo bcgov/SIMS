@@ -9,6 +9,7 @@ import { ECertProcessStep, ValidateDisbursementBase } from ".";
 import { Injectable } from "@nestjs/common";
 import {
   ECertFailedValidation,
+  ECertFailedValidationResult,
   EligibleECertDisbursement,
 } from "../disbursement-schedule.models";
 import {
@@ -53,6 +54,7 @@ export class ValidateDisbursementFullTimeStep
    * @param _entityManager not used for full-time.
    * @param log keep it compliant with the required parameters
    * used by {@link ECertProcessStep}.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
    * @returns list of failed validations, otherwise an empty array if
    * no blocking conditions were found.
    */
@@ -60,6 +62,7 @@ export class ValidateDisbursementFullTimeStep
     eCertDisbursement: EligibleECertDisbursement,
     _entityManager: EntityManager,
     log: ProcessSummary,
+    targetValidations?: ECertFailedValidation[],
   ): Promise<ECertPreValidatorResult> {
     log.info("Executing full-time disbursement validations.");
     const validationResults = super.validate(eCertDisbursement, log);
@@ -69,8 +72,38 @@ export class ValidateDisbursementFullTimeStep
       RestrictionActionType.StopFullTimeDisbursement,
       validationResults,
       log,
+      targetValidations,
     );
     // Validate modified independent status when estranged from parents.
+    this.validateModifiedIndependentStatus(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
+    return new ECertPreValidatorResult(validationResults);
+  }
+
+  /**
+   * Validate if application modified independent status match with student modified independent status.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateModifiedIndependentStatus(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.ModifiedIndependentStatusNotApproved,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
     if (
       eCertDisbursement.modifiedIndependentDetails.estrangedFromParents ===
         FormYesNoOptions.Yes &&
@@ -85,6 +118,5 @@ export class ValidateDisbursementFullTimeStep
         resultType: ECertFailedValidation.ModifiedIndependentStatusNotApproved,
       });
     }
-    return new ECertPreValidatorResult(validationResults);
   }
 }
