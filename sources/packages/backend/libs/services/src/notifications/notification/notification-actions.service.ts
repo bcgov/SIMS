@@ -1740,12 +1740,12 @@ export class NotificationActionsService {
   /**
    * Creates a ministry notification when a when a program suspension restriction is blocking an application
    * at accept assessment or at e-Cert.
-   * @param notification notification details.
+   * @param notifications notification details.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveProgramSuspensionBlockingApplicationNotification(
-    notification: ProgramSuspensionBlockingApplicationNotification,
-    entityManager: EntityManager,
+    notifications: ProgramSuspensionBlockingApplicationNotification[],
+    entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, emailContacts } =
@@ -1757,26 +1757,28 @@ export class NotificationActionsService {
       return;
     }
     const ministryNotificationsToSend =
-      emailContacts.map<SaveNotificationModel>((emailContact) => ({
-        userId: auditUser.id,
-        messageType:
-          NotificationMessageType.ProgramSuspensionBlockingApplication,
-        messagePayload: {
-          email_address: emailContact,
-          template_id: templateId,
-          personalisation: {
-            givenNames: notification.givenNames ?? "",
-            lastName: notification.lastName,
-            birthDate: getDateOnlyFormat(notification.birthDate),
-            studentEmail: notification.studentEmail,
-            applicationNumber: notification.applicationNumber,
-            dateTime: this.getDateTimeOnPSTTimeZone(),
-            institutionOperatingName: notification.institutionOperatingName,
-            programName: notification.programName,
+      emailContacts.flatMap<SaveNotificationModel>((emailContact) =>
+        notifications.map((notification) => ({
+          userId: auditUser.id,
+          messageType:
+            NotificationMessageType.ProgramSuspensionBlockingApplication,
+          messagePayload: {
+            email_address: emailContact,
+            template_id: templateId,
+            personalisation: {
+              givenNames: notification.givenNames ?? "",
+              lastName: notification.lastName,
+              birthDate: getDateOnlyFormat(notification.birthDate),
+              studentEmail: notification.studentEmail,
+              applicationNumber: notification.applicationNumber,
+              dateTime: this.getDateTimeOnPSTTimeZone(),
+              institutionOperatingName: notification.institutionOperatingName,
+              programName: notification.programName,
+            },
           },
-        },
-        metadata: notification.metadata,
-      }));
+          metadata: notification.metadata,
+        })),
+      );
     // Save notifications to be sent to the ministry into the notification table.
     await this.notificationService.saveNotifications(
       ministryNotificationsToSend,

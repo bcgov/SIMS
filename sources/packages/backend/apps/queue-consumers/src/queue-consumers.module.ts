@@ -86,6 +86,7 @@ import {
   StudentAssessmentReminderNotification,
   CASInvoiceBatchService,
   CASInvoiceService,
+  ProgramSuspensionBlockingAssessmentNotification,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -190,6 +191,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     StudentSecondDisbursementReminderNotification,
     StudentCOERequiredNearEndDateReminderNotification,
     StudentAssessmentReminderNotification,
+    ProgramSuspensionBlockingAssessmentNotification,
     MinistryCRAFileProcessingIssueNotification,
     MinistrySINFileProcessingIssueNotification,
     CASInvoiceBatchService,

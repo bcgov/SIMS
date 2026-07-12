@@ -26,6 +26,8 @@ import {
 } from "@sims/utilities";
 import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import { ECertFailedValidation } from "@sims/integrations/services";
+import { RestrictionCode } from "@sims/services";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -458,6 +460,65 @@ export class ApplicationService {
   }
 
   /**
+   * Get application that are blocked at accept assessment due to program suspension restriction.
+   * @returns applications with assessments blocked by program suspension restriction.
+   */
+  async getApplicationsBlockedByProgramSuspension(): Promise<Application[]> {
+    // Sub query to defined if a notification was already sent to the current assessment.
+    const {
+      query: notificationExistsQuery,
+      parameters: notificationExistsParameters,
+    } = this.getNotificationExistsSubQuery(
+      NotificationMessageType.ProgramSuspensionBlockingApplication,
+      {
+        assessmentMetadata: { parentQueryAssessmentAlias: "currentAssessment" },
+      },
+    );
+    // Get all applications pending for accept assessment and that have not been notified yet
+    // about the program suspension restriction blocking the assessment acceptance.
+    const applicationsPendingAcceptAssessment =
+      await this.getPendingAcceptAssessmentBaseQuery()
+        .andWhere("application.isArchived = false")
+        .andWhere(
+          `NOT EXISTS (${notificationExistsQuery})`,
+          notificationExistsParameters,
+        )
+        .getMany();
+    if (!applicationsPendingAcceptAssessment.length) {
+      return [];
+    }
+    // Get the accept assessment validation results for the applications pending accept assessment.
+    const applicationIds = applicationsPendingAcceptAssessment.map(
+      (application) => application.id,
+    );
+    const acceptAssessmentValidationResults =
+      await this.eCertPreValidationService.executeAcceptAssessmentValidations(
+        applicationIds,
+      );
+    const applicationIdsBlockedByProgramSuspension =
+      acceptAssessmentValidationResults
+        .filter(
+          (validation) =>
+            !validation.validationResult.canAcceptAssessment &&
+            validation.validationResult.failedValidations.some(
+              (failedValidation) =>
+                failedValidation.resultType ===
+                  ECertFailedValidation.HasStopDisbursementInstitutionRestriction &&
+                failedValidation.additionalInfo.restrictionCodes.includes(
+                  RestrictionCode.SUS,
+                ),
+            ),
+        )
+        .map((validationResult) => validationResult.applicationId);
+    if (!applicationIdsBlockedByProgramSuspension.length) {
+      return [];
+    }
+    return applicationsPendingAcceptAssessment.filter((application) =>
+      applicationIdsBlockedByProgramSuspension.includes(application.id),
+    );
+  }
+
+  /**
    * Get existing notification sub query for a specific notification message type and options if provided.
    * @param notificationMessageId notification message type id to check for existing notifications.
    * @param options optional parameters to customize the sub query, such as assessment parent alias.
@@ -499,10 +560,12 @@ export class ApplicationService {
         "application.applicationNumber",
         "currentAssessment.id",
         "student.id",
+        "student.birthDate",
         "user.id",
         "user.firstName",
         "user.lastName",
         "user.email",
+        "offering.id",
         "program.id",
         "program.name",
         "location.id",

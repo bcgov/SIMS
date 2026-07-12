@@ -107,7 +107,7 @@ export class ProgramSuspensionBlockingDisbursementNotification extends ECertNoti
       metadata: { disbursementId: eCertDisbursement.disbursement.id },
     };
     await this.notificationActionsService.saveProgramSuspensionBlockingApplicationNotification(
-      notification,
+      [notification],
       entityManager,
     );
   }

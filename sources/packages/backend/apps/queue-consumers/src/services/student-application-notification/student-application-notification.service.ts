@@ -7,6 +7,7 @@ import {
   MinistryCRAFileProcessingIssueNotification,
   MinistrySINFileProcessingIssueNotification,
   StudentAssessmentReminderNotification,
+  ProgramSuspensionBlockingAssessmentNotification,
 } from "./student-application-notification-processor";
 
 @Injectable()
@@ -18,6 +19,7 @@ export class StudentApplicationNotificationService {
     private readonly ministryCRAFileProcessingIssueNotification: MinistryCRAFileProcessingIssueNotification,
     private readonly ministrySINFileProcessingIssueNotification: MinistrySINFileProcessingIssueNotification,
     private readonly studentAssessmentReminderNotification: StudentAssessmentReminderNotification,
+    private readonly programSuspensionBlockingAssessmentNotification: ProgramSuspensionBlockingAssessmentNotification,
   ) {}
 
   /**
@@ -34,6 +36,7 @@ export class StudentApplicationNotificationService {
       this.ministryCRAFileProcessingIssueNotification,
       this.ministrySINFileProcessingIssueNotification,
       this.studentAssessmentReminderNotification,
+      this.programSuspensionBlockingAssessmentNotification,
     ].map((notification) => notification.createNotification(processSummary));
     await Promise.allSettled(notifications);
   }

@@ -3,9 +3,10 @@ import { ApplicationService } from "../../";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
   NotificationActionsService,
-  StudentAcceptAssessmentReminderNotification,
+  ProgramSuspensionBlockingApplicationNotification,
 } from "@sims/services";
-import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants/system-configurations-constants";
+import { NOTIFICATION_MISSING_EMAIL_CONTACTS } from "@sims/services/constants";
+import { CustomNamedError } from "@sims/utilities";
 
 /**
  * Creates a notification for a blocked assessment acceptance due to a program suspension restriction for the ministry.
@@ -24,36 +25,52 @@ export class ProgramSuspensionBlockingAssessmentNotification {
   async createNotification(processSummary: ProcessSummary): Promise<void> {
     const notificationLog = new ProcessSummary();
     processSummary.children(notificationLog);
-
     const applications =
-      await this.applicationService.getApplicationsWithOverdueAssessments();
-
+      await this.applicationService.getApplicationsBlockedByProgramSuspension();
     if (!applications.length) {
       notificationLog.info(
-        `No assessments awaiting acceptance ${STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS} days past due found to generate reminder notifications.`,
+        "No applications blocked by program suspension restriction are found to generate notifications.",
       );
       return;
     }
-
     const notifications =
-      applications.map<StudentAcceptAssessmentReminderNotification>(
+      applications.map<ProgramSuspensionBlockingApplicationNotification>(
         (application) => ({
-          userId: application.student.user.id,
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
-          toAddress: application.student.user.email,
+          studentEmail: application.student.user.email,
+          birthDate: application.student.birthDate,
           applicationNumber: application.applicationNumber,
-          assessmentId: application.currentAssessment!.id,
+          institutionOperatingName:
+            application.currentAssessment.offering.institutionLocation
+              .institution.operatingName,
+          programName:
+            application.currentAssessment.offering.educationProgram.name,
+          metadata: { assessmentId: application.currentAssessment.id },
         }),
       );
-
-    await this.notificationActionsService.saveStudentAssessmentReminderNotification(
-      notifications,
-    );
+    try {
+      await this.notificationActionsService.saveProgramSuspensionBlockingApplicationNotification(
+        notifications,
+      );
+    } catch (error: unknown) {
+      // Log process summary warning to create alerts when email contacts are missing for the notification
+      // without failing the entire process.
+      if (
+        error instanceof CustomNamedError &&
+        error.name === NOTIFICATION_MISSING_EMAIL_CONTACTS
+      ) {
+        notificationLog.warn(
+          `Program suspension blocking application notification cannot be created: ${error.message}`,
+        );
+        return;
+      }
+      throw error;
+    }
 
     notificationLog.info(
-      `Overdue assessments awaiting acceptance that generated reminder notifications: ${applications
-        .map((application) => application.applicationNumber)
+      `Program suspension blocking application notifications created for the assessments: ${applications
+        .map((application) => application.currentAssessment.id)
         .join(", ")}`,
     );
   }
