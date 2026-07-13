@@ -21,6 +21,7 @@ import {
   saveFakeSFASIndividual,
   RestrictionCode,
   ensureProgramYearExistsForPartTimeOnly,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
 import {
   Application,
@@ -29,6 +30,7 @@ import {
   EducationProgramOffering,
   OfferingIntensity,
   ProgramYear,
+  RestrictionType,
   Student,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
@@ -38,6 +40,7 @@ import { AppStudentsModule } from "../../../../app.students.module";
 import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sfas-part-time-application";
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
+import { ACTIVE_INSTITUTION_RESTRICTION } from "../../../../constants";
 
 describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;
@@ -1044,6 +1047,49 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       });
   });
 
+  it("Should throw a forbidden error when submitting an application for an institution under review.", async () => {
+    // Arrange
+    const { student, draftApplication, payload, selectedOffering } =
+      await saveApplicationDraftReadyForSubmission();
+    // Associate the IUR restriction to the institution under review location.
+    const iurRestriction = await db.restriction.findOneOrFail({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.IUR,
+      },
+    });
+    await saveFakeInstitutionRestriction(db, {
+      restriction: iurRestriction,
+      institution: selectedOffering.institutionLocation.institution,
+    });
+
+    const endpoint = `/students/application/${draftApplication.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: payload.data },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.FORBIDDEN)
+      .expect({
+        message:
+          "The application cannot be submitted at this time because the institution associated with your application is currently restricted.",
+        errorType: ACTIVE_INSTITUTION_RESTRICTION,
+      });
+  });
+
   /**
    * Save a draft application ready for submission.
    * @param options optional parameters for saving the application.
@@ -1057,6 +1103,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     student: Student;
     draftApplication: Application;
     payload: SaveApplicationAPIInDTO;
+    selectedOffering: EducationProgramOffering;
   }> {
     // Create a student and a draft application.
     const student = await saveFakeStudent(db.dataSource);
@@ -1093,6 +1140,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       student,
       draftApplication,
       payload,
+      selectedOffering,
     };
   }
 
