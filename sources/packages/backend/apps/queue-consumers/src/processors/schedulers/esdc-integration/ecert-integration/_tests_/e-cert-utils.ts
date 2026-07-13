@@ -1,5 +1,7 @@
 import {
+  Application,
   ApplicationStatus,
+  Assessment,
   COEStatus,
   DisbursementSchedule,
   DisbursementValue,
@@ -16,6 +18,7 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
+import { getISODateOnlyString, addDays } from "@sims/utilities";
 import { In } from "typeorm";
 
 export const AVIATION_CREDENTIAL_TEST_INPUTS = [
@@ -264,4 +267,53 @@ export async function loadDisbursementAndStudentRestrictions(
     },
     loadEagerRelations: false,
   });
+}
+
+/**
+ * Create application with a disbursement schedule eligible for e-Cert.
+ * @param db e2e data sources.
+ * @param offeringIntensity offering intensity.
+ * @returns application with a disbursement schedule eligible for e-Cert.
+ */
+export async function createEligibleECertApplication(
+  db: E2EDataSources,
+  offeringIntensity: OfferingIntensity,
+): Promise<Application> {
+  const eligibleDisbursement: Partial<DisbursementSchedule> = {
+    coeStatus: COEStatus.completed,
+    coeUpdatedAt: new Date(),
+  };
+  // Student with valid SIN.
+  const student = await saveFakeStudent(db.dataSource);
+  // Valid MSFAA Number.
+  const msfaaNumber = await db.msfaaNumber.save(
+    createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed,
+        msfaaInitialValues: {
+          offeringIntensity,
+        },
+      },
+    ),
+  );
+  return saveFakeApplicationDisbursements(
+    db.dataSource,
+    {
+      student,
+      msfaaNumber,
+    },
+    {
+      offeringIntensity,
+      applicationStatus: ApplicationStatus.Completed,
+      currentAssessmentInitialValues: {
+        assessmentData: { weeks: 5 } as Assessment,
+        assessmentDate: new Date(),
+      },
+      firstDisbursementInitialValues: {
+        ...eligibleDisbursement,
+        disbursementDate: getISODateOnlyString(addDays(1)),
+      },
+    },
+  );
 }

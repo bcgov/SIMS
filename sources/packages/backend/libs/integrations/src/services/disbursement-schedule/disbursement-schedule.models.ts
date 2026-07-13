@@ -294,6 +294,7 @@ export type EligibleECertOffering = Pick<
 export class EligibleECertDisbursement {
   private readonly studentRestrictionsBypassedIds: number[];
   private readonly institutionRestrictionsBypassedIds: number[];
+  private failedValidationsInternal: ECertFailedValidationResult[];
   /**
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
@@ -313,6 +314,10 @@ export class EligibleECertDisbursement {
    * @param disabilityDetails students Disability status both from application submitted
    * and the student profile disability status verification.
    * @param modifiedIndependentDetails student's "estranged from parents" information.
+   * @param applicationEligibleDisbursementIndex The index is used to identify if the disbursement is either first or second eligible disbursement
+   * for the application.
+   ** Note: An eligible disbursement means a disbursement that is pending and satisfies all the preliminary conditions
+   ** for e-Cert generation.
    * @param restrictions all active student restrictions actions. These actions can
    * impact the e-Cert calculations.
    * This is a shared array reference between all the disbursements of a single student.
@@ -336,6 +341,7 @@ export class EligibleECertDisbursement {
     readonly maxLifetimeBCLoanAmount: number,
     readonly disabilityDetails: DisabilityDetails,
     readonly modifiedIndependentDetails: ModifiedIndependentDetails,
+    readonly applicationEligibleDisbursementIndex: 1 | 2,
     private readonly restrictions: StudentActiveRestriction[],
     private readonly restrictionBypass: ApplicationActiveRestrictionBypass[],
     private readonly institutionRestrictions: InstitutionActiveRestriction[],
@@ -392,6 +398,20 @@ export class EligibleECertDisbursement {
    */
   get activeRestrictionBypasses(): ReadonlyArray<ApplicationActiveRestrictionBypass> {
     return this.restrictionBypass;
+  }
+
+  /**
+   * Failed validation results from e-Cert pre-validation.
+   */
+  set failedValidations(failedValidations: ECertFailedValidationResult[]) {
+    this.failedValidationsInternal = failedValidations;
+  }
+
+  /**
+   * Failed validation results from e-Cert pre-validation.
+   */
+  get failedValidations(): ReadonlyArray<ECertFailedValidationResult> {
+    return this.failedValidationsInternal ?? [];
   }
 
   /**

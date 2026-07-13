@@ -172,7 +172,6 @@ export interface InstitutionRequestsDesignationNotification {
   institutionPrimaryEmail: string;
 }
 
-
 export interface InstitutionAddsPendingProgramNotification {
   institutionName: string;
   institutionOperatingName: string;
@@ -180,7 +179,6 @@ export interface InstitutionAddsPendingProgramNotification {
   institutionPrimaryEmail: string;
   email: string;
 }
-
 
 export interface InstitutionAddsPendingOfferingNotification {
   institutionName: string;
@@ -296,4 +294,19 @@ export interface StudentAcceptAssessmentReminderNotification {
   userId: number;
   applicationNumber: string;
   assessmentId: number;
+}
+
+/**
+ * Notification sent to the ministry when a program suspension restriction
+ * is blocking an application at accept assessment or at e-Cert.
+ */
+export interface ProgramSuspensionBlockingApplicationNotification {
+  givenNames?: string;
+  lastName: string;
+  studentEmail: string;
+  birthDate: string;
+  applicationNumber: string;
+  institutionOperatingName: string;
+  programName: string;
+  metadata: { assessmentId: number } | { disbursementId: number };
 }

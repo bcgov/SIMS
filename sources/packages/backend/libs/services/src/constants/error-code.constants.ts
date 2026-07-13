@@ -78,3 +78,9 @@ export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
  * for instance, T4A files.
  */
 export const FILE_HASH_DUPLICATION_ERROR = "FILE_HASH_DUPLICATION_ERROR";
+/**
+ * Notification message is missing email contacts, which are required to send the email.
+ ** Email contacts are currently in use for only ministry notifications.
+ */
+export const NOTIFICATION_MISSING_EMAIL_CONTACTS =
+  "NOTIFICATION_MISSING_EMAIL_CONTACTS";

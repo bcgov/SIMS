@@ -261,4 +261,9 @@ export enum NotificationMessageType {
    * Student notification for assessment reminder.
    */
   StudentAssessmentReminder = 41,
+  /**
+   * Notification sent to the ministry when a program suspension restriction
+   * is blocking an application at accept assessment or at e-Cert.
+   */
+  ProgramSuspensionBlockingApplication = 42,
 }

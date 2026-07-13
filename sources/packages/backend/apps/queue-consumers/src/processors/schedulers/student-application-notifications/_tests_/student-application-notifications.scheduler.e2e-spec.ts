@@ -1,6 +1,7 @@
 import { INestApplication } from "@nestjs/common";
 import {
   addDays,
+  getDateOnlyFormat,
   getISODateOnlyString,
   getPSTPDTDateTime,
   QueueNames,
@@ -12,18 +13,23 @@ import {
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
+  MSFAAStates,
   createE2EDataSources,
   createFakeCRAIncomeVerification,
   createFakeDisbursementSchedule,
   createFakeEducationProgramOffering,
+  createFakeMSFAANumber,
   createFakeNotification,
   createFakeSINValidation,
   createFakeStudentAssessment,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
+  saveFakeApplicationRestrictionBypass,
+  saveFakeInstitutionRestriction,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
+  Application,
   ApplicationStatus,
   Assessment,
   AssessmentStatus,
@@ -37,11 +43,17 @@ import {
   NotificationMessage,
   NotificationMessageType,
   OfferingIntensity,
+  Restriction,
   WorkflowData,
 } from "@sims/sims-db";
 import { IsNull, Not } from "typeorm";
+import MockDate from "mockdate";
 import { StudentApplicationNotificationsScheduler } from "../../student-application-notifications/student-application-notifications.scheduler";
-import { FileProcessingIssueType, SystemUsersService } from "@sims/services";
+import {
+  FileProcessingIssueType,
+  RestrictionCode,
+  SystemUsersService,
+} from "@sims/services";
 import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 
 describe(
@@ -51,6 +63,7 @@ describe(
     let processor: StudentApplicationNotificationsScheduler;
     let db: E2EDataSources;
     let systemUsersService: SystemUsersService;
+    let susRestriction: Restriction;
     const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
 
     beforeAll(async () => {
@@ -68,22 +81,31 @@ describe(
         },
         { emailContacts: [MINISTRY_EMAIL_ADDRESS] },
       );
+      susRestriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.SUS,
+        },
+      });
     });
 
     beforeEach(async () => {
+      MockDate.reset();
       // Cancel all applications to ensure that existing data will not affect these tests.
       await db.application.update(
         { applicationStatus: Not(ApplicationStatus.Cancelled) },
         { applicationStatus: ApplicationStatus.Cancelled },
       );
+      // Mark all notifications as sent to ensure that existing data will not affect these tests.
+      await db.notification.update(
+        {
+          dateSent: IsNull(),
+        },
+        { dateSent: new Date() },
+      );
     });
 
     describe("StudentPDPPDReminderNotification", () => {
-      beforeEach(async () => {
-        await markNotificationsSent(
-          NotificationMessageType.StudentPDPPDApplicationNotification,
-        );
-      });
       it(
         "Should generate a notification for PD/PPD student mismatch close to the offering end date " +
           "when the application is Assessment/Completed and at least one disbursement is pending and there is a PD/PPD mismatch.",
@@ -316,11 +338,6 @@ describe(
     });
 
     describe("StudentSecondDisbursementReminderNotification", () => {
-      beforeEach(async () => {
-        await markNotificationsSent(
-          NotificationMessageType.StudentSecondDisbursementNotification,
-        );
-      });
       it(
         "Should generate a second disbursement reminder notification for a student when the " +
           "application is Completed and the second disbursement with Required COE status " +
@@ -486,11 +503,6 @@ describe(
     });
 
     describe("StudentCOERequiredNearEndDateReminderNotification", () => {
-      beforeEach(async () => {
-        await markNotificationsSent(
-          NotificationMessageType.StudentCOERequiredNearEndDateNotification,
-        );
-      });
       it(
         "Should generate a notification for a student when the study end date is within 10 days " +
           "and at least one COE is required on the most recent assessment.",
@@ -711,9 +723,6 @@ describe(
             },
             { dateReceived: new Date() },
           );
-          await markNotificationsSent(
-            NotificationMessageType.MinistryFileProcessingIssue,
-          );
         });
         it(`Should generate a notification for CRA file processing issues when the file was sent ${daysPastSent} days ago with no response file received.`, async () => {
           // Arrange
@@ -845,9 +854,6 @@ describe(
           },
           { dateReceived: new Date() },
         );
-        await markNotificationsSent(
-          NotificationMessageType.MinistryFileProcessingIssue,
-        );
       });
       positiveCRASINNotificationData.forEach(({ daysPastSent }) => {
         it(`Should generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with no response file received.`, async () => {
@@ -963,11 +969,6 @@ describe(
     });
 
     describe("StudentAssessmentReminderNotification", () => {
-      beforeEach(async () => {
-        markNotificationsSent(
-          NotificationMessageType.StudentAssessmentReminder,
-        );
-      });
       // The following scenarios should generate notifications.
       const positiveAssessmentNotificationData = [
         {
@@ -1249,6 +1250,163 @@ describe(
       });
     });
 
+    describe("ProgramSuspensionBlockingAssessmentNotification", () => {
+      it(`Should generate program suspension blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction.`, async () => {
+        // Arrange
+        // Create an application pending assessment confirmation.
+        const application = await createApplicationPendingAcceptAssessment();
+        const offering = application.currentAssessment.offering;
+        const location = offering.institutionLocation;
+        const program = offering.educationProgram;
+        const institution = location.institution;
+        // Add institution restriction for the application location and program.
+        await saveFakeInstitutionRestriction(db, {
+          restriction: susRestriction,
+          institution,
+          program,
+          location,
+        });
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+        const now = new Date();
+        MockDate.set(now);
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Program suspension blocking application notifications created for the assessments: ${application.currentAssessment.id}`,
+          ]),
+        ).toBe(true);
+        const notification = await findNotification(
+          NotificationMessageType.ProgramSuspensionBlockingApplication,
+        );
+        expect(notification).toBeDefined();
+        const student = application.student;
+        expect(notification!.messagePayload).toStrictEqual({
+          email_address: MINISTRY_EMAIL_ADDRESS,
+          template_id: expect.any(String),
+          personalisation: {
+            dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+            lastName: student.user.lastName,
+            birthDate: getDateOnlyFormat(student.birthDate),
+            givenNames: student.user.firstName,
+            programName: program.name,
+            studentEmail: student.user.email,
+            applicationNumber: application.applicationNumber,
+            institutionOperatingName: institution.operatingName,
+          },
+        });
+        expect(notification!.metadata).toStrictEqual({
+          assessmentId: application.currentAssessment!.id,
+        });
+      });
+
+      it(
+        `Should not generate program suspension blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction` +
+          " and a notification has already been sent for the assessment.",
+        async () => {
+          // Arrange
+          // Create an application pending assessment confirmation.
+          const application = await createApplicationPendingAcceptAssessment();
+          const offering = application.currentAssessment.offering;
+          const location = offering.institutionLocation;
+          const program = offering.educationProgram;
+          const institution = location.institution;
+          // Add institution restriction for the application location and program.
+          await saveFakeInstitutionRestriction(db, {
+            restriction: susRestriction,
+            institution,
+            program,
+            location,
+          });
+          // Create an existing notification for the assessment.
+          const existingNotification = createFakeNotification(
+            {
+              user: systemUsersService.systemUser,
+              auditUser: systemUsersService.systemUser,
+              notificationMessage: {
+                id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+              } as NotificationMessage,
+            },
+            {
+              initialValue: {
+                metadata: {
+                  assessmentId: application.currentAssessment!.id,
+                },
+                dateSent: new Date(),
+              },
+            },
+          );
+          await db.notification.save(existingNotification);
+          // Queued job.
+          const mockedJob = mockBullJob<void>();
+
+          // Act
+          await processor.processQueue(mockedJob.job);
+
+          // Assert
+          expect(
+            mockedJob.containLogMessages([
+              "No applications blocked by the program suspension restriction without an existing notification were found.",
+            ]),
+          ).toBe(true);
+          const isNewNotificationCreated = await notificationExists(
+            NotificationMessageType.ProgramSuspensionBlockingApplication,
+          );
+          expect(isNewNotificationCreated).toBe(false);
+        },
+      );
+
+      it(
+        `Should not generate program suspension blocking application notification when an application is blocked from confirming assessment due to ${RestrictionCode.SUS} restriction` +
+          " and the restriction is bypassed.",
+        async () => {
+          // Arrange
+          // Create an application pending assessment confirmation.
+          const application = await createApplicationPendingAcceptAssessment();
+          const offering = application.currentAssessment.offering;
+          const location = offering.institutionLocation;
+          const program = offering.educationProgram;
+          const institution = location.institution;
+          // Add institution restriction for the application location and program.
+          const institutionRestriction = await saveFakeInstitutionRestriction(
+            db,
+            {
+              restriction: susRestriction,
+              institution,
+              program,
+              location,
+            },
+          );
+          // Create an application restriction bypass.
+          await saveFakeApplicationRestrictionBypass(db, {
+            application,
+            institutionRestriction,
+          });
+          // Queued job.
+          const mockedJob = mockBullJob<void>();
+
+          // Act
+          await processor.processQueue(mockedJob.job);
+
+          // Assert
+          expect(
+            mockedJob.containLogMessages([
+              "No applications blocked by the program suspension restriction without an existing notification were found.",
+            ]),
+          ).toBe(true);
+          const isNewNotificationCreated = await notificationExists(
+            NotificationMessageType.ProgramSuspensionBlockingApplication,
+          );
+          expect(isNewNotificationCreated).toBe(false);
+        },
+      );
+    });
+
     /**
      * Helper function to find a notification for assertions.
      * @param messageType The type of notification message to find.
@@ -1285,11 +1443,6 @@ describe(
       userId: number = systemUsersService.systemUser.id,
     ): Promise<boolean> {
       return await db.notification.exists({
-        select: {
-          id: true,
-          messagePayload: true,
-        },
-        relations: { notificationMessage: true },
         where: {
           notificationMessage: {
             id: messageType,
@@ -1301,17 +1454,37 @@ describe(
     }
 
     /**
-     * Marks the notifications of the specified message type as sent by updating the dateSent to the current date.
-     * @param messageType The type of notification message to update.
+     * Creates an application pending accept assessment with the specified offering intensity.
+     * @param offeringIntensity application offering intensity.
+     * @returns application.
      */
-    async function markNotificationsSent(messageType: NotificationMessageType) {
-      await db.notification.update(
+    async function createApplicationPendingAcceptAssessment(
+      offeringIntensity = OfferingIntensity.fullTime,
+    ): Promise<Application> {
+      // Student with valid SIN.
+      const student = await saveFakeStudent(db.dataSource);
+      // Valid MSFAA Number.
+      const msfaaNumber = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Signed,
+            msfaaInitialValues: {
+              offeringIntensity,
+            },
+          },
+        ),
+      );
+      return saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber },
         {
-          notificationMessage: {
-            id: messageType,
+          offeringIntensity,
+          applicationStatus: ApplicationStatus.Assessment,
+          currentAssessmentInitialValues: {
+            noaApprovalStatus: AssessmentStatus.required,
           },
         },
-        { dateSent: new Date() },
       );
     }
   },

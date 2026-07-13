@@ -59,6 +59,7 @@ export class ValidateDisbursementPartTimeStep
    * used by {@link ECertProcessStep}.
    * @param log keep it compliant with the required parameters
    * used by {@link ECertProcessStep}.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
    * @returns list of failed validations, otherwise an empty array if
    * no blocking conditions were found.
    */
@@ -66,28 +67,45 @@ export class ValidateDisbursementPartTimeStep
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
+    targetValidations?: ECertFailedValidation[],
   ): Promise<ECertPreValidatorResult> {
     log.info("Executing part-time disbursement validations.");
-    const validationResults = super.validate(eCertDisbursement, log);
+    const validationResults = super.validate(
+      eCertDisbursement,
+      log,
+      targetValidations,
+    );
     // Validate stop part-time disbursement restrictions.
     super.validateStopDisbursementRestriction(
       eCertDisbursement,
       RestrictionActionType.StopPartTimeDisbursement,
       validationResults,
       log,
+      targetValidations,
     );
 
     // Validate CSLP.
-    const validateLifetimeMaximumCSLP = await this.validateCSLPLifetimeMaximum(
-      eCertDisbursement,
-      entityManager,
-      log,
-    );
-    if (!validateLifetimeMaximumCSLP) {
-      validationResults.push({
-        resultType: ECertFailedValidation.LifetimeMaximumCSLP,
-      });
+    // TODO: This validation is not moved to individual method considering the time taken to extend the pre validations.
+    // This can be done in future efforts.
+    if (
+      this.canExecuteValidation(
+        ECertFailedValidation.LifetimeMaximumCSLP,
+        targetValidations,
+      )
+    ) {
+      const validateLifetimeMaximumCSLP =
+        await this.validateCSLPLifetimeMaximum(
+          eCertDisbursement,
+          entityManager,
+          log,
+        );
+      if (!validateLifetimeMaximumCSLP) {
+        validationResults.push({
+          resultType: ECertFailedValidation.LifetimeMaximumCSLP,
+        });
+      }
     }
+    eCertDisbursement.failedValidations = validationResults;
     return new ECertPreValidatorResult(validationResults);
   }
 

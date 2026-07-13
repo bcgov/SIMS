@@ -24,80 +24,63 @@ export abstract class ValidateDisbursementBase {
    * Validate common requirements independently of the offering intensity.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
    */
   protected validate(
     eCertDisbursement: EligibleECertDisbursement,
     log: ProcessSummary,
+    targetValidations?: ECertFailedValidation[],
   ): ECertFailedValidationResult[] {
     const validationResults: ECertFailedValidationResult[] = [];
     // COE
-    if (eCertDisbursement.disbursement.coeStatus !== COEStatus.completed) {
-      log.info("Waiting for confirmation of enrolment to be completed.");
-      validationResults.push({
-        resultType: ECertFailedValidation.NonCompletedCOE,
-      });
-    }
+    this.validateCOEStatus(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     // SIN
-    if (!eCertDisbursement.hasValidSIN) {
-      log.info("Student SIN is invalid or the validation is pending.");
-      validationResults.push({ resultType: ECertFailedValidation.InvalidSIN });
-    }
+    this.validateSINStatus(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     // MSFAA cancelation.
-    if (eCertDisbursement.disbursement.msfaaNumber?.cancelledDate) {
-      log.info("Student MSFAA associated with the disbursement is cancelled.");
-      validationResults.push({
-        resultType: ECertFailedValidation.MSFAACanceled,
-      });
-    }
+    this.validateCancelledMSFAA(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     // MSFAA signed.
-    if (!eCertDisbursement.disbursement.msfaaNumber?.dateSigned) {
-      log.info(
-        "Student MSFAA associated with the disbursement is not signed or there is no MSFAA associated with the application.",
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.MSFAANotSigned,
-      });
-    }
+    this.validateSignedMSFAA(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     // Disability Status PD/PPD Verified.
-    const disabilityStatusValidation = eCertDisbursement.disabilityDetails
-      .calculatedPDPPDStatus
-      ? [DisabilityStatus.PD, DisabilityStatus.PPD].includes(
-          eCertDisbursement.disabilityDetails.studentProfileDisabilityStatus,
-        )
-      : true;
-    if (!disabilityStatusValidation) {
-      log.info(`Student disability Status PD/PPD is not verified.`);
-      validationResults.push({
-        resultType: ECertFailedValidation.DisabilityStatusNotConfirmed,
-      });
-    }
+    this.validateDisabilityStatus(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     // No estimated awards amounts to be disbursed.
-    const hasEstimatedAwards =
-      eCertDisbursement.disbursement.hasEstimatedAwards;
-    if (!hasEstimatedAwards) {
-      log.info(
-        "Disbursement estimated awards do not contain any amount to be disbursed.",
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
-      });
-    }
-    // When a student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application,
-    // create an additional eCert blocker to prevent further funds from being disbursed.
-    if (
-      eCertDisbursement.hasActiveStudentScholasticStanding([
-        StudentScholasticStandingChangeType.SchoolTransfer,
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      ])
-    ) {
-      log.info(
-        `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
-      });
-    }
-
+    this.validateEstimatedAwards(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
+    // Active School Transfer or Withdraw.
+    this.validateActiveSchoolTransferOrWithdraw(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     return validationResults;
   }
 
@@ -107,6 +90,7 @@ export abstract class ValidateDisbursementBase {
    * @param restrictionActionType restriction action type to be validated.
    * @param validationResults list of failed validations to be updated.
    * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
    */
   protected validateStopDisbursementRestriction(
     eCertDisbursement: EligibleECertDisbursement,
@@ -115,7 +99,20 @@ export abstract class ValidateDisbursementBase {
       | RestrictionActionType.StopPartTimeDisbursement,
     validationResults: ECertFailedValidationResult[],
     log: ProcessSummary,
+    targetValidations?: ECertFailedValidation[],
   ): void {
+    const canExecuteValidation =
+      this.canExecuteValidation(
+        ECertFailedValidation.HasStopDisbursementRestriction,
+        targetValidations,
+      ) ||
+      this.canExecuteValidation(
+        ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+        targetValidations,
+      );
+    if (!canExecuteValidation) {
+      return;
+    }
     // Validate stop disbursement restrictions.
     const stopDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
@@ -172,5 +169,231 @@ export abstract class ValidateDisbursementBase {
       eCertDisbursement.activeRestrictionBypasses,
       log,
     );
+  }
+
+  /**
+   * Validate COE status for the given disbursement.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateCOEStatus(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.NonCompletedCOE,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    if (eCertDisbursement.disbursement.coeStatus !== COEStatus.completed) {
+      log.info("Waiting for confirmation of enrolment to be completed.");
+      validationResults.push({
+        resultType: ECertFailedValidation.NonCompletedCOE,
+      });
+    }
+  }
+
+  /**
+   * Validate SIN status of the application student.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateSINStatus(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.InvalidSIN,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    if (!eCertDisbursement.hasValidSIN) {
+      log.info("Student SIN is invalid or the validation is pending.");
+      validationResults.push({ resultType: ECertFailedValidation.InvalidSIN });
+    }
+  }
+
+  /**
+   * Validate cancelled MSFAA for the given disbursement.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateCancelledMSFAA(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.MSFAACanceled,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    if (eCertDisbursement.disbursement.msfaaNumber?.cancelledDate) {
+      log.info("Student MSFAA associated with the disbursement is cancelled.");
+      validationResults.push({
+        resultType: ECertFailedValidation.MSFAACanceled,
+      });
+    }
+  }
+
+  /**
+   * Validate signed MSFAA for the given disbursement.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateSignedMSFAA(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.MSFAANotSigned,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    if (!eCertDisbursement.disbursement.msfaaNumber?.dateSigned) {
+      log.info(
+        "Student MSFAA associated with the disbursement is not signed or there is no MSFAA associated with the application.",
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.MSFAANotSigned,
+      });
+    }
+  }
+
+  /**
+   * Validate if the application disability status match with student disability status.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateDisabilityStatus(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.DisabilityStatusNotConfirmed,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    const disabilityStatusValidation = eCertDisbursement.disabilityDetails
+      .calculatedPDPPDStatus
+      ? [DisabilityStatus.PD, DisabilityStatus.PPD].includes(
+          eCertDisbursement.disabilityDetails.studentProfileDisabilityStatus,
+        )
+      : true;
+    if (!disabilityStatusValidation) {
+      log.info(`Student disability Status PD/PPD is not verified.`);
+      validationResults.push({
+        resultType: ECertFailedValidation.DisabilityStatusNotConfirmed,
+      });
+    }
+  }
+
+  /**
+   * Validate if the disbursement has estimated awards to be disbursed.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateEstimatedAwards(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.NoEstimatedAwardAmounts,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    const hasEstimatedAwards =
+      eCertDisbursement.disbursement.hasEstimatedAwards;
+    if (!hasEstimatedAwards) {
+      log.info(
+        "Disbursement estimated awards do not contain any amount to be disbursed.",
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
+      });
+    }
+  }
+
+  /**
+   * When a student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application,
+   * create an additional eCert blocker to prevent further funds from being disbursed.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateActiveSchoolTransferOrWithdraw(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.ActiveTransferOrWithdraw,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    if (
+      eCertDisbursement.hasActiveStudentScholasticStanding([
+        StudentScholasticStandingChangeType.SchoolTransfer,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ])
+    ) {
+      log.info(
+        `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
+      });
+    }
+  }
+
+  /**
+   * Check if a specific validation can be executed based on the list of validations to execute.
+   * @param validation validation to check.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  protected canExecuteValidation(
+    validation: ECertFailedValidation,
+    targetValidations?: ECertFailedValidation[],
+  ): boolean {
+    return !targetValidations?.length || targetValidations.includes(validation);
   }
 }

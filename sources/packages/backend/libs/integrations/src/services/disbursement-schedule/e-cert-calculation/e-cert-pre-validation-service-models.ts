@@ -6,7 +6,7 @@ import {
 import { ProcessSummary } from "@sims/utilities/logger";
 import { EntityManager } from "typeorm";
 
-const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
+export const ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS = [
   ECertFailedValidation.DisabilityStatusNotConfirmed,
   ECertFailedValidation.MSFAACanceled,
   ECertFailedValidation.MSFAANotSigned,
@@ -53,6 +53,10 @@ export class ECertPreValidatorResult {
   }
 }
 
+export interface ApplicationECertPreValidatorResult {
+  applicationId: number;
+  validationResult: ECertPreValidatorResult;
+}
 /**
  * Allow validations to be executed before the e-Cert disbursement time.
  */
@@ -63,11 +67,14 @@ export interface ECertPreValidator {
    * The intention is to know ahead of time of the existence
    * of such conditions in a way that an action can be taken
    * to allow the money to be disbursed.
+   * TODO: The method signature is asynchronous only due to CSLP validation in part-time that calls database to get student loan balance.
+   * Once the student loan balance is loaded to eligible disbursement, this method can be synchronous.
    * @param eCertDisbursement eligible disbursement to be validated.
    * @param entityManager keep it compliant with the required parameters
    * used by {@link ECertProcessStep}.
    * @param log keep it compliant with the required parameters
    * used by {@link ECertProcessStep}.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
    * @returns list of failed validations, otherwise an empty array if
    * no blocking conditions were found.
    */
@@ -75,5 +82,6 @@ export interface ECertPreValidator {
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
     log: ProcessSummary,
+    targetValidations?: ECertFailedValidation[],
   ): Promise<ECertPreValidatorResult>;
 }

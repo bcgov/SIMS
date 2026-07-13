@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { ECertGenerationService } from "@sims/integrations/services";
 import { EligibleECertDisbursement } from "@sims/integrations/services/disbursement-schedule/disbursement-schedule.models";
 import {
+  ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS,
+  ApplicationECertPreValidatorResult,
   ECertPreValidator,
   ECertPreValidatorResult,
 } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
@@ -43,7 +45,7 @@ export class ECertPreValidationService {
   ): Promise<ECertPreValidatorResult> {
     const [firstEligibleDisbursement] =
       await this.eCertGenerationService.getEligibleDisbursements({
-        applicationId,
+        applicationIds: [applicationId],
         allowNonCompleted: allowNonCompleted ?? false,
       });
     if (!firstEligibleDisbursement) {
@@ -53,13 +55,55 @@ export class ECertPreValidationService {
       firstEligibleDisbursement,
     );
     const log = new ProcessSummary();
-    const validations = eCertPreValidator.executePreValidations(
+    const validations = await eCertPreValidator.executePreValidations(
       firstEligibleDisbursement,
       this.dataSource.manager,
       log,
     );
     this.logger.logProcessSummary(log);
     return validations;
+  }
+
+  /**
+   * Execute the validations that would block a student from accepting an assessment.
+   * @param applicationIds applications to have its first eligible disbursements validated.
+   * @returns accept assessment validation result.
+   */
+  async executeAcceptAssessmentValidations(
+    applicationIds: number[],
+  ): Promise<ApplicationECertPreValidatorResult[]> {
+    const eligibleDisbursements =
+      await this.eCertGenerationService.getEligibleDisbursements({
+        applicationIds,
+        allowNonCompleted: true,
+      });
+
+    if (!eligibleDisbursements.length) {
+      return [];
+    }
+    // Get only the first eligible disbursement for each application to validate the assessment acceptance.
+    const applicationFirstEligibleDisbursements = eligibleDisbursements.filter(
+      (disbursement) => disbursement.applicationEligibleDisbursementIndex === 1,
+    );
+    const log = new ProcessSummary();
+    const applicationECertPreValidatorResults: ApplicationECertPreValidatorResult[] =
+      [];
+    for (const firstEligibleDisbursement of applicationFirstEligibleDisbursements) {
+      const eCertPreValidator = this.getECertPreValidator(
+        firstEligibleDisbursement,
+      );
+      const validationResult = await eCertPreValidator.executePreValidations(
+        firstEligibleDisbursement,
+        this.dataSource.manager,
+        log,
+        ACCEPT_ASSESSMENT_BLOCKING_VALIDATIONS,
+      );
+      applicationECertPreValidatorResults.push({
+        applicationId: firstEligibleDisbursement.applicationId,
+        validationResult,
+      });
+    }
+    return applicationECertPreValidatorResults;
   }
 
   /**

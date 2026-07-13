@@ -44,6 +44,7 @@ import {
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ArrayContains, In, IsNull, Like, Not } from "typeorm";
+import MockDate from "mockdate";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
@@ -54,7 +55,9 @@ import {
   QueueNames,
   addDays,
   formatDate,
+  getDateOnlyFormat,
   getISODateOnlyString,
+  getPSTPDTDateTime,
 } from "@sims/utilities";
 import { FullTimeECertProcessIntegrationScheduler } from "../ecert-full-time-process-integration.scheduler";
 import { DeepMocked } from "@golevelup/ts-jest";
@@ -65,6 +68,7 @@ import {
   AVIATION_CREDENTIAL_TEST_INPUTS,
   awardAssert,
   createBlockedDisbursementTestData,
+  createEligibleECertApplication,
   loadAwardValues,
   loadDisbursementAndStudentRestrictions,
 } from "./e-cert-utils";
@@ -83,7 +87,12 @@ describe(
     let sharedMinistryUser: User;
     let stopFullTimeBCLoanRestriction: Restriction;
     let stopFullTimeBCGrantRestriction: Restriction;
+    let susRestriction: Restriction;
     const MAX_LIFE_TIME_BC_LOAN_AMOUNT = 50000;
+    const OFFERING_INTENSITY = OfferingIntensity.fullTime;
+    const BLOCK_DISBURSEMENT_ACTION_TYPE =
+      RestrictionActionType.StopFullTimeDisbursement;
+    const MINISTRY_NOTIFICATION_EMAIL = "dummy@some.domain";
 
     beforeAll(async () => {
       // Env variable required for querying the eligible e-Cert records.
@@ -101,9 +110,12 @@ describe(
       // Insert fake email contact to send ministry email.
       await db.notificationMessage.update(
         {
-          id: NotificationMessageType.MinistryNotificationDisbursementBlocked,
+          id: In([
+            NotificationMessageType.MinistryNotificationDisbursementBlocked,
+            NotificationMessageType.ProgramSuspensionBlockingApplication,
+          ]),
         },
-        { emailContacts: ["dummy@some.domain"] },
+        { emailContacts: [MINISTRY_NOTIFICATION_EMAIL] },
       );
       // Create common restrictions used on tests having distinct action types
       // to ensure the proper restrictions are applied during e-Cert generation.
@@ -122,10 +134,17 @@ describe(
             },
           }),
         ]);
+      susRestriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.SUS,
+        },
+      });
     });
 
     beforeEach(async () => {
       jest.clearAllMocks();
+      MockDate.reset();
       // Ensures that every disbursement on database is cancelled allowing the e-Certs to
       // be generated with the data created for every specific scenario.
       await db.disbursementSchedule.update(
@@ -177,7 +196,7 @@ describe(
             applicationStatus: ApplicationStatus.Completed,
             relationshipStatus: RelationshipStatus.MarriedUnable,
           },
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
             assessmentDate: new Date(),
@@ -305,7 +324,7 @@ describe(
         db.dataSource,
         { student, disbursementValues: firstDisbursementValues, msfaaNumber },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -500,7 +519,7 @@ describe(
             disbursementValues: reassessmentDisbursementValues,
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -668,7 +687,7 @@ describe(
             disbursementValues: reassessmentDisbursementValues,
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -805,7 +824,7 @@ describe(
           ],
         },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -856,7 +875,7 @@ describe(
           ],
         },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -1046,7 +1065,7 @@ describe(
             ],
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -1161,7 +1180,7 @@ describe(
           ],
         },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -1284,7 +1303,7 @@ describe(
             ],
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -1370,7 +1389,7 @@ describe(
         db.dataSource,
         { student, msfaaNumber },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -1551,7 +1570,7 @@ describe(
         db.dataSource,
         { student, msfaaNumber },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -1621,7 +1640,7 @@ describe(
         db.dataSource,
         { student, msfaaNumber },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
@@ -1690,7 +1709,7 @@ describe(
             {
               msfaaState: MSFAAStates.Signed,
               msfaaInitialValues: {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
               },
             },
           ),
@@ -1722,7 +1741,7 @@ describe(
             ],
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -1841,7 +1860,7 @@ describe(
 
     it(
       "Should have the e-Cert generated for a full-time application and the bypass active when " +
-        `a student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.AllDisbursements}'.`,
+        `a student has an active '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction and it is bypassed with behavior '${RestrictionBypassBehaviors.AllDisbursements}'.`,
       async () => {
         // Arrange
         // Student with valid SIN.
@@ -1853,7 +1872,7 @@ describe(
             {
               msfaaState: MSFAAStates.Signed,
               msfaaInitialValues: {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
               },
             },
           ),
@@ -1873,7 +1892,7 @@ describe(
             ],
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -1893,8 +1912,7 @@ describe(
             creator: sharedMinistryUser,
           },
           {
-            restrictionActionType:
-              RestrictionActionType.StopFullTimeDisbursement,
+            restrictionActionType: BLOCK_DISBURSEMENT_ACTION_TYPE,
             initialValues: {
               bypassBehavior: RestrictionBypassBehaviors.AllDisbursements,
             },
@@ -1947,7 +1965,7 @@ describe(
             {
               msfaaState: MSFAAStates.Signed,
               msfaaInitialValues: {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
               },
             },
           ),
@@ -1967,7 +1985,7 @@ describe(
             ],
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -2006,8 +2024,7 @@ describe(
             creator: sharedMinistryUser,
           },
           {
-            restrictionActionType:
-              RestrictionActionType.StopFullTimeDisbursement,
+            restrictionActionType: BLOCK_DISBURSEMENT_ACTION_TYPE,
             initialValues: {
               bypassBehavior: RestrictionBypassBehaviors.AllDisbursements,
             },
@@ -2048,7 +2065,7 @@ describe(
 
     it(
       "Should prevent an e-Cert generation and keep the bypass active when " +
-        `multiple '${RestrictionActionType.StopFullTimeDisbursement}' restrictions exist and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
+        `multiple '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restrictions exist and only one is bypassed and it is bypassed with behavior '${RestrictionBypassBehaviors.NextDisbursementOnly}'.`,
       async () => {
         // Arrange
         // Student with valid SIN.
@@ -2060,7 +2077,7 @@ describe(
             {
               msfaaState: MSFAAStates.Signed,
               msfaaInitialValues: {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
               },
             },
           ),
@@ -2080,7 +2097,7 @@ describe(
             ],
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -2100,8 +2117,7 @@ describe(
             creator: sharedMinistryUser,
           },
           {
-            restrictionActionType:
-              RestrictionActionType.StopFullTimeDisbursement,
+            restrictionActionType: BLOCK_DISBURSEMENT_ACTION_TYPE,
             initialValues: {
               bypassBehavior: RestrictionBypassBehaviors.NextDisbursementOnly,
             },
@@ -2115,9 +2131,7 @@ describe(
           where: {
             restrictionType: RestrictionType.Provincial,
             actionEffectiveConditions: IsNull(),
-            actionType: ArrayContains([
-              RestrictionActionType.StopFullTimeDisbursement,
-            ]),
+            actionType: ArrayContains([BLOCK_DISBURSEMENT_ACTION_TYPE]),
           },
         });
         // Create a non-bypassed student restriction to stop disbursement.
@@ -2136,7 +2150,7 @@ describe(
         expect(
           mockedJob.containLogMessages([
             `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
-            `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
+            `Student has an active '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction and the disbursement calculation will not proceed.`,
           ]),
         ).toBe(true);
 
@@ -2166,7 +2180,7 @@ describe(
         // Arrange
         const { student, disbursement } =
           await createBlockedDisbursementTestData(db, {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             isValidSIN: true,
             disbursementValues: [],
           });
@@ -2231,7 +2245,7 @@ describe(
       const { student, disbursement } = await createBlockedDisbursementTestData(
         db,
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           isValidSIN: true,
           disbursementValues: [],
         },
@@ -2300,7 +2314,7 @@ describe(
     it(
       "Should block the disbursement and log the information when the institution" +
         " has an effective institution restriction for the application location and program" +
-        ` with action type ${RestrictionActionType.StopFullTimeDisbursement}.`,
+        ` with action type ${BLOCK_DISBURSEMENT_ACTION_TYPE}.`,
       async () => {
         // Arrange
         // Eligible COE basic properties.
@@ -2317,7 +2331,7 @@ describe(
             {
               msfaaState: MSFAAStates.Signed,
               msfaaInitialValues: {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
               },
             },
           ),
@@ -2329,7 +2343,7 @@ describe(
             msfaaNumber,
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -2346,9 +2360,7 @@ describe(
           select: { id: true },
           where: {
             restrictionType: RestrictionType.Institution,
-            actionType: ArrayContains([
-              RestrictionActionType.StopFullTimeDisbursement,
-            ]),
+            actionType: ArrayContains([BLOCK_DISBURSEMENT_ACTION_TYPE]),
           },
         });
         const offering = application.currentAssessment.offering;
@@ -2381,7 +2393,7 @@ describe(
         // Assert log messages for the blocked disbursement.
         expect(
           mockedJob.containLogMessages([
-            `Institution has an effective '${RestrictionActionType.StopFullTimeDisbursement}' restriction` +
+            `Institution has an effective '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction` +
               ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
             "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
           ]),
@@ -2397,6 +2409,170 @@ describe(
           },
         });
         expect(scheduleIsPending).toBe(true);
+      },
+    );
+
+    it(
+      "Should block the disbursement and create program suspension blocking application notification" +
+        ` when the application location and program has effective institution restriction ${RestrictionCode.SUS}.`,
+      async () => {
+        // Arrange
+        const application = await createEligibleECertApplication(
+          db,
+          OFFERING_INTENSITY,
+        );
+        const offering = application.currentAssessment.offering;
+        const location = offering.institutionLocation;
+        const program = offering.educationProgram;
+        const institution = location.institution;
+        // Add institution restriction for the application location and program.
+        await saveFakeInstitutionRestriction(db, {
+          restriction: susRestriction,
+          institution,
+          program,
+          location,
+        });
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+        const now = new Date();
+        MockDate.set(now);
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        // Assert log messages.
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        // Assert log messages for the blocked disbursement.
+        expect(
+          mockedJob.containLogMessages([
+            `Institution has an effective '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction` +
+              ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+            "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
+            `Program suspension blocking application notification created for disbursement ID ${disbursement.id}.`,
+          ]),
+        ).toBe(true);
+        // Assert that the disbursement is still in status 'Pending' with date sent null.
+        const scheduleIsPending = await db.disbursementSchedule.exists({
+          where: {
+            id: disbursement.id,
+            dateSent: IsNull(),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        });
+        expect(scheduleIsPending).toBe(true);
+        // Assert that the notification was created for the disbursement.
+        const notification = await db.notification.findOne({
+          select: {
+            id: true,
+            messagePayload: true,
+          },
+          where: {
+            dateSent: IsNull(),
+            notificationMessage: {
+              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+            },
+            metadata: { disbursementId: disbursement.id },
+          },
+          loadEagerRelations: false,
+        });
+        const student = application.student;
+        expect(notification).toEqual({
+          id: expect.any(Number),
+          messagePayload: {
+            email_address: MINISTRY_NOTIFICATION_EMAIL,
+            template_id: expect.any(String),
+            personalisation: {
+              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              lastName: student.user.lastName,
+              givenNames: student.user.firstName,
+              birthDate: getDateOnlyFormat(student.birthDate),
+              studentEmail: student.user.email,
+              applicationNumber: application.applicationNumber,
+              programName: program.name,
+              institutionOperatingName: institution.operatingName,
+            },
+          },
+        });
+      },
+    );
+
+    it(
+      "Should block the disbursement but not create a program suspension blocking application notification" +
+        ` when the application location and program has effective institution restriction ${RestrictionCode.SUS}` +
+        " and the notification already exists for the disbursement.",
+      async () => {
+        // Arrange
+        const application = await createEligibleECertApplication(
+          db,
+          OFFERING_INTENSITY,
+        );
+        const offering = application.currentAssessment.offering;
+        const location = offering.institutionLocation;
+        const program = offering.educationProgram;
+        const institution = location.institution;
+        // Add institution restriction for the application location and program.
+        await saveFakeInstitutionRestriction(db, {
+          restriction: susRestriction,
+          institution,
+          program,
+          location,
+        });
+        const [disbursement] =
+          application.currentAssessment.disbursementSchedules;
+        // Create a sent notification.
+        const existingNotification = createFakeNotification(
+          {
+            user: systemUsersService.systemUser,
+            auditUser: systemUsersService.systemUser,
+            notificationMessage: {
+              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+            } as NotificationMessage,
+          },
+          {
+            initialValue: {
+              metadata: {
+                disbursementId: disbursement.id,
+              },
+              dateSent: new Date(),
+            },
+          },
+        );
+        await db.notification.save(existingNotification);
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await processor.processQueue(mockedJob.job);
+
+        // Assert
+        // Assert log messages for the blocked disbursement.
+        expect(
+          mockedJob.containLogMessages([
+            `Program suspension blocking application notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
+          ]),
+        ).toBe(true);
+        // Assert that the disbursement is still in status 'Pending' with date sent null.
+        const scheduleIsPending = await db.disbursementSchedule.exists({
+          where: {
+            id: disbursement.id,
+            dateSent: IsNull(),
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        });
+        expect(scheduleIsPending).toBe(true);
+        // Assert that new notification was not created for the disbursement.
+        const isNewNotificationCreated = await db.notification.exists({
+          where: {
+            dateSent: IsNull(),
+            notificationMessage: {
+              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+            },
+            metadata: { disbursementId: disbursement.id },
+          },
+        });
+        expect(isNewNotificationCreated).toBe(false);
       },
     );
 
@@ -2421,7 +2597,7 @@ describe(
               {
                 msfaaState: MSFAAStates.Signed,
                 msfaaInitialValues: {
-                  offeringIntensity: OfferingIntensity.fullTime,
+                  offeringIntensity: OFFERING_INTENSITY,
                 },
               },
             ),
@@ -2433,7 +2609,7 @@ describe(
               msfaaNumber,
             },
             {
-              offeringIntensity: OfferingIntensity.fullTime,
+              offeringIntensity: OFFERING_INTENSITY,
               applicationStatus: ApplicationStatus.Completed,
               currentAssessmentInitialValues: {
                 assessmentData: { weeks: 5 } as Assessment,
@@ -2516,7 +2692,7 @@ describe(
               {
                 msfaaState: MSFAAStates.Signed,
                 msfaaInitialValues: {
-                  offeringIntensity: OfferingIntensity.fullTime,
+                  offeringIntensity: OFFERING_INTENSITY,
                 },
               },
             ),
@@ -2528,7 +2704,7 @@ describe(
               msfaaNumber,
             },
             {
-              offeringIntensity: OfferingIntensity.fullTime,
+              offeringIntensity: OFFERING_INTENSITY,
               applicationStatus: ApplicationStatus.Completed,
               currentAssessmentInitialValues: {
                 assessmentData: { weeks: 5 } as Assessment,
@@ -2605,7 +2781,7 @@ describe(
             {
               msfaaState: MSFAAStates.Signed,
               msfaaInitialValues: {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
               },
             },
           ),
@@ -2617,7 +2793,7 @@ describe(
             msfaaNumber,
           },
           {
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OFFERING_INTENSITY,
             applicationStatus: ApplicationStatus.Completed,
             currentAssessmentInitialValues: {
               assessmentData: { weeks: 5 } as Assessment,
@@ -2704,7 +2880,7 @@ describe(
                 {
                   msfaaState: MSFAAStates.Signed,
                   msfaaInitialValues: {
-                    offeringIntensity: OfferingIntensity.fullTime,
+                    offeringIntensity: OFFERING_INTENSITY,
                   },
                 },
               ),
@@ -2724,7 +2900,7 @@ describe(
                   ],
                 },
                 {
-                  offeringIntensity: OfferingIntensity.fullTime,
+                  offeringIntensity: OFFERING_INTENSITY,
                   applicationStatus: ApplicationStatus.Completed,
                   currentAssessmentInitialValues: {
                     assessmentData: { weeks: 5 } as Assessment,
@@ -2830,7 +3006,7 @@ describe(
                   ],
                 },
                 {
-                  offeringIntensity: OfferingIntensity.fullTime,
+                  offeringIntensity: OFFERING_INTENSITY,
                   applicationStatus: ApplicationStatus.Completed,
                   currentAssessmentInitialValues: {
                     assessmentData: { weeks: 5 } as Assessment,
@@ -2877,7 +3053,7 @@ describe(
             // Assert log messages for the blocked disbursement.
             expect(
               mockedJob.containLogMessages([
-                `Student has an active '${RestrictionActionType.StopFullTimeDisbursement}' restriction and the disbursement calculation will not proceed.`,
+                `Student has an active '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction and the disbursement calculation will not proceed.`,
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               ]),
             ).toBe(true);
@@ -2954,7 +3130,7 @@ describe(
                 ],
               },
               {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
                 applicationStatus: ApplicationStatus.Completed,
                 currentAssessmentInitialValues: {
                   assessmentData: { weeks: 5 } as Assessment,
@@ -3084,7 +3260,7 @@ describe(
                 ],
               },
               {
-                offeringIntensity: OfferingIntensity.fullTime,
+                offeringIntensity: OFFERING_INTENSITY,
                 applicationStatus: ApplicationStatus.Completed,
                 currentAssessmentInitialValues: {
                   assessmentData: { weeks: 5 } as Assessment,
@@ -3199,7 +3375,7 @@ describe(
         db.dataSource,
         { student, msfaaNumber },
         {
-          offeringIntensity: OfferingIntensity.fullTime,
+          offeringIntensity: OFFERING_INTENSITY,
           applicationStatus: ApplicationStatus.Completed,
           currentAssessmentInitialValues: {
             assessmentData: { weeks: 5 } as Assessment,
