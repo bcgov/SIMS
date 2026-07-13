@@ -19,7 +19,7 @@ export class ProgramSuspensionBlockingAssessmentNotification {
   ) {}
 
   /**
-   * Creates an assessment reminder notification.
+   * Creates a program suspension blocking assessment notification for the ministry.
    * @param processSummary process summary for logging.
    */
   async createNotification(processSummary: ProcessSummary): Promise<void> {
@@ -29,7 +29,7 @@ export class ProgramSuspensionBlockingAssessmentNotification {
       await this.applicationService.getApplicationsBlockedByProgramSuspension();
     if (!applications.length) {
       notificationLog.info(
-        "No applications blocked by program suspension restriction without an existing notification are found.",
+        "No applications blocked by the program suspension restriction without an existing notification were found.",
       );
       return;
     }

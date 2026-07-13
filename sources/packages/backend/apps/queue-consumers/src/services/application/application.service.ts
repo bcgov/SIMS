@@ -446,6 +446,7 @@ export class ApplicationService {
       .getMany();
 
     const eligibleApplications: Application[] = [];
+    //TODO: This execution can be improved by using the newly created executeAcceptAssessmentValidations.
     await processInParallel(async (application) => {
       const validationResult =
         await this.eCertPreValidationService.executePreValidations(

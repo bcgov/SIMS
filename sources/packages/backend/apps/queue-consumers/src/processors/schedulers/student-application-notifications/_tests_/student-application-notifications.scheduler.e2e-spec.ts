@@ -1350,7 +1350,7 @@ describe(
           // Assert
           expect(
             mockedJob.containLogMessages([
-              "No applications blocked by program suspension restriction without an existing notification are found.",
+              "No applications blocked by the program suspension restriction without an existing notification were found.",
             ]),
           ).toBe(true);
           const isNewNotificationCreated = await notificationExists(
@@ -1394,7 +1394,7 @@ describe(
           // Assert
           expect(
             mockedJob.containLogMessages([
-              "No applications blocked by program suspension restriction without an existing notification are found.",
+              "No applications blocked by the program suspension restriction without an existing notification were found.",
             ]),
           ).toBe(true);
           const isNewNotificationCreated = await notificationExists(

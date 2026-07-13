@@ -55,7 +55,7 @@ export class ECertPreValidationService {
       firstEligibleDisbursement,
     );
     const log = new ProcessSummary();
-    const validations = eCertPreValidator.executePreValidations(
+    const validations = await eCertPreValidator.executePreValidations(
       firstEligibleDisbursement,
       this.dataSource.manager,
       log,
