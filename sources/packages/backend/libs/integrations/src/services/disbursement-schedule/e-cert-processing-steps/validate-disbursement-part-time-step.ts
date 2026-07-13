@@ -105,6 +105,7 @@ export class ValidateDisbursementPartTimeStep
         });
       }
     }
+    eCertDisbursement.failedValidations = validationResults;
     return new ECertPreValidatorResult(validationResults);
   }
 

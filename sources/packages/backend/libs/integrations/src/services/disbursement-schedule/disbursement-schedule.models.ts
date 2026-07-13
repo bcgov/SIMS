@@ -294,6 +294,7 @@ export type EligibleECertOffering = Pick<
 export class EligibleECertDisbursement {
   private readonly studentRestrictionsBypassedIds: number[];
   private readonly institutionRestrictionsBypassedIds: number[];
+  private failedValidationsInternal: ECertFailedValidationResult[];
   /**
    * Creates a new instance of a eligible e-Cert to be calculated.
    * @param studentId student id.
@@ -397,6 +398,20 @@ export class EligibleECertDisbursement {
    */
   get activeRestrictionBypasses(): ReadonlyArray<ApplicationActiveRestrictionBypass> {
     return this.restrictionBypass;
+  }
+
+  /**
+   * Failed validation results from e-Cert pre-validation.
+   */
+  set failedValidations(failedValidations: ECertFailedValidationResult[]) {
+    this.failedValidationsInternal = failedValidations;
+  }
+
+  /**
+   * Failed validation results from e-Cert pre-validation.
+   */
+  get failedValidations(): ReadonlyArray<ECertFailedValidationResult> {
+    return this.failedValidationsInternal ?? [];
   }
 
   /**

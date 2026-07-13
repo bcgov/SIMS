@@ -1738,7 +1738,7 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a ministry notification when a when a program suspension restriction is blocking an application
+   * Creates a ministry notification when a program suspension restriction is blocking an application
    * at accept assessment or at e-Cert.
    * @param notifications notification details.
    * @param entityManager entity manager to execute in transaction.

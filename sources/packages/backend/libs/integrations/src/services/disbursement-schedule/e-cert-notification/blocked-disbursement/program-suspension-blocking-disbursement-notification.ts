@@ -7,7 +7,10 @@ import {
 import { Application, NotificationMessageType } from "@sims/sims-db";
 import { EntityManager } from "typeorm";
 import { ECertNotification } from "../e-cert-notification";
-import { EligibleECertDisbursement } from "../../disbursement-schedule.models";
+import {
+  ECertFailedValidation,
+  EligibleECertDisbursement,
+} from "../../disbursement-schedule.models";
 
 /**
  * Creates a notification for a blocked disbursement due to a program suspension restriction for the ministry.
@@ -33,10 +36,16 @@ export class ProgramSuspensionBlockingDisbursementNotification extends ECertNoti
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
   ): Promise<boolean> {
-    const hasEffectiveSuspensionRestriction = eCertDisbursement
-      .getEffectiveRestrictions()
-      .some((restriction) => restriction.code === RestrictionCode.SUS);
-    if (!hasEffectiveSuspensionRestriction) {
+    const hasBlockingSuspensionRestriction =
+      eCertDisbursement.failedValidations.some(
+        (failedValidation) =>
+          failedValidation.resultType ===
+            ECertFailedValidation.HasStopDisbursementInstitutionRestriction &&
+          failedValidation.additionalInfo.restrictionCodes.includes(
+            RestrictionCode.SUS,
+          ),
+      );
+    if (!hasBlockingSuspensionRestriction) {
       return false;
     }
     // Check if the notification already exists for the given disbursement
@@ -57,43 +66,45 @@ export class ProgramSuspensionBlockingDisbursementNotification extends ECertNoti
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
   ): Promise<void> {
-    const application = await entityManager.getRepository(Application).findOne({
-      select: {
-        id: true,
-        applicationNumber: true,
-        student: {
+    const application = await entityManager
+      .getRepository(Application)
+      .findOneOrFail({
+        select: {
           id: true,
-          birthDate: true,
-          user: {
+          applicationNumber: true,
+          student: {
             id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        currentAssessment: {
-          id: true,
-          offering: {
-            id: true,
-            educationProgram: { id: true, name: true },
-            institutionLocation: {
+            birthDate: true,
+            user: {
               id: true,
-              institution: { id: true, operatingName: true },
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+          currentAssessment: {
+            id: true,
+            offering: {
+              id: true,
+              educationProgram: { id: true, name: true },
+              institutionLocation: {
+                id: true,
+                institution: { id: true, operatingName: true },
+              },
             },
           },
         },
-      },
-      relations: {
-        currentAssessment: {
-          offering: {
-            educationProgram: true,
-            institutionLocation: { institution: true },
+        relations: {
+          currentAssessment: {
+            offering: {
+              educationProgram: true,
+              institutionLocation: { institution: true },
+            },
           },
+          student: { user: true },
         },
-        student: { user: true },
-      },
-      where: { id: eCertDisbursement.applicationId },
-    });
+        where: { id: eCertDisbursement.applicationId },
+      });
     const notification: ProgramSuspensionBlockingApplicationNotification = {
       givenNames: application.student.user.firstName,
       lastName: application.student.user.lastName,

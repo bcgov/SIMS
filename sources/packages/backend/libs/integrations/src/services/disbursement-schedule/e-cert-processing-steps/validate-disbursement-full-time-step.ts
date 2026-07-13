@@ -65,7 +65,11 @@ export class ValidateDisbursementFullTimeStep
     targetValidations?: ECertFailedValidation[],
   ): Promise<ECertPreValidatorResult> {
     log.info("Executing full-time disbursement validations.");
-    const validationResults = super.validate(eCertDisbursement, log);
+    const validationResults = super.validate(
+      eCertDisbursement,
+      log,
+      targetValidations,
+    );
     // Validate stop full-time disbursement restrictions.
     super.validateStopDisbursementRestriction(
       eCertDisbursement,
@@ -81,6 +85,7 @@ export class ValidateDisbursementFullTimeStep
       validationResults,
       targetValidations,
     );
+    eCertDisbursement.failedValidations = validationResults;
     return new ECertPreValidatorResult(validationResults);
   }
 
