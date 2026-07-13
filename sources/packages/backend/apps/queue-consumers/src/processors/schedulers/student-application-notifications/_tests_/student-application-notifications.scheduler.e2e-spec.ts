@@ -1304,6 +1304,7 @@ describe(
           assessmentId: application.currentAssessment!.id,
         });
       });
+
       it(
         `Should not generate program suspension blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction` +
           " and a notification has already been sent for the assessment.",
@@ -1359,6 +1360,7 @@ describe(
           expect(isNewNotificationCreated).toBe(false);
         },
       );
+
       it(
         `Should not generate program suspension blocking application notification when an application is blocked from confirming assessment due to ${RestrictionCode.SUS} restriction` +
           " and the restriction is bypassed.",

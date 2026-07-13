@@ -67,6 +67,8 @@ export interface ECertPreValidator {
    * The intention is to know ahead of time of the existence
    * of such conditions in a way that an action can be taken
    * to allow the money to be disbursed.
+   * TODO: The method signature is asynchronous only due to CSLP validation in part-time that calls database to get student loan balance.
+   * Once the student loan balance is loaded to eligible disbursement, this method can be synchronous.
    * @param eCertDisbursement eligible disbursement to be validated.
    * @param entityManager keep it compliant with the required parameters
    * used by {@link ECertProcessStep}.
