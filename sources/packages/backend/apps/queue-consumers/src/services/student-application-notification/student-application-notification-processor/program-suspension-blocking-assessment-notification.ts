@@ -29,7 +29,7 @@ export class ProgramSuspensionBlockingAssessmentNotification {
       await this.applicationService.getApplicationsBlockedByProgramSuspension();
     if (!applications.length) {
       notificationLog.info(
-        "No applications blocked by program suspension restriction are found to generate notifications.",
+        "No applications blocked by program suspension restriction without an existing notification are found.",
       );
       return;
     }
