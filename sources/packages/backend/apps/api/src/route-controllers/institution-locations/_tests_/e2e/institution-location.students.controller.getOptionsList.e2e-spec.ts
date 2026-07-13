@@ -25,7 +25,7 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the list of all designated institution locations which should contains the newly created designated location and not the newly created non designated location when student requests all locations.", async () => {
+  it("Should get the list of all designated institution locations which should contain the newly created designated location and not the newly created non-designated location when a student requests all locations.", async () => {
     // Arrange
     const newDesignation = await saveFakeDesignationAgreementLocation(db, {
       numberOfLocations: 2,
@@ -66,7 +66,7 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
       });
   });
 
-  it("Should get the list of all designated institution locations excluding the location that belongs to an institution under review when student requests all locations.", async () => {
+  it("Should get the list of all designated institution locations, excluding the location that belongs to an institution under review, when a student requests all locations.", async () => {
     // Arrange
     // Create two distinct designation agreements, to have two distinct institutions,
     // one of them will be under review (IUR).
