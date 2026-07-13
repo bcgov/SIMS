@@ -74,22 +74,13 @@ export abstract class ValidateDisbursementBase {
       validationResults,
       targetValidations,
     );
-    // When a student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application,
-    // create an additional eCert blocker to prevent further funds from being disbursed.
-    if (
-      eCertDisbursement.hasActiveStudentScholasticStanding([
-        StudentScholasticStandingChangeType.SchoolTransfer,
-        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
-      ])
-    ) {
-      log.info(
-        `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
-      );
-      validationResults.push({
-        resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
-      });
-    }
-
+    // Active School Transfer or Withdraw.
+    this.validateActiveSchoolTransferOrWithdraw(
+      eCertDisbursement,
+      log,
+      validationResults,
+      targetValidations,
+    );
     return validationResults;
   }
 
@@ -354,6 +345,42 @@ export abstract class ValidateDisbursementBase {
       );
       validationResults.push({
         resultType: ECertFailedValidation.NoEstimatedAwardAmounts,
+      });
+    }
+  }
+
+  /**
+   * When a student has an active 'SchoolTransfer' or 'StudentWithdrewFromProgram' scholastic standing event on their application,
+   * create an additional eCert blocker to prevent further funds from being disbursed.
+   * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
+   * @param log cumulative log summary.
+   * @param targetValidations list of validations that should only be executed. If not provided, all validations must be executed.
+   */
+  private validateActiveSchoolTransferOrWithdraw(
+    eCertDisbursement: EligibleECertDisbursement,
+    log: ProcessSummary,
+    validationResults: ECertFailedValidationResult[],
+    targetValidations?: ECertFailedValidation[],
+  ): void {
+    if (
+      !this.canExecuteValidation(
+        ECertFailedValidation.ActiveTransferOrWithdraw,
+        targetValidations,
+      )
+    ) {
+      return;
+    }
+    if (
+      eCertDisbursement.hasActiveStudentScholasticStanding([
+        StudentScholasticStandingChangeType.SchoolTransfer,
+        StudentScholasticStandingChangeType.StudentWithdrewFromProgram,
+      ])
+    ) {
+      log.info(
+        `Student application has an active scholastic standing change with change type '${StudentScholasticStandingChangeType.SchoolTransfer}' or '${StudentScholasticStandingChangeType.StudentWithdrewFromProgram}'.`,
+      );
+      validationResults.push({
+        resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
       });
     }
   }
