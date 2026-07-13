@@ -1095,7 +1095,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
    * @param options optional parameters for saving the application.
    * - `programYear` the program year to associate with the application.
    * If not provided, the recent active program year will be used.
-   * @returns the student, draft application, and payload.
+   * @returns the student, draft application, payload, and selected offering for the application.
    */
   async function saveApplicationDraftReadyForSubmission(options?: {
     programYear?: ProgramYear;
