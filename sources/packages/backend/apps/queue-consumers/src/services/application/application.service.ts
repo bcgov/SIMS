@@ -463,6 +463,8 @@ export class ApplicationService {
 
   /**
    * Get application that are blocked at accept assessment due to program suspension restriction.
+   * @param options related options.
+   * - `processSummary` process summary for logging.
    * @returns applications with assessments blocked by program suspension restriction.
    */
   async getApplicationsBlockedByProgramSuspension(options?: {
