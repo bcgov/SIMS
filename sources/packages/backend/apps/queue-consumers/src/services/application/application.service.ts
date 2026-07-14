@@ -498,7 +498,7 @@ export class ApplicationService {
       return [];
     }
     options?.processSummary?.info(
-      `Applications from restricted institutions pending accept assessment: ${applicationsPendingAcceptAssessment.length}`,
+      `Number of applications from restricted institutions pending accept assessment: ${applicationsPendingAcceptAssessment.length}`,
     );
     // Get the accept assessment validation results for the applications pending accept assessment.
     const applicationIds = applicationsPendingAcceptAssessment.map(
