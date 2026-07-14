@@ -28,6 +28,7 @@ import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/con
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { ECertFailedValidation } from "@sims/integrations/services";
 import { RestrictionCode } from "@sims/services";
+import { ProcessSummary } from "@sims/utilities/logger";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -464,7 +465,9 @@ export class ApplicationService {
    * Get application that are blocked at accept assessment due to program suspension restriction.
    * @returns applications with assessments blocked by program suspension restriction.
    */
-  async getApplicationsBlockedByProgramSuspension(): Promise<Application[]> {
+  async getApplicationsBlockedByProgramSuspension(options?: {
+    processSummary?: ProcessSummary;
+  }): Promise<Application[]> {
     // Sub query to defined if a notification was already sent to the current assessment.
     const {
       query: notificationExistsQuery,
@@ -492,6 +495,9 @@ export class ApplicationService {
     if (!applicationsPendingAcceptAssessment.length) {
       return [];
     }
+    options?.processSummary?.info(
+      `Applications from restricted institutions pending accept assessment: ${applicationsPendingAcceptAssessment.length}`,
+    );
     // Get the accept assessment validation results for the applications pending accept assessment.
     const applicationIds = applicationsPendingAcceptAssessment.map(
       (application) => application.id,
