@@ -2577,6 +2577,7 @@
                     }
                   ],
                   "validate": {
+                    "required": true,
                     "onlyAvailableItems": true
                   },
                   "type": "radio",
