@@ -477,8 +477,12 @@ export class ApplicationService {
     );
     // Get all applications pending for accept assessment and that have not been notified yet
     // about the program suspension restriction blocking the assessment acceptance.
+    // As these applications are retrieved to be validated further for effective program suspension restriction
+    // applications from institutions having active restrictions only are considered to be more relevant for the validation.
     const applicationsPendingAcceptAssessment =
       await this.getPendingAcceptAssessmentBaseQuery()
+        .innerJoin("institution.restrictions", "institutionRestriction")
+        .andWhere("institutionRestriction.isActive = true")
         .andWhere("application.isArchived = false")
         .andWhere(
           `NOT EXISTS (${notificationExistsQuery})`,
