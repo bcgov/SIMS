@@ -17,6 +17,7 @@ import {
   QueryAndParamsForExecution,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
+import { LoggerService } from "@sims/utilities/logger";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   addDays,
@@ -28,7 +29,6 @@ import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/con
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { ECertFailedValidation } from "@sims/integrations/services";
 import { RestrictionCode } from "@sims/services";
-import { ProcessSummary } from "@sims/utilities/logger";
 
 interface SecondDisbursementStillPending {
   assessmentId: number;
@@ -69,6 +69,7 @@ export class ApplicationService {
     private readonly notificationRepo: Repository<Notification>,
     @InjectRepository(DisbursementSchedule)
     private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
+    private readonly logger: LoggerService,
   ) {
     this.inProgressStatusesExistsQuery = this.studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
@@ -463,13 +464,9 @@ export class ApplicationService {
 
   /**
    * Get application that are blocked at accept assessment due to program suspension restriction.
-   * @param options related options.
-   * - `processSummary` process summary for logging.
    * @returns applications with assessments blocked by program suspension restriction.
    */
-  async getApplicationsBlockedByProgramSuspension(options?: {
-    processSummary?: ProcessSummary;
-  }): Promise<Application[]> {
+  async getApplicationsBlockedByProgramSuspension(): Promise<Application[]> {
     // Sub query to defined if a notification was already sent to the current assessment.
     const {
       query: notificationExistsQuery,
@@ -497,8 +494,9 @@ export class ApplicationService {
     if (!applicationsPendingAcceptAssessment.length) {
       return [];
     }
-    options?.processSummary?.info(
-      `Number of applications from restricted institutions pending accept assessment: ${applicationsPendingAcceptAssessment.length}`,
+    this.logger.log(
+      "Number of applications from restricted institutions pending accept assessment:",
+      applicationsPendingAcceptAssessment.length,
     );
     // Get the accept assessment validation results for the applications pending accept assessment.
     const applicationIds = applicationsPendingAcceptAssessment.map(

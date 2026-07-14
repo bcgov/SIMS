@@ -26,9 +26,7 @@ export class ProgramSuspensionBlockingAssessmentNotification {
     const notificationLog = new ProcessSummary();
     processSummary.children(notificationLog);
     const applications =
-      await this.applicationService.getApplicationsBlockedByProgramSuspension({
-        processSummary: notificationLog,
-      });
+      await this.applicationService.getApplicationsBlockedByProgramSuspension();
     if (!applications.length) {
       notificationLog.info(
         "No applications blocked by the program suspension restriction without an existing notification were found.",
