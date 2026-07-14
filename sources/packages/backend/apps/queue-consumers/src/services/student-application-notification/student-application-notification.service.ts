@@ -37,7 +37,18 @@ export class StudentApplicationNotificationService {
       this.ministrySINFileProcessingIssueNotification,
       this.studentAssessmentReminderNotification,
       this.programSuspensionBlockingAssessmentNotification,
-    ].map((notification) => notification.createNotification(processSummary));
-    await Promise.allSettled(notifications);
+    ];
+    const notificationProcessingActions = notifications.map((notification) =>
+      notification.createNotification(processSummary),
+    );
+    const results = await Promise.allSettled(notificationProcessingActions);
+    results.forEach((result, index) => {
+      if (result.status === "rejected") {
+        processSummary.error(
+          `Error while creating ${notifications[index].constructor.name}.`,
+          result.reason,
+        );
+      }
+    });
   }
 }
