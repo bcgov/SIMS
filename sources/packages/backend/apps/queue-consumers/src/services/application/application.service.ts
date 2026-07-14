@@ -17,6 +17,7 @@ import {
   QueryAndParamsForExecution,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
+import { LoggerService } from "@sims/utilities/logger";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   addDays,
@@ -68,6 +69,7 @@ export class ApplicationService {
     private readonly notificationRepo: Repository<Notification>,
     @InjectRepository(DisbursementSchedule)
     private readonly disbursementScheduleRepo: Repository<DisbursementSchedule>,
+    private readonly logger: LoggerService,
   ) {
     this.inProgressStatusesExistsQuery = this.studentAssessmentRepo
       .createQueryBuilder("studentAssessment")
@@ -477,8 +479,12 @@ export class ApplicationService {
     );
     // Get all applications pending for accept assessment and that have not been notified yet
     // about the program suspension restriction blocking the assessment acceptance.
+    // As these applications are retrieved to be validated further for effective program suspension restriction
+    // applications from institutions having active restrictions only are considered to be more relevant for the validation.
     const applicationsPendingAcceptAssessment =
       await this.getPendingAcceptAssessmentBaseQuery()
+        .innerJoin("institution.restrictions", "institutionRestriction")
+        .andWhere("institutionRestriction.isActive = true")
         .andWhere("application.isArchived = false")
         .andWhere(
           `NOT EXISTS (${notificationExistsQuery})`,
@@ -488,6 +494,9 @@ export class ApplicationService {
     if (!applicationsPendingAcceptAssessment.length) {
       return [];
     }
+    this.logger.log(
+      `Number of applications from restricted institutions pending accept assessment: ${applicationsPendingAcceptAssessment.length}`,
+    );
     // Get the accept assessment validation results for the applications pending accept assessment.
     const applicationIds = applicationsPendingAcceptAssessment.map(
       (application) => application.id,
