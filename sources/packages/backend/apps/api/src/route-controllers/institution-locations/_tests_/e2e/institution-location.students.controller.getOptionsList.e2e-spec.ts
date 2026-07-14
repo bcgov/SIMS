@@ -8,9 +8,12 @@ import {
 } from "../../../../testHelpers";
 import {
   E2EDataSources,
+  RestrictionCode,
   createE2EDataSources,
   saveFakeDesignationAgreementLocation,
+  saveFakeInstitutionRestriction,
 } from "@sims/test-utils";
+import { RestrictionType } from "@sims/sims-db";
 
 describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
   let app: INestApplication;
@@ -22,7 +25,7 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the list of all designated institution location which should contain the only newly created designated location and not the newly created non designated location when student requests.", async () => {
+  it("Should get the list of all designated institution locations which should contain the newly created designated location and not the newly created non-designated location when a student requests all locations.", async () => {
     // Arrange
     const newDesignation = await saveFakeDesignationAgreementLocation(db, {
       numberOfLocations: 2,
@@ -42,23 +45,73 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              id: designatedLocation.institutionLocation.id,
-              description: designatedLocation.institutionLocation.name,
-            }),
-            expect.not.objectContaining({
-              id: nonDesignatedLocation.institutionLocation.id,
-              description: nonDesignatedLocation.institutionLocation.name,
-            }),
-          ]),
+        const locationIds = response.body.map(
+          (location: { id: number }) => location.id,
+        );
+        expect(locationIds).toContain(
+          designatedLocation.institutionLocation.id,
+        );
+        expect(locationIds).not.toContain(
+          nonDesignatedLocation.institutionLocation.id,
+        );
+      });
+  });
+
+  it("Should get the list of all designated institution locations, excluding the location that belongs to an institution under review, when a student requests all locations.", async () => {
+    // Arrange
+    // Create two distinct designation agreements, to have two distinct institutions,
+    // one of them will be under review (IUR).
+    const [newDesignation, newDesignationIUR] = await Promise.all([
+      saveFakeDesignationAgreementLocation(db, {
+        numberOfLocations: 1,
+      }),
+      saveFakeDesignationAgreementLocation(db, {
+        numberOfLocations: 1,
+      }),
+    ]);
+    const [designatedLocation] = newDesignation.designationAgreementLocations;
+    const [underReviewLocation] =
+      newDesignationIUR.designationAgreementLocations;
+
+    // Associate the IUR restriction to the institution under review location.
+    const iurRestriction = await db.restriction.findOneOrFail({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.IUR,
+      },
+    });
+    await saveFakeInstitutionRestriction(db, {
+      restriction: iurRestriction,
+      institution: underReviewLocation.institutionLocation.institution,
+    });
+
+    const endpoint = "/students/location/options-list";
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        const locationIds = response.body.map(
+          (location: { id: number }) => location.id,
+        );
+        expect(locationIds).toContain(
+          designatedLocation.institutionLocation.id,
+        );
+        expect(locationIds).not.toContain(
+          underReviewLocation.institutionLocation.id,
         );
       });
   });

@@ -167,4 +167,8 @@ export enum RestrictionCode {
    * Institution block remittance request restriction.
    */
   REMIT = "REMIT",
+  /**
+   * Institution under review restriction.
+   */
+  IUR = "IUR",
 }
