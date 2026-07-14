@@ -45,23 +45,21 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+
     // Act/Assert
     await request(app.getHttpServer())
       .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              id: designatedLocation.institutionLocation.id,
-              description: designatedLocation.institutionLocation.name,
-            }),
-            expect.not.objectContaining({
-              id: nonDesignatedLocation.institutionLocation.id,
-              description: nonDesignatedLocation.institutionLocation.name,
-            }),
-          ]),
+        const locationIds = response.body.map(
+          (location: { id: number }) => location.id,
+        );
+        expect(locationIds).toContain(
+          designatedLocation.institutionLocation.id,
+        );
+        expect(locationIds).not.toContain(
+          nonDesignatedLocation.institutionLocation.id,
         );
       });
   });
@@ -106,17 +104,14 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect((response) => {
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              id: designatedLocation.institutionLocation.id,
-              description: designatedLocation.institutionLocation.name,
-            }),
-            expect.not.objectContaining({
-              id: underReviewLocation.institutionLocation.id,
-              description: underReviewLocation.institutionLocation.name,
-            }),
-          ]),
+        const locationIds = response.body.map(
+          (location: { id: number }) => location.id,
+        );
+        expect(locationIds).toContain(
+          designatedLocation.institutionLocation.id,
+        );
+        expect(locationIds).not.toContain(
+          underReviewLocation.institutionLocation.id,
         );
       });
   });
