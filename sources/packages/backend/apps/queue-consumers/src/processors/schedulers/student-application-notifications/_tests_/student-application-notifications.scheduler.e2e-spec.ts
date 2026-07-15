@@ -44,6 +44,7 @@ import {
   NotificationMessageType,
   OfferingIntensity,
   Restriction,
+  StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
 import { IsNull, Not } from "typeorm";
@@ -991,6 +992,7 @@ describe(
               currentAssessmentInitialValues: {
                 noaApprovalStatus: AssessmentStatus.required,
                 noaApprovalStatusUpdatedOn: addDays(-overdueDays),
+                studentAssessmentStatus: StudentAssessmentStatus.Completed,
               },
             },
           );
@@ -1038,6 +1040,7 @@ describe(
             currentAssessmentInitialValues: {
               noaApprovalStatus: AssessmentStatus.required,
               noaApprovalStatusUpdatedOn: addDays(-6),
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
           },
         );
@@ -1073,6 +1076,7 @@ describe(
             currentAssessmentInitialValues: {
               noaApprovalStatus: AssessmentStatus.required,
               noaApprovalStatusUpdatedOn: addDays(-10),
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
           },
         );
@@ -1126,6 +1130,7 @@ describe(
             currentAssessmentInitialValues: {
               noaApprovalStatus: AssessmentStatus.completed,
               noaApprovalStatusUpdatedOn: addDays(-10),
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
           },
         );
@@ -1172,6 +1177,7 @@ describe(
             currentAssessmentInitialValues: {
               noaApprovalStatus: AssessmentStatus.required,
               noaApprovalStatusUpdatedOn: addDays(-10),
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
           },
         );
@@ -1223,6 +1229,7 @@ describe(
                   pdppdStatus: false,
                 },
               } as WorkflowData,
+              studentAssessmentStatus: StudentAssessmentStatus.Completed,
             },
             firstDisbursementInitialValues: {
               coeStatus: COEStatus.required,
@@ -1483,6 +1490,7 @@ describe(
           applicationStatus: ApplicationStatus.Assessment,
           currentAssessmentInitialValues: {
             noaApprovalStatus: AssessmentStatus.required,
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },
         },
       );

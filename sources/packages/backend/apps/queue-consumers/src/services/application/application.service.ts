@@ -594,6 +594,12 @@ export class ApplicationService {
       })
       .andWhere("application.applicationStatus = :applicationStatus", {
         applicationStatus: ApplicationStatus.Assessment,
-      });
+      })
+      .andWhere(
+        "currentAssessment.studentAssessmentStatus = :studentAssessmentStatus",
+        {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      );
   }
 }
