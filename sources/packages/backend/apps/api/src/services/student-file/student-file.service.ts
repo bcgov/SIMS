@@ -5,12 +5,22 @@ import {
   StudentFile,
   User,
   FileOriginType,
+  NoteType,
 } from "@sims/sims-db";
 import { FileUploadOptions } from "./student-file.model";
+import { NoteSharedService } from "@sims/services";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  STUDENT_FILE_IS_DELETED,
+  STUDENT_FILE_NOT_FOUND,
+} from "../../constants";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
+  ) {
     super(dataSource.getRepository(StudentFile));
   }
 
@@ -33,6 +43,9 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
         uniqueFileName,
+      })
+      .andWhere("studentFile.isDeleted = :isDeleted", {
+        isDeleted: false,
       });
 
     if (studentId) {
@@ -132,8 +145,68 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
         fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
       })
+      .andWhere("studentFile.isDeleted = :isDeleted", {
+        isDeleted: false,
+      })
       .orderBy("studentFile.createdAt", "DESC")
       .getMany();
+  }
+
+  /**
+   * Soft deletes a student uploaded file.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param auditUserId user that should be considered the one causing the changes.
+   * @param noteDescription note description explaining the deletion reason.
+   */
+  async deleteStudentUploadedFile(
+    uniqueFileName: string,
+    auditUserId: number,
+    noteDescription: string,
+  ): Promise<void> {
+    const studentFile = await this.repo.findOne({
+      select: {
+        id: true,
+        student: {
+          id: true,
+        },
+        isDeleted: true,
+      },
+      where: {
+        uniqueFileName,
+        fileOrigin: In([FileOriginType.Student, FileOriginType.Ministry]),
+      },
+    });
+    if (!studentFile) {
+      throw new CustomNamedError(
+        "Student file not found.",
+        STUDENT_FILE_NOT_FOUND,
+      );
+    }
+    if (studentFile.isDeleted) {
+      throw new CustomNamedError(
+        "Student file is already set as deleted.",
+        STUDENT_FILE_IS_DELETED,
+      );
+    }
+    const studentId = studentFile.student.id;
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const now = new Date();
+      await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      await transactionalEntityManager.getRepository(StudentFile).update(
+        { id: studentFile.id },
+        {
+          isDeleted: true,
+          modifier: { id: auditUserId } as User,
+          updatedAt: now,
+        },
+      );
+    });
   }
 
   /**

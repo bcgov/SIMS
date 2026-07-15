@@ -109,4 +109,14 @@ export class StudentFile extends RecordDataModel {
     type: "char",
   })
   fileHash: string;
+
+  /**
+   * Indicates if the file has been soft deleted.
+   */
+  @Column({
+    name: "is_deleted",
+    type: "boolean",
+    default: false,
+  })
+  isDeleted: boolean;
 }
