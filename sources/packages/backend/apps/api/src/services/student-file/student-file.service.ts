@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
+import { DataSource, EntityManager, In, Not, UpdateResult } from "typeorm";
 import {
   RecordDataModelService,
   StudentFile,
@@ -153,7 +153,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
   }
 
   /**
-   * Soft deletes a student uploaded file.
+   * Soft deletes a uploaded student file.
    * @param uniqueFileName unique file name (name+guid).
    * @param auditUserId user that should be considered the one causing the changes.
    * @param noteDescription note description explaining the deletion reason.
@@ -171,9 +171,12 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         },
         isDeleted: true,
       },
+      relations: {
+        student: true,
+      },
       where: {
         uniqueFileName,
-        fileOrigin: In([FileOriginType.Student, FileOriginType.Ministry]),
+        fileOrigin: Not(FileOriginType.Temporary),
       },
     });
     if (!studentFile) {

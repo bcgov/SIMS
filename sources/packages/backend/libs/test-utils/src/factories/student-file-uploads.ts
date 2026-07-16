@@ -19,6 +19,7 @@ import { createFakeStudent } from "./student";
  * - `fileOrigin` option for specifying the file origin.
  * - `groupName` option for specifying the group name.
  * - `hash` option for specifying the file hash.
+ * - `isDeleted` option for specifying if the file is deleted.
  * @returns created studentFile object.
  */
 export function createFakeStudentFileUpload(
@@ -31,6 +32,7 @@ export function createFakeStudentFileUpload(
     fileOrigin?: FileOriginType;
     groupName?: string;
     hash?: string;
+    isDeleted?: boolean;
   },
 ): StudentFile {
   const studentFile = new StudentFile();
@@ -44,6 +46,7 @@ export function createFakeStudentFileUpload(
   studentFile.virusScanStatus = VirusScanStatus.Pending;
   studentFile.fileHash =
     options?.hash ?? faker.string.alphanumeric({ length: 64 });
+  studentFile.isDeleted = options?.isDeleted ?? false;
   return studentFile;
 }
 
@@ -58,6 +61,7 @@ export function createFakeStudentFileUpload(
  * - `fileOrigin` option for specifying the file origin.
  * - `groupName` option for specifying the group name.
  * - `hash` option for specifying the file hash.
+ * - `isDeleted` option for specifying if the file is deleted.
  * @returns persisted studentFile.
  */
 export async function saveFakeStudentFileUpload(
@@ -68,6 +72,7 @@ export async function saveFakeStudentFileUpload(
     fileOrigin?: FileOriginType;
     groupName?: string;
     hash?: string;
+    isDeleted?: boolean;
   },
 ): Promise<StudentFile> {
   const studentFile = createFakeStudentFileUpload(relations, options);
