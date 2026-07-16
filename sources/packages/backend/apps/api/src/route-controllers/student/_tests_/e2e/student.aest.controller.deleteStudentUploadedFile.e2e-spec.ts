@@ -34,7 +34,7 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
   });
 
   beforeEach(() => {
-    MockDate.set(new Date());
+    MockDate.reset();
   });
 
   it("Should delete a non-temporary file when the file exists and is not deleted.", async () => {
