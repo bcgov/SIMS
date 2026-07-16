@@ -44,9 +44,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .where("studentFile.uniqueFileName = :uniqueFileName", {
         uniqueFileName,
       })
-      .andWhere("studentFile.isDeleted = :isDeleted", {
-        isDeleted: false,
-      });
+      .andWhere("studentFile.deletedAt IS NULL");
 
     if (studentId) {
       query.andWhere("studentFile.student.id = :studentId", { studentId });
@@ -145,15 +143,13 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
         fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
       })
-      .andWhere("studentFile.isDeleted = :isDeleted", {
-        isDeleted: false,
-      })
+      .andWhere("studentFile.deletedAt IS NULL")
       .orderBy("studentFile.createdAt", "DESC")
       .getMany();
   }
 
   /**
-   * Soft deletes a uploaded student file.
+   * Soft deletes an uploaded student file.
    * @param uniqueFileName unique file name (name+guid).
    * @param auditUserId user that should be considered the one causing the changes.
    * @param noteDescription note description explaining the deletion reason.
@@ -169,7 +165,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         student: {
           id: true,
         },
-        isDeleted: true,
+        deletedAt: true,
       },
       relations: {
         student: true,
@@ -178,6 +174,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         uniqueFileName,
         fileOrigin: Not(FileOriginType.Temporary),
       },
+      withDeleted: true,
     });
     if (!studentFile) {
       throw new CustomNamedError(
@@ -185,7 +182,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         STUDENT_FILE_NOT_FOUND,
       );
     }
-    if (studentFile.isDeleted) {
+    if (studentFile.deletedAt) {
       throw new CustomNamedError(
         "Student file is already set as deleted.",
         STUDENT_FILE_IS_DELETED,
@@ -204,7 +201,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       await transactionalEntityManager.getRepository(StudentFile).update(
         { id: studentFile.id },
         {
-          isDeleted: true,
+          deletedAt: now,
           modifier: { id: auditUserId } as User,
           updatedAt: now,
         },

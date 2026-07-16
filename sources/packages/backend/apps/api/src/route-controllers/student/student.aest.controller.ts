@@ -245,12 +245,12 @@ export class StudentAESTController extends BaseController {
   }
 
   /**
-   * Soft deletes a student uploaded file from Student or Ministry origin.
+   * Soft deletes an uploaded student file.
    * @param userToken user authentication token.
    * @param uniqueFileNameParam unique file name (name+guid).
    * @param payload delete file details.
    */
-  @Roles(Role.StudentUploadFile)
+  @Roles(Role.StudentDeleteUploadedFile)
   @ApiNotFoundResponse({
     description: "Student file not found.",
   })

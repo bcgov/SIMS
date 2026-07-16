@@ -16,7 +16,6 @@ import {
 } from "@sims/test-utils";
 import { FileOriginType, User } from "@sims/sims-db";
 import { STUDENT_FILE_IS_DELETED } from "../../../../constants";
-import { beforeEach } from "node:test";
 
 describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
   let app: INestApplication;
@@ -69,7 +68,7 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
     const updatedStudentFile = await db.studentFile.findOne({
       select: {
         id: true,
-        isDeleted: true,
+        deletedAt: true,
         modifier: { id: true },
         updatedAt: true,
       },
@@ -79,10 +78,11 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
       where: {
         id: studentFile.id,
       },
+      withDeleted: true,
     });
     expect(updatedStudentFile).toEqual({
       id: studentFile.id,
-      isDeleted: true,
+      deletedAt: now,
       modifier: ministryUser,
       updatedAt: now,
     });
@@ -119,7 +119,7 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
       },
       {
         fileOrigin: FileOriginType.Ministry,
-        isDeleted: true,
+        deletedAt: new Date(),
       },
     );
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -173,15 +173,16 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
     const updatedStudentFile = await db.studentFile.findOne({
       select: {
         id: true,
-        isDeleted: true,
+        deletedAt: true,
       },
       where: {
         id: studentFile.id,
       },
+      withDeleted: true,
     });
     expect(updatedStudentFile).toEqual({
       id: studentFile.id,
-      isDeleted: false,
+      deletedAt: null,
     });
   });
 

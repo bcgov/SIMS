@@ -18,6 +18,7 @@ export enum Role {
   StudentAddRestriction = "student-add-restriction",
   StudentResolveRestriction = "student-resolve-restriction",
   StudentUploadFile = "student-upload-file",
+  StudentDeleteUploadedFile = "student-delete-uploaded-file",
   StudentApproveDeclineAccountRequests = "student-approve-decline-account-requests",
   StudentEditProfile = "student-edit-profile",
   StudentApproveDeclineExceptions = "student-approve-decline-exceptions",

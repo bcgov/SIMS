@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
@@ -111,12 +112,12 @@ export class StudentFile extends RecordDataModel {
   fileHash: string;
 
   /**
-   * Indicates if the file has been soft deleted.
+   * Timestamp when the file was soft-deleted.
    */
-  @Column({
-    name: "is_deleted",
-    type: "boolean",
-    default: false,
+  @DeleteDateColumn({
+    name: "deleted_at",
+    type: "timestamptz",
+    nullable: true,
   })
-  isDeleted: boolean;
+  deletedAt?: Date;
 }
