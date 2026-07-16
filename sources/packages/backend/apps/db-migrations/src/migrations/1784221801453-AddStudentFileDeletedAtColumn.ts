@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class AddStudentFileDeletedAtColumn1784210759344 implements MigrationInterface {
+export class AddStudentFileDeletedAtColumn1784221801453 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData("Add-deleted-at-column.sql", "StudentFiles"),
