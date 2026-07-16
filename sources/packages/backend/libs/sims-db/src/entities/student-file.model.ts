@@ -110,7 +110,6 @@ export class StudentFile extends RecordDataModel {
     type: "char",
   })
   fileHash: string;
-
   /**
    * Timestamp when the file was soft-deleted.
    */
