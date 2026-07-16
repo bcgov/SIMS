@@ -33,6 +33,10 @@ export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
     id: "Program_And_Offering_Status_Report",
   },
   {
+    description: "Student Applications By Institution",
+    id: "Ministry_Student_Applications_By_Institution",
+  },
+  {
     description: "Student Unmet Need",
     id: "Ministry_Student_Unmet_Need_Report",
   },

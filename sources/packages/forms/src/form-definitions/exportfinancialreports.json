@@ -39,17 +39,18 @@
           "input": true,
           "components": [
             {
-              "input": true,
-              "tableView": true,
               "label": "Program Year",
-              "key": "programYear",
               "placeholder": "Select Program Year",
+              "tableView": true,
               "validate": {
                 "required": true
               },
-              "type": "select",
-              "lockKey": true,
+              "validateWhenHidden": false,
+              "key": "programYear",
               "customConditional": "show =\r\n  data.reportName === \"Offering_Details_Report\" ||\r\n  data.reportName === \"Student_Unmet_Need_Report\" ||\r\n  data.reportName === \"COE_Requests\";",
+              "type": "select",
+              "input": true,
+              "lockKey": true,
               "isNew": false
             },
             {
@@ -63,8 +64,9 @@
               },
               "valueProperty": "value",
               "refreshOn": "institutionsList",
+              "validateWhenHidden": false,
               "key": "institution",
-              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'",
+              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'\n       || data.reportName === 'Ministry_Student_Applications_By_Institution';\n       \n       ",
               "logic": [
                 {
                   "name": "Required Validator",
@@ -187,7 +189,7 @@
                 }
               ],
               "key": "columns",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution';",
               "type": "columns",
               "input": false,
               "tableView": false,
@@ -218,7 +220,7 @@
               },
               "validateWhenHidden": false,
               "key": "offeringIntensity",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests';",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution';",
               "type": "selectboxes",
               "input": true,
               "inputType": "checkbox"
