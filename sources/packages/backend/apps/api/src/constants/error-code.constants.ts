@@ -205,6 +205,16 @@ export const VIRUS_DETECTED = "VIRUS_DETECTED";
 export const FILE_SAVE_ERROR = "FILE_SAVE_ERROR";
 
 /**
+ * Student file not found.
+ */
+export const STUDENT_FILE_NOT_FOUND = "STUDENT_FILE_NOT_FOUND";
+
+/**
+ * Attempt to soft-delete a student file that is already set as deleted.
+ */
+export const STUDENT_FILE_IS_DELETED = "STUDENT_FILE_IS_DELETED";
+
+/**
  * Bypass for restricted party already exists.
  */
 export const ACTIVE_BYPASS_FOR_RESTRICTED_PARTY_ALREADY_EXISTS =
