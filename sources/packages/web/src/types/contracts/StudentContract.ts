@@ -140,4 +140,5 @@ export interface StudentFileUploadsDetails {
   groupName: string;
   createdAt: Date;
   uploadedBy?: string;
+  deletedAt?: Date;
 }
