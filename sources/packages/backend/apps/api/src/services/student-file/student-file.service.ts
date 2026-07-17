@@ -50,8 +50,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       ])
       .where("studentFile.uniqueFileName = :uniqueFileName", {
         uniqueFileName,
-      })
-      .andWhere("studentFile.deletedAt IS NULL");
+      });
 
     if (studentId) {
       query.andWhere("studentFile.student.id = :studentId", { studentId });
@@ -171,6 +170,7 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         student: {
           id: true,
         },
+        deletedAt: true,
       },
       relations: {
         student: true,
