@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, In, IsNull, Repository } from "typeorm";
+import {
+  Brackets,
+  EntityManager,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Repository,
+} from "typeorm";
 import {
   FormCategory,
   FormSubmission,
@@ -295,6 +302,34 @@ export class FormSubmissionService {
             : undefined,
         },
       },
+    });
+  }
+
+  /**
+   * Acquires a pessimistic write lock on the form submission to prevent concurrent updates.
+   * @param entityManager entity manager to execute in transaction.
+   * @param findOptions options to identify the form submission to lock.
+   * - `submissionId` the ID of the form submission to lock.
+   * - `submissionItemId` the ID of a form submission item to lock the parent form submission.
+   * At least one of the options must be provided.
+   */
+  async acquireLockOnFormSubmission(
+    entityManager: EntityManager,
+    findOptions: { submissionId?: number; submissionItemId?: number },
+  ): Promise<void> {
+    if (!findOptions.submissionId && !findOptions.submissionItemId) {
+      throw new Error(
+        "At least one of submissionId or submissionItemId must be provided to acquire a lock on a form submission.",
+      );
+    }
+    const where: FindOptionsWhere<FormSubmission> = findOptions.submissionId
+      ? { id: findOptions.submissionId }
+      : { formSubmissionItems: { id: findOptions.submissionItemId } };
+    // Acquire a DB lock for the form submission item to prevent concurrent updates.
+    await entityManager.getRepository(FormSubmission).findOne({
+      select: { id: true },
+      where,
+      lock: { mode: "pessimistic_write" },
     });
   }
 }

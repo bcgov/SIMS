@@ -34,6 +34,7 @@ import { NotificationActionsService } from "@sims/services/notifications";
 import {
   FormSubmissionAuthRoles,
   FormSubmissionAuthorizationService,
+  FormSubmissionService,
 } from "../../services";
 
 @Injectable()
@@ -44,6 +45,7 @@ export class FormSubmissionApprovalService {
     private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
+    private readonly formSubmissionService: FormSubmissionService,
   ) {}
 
   /**
@@ -64,12 +66,11 @@ export class FormSubmissionApprovalService {
     return this.dataSource.transaction(async (entityManager) => {
       const formSubmissionItemRepo =
         entityManager.getRepository(FormSubmissionItem);
-      // Acquire a DB lock for the form submission item to prevent concurrent updates.
-      await formSubmissionItemRepo.findOne({
-        select: { id: true },
-        where: { id: submissionItemId },
-        lock: { mode: "pessimistic_write" },
-      });
+      // Acquire a DB lock for the form submission to prevent concurrent updates.
+      await this.formSubmissionService.acquireLockOnFormSubmission(
+        entityManager,
+        { submissionItemId },
+      );
       const submissionItem = await formSubmissionItemRepo.findOne({
         select: {
           id: true,
@@ -178,11 +179,10 @@ export class FormSubmissionApprovalService {
     return this.dataSource.transaction(async (entityManager) => {
       const formSubmissionRepo = entityManager.getRepository(FormSubmission);
       // Acquire a DB lock for the form submission to prevent concurrent completion.
-      await formSubmissionRepo.findOne({
-        select: { id: true },
-        where: { id: submissionId },
-        lock: { mode: "pessimistic_write" },
-      });
+      await this.formSubmissionService.acquireLockOnFormSubmission(
+        entityManager,
+        { submissionId },
+      );
       const formSubmission = await formSubmissionRepo.findOne({
         select: {
           id: true,
