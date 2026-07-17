@@ -1,16 +1,33 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  IsNull,
+  Not,
+  UpdateResult,
+} from "typeorm";
 import {
   RecordDataModelService,
   StudentFile,
   User,
   FileOriginType,
+  NoteType,
 } from "@sims/sims-db";
 import { FileUploadOptions } from "./student-file.model";
+import { NoteSharedService } from "@sims/services";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  STUDENT_FILE_IS_DELETED,
+  STUDENT_FILE_NOT_FOUND,
+} from "../../constants";
 
 @Injectable()
 export class StudentFileService extends RecordDataModelService<StudentFile> {
-  constructor(private readonly dataSource: DataSource) {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly noteSharedService: NoteSharedService,
+  ) {
     super(dataSource.getRepository(StudentFile));
   }
 
@@ -134,6 +151,70 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       })
       .orderBy("studentFile.createdAt", "DESC")
       .getMany();
+  }
+
+  /**
+   * Soft deletes an uploaded student file.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param auditUserId user that should be considered the one causing the changes.
+   * @param noteDescription note description explaining the deletion reason.
+   */
+  async deleteStudentUploadedFile(
+    uniqueFileName: string,
+    auditUserId: number,
+    noteDescription: string,
+  ): Promise<void> {
+    const studentFile = await this.repo.findOne({
+      select: {
+        id: true,
+        student: {
+          id: true,
+        },
+      },
+      relations: {
+        student: true,
+      },
+      where: {
+        uniqueFileName,
+        fileOrigin: Not(FileOriginType.Temporary),
+      },
+      withDeleted: true,
+    });
+    if (!studentFile) {
+      throw new CustomNamedError(
+        "Student file not found.",
+        STUDENT_FILE_NOT_FOUND,
+      );
+    }
+    const studentId = studentFile.student.id;
+    await this.dataSource.transaction(async (transactionalEntityManager) => {
+      const now = new Date();
+      const auditUser = { id: auditUserId } as User;
+      const note = await this.noteSharedService.createStudentNote(
+        studentId,
+        NoteType.General,
+        noteDescription,
+        auditUserId,
+        transactionalEntityManager,
+      );
+      const updateResult = await transactionalEntityManager
+        .getRepository(StudentFile)
+        .update(
+          { id: studentFile.id, deletedAt: IsNull() },
+          {
+            deletionNote: note,
+            deletedAt: now,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+        );
+      if (!updateResult.affected) {
+        throw new CustomNamedError(
+          "Student file is already set as deleted.",
+          STUDENT_FILE_IS_DELETED,
+        );
+      }
+    });
   }
 
   /**
