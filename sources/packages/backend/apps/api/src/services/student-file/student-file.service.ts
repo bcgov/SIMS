@@ -170,7 +170,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         student: {
           id: true,
         },
-        deletedAt: true,
       },
       relations: {
         student: true,
