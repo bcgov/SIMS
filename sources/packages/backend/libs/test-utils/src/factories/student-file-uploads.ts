@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import {
   FileOriginType,
+  Note,
   Student,
   StudentFile,
   User,
@@ -14,6 +15,7 @@ import { createFakeStudent } from "./student";
  * @params relations entity relations
  * - `student` related student relation.
  * - `creator` related user relation.
+ * - `deletionNote` related deletion note relation.
  * @param options related to StudentFile
  * - `fileName` option for specifying the file name.
  * - `fileOrigin` option for specifying the file origin.
@@ -26,6 +28,7 @@ export function createFakeStudentFileUpload(
   relations?: {
     student?: Student;
     creator?: User;
+    deletionNote?: Note;
   },
   options?: {
     fileName?: string;
@@ -47,6 +50,7 @@ export function createFakeStudentFileUpload(
   studentFile.fileHash =
     options?.hash ?? faker.string.alphanumeric({ length: 64 });
   studentFile.deletedAt = options?.deletedAt;
+  studentFile.deletionNote = relations?.deletionNote;
   return studentFile;
 }
 
@@ -56,6 +60,7 @@ export function createFakeStudentFileUpload(
  * @param relations entity relations.
  * - `student` related student relation.
  * - `creator` related user relation.
+ * - `deletionNote` related deletion note relation.
  * @param options related to StudentFile
  * - `fileName` option for specifying the file name.
  * - `fileOrigin` option for specifying the file origin.
@@ -66,7 +71,7 @@ export function createFakeStudentFileUpload(
  */
 export async function saveFakeStudentFileUpload(
   dataSource: DataSource,
-  relations?: { student?: Student; creator?: User },
+  relations?: { student?: Student; creator?: User; deletionNote?: Note },
   options?: {
     fileName?: string;
     fileOrigin?: FileOriginType;

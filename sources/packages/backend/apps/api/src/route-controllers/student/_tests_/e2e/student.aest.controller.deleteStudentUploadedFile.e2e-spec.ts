@@ -14,7 +14,7 @@ import {
   saveFakeStudent,
   saveFakeStudentFileUpload,
 } from "@sims/test-utils";
-import { FileOriginType, User } from "@sims/sims-db";
+import { FileOriginType, NoteType, User } from "@sims/sims-db";
 import { STUDENT_FILE_IS_DELETED } from "../../../../constants";
 
 describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
@@ -69,10 +69,15 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
       select: {
         id: true,
         deletedAt: true,
+        deletionNote: {
+          noteType: true,
+          description: true,
+        },
         modifier: { id: true },
         updatedAt: true,
       },
       relations: {
+        deletionNote: true,
         modifier: true,
       },
       where: {
@@ -83,6 +88,10 @@ describe("StudentAESTController(e2e)-deleteStudentUploadedFile.", () => {
     expect(updatedStudentFile).toEqual({
       id: studentFile.id,
       deletedAt: now,
+      deletionNote: {
+        noteType: NoteType.General,
+        description: "Delete ministry uploaded file.",
+      },
       modifier: ministryUser,
       updatedAt: now,
     });

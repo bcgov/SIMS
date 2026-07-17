@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
+import { Note } from "./note.model";
 import { RecordDataModel } from "./record.model";
 import { FileOriginType, StudentFileMetadata } from "./student-file.type";
 import { Student } from "./student.model";
@@ -119,4 +120,13 @@ export class StudentFile extends RecordDataModel {
     nullable: true,
   })
   deletedAt?: Date;
+  /**
+   * Note added during student file deletion.
+   */
+  @OneToOne(() => Note, { nullable: true })
+  @JoinColumn({
+    name: "deletion_note_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  deletionNote?: Note;
 }

@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, Not, UpdateResult } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  IsNull,
+  Not,
+  UpdateResult,
+} from "typeorm";
 import {
   RecordDataModelService,
   StudentFile,
@@ -191,21 +198,31 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
     const studentId = studentFile.student.id;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       const now = new Date();
-      await this.noteSharedService.createStudentNote(
+      const auditUser = { id: auditUserId } as User;
+      const note = await this.noteSharedService.createStudentNote(
         studentId,
         NoteType.General,
         noteDescription,
         auditUserId,
         transactionalEntityManager,
       );
-      await transactionalEntityManager.getRepository(StudentFile).update(
-        { id: studentFile.id },
-        {
-          deletedAt: now,
-          modifier: { id: auditUserId } as User,
-          updatedAt: now,
-        },
-      );
+      const updateResult = await transactionalEntityManager
+        .getRepository(StudentFile)
+        .update(
+          { id: studentFile.id, deletedAt: IsNull() },
+          {
+            deletionNote: note,
+            deletedAt: now,
+            modifier: auditUser,
+            updatedAt: now,
+          },
+        );
+      if (!updateResult.affected) {
+        throw new CustomNamedError(
+          "Student file is already set as deleted.",
+          STUDENT_FILE_IS_DELETED,
+        );
+      }
     });
   }
 
