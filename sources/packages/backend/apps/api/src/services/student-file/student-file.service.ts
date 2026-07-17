@@ -150,7 +150,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
       .andWhere("studentFile.fileOrigin IN (:...fileOrigin)", {
         fileOrigin: [FileOriginType.Student, FileOriginType.Ministry],
       })
-      .andWhere("studentFile.deletedAt IS NULL")
       .orderBy("studentFile.createdAt", "DESC")
       .getMany();
   }
