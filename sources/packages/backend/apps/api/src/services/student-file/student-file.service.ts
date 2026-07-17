@@ -189,12 +189,6 @@ export class StudentFileService extends RecordDataModelService<StudentFile> {
         STUDENT_FILE_NOT_FOUND,
       );
     }
-    if (studentFile.deletedAt) {
-      throw new CustomNamedError(
-        "Student file is already set as deleted.",
-        STUDENT_FILE_IS_DELETED,
-      );
-    }
     const studentId = studentFile.student.id;
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       const now = new Date();
