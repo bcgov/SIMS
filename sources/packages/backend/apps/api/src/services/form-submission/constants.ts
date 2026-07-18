@@ -83,3 +83,12 @@ export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND =
  */
 export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED =
   "FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED";
+/**
+ * The form submission is cancelled and no further actions can be performed on it.
+ */
+export const FORM_SUBMISSION_CANCELLED = "FORM_SUBMISSION_CANCELLED";
+/**
+ * The form submission has one or more form submission items with ministry decision(s).
+ */
+export const FORM_SUBMISSION_WITH_MINISTRY_DECISION =
+  "FORM_SUBMISSION_WITH_MINISTRY_DECISION";
