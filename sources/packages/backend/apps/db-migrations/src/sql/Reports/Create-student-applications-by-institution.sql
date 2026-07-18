@@ -2,7 +2,7 @@ INSERT INTO
   sims.report_configs (report_name, report_sql)
 VALUES
   (
-    'Ministry_Student_Applications_By_Institution',
+    'Ministry_Student_Applications_By_Institution_Report',
     $$WITH application_with_assessment_sent AS (
       SELECT
         DISTINCT(applications.parent_application_id) AS parent_application_id

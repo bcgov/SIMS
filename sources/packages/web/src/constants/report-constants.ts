@@ -34,7 +34,7 @@ export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
   },
   {
     description: "Student Applications By Institution",
-    id: "Ministry_Student_Applications_By_Institution",
+    id: "Ministry_Student_Applications_By_Institution_Report",
   },
   {
     description: "Student Unmet Need",

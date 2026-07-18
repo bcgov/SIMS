@@ -39,18 +39,17 @@
           "input": true,
           "components": [
             {
-              "label": "Program Year",
-              "placeholder": "Select Program Year",
+              "input": true,
               "tableView": true,
+              "label": "Program Year",
+              "key": "programYear",
+              "placeholder": "Select Program Year",
               "validate": {
                 "required": true
               },
-              "validateWhenHidden": false,
-              "key": "programYear",
-              "customConditional": "show =\r\n  data.reportName === \"Offering_Details_Report\" ||\r\n  data.reportName === \"Student_Unmet_Need_Report\" ||\r\n  data.reportName === \"COE_Requests\";",
               "type": "select",
-              "input": true,
               "lockKey": true,
+              "customConditional": "show =\r\n  data.reportName === \"Offering_Details_Report\" ||\r\n  data.reportName === \"Student_Unmet_Need_Report\" ||\r\n  data.reportName === \"COE_Requests\";",
               "isNew": false
             },
             {
@@ -66,7 +65,50 @@
               "refreshOn": "institutionsList",
               "validateWhenHidden": false,
               "key": "institution",
-              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'\n       || data.reportName === 'Ministry_Student_Applications_By_Institution';\n       \n       ",
+              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'\n       || data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
+              "logic": [
+                {
+                  "name": "Required Validator",
+                  "trigger": {
+                    "type": "javascript",
+                    "javascript": "result = [\n  'Program_And_Offering_Status_Report',\n  'Ministry_Student_Applications_By_Institution_Report'\n].includes(data.reportName);\n"
+                  },
+                  "actions": [
+                    {
+                      "name": "Set as required",
+                      "type": "property",
+                      "property": {
+                        "label": "Required",
+                        "value": "validate.required",
+                        "type": "boolean"
+                      },
+                      "state": true
+                    }
+                  ]
+                }
+              ],
+              "type": "select",
+              "input": true,
+              "lockKey": true,
+              "isNew": false
+            },
+            {
+              "label": "Programs",
+              "widget": "choicesjs",
+              "placeholder": "Select Program Name",
+              "tableView": true,
+              "dataSrc": "custom",
+              "data": {
+                "custom": "values = data.programNames;"
+              },
+              "valueProperty": "value",
+              "refreshOn": "institutionsList",
+              "validate": {
+                "required": true
+              },
+              "validateWhenHidden": false,
+              "key": "program",
+              "customConditional": "show = data.reportName === 'Ministry_Student_Applications_By_Institution_Report'\n  && !!data.params.institution;\n       \n       ",
               "logic": [
                 {
                   "name": "Required Validator",
@@ -189,7 +231,7 @@
                 }
               ],
               "key": "columns",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution';",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
               "type": "columns",
               "input": false,
               "tableView": false,
@@ -220,7 +262,7 @@
               },
               "validateWhenHidden": false,
               "key": "offeringIntensity",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution';",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
               "type": "selectboxes",
               "input": true,
               "inputType": "checkbox"
@@ -244,6 +286,15 @@
           "label": "institutionNames",
           "persistent": false,
           "key": "institutionNames",
+          "type": "hidden",
+          "input": true,
+          "tableView": false,
+          "lockKey": true
+        },
+        {
+          "label": "programNames",
+          "persistent": false,
+          "key": "programNames",
           "type": "hidden",
           "input": true,
           "tableView": false,

@@ -55,7 +55,10 @@ export default defineComponent({
     const loading = ref(false);
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
     const INSTITUTION_NAMES = "institutionNames";
+    const PROGRAM_NAMES = "programNames";
     const INSTITUTION_DROPDOWN_KEY = "institution";
+    const PROGRAM_DROPDOWN_KEY = "program";
+    let loadedProgramsInstitutionId: number | null = null;
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
@@ -95,6 +98,25 @@ export default defineComponent({
           // its items are not populated yet.
           await formioDataLoader.loadInstitutionNames(form, INSTITUTION_NAMES);
         }
+      } else if (event.changed?.component.key === INSTITUTION_DROPDOWN_KEY) {
+        const programSelect = getFirstComponent(form, PROGRAM_DROPDOWN_KEY);
+        const institutionId = +event.changed.value;
+        if (!institutionId) {
+          return;
+        }
+        if (
+          programSelect._visible &&
+          (!programSelect.selectOptions.length ||
+            loadedProgramsInstitutionId !== institutionId)
+        ) {
+          // Load program data if the select is visible and
+          // its items are not populated yet.
+          await formioDataLoader.loadProgramsNames(form, PROGRAM_NAMES, {
+            institutionId,
+            isIncludeInActiveProgram: true,
+          });
+          loadedProgramsInstitutionId = institutionId;
+        }
       }
     };
     const submitForm = () => {
@@ -104,6 +126,7 @@ export default defineComponent({
       try {
         loading.value = true;
         delete data[INSTITUTION_NAMES];
+        delete data[PROGRAM_NAMES];
         await downloadReports(data);
       } catch {
         snackBar.error("Unexpected error while downloading the report.");
