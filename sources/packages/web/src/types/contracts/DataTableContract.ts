@@ -665,6 +665,7 @@ export const StudentFileUploadsHeaders = [
   { title: "Application", sortable: false, key: "applicationNumber" },
   { title: "Date Submitted", sortable: false, key: "createdAt" },
   { title: "File", sortable: false, key: "fileName" },
+  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

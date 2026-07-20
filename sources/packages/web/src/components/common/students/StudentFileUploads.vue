@@ -65,6 +65,19 @@
               <span>{{ item.fileName }}</span>
             </div>
           </template>
+          <template #[`item.action`]="{ item }">
+            <check-permission-role :role="Role.StudentDeleteUploadedFile">
+              <template #="{ notAllowed }">
+                <v-btn
+                  color="primary"
+                  variant="outlined"
+                  :disabled="notAllowed"
+                  @click="deleteStudentFile(item.uniqueFileName, item.fileName)"
+                  >Delete</v-btn
+                >
+              </template>
+            </check-permission-role>
+          </template>
         </v-data-table>
       </toggle-content>
     </content-group>
@@ -94,6 +107,22 @@
         </v-row>
       </template>
     </formio-modal-dialog>
+    <user-note-confirm-modal
+      title="Delete file"
+      ref="deleteFileModal"
+      ok-label="Delete file"
+      notes-description="Notes will be visible to StudentAid staff and institutions. This will not be shown to students."
+    >
+      <template #content="{ showParameter }">
+        <span><strong>File:</strong> {{ showParameter.fileName }}</span>
+        <p>
+          <strong>Attention:</strong> Before proceeding, ensure that all
+          required privacy, records management, and compliance activities have
+          been completed. Once deleted, the file and its contents will no longer
+          be available for viewing or download.
+        </p>
+      </template>
+    </user-note-confirm-modal>
   </body-header-container>
 </template>
 
@@ -108,6 +137,7 @@ import {
   Role,
   StudentFileUploadsHeaders,
   StudentFileUploadsDetails,
+  ApiProcessError,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -119,12 +149,21 @@ import {
 } from "@/composables";
 import FormioModalDialog from "@/components/generic/FormioModalDialog.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import UserNoteConfirmModal, {
+  UserNoteModal,
+} from "@/components/common/modals/UserNoteConfirmModal.vue";
+
+interface DeleteFileParameter {
+  uniqueFileName: string;
+  fileName: string;
+}
 
 export default defineComponent({
   emits: ["uploadFile"],
   components: {
     CheckPermissionRole,
     FormioModalDialog,
+    UserNoteConfirmModal,
   },
   props: {
     studentId: {
@@ -150,6 +189,9 @@ export default defineComponent({
   setup(props, context) {
     const studentFileUploads = ref([] as StudentFileUploadsDetails[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
+    const deleteFileModal = ref(
+      {} as ModalDialog<UserNoteModal<DeleteFileParameter>>,
+    );
     const { getISODateHourMinuteString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -178,6 +220,37 @@ export default defineComponent({
       }
     };
 
+    const deleteStudentFile = async (
+      uniqueFileName: string,
+      fileName: string,
+    ) => {
+      await deleteFileModal.value.showModal(
+        { uniqueFileName, fileName },
+        deleteStudentFileCall,
+      );
+    };
+
+    const deleteStudentFileCall = async (
+      userNoteModalResult: UserNoteModal<DeleteFileParameter>,
+    ): Promise<boolean> => {
+      try {
+        await StudentService.shared.deleteStudentUploadedFile(
+          userNoteModalResult.showParameter.uniqueFileName,
+          { noteDescription: userNoteModalResult.note },
+        );
+        snackBar.success("File deleted.");
+        await loadStudentFileUploads();
+        return true;
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(error.message);
+          return false;
+        }
+        snackBar.error("An unexpected error happened while deleting the file.");
+      }
+      return false;
+    };
+
     const studentFileUploadHeaders = computed(() => {
       return props.canViewUploadedBy
         ? StudentFileUploadsHeaders
@@ -201,6 +274,8 @@ export default defineComponent({
       initialData,
       studentFileUploadHeaders,
       isMobile,
+      deleteStudentFile,
+      deleteFileModal,
     };
   },
 });

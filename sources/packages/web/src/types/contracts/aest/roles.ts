@@ -50,4 +50,5 @@ export enum Role {
   StudentViewScholasticStandingHistory = "student-view-scholastic-standing-history",
   StudentDeleteRestriction = "student-delete-restriction",
   StudentEditDisabilityProfile = "student-edit-disability-profile",
+  StudentDeleteUploadedFile = "student-delete-uploaded-file",
 }
