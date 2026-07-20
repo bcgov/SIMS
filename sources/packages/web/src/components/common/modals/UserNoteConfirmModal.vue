@@ -7,7 +7,7 @@
     >
       <template #content>
         <error-summary :errors="modalNotesForm.errors" />
-        <slot name="content">{{ text }}</slot>
+        <slot name="content" :show-parameter="showParameter">{{ text }}</slot>
         <v-textarea
           :label="notesLabel"
           variant="outlined"
@@ -58,6 +58,7 @@ export default defineComponent({
     text: {
       type: String,
       required: false,
+      default: undefined,
     },
     okLabel: {
       type: String,
@@ -72,6 +73,7 @@ export default defineComponent({
     maxWidth: {
       type: Number,
       required: false,
+      default: undefined,
     },
     disablePrimaryButton: {
       type: Boolean,
@@ -135,6 +137,7 @@ export default defineComponent({
       showModal,
       resolvePromise,
       loading,
+      showParameter,
     };
   },
 });

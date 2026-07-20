@@ -72,7 +72,7 @@
                   color="primary"
                   variant="outlined"
                   :disabled="notAllowed"
-                  @click="deleteStudentFile(item.uniqueFileName)"
+                  @click="deleteStudentFile(item.uniqueFileName, item.fileName)"
                   >Delete</v-btn
                 >
               </template>
@@ -113,7 +113,8 @@
       ok-label="Delete file"
       notes-description="Notes will be visible to StudentAid staff and institutions. This will not be shown to students."
     >
-      <template #content>
+      <template #content="{ showParameter }">
+        <span><strong>File:</strong> {{ showParameter.fileName }}</span>
         <p>
           <strong>Attention:</strong> Before proceeding, ensure that all
           required privacy, records management, and compliance activities have
@@ -152,6 +153,11 @@ import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
 
+interface DeleteFileParameter {
+  uniqueFileName: string;
+  fileName: string;
+}
+
 export default defineComponent({
   emits: ["uploadFile"],
   components: {
@@ -183,7 +189,9 @@ export default defineComponent({
   setup(props, context) {
     const studentFileUploads = ref([] as StudentFileUploadsDetails[]);
     const fileUploadModal = ref({} as ModalDialog<FormIOForm | boolean>);
-    const deleteFileModal = ref({} as ModalDialog<UserNoteModal<string>>);
+    const deleteFileModal = ref(
+      {} as ModalDialog<UserNoteModal<DeleteFileParameter>>,
+    );
     const { getISODateHourMinuteString, emptyStringFiller } = useFormatters();
     const fileUtils = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
@@ -212,19 +220,22 @@ export default defineComponent({
       }
     };
 
-    const deleteStudentFile = async (uniqueFileName: string) => {
+    const deleteStudentFile = async (
+      uniqueFileName: string,
+      fileName: string,
+    ) => {
       await deleteFileModal.value.showModal(
-        uniqueFileName,
+        { uniqueFileName, fileName },
         deleteStudentFileCall,
       );
     };
 
     const deleteStudentFileCall = async (
-      userNoteModalResult: UserNoteModal<string>,
+      userNoteModalResult: UserNoteModal<DeleteFileParameter>,
     ): Promise<boolean> => {
       try {
         await StudentService.shared.deleteStudentUploadedFile(
-          userNoteModalResult.showParameter,
+          userNoteModalResult.showParameter.uniqueFileName,
           { noteDescription: userNoteModalResult.note },
         );
         snackBar.success("File deleted.");
