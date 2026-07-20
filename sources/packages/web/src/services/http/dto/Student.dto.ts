@@ -130,7 +130,6 @@ export interface StudentFileDetailsAPIOutDTO extends StudentUploadFileAPIOutDTO 
   metadata: StudentFileMetadataAPIOutDTO;
   groupName: string;
   createdAt: Date;
-  deletedAt?: Date;
 }
 
 /**
@@ -265,4 +264,3 @@ export interface UpdateModifiedIndependentStatusAPIInDTO {
 export interface DeleteStudentFileAPIInDTO {
   noteDescription: string;
 }
-

@@ -71,7 +71,7 @@
                 <v-btn
                   color="primary"
                   variant="outlined"
-                  :disabled="notAllowed || !!item.deletedAt"
+                  :disabled="notAllowed"
                   @click="deleteStudentFile(item.uniqueFileName)"
                   >Delete</v-btn
                 >
@@ -111,6 +111,7 @@
       title="Delete file"
       ref="deleteFileModal"
       ok-label="Delete file"
+      notes-description="Notes will be visible to StudentAid staff and institutions. This will not be shown to students."
     >
       <template #content>
         <p>
