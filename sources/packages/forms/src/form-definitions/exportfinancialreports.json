@@ -97,43 +97,15 @@
               "widget": "choicesjs",
               "placeholder": "Select Program Name",
               "tableView": true,
-              "dataSrc": "custom",
-              "data": {
-                "custom": "values = data.programNames;"
-              },
               "valueProperty": "value",
-              "refreshOn": "institutionsList",
+              "idPath": "",
+              "selectThreshold": 1,
               "validate": {
                 "required": true
               },
               "validateWhenHidden": false,
               "key": "program",
               "customConditional": "show = data.reportName === 'Ministry_Student_Applications_By_Institution_Report'\n  && !!data.params.institution;\n       \n       ",
-              "logic": [
-                {
-                  "name": "Required Validator",
-                  "trigger": {
-                    "type": "simple",
-                    "simple": {
-                      "show": true,
-                      "when": "reportName",
-                      "eq": "Program_And_Offering_Status_Report"
-                    }
-                  },
-                  "actions": [
-                    {
-                      "name": "Set as required",
-                      "type": "property",
-                      "property": {
-                        "label": "Required",
-                        "value": "validate.required",
-                        "type": "boolean"
-                      },
-                      "state": true
-                    }
-                  ]
-                }
-              ],
               "type": "select",
               "input": true,
               "lockKey": true,
@@ -286,15 +258,6 @@
           "label": "institutionNames",
           "persistent": false,
           "key": "institutionNames",
-          "type": "hidden",
-          "input": true,
-          "tableView": false,
-          "lockKey": true
-        },
-        {
-          "label": "programNames",
-          "persistent": false,
-          "key": "programNames",
           "type": "hidden",
           "input": true,
           "tableView": false,

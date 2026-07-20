@@ -184,35 +184,6 @@ export function useFormioDropdownLoader() {
     formioUtils.setComponentValue(form, componentKey, mappedInstitutionNames);
   };
 
-  /**
-   * Retrieve the list of programs for a particular institution.
-   * @param form form in which the list is loaded.
-   * @param componentKey component key.
-   * @param options method options:
-   * - `institutionId`: if provided, programs list for that institution is returned.
-   * Used to get programs for a particular institution from the ministry side.
-   * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
-   * and not active education program is considered.
-   */
-  const loadProgramsNames = async (
-    form: FormIOForm,
-    componentKey: string,
-    options?: {
-      institutionId?: number;
-      isIncludeInActiveProgram?: boolean;
-    },
-  ) => {
-    const programs =
-      await EducationProgramService.shared.getProgramsListForInstitutions(
-        options,
-      );
-    const mappedPrograms = programs.map((program) => ({
-      value: program.id,
-      label: program.description,
-    }));
-    formioUtils.setComponentValue(form, componentKey, mappedPrograms);
-  };
-
   return {
     loadLocations,
     loadProgramsForLocation,
@@ -223,6 +194,5 @@ export function useFormioDropdownLoader() {
     loadProgramYear,
     loadDropdown,
     loadInstitutionNames,
-    loadProgramsNames,
   };
 }
