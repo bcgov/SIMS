@@ -110,19 +110,18 @@ export class FormSubmission extends RecordDataModel {
   /**
    * User who updated the submission status.
    */
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: false })
   @JoinColumn({
     name: "submission_status_updated_by",
     referencedColumnName: ColumnNames.ID,
   })
-  submissionStatusUpdatedBy?: User;
+  submissionStatusUpdatedBy: User;
   /**
    * Date and time when the submission status was updated.
    */
   @Column({
     name: "submission_status_updated_on",
     type: "timestamptz",
-    nullable: true,
   })
-  submissionStatusUpdatedOn?: Date;
+  submissionStatusUpdatedOn: Date;
 }

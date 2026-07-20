@@ -253,6 +253,8 @@ export class FormSubmissionApprovalService {
           assessedBy: auditUser,
           modifier: auditUser,
           updatedAt: now,
+          submissionStatusUpdatedBy: auditUser,
+          submissionStatusUpdatedOn: now,
         },
       );
       // Associate final notes with the student.
