@@ -100,9 +100,6 @@
               "valueProperty": "value",
               "idPath": "",
               "selectThreshold": 1,
-              "validate": {
-                "required": true
-              },
               "validateWhenHidden": false,
               "key": "program",
               "customConditional": "show = data.reportName === 'Ministry_Student_Applications_By_Institution_Report'\n  && !!data.params.institution;\n       \n       ",

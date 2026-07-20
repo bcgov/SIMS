@@ -55,13 +55,18 @@ export class ReportControllerService {
     if (submissionResult.data.data.params["institution"] === "") {
       submissionResult.data.data.params["institution"] = 0;
     }
-    const programYearExists = await this.programYearService.programYearExists(
-      payload.params.programYear as number,
-    );
-    if (!programYearExists) {
-      throw new BadRequestException(
-        "Not able to export report due to an invalid program year.",
+    if (submissionResult.data.data.params["program"] === "") {
+      submissionResult.data.data.params["program"] = 0;
+    }
+    if (payload.params.programYear) {
+      const programYearExists = await this.programYearService.programYearExists(
+        payload.params.programYear as number,
       );
+      if (!programYearExists) {
+        throw new BadRequestException(
+          "Not able to export report due to an invalid program year.",
+        );
+      }
     }
     if (options?.institutionId) {
       submissionResult.data.data.params.institutionId = options.institutionId;
