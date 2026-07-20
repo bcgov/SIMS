@@ -3,8 +3,10 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   UnprocessableEntityException,
@@ -12,7 +14,11 @@ import {
 import {
   DynamicFormConfigurationService,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
+  FORM_SUBMISSION_NOT_FOUND,
+  FORM_SUBMISSION_NOT_PENDING,
   FORM_SUBMISSION_PENDING_DECISION,
+  FORM_SUBMISSION_WITH_MINISTRY_DECISION,
+  FormSubmissionCancellationService,
   FormSubmissionSubmitService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
@@ -55,6 +61,7 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly supplementaryDataLoader: SupplementaryDataLoader,
     private readonly formSubmissionControllerService: FormSubmissionControllerService,
     private readonly featureTogglesService: FeatureTogglesService,
+    private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
   ) {
     super();
   }
@@ -197,6 +204,46 @@ export class FormSubmissionStudentsController extends BaseController {
               "Failed to submit the form due to invalid dynamic data.",
             );
           case FORM_SUBMISSION_PENDING_DECISION:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+          default:
+            throw new UnprocessableEntityException(error.message);
+        }
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Cancel a form submission.
+   * @param formSubmissionId form submission ID to be cancelled.
+   */
+  @ApiNotFoundResponse({ description: "Form submission not found." })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Form submission is already cancelled or " +
+      "form submission is not in pending status and cannot be cancelled or " +
+      "form submission has one or more form submission items with ministry decisions and cannot be cancelled.",
+  })
+  @Patch(":formSubmissionId/cancel")
+  async cancelFormSubmission(
+    @Param("formSubmissionId", ParseIntPipe) formSubmissionId: number,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<void> {
+    try {
+      await this.formSubmissionCancellationService.cancelFormSubmission(
+        formSubmissionId,
+        userToken.userId,
+        { studentId: userToken.studentId },
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case FORM_SUBMISSION_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case FORM_SUBMISSION_NOT_PENDING:
+          case FORM_SUBMISSION_WITH_MINISTRY_DECISION:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

@@ -84,21 +84,29 @@ export class FormSubmissionCancellationService {
   /**
    * Cancel a form submission.
    * @param submissionId The ID of the form submission to cancel.
+   * @param auditUserId The ID of the user performing the cancellation.
    * @param options options to validate the form submission cancellation.
    * - `studentId` ID of the student associated with the form submission.
    */
   async cancelFormSubmission(
     submissionId: number,
+    auditUserId: number,
     options?: { studentId?: number },
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
       await this.validate(submissionId, entityManager, options);
-      await entityManager
-        .getRepository(FormSubmission)
-        .update(
-          { id: submissionId },
-          { submissionStatus: FormSubmissionStatus.Cancelled },
-        );
+      const now = new Date();
+      const auditUser = { id: auditUserId };
+      await entityManager.getRepository(FormSubmission).update(
+        { id: submissionId },
+        {
+          submissionStatus: FormSubmissionStatus.Cancelled,
+          submissionStatusUpdatedOn: now,
+          submissionStatusUpdatedBy: auditUser,
+          modifier: auditUser,
+          updatedAt: now,
+        },
+      );
     });
   }
 }
