@@ -29,6 +29,7 @@ import {
 import MockDate from "mockdate";
 import { addDays } from "@sims/utilities";
 import {
+  FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_ITEM_OUTDATED,
   FormSubmissionAuthRoles,
 } from "../../../../services";
@@ -369,6 +370,46 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
           "Decisions cannot be made on items belonging to a form submission that is not pending.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should throw an unprocessable entity error when submitting an item decision for a cancelled form submission.", async () => {
+    // Arrange
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Cancelled,
+      ministryAuditUser: ministryAdminUser,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealA,
+          decisions: [],
+        },
+      ],
+    });
+    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
+    const payload = {
+      decisionStatus: FormSubmissionDecisionStatus.Pending,
+      noteDescription: "This is a decision note.",
+      lastUpdateDate: formSubmissionItemA.updatedAt,
+    };
+    const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Decisions cannot be made on items belonging to a form submission that is cancelled.",
+        errorType: FORM_SUBMISSION_CANCELLED,
       });
   });
 

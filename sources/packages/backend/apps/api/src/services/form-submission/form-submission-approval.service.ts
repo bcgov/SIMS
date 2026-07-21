@@ -123,7 +123,7 @@ export class FormSubmissionApprovalService {
         FormSubmissionStatus.Cancelled
       ) {
         throw new CustomNamedError(
-          `Decisions cannot be made on items belonging to a form submission that is cancelled.`,
+          "Decisions cannot be made on items belonging to a form submission that is cancelled.",
           FORM_SUBMISSION_CANCELLED,
         );
       }
