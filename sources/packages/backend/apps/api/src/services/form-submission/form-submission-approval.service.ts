@@ -16,6 +16,7 @@ import {
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_DECISION_PENDING,
   FORM_SUBMISSION_ITEM_NOT_FOUND,
   FORM_SUBMISSION_ITEM_OUTDATED,
@@ -115,6 +116,15 @@ export class FormSubmissionApprovalService {
         throw new CustomNamedError(
           "The form submission item has been updated since it was last retrieved. Please refresh and try again.",
           FORM_SUBMISSION_ITEM_OUTDATED,
+        );
+      }
+      if (
+        submissionItem.formSubmission.submissionStatus ===
+        FormSubmissionStatus.Cancelled
+      ) {
+        throw new CustomNamedError(
+          `Decisions cannot be made on items belonging to a form submission that is cancelled.`,
+          FORM_SUBMISSION_CANCELLED,
         );
       }
       if (
@@ -229,6 +239,12 @@ export class FormSubmissionApprovalService {
       this.checkFormSubmissionRelatedApplicationStatus(
         formSubmission.application,
       );
+      if (formSubmission.submissionStatus === FormSubmissionStatus.Cancelled) {
+        throw new CustomNamedError(
+          `Final decision cannot be made on a form submission that is cancelled.`,
+          FORM_SUBMISSION_CANCELLED,
+        );
+      }
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           "Final decision cannot be made on a form submission with status different than pending.",
