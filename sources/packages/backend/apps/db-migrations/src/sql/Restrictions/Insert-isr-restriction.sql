@@ -17,8 +17,6 @@ VALUES
         ARRAY [
             'Stop part-time application eligibility',
             'Stop full-time application eligibility',
-            'Stop part-time accept assessment',
-            'Stop full-time accept assessment',
             'Stop part-time disbursement',
             'Stop full-time disbursement'
         ] :: sims.restriction_action_types [],

@@ -147,12 +147,26 @@ export abstract class ValidateDisbursementBase {
         });
       }
       if (institutionRestrictions.length) {
-        const program = eCertDisbursement.offering.educationProgram;
-        const location = eCertDisbursement.offering.institutionLocation;
-        log.info(
-          `Institution has an effective '${restrictionActionType}' restriction` +
-            ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+        const hasProgramLocationRestriction = institutionRestrictions.some(
+          (restriction) => restriction.program && restriction.location,
         );
+        const hasInstitutionRestriction = institutionRestrictions.some(
+          (restriction) => !restriction.program && !restriction.location,
+        );
+        // TODO Do we want to show both log messages?
+        if (hasProgramLocationRestriction) {
+          const program = eCertDisbursement.offering.educationProgram;
+          const location = eCertDisbursement.offering.institutionLocation;
+          log.info(
+            `Institution has an effective '${restrictionActionType}' restriction` +
+              ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+          );
+        }
+        if (hasInstitutionRestriction) {
+          log.info(
+            `Institution has an effective '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
+          );
+        }
 
         validationResults.push({
           resultType:

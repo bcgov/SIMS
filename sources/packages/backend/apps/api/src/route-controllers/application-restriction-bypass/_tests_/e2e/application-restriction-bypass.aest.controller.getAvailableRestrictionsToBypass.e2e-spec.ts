@@ -371,6 +371,44 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       });
   });
 
+  it("Should list a institution-scoped institution restriction for a full-time application when not already bypassed.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      offeringIntensity: OfferingIntensity.fullTime,
+    });
+
+    const isrRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.ISR },
+    });
+
+    // Add am ISR restriction that should be available to be bypassed because the restriction has an action type "Stop full time disbursement".
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
+      restriction: isrRestriction,
+    });
+
+    const endpoint = `/aest/application-restriction-bypass/application/${application.id}/options-list`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        availableRestrictionsToBypass: [
+          {
+            restrictionId: institutionRestriction.id,
+            restrictionCode: institutionRestriction.restriction.restrictionCode,
+            restrictionCreatedAt:
+              institutionRestriction.createdAt.toISOString(),
+            restrictedParty: RestrictedParty.Institution,
+          },
+        ],
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
