@@ -371,7 +371,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       });
   });
 
-  it("Should list a institution-scoped institution restriction for a full-time application when not already bypassed.", async () => {
+  it("Should return an institution-scoped institution restriction for a full-time application when not already bypassed.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.fullTime,
@@ -381,7 +381,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       where: { restrictionCode: RestrictionCode.ISR },
     });
 
-    // Add am ISR restriction that should be available to be bypassed because the restriction has an action type "Stop full time disbursement".
+    // Add an ISR restriction that should be available to be bypassed because the restriction has an action type "Stop full time disbursement".
     const institutionRestriction = await saveFakeInstitutionRestriction(db, {
       institution:
         application.currentAssessment.offering.institutionLocation.institution,
