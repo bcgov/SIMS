@@ -207,6 +207,15 @@
               "hideLabel": true
             },
             {
+              "label": "Is start date limited by archive date",
+              "calculateValue": "value = data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
+              "calculateServer": true,
+              "key": "isStartDateLimitedByArchiveDate",
+              "type": "hidden",
+              "input": true,
+              "tableView": false
+            },
+            {
               "label": "Intensity",
               "optionsLabelPosition": "right",
               "tableView": false,

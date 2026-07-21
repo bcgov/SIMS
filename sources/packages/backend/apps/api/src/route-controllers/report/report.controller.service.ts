@@ -11,12 +11,16 @@ import {
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
+  addDays,
+  getISODateOnlyString,
 } from "@sims/utilities";
 import { Response } from "express";
 import { FormService, ProgramYearService } from "../../services";
 import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 import { streamFile } from "../utils";
+import { ConfigService } from "@sims/utilities/config";
+import dayjs from "dayjs";
 
 /**
  * Controller Service layer for reports.
@@ -27,6 +31,7 @@ export class ReportControllerService {
     private readonly reportService: ReportService,
     private readonly formService: FormService,
     private readonly programYearService: ProgramYearService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -70,6 +75,28 @@ export class ReportControllerService {
     }
     if (options?.institutionId) {
       submissionResult.data.data.params.institutionId = options.institutionId;
+    }
+    // Ensure report period will be restricted by the archive date limit if the report
+    // is being generated for a period that exceeds the archive date limit.
+    if (
+      submissionResult.data.data.params.isStartDateLimitedByArchiveDate === true
+    ) {
+      // This should be removed from the params to avoid the report query to fail due to an unknown parameter.
+      delete submissionResult.data.data.params.isStartDateLimitedByArchiveDate;
+      const archiveStartDateLimit = addDays(
+        -this.configService.applicationArchiveDays,
+        getISODateOnlyString(new Date()),
+      );
+      const startDate = dayjs(
+        submissionResult.data.data.params.startDate as string,
+      );
+      if (startDate.isBefore(archiveStartDateLimit)) {
+        // Overwrite the start date to ensure the report will be generated for
+        //  a period that is within the archive date limit.
+        submissionResult.data.data.params.startDate = getISODateOnlyString(
+          archiveStartDateLimit,
+        );
+      }
     }
     try {
       const reportData = await this.reportService.getReportDataAsCSV(
