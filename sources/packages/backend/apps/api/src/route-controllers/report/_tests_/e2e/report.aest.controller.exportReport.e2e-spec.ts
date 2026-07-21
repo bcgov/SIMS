@@ -52,6 +52,10 @@ import {
   buildUnmetNeedReportData,
   createApplicationsDataSetup,
 } from "./unmet-need-report-utils";
+import {
+  buildApplicationsByInstitutionData,
+  createApplicationsByInstitutionDataSetup,
+} from "./student-applications-by-institutiont-report-utils";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -1667,6 +1671,54 @@ describe("ReportAestController(e2e)-exportReport", () => {
         });
     },
   );
+
+  it("Should generate the Student Student Applications By Institution Report for ministry when a report generation request is made with the appropriate filters.", async () => {
+    // Arrange
+    const now = new Date();
+    const student = await saveFakeStudent(db.dataSource);
+    const institution = await db.institution.save(createFakeInstitution());
+    const application = await createApplicationsByInstitutionDataSetup(db, {
+      student,
+      institution,
+      originalSubmissionDate: now,
+    });
+    const payload = {
+      reportName: "Ministry_Student_Applications_By_Institution_Report",
+      params: {
+        institution: application.location.institution.id,
+        program: "",
+        startDate: now,
+        endDate: addDays(1, now),
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+      },
+    };
+
+    const endpoint = "/aest/report";
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+    // Expected report records.
+    const expectedRecord = buildApplicationsByInstitutionData(application);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toEqual(
+          expect.arrayContaining([expectedRecord]),
+        );
+      });
+  });
 
   /**
    * Converts education program offering object into a key-value pair object matching the result data.

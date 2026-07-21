@@ -20,7 +20,7 @@ VALUES
         AND applications.is_archived = false
         AND disbursement_schedules.disbursement_schedule_status = 'Sent'
         AND parent_applications.submitted_date BETWEEN :startDate AND :endDate
-        AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
+        AND applications.offering_intensity = ANY(:offeringIntensity)
         AND institution_locations.institution_id = :institution
         AND (:program = 0 OR education_programs.id = :program)
     )
@@ -50,8 +50,8 @@ VALUES
       cast(education_programs_offerings.study_start_date AS varchar) AS "Study Start Date",
       cast(education_programs_offerings.study_end_date AS varchar) AS "Study End Date",
       CASE
-        WHEN education_programs_offerings.offering_intensity = 'Part Time' THEN student_assessments.assessment_data ->> 'totalAssessmentNeed'
-        WHEN education_programs_offerings.offering_intensity = 'Full Time' THEN student_assessments.assessment_data ->> 'totalAssessedCost'
+        WHEN applications.offering_intensity = 'Part Time' THEN student_assessments.assessment_data ->> 'totalAssessmentNeed'
+        WHEN applications.offering_intensity = 'Full Time' THEN student_assessments.assessment_data ->> 'totalAssessedCost'
       END AS "Total Assistance"
     FROM
       sims.applications applications
@@ -75,7 +75,7 @@ VALUES
       )
       AND applications.is_archived = false
       AND parent_applications.submitted_date BETWEEN :startDate AND :endDate
-      AND education_programs_offerings.offering_intensity = ANY(:offeringIntensity)
+      AND applications.offering_intensity = ANY(:offeringIntensity)
       AND institution_locations.institution_id = :institution
       AND (:program = 0 OR education_programs.id = :program)
     ORDER BY
