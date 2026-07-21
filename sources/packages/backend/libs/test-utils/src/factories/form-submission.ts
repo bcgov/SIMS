@@ -108,6 +108,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   formSubmission.application = testInputData.application;
   formSubmission.createdAt = now;
   formSubmission.creator = student.user;
+  formSubmission.submissionStatusUpdatedOn = now;
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;
   formSubmission.submissionStatus = testInputData.submissionStatus;
@@ -115,6 +116,12 @@ export async function saveFakeFormSubmissionFromInputTestData(
     formSubmission.assessedDate = now;
     formSubmission.assessedBy = testInputData.ministryAuditUser;
   }
+  formSubmission.submissionStatusUpdatedBy = [
+    FormSubmissionStatus.Completed,
+    FormSubmissionStatus.Declined,
+  ].includes(testInputData.submissionStatus)
+    ? testInputData.ministryAuditUser
+    : student.user;
   formSubmission.formSubmissionItems = [];
   await db.formSubmission.save(formSubmission);
   for (const itemInputData of testInputData.formSubmissionItems) {
