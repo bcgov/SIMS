@@ -118,7 +118,7 @@ export abstract class ValidateDisbursementBase {
     const stopDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       [restrictionActionType],
-    ).sort((a, b) => a.code.localeCompare(b.code));
+    );
     if (stopDisbursementRestrictions.length) {
       const studentRestrictions = stopDisbursementRestrictions.filter(
         (restriction) =>
