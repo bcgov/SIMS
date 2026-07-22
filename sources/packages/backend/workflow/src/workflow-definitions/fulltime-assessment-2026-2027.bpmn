@@ -139,7 +139,7 @@ Will not change based on institution or appeal</bpmn:text>
     <bpmn:association id="Association_069y725" associationDirection="None" sourceRef="TextAnnotation_0eilku9" targetRef="Event_1jlyysi" />
     <bpmn:group id="Group_0tzz616" />
     <bpmn:textAnnotation id="TextAnnotation_01utjft">
-      <bpmn:text>Variables created in this scope that will be consumed in upcoming logic, must have their creation ensured for all the flows.
+      <bpmn:text>Variables created in this scope that will be consumed in upcoming logic must have their creation ensured for all the flows.
 For instance:
 - calculatedDataTotalEligibleDependants
 - calculatedDataTotalChildcareDependants</bpmn:text>
@@ -4801,10 +4801,6 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <di:waypoint x="10460" y="2320" />
         <di:waypoint x="10542" y="2320" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_17pjjzp_di" bpmnElement="Association_17pjjzp">
-        <di:waypoint x="2039" y="750" />
-        <di:waypoint x="2005" y="678" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5290" y="1180" width="870" height="760" />
         <bpmndi:BPMNLabel>
@@ -4989,6 +4985,13 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <dc:Bounds x="10160" y="2480" width="268" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0tzz616_di" bpmnElement="Group_0tzz616">
+        <dc:Bounds x="1920" y="255" width="95" height="423" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kdpkir" bpmnElement="TextAnnotation_01utjft">
+        <dc:Bounds x="1910" y="750" width="305" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
         <di:waypoint x="3441" y="1138" />
         <di:waypoint x="3443" y="1113" />
@@ -5045,13 +5048,10 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <di:waypoint x="10160" y="2500" />
         <di:waypoint x="10118" y="2415" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Group_0tzz616_di" bpmnElement="Group_0tzz616">
-        <dc:Bounds x="1920" y="255" width="95" height="423" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1kdpkir" bpmnElement="TextAnnotation_01utjft">
-        <dc:Bounds x="1910" y="750" width="305" height="98" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_17pjjzp_di" bpmnElement="Association_17pjjzp">
+        <di:waypoint x="2039" y="750" />
+        <di:waypoint x="2005" y="678" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_0lbfbig">

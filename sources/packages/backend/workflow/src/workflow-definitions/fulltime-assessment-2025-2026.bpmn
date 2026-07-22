@@ -164,7 +164,7 @@ calculatedDataParent1TaxRate</bpmn:text>
     <bpmn:association id="Association_013h80t" associationDirection="None" sourceRef="Activity_17g355h" targetRef="TextAnnotation_0acv2yp" />
     <bpmn:group id="Group_0tzz616" />
     <bpmn:textAnnotation id="TextAnnotation_01utjft">
-      <bpmn:text>Variables created in this scope that will be consumed in upcoming logic, must have their creation ensured for all the flows.
+      <bpmn:text>Variables created in this scope that will be consumed in upcoming logic must have their creation ensured for all the flows.
 For instance:
 - calculatedDataTotalEligibleDependants
 - calculatedDataTotalChildcareDependants</bpmn:text>
@@ -4654,10 +4654,6 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="863" y="594" />
         <di:waypoint x="804" y="458" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_139zks3_di" bpmnElement="Association_139zks3">
-        <di:waypoint x="1843" y="750" />
-        <di:waypoint x="1817" y="678" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_0lerduq_di" bpmnElement="Group_0lerduq">
         <dc:Bounds x="5200" y="1180" width="870" height="760" />
         <bpmndi:BPMNLabel>
@@ -4864,6 +4860,13 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <dc:Bounds x="1165" y="140" width="305" height="100" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0tzz616_di" bpmnElement="Group_0tzz616">
+        <dc:Bounds x="1740" y="255" width="95" height="423" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hysyo3" bpmnElement="TextAnnotation_01utjft">
+        <dc:Bounds x="1700" y="750" width="305" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1cey5l7_di" bpmnElement="Association_1cey5l7">
         <di:waypoint x="7617" y="1728" />
         <di:waypoint x="7637" y="1845" />
@@ -4940,13 +4943,10 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <di:waypoint x="1261" y="351" />
         <di:waypoint x="1235" y="240" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Group_0tzz616_di" bpmnElement="Group_0tzz616">
-        <dc:Bounds x="1740" y="255" width="95" height="423" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1hysyo3" bpmnElement="TextAnnotation_01utjft">
-        <dc:Bounds x="1700" y="750" width="305" height="98" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_139zks3_di" bpmnElement="Association_139zks3">
+        <di:waypoint x="1843" y="750" />
+        <di:waypoint x="1817" y="678" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_0lbfbig">
