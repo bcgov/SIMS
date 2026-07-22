@@ -2133,6 +2133,7 @@ If distance education/blended learning program or if married and claiming separa
           <zeebe:output source="=max(calculatedDataTotalEligibleParent1Dependants,calculatedDataTotalEligibleParent2Dependants)" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=max(calculatedDataTotalEligibleParent1ContributionDependants,calculatedDataTotalEligibleParent2ContributionDependants)" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ovh763</bpmn:incoming>
@@ -2144,6 +2145,7 @@ If distance education/blended learning program or if married and claiming separa
           <zeebe:output source="=if parent1DependentTable = null then 0 else&#10;  count(&#10;parent1DependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if parent1DependentTable = null then 1 else&#10;  count(&#10;parent1DependentTable[&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )+1" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1li9w29</bpmn:incoming>
@@ -2212,6 +2214,7 @@ If distance education/blended learning program or if married and claiming separa
           <zeebe:output source="=if appealDataParentDependentTable = null then 0 else&#10;  count(&#10;appealDataParentDependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if appealDataParentDependentTable = null then 1 else&#10;  count(&#10;appealDataParentDependentTable[&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )+1" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1m2uh8r</bpmn:incoming>
