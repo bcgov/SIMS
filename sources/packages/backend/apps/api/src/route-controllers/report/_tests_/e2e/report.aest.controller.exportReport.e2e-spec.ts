@@ -1672,7 +1672,7 @@ describe("ReportAestController(e2e)-exportReport", () => {
     },
   );
 
-  it("Should generate the Student Student Applications By Institution Report for ministry when a report generation request is made with the appropriate filters.", async () => {
+  it("Should generate the Student Applications By Institution Report for ministry when a report generation request is made with the appropriate filters.", async () => {
     // Arrange
     const now = new Date();
     const student = await saveFakeStudent(db.dataSource);

@@ -46,7 +46,6 @@ VALUES
       education_programs.credential_type AS "Program Credential Type",
       education_programs.cip_code AS "CIP Code",
       education_programs_offerings.offering_name AS "Offering Name",
-      education_programs_offerings.offering_name AS "Offering Name",
       cast(education_programs_offerings.study_start_date AS varchar) AS "Study Start Date",
       cast(education_programs_offerings.study_end_date AS varchar) AS "Study End Date",
       CASE
