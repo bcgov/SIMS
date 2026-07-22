@@ -68,15 +68,29 @@
                   <v-col cols="auto"
                     ><status-chip-form-submission :status="submission.status"
                   /></v-col>
-                  <v-col class="d-flex justify-end"
-                    ><v-btn
-                      v-if="canViewFormSubmittedData"
-                      color="primary"
-                      :disabled="submission.canViewFormSubmittedData === false"
-                    >
-                      View
-                    </v-btn></v-col
-                  >
+                  <v-col class="d-flex justify-end">
+                    <div class="d-flex ga-2">
+                      <v-btn
+                        v-if="
+                          canAllowCancelSubmission &&
+                          submission.canCancelSubmission
+                        "
+                        color="error"
+                        @click.stop="cancelFormSubmission(submission.id)"
+                      >
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        v-if="canViewFormSubmittedData"
+                        color="primary"
+                        :disabled="
+                          submission.canViewFormSubmittedData === false
+                        "
+                      >
+                        View
+                      </v-btn>
+                    </div>
+                  </v-col>
                 </v-row>
                 <v-divider class="mb-0"></v-divider>
               </v-card-title>
@@ -90,8 +104,18 @@
                     </template>
                   </title-value></v-col
                 >
-                <v-col
-                  ><title-value property-title="Assessed date">
+                <v-col>
+                  <title-value
+                    property-title="Cancelled date"
+                    v-if="submission.status === FormSubmissionStatus.Cancelled"
+                  >
+                    <template #value>
+                      {{
+                        getISODateHourMinuteString(submission.statusUpdatedDate)
+                      }}
+                    </template>
+                  </title-value>
+                  <title-value property-title="Assessed date" v-else>
                     <template #value>
                       {{
                         conditionalEmptyStringFiller(
@@ -145,16 +169,39 @@
       </v-skeleton-loader>
     </content-group>
   </body-header-container>
+  <confirm-modal
+    title="Cancel form or appeal"
+    ref="cancelFormSubmissionModal"
+    ok-label="Confirm cancellation"
+  >
+    <template #content>
+      <p>
+        Are you sure you want to cancel this form or appeal? You will not be
+        able to reverse this cancellation once it has been confirmed.
+      </p>
+      <p>
+        <strong>Important:</strong> Any new appeal or form that you submit will
+        be placed at the end of the current processing queue.
+      </p>
+    </template>
+  </confirm-modal>
 </template>
 <script lang="ts">
 import { computed, defineComponent, ref, watchEffect } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { useFormatters, useSnackBar, useStudentAppeals } from "@/composables";
+import {
+  ModalDialog,
+  useFormatters,
+  useSnackBar,
+  useStudentAppeals,
+} from "@/composables";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmission.vue";
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
-import { FormCategory } from "@/types";
+import { ApiProcessError, FormCategory, FormSubmissionStatus } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
+import { FORM_SUBMISSION_CANCELLED } from "@/constants";
+import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
 export type FormsCategoryFilterTypes = FormCategory | "all";
 
@@ -163,6 +210,10 @@ interface FormsCategoryFilter {
   value: FormsCategoryFilterTypes;
   count: number;
 }
+
+const API_PROCESS_ERROR_MAPPING: Record<string, string> = {
+  [FORM_SUBMISSION_CANCELLED]: "Unable to cancel due to ministry decision.",
+};
 
 export default defineComponent({
   emits: {
@@ -173,6 +224,7 @@ export default defineComponent({
   components: {
     StatusChipFormSubmission,
     StatusChipFormSubmissionDecision,
+    ConfirmModal,
   },
   props: {
     studentId: {
@@ -185,12 +237,18 @@ export default defineComponent({
       required: false,
       default: true,
     },
+    canAllowCancelSubmission: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const loading = ref(true);
     const snackBar = useSnackBar();
     const formCategoryFilter = ref<FormsCategoryFilterTypes>("all");
     const formCategoryFilterOptions = ref<FormsCategoryFilter[]>([]);
+    const cancelFormSubmissionModal = ref({} as ModalDialog<boolean>);
     const { mapStudentAppealsFormNames } = useStudentAppeals();
     const {
       emptyStringFiller,
@@ -199,8 +257,7 @@ export default defineComponent({
       dateOnlyLongString,
     } = useFormatters();
     const submissions = ref<FormSubmissionAPIOutDTO[]>();
-
-    watchEffect(async () => {
+    const loadSubmissionHistory = async () => {
       try {
         loading.value = true;
         const submissionSummary =
@@ -239,7 +296,7 @@ export default defineComponent({
       } finally {
         loading.value = false;
       }
-    });
+    };
 
     const filteredSubmissions = computed(() => {
       if (formCategoryFilter.value === "all") {
@@ -253,6 +310,34 @@ export default defineComponent({
     const goToSubmission = async (formSubmissionId: number) => {
       emit("goToSubmission", formSubmissionId);
     };
+
+    /**
+     * Cancels a form submission after confirming with the user.
+     * @param formSubmissionId form submission id to cancel.
+     */
+    const cancelFormSubmission = async (formSubmissionId: number) => {
+      const confirm = await cancelFormSubmissionModal.value.showModal();
+      if (!confirm) {
+        return;
+      }
+      try {
+        await FormSubmissionService.shared.cancelFormSubmission(
+          formSubmissionId,
+        );
+        snackBar.success("Form submission cancelled.");
+        await loadSubmissionHistory();
+      } catch (error: unknown) {
+        if (error instanceof ApiProcessError) {
+          snackBar.error(
+            API_PROCESS_ERROR_MAPPING[error.errorType] || error.message,
+          );
+          return;
+        }
+        snackBar.error("Unexpected error while cancelling form submission.");
+      }
+    };
+
+    watchEffect(loadSubmissionHistory);
 
     return {
       loading,
@@ -268,6 +353,9 @@ export default defineComponent({
       mapStudentAppealsFormNames,
       goToSubmission,
       filteredSubmissions,
+      cancelFormSubmissionModal,
+      cancelFormSubmission,
+      FormSubmissionStatus,
     };
   },
 });

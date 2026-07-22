@@ -70,10 +70,11 @@ export class FormSubmissionCancellationService {
         FORM_SUBMISSION_NOT_PENDING,
       );
     }
-    const hasAnyDecision = formSubmission.formSubmissionItems.some(
-      (item) => !!item.currentDecision?.id,
-    );
-    if (hasAnyDecision) {
+    const hasAnySubmissionItemWithDecision =
+      formSubmission.formSubmissionItems.some(
+        (item) => !!item.currentDecision?.id,
+      );
+    if (hasAnySubmissionItemWithDecision) {
       throw new CustomNamedError(
         `Form submission with ID ${submissionId} has one or more form submission items with ministry decisions and cannot be cancelled.`,
         FORM_SUBMISSION_WITH_MINISTRY_DECISION,

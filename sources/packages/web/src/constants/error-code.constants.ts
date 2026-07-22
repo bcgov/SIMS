@@ -201,6 +201,11 @@ export const FORM_SUBMISSION_PENDING_DECISION =
 export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
 
 /**
+ * The form submission is cancelled and no further actions can be performed on it.
+ */
+export const FORM_SUBMISSION_CANCELLED = "FORM_SUBMISSION_CANCELLED";
+
+/**
  * An assessment cannot be accepted due to an institution restriction.
  */
 export const ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION =

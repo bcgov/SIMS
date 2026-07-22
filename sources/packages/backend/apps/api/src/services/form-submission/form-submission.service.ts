@@ -230,6 +230,7 @@ export class FormSubmissionService {
         submissionStatus: true,
         submittedDate: true,
         assessedDate: true,
+        submissionStatusUpdatedOn: true,
         formCategory: true,
         student: { id: true, user: { firstName: true, lastName: true } },
         application: {
