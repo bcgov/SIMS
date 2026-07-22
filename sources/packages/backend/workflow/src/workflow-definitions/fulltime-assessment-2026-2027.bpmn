@@ -137,6 +137,14 @@ calculatedDataParent1TaxRate</bpmn:text>
 Will not change based on institution or appeal</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_069y725" associationDirection="None" sourceRef="TextAnnotation_0eilku9" targetRef="Event_1jlyysi" />
+    <bpmn:group id="Group_0tzz616" />
+    <bpmn:textAnnotation id="TextAnnotation_01utjft">
+      <bpmn:text>Variables created in this scope that will be consumed in upcoming logic must have their creation ensured for all the flows.
+For instance:
+- calculatedDataTotalEligibleDependants
+- calculatedDataTotalChildcareDependants</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_17pjjzp" associationDirection="None" sourceRef="TextAnnotation_01utjft" targetRef="Group_0tzz616" />
   </bpmn:collaboration>
   <bpmn:process id="fulltime-assessment-2026-2027" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -1957,6 +1965,7 @@ There is also a per application limit based on the number of weeks in the offeri
           <zeebe:output source="=max(calculatedDataTotalEligibleParent1Dependants,calculatedDataTotalEligibleParent2Dependants)" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=max(calculatedDataTotalEligibleParent1ContributionDependants,calculatedDataTotalEligibleParent2ContributionDependants)" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ovh763</bpmn:incoming>
@@ -1968,6 +1977,7 @@ There is also a per application limit based on the number of weeks in the offeri
           <zeebe:output source="=if parent1DependentTable = null then 0 else&#10;  count(&#10;parent1DependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if parent1DependentTable = null then 1 else&#10;  count(&#10;parent1DependentTable[&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )+1" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1li9w29</bpmn:incoming>
@@ -1979,6 +1989,7 @@ There is also a per application limit based on the number of weeks in the offeri
           <zeebe:output source="=if appealDataParentDependentTable = null then 0 else&#10;  count(&#10;appealDataParentDependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if appealDataParentDependentTable = null then 1 else&#10;  count(&#10;appealDataParentDependentTable[&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )+1" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1m2uh8r</bpmn:incoming>
@@ -4974,6 +4985,13 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
         <dc:Bounds x="10160" y="2480" width="268" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0tzz616_di" bpmnElement="Group_0tzz616">
+        <dc:Bounds x="1920" y="255" width="95" height="423" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kdpkir" bpmnElement="TextAnnotation_01utjft">
+        <dc:Bounds x="1910" y="750" width="305" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0q448eh_di" bpmnElement="Association_0q448eh">
         <di:waypoint x="3441" y="1138" />
         <di:waypoint x="3443" y="1113" />
@@ -5029,6 +5047,10 @@ Federal Unmet Provincial Need = Provincial portion of Fed Need less Adjusted BCS
       <bpmndi:BPMNEdge id="Association_069y725_di" bpmnElement="Association_069y725">
         <di:waypoint x="10160" y="2500" />
         <di:waypoint x="10118" y="2415" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_17pjjzp_di" bpmnElement="Association_17pjjzp">
+        <di:waypoint x="2039" y="750" />
+        <di:waypoint x="2005" y="678" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
