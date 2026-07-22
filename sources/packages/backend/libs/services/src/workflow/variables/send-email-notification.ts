@@ -7,8 +7,9 @@ export const EMAIL_NOTIFICATION_PERSONALISATION = "emailNotificationPersonalisat
 /**
  * Free-form metadata provided by the workflow used to check whether the same
  * notification was already sent, preventing duplicate emails. It defines the
- * uniqueness scope of the notification dynamically (e.g. `applicationId` results
- * in once per application). When empty or not provided, the existence check is
- * skipped and the email is always sent.
+ * uniqueness scope of the notification dynamically (e.g. `applicationNumber`
+ * results in once per application, remaining stable across application edits).
+ * When empty or not provided, the existence check is skipped and the email is
+ * always sent.
  */
 export const EMAIL_NOTIFICATION_CHECK_METADATA = "emailNotificationCheckMetadata";

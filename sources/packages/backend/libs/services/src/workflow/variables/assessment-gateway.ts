@@ -12,6 +12,11 @@ export const ASSESSMENT_DATA = "assessmentData";
  */
 export const APPLICATION_ID = "applicationId";
 /**
+ * Human-readable application number that remains stable across application edits.
+ * Created while loading the assessment data.
+ */
+export const APPLICATION_NUMBER = "applicationNumber";
+/**
  * Institution offering program id if selected by the student.
  * If not selected a PIR will be needed.
  */

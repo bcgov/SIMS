@@ -124,6 +124,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.id",
         "assessment.triggerType",
         "application.id",
+        "application.applicationNumber",
         "application.data",
         "application.applicationStatus",
         "application.applicationEditStatus",

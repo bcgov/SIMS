@@ -92,6 +92,10 @@ export interface ApplicationAssessmentJobOutDTO {
    */
   applicationId: number;
   /**
+   * Human-readable application number that remains stable across application edits.
+   */
+  applicationNumber: string;
+  /**
    * Current status of the application.
    */
   applicationStatus: ApplicationStatus;

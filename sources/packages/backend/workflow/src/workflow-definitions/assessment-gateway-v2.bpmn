@@ -633,6 +633,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=null" target="applicationId" />
+          <zeebe:output source="=null" target="applicationNumber" />
           <zeebe:output source="=assessmentId" target="assessmentId" />
           <zeebe:output source="=null" target="applicationExceptionStatus" />
           <zeebe:output source="=null" target="studentDataSelectedOffering" />
@@ -942,7 +943,7 @@ Note: the workflow process should continue its execution as a regular reassessme
           <zeebe:header key="recipientType" value="student" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
-          <zeebe:input source="={applicationId: applicationId}" target="emailNotificationCheckMetadata" />
+          <zeebe:input source="={applicationNumber: applicationNumber}" target="emailNotificationCheckMetadata" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>former-youth-in-care-send-flow</bpmn:incoming>
