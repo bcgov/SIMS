@@ -75,7 +75,8 @@
                           canAllowCancelSubmission &&
                           submission.canCancelSubmission
                         "
-                        color="error"
+                        color="primary"
+                        variant="outlined"
                         @click.stop="cancelFormSubmission(submission.id)"
                       >
                         Cancel
