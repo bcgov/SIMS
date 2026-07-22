@@ -118,13 +118,17 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       recipientType: WorkflowEmailNotificationRecipient.Student,
       assessmentId: firstApplication.currentAssessment.id,
-      emailNotificationCheckMetadata: { applicationId: firstApplication.id },
+      emailNotificationCheckMetadata: {
+        applicationNumber: firstApplication.applicationNumber,
+      },
     });
     const secondApplicationPayload = createFakeSendEmailNotificationPayload({
       templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       recipientType: WorkflowEmailNotificationRecipient.Student,
       assessmentId: secondApplication.currentAssessment.id,
-      emailNotificationCheckMetadata: { applicationId: secondApplication.id },
+      emailNotificationCheckMetadata: {
+        applicationNumber: secondApplication.applicationNumber,
+      },
     });
 
     // Act
