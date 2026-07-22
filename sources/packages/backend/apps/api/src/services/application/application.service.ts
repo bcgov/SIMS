@@ -32,6 +32,7 @@ import {
   StudentAppeal,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   RestrictionActionType,
+  NotificationMessageType,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -692,9 +693,10 @@ export class ApplicationService extends RecordDataModelService<Application> {
     });
     if (applicationsCount > APPLICATION_EDIT_COUNT_TO_SEND_NOTIFICATION) {
       const notificationExists =
-        await this.notificationService.checkApplicationEditedTooManyTimesNotificationExists(
+        await this.notificationService.checkNotificationExists(
+          NotificationMessageType.ApplicationEditedTooManyTimesNotification,
+          { applicationNumber },
           transactionalEntityManager,
-          applicationNumber,
         );
       if (!notificationExists) {
         const student = await this.studentService.getStudentById(studentId);

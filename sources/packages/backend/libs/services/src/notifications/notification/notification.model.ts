@@ -80,6 +80,54 @@ export interface StudentNotification {
   applicationNumber?: string;
 }
 
+/**
+ * Recipient of a workflow-triggered email notification.
+ */
+export enum WorkflowEmailNotificationRecipient {
+  /**
+   * The notification is sent to the student.
+   */
+  Student = "student",
+  /**
+   * The notification is sent to the Ministry.
+   */
+  Ministry = "ministry",
+}
+
+/**
+ * Student personal information required to send a workflow-triggered email
+ * notification to the student. Loaded on the API side because it is not
+ * available in the workflow due to personal information constraints.
+ */
+export interface WorkflowEmailNotificationStudent {
+  userId: number;
+  studentId: number;
+  givenNames?: string;
+  lastName: string;
+  email: string;
+}
+
+/**
+ * Details required to send a generic workflow-triggered email notification to
+ * the student. The GC Notify template is resolved (or created) from the provided
+ * template id, allowing new notifications to be sent without code or migration
+ * changes.
+ */
+export interface WorkflowStudentEmailNotification extends WorkflowEmailNotification {
+  student: WorkflowEmailNotificationStudent;
+}
+
+/**
+ * Details required to send a generic workflow-triggered email notification to
+ * the email contacts configured for the notification message (e.g. Ministry).
+ * The GC Notify template is resolved (or created) from the provided template id,
+ * allowing new notifications to be sent without code or migration changes.
+ */
+export interface WorkflowEmailNotification {
+  templateId: string;
+  personalisation?: Record<string, string | number | string[]>;
+}
+
 export interface DisbursementBlockedNotification {
   givenNames: string;
   lastName: string;

@@ -17,4 +17,5 @@ export enum Workers {
   CreateIdentifiableSupportingUsers = "create-identifiable-supporting-users",
   WorkflowWrapUp = "workflow-wrap-up",
   VerifyAssessmentCalculationOrder = "verify-assessment-calculation-order",
+  SendEmailNotification = "send-email-notification",
 }
