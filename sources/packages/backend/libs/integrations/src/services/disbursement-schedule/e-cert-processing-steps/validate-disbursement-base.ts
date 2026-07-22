@@ -6,6 +6,7 @@ import {
 } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
+  ActiveRestriction,
   ECertFailedValidation,
   ECertFailedValidationResult,
   EligibleECertDisbursement,
@@ -117,7 +118,7 @@ export abstract class ValidateDisbursementBase {
     const stopDisbursementRestrictions = getRestrictionsByActionType(
       eCertDisbursement,
       [restrictionActionType],
-    );
+    ).sort((a, b) => a.code.localeCompare(b.code));
     if (stopDisbursementRestrictions.length) {
       const studentRestrictions = stopDisbursementRestrictions.filter(
         (restriction) =>
@@ -133,8 +134,10 @@ export abstract class ValidateDisbursementBase {
         );
       }
       if (studentRestrictions.length) {
-        log.info(
-          `Student has an active '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
+        this.logEffectiveRestrictions(
+          RestrictedParty.Student,
+          studentRestrictions,
+          log,
         );
 
         validationResults.push({
@@ -147,26 +150,11 @@ export abstract class ValidateDisbursementBase {
         });
       }
       if (institutionRestrictions.length) {
-        const hasProgramLocationRestriction = institutionRestrictions.some(
-          (restriction) => restriction.program && restriction.location,
+        this.logEffectiveRestrictions(
+          RestrictedParty.Institution,
+          institutionRestrictions,
+          log,
         );
-        const hasInstitutionRestriction = institutionRestrictions.some(
-          (restriction) => !restriction.program && !restriction.location,
-        );
-        // TODO Do we want to show both log messages?
-        if (hasProgramLocationRestriction) {
-          const program = eCertDisbursement.offering.educationProgram;
-          const location = eCertDisbursement.offering.institutionLocation;
-          log.info(
-            `Institution has an effective '${restrictionActionType}' restriction` +
-              ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
-          );
-        }
-        if (hasInstitutionRestriction) {
-          log.info(
-            `Institution has an effective '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
-          );
-        }
 
         validationResults.push({
           resultType:
@@ -397,6 +385,26 @@ export abstract class ValidateDisbursementBase {
         resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
       });
     }
+  }
+
+  /**
+   * Logs the effective restrictions blocking the disbursement in a standard format.
+   * @param restrictedParty restricted party that has the effective restrictions.
+   * @param effectiveRestrictions effective restrictions blocking the disbursement.
+   * @param log cumulative log summary.
+   */
+  private logEffectiveRestrictions(
+    restrictedParty: RestrictedParty,
+    effectiveRestrictions: ActiveRestriction[],
+    log: ProcessSummary,
+  ): void {
+    const restrictionCodes = effectiveRestrictions
+      .map((restriction) => restriction.code)
+      .sort((a, b) => a.localeCompare(b))
+      .join(", ");
+    log.info(
+      `${restrictedParty} has effective restrictions: ${restrictionCodes} and the disbursement calculation will not proceed.`,
+    );
   }
 
   /**

@@ -154,8 +154,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
         }),
       )
       .andWhere("institutionRestriction.program.id IS NULL")
-      // TODO Confirm usage of && vs @>.
-      .andWhere(`restriction.actionType && :${actionTypesParam}`)
+      .andWhere(`restriction.actionType @> :${actionTypesParam}`)
       .limit(1)
       .getQuery();
     parameters[actionTypesParam] = actionTypes;
