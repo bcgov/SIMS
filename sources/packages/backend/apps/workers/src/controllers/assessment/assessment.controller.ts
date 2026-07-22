@@ -557,6 +557,7 @@ export class AssessmentController {
     const institutionLocation = offering?.institutionLocation;
     return {
       applicationId: application.id,
+      applicationNumber: application.applicationNumber,
       applicationStatus: application.applicationStatus,
       applicationEditStatus: application.applicationEditStatus,
       hasNOAApproval,

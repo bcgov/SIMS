@@ -12,3 +12,5 @@ export * from "./disbursement/disbursement.controller";
 export * from "./disbursement/disbursement.dto";
 export * from "./health-check/health.controller";
 export * from "./metrics/metrics.controller";
+export * from "./notification/notification.controller";
+export * from "./notification/notification.dto";

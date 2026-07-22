@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.47.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="f874f098-96b6-491d-81ec-ecf7a0d8c67a">
   <bpmn:collaboration id="Collaboration_0z9wj8q">
     <bpmn:participant id="application-in-progress" name="Assessment" processRef="assessment-gateway-v2" />
     <bpmn:group id="Group_19tqt3y" categoryValueRef="CategoryValue_1l89ztr" />
@@ -78,6 +78,9 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>Gateway_1aawyrx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>pir-workflow-wrap-up-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1mj2hkh</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>former-youth-in-care-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>send-former-youth-in-care-email-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>former-youth-in-care-join-gateway</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
         <bpmn:flowNodeRef>verify-assessment-calculation-timer</bpmn:flowNodeRef>
@@ -599,7 +602,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:outgoing>Flow_0106iy0</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_0wavgao" name="Check edit status" default="Flow_0ljbhnq">
-      <bpmn:incoming>assessment-flow</bpmn:incoming>
+      <bpmn:incoming>Flow_1gjp61i</bpmn:incoming>
       <bpmn:outgoing>Flow_0ljbhnq</bpmn:outgoing>
       <bpmn:outgoing>change-in-progress-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -630,6 +633,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:extensionElements>
         <zeebe:ioMapping>
           <zeebe:output source="=null" target="applicationId" />
+          <zeebe:output source="=null" target="applicationNumber" />
           <zeebe:output source="=assessmentId" target="assessmentId" />
           <zeebe:output source="=null" target="applicationExceptionStatus" />
           <zeebe:output source="=null" target="studentDataSelectedOffering" />
@@ -776,7 +780,7 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_0106iy0" sourceRef="update-application-status-to-in-progress-task" targetRef="Activity_069nn9n" />
     <bpmn:sequenceFlow id="Flow_1w081qo" sourceRef="Activity_069nn9n" targetRef="Gateway_1aawyrx" />
     <bpmn:sequenceFlow id="Flow_0ljbhnq" sourceRef="Gateway_0wavgao" targetRef="update-application-status-to-in-progress-task" />
-    <bpmn:sequenceFlow id="assessment-flow" name="Original Assessment" sourceRef="assessment-process-type-gateway" targetRef="Gateway_0wavgao">
+    <bpmn:sequenceFlow id="assessment-flow" name="Original Assessment" sourceRef="assessment-process-type-gateway" targetRef="former-youth-in-care-gateway">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="assessment-process-type-gateway" />
@@ -926,6 +930,36 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:outgoing>Flow_17bbn8b</bpmn:outgoing>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_17bbn8b" sourceRef="Activity_1vyml74" targetRef="Gateway_1hwknxt" />
+    <bpmn:exclusiveGateway id="former-youth-in-care-gateway" name="Former youth in care?" default="Flow_10xaz6e">
+      <bpmn:incoming>assessment-flow</bpmn:incoming>
+      <bpmn:outgoing>former-youth-in-care-send-flow</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10xaz6e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="send-former-youth-in-care-email-task" name="Send former youth in care email">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="send-email-notification" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="templateId" value="636dd0c7-fe23-4a25-826b-03202326b580" />
+          <zeebe:header key="recipientType" value="student" />
+        </zeebe:taskHeaders>
+        <zeebe:ioMapping>
+          <zeebe:input source="={applicationNumber: applicationNumber}" target="emailNotificationCheckMetadata" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>former-youth-in-care-send-flow</bpmn:incoming>
+      <bpmn:outgoing>former-youth-in-care-email-sent-flow</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="former-youth-in-care-send-flow" sourceRef="former-youth-in-care-gateway" targetRef="send-former-youth-in-care-email-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataYouthInCare != null and studentDataYouthInCare != "no"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10xaz6e" sourceRef="former-youth-in-care-gateway" targetRef="former-youth-in-care-join-gateway" />
+    <bpmn:sequenceFlow id="former-youth-in-care-email-sent-flow" sourceRef="send-former-youth-in-care-email-task" targetRef="former-youth-in-care-join-gateway" />
+    <bpmn:exclusiveGateway id="former-youth-in-care-join-gateway" default="Flow_1gjp61i">
+      <bpmn:incoming>Flow_10xaz6e</bpmn:incoming>
+      <bpmn:incoming>former-youth-in-care-email-sent-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gjp61i</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1gjp61i" sourceRef="former-youth-in-care-join-gateway" targetRef="Gateway_0wavgao" />
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -1133,6 +1167,19 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="1587" y="440" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="former-youth-in-care-gateway_di" bpmnElement="former-youth-in-care-gateway" isMarkerVisible="true">
+        <dc:Bounds x="745" y="155" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="731" y="118" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="send-former-youth-in-care-email-task_di" bpmnElement="send-former-youth-in-care-email-task">
+        <dc:Bounds x="830" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="former-youth-in-care-join-gateway_di" bpmnElement="former-youth-in-care-join-gateway" isMarkerVisible="true">
+        <dc:Bounds x="745" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="2060" y="790" width="580" height="200" />
       </bpmndi:BPMNShape>
@@ -1186,7 +1233,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="Gateway_0wavgao_di" bpmnElement="Gateway_0wavgao" isMarkerVisible="true">
         <dc:Bounds x="745" y="317" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="727" y="284" width="85" height="14" />
+          <dc:Bounds x="649.5" y="335" width="85" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="assessment-process-type-gateway" isMarkerVisible="true">
@@ -1652,10 +1699,11 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="850" y="342" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07vurqq_di" bpmnElement="assessment-flow">
-        <di:waypoint x="675" y="342" />
-        <di:waypoint x="745" y="342" />
+        <di:waypoint x="650" y="317" />
+        <di:waypoint x="650" y="180" />
+        <di:waypoint x="745" y="180" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="671" y="307" width="60" height="27" />
+          <dc:Bounds x="655" y="145" width="60" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
@@ -1747,6 +1795,23 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNEdge id="Flow_17bbn8b_di" bpmnElement="Flow_17bbn8b">
         <di:waypoint x="3710" y="1360" />
         <di:waypoint x="3735" y="1360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xqg8e1_di" bpmnElement="former-youth-in-care-send-flow">
+        <di:waypoint x="795" y="180" />
+        <di:waypoint x="830" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10xaz6e_di" bpmnElement="Flow_10xaz6e">
+        <di:waypoint x="770" y="205" />
+        <di:waypoint x="770" y="235" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ozpwlc_di" bpmnElement="former-youth-in-care-email-sent-flow">
+        <di:waypoint x="880" y="220" />
+        <di:waypoint x="880" y="260" />
+        <di:waypoint x="795" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gjp61i_di" bpmnElement="Flow_1gjp61i">
+        <di:waypoint x="770" y="285" />
+        <di:waypoint x="770" y="317" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0vf0jbr" bpmnElement="Group_19tqt3y">
         <dc:Bounds x="1930" y="250" width="730" height="170" />

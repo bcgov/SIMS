@@ -15,6 +15,7 @@
           <zeebe:header key="assessmentTriggerType" value="triggerType" />
           <zeebe:header key="applicationExceptionsStrategy" value="data.applicationExceptionsStrategy" />
           <zeebe:header key="applicationId" value="applicationId" />
+          <zeebe:header key="applicationNumber" value="applicationNumber" />
           <zeebe:header key="applicationStatus" value="applicationStatus" />
           <zeebe:header key="applicationEditStatus" value="applicationEditStatus" />
           <zeebe:header key="applicationHasNOAApproval" value="hasNOAApproval" />

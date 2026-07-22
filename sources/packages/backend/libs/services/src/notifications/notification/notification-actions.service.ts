@@ -44,6 +44,8 @@ import {
   SaveNotificationModel,
   StudentAcceptAssessmentReminderNotification,
   ProgramSuspensionBlockingApplicationNotification,
+  WorkflowStudentEmailNotification,
+  WorkflowEmailNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -423,6 +425,116 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [exceptionCompleteNotification],
       auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Sends a workflow-triggered email notification to the student. The GC Notify
+   * template is resolved (or created) from the provided template id, so new
+   * notifications can be sent without code or migration changes. The personal
+   * information (email, given names and last name) is loaded on the API side and
+   * merged with the personalisation provided by the workflow, with the API
+   * loaded values taking precedence.
+   * @param notification notification details.
+   * @param entityManager entity manager to execute in transaction.
+   * @param options notification options.
+   * - `checkMetadata` when provided with at least one criteria, skips creation
+   * if a notification for the same message already exists matching all the
+   * provided criteria, preventing duplicate emails. It allows the uniqueness of
+   * the notification to be defined dynamically by the workflow (e.g.
+   * `applicationId` results in once per application). When empty or not
+   * provided, the email is always sent, allowing a student to receive multiple
+   * emails.
+   */
+  async saveWorkflowStudentEmailNotification(
+    notification: WorkflowStudentEmailNotification,
+    entityManager: EntityManager,
+    options?: {
+      checkMetadata?: NotificationMetadata;
+    },
+  ): Promise<void> {
+    const notificationMessage =
+      await this.notificationMessageService.getOrCreateNotificationMessageByTemplateId(
+        notification.templateId,
+        { entityManager },
+      );
+    const messageType = notificationMessage.id;
+    const { student } = notification;
+    // The check metadata is provided by the workflow and defines the uniqueness
+    // scope used to prevent duplicate emails (e.g. `applicationId` sends the
+    // notification once per application).
+    const checkMetadata = options?.checkMetadata;
+    if (checkMetadata && Object.keys(checkMetadata).length) {
+      const notificationExists =
+        await this.notificationService.checkNotificationExists(
+          messageType,
+          checkMetadata,
+          entityManager,
+        );
+      if (notificationExists) {
+        return;
+      }
+    }
+    const studentEmailNotification = {
+      userId: student.userId,
+      messageType,
+      messagePayload: {
+        email_address: student.email,
+        template_id: notificationMessage.templateId,
+        personalisation: {
+          ...notification.personalisation,
+          givenNames: student.givenNames ?? "",
+          lastName: student.lastName,
+        },
+      },
+      metadata: checkMetadata,
+    };
+    await this.notificationService.saveNotifications(
+      [studentEmailNotification],
+      this.systemUsersService.systemUser.id,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Sends a workflow-triggered email notification to the Ministry. The GC Notify
+   * template is resolved (or created) from the provided template id, so new
+   * notifications can be sent without code or migration changes. The
+   * notification is sent to the email contacts configured for the notification
+   * message.
+   * @param notification notification details.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  async saveWorkflowMinistryEmailNotification(
+    notification: WorkflowEmailNotification,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const notificationMessage =
+      await this.notificationMessageService.getOrCreateNotificationMessageByTemplateId(
+        notification.templateId,
+        { entityManager },
+      );
+    if (!notificationMessage.emailContacts?.length) {
+      this.logger.error(
+        `${NOTIFICATION_MISSING_EMAIL_CONTACTS} No email contacts are configured for the Ministry notification with template ${notification.templateId}.`,
+      );
+      return;
+    }
+    const notificationsToSend = notificationMessage.emailContacts.map(
+      (emailContact) => ({
+        messageType: notificationMessage.id,
+        messagePayload: {
+          email_address: emailContact,
+          template_id: notificationMessage.templateId,
+          personalisation: notification.personalisation ?? {},
+        },
+      }),
+    );
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      this.systemUsersService.systemUser.id,
       { entityManager },
     );
   }
