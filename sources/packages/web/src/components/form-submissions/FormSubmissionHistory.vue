@@ -201,7 +201,10 @@ import StatusChipFormSubmission from "@/components/generic/StatusChipFormSubmiss
 import StatusChipFormSubmissionDecision from "@/components/generic/StatusChipFormSubmissionDecision.vue";
 import { ApiProcessError, FormCategory, FormSubmissionStatus } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
-import { FORM_SUBMISSION_CANCELLED } from "@/constants";
+import {
+  FORM_SUBMISSION_NOT_PENDING,
+  FORM_SUBMISSION_WITH_MINISTRY_DECISION,
+} from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 
 export type FormsCategoryFilterTypes = FormCategory | "all";
@@ -211,10 +214,6 @@ interface FormsCategoryFilter {
   value: FormsCategoryFilterTypes;
   count: number;
 }
-
-const API_PROCESS_ERROR_MAPPING: Record<string, string> = {
-  [FORM_SUBMISSION_CANCELLED]: "Unable to cancel due to ministry decision.",
-};
 
 export default defineComponent({
   emits: {
@@ -329,9 +328,14 @@ export default defineComponent({
         await loadSubmissionHistory();
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          snackBar.error(
-            API_PROCESS_ERROR_MAPPING[error.errorType] || error.message,
-          );
+          switch (error.errorType) {
+            case FORM_SUBMISSION_NOT_PENDING:
+            case FORM_SUBMISSION_WITH_MINISTRY_DECISION:
+              snackBar.error("Unable to cancel due to ministry decision.");
+              break;
+            default:
+              snackBar.error(error.message);
+          }
           return;
         }
         snackBar.error("Unexpected error while cancelling form submission.");

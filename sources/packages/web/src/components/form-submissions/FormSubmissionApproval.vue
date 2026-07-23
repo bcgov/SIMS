@@ -34,10 +34,11 @@
                 hide-details="auto"
                 :rules="[
                   (v) =>
+                    decision.isReadOnly ||
                     checkNotesLengthRule(v, `${decision.parentName}: notes`),
                 ]"
                 required
-                :readonly="decision.decisionSaved"
+                :readonly="decision.decisionSaved || decision.isReadOnly"
                 :disabled="
                   readOnly ||
                   decision.saveDecisionInProgress ||
@@ -54,6 +55,7 @@
                     v-model="decision.decisionStatus"
                     :rules="[
                       (v: FormSubmissionDecisionStatus) =>
+                        decision.isReadOnly ||
                         hasDecisionRule(v, decision.parentName),
                     ]"
                     :hide-details="true"
@@ -73,6 +75,7 @@
                         :value="decisionStatus.value"
                         :readonly="
                           readOnly ||
+                          decision.isReadOnly ||
                           decision.saveDecisionInProgress ||
                           decision.decisionSaved
                         "
@@ -80,13 +83,8 @@
                       >
                     </v-btn-toggle>
                   </v-input>
-                  <!-- Allow editing a decision while the main submission is still pending. -->
-                  <template
-                    v-if="
-                      !readOnly &&
-                      decision.parentStatus === FormSubmissionStatus.Pending
-                    "
-                  >
+                  <!-- Allow editing a decision while the main submission is still not in final statuses. -->
+                  <template v-if="!readOnly && !decision.isReadOnly">
                     <v-btn
                       v-if="decision.decisionSaved"
                       class="float-right"
@@ -197,7 +195,10 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemMinistryAPIOutDTO,
 } from "@/services/http/dto";
-import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
+import {
+  FORM_SUBMISSION_CANCELLED,
+  FORM_SUBMISSION_ITEM_OUTDATED,
+} from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
 import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
@@ -345,6 +346,7 @@ export default defineComponent({
       decision.saveDecisionInProgress = false;
       decision.decisionSaved =
         !!submissionItem.currentDecision?.decisionNoteDescription;
+      decision.isReadOnly = parentStatus !== FormSubmissionStatus.Pending;
       decision.decisionBy = submissionItem.currentDecision?.decisionBy;
       decision.decisionDate = submissionItem.currentDecision?.decisionDate;
       decision.decisionNoteDescription =
@@ -379,7 +381,7 @@ export default defineComponent({
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
         const itemToUpdate = formSubmissionItems.value.find(
-          (item) => item.decision.submissionItemId === itemId,
+          (item) => item.decision!.submissionItemId === itemId,
         );
         if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
@@ -458,7 +460,12 @@ export default defineComponent({
         snackBar.success("Decision saved.");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {
+          // Form submission being cancelled is considered as the form submission being outdated from what the user is seeing.
+          if (
+            [FORM_SUBMISSION_ITEM_OUTDATED, FORM_SUBMISSION_CANCELLED].includes(
+              error.errorType,
+            )
+          ) {
             decision.saveDecisionInProgress = false;
             const modalResult = await outdatedDecisionModal.value.showModal();
             if (modalResult) {
@@ -494,7 +501,7 @@ export default defineComponent({
       try {
         processingCompletion.value = true;
         const lastUpdatedInfo = formSubmissionItems.value.map((item) => ({
-          submissionItemId: item.id,
+          submissionItemId: item.id!,
           lastUpdateDate: item.decision?.lastUpdateDate as Date,
         }));
         await FormSubmissionService.shared.completeFormSubmission(
