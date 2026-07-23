@@ -15,9 +15,13 @@
           :read-only="true"
         >
           <template #decision="{ decision }">
+            <!--The decision section is available either when the final decision(s) are made or when the user has access to make decisions. -->
             <template
               v-if="
-                formSubmission.status !== FormSubmissionStatus.Pending ||
+                [
+                  FormSubmissionStatus.Completed,
+                  FormSubmissionStatus.Declined,
+                ].includes(formSubmission.status) ||
                 decision.canAssessItemDecision
               "
             >
@@ -34,11 +38,11 @@
                 hide-details="auto"
                 :rules="[
                   (v) =>
-                    decision.isReadOnly ||
+                    isDecisionSectionReadOnly ||
                     checkNotesLengthRule(v, `${decision.parentName}: notes`),
                 ]"
                 required
-                :readonly="decision.decisionSaved || decision.isReadOnly"
+                :readonly="decision.decisionSaved || isDecisionSectionReadOnly"
                 :disabled="
                   readOnly ||
                   decision.saveDecisionInProgress ||
@@ -55,7 +59,7 @@
                     v-model="decision.decisionStatus"
                     :rules="[
                       (v: FormSubmissionDecisionStatus) =>
-                        decision.isReadOnly ||
+                        isDecisionSectionReadOnly ||
                         hasDecisionRule(v, decision.parentName),
                     ]"
                     :hide-details="true"
@@ -74,8 +78,7 @@
                         :color="decisionStatus.color"
                         :value="decisionStatus.value"
                         :readonly="
-                          readOnly ||
-                          decision.isReadOnly ||
+                          isDecisionSectionReadOnly ||
                           decision.saveDecisionInProgress ||
                           decision.decisionSaved
                         "
@@ -84,7 +87,7 @@
                     </v-btn-toggle>
                   </v-input>
                   <!-- Allow editing a decision while the main submission is still not in final statuses. -->
-                  <template v-if="!readOnly && !decision.isReadOnly">
+                  <template v-if="!isDecisionSectionReadOnly">
                     <v-btn
                       v-if="decision.decisionSaved"
                       class="float-right"
@@ -274,6 +277,15 @@ export default defineComponent({
     );
 
     /**
+     * Indicates if the decision section is read-only if the main submission is no longer in pending status.
+     */
+    const isDecisionSectionReadOnly = computed(
+      () =>
+        props.readOnly ||
+        formSubmission.value.status !== FormSubmissionStatus.Pending,
+    );
+
+    /**
      * Load the form definition and its items.
      */
     const loadFormSubmission = async () => {
@@ -346,7 +358,6 @@ export default defineComponent({
       decision.saveDecisionInProgress = false;
       decision.decisionSaved =
         !!submissionItem.currentDecision?.decisionNoteDescription;
-      decision.isReadOnly = parentStatus !== FormSubmissionStatus.Pending;
       decision.decisionBy = submissionItem.currentDecision?.decisionBy;
       decision.decisionDate = submissionItem.currentDecision?.decisionDate;
       decision.decisionNoteDescription =
@@ -386,6 +397,13 @@ export default defineComponent({
         if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
         }
+        // Update the form submission values used by the UI.
+        formSubmission.value = {
+          id: submission.id,
+          formCategory: submission.formCategory,
+          status: submission.status,
+          canAssessFinalDecision: !!submission.canAssessFinalDecision,
+        };
         const [reloadedSubmissionItem] = submission.submissionItems;
         assignItemDecisionProperties(
           reloadedSubmissionItem,
@@ -573,6 +591,7 @@ export default defineComponent({
       cancelChangeDecision,
       getISODateHourMinuteString,
       formSubmissionLoading,
+      isDecisionSectionReadOnly,
     };
   },
 });

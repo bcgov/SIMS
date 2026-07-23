@@ -94,7 +94,6 @@ export interface FormSubmissionItemDecisionApproval extends FormSubmissionItemDe
   lastUpdateDate: Date;
   decisionHistory?: DecisionHistory[];
   canAssessItemDecision: boolean;
-  isReadOnly: boolean;
 }
 
 /**
