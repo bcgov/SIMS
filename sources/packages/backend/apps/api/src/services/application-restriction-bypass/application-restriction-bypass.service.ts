@@ -326,7 +326,7 @@ export class ApplicationRestrictionBypassService {
       .leftJoin(
         "institution.restrictions",
         "institutionRestriction",
-        "institutionRestriction.isActive = TRUE AND institutionRestriction.program = offeringProgram.id AND institutionRestriction.location = institutionLocation.id",
+        "institutionRestriction.isActive = TRUE AND (institutionRestriction.program = offeringProgram.id or institutionRestriction.program is null) AND (institutionRestriction.location = institutionLocation.id or institutionRestriction.location is null)",
       )
       .innerJoin("institutionRestriction.restriction", "instRestrictionDetail")
       .where("application.id = :applicationId", { applicationId })

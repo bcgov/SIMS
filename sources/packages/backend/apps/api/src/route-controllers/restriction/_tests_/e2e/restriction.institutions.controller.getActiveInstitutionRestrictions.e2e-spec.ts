@@ -6,6 +6,7 @@ import {
   createFakeInstitutionLocation,
   createFakeEducationProgram,
   saveFakeInstitutionRestriction,
+  RestrictionCode,
 } from "@sims/test-utils";
 import {
   RestrictionNotificationType,
@@ -32,7 +33,7 @@ import { In } from "typeorm";
 describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestrictions.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  const testRestrictionCodes = ["INST001", "INST002"];
+  const testRestrictionCodes = ["INST001", "INST002", RestrictionCode.ISR];
   const [restrictionCode, restrictionWithNoEffectCode] = testRestrictionCodes;
   const endpoint = "/institutions/restriction/active";
   let restriction: Restriction;
@@ -183,6 +184,50 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
         });
     },
   );
+
+  it("Should return an active ISR institution restriction including banner message when the institution user type is user.", async () => {
+    // Arrange
+    const { institution } = await getAuthRelatedEntities(
+      db.dataSource,
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    // Create ISR institution restriction.
+    const isrRestriction = await db.restriction.findOneOrFail({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.ISR,
+      },
+    });
+    await saveFakeInstitutionRestriction(db, {
+      restriction: isrRestriction,
+      institution,
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCUser,
+    );
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        items: [
+          {
+            restrictionActions: [
+              RestrictionActionType.StopPartTimeApplicationEligibility,
+              RestrictionActionType.StopFullTimeApplicationEligibility,
+              RestrictionActionType.StopPartTimeDisbursement,
+              RestrictionActionType.StopFullTimeDisbursement,
+            ],
+            restrictionCode: RestrictionCode.ISR,
+            restrictionNotificationType: RestrictionNotificationType.Error,
+            displayScope: "institution",
+            bannerMessage: "Your institution is currently suspended.",
+          },
+        ],
+      });
+  });
 
   it("Should return no active institution restrictions when there are no institution restrictions present for the institution.", async () => {
     // Arrange

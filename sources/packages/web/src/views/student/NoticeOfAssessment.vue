@@ -70,12 +70,6 @@
               You have restrictions that block funding on your account. Please
               resolve them in order to move forward with your application.
             </li>
-            <li
-              v-if="acceptValidation.hasStopDisbursementInstitutionRestriction"
-            >
-              Your application is currently pending further review by StudentAid
-              BC.
-            </li>
             <li v-if="acceptValidation.noEstimatedAwardAmounts">
               Your application has been assessed and no funding has been
               awarded. If you believe this is an error, please review your
@@ -126,7 +120,7 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  AcceptAssessmentRestrictionAPIOutDTO,
+  ApplicationInstitutionRestrictionAPIOutDTO,
   AssessmentNOAAPIOutDTO,
 } from "@/services/http/dto";
 import { computed, defineComponent, onMounted, ref } from "vue";
@@ -173,7 +167,6 @@ export default defineComponent({
       modifiedIndependentStatusNotApproved: false,
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
-      hasStopDisbursementInstitutionRestriction: false,
       noEstimatedAwardAmounts: false,
       hasEffectiveAviationRestriction: false,
       institutionRestrictionMessages: [] as string[],
@@ -240,12 +233,18 @@ export default defineComponent({
     /**
      * Get unique institution restriction messages to be displayed to the student.
      * If a restriction does not have a message, a default message will be used instead.
-     * @param restrictions list of institution restrictions to be evaluated.
+     * @param acceptAssessmentRestrictions restrictions preventing assessment acceptance.
+     * @param stopDisbursementRestrictions restrictions blocking disbursements.
      * @returns list of unique messages to be displayed to the student.
      */
     const getInstitutionRestrictionMessages = (
-      restrictions: AcceptAssessmentRestrictionAPIOutDTO[],
+      acceptAssessmentRestrictions: ApplicationInstitutionRestrictionAPIOutDTO[],
+      stopDisbursementRestrictions: ApplicationInstitutionRestrictionAPIOutDTO[],
     ) => {
+      const restrictions = [
+        ...acceptAssessmentRestrictions,
+        ...stopDisbursementRestrictions,
+      ];
       const messages = restrictions.map(
         (restriction) =>
           restriction.message || INSTITUTION_RESTRICTED_DEFAULT_MESSAGE,
@@ -278,10 +277,6 @@ export default defineComponent({
           warnings.eCertFailedValidations.includes(
             ECertFailedValidation.HasStopDisbursementRestriction,
           ),
-        hasStopDisbursementInstitutionRestriction:
-          warnings.eCertFailedValidations.includes(
-            ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
-          ),
         noEstimatedAwardAmounts: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.NoEstimatedAwardAmounts,
         ),
@@ -290,6 +285,7 @@ export default defineComponent({
             ?.hasEffectiveAviationRestriction ?? false,
         institutionRestrictionMessages: getInstitutionRestrictionMessages(
           warnings.acceptAssessmentRestrictions,
+          warnings.stopDisbursementInstitutionRestrictions,
         ),
       };
     });

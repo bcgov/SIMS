@@ -72,6 +72,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         eCertFailedValidations: [],
         canAcceptAssessment: true,
         acceptAssessmentRestrictions: [],
+        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -136,6 +137,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -195,6 +197,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -265,12 +268,13 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
 
   it(
-    "Should return a failed ecert validations array with stop disbursement institution restriction when" +
+    "Should return a failed ecert validations array with stop disbursement institution restriction and prevent the assessment acceptance when" +
       " there is an effective restriction on institution account for the application location and program" +
       " and the offering intensity is part-time.",
     async () => {
@@ -305,14 +309,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         },
       );
 
-      // Institution restriction.
+      // Institution ISR restriction (which contains Stop part-time disbursement action type).
       const restriction = await db.restriction.findOne({
-        select: { id: true },
+        select: { id: true, restrictionCode: true },
         where: {
           restrictionType: RestrictionType.Institution,
-          actionType: ArrayContains([
-            RestrictionActionType.StopPartTimeDisbursement,
-          ]),
+          restrictionCode: RestrictionCode.ISR,
         },
       });
       const location =
@@ -346,11 +348,18 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [
+            {
+              code: restriction.restrictionCode,
+              message:
+                "Your assessment cannot be accepted at this time because the institution associated with your application is currently suspended.",
+            },
+          ],
         });
     },
   );
 
-  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective restriction on institution with an action to Stop accept assessment.", async () => {
+  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective IUR restriction on the institution.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const msfaaNumber = createFakeMSFAANumber(
@@ -381,14 +390,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         },
       },
     );
-    // Institution restriction.
+    // Institution IUR restriction.
     const restriction = await db.restriction.findOne({
       select: { id: true, restrictionCode: true },
       where: {
         restrictionType: RestrictionType.Institution,
-        actionType: ArrayContains([
-          RestrictionActionType.StopFullTimeAcceptAssessment,
-        ]),
+        restrictionCode: RestrictionCode.IUR,
       },
     });
     const institution =
@@ -418,6 +425,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
               "Your assessment cannot be accepted at this time because the institution associated with your application is currently under review.",
           },
         ],
+        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -466,6 +474,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         canAcceptAssessment: false,
         eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: false },
         acceptAssessmentRestrictions: [],
+        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -536,6 +545,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -611,6 +621,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: true,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );

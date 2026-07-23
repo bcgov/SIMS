@@ -1318,7 +1318,7 @@ describe(
         // This restriction will not be bypassed and should block the disbursement,
         // making the bypass not be resolved.
         const restriction = await db.restriction.findOne({
-          select: { id: true },
+          select: { id: true, restrictionCode: true },
           where: {
             restrictionType: RestrictionType.Provincial,
             actionType: ArrayContains([BLOCK_DISBURSEMENT_ACTION_TYPE]),
@@ -1341,7 +1341,7 @@ describe(
         expect(
           mockedJob.containLogMessages([
             `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${restrictionBypass.studentRestriction.restriction.restrictionCode}(${restrictionBypass.studentRestriction.id}).`,
-            `Student has an active '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction and the disbursement calculation will not proceed.`,
+            `Student has effective restrictions: ${restriction.restrictionCode} and the disbursement calculation will not proceed.`,
           ]),
         ).toBe(true);
 
@@ -1709,7 +1709,7 @@ describe(
         );
         // Institution restriction that blocks disbursement.
         const restriction = await db.restriction.findOne({
-          select: { id: true },
+          select: { id: true, restrictionCode: true },
           where: {
             restrictionType: RestrictionType.Institution,
             actionType: ArrayContains([BLOCK_DISBURSEMENT_ACTION_TYPE]),
@@ -1745,8 +1745,7 @@ describe(
         // Assert log messages for the blocked disbursement.
         expect(
           mockedJob.containLogMessages([
-            `Institution has an effective '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction` +
-              ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+            `Institution has effective restrictions: ${restriction.restrictionCode} and the disbursement calculation will not proceed.`,
             "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
           ]),
         ).toBe(true);
@@ -1900,8 +1899,7 @@ describe(
         // Assert log messages for the blocked disbursement.
         expect(
           mockedJob.containLogMessages([
-            `Institution has an effective '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction` +
-              ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+            `Institution has effective restrictions: ${RestrictionCode.SUS} and the disbursement calculation will not proceed.`,
             "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
             `Program suspension blocking application notification created for disbursement ID ${disbursement.id}.`,
           ]),
@@ -2526,7 +2524,7 @@ describe(
             // Assert log messages for the blocked disbursement.
             expect(
               mockedJob.containLogMessages([
-                `Student has an active '${BLOCK_DISBURSEMENT_ACTION_TYPE}' restriction and the disbursement calculation will not proceed.`,
+                `Student has effective restrictions: ${restrictionCode} and the disbursement calculation will not proceed.`,
                 "The step determined that the calculation should be interrupted. This disbursement will not be part of the next e-Cert generation.",
               ]),
             ).toBe(true);

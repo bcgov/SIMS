@@ -76,7 +76,10 @@ import {
 import { ApiProcessError } from "../../types";
 import { ACTIVE_STUDENT_RESTRICTION } from "../../constants";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { AssessmentSequentialProcessingService } from "@sims/services";
+import {
+  AssessmentSequentialProcessingService,
+  RestrictionCode,
+} from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import {
   ECertFailedValidation,
@@ -1139,8 +1142,10 @@ export class ApplicationControllerService {
       (failedValidation) =>
         failedValidation.resultType ===
           ECertFailedValidation.HasStopDisbursementRestriction &&
-        failedValidation.additionalInfo.restrictionCodes.some((code) =>
-          AVIATION_RESTRICTION_CODES.includes(code),
+        failedValidation.additionalInfo.restrictions.some((restriction) =>
+          AVIATION_RESTRICTION_CODES.includes(
+            restriction.code as RestrictionCode,
+          ),
         ),
     );
     return { hasEffectiveAviationRestriction };
