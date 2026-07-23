@@ -72,6 +72,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         eCertFailedValidations: [],
         canAcceptAssessment: true,
         acceptAssessmentRestrictions: [],
+        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -136,6 +137,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -195,6 +197,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -265,6 +268,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -343,7 +347,8 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
-          acceptAssessmentRestrictions: [
+          acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [
             {
               code: restriction.restrictionCode,
               message:
@@ -420,6 +425,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
               "Your assessment cannot be accepted at this time because the institution associated with your application is currently under review.",
           },
         ],
+        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -468,6 +474,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         canAcceptAssessment: false,
         eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: false },
         acceptAssessmentRestrictions: [],
+        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -538,6 +545,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -613,6 +621,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: true,
           },
           acceptAssessmentRestrictions: [],
+          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
