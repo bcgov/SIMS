@@ -164,11 +164,11 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         studentSpouseContributionWeeks: null,
         interfaceNeed: null,
         dependantPostSecondaryQuantity: null,
-        totalChildcareDependants: null,
+        totalChildcareDependants: 0,
         parentalAssets: null,
         interfaceAdditionalTransportationAmount: null,
         totalDaycareCosts11YearsOrUnder: null,
-        totalChildCareCost: null,
+        totalChildCareCost: 0,
         federalFSCExempt: false,
         dependantInfantQuantity: null,
         returnTransportationCost: 0,
@@ -197,7 +197,7 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
         parentalContribution: 20000,
         interfacePolicyApplies: false,
         partnerStudyWeeks: null,
-        eligibleDependantsForCSGD: null,
+        eligibleDependantsForCSGD: 0,
       },
     });
   });

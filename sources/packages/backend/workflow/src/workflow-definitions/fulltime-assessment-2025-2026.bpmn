@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.43.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0ihicdz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.46.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="7a75e87a-6774-4e60-9a94-5dbbe3be143a">
   <bpmn:message id="Message_3q4oc02" name="Message_3q4oc02" />
   <bpmn:collaboration id="Collaboration_1cf99un">
     <bpmn:participant id="Participant_1mct69m" name="fulltime-assessment-2025-2026" processRef="fulltime-assessment-2025-2026" />
@@ -162,6 +162,14 @@ calculatedDataParent2EstimatedIncomeDeductions
 calculatedDataParent1TaxRate</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_013h80t" associationDirection="None" sourceRef="Activity_17g355h" targetRef="TextAnnotation_0acv2yp" />
+    <bpmn:group id="Group_0tzz616" />
+    <bpmn:textAnnotation id="TextAnnotation_01utjft">
+      <bpmn:text>Variables created in this scope that will be consumed in upcoming logic must have their creation ensured for all the flows.
+For instance:
+- calculatedDataTotalEligibleDependants
+- calculatedDataTotalChildcareDependants</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_139zks3" associationDirection="None" sourceRef="TextAnnotation_01utjft" targetRef="Group_0tzz616" />
   </bpmn:collaboration>
   <bpmn:process id="fulltime-assessment-2025-2026" isExecutable="true">
     <bpmn:laneSet id="LaneSet_0i75wz3">
@@ -2125,6 +2133,7 @@ If distance education/blended learning program or if married and claiming separa
           <zeebe:output source="=max(calculatedDataTotalEligibleParent1Dependants,calculatedDataTotalEligibleParent2Dependants)" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=max(calculatedDataTotalEligibleParent1ContributionDependants,calculatedDataTotalEligibleParent2ContributionDependants)" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ovh763</bpmn:incoming>
@@ -2136,6 +2145,7 @@ If distance education/blended learning program or if married and claiming separa
           <zeebe:output source="=if parent1DependentTable = null then 0 else&#10;  count(&#10;parent1DependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if parent1DependentTable = null then 1 else&#10;  count(&#10;parent1DependentTable[&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )+1" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1li9w29</bpmn:incoming>
@@ -2204,6 +2214,7 @@ If distance education/blended learning program or if married and claiming separa
           <zeebe:output source="=if appealDataParentDependentTable = null then 0 else&#10;  count(&#10;appealDataParentDependentTable[&#10;// 0-18 years of age: eligible.&#10;date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;// 19-22 years of age: post-sec must be Yes or Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and (item.attendingPostSecondarySchool = &#34;yes&#34; or item.declaredOnTaxes = &#34;yes&#34;)&#10;)&#10;// &#62; 22 years: eligible if Tax is Yes.&#10;or (&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.declaredOnTaxes = &#34;yes&#34;&#10;)&#10;]&#10;  )" target="calculatedDataTotalParentEligibleDependants" />
           <zeebe:output source="=// 19-22 years of age: post-sec must be Yes&#10;if appealDataParentDependentTable = null then 1 else&#10;  count(&#10;appealDataParentDependentTable[&#10;  date(item.dateOfBirth) &#60; (date(offeringStudyStartDate) - duration(&#34;P18Y&#34;))&#10;  and date(item.dateOfBirth) &#62;= (date(offeringStudyStartDate) - duration(&#34;P22Y&#34;))&#10;  and item.attendingPostSecondarySchool = &#34;yes&#34;&#10;]&#10;  )+1" target="calculatedDataTotalParentEligibleContributionDependants" />
           <zeebe:output source="=0" target="calculatedDataTotalEligibleDependants" />
+          <zeebe:output source="=0" target="calculatedDataTotalChildcareDependants" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1m2uh8r</bpmn:incoming>
@@ -4849,6 +4860,13 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
         <dc:Bounds x="1165" y="140" width="305" height="100" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0tzz616_di" bpmnElement="Group_0tzz616">
+        <dc:Bounds x="1740" y="255" width="95" height="423" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hysyo3" bpmnElement="TextAnnotation_01utjft">
+        <dc:Bounds x="1700" y="750" width="305" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1cey5l7_di" bpmnElement="Association_1cey5l7">
         <di:waypoint x="7617" y="1728" />
         <di:waypoint x="7637" y="1845" />
@@ -4924,6 +4942,10 @@ The total parent deductions are rounded half up (5.5 = 6) to align with our whol
       <bpmndi:BPMNEdge id="Association_013h80t_di" bpmnElement="Association_013h80t">
         <di:waypoint x="1261" y="351" />
         <di:waypoint x="1235" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_139zks3_di" bpmnElement="Association_139zks3">
+        <di:waypoint x="1843" y="750" />
+        <di:waypoint x="1817" y="678" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
