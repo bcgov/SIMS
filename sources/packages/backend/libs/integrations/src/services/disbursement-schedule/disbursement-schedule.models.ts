@@ -589,7 +589,7 @@ export enum ECertFailedValidation {
   ActiveTransferOrWithdraw = "ActiveTransferOrWithdraw",
 }
 
-interface StopDisbursementRestrictionValidationResult {
+export interface StopDisbursementRestrictionValidationResult {
   resultType:
     | ECertFailedValidation.HasStopDisbursementRestriction
     | ECertFailedValidation.HasStopDisbursementInstitutionRestriction;
