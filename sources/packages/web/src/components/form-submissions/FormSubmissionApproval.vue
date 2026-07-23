@@ -397,13 +397,8 @@ export default defineComponent({
         if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
         }
-        // Update the form submission values used by the UI.
-        formSubmission.value = {
-          id: submission.id,
-          formCategory: submission.formCategory,
-          status: submission.status,
-          canAssessFinalDecision: !!submission.canAssessFinalDecision,
-        };
+        // Reload the form submission status.
+        formSubmission.value.status = submission.status;
         const [reloadedSubmissionItem] = submission.submissionItems;
         assignItemDecisionProperties(
           reloadedSubmissionItem,
