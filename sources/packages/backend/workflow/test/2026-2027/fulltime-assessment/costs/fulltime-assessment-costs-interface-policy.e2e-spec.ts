@@ -7,7 +7,7 @@ import {
 import { PROGRAM_YEAR } from "../../constants/program-year.constants";
 
 describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface-policy.`, () => {
-  it("Should show interface policy applies when a student declares income assistance of $1500 or more.", async () => {
+  it("Should calculate interface policy applies when a student declares income assistance of $1500 or more.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -22,12 +22,33 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(true);
+    // Assert updated variables from the interface policy calculations.
     expect(
-      calculatedAssessment.variables.calculatedDataInterfaceNeed,
-    ).toBeGreaterThanOrEqual(0);
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
+    ).toBe(22500);
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
+    ).toBe(0);
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceTransportationAmount,
+    ).toBe(368);
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceAdditionalTransportationAmount,
+    ).toBe(0);
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      22868,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
+    ).toBe(22868);
+    expect(
+      calculatedAssessment.variables.calculatedDataFederalAssessedNeed,
+    ).toBe(22868);
   });
 
-  it("Should show interface policy applies when a married student who declares less than $1500 income assistance and has a partner that will receive BCEA income assistance of $1500 or more.", async () => {
+  it("Should calculate interface policy applies when a married student who declares less than $1500 income assistance and has a partner that will receive BCEA income assistance of $1500 or more.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -51,12 +72,33 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
     ).toBe(true);
+    // Assert updated variables from the interface policy calculations.
     expect(
-      calculatedAssessment.variables.calculatedDataInterfaceNeed,
-    ).toBeGreaterThanOrEqual(0);
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
+    ).toBe(22500);
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
+    ).toBe(0);
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceTransportationAmount,
+    ).toBe(368);
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceAdditionalTransportationAmount,
+    ).toBe(0);
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      22868,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
+    ).toBe(22868);
+    expect(
+      calculatedAssessment.variables.calculatedDataFederalAssessedNeed,
+    ).toBe(22868);
   });
 
-  it("Should show interface policy does not apply when a student declares income assistance of less than $1500.", async () => {
+  it("Should calculate interface policy does not apply when a student declares income assistance of less than $1500.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -76,7 +118,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     );
   });
 
-  it("Should show interface policy does not apply when a student declares no income assistance amount.", async () => {
+  it("Should calculate interface policy does not apply when a student declares no income assistance amount.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -95,7 +137,7 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     );
   });
 
-  it("Should show interface policy does not apply when a married student declares income assistance of less than $1500 and has a partner that will receive BCEA income assistance of less than $1500.", async () => {
+  it("Should calculate interface policy does not apply when a married student declares income assistance of less than $1500 and has a partner that will receive BCEA income assistance of less than $1500.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
@@ -177,6 +219,56 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
     expect(
       calculatedAssessment.variables.calculatedDataFederalAssessedNeed,
     ).toBe(calculatedAssessment.variables.calculatedDataInterfaceNeed);
+  });
+
+  it("Should calculate interface policy applies for a single dependant student when the student declares income assistance of $1500 or more.", async () => {
+    // Arrange
+    const assessmentConsolidatedData =
+      createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
+    assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1500;
+    assessmentConsolidatedData.studentDataRelationshipStatus = "single";
+    assessmentConsolidatedData.studentDataDependantstatus = "dependant";
+    assessmentConsolidatedData.studentDataNumberOfParents = 1;
+    assessmentConsolidatedData.studentDataParents = [
+      {
+        parentIsAbleToReport: YesNoOptions.Yes,
+      },
+    ];
+    assessmentConsolidatedData.parent1TotalIncome = 40000;
+
+    // Act
+    const calculatedAssessment = await executeFullTimeAssessmentForProgramYear(
+      PROGRAM_YEAR,
+      assessmentConsolidatedData,
+    );
+    // Assert
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfacePolicyApplies,
+    ).toBe(true);
+    // Assert updated variables from the interface policy calculations.
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceEducationCosts,
+    ).toBe(22500);
+    expect(
+      calculatedAssessment.variables.calculatedDataInterfaceChildCareCosts,
+    ).toBe(0);
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceTransportationAmount,
+    ).toBe(368);
+    expect(
+      calculatedAssessment.variables
+        .calculatedDataInterfaceAdditionalTransportationAmount,
+    ).toBe(0);
+    expect(calculatedAssessment.variables.calculatedDataInterfaceNeed).toBe(
+      22868,
+    );
+    expect(
+      calculatedAssessment.variables.calculatedDataProvincialAssessedNeed,
+    ).toBe(22868);
+    expect(
+      calculatedAssessment.variables.calculatedDataFederalAssessedNeed,
+    ).toBe(22868);
   });
 
   afterAll(async () => {
