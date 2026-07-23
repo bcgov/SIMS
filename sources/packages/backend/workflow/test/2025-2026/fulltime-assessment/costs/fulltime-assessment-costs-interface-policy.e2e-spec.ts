@@ -144,14 +144,15 @@ describe(`E2E Test Workflow full-time-assessment-${PROGRAM_YEAR}-costs-interface
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
     assessmentConsolidatedData.studentDataIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataRelationshipStatus = "married";
-    assessmentConsolidatedData.partner1HasEmploymentInsuranceBenefits =
+    assessmentConsolidatedData.studentDataIsYourPartnerAbleToReport = false;
+    assessmentConsolidatedData.studentDataPartnerHasEmploymentInsuranceBenefits =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasTotalIncomeAssistance =
+    assessmentConsolidatedData.studentDataPartnerHasTotalIncomeAssistance =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1HasFedralProvincialPDReceipt =
+    assessmentConsolidatedData.studentDataPartnerHasFedralProvincialPDReceipt =
       YesNoOptions.No;
-    assessmentConsolidatedData.partner1TotalIncome = 0;
-    assessmentConsolidatedData.partner1BCEAIncomeAssistanceAmount = 1000;
+    assessmentConsolidatedData.studentDataEstimatedSpouseIncome = 0;
+    assessmentConsolidatedData.studentDataPartnerBCEAIncomeAssistanceAmount = 1000;
     assessmentConsolidatedData.studentDataGovernmentFundingCosts = 100;
 
     // Act
