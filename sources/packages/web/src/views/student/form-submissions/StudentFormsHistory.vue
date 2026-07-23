@@ -1,6 +1,9 @@
 <template>
   <v-card class="mb-4 p-4">
-    <form-submission-history @go-to-submission="goToSubmission" />
+    <form-submission-history
+      :can-allow-cancel-submission="true"
+      @go-to-submission="goToSubmission"
+    />
   </v-card>
 </template>
 <script lang="ts">

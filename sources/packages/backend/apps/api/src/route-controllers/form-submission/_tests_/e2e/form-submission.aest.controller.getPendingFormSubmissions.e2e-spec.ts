@@ -95,6 +95,16 @@ describe("FormSubmissionAESTController(e2e)-getPendingFormSubmissions", () => {
           },
         },
       ),
+      saveFakeFormSubmission(
+        db,
+        { student: student2 },
+        {
+          initialValues: {
+            formCategory: FormCategory.StudentAppeal,
+            submissionStatus: FormSubmissionStatus.Cancelled,
+          },
+        },
+      ),
     ]);
     // Authorize all dynamic forms linked to the created submissions.
     const dynamicFormConfigurations = [

@@ -11,6 +11,7 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
+  FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_ITEM_NOT_FOUND,
   FORM_SUBMISSION_ITEM_OUTDATED,
   FORM_SUBMISSION_NOT_FOUND,
@@ -168,6 +169,7 @@ export class FormSubmissionAESTController extends BaseController {
           case FORM_SUBMISSION_ITEM_NOT_FOUND:
             throw new NotFoundException(error.message);
           case FORM_SUBMISSION_ITEM_OUTDATED:
+          case FORM_SUBMISSION_CANCELLED:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

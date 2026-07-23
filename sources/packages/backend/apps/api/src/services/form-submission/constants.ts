@@ -52,7 +52,8 @@ export const FORM_SUBMISSION_DECISION_PENDING =
  */
 export const FORM_SUBMISSION_ITEM_NOT_FOUND = "FORM_SUBMISSION_ITEM_NOT_FOUND";
 /**
- * A decision cannot be saved on a form submission item when its parent submission is not in pending status.
+ * A form submission is not in pending status and any final actions(such as completion or cancellation)
+ * or updates(decisions on the form submission items) cannot be performed on it.
  */
 export const FORM_SUBMISSION_NOT_PENDING = "FORM_SUBMISSION_NOT_PENDING";
 /**
@@ -83,3 +84,12 @@ export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_NOT_FOUND =
  */
 export const FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED =
   "FORM_SUBMISSION_SUPPLEMENTARY_DATA_APPLICATION_REQUIRED";
+/**
+ * The form submission is cancelled and no further actions can be performed on it.
+ */
+export const FORM_SUBMISSION_CANCELLED = "FORM_SUBMISSION_CANCELLED";
+/**
+ * The form submission has one or more form submission items with ministry decision(s).
+ */
+export const FORM_SUBMISSION_WITH_MINISTRY_DECISION =
+  "FORM_SUBMISSION_WITH_MINISTRY_DECISION";

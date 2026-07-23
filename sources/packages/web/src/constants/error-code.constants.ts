@@ -201,6 +201,23 @@ export const FORM_SUBMISSION_PENDING_DECISION =
 export const FORM_SUBMISSION_ITEM_OUTDATED = "FORM_SUBMISSION_ITEM_OUTDATED";
 
 /**
+ * The form submission is cancelled and no further actions can be performed on it.
+ */
+export const FORM_SUBMISSION_CANCELLED = "FORM_SUBMISSION_CANCELLED";
+
+/**
+ * A form submission is not in pending status and any final actions(such as completion or cancellation)
+ * or updates(decisions on the form submission items) cannot be performed on it.
+ */
+export const FORM_SUBMISSION_NOT_PENDING = "FORM_SUBMISSION_NOT_PENDING";
+
+/**
+ * The form submission has one or more form submission items with ministry decision(s).
+ */
+export const FORM_SUBMISSION_WITH_MINISTRY_DECISION =
+  "FORM_SUBMISSION_WITH_MINISTRY_DECISION";
+
+/**
  * An assessment cannot be accepted due to an institution restriction.
  */
 export const ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION =

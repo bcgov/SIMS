@@ -107,8 +107,14 @@ export class FormSubmissionControllerService {
         { atLeastOneAuthorized: true },
       );
     }
+    // Check if any of the submission items have a decision made, which would prevent the submission from being cancelled.
+    const hasAnySubmissionItemWithDecision =
+      submission.formSubmissionItems.some((item) => !!item.currentDecision?.id);
     return {
       canViewFormSubmittedData,
+      canCancelSubmission:
+        submission.submissionStatus === FormSubmissionStatus.Pending &&
+        !hasAnySubmissionItemWithDecision,
       id: submission.id,
       formCategory: submission.formCategory,
       status: submission.submissionStatus,
@@ -116,6 +122,7 @@ export class FormSubmissionControllerService {
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
       assessedDate: submission.assessedDate,
+      statusUpdatedDate: submission.submissionStatusUpdatedOn,
       submissionItems: submission.formSubmissionItems.map((item) => ({
         id: item.id,
         formType: item.dynamicFormConfiguration.formType,
