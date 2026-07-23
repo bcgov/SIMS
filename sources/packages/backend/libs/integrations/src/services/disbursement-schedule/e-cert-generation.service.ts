@@ -103,6 +103,7 @@ export class ECertGenerationService {
         "restrictionInstitution.restrictionCode",
         "restrictionInstitution.actionType",
         "restrictionInstitution.actionEffectiveConditions",
+        "restrictionInstitution.metadata",
         "student.id",
         "student.disabilityStatus",
         "student.modifiedIndependentStatus",

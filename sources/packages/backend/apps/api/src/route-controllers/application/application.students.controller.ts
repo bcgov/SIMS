@@ -73,6 +73,10 @@ import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { ConfirmationOfEnrollmentService } from "@sims/services";
 import { ConfigService } from "@sims/utilities/config";
 import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
+import {
+  ECertFailedValidation,
+  StopDisbursementRestrictionValidationResult,
+} from "@sims/integrations/services";
 
 @AllowAuthorizedParty(AuthorizedParties.student)
 @RequiresStudentAccount()
@@ -186,6 +190,23 @@ export class ApplicationStudentsController extends BaseController {
         ),
       acceptAssessmentRestrictions:
         acceptAssessmentEvaluationResult.acceptAssessmentRestrictions,
+      stopDisbursementInstitutionRestrictions:
+        acceptAssessmentEvaluationResult.eCertFailedValidations
+          .filter(
+            (
+              failedValidation,
+            ): failedValidation is StopDisbursementRestrictionValidationResult =>
+              failedValidation.resultType ===
+              ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+          )
+          .flatMap((failedValidation) =>
+            failedValidation.additionalInfo.restrictions.map(
+              (restriction) => ({
+                code: restriction.code,
+                message: restriction.messages?.studentAcceptAssessment,
+              }),
+            ),
+          ),
     };
   }
 

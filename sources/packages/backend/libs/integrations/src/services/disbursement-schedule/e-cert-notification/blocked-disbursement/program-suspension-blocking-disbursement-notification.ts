@@ -41,8 +41,8 @@ export class ProgramSuspensionBlockingDisbursementNotification extends ECertNoti
         (failedValidation) =>
           failedValidation.resultType ===
             ECertFailedValidation.HasStopDisbursementInstitutionRestriction &&
-          failedValidation.additionalInfo.restrictionCodes.includes(
-            RestrictionCode.SUS,
+          failedValidation.additionalInfo.restrictions.some(
+            (restriction) => restriction.code === RestrictionCode.SUS,
           ),
       );
     if (!hasBlockingSuspensionRestriction) {

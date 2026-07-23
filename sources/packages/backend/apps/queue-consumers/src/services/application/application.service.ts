@@ -514,8 +514,8 @@ export class ApplicationService {
               (failedValidation) =>
                 failedValidation.resultType ===
                   ECertFailedValidation.HasStopDisbursementInstitutionRestriction &&
-                failedValidation.additionalInfo.restrictionCodes.includes(
-                  RestrictionCode.SUS,
+                failedValidation.additionalInfo.restrictions.some(
+                  (restriction) => restriction.code === RestrictionCode.SUS,
                 ),
             ),
         )

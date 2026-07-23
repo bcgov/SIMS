@@ -6,7 +6,6 @@ import {
 } from "@sims/sims-db";
 import { ProcessSummary } from "@sims/utilities/logger";
 import {
-  ActiveRestriction,
   ECertFailedValidation,
   ECertFailedValidationResult,
   EligibleECertDisbursement,
@@ -14,6 +13,7 @@ import {
 import {
   getRestrictionsByActionType,
   logActiveRestrictionsBypasses,
+  logEffectiveRestrictions,
 } from "./e-cert-steps-utils";
 import { RestrictedParty } from "@sims/services";
 
@@ -134,7 +134,7 @@ export abstract class ValidateDisbursementBase {
         );
       }
       if (studentRestrictions.length) {
-        this.logEffectiveRestrictions(
+        logEffectiveRestrictions(
           RestrictedParty.Student,
           studentRestrictions,
           log,
@@ -143,14 +143,15 @@ export abstract class ValidateDisbursementBase {
         validationResults.push({
           resultType: ECertFailedValidation.HasStopDisbursementRestriction,
           additionalInfo: {
-            restrictionCodes: studentRestrictions.map(
-              (restriction) => restriction.code,
-            ),
+            restrictions: studentRestrictions.map((restriction) => ({
+              code: restriction.code,
+              messages: restriction.metadata?.messages,
+            })),
           },
         });
       }
       if (institutionRestrictions.length) {
-        this.logEffectiveRestrictions(
+        logEffectiveRestrictions(
           RestrictedParty.Institution,
           institutionRestrictions,
           log,
@@ -160,9 +161,10 @@ export abstract class ValidateDisbursementBase {
           resultType:
             ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
           additionalInfo: {
-            restrictionCodes: institutionRestrictions.map(
-              (restriction) => restriction.code,
-            ),
+            restrictions: institutionRestrictions.map((restriction) => ({
+              code: restriction.code,
+              messages: restriction.metadata?.messages,
+            })),
           },
         });
       }
@@ -385,26 +387,6 @@ export abstract class ValidateDisbursementBase {
         resultType: ECertFailedValidation.ActiveTransferOrWithdraw,
       });
     }
-  }
-
-  /**
-   * Logs the effective restrictions blocking the disbursement in a standard format.
-   * @param restrictedParty restricted party that has the effective restrictions.
-   * @param effectiveRestrictions effective restrictions blocking the disbursement.
-   * @param log cumulative log summary.
-   */
-  private logEffectiveRestrictions(
-    restrictedParty: RestrictedParty,
-    effectiveRestrictions: ActiveRestriction[],
-    log: ProcessSummary,
-  ): void {
-    const restrictionCodes = effectiveRestrictions
-      .map((restriction) => restriction.code)
-      .sort((a, b) => a.localeCompare(b))
-      .join(", ");
-    log.info(
-      `${restrictedParty} has effective restrictions: ${restrictionCodes} and the disbursement calculation will not proceed.`,
-    );
   }
 
   /**

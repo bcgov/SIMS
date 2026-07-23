@@ -1,4 +1,8 @@
-import { RestrictedParty, RestrictionCode } from "@sims/services";
+import {
+  StopDisbursementRestriction,
+  RestrictedParty,
+  RestrictionCode,
+} from "@sims/services";
 import {
   ActionEffectiveCondition,
   ApplicationRestrictionBypass,
@@ -13,6 +17,7 @@ import {
   ModifiedIndependentStatus,
   RestrictionActionType,
   RestrictionBypassBehaviors,
+  RestrictionMetadata,
   StudentRestriction,
   StudentScholasticStanding,
   StudentScholasticStandingChangeType,
@@ -182,6 +187,10 @@ abstract class BaseActiveRestriction {
    * Action effective conditions associated with the restriction.
    */
   actionEffectiveConditions?: ActionEffectiveCondition[];
+  /**
+   * Restriction metadata.
+   */
+  metadata?: RestrictionMetadata;
 }
 
 /**
@@ -517,6 +526,7 @@ export function mapInstitutionActiveRestrictions(
       activeRestriction.location = institutionRestriction.location;
       activeRestriction.actionEffectiveConditions =
         institutionRestriction.restriction.actionEffectiveConditions;
+      activeRestriction.metadata = institutionRestriction.restriction.metadata;
       return activeRestriction;
     },
   );
@@ -583,7 +593,7 @@ interface StopDisbursementRestrictionValidationResult {
   resultType:
     | ECertFailedValidation.HasStopDisbursementRestriction
     | ECertFailedValidation.HasStopDisbursementInstitutionRestriction;
-  additionalInfo: { restrictionCodes: RestrictionCode[] };
+  additionalInfo: { restrictions: StopDisbursementRestriction[] };
 }
 
 interface OtherECertFailedValidationResult {

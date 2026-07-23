@@ -120,7 +120,7 @@ import { ModalDialog, useSnackBar } from "@/composables";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
-  AcceptAssessmentRestrictionAPIOutDTO,
+  ApplicationInstitutionRestrictionAPIOutDTO,
   AssessmentNOAAPIOutDTO,
 } from "@/services/http/dto";
 import { computed, defineComponent, onMounted, ref } from "vue";
@@ -233,12 +233,18 @@ export default defineComponent({
     /**
      * Get unique institution restriction messages to be displayed to the student.
      * If a restriction does not have a message, a default message will be used instead.
-     * @param restrictions list of institution restrictions to be evaluated.
+     * @param acceptAssessmentRestrictions restrictions preventing assessment acceptance.
+     * @param stopDisbursementRestrictions restrictions blocking disbursements.
      * @returns list of unique messages to be displayed to the student.
      */
     const getInstitutionRestrictionMessages = (
-      restrictions: AcceptAssessmentRestrictionAPIOutDTO[],
+      acceptAssessmentRestrictions: ApplicationInstitutionRestrictionAPIOutDTO[],
+      stopDisbursementRestrictions: ApplicationInstitutionRestrictionAPIOutDTO[],
     ) => {
+      const restrictions = [
+        ...acceptAssessmentRestrictions,
+        ...stopDisbursementRestrictions,
+      ];
       const messages = restrictions.map(
         (restriction) =>
           restriction.message || INSTITUTION_RESTRICTED_DEFAULT_MESSAGE,
@@ -279,6 +285,7 @@ export default defineComponent({
             ?.hasEffectiveAviationRestriction ?? false,
         institutionRestrictionMessages: getInstitutionRestrictionMessages(
           warnings.acceptAssessmentRestrictions,
+          warnings.stopDisbursementInstitutionRestrictions,
         ),
       };
     });

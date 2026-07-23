@@ -217,8 +217,6 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
             restrictionActions: [
               RestrictionActionType.StopPartTimeApplicationEligibility,
               RestrictionActionType.StopFullTimeApplicationEligibility,
-              RestrictionActionType.StopPartTimeAcceptAssessment,
-              RestrictionActionType.StopFullTimeAcceptAssessment,
               RestrictionActionType.StopPartTimeDisbursement,
               RestrictionActionType.StopFullTimeDisbursement,
             ],

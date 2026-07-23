@@ -1,3 +1,5 @@
+import { RestrictionMessages } from "@sims/sims-db";
+
 /**
  * Restriction codes that are used in applications (API, Workers, Queue-Consumers).
  * * The Restriction table will have more restriction codes other than below mentioned codes.
@@ -103,6 +105,14 @@ export enum RestrictedParty {
 export interface AcceptAssessmentRestriction {
   code: string;
   message?: string;
+}
+
+/**
+ * Restriction information blocking a student from receiving a disbursement.
+ */
+export interface StopDisbursementRestriction {
+  code: string;
+  messages?: RestrictionMessages;
 }
 
 /**

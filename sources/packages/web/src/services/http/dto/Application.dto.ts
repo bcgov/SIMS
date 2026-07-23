@@ -230,9 +230,9 @@ export interface ApplicationAssessmentStatusDetailsAPIOutDTO {
 }
 
 /**
- * Restriction information for accepting an assessment.
+ * Institution restriction information for an application.
  */
-export interface AcceptAssessmentRestrictionAPIOutDTO {
+export interface ApplicationInstitutionRestrictionAPIOutDTO {
   /**
    * Restriction code.
    */
@@ -247,7 +247,8 @@ export interface ApplicationWarningsAPIOutDTO {
   eCertFailedValidations: ECertFailedValidation[];
   canAcceptAssessment: boolean;
   eCertFailedValidationsInfo?: ECertFailedValidationsInfoAPIOutDTO;
-  acceptAssessmentRestrictions: AcceptAssessmentRestrictionAPIOutDTO[];
+  acceptAssessmentRestrictions: ApplicationInstitutionRestrictionAPIOutDTO[];
+  stopDisbursementInstitutionRestrictions: ApplicationInstitutionRestrictionAPIOutDTO[];
 }
 
 export interface ApplicationSupportingUsersAPIOutDTO {

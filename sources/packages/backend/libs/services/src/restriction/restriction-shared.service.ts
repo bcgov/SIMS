@@ -118,7 +118,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       });
     }
     if (options?.actionTypes?.length) {
-      query.andWhere("restriction.actionType && :actionTypes", {
+      query.andWhere("restriction.actionType @> :actionTypes", {
         actionTypes: options.actionTypes,
       });
     }
@@ -195,23 +195,16 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       },
       where: { id: applicationId },
     });
-    // Both Stop Accept Assessment and Stop Disbursement restrictions block accept assessment.
-    const actionTypes =
+    const action =
       application.offeringIntensity === OfferingIntensity.fullTime
-        ? [
-            RestrictionActionType.StopFullTimeAcceptAssessment,
-            RestrictionActionType.StopFullTimeDisbursement,
-          ]
-        : [
-            RestrictionActionType.StopPartTimeAcceptAssessment,
-            RestrictionActionType.StopPartTimeDisbursement,
-          ];
+        ? RestrictionActionType.StopFullTimeAcceptAssessment
+        : RestrictionActionType.StopPartTimeAcceptAssessment;
     const offering = application.currentAssessment.offering;
     const effectiveInstitutionRestrictions =
       await this.getEffectiveInstitutionRestrictions(
         offering.institutionLocation.institution.id,
         offering.institutionLocation.id,
-        { programId: offering.educationProgram.id, actionTypes },
+        { programId: offering.educationProgram.id, actionTypes: [action] },
       );
     if (effectiveInstitutionRestrictions.length) {
       return {
