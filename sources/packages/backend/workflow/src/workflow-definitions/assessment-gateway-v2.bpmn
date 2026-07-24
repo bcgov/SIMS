@@ -109,9 +109,9 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>assessment-process-type-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>identifiable-parents-creation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_069nn9n</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>send-former-youth-in-care-email-task</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>former-youth-in-care-join-gateway</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>former-youth-in-care-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>send-former-youth-in-care-email-task</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateCatchEvent id="verify-assessment-calculation-timer">
@@ -936,6 +936,16 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="associate-workflow-instance-task" />
     <bpmn:sequenceFlow id="Flow_1wrj7fh" sourceRef="associate-workflow-instance-task" targetRef="load-assessment-data-submit-or-reassessment-subprocess" />
     <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="assessment-process-type-gateway" />
+    <bpmn:exclusiveGateway id="former-youth-in-care-join-gateway" default="Flow_1gjp61i">
+      <bpmn:incoming>Flow_10xaz6e</bpmn:incoming>
+      <bpmn:incoming>former-youth-in-care-email-sent-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gjp61i</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="former-youth-in-care-gateway" name="Former youth in care?" default="Flow_10xaz6e">
+      <bpmn:incoming>assessment-flow</bpmn:incoming>
+      <bpmn:outgoing>former-youth-in-care-send-flow</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10xaz6e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="send-former-youth-in-care-email-task" name="Send former youth in care email">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="send-email-notification" />
@@ -950,16 +960,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>former-youth-in-care-send-flow</bpmn:incoming>
       <bpmn:outgoing>former-youth-in-care-email-sent-flow</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="former-youth-in-care-join-gateway" default="Flow_1gjp61i">
-      <bpmn:incoming>Flow_10xaz6e</bpmn:incoming>
-      <bpmn:incoming>former-youth-in-care-email-sent-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_1gjp61i</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="former-youth-in-care-gateway" name="Former youth in care?" default="Flow_10xaz6e">
-      <bpmn:incoming>assessment-flow</bpmn:incoming>
-      <bpmn:outgoing>former-youth-in-care-send-flow</bpmn:outgoing>
-      <bpmn:outgoing>Flow_10xaz6e</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -1001,12 +1001,12 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="152" y="85" width="5058" height="1530" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1bfd2e9_di" bpmnElement="Lane_1bfd2e9" isHorizontal="true">
-        <dc:Bounds x="182" y="1155" width="5028" height="460" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
         <dc:Bounds x="182" y="85" width="5028" height="1070" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1bfd2e9_di" bpmnElement="Lane_1bfd2e9" isHorizontal="true">
+        <dc:Bounds x="182" y="1155" width="5028" height="460" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="verify-assessment-calculation-timer">
@@ -1266,17 +1266,8 @@ Note: the workflow process should continue its execution as a regular reassessme
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="send-former-youth-in-care-email-task_di" bpmnElement="send-former-youth-in-care-email-task">
-        <dc:Bounds x="870" y="200" width="100" height="80" />
+        <dc:Bounds x="860" y="384" width="100" height="80" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="former-youth-in-care-join-gateway_di" bpmnElement="former-youth-in-care-join-gateway" isMarkerVisible="true">
-        <dc:Bounds x="965" y="322" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="former-youth-in-care-gateway_di" bpmnElement="former-youth-in-care-gateway" isMarkerVisible="true">
-        <dc:Bounds x="795" y="322" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="781" y="381.5" width="78" height="27" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="2370" y="795" width="580" height="200" />
@@ -1317,6 +1308,15 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNShape id="Activity_069nn9n_di" bpmnElement="Activity_069nn9n" isExpanded="false">
         <dc:Bounds x="1290" y="307" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="former-youth-in-care-join-gateway_di" bpmnElement="former-youth-in-care-join-gateway" isMarkerVisible="true">
+        <dc:Bounds x="965" y="322" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="former-youth-in-care-gateway_di" bpmnElement="former-youth-in-care-gateway" isMarkerVisible="true">
+        <dc:Bounds x="795" y="322" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="781" y="284.5" width="78" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="3005" y="1485" />
@@ -1788,18 +1788,18 @@ Note: the workflow process should continue its execution as a regular reassessme
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xqg8e1_di" bpmnElement="former-youth-in-care-send-flow">
-        <di:waypoint x="820" y="322" />
-        <di:waypoint x="820" y="240" />
-        <di:waypoint x="870" y="240" />
+        <di:waypoint x="820" y="372" />
+        <di:waypoint x="820" y="424" />
+        <di:waypoint x="860" y="424" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10xaz6e_di" bpmnElement="Flow_10xaz6e">
         <di:waypoint x="845" y="347" />
         <di:waypoint x="965" y="347" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ozpwlc_di" bpmnElement="former-youth-in-care-email-sent-flow">
-        <di:waypoint x="970" y="240" />
-        <di:waypoint x="990" y="240" />
-        <di:waypoint x="990" y="322" />
+        <di:waypoint x="960" y="424" />
+        <di:waypoint x="990" y="424" />
+        <di:waypoint x="990" y="372" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ef3map_di" bpmnElement="Flow_1ef3map">
         <di:waypoint x="288" y="348" />
@@ -1812,26 +1812,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
         <di:waypoint x="570" y="347" />
         <di:waypoint x="655" y="347" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
-        <di:waypoint x="3510" y="876" />
-        <di:waypoint x="3473" y="1010" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="2770" y="1377" />
-        <di:waypoint x="2358" y="1476" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
-        <di:waypoint x="1740" y="800" />
-        <di:waypoint x="2322" y="542" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
-        <di:waypoint x="3514" y="590" />
-        <di:waypoint x="3470" y="575" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="3482" y="690" />
-        <di:waypoint x="3493" y="697" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0vf0jbr" bpmnElement="Group_19tqt3y">
         <dc:Bounds x="1860" y="340" width="730" height="170" />
@@ -1877,6 +1857,26 @@ Note: the workflow process should continue its execution as a regular reassessme
         <dc:Bounds x="1500" y="800" width="300" height="127" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
+        <di:waypoint x="3510" y="876" />
+        <di:waypoint x="3473" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="2770" y="1377" />
+        <di:waypoint x="2358" y="1476" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
+        <di:waypoint x="3514" y="590" />
+        <di:waypoint x="3470" y="575" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="3482" y="690" />
+        <di:waypoint x="3493" y="697" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
+        <di:waypoint x="1740" y="800" />
+        <di:waypoint x="2322" y="542" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1tu9mrb">
