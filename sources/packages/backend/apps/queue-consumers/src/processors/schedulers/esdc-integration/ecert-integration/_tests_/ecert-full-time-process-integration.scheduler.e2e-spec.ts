@@ -2441,8 +2441,6 @@ describe(
         await saveFakeInstitutionRestriction(db, {
           restriction: isrRestriction,
           institution,
-          program,
-          location,
         });
         // Queued job.
         const mockedJob = mockBullJob<void>();

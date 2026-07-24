@@ -21,6 +21,7 @@ import {
   saveFakeApplication,
   RestrictionCode,
   saveFakeInstitutionRestriction,
+  saveFakeApplicationRestrictionBypass,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
@@ -72,7 +73,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         eCertFailedValidations: [],
         canAcceptAssessment: true,
         acceptAssessmentRestrictions: [],
-        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -137,7 +137,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
-          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -197,7 +196,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
-          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -268,13 +266,12 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
-          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
 
   it(
-    "Should return a failed ecert validations array with stop disbursement institution restriction and prevent the assessment acceptance when" +
+    "Should return a failed ecert validations array with stop disbursement institution restriction and accept assessment restrictions when" +
       " there is an effective restriction on institution account for the application location and program" +
       " and the offering intensity is part-time.",
     async () => {
@@ -309,9 +306,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         },
       );
 
-      // Institution ISR restriction (which contains Stop part-time disbursement action type).
+      // Institution restriction.
       const restriction = await db.restriction.findOne({
-        select: { id: true, restrictionCode: true },
+        select: { id: true },
         where: {
           restrictionType: RestrictionType.Institution,
           restrictionCode: RestrictionCode.ISR,
@@ -347,10 +344,9 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
           eCertFailedValidationsInfo: {
             hasEffectiveAviationRestriction: false,
           },
-          acceptAssessmentRestrictions: [],
-          stopDisbursementInstitutionRestrictions: [
+          acceptAssessmentRestrictions: [
             {
-              code: restriction.restrictionCode,
+              code: RestrictionCode.ISR,
               message:
                 "Your assessment cannot be accepted at this time because the institution associated with your application is currently suspended.",
             },
@@ -359,7 +355,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     },
   );
 
-  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective IUR restriction on the institution.", async () => {
+  it("Should return an institution restriction and prevent the assessment acceptance when there is an effective restriction on institution with an action to Stop accept assessment.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const msfaaNumber = createFakeMSFAANumber(
@@ -390,7 +386,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         },
       },
     );
-    // Institution IUR restriction.
+    // Institution restriction with action RestrictionActionType.StopFullTimeAcceptAssessment.
     const restriction = await db.restriction.findOne({
       select: { id: true, restrictionCode: true },
       where: {
@@ -425,7 +421,180 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
               "Your assessment cannot be accepted at this time because the institution associated with your application is currently under review.",
           },
         ],
-        stopDisbursementInstitutionRestrictions: [],
+      });
+  });
+
+  it("Should not return an institution restriction and allow the assessment acceptance when there is an ISR restriction on the institution with a bypass.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const msfaaNumber = createFakeMSFAANumber(
+      {
+        student,
+      },
+      {
+        msfaaState: MSFAAStates.Signed,
+        msfaaInitialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student, msfaaNumber },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+    // Institution ISR restriction.
+    const isrRestriction = await db.restriction.findOne({
+      select: { id: true, restrictionCode: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.ISR,
+      },
+    });
+    const institution =
+      application.currentAssessment.offering.institutionLocation.institution;
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      restriction: isrRestriction,
+      institution,
+    });
+    // Create a bypass for the restriction.
+    await saveFakeApplicationRestrictionBypass(db, {
+      application,
+      institutionRestriction,
+    });
+
+    const endpoint = `/students/application/${application.id}/warnings`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        canAcceptAssessment: true,
+        eCertFailedValidations: [],
+        acceptAssessmentRestrictions: [],
+      });
+  });
+
+  it("Should return all institution restrictions and prevent the assessment acceptance when there are multiple effective institution restrictions preventing accept assessment.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const msfaaNumber = createFakeMSFAANumber(
+      {
+        student,
+      },
+      {
+        msfaaState: MSFAAStates.Signed,
+        msfaaInitialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      },
+    );
+    await db.msfaaNumber.save(msfaaNumber);
+
+    // Mock user services to return the saved student.
+    await mockUserLoginInfo(appModule, student);
+
+    const application = await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student, msfaaNumber },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+        offeringIntensity: OfferingIntensity.fullTime,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      },
+    );
+    // Institution restrictions.
+    const isrRestriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.ISR,
+      },
+    });
+    const iurRestriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.IUR,
+      },
+    });
+    const susRestriction = await db.restriction.findOne({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.SUS,
+      },
+    });
+    const institution =
+      application.currentAssessment.offering.institutionLocation.institution;
+    await saveFakeInstitutionRestriction(db, {
+      restriction: isrRestriction,
+      institution,
+    });
+    await saveFakeInstitutionRestriction(db, {
+      restriction: iurRestriction,
+      institution,
+    });
+    await saveFakeInstitutionRestriction(db, {
+      restriction: susRestriction,
+      institution,
+      program: application.currentAssessment.offering.educationProgram,
+      location: application.currentAssessment.offering.institutionLocation,
+    });
+
+    const endpoint = `/students/application/${application.id}/warnings`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        eCertFailedValidations: [
+          ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+        ],
+        canAcceptAssessment: false,
+        eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: false },
+        acceptAssessmentRestrictions: [
+          {
+            code: RestrictionCode.IUR,
+            message:
+              "Your assessment cannot be accepted at this time because the institution associated with your application is currently under review.",
+          },
+          {
+            code: RestrictionCode.SUS,
+            message:
+              "Your application is currently pending further review by StudentAid BC.",
+          },
+          {
+            code: RestrictionCode.ISR,
+            message:
+              "Your assessment cannot be accepted at this time because the institution associated with your application is currently suspended.",
+          },
+        ],
       });
   });
 
@@ -474,7 +643,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
         canAcceptAssessment: false,
         eCertFailedValidationsInfo: { hasEffectiveAviationRestriction: false },
         acceptAssessmentRestrictions: [],
-        stopDisbursementInstitutionRestrictions: [],
       });
   });
 
@@ -545,7 +713,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: false,
           },
           acceptAssessmentRestrictions: [],
-          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );
@@ -621,7 +788,6 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
             hasEffectiveAviationRestriction: true,
           },
           acceptAssessmentRestrictions: [],
-          stopDisbursementInstitutionRestrictions: [],
         });
     },
   );

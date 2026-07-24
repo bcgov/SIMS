@@ -62,7 +62,7 @@ export function getRestrictionsByActionType(
 }
 
 /**
- * Adds to the log the lists of all restriction bypasses active.
+ * Adds to the log the list of all restriction bypasses active.
  * @param bypasses active bypasses.
  * @param log log to receive the list.
  */
@@ -85,7 +85,7 @@ export function logActiveRestrictionsBypasses(
 }
 
 /**
- * Adds to the log the lists of all effective restrictions.
+ * Adds to the log the list of all effective restrictions.
  * @param restrictedParty restricted party that has the effective restrictions.
  * @param effectiveRestrictions effective restrictions blocking the disbursement.
  * @param log log to receive the list.

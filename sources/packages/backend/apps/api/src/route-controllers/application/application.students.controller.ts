@@ -181,6 +181,21 @@ export class ApplicationStudentsController extends BaseController {
       acceptAssessmentEvaluationResult.eCertFailedValidations.map(
         (failedValidation) => failedValidation.resultType,
       );
+    const stopDisbursementInstitutionRestrictions =
+      acceptAssessmentEvaluationResult.eCertFailedValidations
+        .filter(
+          (
+            failedValidation,
+          ): failedValidation is StopDisbursementRestrictionValidationResult =>
+            failedValidation.resultType ===
+            ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
+        )
+        .flatMap((failedValidation) =>
+          failedValidation.additionalInfo.restrictions.map((restriction) => ({
+            code: restriction.code,
+            message: restriction.messages?.studentAcceptAssessment,
+          })),
+        );
     return {
       eCertFailedValidations,
       canAcceptAssessment: acceptAssessmentEvaluationResult.canAcceptAssessment,
@@ -188,25 +203,10 @@ export class ApplicationStudentsController extends BaseController {
         this.applicationControllerService.buildECertFailedValidationsInfo(
           acceptAssessmentEvaluationResult.eCertFailedValidations,
         ),
-      acceptAssessmentRestrictions:
-        acceptAssessmentEvaluationResult.acceptAssessmentRestrictions,
-      stopDisbursementInstitutionRestrictions:
-        acceptAssessmentEvaluationResult.eCertFailedValidations
-          .filter(
-            (
-              failedValidation,
-            ): failedValidation is StopDisbursementRestrictionValidationResult =>
-              failedValidation.resultType ===
-              ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
-          )
-          .flatMap((failedValidation) =>
-            failedValidation.additionalInfo.restrictions.map(
-              (restriction) => ({
-                code: restriction.code,
-                message: restriction.messages?.studentAcceptAssessment,
-              }),
-            ),
-          ),
+      acceptAssessmentRestrictions: [
+        ...acceptAssessmentEvaluationResult.acceptAssessmentRestrictions,
+        ...stopDisbursementInstitutionRestrictions,
+      ],
     };
   }
 
