@@ -127,7 +127,6 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Checks if a notification of the provided type already exists matching all
    * the provided metadata criteria. Used to prevent sending duplicate emails
    * while allowing the uniqueness scope to be defined dynamically.
-   * - Pass `{ studentId }` to enforce a single notification per student.
    * - Pass `{ applicationNumber }` to enforce a single notification per application.
    * - Multiple criteria can be combined and all must match an existing notification.
    * @param notificationMessageType notification message type to be verified.
