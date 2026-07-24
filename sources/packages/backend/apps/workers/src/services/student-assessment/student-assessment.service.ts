@@ -124,7 +124,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.id",
         "assessment.triggerType",
         "application.id",
-        "application.applicationNumber",
+        "parentApplication.id",
         "application.data",
         "application.applicationStatus",
         "application.applicationEditStatus",
@@ -174,6 +174,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "dynamicFormConfiguration.formCategory",
       ])
       .innerJoin("assessment.application", "application")
+      .innerJoin("application.parentApplication", "parentApplication")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
       .leftJoin("assessment.offering", "offering")

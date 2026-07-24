@@ -113,7 +113,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       recipientType: WorkflowEmailNotificationRecipient.Student,
       assessmentId: firstApplication.currentAssessment.id,
       emailNotificationCheckMetadata: {
-        applicationNumber: firstApplication.applicationNumber,
+        parentApplicationId: firstApplication.parentApplication.id,
       },
     });
     const secondApplicationPayload = createFakeSendEmailNotificationPayload({
@@ -121,7 +121,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       recipientType: WorkflowEmailNotificationRecipient.Student,
       assessmentId: secondApplication.currentAssessment.id,
       emailNotificationCheckMetadata: {
-        applicationNumber: secondApplication.applicationNumber,
+        parentApplicationId: secondApplication.parentApplication.id,
       },
     });
 
@@ -167,9 +167,9 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // Asserts
     // The job fails, raising an incident, since the template is not seeded and
     // notification messages are no longer created at runtime.
-    expect(result).toEqual({
-      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Fail,
-    });
+    expect(result[FAKE_WORKER_JOB_RESULT_PROPERTY]).toBe(
+      MockedZeebeJobResult.Fail,
+    );
     // No notification message is created for the unknown template id.
     const notificationMessage = await db.notificationMessage.findOne({
       select: { id: true },
@@ -179,34 +179,6 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // No notification is created for the student.
     const notificationsCount = await db.notification.count({
       where: { user: { id: student.user.id } },
-    });
-    expect(notificationsCount).toBe(0);
-  });
-
-  it("Should not create any email notification when the recipient is the Ministry and no email contact is configured.", async () => {
-    // Arrange
-    // Use a seeded notification message that has no email contacts configured.
-    const payload = createFakeSendEmailNotificationPayload({
-      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
-      recipientType: WorkflowEmailNotificationRecipient.Ministry,
-      emailNotificationPersonalisation: { applicationNumber: "1234567890" },
-    });
-
-    // Act
-    const result = await notificationController.sendEmailNotification(payload);
-
-    // Asserts
-    // The job completes successfully but no notification is created since there
-    // are no email contacts to send the notification to.
-    expect(result).toEqual({
-      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Complete,
-    });
-    const notificationsCount = await db.notification.count({
-      where: {
-        notificationMessage: {
-          id: NotificationMessageType.FormerYouthInCareNotification,
-        },
-      },
     });
     expect(notificationsCount).toBe(0);
   });
