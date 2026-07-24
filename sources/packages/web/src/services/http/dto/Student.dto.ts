@@ -260,3 +260,7 @@ export interface UpdateModifiedIndependentStatusAPIInDTO {
   modifiedIndependentStatus: ModifiedIndependentStatus;
   noteDescription: string;
 }
+
+export interface DeleteStudentFileAPIInDTO {
+  noteDescription: string;
+}

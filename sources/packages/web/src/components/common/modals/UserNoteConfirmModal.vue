@@ -2,12 +2,12 @@
   <v-form ref="modalNotesForm">
     <modal-dialog-base
       :title="title"
-      :showDialog="showDialog"
-      :maxWidth="maxWidth"
+      :show-dialog="showDialog"
+      :max-width="maxWidth"
     >
       <template #content>
         <error-summary :errors="modalNotesForm.errors" />
-        <slot name="content">{{ text }}</slot>
+        <slot name="content" :show-parameter="showParameter">{{ text }}</slot>
         <v-textarea
           :label="notesLabel"
           variant="outlined"
@@ -16,15 +16,18 @@
           :rules="[(v) => checkNotesLengthRule(v, notesLabel)]"
           required
         />
+        <p class="brand-gray-text" v-if="notesDescription">
+          {{ notesDescription }}
+        </p>
       </template>
       <template #footer>
         <footer-buttons
-          :primaryLabel="okLabel"
-          :secondaryLabel="cancelLabel"
-          @primaryClick="resolvePromise(true)"
-          @secondaryClick="resolvePromise(false)"
-          :disablePrimaryButton="disablePrimaryButton"
-          :showSecondaryButton="showSecondaryButton"
+          :primary-label="okLabel"
+          :secondary-label="cancelLabel"
+          @primary-click="resolvePromise(true)"
+          @secondary-click="resolvePromise(false)"
+          :disable-primary-button="disablePrimaryButton"
+          :show-secondary-button="showSecondaryButton"
           :processing="loading"
         />
       </template>
@@ -55,6 +58,7 @@ export default defineComponent({
     text: {
       type: String,
       required: false,
+      default: undefined,
     },
     okLabel: {
       type: String,
@@ -69,6 +73,7 @@ export default defineComponent({
     maxWidth: {
       type: Number,
       required: false,
+      default: undefined,
     },
     disablePrimaryButton: {
       type: Boolean,
@@ -83,6 +88,10 @@ export default defineComponent({
     notesLabel: {
       type: String,
       default: "Notes",
+    },
+    notesDescription: {
+      type: String,
+      default: undefined,
     },
   },
   setup() {
@@ -128,6 +137,7 @@ export default defineComponent({
       showModal,
       resolvePromise,
       loading,
+      showParameter,
     };
   },
 });

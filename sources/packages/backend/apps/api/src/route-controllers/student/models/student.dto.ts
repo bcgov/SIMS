@@ -324,6 +324,15 @@ export class UniqueFileNameParamAPIInDTO {
   uniqueFileName: string;
 }
 
+/**
+ * Deletes a student file with a mandatory reason.
+ */
+export class DeleteStudentFileAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
 export class UpdateModifiedIndependentStatusAPIInDTO {
   @IsEnum(ModifiedIndependentStatus)
   modifiedIndependentStatus: ModifiedIndependentStatus;
