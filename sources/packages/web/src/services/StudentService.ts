@@ -18,6 +18,7 @@ import {
   LegacyStudentMatchesAPIOutDTO,
   LegacyStudentMatchesAPIInDTO,
   UpdateModifiedIndependentStatusAPIInDTO,
+  DeleteStudentFileAPIInDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -283,5 +284,17 @@ export class StudentService {
       studentId,
       payload,
     );
+  }
+
+  /**
+   * Soft deletes an uploaded student file.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param payload delete file details.
+   */
+  async deleteStudentUploadedFile(
+    uniqueFileName: string,
+    payload: DeleteStudentFileAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.Students.deleteStudentUploadedFile(uniqueFileName, payload);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -41,6 +42,7 @@ import BaseController from "../BaseController";
 import {
   AESTFileUploadToStudentAPIInDTO,
   AESTStudentProfileAPIOutDTO,
+  DeleteStudentFileAPIInDTO,
   StudentSearchAPIInDTO,
   ApplicationSummaryAPIOutDTO,
   CreateSINValidationAPIInDTO,
@@ -76,6 +78,8 @@ import {
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   MODIFIED_INDEPENDENT_STATUS_NOT_UPDATED,
+  STUDENT_FILE_IS_DELETED,
+  STUDENT_FILE_NOT_FOUND,
   SIN_DUPLICATE_NOT_CONFIRMED,
   SIN_VALIDATION_RECORD_INVALID_OPERATION,
   SIN_VALIDATION_RECORD_NOT_FOUND,
@@ -238,6 +242,46 @@ export class StudentAESTController extends BaseController {
         groupName: MINISTRY_FILE_UPLOAD_GROUP_NAME,
       },
     );
+  }
+
+  /**
+   * Soft deletes an uploaded student file.
+   * @param userToken user authentication token.
+   * @param uniqueFileNameParam unique file name (name+guid).
+   * @param payload delete file details.
+   */
+  @Roles(Role.StudentDeleteUploadedFile)
+  @ApiNotFoundResponse({
+    description: "Student file not found.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description: "Student file is already set as deleted.",
+  })
+  @Delete("file/:uniqueFileName")
+  async deleteStudentUploadedFile(
+    @UserToken() userToken: IUserToken,
+    @Param() uniqueFileNameParam: UniqueFileNameParamAPIInDTO,
+    @Body() payload: DeleteStudentFileAPIInDTO,
+  ): Promise<void> {
+    try {
+      await this.fileService.deleteStudentUploadedFile(
+        uniqueFileNameParam.uniqueFileName,
+        userToken.userId,
+        payload.noteDescription,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case STUDENT_FILE_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case STUDENT_FILE_IS_DELETED:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   /**

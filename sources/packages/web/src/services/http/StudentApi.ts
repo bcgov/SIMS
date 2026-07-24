@@ -20,6 +20,7 @@ import {
   LegacyStudentMatchesAPIOutDTO,
   LegacyStudentMatchesAPIInDTO,
   UpdateModifiedIndependentStatusAPIInDTO,
+  DeleteStudentFileAPIInDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -270,6 +271,21 @@ export class StudentApi extends HttpBaseClient {
     await this.patchCall(
       this.addClientRoot(`student/${studentId}/modified-independent-status`),
       payload,
+    );
+  }
+
+  /**
+   * Soft deletes an uploaded student file.
+   * @param uniqueFileName unique file name (name+guid).
+   * @param payload delete file details.
+   */
+  async deleteStudentUploadedFile(
+    uniqueFileName: string,
+    payload: DeleteStudentFileAPIInDTO,
+  ): Promise<void> {
+    await this.deleteCall(
+      this.addClientRoot(`student/file/${uniqueFileName}`),
+      { data: payload },
     );
   }
 }
