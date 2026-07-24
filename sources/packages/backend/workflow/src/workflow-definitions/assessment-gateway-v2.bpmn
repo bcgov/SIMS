@@ -23,65 +23,18 @@
 Note: the workflow process should continue its execution as a regular reassessment.</bpmn:text>
     </bpmn:textAnnotation>
     <bpmn:association id="Association_1gbgxzr" associationDirection="None" sourceRef="changed-with-approval-flow" targetRef="TextAnnotation_1inm7cq" />
-    <bpmn:association id="Association_1ek1rle" sourceRef="verify-assessment-calculation-order-task" targetRef="TextAnnotation_0g9dtl6" />
-    <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
-    <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
     <bpmn:textAnnotation id="TextAnnotation_1q6xzna">
       <bpmn:text>There are two conditions under which a supporting user is created:
  1. The 2025-26 and earlier applications where the partner is able to report. These applications have studentDataIsYourPartnerAbleToReport = true.
  2. All 2026-27 and later applications. These applications have the renamed property studentDataPartnerIsAbleToReport.</bpmn:text>
     </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ek1rle" sourceRef="verify-assessment-calculation-order-task" targetRef="TextAnnotation_0g9dtl6" />
+    <bpmn:association id="Association_110g427" associationDirection="None" sourceRef="TextAnnotation_1qwxwaf" targetRef="application-change-request-approval-task" />
+    <bpmn:association id="Association_1wys3mp" associationDirection="None" sourceRef="TextAnnotation_17tw6q4" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
     <bpmn:association id="Association_0z482ud" associationDirection="None" sourceRef="TextAnnotation_1q6xzna" targetRef="Gateway_176fysj" />
   </bpmn:collaboration>
   <bpmn:process id="assessment-gateway-v2" name="Assessment Gateway V2" isExecutable="true">
     <bpmn:laneSet id="LaneSet_07shl28">
-      <bpmn:lane id="Lane_0lvs868" name="Applications In Progress">
-        <bpmn:flowNodeRef>Gateway_0jc5bz6</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>student-income-verification-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>partner-income-verification-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>retrieve-supporting-info-for-partner-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>create-identifiable-partner-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_176fysj</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_05k6rp7</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>application-exception-verified-message</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-status-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_04wt04t</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>verify-application-exceptions-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1knnojd</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_139oo1r</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>load-assessment-data-pre-assessment-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>application-change-request-approval-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-timer</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-still-pending-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-request-assessed-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-message</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1imkna6</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>change-request-workflow-wrap-up-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>exceptions-workflow-wrap-up-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>identifiable-parents-creation</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>parents-verification-has-dependant-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0ny5tkb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_069nn9n</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>update-application-status-to-in-progress-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_0wavgao</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>assessment-process-type-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>load-assessment-data-submit-or-reassessment-subprocess</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>associate-workflow-instance-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>assessment-start-event</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_1aawyrx</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>pir-workflow-wrap-up-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1mj2hkh</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>former-youth-in-care-gateway</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>send-former-youth-in-care-email-task</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>former-youth-in-care-join-gateway</bpmn:flowNodeRef>
-      </bpmn:lane>
       <bpmn:lane id="Lane_1bfd2e9" name="Assessment/reassessment calculation">
         <bpmn:flowNodeRef>verify-assessment-calculation-timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>verify-assessment-calculation-order-gateway</bpmn:flowNodeRef>
@@ -112,6 +65,53 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmn:flowNodeRef>Gateway_1hwknxt</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0d78x0s</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1vyml74</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_0lvs868" name="Applications In Progress">
+        <bpmn:flowNodeRef>Gateway_0jc5bz6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>student-income-verification-subprocess</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>partner-income-verification-subprocess</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>retrieve-supporting-info-for-partner-subprocess</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>create-identifiable-partner-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_176fysj</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_05k6rp7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1jdrla2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>in-progress-main-parallel-info-gathering-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-retry-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-exception-verified-message</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-status-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_04wt04t</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>verify-application-exceptions-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1knnojd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_139oo1r</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>load-assessment-data-pre-assessment-subprocess</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-change-request-approval-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-timer</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-still-pending-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-request-assessed-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-in-progress-pending-message</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1imkna6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>change-request-workflow-wrap-up-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>minitry-approval-change-declined-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>application-exception-end-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>exceptions-workflow-wrap-up-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>parents-verification-has-dependant-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0ny5tkb</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>update-application-status-to-in-progress-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_0wavgao</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_1aawyrx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>pir-workflow-wrap-up-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1mj2hkh</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assessment-start-event</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>associate-workflow-instance-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>load-assessment-data-submit-or-reassessment-subprocess</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assessment-process-type-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>identifiable-parents-creation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_069nn9n</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>send-former-youth-in-care-email-task</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>former-youth-in-care-join-gateway</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>former-youth-in-care-gateway</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:intermediateCatchEvent id="verify-assessment-calculation-timer">
@@ -427,69 +427,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>verify-application-exceptions-status-denied-flow</bpmn:incoming>
       <bpmn:outgoing>Flow_0puhcea</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:subProcess id="identifiable-parents-creation">
-      <bpmn:incoming>parents-verification-dependantstatus-dependant-flow</bpmn:incoming>
-      <bpmn:outgoing>Flow_0ne5hoq</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics>
-        <bpmn:extensionElements>
-          <zeebe:loopCharacteristics inputCollection="=studentDataParents" inputElement="parent" outputCollection="identifiable_parents_creation_output" outputElement="={&#10;  create_identifiable_parent_task_passthrough: create_identifiable_parent_task_passthrough,&#10;  retrieve_identifiable_parent_info_subprocess_passthrough: retrieve_identifiable_parent_info_subprocess_passthrough,&#10;  parent_income_verification_subprocess_passthrough: parent_income_verification_subprocess_passthrough&#10;}" />
-        </bpmn:extensionElements>
-      </bpmn:multiInstanceLoopCharacteristics>
-      <bpmn:startEvent id="start-supporting-user-creation">
-        <bpmn:outgoing>Flow_1g9cp6m</bpmn:outgoing>
-      </bpmn:startEvent>
-      <bpmn:callActivity id="retrieve-identifiable-parent-info-subprocess" name="Retrieve parent information">
-        <bpmn:extensionElements>
-          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
-          <zeebe:ioMapping>
-            <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
-            <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;]" target="parentSubprocesses" />
-            <zeebe:output source="=totalIncome" target="supportingUserParentTotalIncome" />
-            <zeebe:output source="=&#34;retrieve-identifiable-parent-info-subprocess&#34;" target="retrieve_identifiable_parent_info_subprocess_passthrough" />
-            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
-          </zeebe:ioMapping>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_0u3bioj</bpmn:incoming>
-        <bpmn:outgoing>Flow_1j7259r</bpmn:outgoing>
-      </bpmn:callActivity>
-      <bpmn:callActivity id="parent-income-verification-subprocess" name="Parent Income Verification">
-        <bpmn:extensionElements>
-          <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
-          <zeebe:ioMapping>
-            <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
-            <zeebe:input source="=parentSupportingUserId" target="supportingUserId" />
-            <zeebe:input source="=[&#34;parent-&#34; + string(loopCounter) + &#34;-income-verification-subprocess&#34;]" target="parentSubprocesses" />
-            <zeebe:input source="=applicationId" target="applicationId" />
-            <zeebe:input source="=programYearStartDate" target="programYearStartDate" />
-            <zeebe:output source="=&#34;parent-income-verification-subprocess&#34;" target="parent_income_verification_subprocess_passthrough" />
-            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
-          </zeebe:ioMapping>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1j7259r</bpmn:incoming>
-        <bpmn:outgoing>Flow_0jh200l</bpmn:outgoing>
-      </bpmn:callActivity>
-      <bpmn:endEvent id="end-supporting-user-creation">
-        <bpmn:incoming>Flow_0jh200l</bpmn:incoming>
-      </bpmn:endEvent>
-      <bpmn:serviceTask id="create-identifiable-parent-task" name="Create identifiable parent">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="create-identifiable-supporting-users" />
-          <zeebe:ioMapping>
-            <zeebe:input source="=&#34;Parent&#34;" target="supportingUserType" />
-            <zeebe:input source="=&#34;parents[&#34; + string(loopCounter - 1) + &#34;].parentFullName&#34;" target="fullNamePropertyFilter" />
-            <zeebe:input source="=parent.parentIsAbleToReport = &#34;yes&#34;" target="isAbleToReport" />
-            <zeebe:output source="=createdSupportingUserId" target="createdSupportingUserId" />
-            <zeebe:output source="=create_identifiable_parent_task_passthrough" target="create_identifiable_parent_task_passthrough" />
-          </zeebe:ioMapping>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1g9cp6m</bpmn:incoming>
-        <bpmn:outgoing>Flow_0u3bioj</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:sequenceFlow id="Flow_1g9cp6m" sourceRef="start-supporting-user-creation" targetRef="create-identifiable-parent-task" />
-      <bpmn:sequenceFlow id="Flow_0u3bioj" sourceRef="create-identifiable-parent-task" targetRef="retrieve-identifiable-parent-info-subprocess" />
-      <bpmn:sequenceFlow id="Flow_1j7259r" sourceRef="retrieve-identifiable-parent-info-subprocess" targetRef="parent-income-verification-subprocess" />
-      <bpmn:sequenceFlow id="Flow_0jh200l" sourceRef="parent-income-verification-subprocess" targetRef="end-supporting-user-creation" />
-    </bpmn:subProcess>
     <bpmn:exclusiveGateway id="parents-verification-has-dependant-gateway">
       <bpmn:incoming>Flow_18xo3dr</bpmn:incoming>
       <bpmn:outgoing>parents-verification-dependantstatus-independant-flow</bpmn:outgoing>
@@ -500,96 +437,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_0ne5hoq</bpmn:incoming>
       <bpmn:outgoing>Flow_1uh1kyu</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:subProcess id="Activity_069nn9n" name="Program Information Request (PIR)">
-      <bpmn:extensionElements />
-      <bpmn:incoming>Flow_0106iy0</bpmn:incoming>
-      <bpmn:outgoing>Flow_1w081qo</bpmn:outgoing>
-      <bpmn:sequenceFlow id="Flow_16gxaj4" sourceRef="Gateway_1hpk9e2" targetRef="Gateway_1bhx82g" />
-      <bpmn:sequenceFlow id="Flow_04c1epy" sourceRef="Gateway_1bhx82g" targetRef="Event_1xk3f7n" />
-      <bpmn:sequenceFlow id="Flow_14vcuyq" sourceRef="program-info-request-completed-message" targetRef="Gateway_1hpk9e2" />
-      <bpmn:sequenceFlow id="Flow_0iqatyc" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_1hpk9e2">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
-      </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_13y9h8r" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
-      <bpmn:sequenceFlow id="Flow_1ubrqt9" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-completed-message" />
-      <bpmn:sequenceFlow id="Flow_1t82u52" name="No" sourceRef="pir-pending-gateway" targetRef="pir-pending-event-gateway">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
-      </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_0820hd3" name="Needs PIR" sourceRef="needs-pir-gateway" targetRef="program-info-required-task">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering = null</bpmn:conditionExpression>
-      </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_0nr901q" sourceRef="Event_0uzu9fw" targetRef="needs-pir-gateway" />
-      <bpmn:sequenceFlow id="Flow_0vlzpfm" sourceRef="program-info-not-required-task" targetRef="Gateway_1bhx82g" />
-      <bpmn:sequenceFlow id="Flow_0q4dox9" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering != null</bpmn:conditionExpression>
-      </bpmn:sequenceFlow>
-      <bpmn:sequenceFlow id="Flow_0mc1ufv" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
-      <bpmn:sequenceFlow id="Flow_09spiyj" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
-      <bpmn:exclusiveGateway id="Gateway_1bhx82g">
-        <bpmn:incoming>Flow_0vlzpfm</bpmn:incoming>
-        <bpmn:incoming>Flow_16gxaj4</bpmn:incoming>
-        <bpmn:outgoing>Flow_04c1epy</bpmn:outgoing>
-      </bpmn:exclusiveGateway>
-      <bpmn:exclusiveGateway id="Gateway_1hpk9e2">
-        <bpmn:incoming>Flow_14vcuyq</bpmn:incoming>
-        <bpmn:incoming>Flow_0iqatyc</bpmn:incoming>
-        <bpmn:outgoing>Flow_16gxaj4</bpmn:outgoing>
-      </bpmn:exclusiveGateway>
-      <bpmn:endEvent id="Event_1xk3f7n">
-        <bpmn:incoming>Flow_04c1epy</bpmn:incoming>
-      </bpmn:endEvent>
-      <bpmn:startEvent id="Event_0uzu9fw" name="">
-        <bpmn:outgoing>Flow_0nr901q</bpmn:outgoing>
-      </bpmn:startEvent>
-      <bpmn:intermediateCatchEvent id="program-info-request-completed-message">
-        <bpmn:incoming>Flow_1ubrqt9</bpmn:incoming>
-        <bpmn:outgoing>Flow_14vcuyq</bpmn:outgoing>
-        <bpmn:messageEventDefinition id="MessageEventDefinition_01uds19" messageRef="Message_1clo0eh" />
-      </bpmn:intermediateCatchEvent>
-      <bpmn:serviceTask id="program-info-required-task" name="Program Info required">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="program-info-request" />
-          <zeebe:taskHeaders>
-            <zeebe:header key="programInfoStatus" value="Required" />
-          </zeebe:taskHeaders>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_0mc1ufv</bpmn:incoming>
-        <bpmn:incoming>Flow_0820hd3</bpmn:incoming>
-        <bpmn:outgoing>Flow_13y9h8r</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:exclusiveGateway id="pir-pending-gateway" name="Completed?">
-        <bpmn:incoming>Flow_13y9h8r</bpmn:incoming>
-        <bpmn:outgoing>Flow_0iqatyc</bpmn:outgoing>
-        <bpmn:outgoing>Flow_1t82u52</bpmn:outgoing>
-      </bpmn:exclusiveGateway>
-      <bpmn:eventBasedGateway id="pir-pending-event-gateway">
-        <bpmn:incoming>Flow_1t82u52</bpmn:incoming>
-        <bpmn:outgoing>Flow_09spiyj</bpmn:outgoing>
-        <bpmn:outgoing>Flow_1ubrqt9</bpmn:outgoing>
-      </bpmn:eventBasedGateway>
-      <bpmn:exclusiveGateway id="needs-pir-gateway">
-        <bpmn:incoming>Flow_0nr901q</bpmn:incoming>
-        <bpmn:outgoing>Flow_0q4dox9</bpmn:outgoing>
-        <bpmn:outgoing>Flow_0820hd3</bpmn:outgoing>
-      </bpmn:exclusiveGateway>
-      <bpmn:serviceTask id="program-info-not-required-task" name="Program Info not required">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="program-info-request" />
-          <zeebe:taskHeaders>
-            <zeebe:header key="programInfoStatus" value="Not Required" />
-          </zeebe:taskHeaders>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_0q4dox9</bpmn:incoming>
-        <bpmn:outgoing>Flow_0vlzpfm</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:intermediateCatchEvent id="program-info-request-timer">
-        <bpmn:incoming>Flow_09spiyj</bpmn:incoming>
-        <bpmn:outgoing>Flow_0mc1ufv</bpmn:outgoing>
-        <bpmn:timerEventDefinition id="TimerEventDefinition_08dhknx">
-          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
-        </bpmn:timerEventDefinition>
-      </bpmn:intermediateCatchEvent>
-    </bpmn:subProcess>
     <bpmn:serviceTask id="update-application-status-to-in-progress-task" name="Update Application Status to &#39;In Progress&#39;">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="update-application-status" />
@@ -606,50 +453,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:outgoing>Flow_0ljbhnq</bpmn:outgoing>
       <bpmn:outgoing>change-in-progress-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:exclusiveGateway id="assessment-process-type-gateway" name="Assessment type">
-      <bpmn:incoming>Flow_0rxxozm</bpmn:incoming>
-      <bpmn:outgoing>assessment-flow</bpmn:outgoing>
-      <bpmn:outgoing>reassessment-flow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="load-assessment-data-submit-or-reassessment-subprocess" name="Load consolidated data (Submit or Reassessment)">
-      <bpmn:extensionElements>
-        <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=[&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;]" target="parentSubprocesses" />
-          <zeebe:input source="=&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;" target="load_assessment_data_submit_or_reassessment_subprocess_passthrough" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1wrj7fh</bpmn:incoming>
-      <bpmn:outgoing>Flow_0rxxozm</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:serviceTask id="associate-workflow-instance-task" name="Associate workflow instance">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="associate-workflow-instance" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:startEvent id="assessment-start-event">
-      <bpmn:extensionElements>
-        <zeebe:ioMapping>
-          <zeebe:output source="=null" target="applicationId" />
-          <zeebe:output source="=null" target="parentApplicationId" />
-          <zeebe:output source="=assessmentId" target="assessmentId" />
-          <zeebe:output source="=null" target="applicationExceptionStatus" />
-          <zeebe:output source="=null" target="studentDataSelectedOffering" />
-          <zeebe:output source="=null" target="studentDataDependantstatus" />
-          <zeebe:output source="=null" target="studentDataRelationshipStatus" />
-          <zeebe:output source="=null" target="studentDataIsYourPartnerAbleToReport" />
-          <zeebe:output source="=null" target="parent1TotalIncome" />
-          <zeebe:output source="=null" target="parent2TotalIncome" />
-          <zeebe:output source="=null" target="partner1TotalIncome" />
-          <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
-          <zeebe:output source="=null" target="studentDataCurrentYearIncome" />
-          <zeebe:output source="=[]" target="parentSubprocesses" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
-    </bpmn:startEvent>
     <bpmn:exclusiveGateway id="Gateway_1aawyrx">
       <bpmn:incoming>Flow_1w081qo</bpmn:incoming>
       <bpmn:outgoing>Flow_1daizvx</bpmn:outgoing>
@@ -668,128 +471,6 @@ Note: the workflow process should continue its execution as a regular reassessme
     <bpmn:endEvent id="Event_1mj2hkh">
       <bpmn:incoming>Flow_0jh9h56</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="verify-assessment-calculation-timer" />
-    <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="verify-assessment-calculation-timer" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="ready-for-calculation-gateway" targetRef="verify-assessment-calculation-order-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="release-assessment-calculation-message" />
-    <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="ready-for-calculation-gateway" />
-    <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="ready-for-calculation-gateway" targetRef="Gateway_11qgy63">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = true</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="release-assessment-calculation-message" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="Flow_1btetiq" sourceRef="load-assessment-data-pre-assessment-subprocess" targetRef="verify-assessment-calculation-order-task" />
-    <bpmn:sequenceFlow id="reassessment-flow" name="Reassessment" sourceRef="assessment-process-type-gateway" targetRef="verify-assessment-calculation-order-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0hfjqs0" name="Full Time" sourceRef="Gateway_11qgy63" targetRef="Activity_0t108ac">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1j6gqvf" sourceRef="Activity_0t108ac" targetRef="Activity_0cqcjwg" />
-    <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Part Time"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1k200x2" sourceRef="Activity_09v8xl0" targetRef="Activity_0w3u365" />
-    <bpmn:sequenceFlow id="Flow_17yc7mz" sourceRef="Activity_0w3u365" targetRef="save-disbursement-part-time-task" />
-    <bpmn:sequenceFlow id="Flow_0qmdwld" sourceRef="Activity_0cqcjwg" targetRef="save-disbursement-task" />
-    <bpmn:sequenceFlow id="Flow_1y2j9iz" sourceRef="save-disbursement-part-time-task" targetRef="save-assessment-data-part-time-task" />
-    <bpmn:sequenceFlow id="Flow_0wed99j" sourceRef="save-disbursement-task" targetRef="save-assessment-data-task" />
-    <bpmn:sequenceFlow id="Flow_1f8ymzi" sourceRef="save-assessment-data-part-time-task" targetRef="Activity_0d78x0s" />
-    <bpmn:sequenceFlow id="Flow_1izp0bk" sourceRef="save-assessment-data-task" targetRef="Activity_1vyml74" />
-    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
-    <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-subprocess" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_1uh1kyu" sourceRef="Gateway_0ny5tkb" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_1rn6agw" sourceRef="Gateway_1jdrla2" targetRef="Gateway_0jc5bz6" />
-    <bpmn:sequenceFlow id="Flow_16d5gro" sourceRef="Gateway_0jc5bz6" targetRef="Gateway_1imkna6" />
-    <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
-    <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-subprocess" targetRef="Gateway_1jdrla2" />
-    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-identifiable-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
-    <bpmn:sequenceFlow id="Flow_14701yl" sourceRef="Gateway_176fysj" targetRef="create-identifiable-partner-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true or studentDataPartnerIsAbleToReport != null</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1gii09j" name="Skip creation. Only for 2025/2026 and earlier." sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
-    <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
-    <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_10de3as" sourceRef="Gateway_1knnojd" targetRef="in-progress-main-parallel-info-gathering-gateway" />
-    <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
-    <bpmn:sequenceFlow id="Flow_1txrz77" sourceRef="Gateway_0f9knk0" targetRef="Event_0w0bgro" />
-    <bpmn:sequenceFlow id="Flow_0rkzx2d" sourceRef="Event_0w0bgro" targetRef="workflow-wrap-up-task" />
-    <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
-    <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-retry-timer-flow" sourceRef="verify-application-exceptions-retry-timer" targetRef="verify-application-exceptions-task" />
-    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="application-exception-verified-message" />
-    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="application-exception-verified-message" targetRef="verify-application-exceptions-status-gateway" />
-    <bpmn:sequenceFlow id="verify-application-exceptions-pending-flow" name="Pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-pending-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Pending"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="exceptions-workflow-wrap-up-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="verify-application-exceptions-status-approved-flow" name="Approved" sourceRef="verify-application-exceptions-status-gateway" targetRef="Gateway_1knnojd">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Approved"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_04f30nk" sourceRef="verify-application-exceptions-task" targetRef="Gateway_04wt04t" />
-    <bpmn:sequenceFlow id="Flow_1daizvx" name="PIR Not required or Completed" sourceRef="Gateway_1aawyrx" targetRef="verify-application-exceptions-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Not Required" or programInfoStatus = "Completed"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="change-in-progress-flow" name="Change in progress" sourceRef="Gateway_0wavgao" targetRef="Gateway_1knnojd">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change in progress"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="not-a-change-request-flow" name="Regular flow" sourceRef="Gateway_1imkna6" targetRef="Gateway_139oo1r" />
-    <bpmn:sequenceFlow id="changed-with-approval-flow" name="Changed with approval" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="Gateway_139oo1r">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Changed with approval"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0prddd0" sourceRef="Gateway_139oo1r" targetRef="load-assessment-data-pre-assessment-subprocess" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-flow" name="Change request in progress" sourceRef="Gateway_1imkna6" targetRef="application-change-request-approval-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change in progress"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-timer" targetRef="application-change-request-approval-task" />
-    <bpmn:sequenceFlow id="Flow_10nfd6c" sourceRef="application-change-request-approval-task" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-timer" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-flow" name="Pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change pending approval"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-message-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-message" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-decision-made-flow" name="No longer pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-request-assessed-gateway" />
-    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-message-received-flow" sourceRef="minitry-approval-change-in-progress-pending-message" targetRef="minitry-approval-change-request-assessed-gateway" />
-    <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="change-request-workflow-wrap-up-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=list contains([
-  "Change declined",
-  "Change cancelled"
-], applicationEditStatus)</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0jltxxn" sourceRef="change-request-workflow-wrap-up-task" targetRef="minitry-approval-change-declined-end-event" />
-    <bpmn:sequenceFlow id="Flow_0puhcea" sourceRef="exceptions-workflow-wrap-up-task" targetRef="application-exception-end-event" />
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="identifiable-parents-creation">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0ne5hoq" sourceRef="identifiable-parents-creation" targetRef="Gateway_0ny5tkb" />
-    <bpmn:sequenceFlow id="parents-verification-dependantstatus-independant-flow" name="Independant" sourceRef="parents-verification-has-dependant-gateway" targetRef="Gateway_0ny5tkb">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus != "dependant"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0106iy0" sourceRef="update-application-status-to-in-progress-task" targetRef="Activity_069nn9n" />
-    <bpmn:sequenceFlow id="Flow_1w081qo" sourceRef="Activity_069nn9n" targetRef="Gateway_1aawyrx" />
-    <bpmn:sequenceFlow id="Flow_0ljbhnq" sourceRef="Gateway_0wavgao" targetRef="update-application-status-to-in-progress-task" />
-    <bpmn:sequenceFlow id="assessment-flow" name="Original Assessment" sourceRef="assessment-process-type-gateway" targetRef="former-youth-in-care-gateway">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="assessment-process-type-gateway" />
-    <bpmn:sequenceFlow id="Flow_1wrj7fh" sourceRef="associate-workflow-instance-task" targetRef="load-assessment-data-submit-or-reassessment-subprocess" />
-    <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="associate-workflow-instance-task" />
-    <bpmn:sequenceFlow id="Flow_04qzwk1" name="PIR Declined" sourceRef="Gateway_1aawyrx" targetRef="pir-workflow-wrap-up-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0jh9h56" sourceRef="pir-workflow-wrap-up-task" targetRef="Event_1mj2hkh" />
     <bpmn:endEvent id="Event_0mtgfbi">
       <bpmn:incoming>Flow_0mt0uyq</bpmn:incoming>
     </bpmn:endEvent>
@@ -887,20 +568,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_0mayggl</bpmn:incoming>
       <bpmn:outgoing>Flow_0p1lgm7</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_01iq5cw" name="Has NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
-    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1xse027" />
-    <bpmn:sequenceFlow id="Flow_1cb5fpw" name="Application Not Completed" sourceRef="Gateway_1xse027" targetRef="Gateway_1m2js1c" />
-    <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
-    <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Gateway_0f9knk0" />
-    <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />
-    <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
     <bpmn:exclusiveGateway id="Gateway_1hwknxt">
       <bpmn:incoming>Flow_13rnc99</bpmn:incoming>
       <bpmn:incoming>Flow_17bbn8b</bpmn:incoming>
@@ -917,7 +584,6 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_1f8ymzi</bpmn:incoming>
       <bpmn:outgoing>Flow_13rnc99</bpmn:outgoing>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_13rnc99" sourceRef="Activity_0d78x0s" targetRef="Gateway_1hwknxt" />
     <bpmn:scriptTask id="Activity_1vyml74" name="Configure application appeals eligibility">
       <bpmn:extensionElements>
         <zeebe:script expression="=[&#10;  {&#10;    formName: &#34;stepparentwaiverappeal&#34;,&#10;    isEligible: isEligibleForStepParentWaiverAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;roomandboardcostsappeal&#34;,&#10;    isEligible: isEligibleForRoomAndBoardAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;studentcurrentyearincomeappeal&#34;,&#10;    isEligible: isEligibleForStudentCurrentYearIncomeAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;partnercurrentyearincomeappeal&#34;,&#10;    isEligible: isEligibleForPartnerCurrentYearIncomeAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;studentexceptionalexpenseappeal&#34;,&#10;    isEligible: isEligibleForExceptionalExpenseAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;parentcurrentyearincomeappeal&#34;,&#10;    isEligible: isEligibleForParentCurrentYearIncomeAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;ftaccessibilitygranteligibilityappeal&#34;,&#10;    isEligible: isEligibleForFTAccessibilityGrantEligibilityAppeal = true&#10;  },&#10;  {&#10;    formName: &#34;ftsfainternationalinstitutionseligibilityappeal&#34;,&#10;    isEligible: isEligibleForFTSFAInternationalInstitutionsEligibilityAppeal = true&#10;  },&#10;    {&#10;    formName: &#34;ftcanadastudentgranteligibilityappeal&#34;,&#10;    isEligible: isEligibleForFTCanadaStudentGrantEligibilityAppeal = true&#10;  },&#10;  &#10;  {&#10;    formName: &#34;ftsfaeligibilityoutofprovinceprivateinstitutionsappeal&#34;,&#10;    isEligible: isEligibleForFTOOPPrivateGrantEligibilityAppeal = true&#10;  }&#10;]" resultVariable="applicationAppealsEligibilityDetails" />
@@ -929,12 +595,347 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>Flow_1izp0bk</bpmn:incoming>
       <bpmn:outgoing>Flow_17bbn8b</bpmn:outgoing>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_17bbn8b" sourceRef="Activity_1vyml74" targetRef="Gateway_1hwknxt" />
-    <bpmn:exclusiveGateway id="former-youth-in-care-gateway" name="Former youth in care?" default="Flow_10xaz6e">
-      <bpmn:incoming>assessment-flow</bpmn:incoming>
-      <bpmn:outgoing>former-youth-in-care-send-flow</bpmn:outgoing>
-      <bpmn:outgoing>Flow_10xaz6e</bpmn:outgoing>
+    <bpmn:startEvent id="assessment-start-event">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=null" target="applicationId" />
+          <zeebe:output source="=null" target="parentApplicationId" />
+          <zeebe:output source="=assessmentId" target="assessmentId" />
+          <zeebe:output source="=null" target="applicationExceptionStatus" />
+          <zeebe:output source="=null" target="studentDataSelectedOffering" />
+          <zeebe:output source="=null" target="studentDataDependantstatus" />
+          <zeebe:output source="=null" target="studentDataRelationshipStatus" />
+          <zeebe:output source="=null" target="studentDataIsYourPartnerAbleToReport" />
+          <zeebe:output source="=null" target="parent1TotalIncome" />
+          <zeebe:output source="=null" target="parent2TotalIncome" />
+          <zeebe:output source="=null" target="partner1TotalIncome" />
+          <zeebe:output source="=null" target="studentDataTaxReturnIncome" />
+          <zeebe:output source="=null" target="studentDataCurrentYearIncome" />
+          <zeebe:output source="=[]" target="parentSubprocesses" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1ef3map</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="associate-workflow-instance-task" name="Associate workflow instance">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="associate-workflow-instance" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ef3map</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wrj7fh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="load-assessment-data-submit-or-reassessment-subprocess" name="Load consolidated data (Submit or Reassessment)">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="load-assessment-consolidated-data" propagateAllChildVariables="true" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;]" target="parentSubprocesses" />
+          <zeebe:input source="=&#34;load-assessment-data-submit-or-reassessment-subprocess&#34;" target="load_assessment_data_submit_or_reassessment_subprocess_passthrough" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wrj7fh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rxxozm</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="assessment-process-type-gateway" name="Assessment type">
+      <bpmn:incoming>Flow_0rxxozm</bpmn:incoming>
+      <bpmn:outgoing>assessment-flow</bpmn:outgoing>
+      <bpmn:outgoing>reassessment-flow</bpmn:outgoing>
     </bpmn:exclusiveGateway>
+    <bpmn:subProcess id="identifiable-parents-creation">
+      <bpmn:incoming>parents-verification-dependantstatus-dependant-flow</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ne5hoq</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=studentDataParents" inputElement="parent" outputCollection="identifiable_parents_creation_output" outputElement="={&#10;  create_identifiable_parent_task_passthrough: create_identifiable_parent_task_passthrough,&#10;  retrieve_identifiable_parent_info_subprocess_passthrough: retrieve_identifiable_parent_info_subprocess_passthrough,&#10;  parent_income_verification_subprocess_passthrough: parent_income_verification_subprocess_passthrough&#10;}" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:startEvent id="start-supporting-user-creation">
+        <bpmn:outgoing>Flow_1g9cp6m</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:callActivity id="retrieve-identifiable-parent-info-subprocess" name="Retrieve parent information">
+        <bpmn:extensionElements>
+          <zeebe:calledElement processId="supporting-user-information-request" propagateAllChildVariables="false" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=createdSupportingUserId" target="supportingUserId" />
+            <zeebe:input source="=[&#34;retrieve-supporting-info-for-parent-&#34; + string(loopCounter) + &#34;-subprocess&#34;]" target="parentSubprocesses" />
+            <zeebe:output source="=totalIncome" target="supportingUserParentTotalIncome" />
+            <zeebe:output source="=&#34;retrieve-identifiable-parent-info-subprocess&#34;" target="retrieve_identifiable_parent_info_subprocess_passthrough" />
+            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0u3bioj</bpmn:incoming>
+        <bpmn:outgoing>Flow_1j7259r</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:callActivity id="parent-income-verification-subprocess" name="Parent Income Verification">
+        <bpmn:extensionElements>
+          <zeebe:calledElement processId="cra-integration-income-verification" propagateAllChildVariables="false" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=supportingUserParentTotalIncome" target="reportedIncome" />
+            <zeebe:input source="=parentSupportingUserId" target="supportingUserId" />
+            <zeebe:input source="=[&#34;parent-&#34; + string(loopCounter) + &#34;-income-verification-subprocess&#34;]" target="parentSubprocesses" />
+            <zeebe:input source="=applicationId" target="applicationId" />
+            <zeebe:input source="=programYearStartDate" target="programYearStartDate" />
+            <zeebe:output source="=&#34;parent-income-verification-subprocess&#34;" target="parent_income_verification_subprocess_passthrough" />
+            <zeebe:output source="=supportingUserId" target="parentSupportingUserId" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1j7259r</bpmn:incoming>
+        <bpmn:outgoing>Flow_0jh200l</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:endEvent id="end-supporting-user-creation">
+        <bpmn:incoming>Flow_0jh200l</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:serviceTask id="create-identifiable-parent-task" name="Create identifiable parent">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="create-identifiable-supporting-users" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=&#34;Parent&#34;" target="supportingUserType" />
+            <zeebe:input source="=&#34;parents[&#34; + string(loopCounter - 1) + &#34;].parentFullName&#34;" target="fullNamePropertyFilter" />
+            <zeebe:input source="=parent.parentIsAbleToReport = &#34;yes&#34;" target="isAbleToReport" />
+            <zeebe:output source="=createdSupportingUserId" target="createdSupportingUserId" />
+            <zeebe:output source="=create_identifiable_parent_task_passthrough" target="create_identifiable_parent_task_passthrough" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1g9cp6m</bpmn:incoming>
+        <bpmn:outgoing>Flow_0u3bioj</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1g9cp6m" sourceRef="start-supporting-user-creation" targetRef="create-identifiable-parent-task" />
+      <bpmn:sequenceFlow id="Flow_0u3bioj" sourceRef="create-identifiable-parent-task" targetRef="retrieve-identifiable-parent-info-subprocess" />
+      <bpmn:sequenceFlow id="Flow_1j7259r" sourceRef="retrieve-identifiable-parent-info-subprocess" targetRef="parent-income-verification-subprocess" />
+      <bpmn:sequenceFlow id="Flow_0jh200l" sourceRef="parent-income-verification-subprocess" targetRef="end-supporting-user-creation" />
+    </bpmn:subProcess>
+    <bpmn:subProcess id="Activity_069nn9n" name="Program Information Request (PIR)">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0106iy0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w081qo</bpmn:outgoing>
+      <bpmn:sequenceFlow id="Flow_16gxaj4" sourceRef="Gateway_1hpk9e2" targetRef="Gateway_1bhx82g" />
+      <bpmn:sequenceFlow id="Flow_04c1epy" sourceRef="Gateway_1bhx82g" targetRef="Event_1xk3f7n" />
+      <bpmn:sequenceFlow id="Flow_14vcuyq" sourceRef="program-info-request-completed-message" targetRef="Gateway_1hpk9e2" />
+      <bpmn:sequenceFlow id="Flow_0iqatyc" name="Yes" sourceRef="pir-pending-gateway" targetRef="Gateway_1hpk9e2">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus != "Required"</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_13y9h8r" sourceRef="program-info-required-task" targetRef="pir-pending-gateway" />
+      <bpmn:sequenceFlow id="Flow_1ubrqt9" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-completed-message" />
+      <bpmn:sequenceFlow id="Flow_1t82u52" name="No" sourceRef="pir-pending-gateway" targetRef="pir-pending-event-gateway">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Required"</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0820hd3" name="Needs PIR" sourceRef="needs-pir-gateway" targetRef="program-info-required-task">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering = null</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0nr901q" sourceRef="Event_0uzu9fw" targetRef="needs-pir-gateway" />
+      <bpmn:sequenceFlow id="Flow_0vlzpfm" sourceRef="program-info-not-required-task" targetRef="Gateway_1bhx82g" />
+      <bpmn:sequenceFlow id="Flow_0q4dox9" name="PIR not required" sourceRef="needs-pir-gateway" targetRef="program-info-not-required-task">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataSelectedOffering != null</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0mc1ufv" sourceRef="program-info-request-timer" targetRef="program-info-required-task" />
+      <bpmn:sequenceFlow id="Flow_09spiyj" sourceRef="pir-pending-event-gateway" targetRef="program-info-request-timer" />
+      <bpmn:exclusiveGateway id="Gateway_1bhx82g">
+        <bpmn:incoming>Flow_0vlzpfm</bpmn:incoming>
+        <bpmn:incoming>Flow_16gxaj4</bpmn:incoming>
+        <bpmn:outgoing>Flow_04c1epy</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:exclusiveGateway id="Gateway_1hpk9e2">
+        <bpmn:incoming>Flow_14vcuyq</bpmn:incoming>
+        <bpmn:incoming>Flow_0iqatyc</bpmn:incoming>
+        <bpmn:outgoing>Flow_16gxaj4</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:endEvent id="Event_1xk3f7n">
+        <bpmn:incoming>Flow_04c1epy</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:startEvent id="Event_0uzu9fw" name="">
+        <bpmn:outgoing>Flow_0nr901q</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:intermediateCatchEvent id="program-info-request-completed-message">
+        <bpmn:incoming>Flow_1ubrqt9</bpmn:incoming>
+        <bpmn:outgoing>Flow_14vcuyq</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_01uds19" messageRef="Message_1clo0eh" />
+      </bpmn:intermediateCatchEvent>
+      <bpmn:serviceTask id="program-info-required-task" name="Program Info required">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="program-info-request" />
+          <zeebe:taskHeaders>
+            <zeebe:header key="programInfoStatus" value="Required" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0mc1ufv</bpmn:incoming>
+        <bpmn:incoming>Flow_0820hd3</bpmn:incoming>
+        <bpmn:outgoing>Flow_13y9h8r</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="pir-pending-gateway" name="Completed?">
+        <bpmn:incoming>Flow_13y9h8r</bpmn:incoming>
+        <bpmn:outgoing>Flow_0iqatyc</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1t82u52</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:eventBasedGateway id="pir-pending-event-gateway">
+        <bpmn:incoming>Flow_1t82u52</bpmn:incoming>
+        <bpmn:outgoing>Flow_09spiyj</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1ubrqt9</bpmn:outgoing>
+      </bpmn:eventBasedGateway>
+      <bpmn:exclusiveGateway id="needs-pir-gateway">
+        <bpmn:incoming>Flow_0nr901q</bpmn:incoming>
+        <bpmn:outgoing>Flow_0q4dox9</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0820hd3</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="program-info-not-required-task" name="Program Info not required">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="program-info-request" />
+          <zeebe:taskHeaders>
+            <zeebe:header key="programInfoStatus" value="Not Required" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0q4dox9</bpmn:incoming>
+        <bpmn:outgoing>Flow_0vlzpfm</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:intermediateCatchEvent id="program-info-request-timer">
+        <bpmn:incoming>Flow_09spiyj</bpmn:incoming>
+        <bpmn:outgoing>Flow_0mc1ufv</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_08dhknx">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT12H</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0bza37i" sourceRef="verify-assessment-calculation-order-gateway" targetRef="verify-assessment-calculation-timer" />
+    <bpmn:sequenceFlow id="Flow_0umbeot" sourceRef="verify-assessment-calculation-timer" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_16zz7zb" name="Waiting for another assessment to complete" sourceRef="ready-for-calculation-gateway" targetRef="verify-assessment-calculation-order-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1eip27h" sourceRef="verify-assessment-calculation-order-gateway" targetRef="release-assessment-calculation-message" />
+    <bpmn:sequenceFlow id="Flow_0wp1s62" sourceRef="verify-assessment-calculation-order-task" targetRef="ready-for-calculation-gateway" />
+    <bpmn:sequenceFlow id="Flow_0mpuqex" name="Yes" sourceRef="ready-for-calculation-gateway" targetRef="Gateway_11qgy63">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isReadyForCalculation = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0358dxp" sourceRef="release-assessment-calculation-message" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="Flow_1btetiq" sourceRef="load-assessment-data-pre-assessment-subprocess" targetRef="verify-assessment-calculation-order-task" />
+    <bpmn:sequenceFlow id="reassessment-flow" name="Reassessment" sourceRef="assessment-process-type-gateway" targetRef="verify-assessment-calculation-order-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType != "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0hfjqs0" name="Full Time" sourceRef="Gateway_11qgy63" targetRef="Activity_0t108ac">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Full Time"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1j6gqvf" sourceRef="Activity_0t108ac" targetRef="Activity_0cqcjwg" />
+    <bpmn:sequenceFlow id="Flow_0e3pl88" name="Part Time" sourceRef="Gateway_11qgy63" targetRef="Activity_09v8xl0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=offeringIntensity = "Part Time"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1k200x2" sourceRef="Activity_09v8xl0" targetRef="Activity_0w3u365" />
+    <bpmn:sequenceFlow id="Flow_17yc7mz" sourceRef="Activity_0w3u365" targetRef="save-disbursement-part-time-task" />
+    <bpmn:sequenceFlow id="Flow_0qmdwld" sourceRef="Activity_0cqcjwg" targetRef="save-disbursement-task" />
+    <bpmn:sequenceFlow id="Flow_1y2j9iz" sourceRef="save-disbursement-part-time-task" targetRef="save-assessment-data-part-time-task" />
+    <bpmn:sequenceFlow id="Flow_0wed99j" sourceRef="save-disbursement-task" targetRef="save-assessment-data-task" />
+    <bpmn:sequenceFlow id="Flow_1f8ymzi" sourceRef="save-assessment-data-part-time-task" targetRef="Activity_0d78x0s" />
+    <bpmn:sequenceFlow id="Flow_1izp0bk" sourceRef="save-assessment-data-task" targetRef="Activity_1vyml74" />
+    <bpmn:sequenceFlow id="Flow_1mbspca" sourceRef="student-income-verification-subprocess" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1uh1kyu" sourceRef="Gateway_0ny5tkb" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_1rn6agw" sourceRef="Gateway_1jdrla2" targetRef="Gateway_0jc5bz6" />
+    <bpmn:sequenceFlow id="Flow_16d5gro" sourceRef="Gateway_0jc5bz6" targetRef="Gateway_1imkna6" />
+    <bpmn:sequenceFlow id="Flow_18qbsu1" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="student-income-verification-subprocess" />
+    <bpmn:sequenceFlow id="Flow_1wde0bi" sourceRef="retrieve-supporting-info-for-partner-subprocess" targetRef="partner-income-verification-subprocess" />
+    <bpmn:sequenceFlow id="Flow_0jrbmj3" sourceRef="partner-income-verification-subprocess" targetRef="Gateway_1jdrla2" />
+    <bpmn:sequenceFlow id="Flow_03zfrkx" sourceRef="create-identifiable-partner-task" targetRef="retrieve-supporting-info-for-partner-subprocess" />
+    <bpmn:sequenceFlow id="Flow_14701yl" sourceRef="Gateway_176fysj" targetRef="create-identifiable-partner-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataIsYourPartnerAbleToReport = true or studentDataPartnerIsAbleToReport != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0emvz6f" name="Yes" sourceRef="Gateway_05k6rp7" targetRef="Gateway_176fysj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus = "married"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1gii09j" name="Skip creation. Only for 2025/2026 and earlier." sourceRef="Gateway_176fysj" targetRef="Gateway_1jdrla2" />
+    <bpmn:sequenceFlow id="Flow_0v2i46e" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="Gateway_05k6rp7" />
+    <bpmn:sequenceFlow id="Flow_1u0qixu" name="No" sourceRef="Gateway_05k6rp7" targetRef="Gateway_1jdrla2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataRelationshipStatus != "married"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10de3as" sourceRef="Gateway_1knnojd" targetRef="in-progress-main-parallel-info-gathering-gateway" />
+    <bpmn:sequenceFlow id="Flow_18xo3dr" sourceRef="in-progress-main-parallel-info-gathering-gateway" targetRef="parents-verification-has-dependant-gateway" />
+    <bpmn:sequenceFlow id="Flow_10lg2ud" sourceRef="verify-application-exceptions-pending-gateway" targetRef="verify-application-exceptions-retry-timer" />
+    <bpmn:sequenceFlow id="verify-application-exceptions-retry-timer-flow" sourceRef="verify-application-exceptions-retry-timer" targetRef="verify-application-exceptions-task" />
+    <bpmn:sequenceFlow id="Flow_1v0ju0g" sourceRef="verify-application-exceptions-pending-gateway" targetRef="application-exception-verified-message" />
+    <bpmn:sequenceFlow id="Flow_0ws0afg" sourceRef="application-exception-verified-message" targetRef="verify-application-exceptions-status-gateway" />
+    <bpmn:sequenceFlow id="verify-application-exceptions-pending-flow" name="Pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-pending-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Pending"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-not-pending-flow" name="Not pending" sourceRef="Gateway_04wt04t" targetRef="verify-application-exceptions-status-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus != "Pending"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-denied-flow" name="Declined" sourceRef="verify-application-exceptions-status-gateway" targetRef="exceptions-workflow-wrap-up-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Declined"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="verify-application-exceptions-status-approved-flow" name="Approved" sourceRef="verify-application-exceptions-status-gateway" targetRef="Gateway_1knnojd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationExceptionStatus = "Approved"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_04f30nk" sourceRef="verify-application-exceptions-task" targetRef="Gateway_04wt04t" />
+    <bpmn:sequenceFlow id="Flow_1daizvx" name="PIR Not required or Completed" sourceRef="Gateway_1aawyrx" targetRef="verify-application-exceptions-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Not Required" or programInfoStatus = "Completed"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="change-in-progress-flow" name="Change in progress" sourceRef="Gateway_0wavgao" targetRef="Gateway_1knnojd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change in progress"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="not-a-change-request-flow" name="Regular flow" sourceRef="Gateway_1imkna6" targetRef="Gateway_139oo1r" />
+    <bpmn:sequenceFlow id="changed-with-approval-flow" name="Changed with approval" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="Gateway_139oo1r">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Changed with approval"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0prddd0" sourceRef="Gateway_139oo1r" targetRef="load-assessment-data-pre-assessment-subprocess" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-flow" name="Change request in progress" sourceRef="Gateway_1imkna6" targetRef="application-change-request-approval-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change in progress"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-timer" targetRef="application-change-request-approval-task" />
+    <bpmn:sequenceFlow id="Flow_10nfd6c" sourceRef="application-change-request-approval-task" targetRef="minitry-approval-change-in-progress-still-pending-gateway" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-timer-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-timer" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-flow" name="Pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationEditStatus = "Change pending approval"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-pending-message-flow" sourceRef="minitry-approval-change-in-progress-pending-gateway" targetRef="minitry-approval-change-in-progress-pending-message" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-decision-made-flow" name="No longer pending" sourceRef="minitry-approval-change-in-progress-still-pending-gateway" targetRef="minitry-approval-change-request-assessed-gateway" />
+    <bpmn:sequenceFlow id="minitry-approval-change-in-progress-message-received-flow" sourceRef="minitry-approval-change-in-progress-pending-message" targetRef="minitry-approval-change-request-assessed-gateway" />
+    <bpmn:sequenceFlow id="change-declined-flow" name="Change declined or cancelled" sourceRef="minitry-approval-change-request-assessed-gateway" targetRef="change-request-workflow-wrap-up-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=list contains([
+  "Change declined",
+  "Change cancelled"
+], applicationEditStatus)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0jltxxn" sourceRef="change-request-workflow-wrap-up-task" targetRef="minitry-approval-change-declined-end-event" />
+    <bpmn:sequenceFlow id="Flow_0puhcea" sourceRef="exceptions-workflow-wrap-up-task" targetRef="application-exception-end-event" />
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-dependant-flow" name="Dependant" sourceRef="parents-verification-has-dependant-gateway" targetRef="identifiable-parents-creation">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus = "dependant"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="parents-verification-dependantstatus-independant-flow" name="Independant" sourceRef="parents-verification-has-dependant-gateway" targetRef="Gateway_0ny5tkb">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataDependantstatus != "dependant"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ne5hoq" sourceRef="identifiable-parents-creation" targetRef="Gateway_0ny5tkb" />
+    <bpmn:sequenceFlow id="Flow_0ljbhnq" sourceRef="Gateway_0wavgao" targetRef="update-application-status-to-in-progress-task" />
+    <bpmn:sequenceFlow id="Flow_0106iy0" sourceRef="update-application-status-to-in-progress-task" targetRef="Activity_069nn9n" />
+    <bpmn:sequenceFlow id="Flow_1gjp61i" sourceRef="former-youth-in-care-join-gateway" targetRef="Gateway_0wavgao" />
+    <bpmn:sequenceFlow id="Flow_1w081qo" sourceRef="Activity_069nn9n" targetRef="Gateway_1aawyrx" />
+    <bpmn:sequenceFlow id="Flow_04qzwk1" name="PIR Declined" sourceRef="Gateway_1aawyrx" targetRef="pir-workflow-wrap-up-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=programInfoStatus = "Declined"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0jh9h56" sourceRef="pir-workflow-wrap-up-task" targetRef="Event_1mj2hkh" />
+    <bpmn:sequenceFlow id="Flow_0mt0uyq" sourceRef="workflow-wrap-up-task" targetRef="Event_0mtgfbi" />
+    <bpmn:sequenceFlow id="Flow_0rkzx2d" sourceRef="Event_0w0bgro" targetRef="workflow-wrap-up-task" />
+    <bpmn:sequenceFlow id="Flow_1txrz77" sourceRef="Gateway_0f9knk0" targetRef="Event_0w0bgro" />
+    <bpmn:sequenceFlow id="Flow_01iq5cw" name="Has NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-noa-status-to-not-required-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationHasNOAApproval = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0hmh3m7" sourceRef="update-noa-status-to-not-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:sequenceFlow id="Flow_1wkpr1a" name="Application Completed" sourceRef="Gateway_1xse027" targetRef="update-noa-status-to-not-required-application-completed-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=applicationStatus = "Completed"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1o87o98" sourceRef="update-noa-status-to-not-required-application-completed-task" targetRef="Gateway_0f9knk0" />
+    <bpmn:sequenceFlow id="Flow_1atzf7v" sourceRef="associate-msfaa-task" targetRef="Gateway_1xse027" />
+    <bpmn:sequenceFlow id="Flow_1cb5fpw" name="Application Not Completed" sourceRef="Gateway_1xse027" targetRef="Gateway_1m2js1c" />
+    <bpmn:sequenceFlow id="Flow_0p1lgm7" sourceRef="update-noa-status-to-required-task" targetRef="Gateway_04wql0w" />
+    <bpmn:sequenceFlow id="Flow_0z518wc" sourceRef="Gateway_04wql0w" targetRef="Gateway_0f9knk0" />
+    <bpmn:sequenceFlow id="Flow_1a4wzic" name="Does Not Have NOA Approval" sourceRef="Gateway_1m2js1c" targetRef="update-application-status-to-assessment-task" />
+    <bpmn:sequenceFlow id="Flow_1mpwyku" sourceRef="Gateway_1hwknxt" targetRef="associate-msfaa-task" />
+    <bpmn:sequenceFlow id="Flow_0mayggl" sourceRef="update-application-status-to-assessment-task" targetRef="update-noa-status-to-required-task" />
+    <bpmn:sequenceFlow id="Flow_13rnc99" sourceRef="Activity_0d78x0s" targetRef="Gateway_1hwknxt" />
+    <bpmn:sequenceFlow id="Flow_17bbn8b" sourceRef="Activity_1vyml74" targetRef="Gateway_1hwknxt" />
+    <bpmn:sequenceFlow id="assessment-flow" name="Original Assessment" sourceRef="assessment-process-type-gateway" targetRef="former-youth-in-care-gateway">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="former-youth-in-care-send-flow" sourceRef="former-youth-in-care-gateway" targetRef="send-former-youth-in-care-email-task">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataYouthInCare != null and studentDataYouthInCare != "no"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_10xaz6e" sourceRef="former-youth-in-care-gateway" targetRef="former-youth-in-care-join-gateway" />
+    <bpmn:sequenceFlow id="former-youth-in-care-email-sent-flow" sourceRef="send-former-youth-in-care-email-task" targetRef="former-youth-in-care-join-gateway" />
+    <bpmn:sequenceFlow id="Flow_1ef3map" sourceRef="assessment-start-event" targetRef="associate-workflow-instance-task" />
+    <bpmn:sequenceFlow id="Flow_1wrj7fh" sourceRef="associate-workflow-instance-task" targetRef="load-assessment-data-submit-or-reassessment-subprocess" />
+    <bpmn:sequenceFlow id="Flow_0rxxozm" sourceRef="load-assessment-data-submit-or-reassessment-subprocess" targetRef="assessment-process-type-gateway" />
     <bpmn:serviceTask id="send-former-youth-in-care-email-task" name="Send former youth in care email">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="send-email-notification" />
@@ -949,17 +950,16 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:incoming>former-youth-in-care-send-flow</bpmn:incoming>
       <bpmn:outgoing>former-youth-in-care-email-sent-flow</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="former-youth-in-care-send-flow" sourceRef="former-youth-in-care-gateway" targetRef="send-former-youth-in-care-email-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataYouthInCare != null and studentDataYouthInCare != "no"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_10xaz6e" sourceRef="former-youth-in-care-gateway" targetRef="former-youth-in-care-join-gateway" />
-    <bpmn:sequenceFlow id="former-youth-in-care-email-sent-flow" sourceRef="send-former-youth-in-care-email-task" targetRef="former-youth-in-care-join-gateway" />
     <bpmn:exclusiveGateway id="former-youth-in-care-join-gateway" default="Flow_1gjp61i">
       <bpmn:incoming>Flow_10xaz6e</bpmn:incoming>
       <bpmn:incoming>former-youth-in-care-email-sent-flow</bpmn:incoming>
       <bpmn:outgoing>Flow_1gjp61i</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1gjp61i" sourceRef="former-youth-in-care-join-gateway" targetRef="Gateway_0wavgao" />
+    <bpmn:exclusiveGateway id="former-youth-in-care-gateway" name="Former youth in care?" default="Flow_10xaz6e">
+      <bpmn:incoming>assessment-flow</bpmn:incoming>
+      <bpmn:outgoing>former-youth-in-care-send-flow</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10xaz6e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
   </bpmn:process>
   <bpmn:message id="Message_1clo0eh" name="program-info-request-completed">
     <bpmn:extensionElements>
@@ -998,885 +998,885 @@ Note: the workflow process should continue its execution as a regular reassessme
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0z9wj8q">
       <bpmndi:BPMNShape id="Participant_0y53svc_di" bpmnElement="application-in-progress" isHorizontal="true">
-        <dc:Bounds x="170" y="80" width="4730" height="1530" />
+        <dc:Bounds x="152" y="85" width="5058" height="1530" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1bfd2e9_di" bpmnElement="Lane_1bfd2e9" isHorizontal="true">
-        <dc:Bounds x="200" y="1150" width="4700" height="460" />
+        <dc:Bounds x="182" y="1155" width="5028" height="460" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_0lvs868_di" bpmnElement="Lane_0lvs868" isHorizontal="true">
-        <dc:Bounds x="200" y="80" width="4700" height="1070" />
+        <dc:Bounds x="182" y="85" width="5028" height="1070" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1b54j4j_di" bpmnElement="verify-assessment-calculation-timer">
-        <dc:Bounds x="2602" y="1462" width="36" height="36" />
+        <dc:Bounds x="2912" y="1467" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1q0d1tl_di" bpmnElement="verify-assessment-calculation-order-gateway">
-        <dc:Bounds x="2695" y="1455" width="50" height="50" />
+        <dc:Bounds x="3005" y="1460" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_16whgqa_di" bpmnElement="ready-for-calculation-gateway" isMarkerVisible="true">
-        <dc:Bounds x="2775" y="1335" width="50" height="50" />
+        <dc:Bounds x="3085" y="1340" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2820" y="1280" width="90" height="40" />
+          <dc:Bounds x="3131" y="1285" width="89" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1b7ywcj_di" bpmnElement="verify-assessment-calculation-order-task">
-        <dc:Bounds x="2460" y="1320" width="100" height="80" />
+        <dc:Bounds x="2770" y="1325" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1kvpx37_di" bpmnElement="Activity_0t108ac">
-        <dc:Bounds x="3080" y="1320" width="100" height="80" />
+        <dc:Bounds x="3390" y="1325" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_11qgy63_di" bpmnElement="Gateway_11qgy63" isMarkerVisible="true">
-        <dc:Bounds x="2955" y="1335" width="50" height="50" />
+        <dc:Bounds x="3265" y="1340" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0j2xd1b" bpmnElement="Activity_09v8xl0">
-        <dc:Bounds x="3080" y="1420" width="100" height="80" />
+        <dc:Bounds x="3390" y="1425" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0tm8tcs" bpmnElement="Activity_0w3u365">
-        <dc:Bounds x="3220" y="1420" width="100" height="80" />
+        <dc:Bounds x="3530" y="1425" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1n7bhaz_di" bpmnElement="Activity_0cqcjwg">
-        <dc:Bounds x="3220" y="1320" width="100" height="80" />
+        <dc:Bounds x="3530" y="1325" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0hgpw0i" bpmnElement="save-disbursement-part-time-task">
-        <dc:Bounds x="3360" y="1420" width="100" height="80" />
+        <dc:Bounds x="3670" y="1425" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1rrwclw" bpmnElement="save-disbursement-task">
-        <dc:Bounds x="3360" y="1320" width="100" height="80" />
+        <dc:Bounds x="3670" y="1325" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_10gkyni" bpmnElement="save-assessment-data-part-time-task">
-        <dc:Bounds x="3490" y="1420" width="100" height="80" />
+        <dc:Bounds x="3800" y="1425" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0kunf9f_di" bpmnElement="save-assessment-data-task">
-        <dc:Bounds x="3490" y="1320" width="100" height="80" />
+        <dc:Bounds x="3800" y="1325" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0gfaqjk" bpmnElement="Gateway_0jc5bz6">
-        <dc:Bounds x="2905" y="317" width="50" height="50" />
+        <dc:Bounds x="3215" y="322" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1r6pjw3" bpmnElement="student-income-verification-subprocess">
-        <dc:Bounds x="2250" y="302" width="100" height="80" />
+        <dc:Bounds x="2560" y="307" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1c34e2g" bpmnElement="partner-income-verification-subprocess">
-        <dc:Bounds x="2410" y="490" width="100" height="80" />
+        <dc:Bounds x="2720" y="495" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_02m7l5a" bpmnElement="retrieve-supporting-info-for-partner-subprocess">
-        <dc:Bounds x="2269" y="490" width="100" height="80" />
+        <dc:Bounds x="2579" y="495" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1sauqjd" bpmnElement="create-identifiable-partner-task">
-        <dc:Bounds x="2127" y="490" width="100" height="80" />
+        <dc:Bounds x="2437" y="495" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_166k2o1" bpmnElement="Gateway_176fysj" isMarkerVisible="true">
-        <dc:Bounds x="2005" y="505" width="50" height="50" />
+        <dc:Bounds x="2315" y="510" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_05k6rp7_di" bpmnElement="Gateway_05k6rp7" isMarkerVisible="true">
-        <dc:Bounds x="1943" y="605" width="50" height="50" />
+        <dc:Bounds x="2253" y="610" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1971" y="593" width="65" height="14" />
+          <dc:Bounds x="2281" y="598" width="65" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0fi04ur" bpmnElement="Gateway_1jdrla2" isMarkerVisible="true">
-        <dc:Bounds x="2515" y="605" width="50" height="50" />
+        <dc:Bounds x="2825" y="610" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1472xxr_di" bpmnElement="in-progress-main-parallel-info-gathering-gateway">
-        <dc:Bounds x="1865" y="316" width="50" height="50" />
+        <dc:Bounds x="2175" y="321" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0teq2x0_di" bpmnElement="release-assessment-calculation-message">
-        <dc:Bounds x="2602" y="1372" width="36" height="36" />
+        <dc:Bounds x="2912" y="1377" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0f2fffe_di" bpmnElement="verify-application-exceptions-retry-timer">
-        <dc:Bounds x="1488" y="401" width="36" height="36" />
+        <dc:Bounds x="1798" y="406" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_15lqlgc_di" bpmnElement="application-exception-verified-message">
-        <dc:Bounds x="1554" y="323" width="36" height="36" />
+        <dc:Bounds x="1864" y="328" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_13zjxus_di" bpmnElement="verify-application-exceptions-pending-gateway">
-        <dc:Bounds x="1481" y="316" width="50" height="50" />
+        <dc:Bounds x="1791" y="321" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_18nbhar_di" bpmnElement="verify-application-exceptions-status-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1612" y="316" width="50" height="50" />
+        <dc:Bounds x="1922" y="321" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_04wt04t_di" bpmnElement="Gateway_04wt04t" isMarkerVisible="true">
-        <dc:Bounds x="1375" y="316" width="50" height="50" />
+        <dc:Bounds x="1685" y="321" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1375" y="365" width="53" height="27" />
+          <dc:Bounds x="1685" y="370" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1801h2l" bpmnElement="verify-application-exceptions-task">
-        <dc:Bounds x="1240" y="301" width="100" height="80" />
+        <dc:Bounds x="1550" y="306" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1knnojd_di" bpmnElement="Gateway_1knnojd" isMarkerVisible="true">
-        <dc:Bounds x="1765" y="316" width="50" height="50" />
+        <dc:Bounds x="2075" y="321" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_139oo1r_di" bpmnElement="Gateway_139oo1r" isMarkerVisible="true">
-        <dc:Bounds x="3045" y="905" width="50" height="50" />
+        <dc:Bounds x="3355" y="910" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_15mfyg8_di" bpmnElement="load-assessment-data-pre-assessment-subprocess">
-        <dc:Bounds x="3020" y="990" width="100" height="80" />
+        <dc:Bounds x="3330" y="995" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1q15yac" bpmnElement="application-change-request-approval-task" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="3160" y="530" width="100" height="80" />
+        <dc:Bounds x="3470" y="535" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1bskmj6" bpmnElement="minitry-approval-change-in-progress-pending-timer" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="3072" y="552" width="36" height="36" />
+        <dc:Bounds x="3382" y="557" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14ymg5g" bpmnElement="minitry-approval-change-in-progress-pending-gateway" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="3065" y="675" width="50" height="50" />
+        <dc:Bounds x="3375" y="680" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0nzczwc" bpmnElement="minitry-approval-change-in-progress-still-pending-gateway" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="3175" y="675" width="50" height="50" />
+        <dc:Bounds x="3485" y="680" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3232" y="687" width="53" height="27" />
+          <dc:Bounds x="3542" y="692" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_18hr0ql" bpmnElement="minitry-approval-change-request-assessed-gateway" isMarkerVisible="true" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="3175" y="795" width="50" height="50" />
+        <dc:Bounds x="3485" y="800" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_14f4jm3" bpmnElement="minitry-approval-change-in-progress-pending-message" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
-        <dc:Bounds x="3070" y="802" width="36" height="36" />
+        <dc:Bounds x="3380" y="807" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1imkna6_di" bpmnElement="Gateway_1imkna6" isMarkerVisible="true">
-        <dc:Bounds x="3055" y="415" width="50" height="50" />
+        <dc:Bounds x="3365" y="420" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_07n5f2c" bpmnElement="change-request-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="3350" y="780" width="100" height="80" />
+        <dc:Bounds x="3660" y="785" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1bczfyn" bpmnElement="minitry-approval-change-declined-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="3502" y="802" width="36" height="36" />
+        <dc:Bounds x="3812" y="807" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_016am96_di" bpmnElement="application-exception-end-event" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1619" y="572" width="36" height="36" />
+        <dc:Bounds x="1929" y="577" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_11pvkh4" bpmnElement="exceptions-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1587" y="440" width="100" height="80" />
+        <dc:Bounds x="1897" y="445" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="former-youth-in-care-gateway_di" bpmnElement="former-youth-in-care-gateway" isMarkerVisible="true">
-        <dc:Bounds x="745" y="155" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="731" y="118" width="78" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="send-former-youth-in-care-email-task_di" bpmnElement="send-former-youth-in-care-email-task">
-        <dc:Bounds x="830" y="140" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="former-youth-in-care-join-gateway_di" bpmnElement="former-youth-in-care-join-gateway" isMarkerVisible="true">
-        <dc:Bounds x="745" y="235" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
-        <dc:Bounds x="2060" y="790" width="580" height="200" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18hxtfw_di" bpmnElement="start-supporting-user-creation">
-        <dc:Bounds x="2097" y="872" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1kqsmts" bpmnElement="retrieve-identifiable-parent-info-subprocess">
-        <dc:Bounds x="2295" y="850" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0fe0kex" bpmnElement="parent-income-verification-subprocess">
-        <dc:Bounds x="2435" y="850" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0mkozot_di" bpmnElement="end-supporting-user-creation">
-        <dc:Bounds x="2577" y="872" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0wlj7rd" bpmnElement="create-identifiable-parent-task">
-        <dc:Bounds x="2165" y="850" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1g9cp6m_di" bpmnElement="Flow_1g9cp6m">
-        <di:waypoint x="2133" y="890" />
-        <di:waypoint x="2165" y="890" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0u3bioj_di" bpmnElement="Flow_0u3bioj">
-        <di:waypoint x="2265" y="890" />
-        <di:waypoint x="2295" y="890" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1j7259r_di" bpmnElement="Flow_1j7259r">
-        <di:waypoint x="2395" y="890" />
-        <di:waypoint x="2435" y="890" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0jh200l_di" bpmnElement="Flow_0jh200l">
-        <di:waypoint x="2535" y="890" />
-        <di:waypoint x="2577" y="890" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Gateway_1rt1s2i_di" bpmnElement="parents-verification-has-dependant-gateway" isMarkerVisible="true">
-        <dc:Bounds x="1955" y="940" width="50" height="50" />
+        <dc:Bounds x="2265" y="945" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0cru9d8" bpmnElement="Gateway_0ny5tkb" isMarkerVisible="true">
-        <dc:Bounds x="2715" y="940" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_069nn9n_di" bpmnElement="Activity_069nn9n" isExpanded="false">
-        <dc:Bounds x="980" y="302" width="100" height="80" />
-        <bpmndi:BPMNLabel />
+        <dc:Bounds x="3025" y="945" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1f1vf25_di" bpmnElement="update-application-status-to-in-progress-task">
-        <dc:Bounds x="850" y="302" width="100" height="80" />
+        <dc:Bounds x="1160" y="307" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0wavgao_di" bpmnElement="Gateway_0wavgao" isMarkerVisible="true">
-        <dc:Bounds x="745" y="317" width="50" height="50" />
+        <dc:Bounds x="1055" y="322" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="649.5" y="335" width="85" height="14" />
+          <dc:Bounds x="1037" y="298" width="85" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="assessment-process-type-gateway" isMarkerVisible="true">
-        <dc:Bounds x="625" y="317" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="548" y="314" width="83" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0yu5184_di" bpmnElement="load-assessment-data-submit-or-reassessment-subprocess">
-        <dc:Bounds x="440" y="302" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
-        <dc:Bounds x="290" y="303" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
-        <dc:Bounds x="222" y="325" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1aawyrx_di" bpmnElement="Gateway_1aawyrx" isMarkerVisible="true">
-        <dc:Bounds x="1125" y="317" width="50" height="50" />
+        <dc:Bounds x="1435" y="322" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1l72rhw" bpmnElement="pir-workflow-wrap-up-task" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1100" y="440" width="100" height="80" />
+        <dc:Bounds x="1410" y="445" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1mj2hkh_di" bpmnElement="Event_1mj2hkh" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
-        <dc:Bounds x="1132" y="572" width="36" height="36" />
+        <dc:Bounds x="1442" y="577" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0mtgfbi_di" bpmnElement="Event_0mtgfbi" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
-        <dc:Bounds x="4842" y="1332" width="36" height="36" />
+        <dc:Bounds x="5152" y="1337" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0dcydtn_di" bpmnElement="workflow-wrap-up-task" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
-        <dc:Bounds x="4690" y="1310" width="100" height="80" />
+        <dc:Bounds x="5000" y="1315" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0w0bgro_di" bpmnElement="Event_0w0bgro">
-        <dc:Bounds x="4612" y="1332" width="36" height="36" />
+        <dc:Bounds x="4922" y="1337" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="4601" y="1375" width="67" height="27" />
+          <dc:Bounds x="4911" y="1380" width="68" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_05dcqr1" bpmnElement="update-noa-status-to-not-required-task">
-        <dc:Bounds x="4310" y="1380" width="100" height="80" />
+        <dc:Bounds x="4620" y="1385" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1kjbwdp" bpmnElement="update-noa-status-to-not-required-application-completed-task">
-        <dc:Bounds x="4310" y="1480" width="100" height="80" />
+        <dc:Bounds x="4620" y="1485" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1xse027_di" bpmnElement="Gateway_1xse027" isMarkerVisible="true">
-        <dc:Bounds x="3955" y="1335" width="50" height="50" />
+        <dc:Bounds x="4265" y="1340" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_054vajm" bpmnElement="Gateway_04wql0w" isMarkerVisible="true">
-        <dc:Bounds x="4435" y="1325" width="50" height="50" />
+        <dc:Bounds x="4745" y="1330" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0f9knk0_di" bpmnElement="Gateway_0f9knk0" isMarkerVisible="true">
-        <dc:Bounds x="4535" y="1325" width="50" height="50" />
+        <dc:Bounds x="4845" y="1330" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1m2js1c_di" bpmnElement="Gateway_1m2js1c" isMarkerVisible="true">
-        <dc:Bounds x="4065" y="1335" width="50" height="50" />
+        <dc:Bounds x="4375" y="1340" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_19j2z1x" bpmnElement="associate-msfaa-task">
-        <dc:Bounds x="3830" y="1320" width="100" height="80" />
+        <dc:Bounds x="4140" y="1325" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1usikde" bpmnElement="update-application-status-to-assessment-task">
-        <dc:Bounds x="4160" y="1240" width="100" height="80" />
+        <dc:Bounds x="4470" y="1245" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_012hpqk" bpmnElement="update-noa-status-to-required-task">
-        <dc:Bounds x="4320" y="1240" width="100" height="80" />
+        <dc:Bounds x="4630" y="1245" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1hwknxt_di" bpmnElement="Gateway_1hwknxt" isMarkerVisible="true">
-        <dc:Bounds x="3735" y="1335" width="50" height="50" />
+        <dc:Bounds x="4045" y="1340" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1bv2wa1" bpmnElement="Activity_0d78x0s">
-        <dc:Bounds x="3610" y="1420" width="100" height="80" />
+        <dc:Bounds x="3920" y="1425" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0dvkb3l" bpmnElement="Activity_1vyml74">
-        <dc:Bounds x="3610" y="1320" width="100" height="80" />
+        <dc:Bounds x="3920" y="1325" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="assessment-start-event">
+        <dc:Bounds x="252" y="330" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11aa2j4_di" bpmnElement="associate-workflow-instance-task">
+        <dc:Bounds x="320" y="308" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yu5184_di" bpmnElement="load-assessment-data-submit-or-reassessment-subprocess">
+        <dc:Bounds x="470" y="307" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1c05kxg_di" bpmnElement="assessment-process-type-gateway" isMarkerVisible="true">
+        <dc:Bounds x="655" y="322" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="578" y="319" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="send-former-youth-in-care-email-task_di" bpmnElement="send-former-youth-in-care-email-task">
+        <dc:Bounds x="870" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="former-youth-in-care-join-gateway_di" bpmnElement="former-youth-in-care-join-gateway" isMarkerVisible="true">
+        <dc:Bounds x="965" y="322" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="former-youth-in-care-gateway_di" bpmnElement="former-youth-in-care-gateway" isMarkerVisible="true">
+        <dc:Bounds x="795" y="322" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="781" y="381.5" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
+        <dc:Bounds x="2370" y="795" width="580" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_18hxtfw_di" bpmnElement="start-supporting-user-creation">
+        <dc:Bounds x="2407" y="877" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kqsmts" bpmnElement="retrieve-identifiable-parent-info-subprocess">
+        <dc:Bounds x="2605" y="855" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0fe0kex" bpmnElement="parent-income-verification-subprocess">
+        <dc:Bounds x="2745" y="855" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0mkozot_di" bpmnElement="end-supporting-user-creation">
+        <dc:Bounds x="2887" y="877" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wlj7rd" bpmnElement="create-identifiable-parent-task">
+        <dc:Bounds x="2475" y="855" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1g9cp6m_di" bpmnElement="Flow_1g9cp6m">
+        <di:waypoint x="2443" y="895" />
+        <di:waypoint x="2475" y="895" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u3bioj_di" bpmnElement="Flow_0u3bioj">
+        <di:waypoint x="2575" y="895" />
+        <di:waypoint x="2605" y="895" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j7259r_di" bpmnElement="Flow_1j7259r">
+        <di:waypoint x="2705" y="895" />
+        <di:waypoint x="2745" y="895" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jh200l_di" bpmnElement="Flow_0jh200l">
+        <di:waypoint x="2845" y="895" />
+        <di:waypoint x="2887" y="895" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_069nn9n_di" bpmnElement="Activity_069nn9n" isExpanded="false">
+        <dc:Bounds x="1290" y="307" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
-        <di:waypoint x="2695" y="1480" />
-        <di:waypoint x="2638" y="1480" />
+        <di:waypoint x="3005" y="1485" />
+        <di:waypoint x="2948" y="1485" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0umbeot_di" bpmnElement="Flow_0umbeot">
-        <di:waypoint x="2602" y="1480" />
-        <di:waypoint x="2510" y="1480" />
-        <di:waypoint x="2510" y="1400" />
+        <di:waypoint x="2912" y="1485" />
+        <di:waypoint x="2820" y="1485" />
+        <di:waypoint x="2820" y="1405" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16zz7zb_di" bpmnElement="Flow_16zz7zb">
-        <di:waypoint x="2800" y="1385" />
-        <di:waypoint x="2800" y="1480" />
-        <di:waypoint x="2745" y="1480" />
+        <di:waypoint x="3110" y="1390" />
+        <di:waypoint x="3110" y="1485" />
+        <di:waypoint x="3055" y="1485" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2805" y="1430" width="71" height="53" />
+          <dc:Bounds x="3115" y="1435" width="71" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1eip27h_di" bpmnElement="Flow_1eip27h">
-        <di:waypoint x="2720" y="1455" />
-        <di:waypoint x="2720" y="1390" />
-        <di:waypoint x="2638" y="1390" />
+        <di:waypoint x="3030" y="1460" />
+        <di:waypoint x="3030" y="1395" />
+        <di:waypoint x="2948" y="1395" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wp1s62_di" bpmnElement="Flow_0wp1s62">
-        <di:waypoint x="2560" y="1360" />
-        <di:waypoint x="2775" y="1360" />
+        <di:waypoint x="2870" y="1365" />
+        <di:waypoint x="3085" y="1365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mpuqex_di" bpmnElement="Flow_0mpuqex">
-        <di:waypoint x="2825" y="1360" />
-        <di:waypoint x="2955" y="1360" />
+        <di:waypoint x="3135" y="1365" />
+        <di:waypoint x="3265" y="1365" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2881" y="1342" width="18" height="14" />
+          <dc:Bounds x="3191" y="1347" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0358dxp_di" bpmnElement="Flow_0358dxp">
-        <di:waypoint x="2602" y="1390" />
-        <di:waypoint x="2560" y="1390" />
+        <di:waypoint x="2912" y="1395" />
+        <di:waypoint x="2870" y="1395" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1btetiq_di" bpmnElement="Flow_1btetiq">
-        <di:waypoint x="3070" y="1070" />
-        <di:waypoint x="3070" y="1200" />
-        <di:waypoint x="2510" y="1200" />
-        <di:waypoint x="2510" y="1320" />
+        <di:waypoint x="3380" y="1075" />
+        <di:waypoint x="3380" y="1205" />
+        <di:waypoint x="2820" y="1205" />
+        <di:waypoint x="2820" y="1325" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2487" y="1523" width="85" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ozt4pg_di" bpmnElement="reassessment-flow">
-        <di:waypoint x="650" y="367" />
-        <di:waypoint x="650" y="1360" />
-        <di:waypoint x="2460" y="1360" />
+        <di:waypoint x="680" y="372" />
+        <di:waypoint x="680" y="1365" />
+        <di:waypoint x="2770" y="1365" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="664" y="455" width="74" height="14" />
+          <dc:Bounds x="695" y="460" width="73" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hfjqs0_di" bpmnElement="Flow_0hfjqs0">
-        <di:waypoint x="3005" y="1360" />
-        <di:waypoint x="3080" y="1360" />
+        <di:waypoint x="3315" y="1365" />
+        <di:waypoint x="3390" y="1365" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3020" y="1342" width="45" height="14" />
+          <dc:Bounds x="3330" y="1347" width="45" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1j6gqvf_di" bpmnElement="Flow_1j6gqvf">
-        <di:waypoint x="3180" y="1360" />
-        <di:waypoint x="3220" y="1360" />
+        <di:waypoint x="3490" y="1365" />
+        <di:waypoint x="3530" y="1365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0e3pl88_di" bpmnElement="Flow_0e3pl88">
-        <di:waypoint x="2980" y="1385" />
-        <di:waypoint x="2980" y="1460" />
-        <di:waypoint x="3080" y="1460" />
+        <di:waypoint x="3290" y="1390" />
+        <di:waypoint x="3290" y="1465" />
+        <di:waypoint x="3390" y="1465" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3018" y="1443" width="48" height="14" />
+          <dc:Bounds x="3328" y="1448" width="48" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1k200x2_di" bpmnElement="Flow_1k200x2">
-        <di:waypoint x="3180" y="1460" />
-        <di:waypoint x="3220" y="1460" />
+        <di:waypoint x="3490" y="1465" />
+        <di:waypoint x="3530" y="1465" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17yc7mz_di" bpmnElement="Flow_17yc7mz">
-        <di:waypoint x="3320" y="1460" />
-        <di:waypoint x="3360" y="1460" />
+        <di:waypoint x="3630" y="1465" />
+        <di:waypoint x="3670" y="1465" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qmdwld_di" bpmnElement="Flow_0qmdwld">
-        <di:waypoint x="3320" y="1360" />
-        <di:waypoint x="3360" y="1360" />
+        <di:waypoint x="3630" y="1365" />
+        <di:waypoint x="3670" y="1365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0jquq8b" bpmnElement="Flow_1y2j9iz">
-        <di:waypoint x="3460" y="1460" />
-        <di:waypoint x="3490" y="1460" />
+        <di:waypoint x="3770" y="1465" />
+        <di:waypoint x="3800" y="1465" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wed99j_di" bpmnElement="Flow_0wed99j">
-        <di:waypoint x="3460" y="1360" />
-        <di:waypoint x="3490" y="1360" />
+        <di:waypoint x="3770" y="1365" />
+        <di:waypoint x="3800" y="1365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1f8ymzi_di" bpmnElement="Flow_1f8ymzi">
-        <di:waypoint x="3590" y="1460" />
-        <di:waypoint x="3610" y="1460" />
+        <di:waypoint x="3900" y="1465" />
+        <di:waypoint x="3920" y="1465" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1izp0bk_di" bpmnElement="Flow_1izp0bk">
-        <di:waypoint x="3590" y="1360" />
-        <di:waypoint x="3610" y="1360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1mpwyku_di" bpmnElement="Flow_1mpwyku">
-        <di:waypoint x="3785" y="1360" />
-        <di:waypoint x="3830" y="1360" />
+        <di:waypoint x="3900" y="1365" />
+        <di:waypoint x="3920" y="1365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mbspca_di" bpmnElement="Flow_1mbspca">
-        <di:waypoint x="2350" y="342" />
-        <di:waypoint x="2905" y="342" />
+        <di:waypoint x="2660" y="347" />
+        <di:waypoint x="3215" y="347" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1uh1kyu_di" bpmnElement="Flow_1uh1kyu">
-        <di:waypoint x="2765" y="965" />
-        <di:waypoint x="2860" y="965" />
-        <di:waypoint x="2860" y="342" />
-        <di:waypoint x="2905" y="342" />
+        <di:waypoint x="3075" y="970" />
+        <di:waypoint x="3170" y="970" />
+        <di:waypoint x="3170" y="347" />
+        <di:waypoint x="3215" y="347" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1rn6agw_di" bpmnElement="Flow_1rn6agw">
-        <di:waypoint x="2565" y="630" />
-        <di:waypoint x="2860" y="630" />
-        <di:waypoint x="2860" y="342" />
-        <di:waypoint x="2905" y="342" />
+        <di:waypoint x="2875" y="635" />
+        <di:waypoint x="3170" y="635" />
+        <di:waypoint x="3170" y="347" />
+        <di:waypoint x="3215" y="347" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_16d5gro_di" bpmnElement="Flow_16d5gro">
-        <di:waypoint x="2955" y="342" />
-        <di:waypoint x="3080" y="342" />
-        <di:waypoint x="3080" y="415" />
+        <di:waypoint x="3265" y="347" />
+        <di:waypoint x="3390" y="347" />
+        <di:waypoint x="3390" y="420" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18qbsu1_di" bpmnElement="Flow_18qbsu1">
-        <di:waypoint x="1915" y="341" />
-        <di:waypoint x="2250" y="341" />
+        <di:waypoint x="2225" y="346" />
+        <di:waypoint x="2560" y="346" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wde0bi_di" bpmnElement="Flow_1wde0bi">
-        <di:waypoint x="2369" y="530" />
-        <di:waypoint x="2410" y="530" />
+        <di:waypoint x="2679" y="535" />
+        <di:waypoint x="2720" y="535" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jrbmj3_di" bpmnElement="Flow_0jrbmj3">
-        <di:waypoint x="2510" y="530" />
-        <di:waypoint x="2540" y="530" />
-        <di:waypoint x="2540" y="605" />
+        <di:waypoint x="2820" y="535" />
+        <di:waypoint x="2850" y="535" />
+        <di:waypoint x="2850" y="610" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_03zfrkx_di" bpmnElement="Flow_03zfrkx">
-        <di:waypoint x="2227" y="530" />
-        <di:waypoint x="2269" y="530" />
+        <di:waypoint x="2537" y="535" />
+        <di:waypoint x="2579" y="535" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_14701yl_di" bpmnElement="Flow_14701yl">
-        <di:waypoint x="2055" y="530" />
-        <di:waypoint x="2127" y="530" />
+        <di:waypoint x="2365" y="535" />
+        <di:waypoint x="2437" y="535" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2038" y="486" width="84" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0emvz6f_di" bpmnElement="Flow_0emvz6f">
-        <di:waypoint x="1968" y="605" />
-        <di:waypoint x="1968" y="530" />
-        <di:waypoint x="2005" y="530" />
+        <di:waypoint x="2278" y="610" />
+        <di:waypoint x="2278" y="535" />
+        <di:waypoint x="2315" y="535" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1969" y="513" width="18" height="14" />
+          <dc:Bounds x="2279" y="518" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1gii09j_di" bpmnElement="Flow_1gii09j">
-        <di:waypoint x="2030" y="555" />
-        <di:waypoint x="2030" y="630" />
-        <di:waypoint x="2515" y="630" />
+        <di:waypoint x="2340" y="560" />
+        <di:waypoint x="2340" y="635" />
+        <di:waypoint x="2825" y="635" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2213" y="636" width="74" height="53" />
+          <dc:Bounds x="2523" y="641" width="74" height="53" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0v2i46e_di" bpmnElement="Flow_0v2i46e">
-        <di:waypoint x="1890" y="366" />
-        <di:waypoint x="1890" y="630" />
-        <di:waypoint x="1943" y="630" />
+        <di:waypoint x="2200" y="371" />
+        <di:waypoint x="2200" y="635" />
+        <di:waypoint x="2253" y="635" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1u0qixu_di" bpmnElement="Flow_1u0qixu">
-        <di:waypoint x="1968" y="655" />
-        <di:waypoint x="1968" y="690" />
-        <di:waypoint x="2540" y="690" />
-        <di:waypoint x="2540" y="655" />
+        <di:waypoint x="2278" y="660" />
+        <di:waypoint x="2278" y="695" />
+        <di:waypoint x="2850" y="695" />
+        <di:waypoint x="2850" y="660" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1976" y="672" width="15" height="14" />
+          <dc:Bounds x="2286" y="677" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10de3as_di" bpmnElement="Flow_10de3as">
-        <di:waypoint x="1815" y="341" />
-        <di:waypoint x="1865" y="341" />
+        <di:waypoint x="2125" y="346" />
+        <di:waypoint x="2175" y="346" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18xo3dr_di" bpmnElement="Flow_18xo3dr">
-        <di:waypoint x="1890" y="366" />
-        <di:waypoint x="1890" y="965" />
-        <di:waypoint x="1955" y="965" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1txrz77_di" bpmnElement="Flow_1txrz77">
-        <di:waypoint x="4585" y="1350" />
-        <di:waypoint x="4612" y="1350" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0rkzx2d_di" bpmnElement="Flow_0rkzx2d">
-        <di:waypoint x="4648" y="1350" />
-        <di:waypoint x="4690" y="1350" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0mt0uyq_di" bpmnElement="Flow_0mt0uyq">
-        <di:waypoint x="4790" y="1350" />
-        <di:waypoint x="4842" y="1350" />
+        <di:waypoint x="2200" y="371" />
+        <di:waypoint x="2200" y="970" />
+        <di:waypoint x="2265" y="970" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10lg2ud_di" bpmnElement="Flow_10lg2ud">
-        <di:waypoint x="1506" y="366" />
-        <di:waypoint x="1506" y="401" />
+        <di:waypoint x="1816" y="371" />
+        <di:waypoint x="1816" y="406" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mjvscf_di" bpmnElement="verify-application-exceptions-retry-timer-flow">
-        <di:waypoint x="1488" y="419" />
-        <di:waypoint x="1290" y="419" />
-        <di:waypoint x="1290" y="381" />
+        <di:waypoint x="1798" y="424" />
+        <di:waypoint x="1600" y="424" />
+        <di:waypoint x="1600" y="386" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v0ju0g_di" bpmnElement="Flow_1v0ju0g">
-        <di:waypoint x="1531" y="341" />
-        <di:waypoint x="1554" y="341" />
+        <di:waypoint x="1841" y="346" />
+        <di:waypoint x="1864" y="346" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ws0afg_di" bpmnElement="Flow_0ws0afg">
-        <di:waypoint x="1590" y="341" />
-        <di:waypoint x="1612" y="341" />
+        <di:waypoint x="1900" y="346" />
+        <di:waypoint x="1922" y="346" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_031ttjr_di" bpmnElement="verify-application-exceptions-pending-flow">
-        <di:waypoint x="1425" y="341" />
-        <di:waypoint x="1481" y="341" />
+        <di:waypoint x="1735" y="346" />
+        <di:waypoint x="1791" y="346" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1427" y="327" width="41" height="14" />
+          <dc:Bounds x="1737" y="332" width="41" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a8bc8b_di" bpmnElement="verify-application-exceptions-not-pending-flow">
-        <di:waypoint x="1400" y="316" />
-        <di:waypoint x="1400" y="280" />
-        <di:waypoint x="1637" y="280" />
-        <di:waypoint x="1637" y="316" />
+        <di:waypoint x="1710" y="321" />
+        <di:waypoint x="1710" y="285" />
+        <di:waypoint x="1947" y="285" />
+        <di:waypoint x="1947" y="321" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1470" y="262" width="60" height="14" />
+          <dc:Bounds x="1780" y="267" width="60" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10abeca_di" bpmnElement="verify-application-exceptions-status-denied-flow">
-        <di:waypoint x="1637" y="366" />
-        <di:waypoint x="1637" y="440" />
+        <di:waypoint x="1947" y="371" />
+        <di:waypoint x="1947" y="445" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1640" y="381" width="43" height="14" />
+          <dc:Bounds x="1950" y="386" width="43" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1pm5g4l_di" bpmnElement="verify-application-exceptions-status-approved-flow">
-        <di:waypoint x="1662" y="341" />
-        <di:waypoint x="1765" y="341" />
+        <di:waypoint x="1972" y="346" />
+        <di:waypoint x="2075" y="346" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1676" y="328" width="47" height="14" />
+          <dc:Bounds x="1986" y="333" width="48" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04f30nk_di" bpmnElement="Flow_04f30nk">
-        <di:waypoint x="1340" y="341" />
-        <di:waypoint x="1375" y="341" />
+        <di:waypoint x="1650" y="346" />
+        <di:waypoint x="1685" y="346" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1daizvx_di" bpmnElement="Flow_1daizvx">
-        <di:waypoint x="1174" y="341" />
-        <di:waypoint x="1240" y="341" />
+        <di:waypoint x="1484" y="346" />
+        <di:waypoint x="1550" y="346" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1159" y="286" width="82" height="27" />
+          <dc:Bounds x="1469" y="291" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ox1o19_di" bpmnElement="change-in-progress-flow">
-        <di:waypoint x="770" y="367" />
-        <di:waypoint x="770" y="690" />
-        <di:waypoint x="1790" y="680" />
-        <di:waypoint x="1790" y="366" />
+        <di:waypoint x="1080" y="372" />
+        <di:waypoint x="1080" y="695" />
+        <di:waypoint x="2100" y="685" />
+        <di:waypoint x="2100" y="371" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1255" y="646" width="51" height="27" />
+          <dc:Bounds x="1565" y="651" width="51" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g0yluv_di" bpmnElement="not-a-change-request-flow">
-        <di:waypoint x="3055" y="440" />
-        <di:waypoint x="2950" y="440" />
-        <di:waypoint x="2950" y="930" />
-        <di:waypoint x="3045" y="930" />
+        <di:waypoint x="3365" y="445" />
+        <di:waypoint x="3260" y="445" />
+        <di:waypoint x="3260" y="935" />
+        <di:waypoint x="3355" y="935" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2958" y="443" width="63" height="14" />
+          <dc:Bounds x="3269" y="448" width="62" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1x1k7zp_di" bpmnElement="changed-with-approval-flow">
-        <di:waypoint x="3200" y="845" />
-        <di:waypoint x="3200" y="930" />
-        <di:waypoint x="3095" y="930" />
+        <di:waypoint x="3510" y="850" />
+        <di:waypoint x="3510" y="935" />
+        <di:waypoint x="3405" y="935" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3126" y="868" width="68" height="27" />
+          <dc:Bounds x="3436" y="873" width="68" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0prddd0_di" bpmnElement="Flow_0prddd0">
-        <di:waypoint x="3070" y="955" />
-        <di:waypoint x="3070" y="990" />
+        <di:waypoint x="3380" y="960" />
+        <di:waypoint x="3380" y="995" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mllry2_di" bpmnElement="minitry-approval-change-in-progress-flow">
-        <di:waypoint x="3105" y="440" />
-        <di:waypoint x="3210" y="440" />
-        <di:waypoint x="3210" y="530" />
+        <di:waypoint x="3415" y="445" />
+        <di:waypoint x="3520" y="445" />
+        <di:waypoint x="3520" y="535" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3115" y="447" width="90" height="27" />
+          <dc:Bounds x="3425" y="452" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_00giejb" bpmnElement="minitry-approval-change-in-progress-timer-flow">
-        <di:waypoint x="3108" y="570" />
-        <di:waypoint x="3160" y="570" />
+        <di:waypoint x="3418" y="575" />
+        <di:waypoint x="3470" y="575" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0wpx398" bpmnElement="Flow_10nfd6c">
-        <di:waypoint x="3200" y="610" />
-        <di:waypoint x="3200" y="675" />
+        <di:waypoint x="3510" y="615" />
+        <di:waypoint x="3510" y="680" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_1yh6tri" bpmnElement="minitry-approval-change-in-progress-pending-timer-flow">
-        <di:waypoint x="3090" y="675" />
-        <di:waypoint x="3090" y="588" />
+        <di:waypoint x="3400" y="680" />
+        <di:waypoint x="3400" y="593" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_10kwile" bpmnElement="minitry-approval-change-in-progress-pending-flow">
-        <di:waypoint x="3175" y="700" />
-        <di:waypoint x="3115" y="700" />
+        <di:waypoint x="3485" y="705" />
+        <di:waypoint x="3425" y="705" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3128" y="683" width="41" height="14" />
+          <dc:Bounds x="3438" y="688" width="41" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_16ajxf8" bpmnElement="minitry-approval-change-in-progress-pending-message-flow">
-        <di:waypoint x="3090" y="725" />
-        <di:waypoint x="3090" y="802" />
+        <di:waypoint x="3400" y="730" />
+        <di:waypoint x="3400" y="807" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0nl7k6l" bpmnElement="minitry-approval-change-in-progress-decision-made-flow">
-        <di:waypoint x="3200" y="725" />
-        <di:waypoint x="3200" y="795" />
+        <di:waypoint x="3510" y="730" />
+        <di:waypoint x="3510" y="800" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3205" y="747" width="90" height="14" />
+          <dc:Bounds x="3515" y="752" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_0jzdi8d" bpmnElement="minitry-approval-change-in-progress-message-received-flow">
-        <di:waypoint x="3106" y="820" />
-        <di:waypoint x="3175" y="820" />
+        <di:waypoint x="3416" y="825" />
+        <di:waypoint x="3485" y="825" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_085jk0z" bpmnElement="change-declined-flow">
-        <di:waypoint x="3225" y="820" />
-        <di:waypoint x="3350" y="820" />
+        <di:waypoint x="3535" y="825" />
+        <di:waypoint x="3660" y="825" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3218" y="826" width="83" height="27" />
+          <dc:Bounds x="3528" y="831" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jltxxn_di" bpmnElement="Flow_0jltxxn">
-        <di:waypoint x="3450" y="820" />
-        <di:waypoint x="3502" y="820" />
+        <di:waypoint x="3760" y="825" />
+        <di:waypoint x="3812" y="825" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0puhcea_di" bpmnElement="Flow_0puhcea">
-        <di:waypoint x="1637" y="520" />
-        <di:waypoint x="1637" y="572" />
+        <di:waypoint x="1947" y="525" />
+        <di:waypoint x="1947" y="577" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0j75jrb_di" bpmnElement="parents-verification-dependantstatus-dependant-flow">
-        <di:waypoint x="1980" y="940" />
-        <di:waypoint x="1980" y="890" />
-        <di:waypoint x="2060" y="890" />
+        <di:waypoint x="2290" y="945" />
+        <di:waypoint x="2290" y="895" />
+        <di:waypoint x="2370" y="895" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1989" y="875" width="55" height="14" />
+          <dc:Bounds x="2300" y="880" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u84es9_di" bpmnElement="parents-verification-dependantstatus-independant-flow">
+        <di:waypoint x="2290" y="995" />
+        <di:waypoint x="2290" y="1055" />
+        <di:waypoint x="3050" y="1055" />
+        <di:waypoint x="3050" y="995" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2300" y="1038" width="62" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ne5hoq_di" bpmnElement="Flow_0ne5hoq">
-        <di:waypoint x="2640" y="890" />
-        <di:waypoint x="2740" y="890" />
-        <di:waypoint x="2740" y="940" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0u84es9_di" bpmnElement="parents-verification-dependantstatus-independant-flow">
-        <di:waypoint x="1980" y="990" />
-        <di:waypoint x="1980" y="1050" />
-        <di:waypoint x="2740" y="1050" />
-        <di:waypoint x="2740" y="990" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1989" y="1033" width="63" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0106iy0_di" bpmnElement="Flow_0106iy0">
-        <di:waypoint x="950" y="342" />
-        <di:waypoint x="980" y="342" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1w081qo_di" bpmnElement="Flow_1w081qo">
-        <di:waypoint x="1080" y="342" />
-        <di:waypoint x="1125" y="342" />
+        <di:waypoint x="2950" y="895" />
+        <di:waypoint x="3050" y="895" />
+        <di:waypoint x="3050" y="945" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ljbhnq_di" bpmnElement="Flow_0ljbhnq">
-        <di:waypoint x="795" y="342" />
-        <di:waypoint x="850" y="342" />
+        <di:waypoint x="1105" y="347" />
+        <di:waypoint x="1160" y="347" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_07vurqq_di" bpmnElement="assessment-flow">
-        <di:waypoint x="650" y="317" />
-        <di:waypoint x="650" y="180" />
-        <di:waypoint x="745" y="180" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="655" y="145" width="60" height="27" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_0106iy0_di" bpmnElement="Flow_0106iy0">
+        <di:waypoint x="1260" y="347" />
+        <di:waypoint x="1290" y="347" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
-        <di:waypoint x="540" y="342" />
-        <di:waypoint x="625" y="342" />
+      <bpmndi:BPMNEdge id="Flow_1gjp61i_di" bpmnElement="Flow_1gjp61i">
+        <di:waypoint x="1015" y="347" />
+        <di:waypoint x="1055" y="347" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wrj7fh_di" bpmnElement="Flow_1wrj7fh">
-        <di:waypoint x="390" y="342" />
-        <di:waypoint x="440" y="342" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1ef3map_di" bpmnElement="Flow_1ef3map">
-        <di:waypoint x="258" y="343" />
-        <di:waypoint x="290" y="343" />
+      <bpmndi:BPMNEdge id="Flow_1w081qo_di" bpmnElement="Flow_1w081qo">
+        <di:waypoint x="1390" y="347" />
+        <di:waypoint x="1435" y="347" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04qzwk1_di" bpmnElement="Flow_04qzwk1">
-        <di:waypoint x="1150" y="367" />
-        <di:waypoint x="1150" y="440" />
+        <di:waypoint x="1460" y="372" />
+        <di:waypoint x="1460" y="445" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1157" y="405" width="65" height="14" />
+          <dc:Bounds x="1467" y="410" width="65" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0jh9h56_di" bpmnElement="Flow_0jh9h56">
-        <di:waypoint x="1150" y="520" />
-        <di:waypoint x="1150" y="572" />
+        <di:waypoint x="1460" y="525" />
+        <di:waypoint x="1460" y="577" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mt0uyq_di" bpmnElement="Flow_0mt0uyq">
+        <di:waypoint x="5100" y="1355" />
+        <di:waypoint x="5152" y="1355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rkzx2d_di" bpmnElement="Flow_0rkzx2d">
+        <di:waypoint x="4958" y="1355" />
+        <di:waypoint x="5000" y="1355" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1txrz77_di" bpmnElement="Flow_1txrz77">
+        <di:waypoint x="4895" y="1355" />
+        <di:waypoint x="4922" y="1355" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_01iq5cw_di" bpmnElement="Flow_01iq5cw">
-        <di:waypoint x="4090" y="1385" />
-        <di:waypoint x="4090" y="1420" />
-        <di:waypoint x="4310" y="1420" />
+        <di:waypoint x="4400" y="1390" />
+        <di:waypoint x="4400" y="1425" />
+        <di:waypoint x="4620" y="1425" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="4103" y="1386" width="48" height="27" />
+          <dc:Bounds x="4414" y="1391" width="47" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hmh3m7_di" bpmnElement="Flow_0hmh3m7">
-        <di:waypoint x="4410" y="1420" />
-        <di:waypoint x="4460" y="1420" />
-        <di:waypoint x="4460" y="1375" />
+        <di:waypoint x="4720" y="1425" />
+        <di:waypoint x="4770" y="1425" />
+        <di:waypoint x="4770" y="1380" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wkpr1a_di" bpmnElement="Flow_1wkpr1a">
-        <di:waypoint x="3980" y="1385" />
-        <di:waypoint x="3980" y="1520" />
-        <di:waypoint x="4310" y="1520" />
+        <di:waypoint x="4290" y="1390" />
+        <di:waypoint x="4290" y="1525" />
+        <di:waypoint x="4620" y="1525" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3983" y="1486" width="54" height="27" />
+          <dc:Bounds x="4293" y="1491" width="54" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1o87o98_di" bpmnElement="Flow_1o87o98">
-        <di:waypoint x="4410" y="1520" />
-        <di:waypoint x="4560" y="1520" />
-        <di:waypoint x="4560" y="1375" />
+        <di:waypoint x="4720" y="1525" />
+        <di:waypoint x="4870" y="1525" />
+        <di:waypoint x="4870" y="1380" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1atzf7v_di" bpmnElement="Flow_1atzf7v">
-        <di:waypoint x="3930" y="1360" />
-        <di:waypoint x="3955" y="1360" />
+        <di:waypoint x="4240" y="1365" />
+        <di:waypoint x="4265" y="1365" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1cb5fpw_di" bpmnElement="Flow_1cb5fpw">
-        <di:waypoint x="4005" y="1360" />
-        <di:waypoint x="4065" y="1360" />
+        <di:waypoint x="4315" y="1365" />
+        <di:waypoint x="4375" y="1365" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3998" y="1326" width="74" height="27" />
+          <dc:Bounds x="4308" y="1331" width="74" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0p1lgm7_di" bpmnElement="Flow_0p1lgm7">
-        <di:waypoint x="4420" y="1280" />
-        <di:waypoint x="4460" y="1280" />
-        <di:waypoint x="4460" y="1325" />
+        <di:waypoint x="4730" y="1285" />
+        <di:waypoint x="4770" y="1285" />
+        <di:waypoint x="4770" y="1330" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0z518wc_di" bpmnElement="Flow_0z518wc">
-        <di:waypoint x="4485" y="1350" />
-        <di:waypoint x="4535" y="1350" />
+        <di:waypoint x="4795" y="1355" />
+        <di:waypoint x="4845" y="1355" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a4wzic_di" bpmnElement="Flow_1a4wzic">
-        <di:waypoint x="4090" y="1335" />
-        <di:waypoint x="4090" y="1280" />
-        <di:waypoint x="4160" y="1280" />
+        <di:waypoint x="4400" y="1340" />
+        <di:waypoint x="4400" y="1285" />
+        <di:waypoint x="4470" y="1285" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="4076" y="1246" width="75" height="27" />
+          <dc:Bounds x="4386" y="1251" width="75" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mpwyku_di" bpmnElement="Flow_1mpwyku">
+        <di:waypoint x="4095" y="1365" />
+        <di:waypoint x="4140" y="1365" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0mayggl_di" bpmnElement="Flow_0mayggl">
-        <di:waypoint x="4260" y="1280" />
-        <di:waypoint x="4320" y="1280" />
+        <di:waypoint x="4570" y="1285" />
+        <di:waypoint x="4630" y="1285" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_13rnc99_di" bpmnElement="Flow_13rnc99">
-        <di:waypoint x="3710" y="1460" />
-        <di:waypoint x="3760" y="1460" />
-        <di:waypoint x="3760" y="1385" />
+        <di:waypoint x="4020" y="1465" />
+        <di:waypoint x="4070" y="1465" />
+        <di:waypoint x="4070" y="1390" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17bbn8b_di" bpmnElement="Flow_17bbn8b">
-        <di:waypoint x="3710" y="1360" />
-        <di:waypoint x="3735" y="1360" />
+        <di:waypoint x="4020" y="1365" />
+        <di:waypoint x="4045" y="1365" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07vurqq_di" bpmnElement="assessment-flow">
+        <di:waypoint x="705" y="347" />
+        <di:waypoint x="795" y="347" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="707" y="312" width="60" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0xqg8e1_di" bpmnElement="former-youth-in-care-send-flow">
-        <di:waypoint x="795" y="180" />
-        <di:waypoint x="830" y="180" />
+        <di:waypoint x="820" y="322" />
+        <di:waypoint x="820" y="240" />
+        <di:waypoint x="870" y="240" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10xaz6e_di" bpmnElement="Flow_10xaz6e">
-        <di:waypoint x="770" y="205" />
-        <di:waypoint x="770" y="235" />
+        <di:waypoint x="845" y="347" />
+        <di:waypoint x="965" y="347" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0ozpwlc_di" bpmnElement="former-youth-in-care-email-sent-flow">
-        <di:waypoint x="880" y="220" />
-        <di:waypoint x="880" y="260" />
-        <di:waypoint x="795" y="260" />
+        <di:waypoint x="970" y="240" />
+        <di:waypoint x="990" y="240" />
+        <di:waypoint x="990" y="322" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1gjp61i_di" bpmnElement="Flow_1gjp61i">
-        <di:waypoint x="770" y="285" />
-        <di:waypoint x="770" y="317" />
+      <bpmndi:BPMNEdge id="Flow_1ef3map_di" bpmnElement="Flow_1ef3map">
+        <di:waypoint x="288" y="348" />
+        <di:waypoint x="320" y="348" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wrj7fh_di" bpmnElement="Flow_1wrj7fh">
+        <di:waypoint x="420" y="347" />
+        <di:waypoint x="470" y="347" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rxxozm_di" bpmnElement="Flow_0rxxozm">
+        <di:waypoint x="570" y="347" />
+        <di:waypoint x="655" y="347" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
+        <di:waypoint x="3510" y="876" />
+        <di:waypoint x="3473" y="1010" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="2770" y="1377" />
+        <di:waypoint x="2358" y="1476" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
+        <di:waypoint x="1740" y="800" />
+        <di:waypoint x="2322" y="542" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
+        <di:waypoint x="3514" y="590" />
+        <di:waypoint x="3470" y="575" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="3482" y="690" />
+        <di:waypoint x="3493" y="697" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0vf0jbr" bpmnElement="Group_19tqt3y">
-        <dc:Bounds x="1930" y="250" width="730" height="170" />
+        <dc:Bounds x="1860" y="340" width="730" height="170" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2257" y="257" width="78" height="27" />
+          <dc:Bounds x="2187" y="347" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_04nqxe3" bpmnElement="Group_0uz5ydc">
-        <dc:Bounds x="1930" y="440" width="730" height="280" />
+        <dc:Bounds x="1860" y="530" width="730" height="280" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2258" y="447" width="76" height="27" />
+          <dc:Bounds x="2188" y="537" width="76" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0mw83as" bpmnElement="Group_0ldd4rw">
-        <dc:Bounds x="1930" y="740" width="880" height="350" />
+        <dc:Bounds x="1860" y="830" width="880" height="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2331" y="746" width="78" height="27" />
+          <dc:Bounds x="2261" y="836" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_0vb3fvp_di" bpmnElement="Group_0vb3fvp">
-        <dc:Bounds x="2220" y="1220" width="700" height="290" />
+        <dc:Bounds x="2150" y="1310" width="700" height="290" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2520" y="1230" width="60" height="40" />
+          <dc:Bounds x="2450" y="1320" width="60" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0g9dtl6_di" bpmnElement="TextAnnotation_0g9dtl6">
-        <dc:Bounds x="2240" y="1370" width="188" height="110" />
+        <dc:Bounds x="2170" y="1460" width="188" height="110" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0m4ufpe" bpmnElement="TextAnnotation_1qwxwaf">
-        <dc:Bounds x="3320" y="500" width="310" height="40" />
+        <dc:Bounds x="3250" y="590" width="310" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0ouejj4" bpmnElement="TextAnnotation_17tw6q4">
-        <dc:Bounds x="3320" y="600" width="353" height="55" />
+        <dc:Bounds x="3250" y="690" width="353" height="55" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1inm7cq_di" bpmnElement="TextAnnotation_1inm7cq">
-        <dc:Bounds x="3260" y="920" width="481" height="70" />
+        <dc:Bounds x="3190" y="1010" width="481" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0xhexpd" bpmnElement="TextAnnotation_1q6xzna">
-        <dc:Bounds x="1570" y="710" width="299.99462134251297" height="127.36660929432014" />
+        <dc:Bounds x="1500" y="800" width="300" height="127" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
-        <di:waypoint x="3200" y="871" />
-        <di:waypoint x="3273" y="920" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="2460" y="1374" />
-        <di:waypoint x="2428" y="1383" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
-        <di:waypoint x="3320" y="536" />
-        <di:waypoint x="3260" y="564" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="3320" y="647" />
-        <di:waypoint x="3219" y="694" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
-        <di:waypoint x="1776" y="710" />
-        <di:waypoint x="2015" y="540" />
-      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1tu9mrb">
