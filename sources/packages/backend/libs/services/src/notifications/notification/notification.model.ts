@@ -109,9 +109,8 @@ export interface WorkflowEmailNotificationStudent {
 
 /**
  * Details required to send a generic workflow-triggered email notification to
- * the student. The GC Notify template is resolved (or created) from the provided
- * template id, allowing new notifications to be sent without code or migration
- * changes.
+ * the student. The GC Notify template is resolved from the provided template id,
+ * which is expected to be previously seeded, otherwise an error is raised.
  */
 export interface WorkflowStudentEmailNotification extends WorkflowEmailNotification {
   student: WorkflowEmailNotificationStudent;
@@ -120,8 +119,8 @@ export interface WorkflowStudentEmailNotification extends WorkflowEmailNotificat
 /**
  * Details required to send a generic workflow-triggered email notification to
  * the email contacts configured for the notification message (e.g. Ministry).
- * The GC Notify template is resolved (or created) from the provided template id,
- * allowing new notifications to be sent without code or migration changes.
+ * The GC Notify template is resolved from the provided template id, which is
+ * expected to be previously seeded, otherwise an error is raised.
  */
 export interface WorkflowEmailNotification {
   templateId: string;

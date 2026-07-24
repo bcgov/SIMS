@@ -15,12 +15,6 @@ import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 import { NotificationMessageType } from "@sims/sims-db";
 import { randomUUID } from "node:crypto";
 
-/**
- * Base id from which auto-generated notification messages are created to avoid
- * collisions with the notification messages seeded during migrations.
- */
-const AUTO_GENERATED_NOTIFICATION_MESSAGE_ID_BASE = 1000000;
-
 describe("NotificationController(e2e)-sendEmailNotification", () => {
   let db: E2EDataSources;
   let notificationController: NotificationController;
@@ -156,7 +150,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     expect(notificationsCount).toBe(2);
   });
 
-  it("Should auto-create a notification message when the template id is not associated with any existing notification message.", async () => {
+  it("Should fail the job raising an incident when the template id is not associated with any existing notification message.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
@@ -171,33 +165,29 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const result = await notificationController.sendEmailNotification(payload);
 
     // Asserts
+    // The job fails, raising an incident, since the template is not seeded and
+    // notification messages are no longer created at runtime.
     expect(result).toEqual({
-      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Complete,
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Fail,
     });
-    const autoCreatedMessage = await db.notificationMessage.findOne({
-      select: { id: true, templateId: true },
+    // No notification message is created for the unknown template id.
+    const notificationMessage = await db.notificationMessage.findOne({
+      select: { id: true },
       where: { templateId: unknownTemplateId },
     });
-    expect(autoCreatedMessage.id).toBeGreaterThanOrEqual(
-      AUTO_GENERATED_NOTIFICATION_MESSAGE_ID_BASE,
-    );
-    const createdNotification = await db.notification.findOne({
-      select: { id: true, notificationMessage: { id: true } },
-      relations: { notificationMessage: true },
+    expect(notificationMessage).toBeNull();
+    // No notification is created for the student.
+    const notificationsCount = await db.notification.count({
       where: { user: { id: student.user.id } },
     });
-    expect(createdNotification.notificationMessage.id).toBe(
-      autoCreatedMessage.id,
-    );
+    expect(notificationsCount).toBe(0);
   });
 
   it("Should not create any email notification when the recipient is the Ministry and no email contact is configured.", async () => {
     // Arrange
-    // Use an unknown template id so the auto-created notification message has no
-    // email contacts configured.
-    const unknownTemplateId = randomUUID();
+    // Use a seeded notification message that has no email contacts configured.
     const payload = createFakeSendEmailNotificationPayload({
-      templateId: unknownTemplateId,
+      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       recipientType: WorkflowEmailNotificationRecipient.Ministry,
       emailNotificationPersonalisation: { applicationNumber: "1234567890" },
     });
@@ -211,12 +201,12 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     expect(result).toEqual({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Complete,
     });
-    const autoCreatedMessage = await db.notificationMessage.findOne({
-      select: { id: true },
-      where: { templateId: unknownTemplateId },
-    });
     const notificationsCount = await db.notification.count({
-      where: { notificationMessage: { id: autoCreatedMessage.id } },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.FormerYouthInCareNotification,
+        },
+      },
     });
     expect(notificationsCount).toBe(0);
   });

@@ -431,8 +431,8 @@ export class NotificationActionsService {
 
   /**
    * Sends a workflow-triggered email notification to the student. The GC Notify
-   * template is resolved (or created) from the provided template id, so new
-   * notifications can be sent without code or migration changes. The personal
+   * template is resolved from the provided template id, which is expected to be
+   * previously seeded, otherwise an error is raised. The personal
    * information (email, given names and last name) is loaded on the API side and
    * merged with the personalisation provided by the workflow, with the API
    * loaded values taking precedence.
@@ -455,7 +455,7 @@ export class NotificationActionsService {
     },
   ): Promise<void> {
     const notificationMessage =
-      await this.notificationMessageService.getOrCreateNotificationMessageByTemplateId(
+      await this.notificationMessageService.getNotificationMessageByTemplateId(
         notification.templateId,
         { entityManager },
       );
@@ -499,8 +499,8 @@ export class NotificationActionsService {
 
   /**
    * Sends a workflow-triggered email notification to the Ministry. The GC Notify
-   * template is resolved (or created) from the provided template id, so new
-   * notifications can be sent without code or migration changes. The
+   * template is resolved from the provided template id, which is expected to be
+   * previously seeded, otherwise an error is raised. The
    * notification is sent to the email contacts configured for the notification
    * message.
    * @param notification notification details.
@@ -511,7 +511,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const notificationMessage =
-      await this.notificationMessageService.getOrCreateNotificationMessageByTemplateId(
+      await this.notificationMessageService.getNotificationMessageByTemplateId(
         notification.templateId,
         { entityManager },
       );
