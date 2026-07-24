@@ -41,10 +41,9 @@ export class NotificationController {
   ) {}
 
   /**
-   * Sends a generic email notification triggered by a workflow. The GC Notify
-   * template is resolved (or created) from the provided template id, so new
-   * notifications can be sent without code or migration changes. The recipient
-   * can be either the student or the Ministry:
+   * Sends a generic email notification triggered by a workflow.
+   * @param job Zeebe job that contains the notification details and headers.
+   * @returns Zeebe job acknowledgement.
    */
   @ZeebeWorker(Workers.SendEmailNotification, {
     fetchVariable: [

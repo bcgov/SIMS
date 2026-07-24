@@ -83,7 +83,7 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   private async getNotificationMessageByTemplateId(
     templateId: string,
     notificationMessageRepo: Repository<NotificationMessage>,
-  ): Promise<NotificationMessage> {
+  ): Promise<NotificationMessage | null> {
     const existingMessage = await notificationMessageRepo.findOne({
       select: {
         id: true,

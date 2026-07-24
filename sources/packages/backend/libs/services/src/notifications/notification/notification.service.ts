@@ -148,13 +148,16 @@ export class NotificationService extends RecordDataModelService<Notification> {
         notificationMessageId: notificationMessageType,
       });
     for (const [key, value] of Object.entries(metadata)) {
+      if (value === undefined || value === null) {
+        continue;
+      }
       // Guard the metadata key against injection since it is interpolated into
       // the JSON path, which cannot be provided as a bound parameter.
       if (!/^\w+$/.test(key)) {
         throw new Error(`Invalid notification metadata key: ${key}.`);
       }
       query.andWhere(`notification.metadata->>'${key}' = :${key}`, {
-        [key]: value,
+        [key]: String(value),
       });
     }
     return query.getExists();

@@ -504,7 +504,6 @@ export class NotificationActionsService {
    * notification is sent to the email contacts configured for the notification
    * message.
    * @param notification notification details.
-   * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager entity manager to execute in transaction.
    */
   async saveWorkflowMinistryEmailNotification(
