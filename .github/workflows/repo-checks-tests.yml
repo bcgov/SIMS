@@ -163,7 +163,7 @@ jobs:
       - name: Checkout Target Branch
         uses: actions/checkout@v7
       - name: Setup Nodejs
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "26.x"
       # Run units tests and generate the coverage report.
