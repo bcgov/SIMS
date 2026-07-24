@@ -56,6 +56,7 @@ export default defineComponent({
     const PROGRAM_YEAR_DROPDOWN_KEY = "programYear";
     const INSTITUTION_NAMES = "institutionNames";
     const INSTITUTION_DROPDOWN_KEY = "institution";
+    const PROGRAM_DROPDOWN_KEY = "program";
     let formData: FormIOForm;
     const formLoaded = async (form: FormIOForm) => {
       formData = form;
@@ -94,6 +95,23 @@ export default defineComponent({
           // Load institution data if the select is visible and
           // its items are not populated yet.
           await formioDataLoader.loadInstitutionNames(form, INSTITUTION_NAMES);
+        }
+      } else if (event.changed?.component.key === INSTITUTION_DROPDOWN_KEY) {
+        const programSelect = getFirstComponent(form, PROGRAM_DROPDOWN_KEY);
+        const institutionId = +event.changed.value;
+        if (!institutionId) {
+          return;
+        }
+        if (programSelect._visible) {
+          // Load program data if the select is visible.
+          await formioDataLoader.loadProgramsForInstitution(
+            form,
+            PROGRAM_DROPDOWN_KEY,
+            {
+              institutionId,
+              isIncludeInActiveProgram: true,
+            },
+          );
         }
       }
     };

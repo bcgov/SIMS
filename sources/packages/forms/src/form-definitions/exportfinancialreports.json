@@ -63,18 +63,15 @@
               },
               "valueProperty": "value",
               "refreshOn": "institutionsList",
+              "validateWhenHidden": false,
               "key": "institution",
-              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'",
+              "customConditional": "show = data.reportName === 'Ministry_Student_Unmet_Need_Report'\n       || data.reportName === 'Program_And_Offering_Status_Report'\n       || data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
               "logic": [
                 {
                   "name": "Required Validator",
                   "trigger": {
-                    "type": "simple",
-                    "simple": {
-                      "show": true,
-                      "when": "reportName",
-                      "eq": "Program_And_Offering_Status_Report"
-                    }
+                    "type": "javascript",
+                    "javascript": "result = [\n  'Program_And_Offering_Status_Report',\n  'Ministry_Student_Applications_By_Institution_Report'\n].includes(data.reportName);\n"
                   },
                   "actions": [
                     {
@@ -90,6 +87,22 @@
                   ]
                 }
               ],
+              "type": "select",
+              "input": true,
+              "lockKey": true,
+              "isNew": false
+            },
+            {
+              "label": "Programs",
+              "widget": "choicesjs",
+              "placeholder": "Select Program Name",
+              "tableView": true,
+              "valueProperty": "value",
+              "idPath": "",
+              "selectThreshold": 1,
+              "validateWhenHidden": false,
+              "key": "program",
+              "customConditional": "show = data.reportName === 'Ministry_Student_Applications_By_Institution_Report'\n  && !!data.params.institution;\n       \n       ",
               "type": "select",
               "input": true,
               "lockKey": true,
@@ -187,11 +200,20 @@
                 }
               ],
               "key": "columns",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'Institution_Designation_Report'\n    || data.reportName === 'ECert_Errors_Report'\n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Disbursements_Without_Valid_Supplier_Report'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
               "type": "columns",
               "input": false,
               "tableView": false,
               "hideLabel": true
+            },
+            {
+              "label": "Is start date limited by archive date",
+              "calculateValue": "value = data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
+              "calculateServer": true,
+              "key": "isStartDateLimitedByArchiveDate",
+              "type": "hidden",
+              "input": true,
+              "tableView": false
             },
             {
               "label": "Intensity",
@@ -218,7 +240,7 @@
               },
               "validateWhenHidden": false,
               "key": "offeringIntensity",
-              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests';",
+              "customConditional": "show = \n    data.reportName === 'Disbursement_Forecast_Report' \n    || data.reportName === 'Disbursement_Report' \n    || data.reportName === 'ECert_Errors_Report' \n    || data.reportName === 'Program_And_Offering_Status_Report'\n    || data.reportName === 'Student_Unmet_Need_Report'\n    || data.reportName === 'Ministry_Student_Unmet_Need_Report'\n    || data.reportName === 'Offering_Details_Report'\n    || data.reportName === 'COE_Requests'\n    || data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
               "type": "selectboxes",
               "input": true,
               "inputType": "checkbox"

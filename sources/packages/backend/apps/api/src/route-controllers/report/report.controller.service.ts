@@ -11,12 +11,19 @@ import {
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
+  addDays,
+  getISODateOnlyString,
 } from "@sims/utilities";
 import { Response } from "express";
 import { FormService, ProgramYearService } from "../../services";
-import { ReportsFilterAPIInDTO } from "./models/report.dto";
+import {
+  ReportFilterParamAPIInDTO,
+  ReportsFilterAPIInDTO,
+} from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 import { streamFile } from "../utils";
+import { ConfigService } from "@sims/utilities/config";
+import dayjs from "dayjs";
 
 /**
  * Controller Service layer for reports.
@@ -27,6 +34,7 @@ export class ReportControllerService {
     private readonly reportService: ReportService,
     private readonly formService: FormService,
     private readonly programYearService: ProgramYearService,
+    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -52,16 +60,22 @@ export class ReportControllerService {
     }
     // In case the `institution` is present as optional in the submission it will be sent as an empty string (in case it is not provided)
     // or as a number (in case one institution was selected). To ensure the dynamic parameter will always be sent with the same type, the default 0 is used.
-    if (submissionResult.data.data.params["institution"] === "") {
-      submissionResult.data.data.params["institution"] = 0;
+    if (submissionResult.data.data.params.institution === "") {
+      submissionResult.data.data.params.institution = 0;
     }
-    const programYearExists = await this.programYearService.programYearExists(
-      payload.params.programYear as number,
-    );
-    if (!programYearExists) {
-      throw new BadRequestException(
-        "Not able to export report due to an invalid program year.",
+    if (submissionResult.data.data.params.program === "") {
+      submissionResult.data.data.params.program = 0;
+    }
+    this.applyApplicationArchiveDays(submissionResult.data.data.params);
+    if (payload.params.programYear) {
+      const programYearExists = await this.programYearService.programYearExists(
+        payload.params.programYear as number,
       );
+      if (!programYearExists) {
+        throw new BadRequestException(
+          "Not able to export report due to an invalid program year.",
+        );
+      }
     }
     if (options?.institutionId) {
       submissionResult.data.data.params.institutionId = options.institutionId;
@@ -82,6 +96,35 @@ export class ReportControllerService {
         }
       }
       throw error;
+    }
+  }
+
+  /**
+   * Ensure report period (start date) will be restricted by the archive date limit if the report
+   * is being generated for a period that exceeds the archive date limit.
+   * @param params report params to be used to generate the report.
+   */
+  private applyApplicationArchiveDays(params: ReportFilterParamAPIInDTO): void {
+    // This should be removed from the params to avoid the report query to fail due to an unknown parameter.
+    const isStartDateLimited = params.isStartDateLimitedByArchiveDate;
+    delete params.isStartDateLimitedByArchiveDate;
+    if (isStartDateLimited !== true) {
+      return;
+    }
+    if (!params.startDate) {
+      throw new BadRequestException(
+        "The flag 'isStartDateLimitedByArchiveDate' is set to true, but the 'startDate' parameter is not provided.",
+      );
+    }
+    const archiveStartDateLimit = addDays(
+      -this.configService.applicationArchiveDays,
+      getISODateOnlyString(new Date()),
+    );
+    const startDate = dayjs(params.startDate as string);
+    if (startDate.isBefore(archiveStartDateLimit)) {
+      // Overwrite the start date to ensure the report will be generated for
+      // a period that is within the archive date limit.
+      params.startDate = getISODateOnlyString(archiveStartDateLimit);
     }
   }
 }
