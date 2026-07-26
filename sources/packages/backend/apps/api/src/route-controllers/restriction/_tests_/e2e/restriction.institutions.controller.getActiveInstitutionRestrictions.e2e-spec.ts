@@ -70,12 +70,24 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
   });
 
   beforeEach(async () => {
-    // Clear institution restrictions created with test restrictions before each test.
+    // Clear institution restrictions and bypasses created with test restrictions before each test.
     const institutionRestrictions = await db.institutionRestriction.find({
       select: { id: true },
+      relations: { applicationRestrictionBypasses: true },
       where: { restriction: { restrictionCode: In(testRestrictionCodes) } },
     });
     if (institutionRestrictions.length) {
+      const applicationRestrictionBypassIds = institutionRestrictions
+        .flatMap(
+          (institutionRestriction) =>
+            institutionRestriction.applicationRestrictionBypasses,
+        )
+        .map((bypass) => bypass.id);
+      if (applicationRestrictionBypassIds.length) {
+        await db.applicationRestrictionBypass.delete({
+          id: In(applicationRestrictionBypassIds),
+        });
+      }
       await db.institutionRestriction.delete({
         id: In(institutionRestrictions.map((restriction) => restriction.id)),
       });
