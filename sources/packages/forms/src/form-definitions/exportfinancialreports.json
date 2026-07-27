@@ -207,10 +207,10 @@
               "hideLabel": true
             },
             {
-              "label": "Is start date limited by archive date",
+              "label": "Is Limited By Archive Date",
               "calculateValue": "value = data.reportName === 'Ministry_Student_Applications_By_Institution_Report';",
               "calculateServer": true,
-              "key": "isStartDateLimitedByArchiveDate",
+              "key": "isLimitedByArchiveDate",
               "type": "hidden",
               "input": true,
               "tableView": false

@@ -23,7 +23,6 @@ import {
 import { FormNames } from "../../services/form/constants";
 import { streamFile } from "../utils";
 import { ConfigService } from "@sims/utilities/config";
-import dayjs from "dayjs";
 
 /**
  * Controller Service layer for reports.
@@ -100,31 +99,20 @@ export class ReportControllerService {
   }
 
   /**
-   * Ensure report period (start date) will be restricted by the archive date limit if the report
-   * is being generated for a period that exceeds the archive date limit.
+   * Creates an offering end date limit for an offering when the report
+   * should not include archived offerings.
    * @param params report params to be used to generate the report.
    */
   private applyApplicationArchiveDays(params: ReportFilterParamAPIInDTO): void {
-    // This should be removed from the params to avoid the report query to fail due to an unknown parameter.
-    const isStartDateLimited = params.isStartDateLimitedByArchiveDate;
-    delete params.isStartDateLimitedByArchiveDate;
-    if (isStartDateLimited !== true) {
+    const isLimitedByArchiveDate = params.isLimitedByArchiveDate;
+    // Should be removed from the params to avoid the report query to fail due to an unknown parameter.
+    delete params.isLimitedByArchiveDate;
+    if (isLimitedByArchiveDate !== true) {
       return;
     }
-    if (!params.startDate) {
-      throw new BadRequestException(
-        "The flag 'isStartDateLimitedByArchiveDate' is set to true, but the 'startDate' parameter is not provided.",
-      );
-    }
-    const archiveStartDateLimit = addDays(
+    params.offeringEndDateMinDate = addDays(
       -this.configService.applicationArchiveDays,
       getISODateOnlyString(new Date()),
     );
-    const startDate = dayjs(params.startDate as string);
-    if (startDate.isBefore(archiveStartDateLimit)) {
-      // Overwrite the start date to ensure the report will be generated for
-      // a period that is within the archive date limit.
-      params.startDate = getISODateOnlyString(archiveStartDateLimit);
-    }
   }
 }
