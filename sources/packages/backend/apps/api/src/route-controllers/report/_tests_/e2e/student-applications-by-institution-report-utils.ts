@@ -3,7 +3,6 @@ import {
   Institution,
   Application,
   ApplicationStatus,
-  OfferingIntensity,
   FullTimeAssessment,
   DisbursementScheduleStatus,
   Student,
@@ -17,6 +16,7 @@ import {
   E2EDataSources,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
+import { sumAwardAmounts } from "@sims/test-utils/utils";
 
 export async function createApplicationsByInstitutionDataSetup(
   db: E2EDataSources,
@@ -96,13 +96,16 @@ export async function createApplicationsByInstitutionDataSetup(
 export function buildApplicationsByInstitutionData(
   application: Application,
 ): Record<string, string | number> {
-  const assessmentData = application.currentAssessment.assessmentData;
   const savedOffering = application.currentAssessment.offering;
   const savedEducationProgram = savedOffering.educationProgram;
   const savedInstitution = application.location.institution;
   const savedLocation = application.location;
   const savedStudent = application.student;
   const savedUser = savedStudent.user;
+  const disbursementValues =
+    application.currentAssessment.disbursementSchedules.flatMap(
+      (disbursementSchedule) => disbursementSchedule.disbursementValues ?? [],
+    );
   const disbursed = application.versions
     .flatMap(
       (applicationVersion) => applicationVersion.studentAssessments ?? [],
@@ -143,10 +146,8 @@ export function buildApplicationsByInstitutionData(
     "Offering Name": savedOffering.name,
     "Study Start Date": savedOffering.studyStartDate,
     "Study End Date": savedOffering.studyEndDate,
-    "Total Assistance": (application.offeringIntensity ===
-    OfferingIntensity.fullTime
-      ? (assessmentData as FullTimeAssessment).totalAssessedCost
-      : assessmentData.totalAssessmentNeed
-    ).toString(),
+    "Total Assistance": disbursementValues?.length
+      ? sumAwardAmounts(disbursementValues).toFixed(2)
+      : "",
   };
 }

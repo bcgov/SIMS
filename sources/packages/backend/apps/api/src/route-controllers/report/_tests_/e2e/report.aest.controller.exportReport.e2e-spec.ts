@@ -55,7 +55,7 @@ import {
 import {
   buildApplicationsByInstitutionData,
   createApplicationsByInstitutionDataSetup,
-} from "./student-applications-by-institutiont-report-utils";
+} from "./student-applications-by-institution-report-utils";
 
 describe("ReportAestController(e2e)-exportReport", () => {
   let app: INestApplication;
@@ -1686,9 +1686,10 @@ describe("ReportAestController(e2e)-exportReport", () => {
       reportName: "Ministry_Student_Applications_By_Institution_Report",
       params: {
         institution: application.location.institution.id,
-        program: "",
+        program: application.currentAssessment.offering.educationProgram.id,
         startDate: now,
         endDate: addDays(1, now),
+        isLimitedByArchiveDate: true,
         offeringIntensity: {
           "Full Time": true,
           "Part Time": true,
