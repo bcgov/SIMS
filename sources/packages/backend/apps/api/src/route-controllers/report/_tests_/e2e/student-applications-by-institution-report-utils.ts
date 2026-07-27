@@ -1,9 +1,7 @@
 import {
-  ApplicationData,
   Institution,
   Application,
   ApplicationStatus,
-  FullTimeAssessment,
   DisbursementScheduleStatus,
   Student,
 } from "@sims/sims-db";
@@ -41,6 +39,12 @@ export async function createApplicationsByInstitutionDataSetup(
   },
 ): Promise<Application> {
   const originalSubmissionDate = options?.originalSubmissionDate ?? new Date();
+  // Set the original submission date to be in the past application to allow the search
+  // criteria to find the application based on the first ever submitted application.
+  const previousApplicationSubmissionDate = originalSubmissionDate;
+  // Set the current application submission date to be in the future to ensure that the report filters out applications
+  // based on the submission of the first ever submitted application.
+  const currentApplicationSubmissionDate = addDays(15, originalSubmissionDate);
   const studyStartDate = getISODateOnlyString(
     addDays(30, originalSubmissionDate),
   );
@@ -52,14 +56,8 @@ export async function createApplicationsByInstitutionDataSetup(
     { student: options.student, institution: options.institution },
     {
       applicationInitialValues: {
-        submittedDate: originalSubmissionDate,
+        submittedDate: previousApplicationSubmissionDate,
         applicationStatus: ApplicationStatus.Edited,
-        data: {
-          studystartDate: studyStartDate,
-          studyendDate: studyEndDate,
-          selectedOffering: 1,
-          studentNumber: "1234567",
-        } as ApplicationData,
       },
       offeringInitialValues: {
         studyStartDate,
@@ -67,10 +65,6 @@ export async function createApplicationsByInstitutionDataSetup(
       },
       currentAssessmentInitialValues: {
         assessmentDate: addDays(1, originalSubmissionDate),
-        assessmentData: {
-          totalAssessmentNeed: 1000,
-          totalAssessedCost: 2000,
-        } as FullTimeAssessment,
       },
     },
   );
@@ -97,24 +91,15 @@ export async function createApplicationsByInstitutionDataSetup(
     {
       applicationInitialValues: {
         applicationStatus: ApplicationStatus.Completed,
-        submittedDate: addDays(15, originalSubmissionDate),
+        submittedDate: currentApplicationSubmissionDate,
         applicationNumber: previousApplication.applicationNumber,
-        data: {
-          studystartDate: currentApplicationStartDate,
-          studyendDate: currentApplicationStudyEndDate,
-          selectedOffering: 4,
-        } as ApplicationData,
       },
       offeringInitialValues: {
-        studyStartDate,
+        studyStartDate: currentApplicationStartDate,
         studyEndDate: currentApplicationStudyEndDate,
       },
       currentAssessmentInitialValues: {
         assessmentDate: addDays(2, originalSubmissionDate),
-        assessmentData: {
-          totalAssessmentNeed: 2000,
-          totalAssessedCost: 3000,
-        } as FullTimeAssessment,
       },
     },
   );
