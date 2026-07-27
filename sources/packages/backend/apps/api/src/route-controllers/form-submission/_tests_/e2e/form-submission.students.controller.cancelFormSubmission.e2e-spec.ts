@@ -163,6 +163,7 @@ describe("FormSubmissionStudentsController(e2e)-cancelFormSubmission", () => {
     // Verify the DB updates.
     await assertDBUpdatesOnCancellation(db, formSubmission, now);
   });
+
   [FormSubmissionStatus.Completed, FormSubmissionStatus.Declined].forEach(
     (status) => {
       it(`Should throw unprocessable entity error when trying to cancel a form submission with submission status ${status}.`, async () => {
@@ -317,8 +318,8 @@ async function assertDBUpdatesOnCancellation(
       modifier: { id: true },
       updatedAt: true,
     },
-    where: { id: formSubmission.id },
     relations: { submissionStatusUpdatedBy: true, modifier: true },
+    where: { id: formSubmission.id },
     loadEagerRelations: false,
   });
   const expectedAuditUser = { id: formSubmission.student.user.id };

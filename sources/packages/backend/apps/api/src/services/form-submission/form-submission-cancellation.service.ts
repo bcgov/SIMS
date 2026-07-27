@@ -24,18 +24,11 @@ export class FormSubmissionCancellationService {
    * @param options options to validate the form submission cancellation.
    * - `studentId` ID of the student associated with the form submission.
    */
-  async validate(
+  private async validate(
     submissionId: number,
     entityManager: EntityManager,
     options?: { studentId?: number },
   ): Promise<void> {
-    // Acquire a DB lock for the form submission to prevent concurrent updates.
-    await this.formSubmissionService.acquireLockOnFormSubmission(
-      entityManager,
-      {
-        submissionId,
-      },
-    );
     const formSubmission = await entityManager
       .getRepository(FormSubmission)
       .findOne({
@@ -51,7 +44,6 @@ export class FormSubmissionCancellationService {
         },
         where: { id: submissionId, student: { id: options?.studentId } },
       });
-
     if (!formSubmission) {
       throw new CustomNamedError(
         `Form submission with ID ${submissionId} not found.`,
@@ -95,6 +87,13 @@ export class FormSubmissionCancellationService {
     options?: { studentId?: number },
   ): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
+      // Acquire a DB lock for the form submission to prevent concurrent updates.
+      await this.formSubmissionService.acquireLockOnFormSubmission(
+        entityManager,
+        {
+          submissionId,
+        },
+      );
       await this.validate(submissionId, entityManager, options);
       const now = new Date();
       const auditUser = { id: auditUserId };

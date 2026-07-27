@@ -14,7 +14,7 @@ import {
   getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { FormSubmissionPendingSummary } from "./form-submission.models";
-import { FieldSortOrder } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   FormSubmissionPendingPaginationOptions,
@@ -22,6 +22,7 @@ import {
 } from "../../utilities";
 import { Role } from "../../auth";
 import {
+  FORM_SUBMISSION_NOT_FOUND,
   FormSubmissionAuthorizationService,
   FormSubmissionAuthRoles,
 } from "../../services";
@@ -327,10 +328,18 @@ export class FormSubmissionService {
       ? { id: findOptions.submissionId }
       : { formSubmissionItems: { id: findOptions.submissionItemId } };
     // Acquire a DB lock for the form submission item to prevent concurrent updates.
-    await entityManager.getRepository(FormSubmission).findOne({
-      select: { id: true },
-      where,
-      lock: { mode: "pessimistic_write" },
-    });
+    const formSubmission = await entityManager
+      .getRepository(FormSubmission)
+      .findOne({
+        select: { id: true },
+        where,
+        lock: { mode: "pessimistic_write" },
+      });
+    if (!formSubmission) {
+      const errorMessage = findOptions.submissionId
+        ? `Form submission with ID ${findOptions.submissionId} not found.`
+        : `Form submission with submission item ID ${findOptions.submissionItemId} not found.`;
+      throw new CustomNamedError(errorMessage, FORM_SUBMISSION_NOT_FOUND);
+    }
   }
 }

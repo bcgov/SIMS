@@ -15,14 +15,12 @@
           :read-only="true"
         >
           <template #decision="{ decision }">
-            <!--The decision section is available either when the final decision(s) are made or when the user has access to make decisions. -->
             <template
               v-if="
-                [
-                  FormSubmissionStatus.Completed,
-                  FormSubmissionStatus.Declined,
-                ].includes(formSubmission.status) ||
-                decision.canAssessItemDecision
+                canShowDecisionSection(
+                  formSubmission.status,
+                  decision.canAssessItemDecision,
+                )
               "
             >
               <h4 class="category-header-medium brand-gray-text">
@@ -562,6 +560,24 @@ export default defineComponent({
       await reloadFormSubmissionItem(decision.submissionItemId);
     };
 
+    /**
+     * The decision section is shown either when the final decision(s) are made or when the user has access to make decisions.
+     * @param formSubmissionStatus form submission status.
+     * @param canUserAssessItemDecision checks if the user has access to make decisions for the form submission item.
+     * @returns true if the decision section should be shown, otherwise false.
+     */
+    const canShowDecisionSection = (
+      formSubmissionStatus: FormSubmissionStatus,
+      canUserAssessItemDecision: boolean,
+    ): boolean => {
+      return (
+        [
+          FormSubmissionStatus.Completed,
+          FormSubmissionStatus.Declined,
+        ].includes(formSubmissionStatus) || canUserAssessItemDecision
+      );
+    };
+
     watchEffect(async () => {
       await loadFormSubmission();
     });
@@ -587,6 +603,7 @@ export default defineComponent({
       getISODateHourMinuteString,
       formSubmissionLoading,
       isDecisionSectionReadOnly,
+      canShowDecisionSection,
     };
   },
 });
