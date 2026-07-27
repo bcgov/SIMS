@@ -18,6 +18,19 @@ import {
 } from "@sims/test-utils";
 import { sumAwardAmounts } from "@sims/test-utils/utils";
 
+/**
+ * Creates application data setup for testing Ministry_Student_Applications_By_Institution_Report.
+ * An application is created with a previous version to ensure that the report filters out applications
+ * based on the submission of the first ever submitted application.
+ * @param db E2E data sources.
+ * @param options method options.
+ * - `student` student to be used in the application.
+ * - `institution` institution to be used in the applications.
+ * - `originalSubmissionDate` original submission date to be used in the application.
+ * - `currentOfferingEndDateOffSet` current offering end date offset to be used in the application.
+ * useful when the offering end date must be set in the past.
+ * @returns The created application.
+ */
 export async function createApplicationsByInstitutionDataSetup(
   db: E2EDataSources,
   options: {
@@ -61,11 +74,18 @@ export async function createApplicationsByInstitutionDataSetup(
       },
     },
   );
-  const currentApplicationStudyEndDate = options?.currentOfferingEndDateOffSet
-    ? getISODateOnlyString(
-        addDays(options.currentOfferingEndDateOffSet, new Date()),
-      )
-    : studyEndDate;
+  let currentApplicationStartDate = studyStartDate;
+  let currentApplicationStudyEndDate = studyEndDate;
+  if (options?.currentOfferingEndDateOffSet) {
+    currentApplicationStudyEndDate = getISODateOnlyString(
+      addDays(options.currentOfferingEndDateOffSet, new Date()),
+    );
+    // Set start date to be before the end date (just to be consistent with the data).
+    // Only the end date is relevant for the report, as it is used to determine if the application is archived or not.
+    currentApplicationStartDate = getISODateOnlyString(
+      addDays(-30, new Date(currentApplicationStudyEndDate)),
+    );
+  }
   const currentApplication = await saveFakeApplicationDisbursements(
     db.dataSource,
     {
@@ -80,7 +100,7 @@ export async function createApplicationsByInstitutionDataSetup(
         submittedDate: addDays(15, originalSubmissionDate),
         applicationNumber: previousApplication.applicationNumber,
         data: {
-          studystartDate: studyStartDate,
+          studystartDate: currentApplicationStartDate,
           studyendDate: currentApplicationStudyEndDate,
           selectedOffering: 4,
         } as ApplicationData,

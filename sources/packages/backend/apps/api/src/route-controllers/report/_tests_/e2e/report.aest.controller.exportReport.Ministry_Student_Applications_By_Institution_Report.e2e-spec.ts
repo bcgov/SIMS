@@ -18,12 +18,13 @@ import {
   buildApplicationsByInstitutionData,
   createApplicationsByInstitutionDataSetup,
 } from "./student-applications-by-institution-report-utils";
-import { ConfigService } from "@sims/utilities/config/config.service";
+import { ConfigService } from "@sims/utilities/config";
 
-describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_By_Institution_Report", () => {
+describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_By_Institution_Report)", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let applicationArchiveDays: number;
+  const endpoint = "/aest/report";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -54,6 +55,8 @@ describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_B
       params: {
         institution: institution.id,
         program: application.currentAssessment.offering.educationProgram.id,
+        // Use a day only period to ensure the report filters out applications
+        // based on the submission of the first ever submitted application.
         startDate: now,
         endDate: addDays(1, now),
         isLimitedByArchiveDate: true,
@@ -64,7 +67,6 @@ describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_B
       },
     };
 
-    const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
     );
@@ -108,6 +110,8 @@ describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_B
       params: {
         institution: institution.id,
         program: "",
+        // Use a day only period to ensure the report filters out applications
+        // based on the submission of the first ever submitted application.
         startDate: now,
         endDate: addDays(1, now),
         isLimitedByArchiveDate: true,
@@ -118,7 +122,6 @@ describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_B
       },
     };
 
-    const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
     );
@@ -168,6 +171,8 @@ describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_B
       params: {
         institution: institution.id,
         program: "",
+        // Use a day only period to ensure the report filters out applications
+        // based on the submission of the first ever submitted application.
         startDate: now,
         endDate: addDays(1, now),
         isLimitedByArchiveDate: true,
@@ -178,7 +183,6 @@ describe("ReportAestController(e2e)-exportReport-Ministry_Student_Applications_B
       },
     };
 
-    const endpoint = "/aest/report";
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
     );
