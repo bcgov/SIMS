@@ -92,6 +92,8 @@ export class FormSubmissionSubmitService {
       formSubmission.formCategory = referenceSubmissionConfig.formCategory;
       formSubmission.creator = creator;
       formSubmission.createdAt = now;
+      formSubmission.submissionStatusUpdatedBy = creator;
+      formSubmission.submissionStatusUpdatedOn = now;
       formSubmission.formSubmissionItems = validatedItems.map(
         (submissionItem) =>
           ({

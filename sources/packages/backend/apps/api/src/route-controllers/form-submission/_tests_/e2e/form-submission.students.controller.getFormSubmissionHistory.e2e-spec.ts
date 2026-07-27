@@ -60,11 +60,13 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
     const application = await saveFakeApplication(db.dataSource, {
       student,
     });
-    const [twoDaysAgo, yesterday, today] = [
+    const [threeDaysAgo, twoDaysAgo, yesterday, today] = [
+      addDays(-3),
       addDays(-2),
       addDays(-1),
       new Date(),
     ];
+
     // Pending student appeal with an associated application.
     // Expected to be returned, decisions as pending even being already assessed (not pending).
     const pendingStudentAppealPromise = saveFakeFormSubmissionFromInputTestData(
@@ -127,7 +129,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
     const completedStudentFormPromise = saveFakeFormSubmissionFromInputTestData(
       db,
       {
-        now: twoDaysAgo,
+        now: threeDaysAgo,
         student,
         formCategory: FormCategory.StudentForm,
         submissionStatus: FormSubmissionStatus.Completed,
@@ -144,18 +146,41 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
         ],
       },
     );
-    const [pendingStudentAppeal, completedStudentAppeal, completedStudentForm] =
-      await Promise.all([
-        pendingStudentAppealPromise,
-        completedStudentAppealPromise,
-        completedStudentFormPromise,
-      ]);
+    // Pending student form with no decisions made.
+    const pendingNoDecisionStudentFormPromise =
+      saveFakeFormSubmissionFromInputTestData(db, {
+        now: twoDaysAgo,
+        student,
+        formCategory: FormCategory.StudentForm,
+        submissionStatus: FormSubmissionStatus.Pending,
+        // Ensure items are added in alphabetical order DESC to
+        // assert they will be returned in alphabetical order ASC.
+        formSubmissionItems: [
+          {
+            dynamicFormConfiguration: formConfigs.studentFormA,
+            decisions: [],
+          },
+        ],
+      });
+    const [
+      pendingStudentAppeal,
+      completedStudentAppeal,
+      completedStudentForm,
+      pendingNoDecisionStudentForm,
+    ] = await Promise.all([
+      pendingStudentAppealPromise,
+      completedStudentAppealPromise,
+      completedStudentFormPromise,
+      pendingNoDecisionStudentFormPromise,
+    ]);
     const [pendingStudentAppealSavedItem1, pendingStudentAppealSavedItem2] =
       pendingStudentAppeal.formSubmissionItems;
     const [completedStudentAppealSavedItem1] =
       completedStudentAppeal.formSubmissionItems;
     const [completedStudentFormSavedItem1] =
       completedStudentForm.formSubmissionItems;
+    const [pendingNoDecisionStudentFormSavedItem1] =
+      pendingNoDecisionStudentForm.formSubmissionItems;
     const endpoint = "/students/form-submission";
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -179,6 +204,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
             status: FormSubmissionStatus.Pending,
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             assessedDate: null,
+            canCancelSubmission: false,
+            statusUpdatedDate:
+              pendingStudentAppeal.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
               {
                 id: pendingStudentAppealSavedItem2.id,
@@ -213,6 +241,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
             status: FormSubmissionStatus.Completed,
             submittedDate: completedStudentAppeal.submittedDate.toISOString(),
             assessedDate: completedStudentAppeal.assessedDate.toISOString(),
+            canCancelSubmission: false,
+            statusUpdatedDate:
+              completedStudentAppeal.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
               {
                 id: completedStudentAppealSavedItem1.id,
@@ -228,6 +259,30 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
               },
             ],
           },
+          // Pending Student Form
+          {
+            id: pendingNoDecisionStudentForm.id,
+            formCategory: FormCategory.StudentForm,
+            status: FormSubmissionStatus.Pending,
+            submittedDate:
+              pendingNoDecisionStudentForm.submittedDate.toISOString(),
+            assessedDate: null,
+            canCancelSubmission: true,
+            statusUpdatedDate:
+              pendingNoDecisionStudentForm.submissionStatusUpdatedOn.toISOString(),
+            submissionItems: [
+              {
+                id: pendingNoDecisionStudentFormSavedItem1.id,
+                formType: formConfigs.studentFormA.formType,
+                formCategory: FormCategory.StudentForm,
+                dynamicFormConfigurationId: formConfigs.studentFormA.id,
+                formDefinitionName: formConfigs.studentFormA.formDefinitionName,
+                currentDecision: {
+                  decisionStatus: FormSubmissionDecisionStatus.Pending,
+                },
+              },
+            ],
+          },
           // Completed Student Form
           {
             id: completedStudentForm.id,
@@ -235,6 +290,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
             status: FormSubmissionStatus.Completed,
             submittedDate: completedStudentForm.submittedDate.toISOString(),
             assessedDate: completedStudentForm.assessedDate.toISOString(),
+            canCancelSubmission: false,
+            statusUpdatedDate:
+              completedStudentForm.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
               {
                 id: completedStudentFormSavedItem1.id,

@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { Brackets, In, IsNull, Repository } from "typeorm";
+import {
+  Brackets,
+  EntityManager,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Repository,
+} from "typeorm";
 import {
   FormCategory,
   FormSubmission,
@@ -7,7 +14,7 @@ import {
   getUserFullNameLikeSearch,
 } from "@sims/sims-db";
 import { FormSubmissionPendingSummary } from "./form-submission.models";
-import { FieldSortOrder } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   FormSubmissionPendingPaginationOptions,
@@ -15,6 +22,7 @@ import {
 } from "../../utilities";
 import { Role } from "../../auth";
 import {
+  FORM_SUBMISSION_NOT_FOUND,
   FormSubmissionAuthorizationService,
   FormSubmissionAuthRoles,
 } from "../../services";
@@ -223,6 +231,7 @@ export class FormSubmissionService {
         submissionStatus: true,
         submittedDate: true,
         assessedDate: true,
+        submissionStatusUpdatedOn: true,
         formCategory: true,
         student: { id: true, user: { firstName: true, lastName: true } },
         application: {
@@ -296,5 +305,41 @@ export class FormSubmissionService {
         },
       },
     });
+  }
+
+  /**
+   * Acquires a pessimistic write lock on the form submission to prevent concurrent updates.
+   * @param entityManager entity manager to execute in transaction.
+   * @param findOptions options to identify the form submission to lock.
+   * - `submissionId` the ID of the form submission to lock.
+   * - `submissionItemId` the ID of a form submission item to lock the parent form submission.
+   * At least one of the options must be provided.
+   */
+  async acquireLockOnFormSubmission(
+    entityManager: EntityManager,
+    findOptions: { submissionId?: number; submissionItemId?: number },
+  ): Promise<void> {
+    if (!findOptions.submissionId && !findOptions.submissionItemId) {
+      throw new Error(
+        "At least one of submissionId or submissionItemId must be provided to acquire a lock on a form submission.",
+      );
+    }
+    const where: FindOptionsWhere<FormSubmission> = findOptions.submissionId
+      ? { id: findOptions.submissionId }
+      : { formSubmissionItems: { id: findOptions.submissionItemId } };
+    // Acquire a DB lock for the form submission item to prevent concurrent updates.
+    const formSubmission = await entityManager
+      .getRepository(FormSubmission)
+      .findOne({
+        select: { id: true },
+        where,
+        lock: { mode: "pessimistic_write" },
+      });
+    if (!formSubmission) {
+      const errorMessage = findOptions.submissionId
+        ? `Form submission with ID ${findOptions.submissionId} not found.`
+        : `Form submission with submission item ID ${findOptions.submissionItemId} not found.`;
+      throw new CustomNamedError(errorMessage, FORM_SUBMISSION_NOT_FOUND);
+    }
   }
 }

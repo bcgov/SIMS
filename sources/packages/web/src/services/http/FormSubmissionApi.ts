@@ -155,4 +155,15 @@ export class FormSubmissionApi extends HttpBaseClient {
       payload,
     );
   }
+
+  /**
+   * Cancel a form submission.
+   * @param formSubmissionId form submission ID to be cancelled.
+   */
+  async cancelFormSubmission(formSubmissionId: number): Promise<void> {
+    await this.patchCall(
+      this.addClientRoot(`form-submission/${formSubmissionId}/cancel`),
+      undefined,
+    );
+  }
 }

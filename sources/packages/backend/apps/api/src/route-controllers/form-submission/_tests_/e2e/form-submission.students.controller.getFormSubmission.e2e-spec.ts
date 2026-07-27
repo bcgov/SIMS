@@ -100,6 +100,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
           status: FormSubmissionStatus.Pending,
           submittedDate: formSubmission.submittedDate.toISOString(),
           assessedDate: null,
+          canCancelSubmission: false,
+          statusUpdatedDate:
+            formSubmission.submissionStatusUpdatedOn.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,
@@ -182,6 +185,9 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
           status: FormSubmissionStatus.Completed,
           submittedDate: formSubmission.submittedDate.toISOString(),
           assessedDate: formSubmission.assessedDate.toISOString(),
+          canCancelSubmission: false,
+          statusUpdatedDate:
+            formSubmission.submissionStatusUpdatedOn.toISOString(),
           submissionItems: [
             {
               id: formSubmissionItemA.id,

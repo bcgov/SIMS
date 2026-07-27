@@ -16,6 +16,7 @@ import {
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_DECISION_PENDING,
   FORM_SUBMISSION_ITEM_NOT_FOUND,
   FORM_SUBMISSION_ITEM_OUTDATED,
@@ -34,6 +35,7 @@ import { NotificationActionsService } from "@sims/services/notifications";
 import {
   FormSubmissionAuthRoles,
   FormSubmissionAuthorizationService,
+  FormSubmissionService,
 } from "../../services";
 
 @Injectable()
@@ -44,6 +46,7 @@ export class FormSubmissionApprovalService {
     private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
+    private readonly formSubmissionService: FormSubmissionService,
   ) {}
 
   /**
@@ -64,12 +67,11 @@ export class FormSubmissionApprovalService {
     return this.dataSource.transaction(async (entityManager) => {
       const formSubmissionItemRepo =
         entityManager.getRepository(FormSubmissionItem);
-      // Acquire a DB lock for the form submission item to prevent concurrent updates.
-      await formSubmissionItemRepo.findOne({
-        select: { id: true },
-        where: { id: submissionItemId },
-        lock: { mode: "pessimistic_write" },
-      });
+      // Acquire a DB lock for the form submission to prevent concurrent updates.
+      await this.formSubmissionService.acquireLockOnFormSubmission(
+        entityManager,
+        { submissionItemId },
+      );
       const submissionItem = await formSubmissionItemRepo.findOne({
         select: {
           id: true,
@@ -114,6 +116,15 @@ export class FormSubmissionApprovalService {
         throw new CustomNamedError(
           "The form submission item has been updated since it was last retrieved. Please refresh and try again.",
           FORM_SUBMISSION_ITEM_OUTDATED,
+        );
+      }
+      if (
+        submissionItem.formSubmission.submissionStatus ===
+        FormSubmissionStatus.Cancelled
+      ) {
+        throw new CustomNamedError(
+          "Decisions cannot be made on items belonging to a form submission that is cancelled.",
+          FORM_SUBMISSION_CANCELLED,
         );
       }
       if (
@@ -178,11 +189,10 @@ export class FormSubmissionApprovalService {
     return this.dataSource.transaction(async (entityManager) => {
       const formSubmissionRepo = entityManager.getRepository(FormSubmission);
       // Acquire a DB lock for the form submission to prevent concurrent completion.
-      await formSubmissionRepo.findOne({
-        select: { id: true },
-        where: { id: submissionId },
-        lock: { mode: "pessimistic_write" },
-      });
+      await this.formSubmissionService.acquireLockOnFormSubmission(
+        entityManager,
+        { submissionId },
+      );
       const formSubmission = await formSubmissionRepo.findOne({
         select: {
           id: true,
@@ -229,6 +239,12 @@ export class FormSubmissionApprovalService {
       this.checkFormSubmissionRelatedApplicationStatus(
         formSubmission.application,
       );
+      if (formSubmission.submissionStatus === FormSubmissionStatus.Cancelled) {
+        throw new CustomNamedError(
+          `Final decision cannot be made on a form submission that is cancelled.`,
+          FORM_SUBMISSION_CANCELLED,
+        );
+      }
       if (formSubmission.submissionStatus !== FormSubmissionStatus.Pending) {
         throw new CustomNamedError(
           "Final decision cannot be made on a form submission with status different than pending.",
@@ -253,6 +269,8 @@ export class FormSubmissionApprovalService {
           assessedBy: auditUser,
           modifier: auditUser,
           updatedAt: now,
+          submissionStatusUpdatedBy: auditUser,
+          submissionStatusUpdatedOn: now,
         },
       );
       // Associate final notes with the student.

@@ -135,4 +135,12 @@ export class FormSubmissionService {
       payload,
     );
   }
+
+  /**
+   * Cancel a form submission.
+   * @param formSubmissionId form submission ID to be cancelled.
+   */
+  async cancelFormSubmission(formSubmissionId: number): Promise<void> {
+    await ApiClient.FormSubmissionApi.cancelFormSubmission(formSubmissionId);
+  }
 }

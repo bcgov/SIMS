@@ -38,6 +38,7 @@ import {
   FormSubmissionUpdateModifiedIndependentAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
+  FormSubmissionCancellationService,
 } from "./services";
 import {
   ApplicationStudentsController,
@@ -196,6 +197,7 @@ import {
     SupplementaryDataLoader,
     // Form Submission Service.
     FormSubmissionSubmitService,
+    FormSubmissionCancellationService,
     FormSubmissionControllerService,
     FormSubmissionUpdateNonPunitiveWithdrawalAction,
     FormSubmissionUpdateModifiedIndependentAction,

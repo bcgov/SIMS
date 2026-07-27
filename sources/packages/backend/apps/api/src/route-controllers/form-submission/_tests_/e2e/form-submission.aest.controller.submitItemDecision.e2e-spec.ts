@@ -29,6 +29,7 @@ import {
 import MockDate from "mockdate";
 import { addDays } from "@sims/utilities";
 import {
+  FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_ITEM_OUTDATED,
   FormSubmissionAuthRoles,
 } from "../../../../services";
@@ -372,6 +373,46 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       });
   });
 
+  it("Should throw an unprocessable entity error when submitting an item decision for a cancelled form submission.", async () => {
+    // Arrange
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Cancelled,
+      ministryAuditUser: ministryAdminUser,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealA,
+          decisions: [],
+        },
+      ],
+    });
+    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
+    const payload = {
+      decisionStatus: FormSubmissionDecisionStatus.Pending,
+      noteDescription: "This is a decision note.",
+      lastUpdateDate: formSubmissionItemA.updatedAt,
+    };
+    const endpoint = `/aest/form-submission/items/${formSubmissionItemA.id}/decision`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealA],
+      [FormSubmissionAuthRoles.AssessItemDecision],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "Decisions cannot be made on items belonging to a form submission that is cancelled.",
+        errorType: FORM_SUBMISSION_CANCELLED,
+      });
+  });
+
   it("Should throw a forbidden error when submitting a student form decision and the user does not have the required role.", async () => {
     // Arrange
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -464,7 +505,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        message: "Form submission item with ID 99999 not found.",
+        message: "Form submission with submission item ID 99999 not found.",
         error: "Not Found",
         statusCode: HttpStatus.NOT_FOUND,
       });

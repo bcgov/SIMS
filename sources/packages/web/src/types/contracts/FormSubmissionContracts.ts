@@ -40,6 +40,10 @@ export enum FormSubmissionStatus {
    * all forms were declined.
    */
   Declined = "Declined",
+  /**
+   * The form submission was cancelled.
+   */
+  Cancelled = "Cancelled",
 }
 
 /**

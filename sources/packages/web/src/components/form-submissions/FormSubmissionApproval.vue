@@ -17,8 +17,10 @@
           <template #decision="{ decision }">
             <template
               v-if="
-                formSubmission.status !== FormSubmissionStatus.Pending ||
-                decision.canAssessItemDecision
+                canShowDecisionSection(
+                  formSubmission.status,
+                  decision.canAssessItemDecision,
+                )
               "
             >
               <h4 class="category-header-medium brand-gray-text">
@@ -34,10 +36,11 @@
                 hide-details="auto"
                 :rules="[
                   (v) =>
+                    isDecisionSectionReadOnly ||
                     checkNotesLengthRule(v, `${decision.parentName}: notes`),
                 ]"
                 required
-                :readonly="decision.decisionSaved"
+                :readonly="decision.decisionSaved || isDecisionSectionReadOnly"
                 :disabled="
                   readOnly ||
                   decision.saveDecisionInProgress ||
@@ -54,6 +57,7 @@
                     v-model="decision.decisionStatus"
                     :rules="[
                       (v: FormSubmissionDecisionStatus) =>
+                        isDecisionSectionReadOnly ||
                         hasDecisionRule(v, decision.parentName),
                     ]"
                     :hide-details="true"
@@ -72,7 +76,7 @@
                         :color="decisionStatus.color"
                         :value="decisionStatus.value"
                         :readonly="
-                          readOnly ||
+                          isDecisionSectionReadOnly ||
                           decision.saveDecisionInProgress ||
                           decision.decisionSaved
                         "
@@ -80,13 +84,8 @@
                       >
                     </v-btn-toggle>
                   </v-input>
-                  <!-- Allow editing a decision while the main submission is still pending. -->
-                  <template
-                    v-if="
-                      !readOnly &&
-                      decision.parentStatus === FormSubmissionStatus.Pending
-                    "
-                  >
+                  <!-- Allow editing a decision while the main submission is still not in final statuses. -->
+                  <template v-if="!isDecisionSectionReadOnly">
                     <v-btn
                       v-if="decision.decisionSaved"
                       class="float-right"
@@ -197,7 +196,10 @@ import {
   FormSubmissionMinistryAPIOutDTO,
   FormSubmissionItemMinistryAPIOutDTO,
 } from "@/services/http/dto";
-import { FORM_SUBMISSION_ITEM_OUTDATED } from "@/constants";
+import {
+  FORM_SUBMISSION_CANCELLED,
+  FORM_SUBMISSION_ITEM_OUTDATED,
+} from "@/constants";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
 import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
@@ -270,6 +272,15 @@ export default defineComponent({
         !props.readOnly &&
         formSubmission.value.status === FormSubmissionStatus.Pending &&
         formSubmission.value.canAssessFinalDecision,
+    );
+
+    /**
+     * Indicates if the decision section is read-only if the main submission is no longer in pending status.
+     */
+    const isDecisionSectionReadOnly = computed(
+      () =>
+        props.readOnly ||
+        formSubmission.value.status !== FormSubmissionStatus.Pending,
     );
 
     /**
@@ -379,11 +390,13 @@ export default defineComponent({
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
         const itemToUpdate = formSubmissionItems.value.find(
-          (item) => item.decision.submissionItemId === itemId,
+          (item) => item.decision!.submissionItemId === itemId,
         );
         if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
         }
+        // Reload the form submission status.
+        formSubmission.value.status = submission.status;
         const [reloadedSubmissionItem] = submission.submissionItems;
         assignItemDecisionProperties(
           reloadedSubmissionItem,
@@ -458,7 +471,12 @@ export default defineComponent({
         snackBar.success("Decision saved.");
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
-          if (error.errorType === FORM_SUBMISSION_ITEM_OUTDATED) {
+          // Form submission being cancelled is considered as the form submission being outdated from what the user is seeing.
+          if (
+            [FORM_SUBMISSION_ITEM_OUTDATED, FORM_SUBMISSION_CANCELLED].includes(
+              error.errorType,
+            )
+          ) {
             decision.saveDecisionInProgress = false;
             const modalResult = await outdatedDecisionModal.value.showModal();
             if (modalResult) {
@@ -494,7 +512,7 @@ export default defineComponent({
       try {
         processingCompletion.value = true;
         const lastUpdatedInfo = formSubmissionItems.value.map((item) => ({
-          submissionItemId: item.id,
+          submissionItemId: item.id!,
           lastUpdateDate: item.decision?.lastUpdateDate as Date,
         }));
         await FormSubmissionService.shared.completeFormSubmission(
@@ -542,6 +560,24 @@ export default defineComponent({
       await reloadFormSubmissionItem(decision.submissionItemId);
     };
 
+    /**
+     * The decision section is shown either when the final decision(s) are made or when the user has access to make decisions.
+     * @param formSubmissionStatus form submission status.
+     * @param canUserAssessItemDecision checks if the user has access to make decisions for the form submission item.
+     * @returns true if the decision section should be shown, otherwise false.
+     */
+    const canShowDecisionSection = (
+      formSubmissionStatus: FormSubmissionStatus,
+      canUserAssessItemDecision: boolean,
+    ): boolean => {
+      return (
+        [
+          FormSubmissionStatus.Completed,
+          FormSubmissionStatus.Declined,
+        ].includes(formSubmissionStatus) || canUserAssessItemDecision
+      );
+    };
+
     watchEffect(async () => {
       await loadFormSubmission();
     });
@@ -566,6 +602,8 @@ export default defineComponent({
       cancelChangeDecision,
       getISODateHourMinuteString,
       formSubmissionLoading,
+      isDecisionSectionReadOnly,
+      canShowDecisionSection,
     };
   },
 });

@@ -120,6 +120,8 @@ export class FormSubmissionAPIOutDTO extends FormSubmissionBaseAPIOutDTO {
    * to view at least one of the form items submitted data.
    */
   canViewFormSubmittedData?: boolean;
+  canCancelSubmission: boolean;
+  statusUpdatedDate: Date;
   submissionItems: FormSubmissionItemAPIOutDTO[];
 }
 

@@ -108,6 +108,7 @@ export async function saveFakeFormSubmissionFromInputTestData(
   formSubmission.application = testInputData.application;
   formSubmission.createdAt = now;
   formSubmission.creator = student.user;
+  formSubmission.submissionStatusUpdatedOn = now;
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;
   formSubmission.submissionStatus = testInputData.submissionStatus;
@@ -115,6 +116,12 @@ export async function saveFakeFormSubmissionFromInputTestData(
     formSubmission.assessedDate = now;
     formSubmission.assessedBy = testInputData.ministryAuditUser;
   }
+  formSubmission.submissionStatusUpdatedBy = [
+    FormSubmissionStatus.Completed,
+    FormSubmissionStatus.Declined,
+  ].includes(testInputData.submissionStatus)
+    ? testInputData.ministryAuditUser
+    : student.user;
   formSubmission.formSubmissionItems = [];
   await db.formSubmission.save(formSubmission);
   for (const itemInputData of testInputData.formSubmissionItems) {
@@ -216,11 +223,14 @@ export async function saveFakeFormSubmission(
   formSubmission.formCategory = formCategory;
   formSubmission.application = relations?.application;
   formSubmission.submissionStatus = submissionStatus;
+  formSubmission.submissionStatusUpdatedOn = new Date();
   // The DB constraint requires assessedDate and assessedBy when not Pending.
   if (submissionStatus !== FormSubmissionStatus.Pending) {
     formSubmission.assessedDate = new Date();
     formSubmission.assessedBy = student.user;
   }
+  formSubmission.submissionStatusUpdatedBy =
+    options?.initialValues?.submissionStatusUpdatedBy ?? student.user;
   const numberOfItems = options?.numberOfItems ?? 1;
   formSubmission.formSubmissionItems = Array.from(
     { length: numberOfItems },
