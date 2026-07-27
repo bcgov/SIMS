@@ -505,7 +505,7 @@ describe("FormSubmissionAESTController(e2e)-submitItemDecision", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        message: "Form submission item with ID 99999 not found.",
+        message: "Form submission with submission item ID 99999 not found.",
         error: "Not Found",
         statusCode: HttpStatus.NOT_FOUND,
       });

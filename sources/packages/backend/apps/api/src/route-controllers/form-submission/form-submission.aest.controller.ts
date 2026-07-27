@@ -166,6 +166,7 @@ export class FormSubmissionAESTController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case FORM_SUBMISSION_NOT_FOUND:
           case FORM_SUBMISSION_ITEM_NOT_FOUND:
             throw new NotFoundException(error.message);
           case FORM_SUBMISSION_ITEM_OUTDATED:

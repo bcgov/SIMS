@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
+  FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
   FORM_SUBMISSION_NOT_FOUND,
   FORM_SUBMISSION_NOT_PENDING,
@@ -247,7 +248,7 @@ export class FormSubmissionStudentsController extends BaseController {
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );
-          default:
+          case FORM_SUBMISSION_CANCELLED:
             throw new UnprocessableEntityException(error.message);
         }
       }
