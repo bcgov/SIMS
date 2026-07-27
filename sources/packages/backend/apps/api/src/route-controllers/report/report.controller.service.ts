@@ -23,6 +23,7 @@ import {
 import { FormNames } from "../../services/form/constants";
 import { streamFile } from "../utils";
 import { ConfigService } from "@sims/utilities/config";
+import { LoggerService } from "@sims/utilities/logger";
 
 /**
  * Controller Service layer for reports.
@@ -34,6 +35,7 @@ export class ReportControllerService {
     private readonly formService: FormService,
     private readonly programYearService: ProgramYearService,
     private readonly configService: ConfigService,
+    private readonly logger: LoggerService,
   ) {}
 
   /**
@@ -57,6 +59,9 @@ export class ReportControllerService {
         "Not able to export report due to an invalid request.",
       );
     }
+    this.logger.log(
+      `Generating report ${payload.reportName} using params: ${JSON.stringify(submissionResult.data.data.params)}`,
+    );
     // In case the `institution` is present as optional in the submission it will be sent as an empty string (in case it is not provided)
     // or as a number (in case one institution was selected). To ensure the dynamic parameter will always be sent with the same type, the default 0 is used.
     if (submissionResult.data.data.params.institution === "") {
