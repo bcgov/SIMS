@@ -43,6 +43,7 @@ export function createFakeApplication(
     programYear?: ProgramYear;
     currentStudentAssessment?: StudentAssessment;
     applicationException?: ApplicationException;
+    institution?: Institution;
     location?: InstitutionLocation;
     precedingApplication?: Application;
     parentApplication?: Application;
@@ -74,7 +75,9 @@ export function createFakeApplication(
     options?.initialValue?.applicationNumber ??
     faker.number.int({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
-  application.location = relations?.location ?? createFakeInstitutionLocation();
+  application.location =
+    relations?.location ??
+    createFakeInstitutionLocation({ institution: relations?.institution });
   application.pirProgram = relations?.pirProgram;
   application.pirStatus = options?.initialValue?.pirStatus;
   application.pirHash = options?.initialValue?.pirHash;
@@ -341,6 +344,7 @@ export async function saveFakeApplication(
     {
       student: savedStudent,
       auditUser: savedUser,
+      institution: relations?.institution,
       location: relations?.institutionLocation,
       programYear: relations?.programYear,
       applicationException: relations?.applicationException,

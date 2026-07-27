@@ -24,6 +24,7 @@ export async function createApplicationsByInstitutionDataSetup(
     student: Student;
     institution: Institution;
     originalSubmissionDate?: Date;
+    currentOfferingEndDateOffSet?: number;
   },
 ): Promise<Application> {
   const originalSubmissionDate = options?.originalSubmissionDate ?? new Date();
@@ -47,6 +48,10 @@ export async function createApplicationsByInstitutionDataSetup(
           studentNumber: "1234567",
         } as ApplicationData,
       },
+      offeringInitialValues: {
+        studyStartDate,
+        studyEndDate,
+      },
       currentAssessmentInitialValues: {
         assessmentDate: addDays(1, originalSubmissionDate),
         assessmentData: {
@@ -56,6 +61,11 @@ export async function createApplicationsByInstitutionDataSetup(
       },
     },
   );
+  const currentApplicationStudyEndDate = options?.currentOfferingEndDateOffSet
+    ? getISODateOnlyString(
+        addDays(options.currentOfferingEndDateOffSet, new Date()),
+      )
+    : studyEndDate;
   const currentApplication = await saveFakeApplicationDisbursements(
     db.dataSource,
     {
@@ -71,9 +81,13 @@ export async function createApplicationsByInstitutionDataSetup(
         applicationNumber: previousApplication.applicationNumber,
         data: {
           studystartDate: studyStartDate,
-          studyendDate: studyEndDate,
+          studyendDate: currentApplicationStudyEndDate,
           selectedOffering: 4,
         } as ApplicationData,
+      },
+      offeringInitialValues: {
+        studyStartDate,
+        studyEndDate: currentApplicationStudyEndDate,
       },
       currentAssessmentInitialValues: {
         assessmentDate: addDays(2, originalSubmissionDate),
