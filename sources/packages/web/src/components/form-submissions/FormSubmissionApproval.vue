@@ -2,6 +2,7 @@
   <body-header-container :enable-card-view="false">
     <template #header>
       <form-submission-approval-header
+        ref="formSubmissionApprovalHeader"
         :form-submission="formSubmission"
         :loading="formSubmissionLoading"
       />
@@ -253,6 +254,8 @@ export default defineComponent({
         InstanceType<typeof VTextarea>
       >(),
     );
+    const formSubmissionApprovalHeader =
+      ref<InstanceType<typeof FormSubmissionApprovalHeader>>();
 
     /**
      * Decision options to be selected by the user
@@ -481,6 +484,13 @@ export default defineComponent({
             const modalResult = await outdatedDecisionModal.value.showModal();
             if (modalResult) {
               await reloadFormSubmissionItem(decision.submissionItemId);
+              // If the form submission was cancelled, scroll to the top of the page to show the user the status chip with the updated status.
+              if (error.errorType === FORM_SUBMISSION_CANCELLED) {
+                formSubmissionApprovalHeader.value?.$el?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+              }
             }
             return;
           }
@@ -604,6 +614,7 @@ export default defineComponent({
       formSubmissionLoading,
       isDecisionSectionReadOnly,
       canShowDecisionSection,
+      formSubmissionApprovalHeader,
     };
   },
 });
