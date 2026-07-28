@@ -10,7 +10,6 @@ VALUES
         FROM
           sims.applications applications
           INNER JOIN sims.applications parent_applications ON parent_applications.id = applications.parent_application_id
-            AND parent_applications.parent_application_id = parent_applications.id
           INNER JOIN sims.student_assessments student_assessments ON student_assessments.id = applications.current_assessment_id
           INNER JOIN sims.disbursement_schedules disbursement_schedules ON disbursement_schedules.student_assessment_id = student_assessments.id
           INNER JOIN sims.disbursement_values disbursement_values ON disbursement_values.disbursement_schedule_id = disbursement_schedules.id
@@ -34,15 +33,13 @@ VALUES
         FROM
           sims.applications applications
           INNER JOIN sims.applications parent_applications ON parent_applications.id = applications.parent_application_id
-            AND parent_applications.parent_application_id = parent_applications.id
           INNER JOIN sims.student_assessments student_assessments ON student_assessments.id = applications.current_assessment_id
           INNER JOIN sims.disbursement_schedules disbursement_schedules ON disbursement_schedules.student_assessment_id = student_assessments.id
           INNER JOIN sims.education_programs_offerings education_programs_offerings ON education_programs_offerings.id = student_assessments.offering_id
           INNER JOIN sims.education_programs education_programs ON education_programs.id = education_programs_offerings.program_id
           INNER JOIN sims.institution_locations institution_locations ON institution_locations.id = applications.location_id
         WHERE
-          applications.application_status = 'Completed'
-          AND disbursement_schedules.disbursement_schedule_status = 'Sent'
+          disbursement_schedules.disbursement_schedule_status = 'Sent'
           -- The below criteria should be kept the same across all queries in this report.
           AND parent_applications.submitted_date BETWEEN :startDate AND :endDate
           and education_programs_offerings.study_end_date >= :offeringEndDateMinDate
@@ -78,7 +75,6 @@ VALUES
       FROM
         sims.applications applications
         INNER JOIN sims.applications parent_applications ON parent_applications.id = applications.parent_application_id
-        AND parent_applications.parent_application_id = parent_applications.id
         INNER JOIN sims.students students ON students.id = applications.student_id
         INNER JOIN sims.sin_validations sin_validations ON sin_validations.id = students.sin_validation_id
         INNER JOIN sims.users users ON users.id = students.user_id

@@ -19,6 +19,7 @@ import {
   createApplicationsByInstitutionDataSetup,
 } from "./student-applications-by-institution-report-utils";
 import { ConfigService } from "@sims/utilities/config";
+import { DisbursementScheduleStatus } from "@sims/sims-db/entities";
 
 describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_By_Institution_Report)", () => {
   let app: INestApplication;
@@ -166,6 +167,58 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
         currentOfferingEndDateOffSet: -applicationArchiveDays - 1,
       }),
     ]);
+    const payload = {
+      reportName: "Ministry_Student_Applications_By_Institution_Report",
+      params: {
+        institution: institution.id,
+        program: "",
+        // Use a day only period to ensure the report filters out applications
+        // based on the submission of the first ever submitted application.
+        startDate: now,
+        endDate: addDays(1, now),
+        isLimitedByArchiveDate: true,
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+      },
+    };
+
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+    // Expected report records.
+    const expectedRecord = buildApplicationsByInstitutionData(application);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toEqual([expectedRecord]);
+      });
+  });
+
+  it("Should generate the report with disbursed as 'Yes' when a report generation request and the parent application has one disbursement sent.", async () => {
+    // Arrange
+    const now = new Date();
+    const student = await saveFakeStudent(db.dataSource);
+    const institution = await db.institution.save(createFakeInstitution());
+    const application = await createApplicationsByInstitutionDataSetup(db, {
+      student,
+      institution,
+      originalSubmissionDate: now,
+      // Ensure response will be Yes.
+      parentApplicationFirstDisbursementInitialValues: {
+        disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+      },
+    });
     const payload = {
       reportName: "Ministry_Student_Applications_By_Institution_Report",
       params: {

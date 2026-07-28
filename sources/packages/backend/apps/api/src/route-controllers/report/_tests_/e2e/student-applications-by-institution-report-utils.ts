@@ -4,6 +4,7 @@ import {
   ApplicationStatus,
   DisbursementScheduleStatus,
   Student,
+  DisbursementSchedule,
 } from "@sims/sims-db";
 import {
   addDays,
@@ -36,6 +37,7 @@ export async function createApplicationsByInstitutionDataSetup(
     institution: Institution;
     originalSubmissionDate?: Date;
     currentOfferingEndDateOffSet?: number;
+    parentApplicationFirstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
   const originalSubmissionDate = options?.originalSubmissionDate ?? new Date();
@@ -66,6 +68,8 @@ export async function createApplicationsByInstitutionDataSetup(
       currentAssessmentInitialValues: {
         assessmentDate: addDays(1, originalSubmissionDate),
       },
+      firstDisbursementInitialValues:
+        options.parentApplicationFirstDisbursementInitialValues,
     },
   );
   let currentApplicationStartDate = studyStartDate;
