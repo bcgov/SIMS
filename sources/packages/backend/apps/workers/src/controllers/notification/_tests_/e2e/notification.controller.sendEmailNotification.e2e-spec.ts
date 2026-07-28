@@ -5,6 +5,8 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
+  FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY,
   FAKE_WORKER_JOB_RESULT_PROPERTY,
   MockedZeebeJobResult,
 } from "../../../../../test/utils/worker-job-mock";
@@ -16,6 +18,7 @@ import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import { randomUUID } from "node:crypto";
 import { IsNull } from "typeorm";
+import { NOTIFICATION_MISSING_EMAIL_CONTACTS } from "@sims/services/constants";
 
 describe("NotificationController(e2e)-sendEmailNotification", () => {
   let db: E2EDataSources;
@@ -77,7 +80,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     });
   });
 
-  it("Should create a new email notification when no metadata is provided even if a notification for the same message already exists.", async () => {
+  it("Should create a new email notification when no metadata is provided.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
@@ -206,6 +209,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         },
         user: IsNull(),
       },
+      order: { id: "DESC" },
     });
     expect(createdNotification).toEqual({
       id: expect.any(Number),
@@ -222,6 +226,35 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       },
       metadata: null,
     });
+  });
+
+  it("Should fail the job raising an incident when no email contact is associated with a ministry notification message.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(db.dataSource);
+    const { student } = savedApplication;
+    const payload = createFakeSendEmailNotificationPayload(
+      GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      EmailNotificationRecipient.Ministry,
+      { assessmentId: savedApplication.currentAssessment.id },
+    );
+
+    // Act
+    const result = await notificationController.sendEmailNotification(payload);
+
+    // Asserts
+    // The job fails, raising an incident, since the template is not seeded and
+    // notification messages are no longer created at runtime.
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
+      [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]:
+        NOTIFICATION_MISSING_EMAIL_CONTACTS,
+      [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: `No email contacts are configured for the Ministry notification with template ${GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification}.`,
+    });
+    // No notification is created for the student.
+    const notificationsCount = await db.notification.count({
+      where: { user: { id: student.user.id } },
+    });
+    expect(notificationsCount).toBe(0);
   });
 
   it("Should fail the job raising an incident when the template id is not associated with any existing notification message.", async () => {
@@ -241,9 +274,12 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // Asserts
     // The job fails, raising an incident, since the template is not seeded and
     // notification messages are no longer created at runtime.
-    expect(result[FAKE_WORKER_JOB_RESULT_PROPERTY]).toBe(
-      MockedZeebeJobResult.Fail,
-    );
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Fail,
+      [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: expect.stringContaining(
+        `Notification message not found for template id ${unknownTemplateId}`,
+      ),
+    });
     // No notification is created for the student.
     const notificationsCount = await db.notification.count({
       where: { user: { id: student.user.id } },

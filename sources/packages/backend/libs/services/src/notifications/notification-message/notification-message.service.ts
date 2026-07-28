@@ -53,7 +53,7 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   ): Promise<NotificationMessage> {
     const notificationMessageRepo =
       options?.entityManager?.getRepository(NotificationMessage) ?? this.repo;
-    return notificationMessageRepo.findOneOrFail({
+    const notificationMessage = await notificationMessageRepo.findOne({
       select: {
         id: true,
         templateId: true,
@@ -63,5 +63,11 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
         templateId,
       },
     });
+    if (!notificationMessage) {
+      throw new Error(
+        `Notification message not found for template id ${templateId}`,
+      );
+    }
+    return notificationMessage;
   }
 }

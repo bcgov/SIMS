@@ -124,14 +124,13 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   /**
-   * Checks if a notification of the provided type already exists matching all
-   * the provided metadata criteria. Used to prevent sending duplicate emails
-   * while allowing the uniqueness scope to be defined dynamically.
+   * Checks if a notification of the provided type already exists matching the
+   * provided metadata. Used to prevent sending duplicate emails while allowing
+   * the uniqueness scope to be defined dynamically.
    * - Pass `{ parentApplicationId }` to enforce a single notification per
    * application, remaining stable across application edits.
-   * - Multiple criteria can be combined and all must match an existing notification.
    * @param notificationMessageType notification message type to be verified.
-   * @param metadata metadata criteria that must all match an existing notification.
+   * @param metadata metadata that must match an existing notification.
    * @param entityManager entity manager to be part of the transaction.
    * @returns true if a matching notification already exists, otherwise false.
    */
@@ -140,27 +139,12 @@ export class NotificationService extends RecordDataModelService<Notification> {
     metadata: NotificationMetadata,
     entityManager: EntityManager,
   ): Promise<boolean> {
-    const query = entityManager
-      .getRepository(Notification)
-      .createQueryBuilder("notification")
-      .innerJoin("notification.notificationMessage", "notificationMessage")
-      .where("notificationMessage.id = :notificationMessageId", {
-        notificationMessageId: notificationMessageType,
-      });
-    for (const [key, value] of Object.entries(metadata)) {
-      if (value === undefined || value === null) {
-        continue;
-      }
-      // Guard the metadata key against injection since it is interpolated into
-      // the JSON path, which cannot be provided as a bound parameter.
-      if (!/^\w+$/.test(key)) {
-        throw new Error(`Invalid notification metadata key: ${key}.`);
-      }
-      query.andWhere(`notification.metadata->>'${key}' = :${key}`, {
-        [key]: String(value),
-      });
-    }
-    return query.getExists();
+    return entityManager.getRepository(Notification).exists({
+      where: {
+        notificationMessage: { id: notificationMessageType },
+        metadata,
+      },
+    });
   }
 
   /**

@@ -447,16 +447,12 @@ export class NotificationActionsService {
    */
   async saveWorkflowStudentEmailNotification(
     notification: WorkflowStudentEmailNotification,
+    notificationMessage: NotificationMessage,
     entityManager: EntityManager,
     options?: {
       metadata?: NotificationMetadata;
     },
   ): Promise<void> {
-    const notificationMessage =
-      await this.notificationMessageService.getNotificationMessageByTemplateId(
-        notification.templateId,
-        { entityManager },
-      );
     const messageType = notificationMessage.id;
     const { student } = notification;
     // The metadata is provided by the workflow and defines the uniqueness
@@ -502,19 +498,9 @@ export class NotificationActionsService {
    */
   async saveWorkflowMinistryEmailNotification(
     notification: WorkflowEmailNotification,
+    notificationMessage: NotificationMessage,
     entityManager: EntityManager,
   ): Promise<void> {
-    const notificationMessage =
-      await this.notificationMessageService.getNotificationMessageByTemplateId(
-        notification.templateId,
-        { entityManager },
-      );
-    if (!notificationMessage.emailContacts?.length) {
-      this.logger.error(
-        `${NOTIFICATION_MISSING_EMAIL_CONTACTS} No email contacts are configured for the Ministry notification with template ${notification.templateId}.`,
-      );
-      return;
-    }
     const notificationsToSend = notificationMessage.emailContacts.map(
       (emailContact) => ({
         messageType: notificationMessage.id,

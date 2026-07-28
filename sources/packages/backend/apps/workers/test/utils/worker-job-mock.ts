@@ -66,7 +66,7 @@ export function createFakeWorkerJob<
       ({
         resultType: MockedZeebeJobResult.Complete,
         outputVariables: updatedVariables,
-      } as FakeWorkerJobResult),
+      }) as FakeWorkerJobResult,
   );
   job.fail = jest.fn().mockImplementation(
     (errorMessage: string, retries?: number) =>
@@ -74,7 +74,7 @@ export function createFakeWorkerJob<
         resultType: MockedZeebeJobResult.Fail,
         errorMessage,
         retries,
-      } as FakeWorkerJobResult),
+      }) as FakeWorkerJobResult,
   );
   job.error = jest.fn().mockImplementation(
     (errorCode: string, errorMessage?: string) =>
@@ -82,7 +82,7 @@ export function createFakeWorkerJob<
         resultType: MockedZeebeJobResult.Error,
         errorCode,
         errorMessage,
-      } as FakeWorkerJobResult),
+      }) as FakeWorkerJobResult,
   );
   return job;
 }

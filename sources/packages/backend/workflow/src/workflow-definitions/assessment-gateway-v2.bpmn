@@ -1814,70 +1814,70 @@ Note: the workflow process should continue its execution as a regular reassessme
         <di:waypoint x="570" y="347" />
         <di:waypoint x="655" y="347" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
+        <di:waypoint x="2770" y="1392" />
+        <di:waypoint x="2736" y="1410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
+        <di:waypoint x="3640" y="544" />
+        <di:waypoint x="3570" y="572" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
+        <di:waypoint x="3640" y="660" />
+        <di:waypoint x="3530" y="700" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
+        <di:waypoint x="3494" y="935" />
+        <di:waypoint x="3664" y="970" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
+        <di:waypoint x="2063" y="710" />
+        <di:waypoint x="2324" y="544" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BPMNShape_0vf0jbr" bpmnElement="Group_19tqt3y">
-        <dc:Bounds x="1860" y="340" width="730" height="170" />
+        <dc:Bounds x="2245" y="255" width="730" height="170" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2187" y="347" width="78" height="27" />
+          <dc:Bounds x="2572" y="262" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_04nqxe3" bpmnElement="Group_0uz5ydc">
-        <dc:Bounds x="1860" y="530" width="730" height="280" />
+        <dc:Bounds x="2245" y="440" width="730" height="280" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2188" y="537" width="76" height="27" />
+          <dc:Bounds x="2573" y="447" width="76" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0mw83as" bpmnElement="Group_0ldd4rw">
-        <dc:Bounds x="1860" y="830" width="880" height="350" />
+        <dc:Bounds x="2250" y="745" width="880" height="350" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2261" y="836" width="78" height="27" />
+          <dc:Bounds x="2651" y="751" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Group_0vb3fvp_di" bpmnElement="Group_0vb3fvp">
-        <dc:Bounds x="2150" y="1310" width="700" height="290" />
+        <dc:Bounds x="2540" y="1255" width="700" height="290" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2450" y="1320" width="60" height="40" />
+          <dc:Bounds x="2840" y="1265" width="60" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0g9dtl6_di" bpmnElement="TextAnnotation_0g9dtl6">
-        <dc:Bounds x="2170" y="1460" width="188" height="110" />
+        <dc:Bounds x="2570" y="1410" width="188" height="110" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0m4ufpe" bpmnElement="TextAnnotation_1qwxwaf">
-        <dc:Bounds x="3250" y="590" width="310" height="40" />
+        <dc:Bounds x="3640" y="520" width="310" height="40" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0ouejj4" bpmnElement="TextAnnotation_17tw6q4">
-        <dc:Bounds x="3250" y="690" width="353" height="55" />
+        <dc:Bounds x="3640" y="630" width="353" height="55" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1inm7cq_di" bpmnElement="TextAnnotation_1inm7cq">
-        <dc:Bounds x="3190" y="1010" width="481" height="70" />
+        <dc:Bounds x="3560" y="970" width="481" height="70" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0xhexpd" bpmnElement="TextAnnotation_1q6xzna">
-        <dc:Bounds x="1500" y="800" width="300" height="127" />
+        <dc:Bounds x="1850" y="710" width="300" height="127" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Association_1gbgxzr_di" bpmnElement="Association_1gbgxzr">
-        <di:waypoint x="3510" y="876" />
-        <di:waypoint x="3473" y="1010" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1ek1rle_di" bpmnElement="Association_1ek1rle">
-        <di:waypoint x="2770" y="1377" />
-        <di:waypoint x="2358" y="1476" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_110g427_di" bpmnElement="Association_110g427">
-        <di:waypoint x="3514" y="590" />
-        <di:waypoint x="3470" y="575" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1wys3mp_di" bpmnElement="Association_1wys3mp">
-        <di:waypoint x="3482" y="690" />
-        <di:waypoint x="3493" y="697" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0z482ud_di" bpmnElement="Association_0z482ud">
-        <di:waypoint x="1740" y="800" />
-        <di:waypoint x="2322" y="542" />
-      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1tu9mrb">

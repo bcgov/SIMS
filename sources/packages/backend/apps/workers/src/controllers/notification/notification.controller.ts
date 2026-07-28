@@ -18,7 +18,11 @@ import {
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import { createUnexpectedJobFail } from "../../utilities";
-import { Workers, ASSESSMENT_NOT_FOUND } from "@sims/services/constants";
+import {
+  Workers,
+  ASSESSMENT_NOT_FOUND,
+  NOTIFICATION_MISSING_EMAIL_CONTACTS,
+} from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
   METADATA,
@@ -26,7 +30,10 @@ import {
 } from "@sims/services/workflow/variables/send-email-notification";
 import { MaxJobsToActivate } from "../../types";
 import { NotificationActionsService } from "@sims/services";
-import { EmailNotificationRecipient } from "@sims/services/notifications";
+import {
+  EmailNotificationRecipient,
+  NotificationMessageService,
+} from "@sims/services/notifications";
 import { StudentAssessment } from "@sims/sims-db";
 import { DataSource } from "typeorm";
 import {
@@ -41,6 +48,7 @@ export class NotificationController {
     private readonly dataSource: DataSource,
     private readonly studentAssessmentService: StudentAssessmentService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly notificationMessageService: NotificationMessageService,
   ) {}
 
   /**
@@ -66,12 +74,13 @@ export class NotificationController {
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
     const { templateId, recipientType } = job.customHeaders;
-    const { assessmentId, personalisation: personalisationContext, metadata } =
-      job.variables;
+    const {
+      assessmentId,
+      personalisation: personalisationContext,
+      metadata,
+    } = job.variables;
     try {
-      // Load the notification data generically, regardless of the recipient
-      // type, so it can be used to resolve the personalisation and to address
-      // the notification.
+      // Load the notification data to resolve the personalisation.
       const assessment =
         await this.studentAssessmentService.getAssessmentNotificationDetails(
           assessmentId,
@@ -87,6 +96,12 @@ export class NotificationController {
         personalisationContext,
         notificationData,
       );
+
+      const notificationMessage =
+        await this.notificationMessageService.getNotificationMessageByTemplateId(
+          templateId,
+        );
+
       await this.dataSource.transaction(async (entityManager) => {
         switch (recipientType) {
           case EmailNotificationRecipient.Student:
@@ -99,13 +114,24 @@ export class NotificationController {
                   email: notificationData.studentEmail,
                 },
               },
+              notificationMessage,
               entityManager,
               { metadata },
             );
             break;
           case EmailNotificationRecipient.Ministry:
+            if (!notificationMessage.emailContacts?.length) {
+              const errorMessage = `No email contacts are configured for the Ministry notification with template ${templateId}.`;
+              jobLogger.error(errorMessage);
+              return job.error(
+                NOTIFICATION_MISSING_EMAIL_CONTACTS,
+                errorMessage,
+              );
+            }
+
             await this.notificationActionsService.saveWorkflowMinistryEmailNotification(
               { templateId, personalisation },
+              notificationMessage,
               entityManager,
             );
             break;
