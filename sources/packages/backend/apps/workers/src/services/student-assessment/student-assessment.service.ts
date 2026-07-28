@@ -362,7 +362,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         application: { student: { user: true } },
       },
       where: { id: assessmentId },
-      lock: { mode: "pessimistic_write", tables: ["StudentAssessment"] },
+      lock: { mode: "pessimistic_write", tables: ["student_assessments"] },
     });
   }
 
