@@ -45,7 +45,7 @@ export interface SendEmailNotificationJobInDTO {
   /**
    * Assessment id used to load the notification data on the API side.
    */
-  assessmentId?: number;
+  assessmentId: number;
   /**
    * Personalisation context provided by the workflow, mapping each GC Notify
    * personalisation variable name to the path of the value to be resolved from
