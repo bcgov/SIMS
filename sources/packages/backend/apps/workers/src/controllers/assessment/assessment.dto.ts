@@ -92,8 +92,7 @@ export interface ApplicationAssessmentJobOutDTO {
    */
   applicationId: number;
   /**
-   * Parent application id that remains stable across application edits, used to
-   * uniquely identify an application regardless of the number of edits.
+   * Parent application id, which remains stable across application edits.
    */
   parentApplicationId: number;
   /**

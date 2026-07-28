@@ -11,20 +11,23 @@
 import { Controller, Logger } from "@nestjs/common";
 import { ZeebeWorker } from "../../zeebe";
 import {
+  NotificationPersonalisationContext,
+  NotificationPersonalisationData,
   SendEmailNotificationJobHeaderDTO,
   SendEmailNotificationJobInDTO,
 } from "..";
 import { StudentAssessmentService } from "../../services";
 import { createUnexpectedJobFail } from "../../utilities";
-import { Workers } from "@sims/services/constants";
+import { Workers, ASSESSMENT_NOT_FOUND } from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
-  EMAIL_NOTIFICATION_CHECK_METADATA,
-  EMAIL_NOTIFICATION_PERSONALISATION,
+  METADATA,
+  PERSONALISATION,
 } from "@sims/services/workflow/variables/send-email-notification";
 import { MaxJobsToActivate } from "../../types";
 import { NotificationActionsService } from "@sims/services";
-import { WorkflowEmailNotificationRecipient } from "@sims/services/notifications";
+import { EmailNotificationRecipient } from "@sims/services/notifications";
+import { StudentAssessment } from "@sims/sims-db";
 import { DataSource } from "typeorm";
 import {
   IOutputVariables,
@@ -41,16 +44,15 @@ export class NotificationController {
   ) {}
 
   /**
-   * Sends a generic email notification triggered by a workflow.
+   * Sends a generic email notification triggered by a workflow. The notification
+   * data is loaded generically from the assessment and used both to resolve the
+   * personalisation referenced by the workflow and to address the notification
+   * according to the recipient type.
    * @param job Zeebe job that contains the notification details and headers.
    * @returns Zeebe job acknowledgement.
    */
   @ZeebeWorker(Workers.SendEmailNotification, {
-    fetchVariable: [
-      ASSESSMENT_ID,
-      EMAIL_NOTIFICATION_PERSONALISATION,
-      EMAIL_NOTIFICATION_CHECK_METADATA,
-    ],
+    fetchVariable: [ASSESSMENT_ID, PERSONALISATION, METADATA],
     maxJobsToActivate: MaxJobsToActivate.Normal,
   })
   async sendEmailNotification(
@@ -64,42 +66,46 @@ export class NotificationController {
   ): Promise<MustReturnJobActionAcknowledgement> {
     const jobLogger = new Logger(job.type);
     const { templateId, recipientType } = job.customHeaders;
-    const {
-      assessmentId,
-      emailNotificationPersonalisation,
-      emailNotificationCheckMetadata,
-    } = job.variables;
+    const { assessmentId, personalisation: personalisationContext, metadata } =
+      job.variables;
     try {
+      // Load the notification data generically, regardless of the recipient
+      // type, so it can be used to resolve the personalisation and to address
+      // the notification.
+      const assessment =
+        await this.studentAssessmentService.getAssessmentNotificationDetails(
+          assessmentId,
+        );
+      if (!assessment) {
+        const message = `Assessment id ${assessmentId} not found.`;
+        jobLogger.error(message);
+        return job.error(ASSESSMENT_NOT_FOUND, message);
+      }
+      const notificationData =
+        this.buildNotificationPersonalisationData(assessment);
+      const personalisation = this.resolvePersonalisation(
+        personalisationContext,
+        notificationData,
+      );
       await this.dataSource.transaction(async (entityManager) => {
         switch (recipientType) {
-          case WorkflowEmailNotificationRecipient.Student: {
-            const student =
-              await this.studentAssessmentService.getStudentDetailsForNotificationByAssessmentId(
-                assessmentId,
-                entityManager,
-              );
-            if (!student) {
-              throw new Error(
-                `Student not found for the assessment id ${assessmentId}.`,
-              );
-            }
+          case EmailNotificationRecipient.Student:
             await this.notificationActionsService.saveWorkflowStudentEmailNotification(
               {
                 templateId,
-                personalisation: emailNotificationPersonalisation,
-                student,
+                personalisation,
+                student: {
+                  userId: notificationData.studentUserId,
+                  email: notificationData.studentEmail,
+                },
               },
               entityManager,
-              { checkMetadata: emailNotificationCheckMetadata },
+              { metadata },
             );
             break;
-          }
-          case WorkflowEmailNotificationRecipient.Ministry:
+          case EmailNotificationRecipient.Ministry:
             await this.notificationActionsService.saveWorkflowMinistryEmailNotification(
-              {
-                templateId,
-                personalisation: emailNotificationPersonalisation,
-              },
+              { templateId, personalisation },
               entityManager,
             );
             break;
@@ -114,5 +120,48 @@ export class NotificationController {
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, { logger: jobLogger });
     }
+  }
+
+  /**
+   * Builds the notification data used as the source of the values referenced by
+   * the personalisation context provided by the workflow.
+   * @param assessment assessment with the associated student details.
+   * @returns notification data resolved from the assessment.
+   */
+  private buildNotificationPersonalisationData(
+    assessment: StudentAssessment,
+  ): NotificationPersonalisationData {
+    const { student } = assessment.application;
+    return {
+      studentUserId: student.user.id,
+      studentEmail: student.user.email,
+      studentGivenNames: student.user.firstName ?? "",
+      studentLastName: student.user.lastName,
+      applicationNumber: assessment.application.applicationNumber,
+    };
+  }
+
+  /**
+   * Resolves the personalisation values sent to GC Notify from the personalisation
+   * context provided by the workflow, mapping each variable name to the
+   * corresponding value in the notification data.
+   * @param personalisationContext personalisation context provided by the
+   * workflow, mapping each variable name to a path in the notification data.
+   * @param notificationData notification data resolved on the API side.
+   * @returns personalisation values to be sent to GC Notify.
+   */
+  private resolvePersonalisation(
+    personalisationContext: NotificationPersonalisationContext | undefined,
+    notificationData: NotificationPersonalisationData,
+  ): Record<string, string | number | string[]> {
+    const personalisation: Record<string, string | number | string[]> = {};
+    if (!personalisationContext) {
+      return personalisation;
+    }
+    for (const [variableName, path] of Object.entries(personalisationContext)) {
+      personalisation[variableName] =
+        notificationData[path as keyof NotificationPersonalisationData];
+    }
+    return personalisation;
   }
 }

@@ -1,9 +1,9 @@
 /**
- * Free-form personalisation values provided by the workflow to be merged with
- * the personal information loaded on the API side (e.g. student given names and
- * last name) before the email is sent.
+ * Personalisation context provided by the workflow, mapping each GC Notify
+ * personalisation variable name to the path of the value to be resolved from
+ * the notification data loaded on the API side (e.g. `studentGivenNames`).
  */
-export const EMAIL_NOTIFICATION_PERSONALISATION = "emailNotificationPersonalisation";
+export const PERSONALISATION = "personalisation";
 /**
  * Free-form metadata provided by the workflow used to check whether the same
  * notification was already sent, preventing duplicate emails. It defines the
@@ -12,4 +12,4 @@ export const EMAIL_NOTIFICATION_PERSONALISATION = "emailNotificationPersonalisat
  * When empty or not provided, the existence check is skipped and the email is
  * always sent.
  */
-export const EMAIL_NOTIFICATION_CHECK_METADATA = "emailNotificationCheckMetadata";
+export const METADATA = "metadata";

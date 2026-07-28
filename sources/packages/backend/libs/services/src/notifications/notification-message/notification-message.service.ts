@@ -62,9 +62,6 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
       where: {
         templateId,
       },
-      order: {
-        id: "ASC",
-      },
     });
   }
 }

@@ -83,7 +83,7 @@ export interface StudentNotification {
 /**
  * Recipient of a workflow-triggered email notification.
  */
-export enum WorkflowEmailNotificationRecipient {
+export enum EmailNotificationRecipient {
   /**
    * The notification is sent to the student.
    */
@@ -95,15 +95,11 @@ export enum WorkflowEmailNotificationRecipient {
 }
 
 /**
- * Student personal information required to send a workflow-triggered email
- * notification to the student. Loaded on the API side because it is not
- * available in the workflow due to personal information constraints.
+ * Student addressing information required to send a workflow-triggered email
+ * notification to the student.
  */
 export interface WorkflowEmailNotificationStudent {
   userId: number;
-  studentId: number;
-  givenNames?: string;
-  lastName: string;
   email: string;
 }
 

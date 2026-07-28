@@ -1,5 +1,6 @@
 import {
   createE2EDataSources,
+  createFakeNotification,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -10,10 +11,11 @@ import {
 import { createTestingAppModule } from "../../../../../test/helpers";
 import { NotificationController } from "../../notification.controller";
 import { createFakeSendEmailNotificationPayload } from "./send-email-notification-factory";
-import { WorkflowEmailNotificationRecipient } from "@sims/services/notifications";
+import { EmailNotificationRecipient } from "@sims/services/notifications";
 import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
-import { NotificationMessageType } from "@sims/sims-db";
+import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import { randomUUID } from "node:crypto";
+import { IsNull } from "typeorm";
 
 describe("NotificationController(e2e)-sendEmailNotification", () => {
   let db: E2EDataSources;
@@ -25,16 +27,21 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     notificationController = nestApplication.get(NotificationController);
   });
 
-  it("Should create a student email notification loading the student personal information when the recipient is the student.", async () => {
+  it("Should create a student email notification resolving the personalisation from the provided paths when the recipient is the student.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
-    const payload = createFakeSendEmailNotificationPayload({
-      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
-      recipientType: WorkflowEmailNotificationRecipient.Student,
-      assessmentId: savedApplication.currentAssessment.id,
-      emailNotificationPersonalisation: { applicationNumber: "1234567890" },
-    });
+    const payload = createFakeSendEmailNotificationPayload(
+      GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      EmailNotificationRecipient.Student,
+      {
+        assessmentId: savedApplication.currentAssessment.id,
+        personalisation: {
+          givenNames: "studentGivenNames",
+          lastName: "studentLastName",
+        },
+      },
+    );
 
     // Act
     const result = await notificationController.sendEmailNotification(payload);
@@ -62,7 +69,6 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         template_id: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
         email_address: student.user.email,
         personalisation: {
-          applicationNumber: "1234567890",
           givenNames: student.user.firstName ?? "",
           lastName: student.user.lastName,
         },
@@ -71,24 +77,38 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     });
   });
 
-  it("Should send a new email notification every time when the check metadata is empty allowing a student to receive multiple emails.", async () => {
+  it("Should create a new email notification when no metadata is provided even if a notification for the same message already exists.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
-    const payload = createFakeSendEmailNotificationPayload({
-      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
-      recipientType: WorkflowEmailNotificationRecipient.Student,
-      assessmentId: savedApplication.currentAssessment.id,
-      emailNotificationCheckMetadata: {},
-    });
+    // Prepare an existing notification for the same message to ensure a new one
+    // is still created when no uniqueness criteria is provided.
+    const existingNotification = createFakeNotification(
+      {
+        user: student.user,
+        notificationMessage: {
+          id: NotificationMessageType.FormerYouthInCareNotification,
+        } as NotificationMessage,
+      },
+      { initialValue: { metadata: null } },
+    );
+    await db.notification.save(existingNotification);
+    const payload = createFakeSendEmailNotificationPayload(
+      GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      EmailNotificationRecipient.Student,
+      {
+        assessmentId: savedApplication.currentAssessment.id,
+        metadata: {},
+      },
+    );
 
     // Act
-    // Execute the worker twice to ensure a new notification is created each time
-    // when no uniqueness criteria is provided.
-    await notificationController.sendEmailNotification(payload);
-    await notificationController.sendEmailNotification(payload);
+    const result = await notificationController.sendEmailNotification(payload);
 
     // Asserts
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Complete,
+    });
     const notificationsCount = await db.notification.count({
       where: {
         user: { id: student.user.id },
@@ -97,47 +117,43 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         },
       },
     });
+    // The prepared notification plus the one created by the worker.
     expect(notificationsCount).toBe(2);
   });
 
-  it("Should create one email notification per application allowing a student with multiple applications to receive one email for each application.", async () => {
+  it("Should not create a duplicate email notification when a notification with the same metadata already exists.", async () => {
     // Arrange
-    const firstApplication = await saveFakeApplication(db.dataSource);
-    const { student } = firstApplication;
-    // Create a second application for the same student.
-    const secondApplication = await saveFakeApplication(db.dataSource, {
-      student,
-    });
-    const firstApplicationPayload = createFakeSendEmailNotificationPayload({
-      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
-      recipientType: WorkflowEmailNotificationRecipient.Student,
-      assessmentId: firstApplication.currentAssessment.id,
-      emailNotificationCheckMetadata: {
-        parentApplicationId: firstApplication.parentApplication.id,
+    const savedApplication = await saveFakeApplication(db.dataSource);
+    const { student } = savedApplication;
+    const parentApplicationId = savedApplication.parentApplication.id;
+    // Prepare an existing notification with the same metadata to ensure the
+    // worker does not create a duplicate.
+    const existingNotification = createFakeNotification(
+      {
+        user: student.user,
+        notificationMessage: {
+          id: NotificationMessageType.FormerYouthInCareNotification,
+        } as NotificationMessage,
       },
-    });
-    const secondApplicationPayload = createFakeSendEmailNotificationPayload({
-      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
-      recipientType: WorkflowEmailNotificationRecipient.Student,
-      assessmentId: secondApplication.currentAssessment.id,
-      emailNotificationCheckMetadata: {
-        parentApplicationId: secondApplication.parentApplication.id,
+      { initialValue: { metadata: { parentApplicationId } } },
+    );
+    await db.notification.save(existingNotification);
+    const payload = createFakeSendEmailNotificationPayload(
+      GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      EmailNotificationRecipient.Student,
+      {
+        assessmentId: savedApplication.currentAssessment.id,
+        metadata: { parentApplicationId },
       },
-    });
+    );
 
     // Act
-    // Execute the worker twice per application to ensure a single notification
-    // is created for each application.
-    await notificationController.sendEmailNotification(firstApplicationPayload);
-    await notificationController.sendEmailNotification(firstApplicationPayload);
-    await notificationController.sendEmailNotification(
-      secondApplicationPayload,
-    );
-    await notificationController.sendEmailNotification(
-      secondApplicationPayload,
-    );
+    const result = await notificationController.sendEmailNotification(payload);
 
     // Asserts
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Complete,
+    });
     const notificationsCount = await db.notification.count({
       where: {
         user: { id: student.user.id },
@@ -146,8 +162,66 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         },
       },
     });
-    // The student has two applications, so exactly two notifications are expected.
-    expect(notificationsCount).toBe(2);
+    // Only the prepared notification is expected, no duplicate is created.
+    expect(notificationsCount).toBe(1);
+  });
+
+  it("Should create a ministry email notification for each configured email contact when the recipient is the ministry.", async () => {
+    // Arrange
+    const savedApplication = await saveFakeApplication(db.dataSource);
+    const ministryEmailContact = `ministry-${randomUUID()}@example.com`;
+    // Configure the email contacts used to address the ministry notification.
+    await db.notificationMessage.update(
+      NotificationMessageType.FormerYouthInCareNotification,
+      { emailContacts: [ministryEmailContact] },
+    );
+    const payload = createFakeSendEmailNotificationPayload(
+      GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      EmailNotificationRecipient.Ministry,
+      {
+        assessmentId: savedApplication.currentAssessment.id,
+        personalisation: { applicationNumber: "applicationNumber" },
+      },
+    );
+
+    // Act
+    const result = await notificationController.sendEmailNotification(payload);
+
+    // Asserts
+    expect(result).toEqual({
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Complete,
+    });
+    const createdNotification = await db.notification.findOne({
+      select: {
+        id: true,
+        messagePayload: true,
+        metadata: true,
+        user: { id: true },
+        notificationMessage: { id: true },
+      },
+      relations: { user: true, notificationMessage: true },
+      where: {
+        notificationMessage: {
+          id: NotificationMessageType.FormerYouthInCareNotification,
+        },
+        user: IsNull(),
+      },
+    });
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      user: null,
+      notificationMessage: {
+        id: NotificationMessageType.FormerYouthInCareNotification,
+      },
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+        email_address: ministryEmailContact,
+        personalisation: {
+          applicationNumber: savedApplication.applicationNumber,
+        },
+      },
+      metadata: null,
+    });
   });
 
   it("Should fail the job raising an incident when the template id is not associated with any existing notification message.", async () => {
@@ -155,11 +229,11 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
     const unknownTemplateId = randomUUID();
-    const payload = createFakeSendEmailNotificationPayload({
-      templateId: unknownTemplateId,
-      recipientType: WorkflowEmailNotificationRecipient.Student,
-      assessmentId: savedApplication.currentAssessment.id,
-    });
+    const payload = createFakeSendEmailNotificationPayload(
+      unknownTemplateId,
+      EmailNotificationRecipient.Student,
+      { assessmentId: savedApplication.currentAssessment.id },
+    );
 
     // Act
     const result = await notificationController.sendEmailNotification(payload);
@@ -170,12 +244,6 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     expect(result[FAKE_WORKER_JOB_RESULT_PROPERTY]).toBe(
       MockedZeebeJobResult.Fail,
     );
-    // No notification message is created for the unknown template id.
-    const notificationMessage = await db.notificationMessage.findOne({
-      select: { id: true },
-      where: { templateId: unknownTemplateId },
-    });
-    expect(notificationMessage).toBeNull();
     // No notification is created for the student.
     const notificationsCount = await db.notification.count({
       where: { user: { id: student.user.id } },

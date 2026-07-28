@@ -432,18 +432,16 @@ export class NotificationActionsService {
   /**
    * Sends a workflow-triggered email notification to the student. The GC Notify
    * template is resolved from the provided template id, which is expected to be
-   * previously seeded, otherwise an error is raised. The personal
-   * information (email, given names and last name) is loaded on the API side and
-   * merged with the personalisation provided by the workflow, with the API
-   * loaded values taking precedence.
+   * previously seeded, otherwise an error is raised. The personalisation is
+   * provided already resolved by the caller and sent as is.
    * @param notification notification details.
    * @param entityManager entity manager to execute in transaction.
    * @param options notification options.
-   * - `checkMetadata` when provided with at least one criteria, skips creation
+   * - `metadata` when provided with at least one criteria, skips creation
    * if a notification for the same message already exists matching all the
    * provided criteria, preventing duplicate emails. It allows the uniqueness of
    * the notification to be defined dynamically by the workflow (e.g.
-   * `applicationId` results in once per application). When empty or not
+   * `parentApplicationId` results in once per application). When empty or not
    * provided, the email is always sent, allowing a student to receive multiple
    * emails.
    */
@@ -451,7 +449,7 @@ export class NotificationActionsService {
     notification: WorkflowStudentEmailNotification,
     entityManager: EntityManager,
     options?: {
-      checkMetadata?: NotificationMetadata;
+      metadata?: NotificationMetadata;
     },
   ): Promise<void> {
     const notificationMessage =
@@ -461,15 +459,15 @@ export class NotificationActionsService {
       );
     const messageType = notificationMessage.id;
     const { student } = notification;
-    // The check metadata is provided by the workflow and defines the uniqueness
-    // scope used to prevent duplicate emails (e.g. `applicationId` sends the
-    // notification once per application).
-    const checkMetadata = options?.checkMetadata;
-    if (checkMetadata && Object.keys(checkMetadata).length) {
+    // The metadata is provided by the workflow and defines the uniqueness
+    // scope used to prevent duplicate emails (e.g. `parentApplicationId` sends
+    // the notification once per application).
+    const metadata = options?.metadata;
+    if (metadata && Object.keys(metadata).length) {
       const notificationExists =
         await this.notificationService.checkNotificationExists(
           messageType,
-          checkMetadata,
+          metadata,
           entityManager,
         );
       if (notificationExists) {
@@ -482,13 +480,9 @@ export class NotificationActionsService {
       messagePayload: {
         email_address: student.email,
         template_id: notificationMessage.templateId,
-        personalisation: {
-          ...notification.personalisation,
-          givenNames: student.givenNames ?? "",
-          lastName: student.lastName,
-        },
+        personalisation: notification.personalisation ?? {},
       },
-      metadata: checkMetadata,
+      metadata,
     };
     await this.notificationService.saveNotifications(
       [studentEmailNotification],

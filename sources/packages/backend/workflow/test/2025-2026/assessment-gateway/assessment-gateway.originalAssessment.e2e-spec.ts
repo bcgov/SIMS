@@ -37,7 +37,7 @@ import {
   PROGRAM_YEAR,
   PROGRAM_YEAR_BASE_ID,
 } from "../constants/program-year.constants";
-import { AssessmentDataType } from "@sims/test-utils";
+import { AssessmentDataType, YesNoOptions } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 
 describe(`E2E Test Workflow assessment gateway on original assessment for ${PROGRAM_YEAR}`, () => {
@@ -615,6 +615,53 @@ describe(`E2E Test Workflow assessment gateway on original assessment for ${PROG
       assessmentGatewayResponse.variables,
       WorkflowServiceTasks.ProgramInfoNotRequired,
       WorkflowServiceTasks.VerifyApplicationExceptions,
+    );
+  });
+
+  it("Should not send the former youth in care email when the student declares not to be a former youth in care.", async () => {
+    // Arrange
+
+    // Assessment consolidated mocked data with the student declaring not to be a former youth in care.
+    const assessmentConsolidatedData: AssessmentConsolidatedData = {
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      ...createFakeConsolidatedFulltimeData(PROGRAM_YEAR),
+      ...createFakeSingleIndependentStudentData(),
+      studentDataYouthInCare: YesNoOptions.No,
+      // Application with PIR not required.
+      studentDataSelectedOffering: 1,
+    };
+
+    const workersMockedData = createWorkersMockedData([
+      createLoadAssessmentDataTaskMock({ assessmentConsolidatedData }),
+      createProgramInfoNotRequiredTaskMock(),
+      createVerifyApplicationExceptionsTaskMock(),
+      createIncomeRequestTaskMock({
+        incomeVerificationId: incomeVerificationId++,
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createCheckIncomeRequestTaskMock({
+        subprocesses: WorkflowSubprocesses.StudentIncomeVerification,
+      }),
+      createVerifyAssessmentCalculationOrderTaskMock(),
+    ]);
+
+    const currentAssessmentId = assessmentId++;
+
+    // Act
+    const assessmentGatewayResponse =
+      await zeebeClientProvider.createProcessInstanceWithResult({
+        bpmnProcessId: DEFAULT_ASSESSMENT_GATEWAY,
+        variables: {
+          [ASSESSMENT_ID]: currentAssessmentId,
+          ...workersMockedData,
+        },
+        requestTimeout: PROCESS_INSTANCE_CREATE_TIMEOUT,
+      });
+
+    // Assert
+    expectNotToPassThroughServiceTasks(
+      assessmentGatewayResponse.variables,
+      WorkflowServiceTasks.SendFormerYouthInCareEmail,
     );
   });
 

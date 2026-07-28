@@ -1,30 +1,34 @@
 import { IOutputVariables, ZeebeJob } from "@camunda8/sdk/dist/zeebe/types";
 import { createFakeWorkerJob } from "../../../../../test/utils/worker-job-mock";
 import {
+  NotificationPersonalisationContext,
   SendEmailNotificationJobHeaderDTO,
   SendEmailNotificationJobInDTO,
 } from "../../notification.dto";
-import { WorkflowEmailNotificationRecipient } from "@sims/services/notifications";
+import { EmailNotificationRecipient } from "@sims/services/notifications";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
 
 /**
  * Creates a fake send email notification payload.
+ * @param templateId GC Notify template id used to send the email.
+ * @param recipientType recipient of the notification.
  * @param options payload options.
- * - `templateId` GC Notify template id used to send the email.
- * - `recipientType` recipient of the notification.
- * - `assessmentId` assessment id used to load the student personal information.
- * - `emailNotificationPersonalisation` personalisation provided by the workflow.
- * - `emailNotificationCheckMetadata` when provided, skips creation if a
- * notification for the same message already exists with matching metadata.
+ * - `assessmentId` assessment id used to load the notification data.
+ * - `personalisation` personalisation context provided by the workflow, mapping
+ * each variable name to a path in the notification data.
+ * - `metadata` when provided, skips creation if a notification for the same
+ * message already exists with matching metadata.
  * @returns fake send email notification payload.
  */
-export function createFakeSendEmailNotificationPayload(options: {
-  templateId: string;
-  recipientType: WorkflowEmailNotificationRecipient;
-  assessmentId?: number;
-  emailNotificationPersonalisation?: Record<string, string | number | string[]>;
-  emailNotificationCheckMetadata?: NotificationMetadata;
-}): Readonly<
+export function createFakeSendEmailNotificationPayload(
+  templateId: string,
+  recipientType: EmailNotificationRecipient,
+  options?: {
+    assessmentId?: number;
+    personalisation?: NotificationPersonalisationContext;
+    metadata?: NotificationMetadata;
+  },
+): Readonly<
   ZeebeJob<
     SendEmailNotificationJobInDTO,
     SendEmailNotificationJobHeaderDTO,
@@ -37,14 +41,13 @@ export function createFakeSendEmailNotificationPayload(options: {
     IOutputVariables
   >({
     variables: {
-      assessmentId: options.assessmentId,
-      emailNotificationPersonalisation:
-        options.emailNotificationPersonalisation,
-      emailNotificationCheckMetadata: options.emailNotificationCheckMetadata,
+      assessmentId: options?.assessmentId,
+      personalisation: options?.personalisation,
+      metadata: options?.metadata,
     },
     customHeaders: {
-      templateId: options.templateId,
-      recipientType: options.recipientType,
+      templateId,
+      recipientType,
     },
   });
 }

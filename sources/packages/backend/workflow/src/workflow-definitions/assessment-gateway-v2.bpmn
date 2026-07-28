@@ -929,7 +929,7 @@ Note: the workflow process should continue its execution as a regular reassessme
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=assessmentTriggerType = "Original assessment"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="former-youth-in-care-send-flow" sourceRef="former-youth-in-care-gateway" targetRef="send-former-youth-in-care-email-task">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataYouthInCare != null and studentDataYouthInCare != "no"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=studentDataYouthInCare != "no"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_10xaz6e" sourceRef="former-youth-in-care-gateway" targetRef="former-youth-in-care-join-gateway" />
     <bpmn:sequenceFlow id="former-youth-in-care-email-sent-flow" sourceRef="send-former-youth-in-care-email-task" targetRef="former-youth-in-care-join-gateway" />
@@ -954,7 +954,8 @@ Note: the workflow process should continue its execution as a regular reassessme
           <zeebe:header key="recipientType" value="student" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
-          <zeebe:input source="={parentApplicationId: parentApplicationId}" target="emailNotificationCheckMetadata" />
+          <zeebe:input source="={givenNames: &#34;studentGivenNames&#34;, lastName: &#34;studentLastName&#34;}" target="personalisation" />
+          <zeebe:input source="={parentApplicationId: parentApplicationId}" target="metadata" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>former-youth-in-care-send-flow</bpmn:incoming>
@@ -1265,10 +1266,6 @@ Note: the workflow process should continue its execution as a regular reassessme
           <dc:Bounds x="578" y="319" width="84" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="send-former-youth-in-care-email-task_di" bpmnElement="send-former-youth-in-care-email-task">
-        <dc:Bounds x="860" y="384" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1r28emd_di" bpmnElement="identifiable-parents-creation" isExpanded="true">
         <dc:Bounds x="2370" y="795" width="580" height="200" />
       </bpmndi:BPMNShape>
@@ -1317,6 +1314,10 @@ Note: the workflow process should continue its execution as a regular reassessme
         <bpmndi:BPMNLabel>
           <dc:Bounds x="781" y="284.5" width="78" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="send-former-youth-in-care-email-task_di" bpmnElement="send-former-youth-in-care-email-task">
+        <dc:Bounds x="860" y="384" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0bza37i_di" bpmnElement="Flow_0bza37i">
         <di:waypoint x="3005" y="1485" />

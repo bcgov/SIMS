@@ -17,7 +17,6 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NotificationActionsService, SystemUsersService } from "@sims/services";
-import { WorkflowEmailNotificationStudent } from "@sims/services/notifications";
 
 /**
  * Manages the student assessment related operations.
@@ -323,53 +322,44 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Loads the student personal information required to send an email
-   * notification to the student from a given assessment. This information is
-   * loaded on the API side because it is not available in the workflow due to
-   * personal information constraints.
+   * Loads the assessment along with the student details required to build the
+   * data used to personalise and address a workflow-triggered email
+   * notification. This information is loaded on the API side because it is not
+   * available in the workflow due to personal information constraints.
    * @param assessmentId assessment id used to reach the associated student.
-   * @param entityManager entity manager to execute in transaction.
-   * @returns student notification details or null when the assessment or the
-   * associated student is not found.
+   * @param options options.
+   * - `entityManager` optional entity manager to execute in transaction.
+   * @returns assessment with the associated student details, or null when the
+   * assessment is not found.
    */
-  async getStudentDetailsForNotificationByAssessmentId(
+  async getAssessmentNotificationDetails(
     assessmentId: number,
-    entityManager: EntityManager,
-  ): Promise<WorkflowEmailNotificationStudent | null> {
-    const studentAssessment = await entityManager
-      .getRepository(StudentAssessment)
-      .findOne({
-        select: {
+    options?: { entityManager?: EntityManager },
+  ): Promise<StudentAssessment | null> {
+    const assessmentRepo =
+      options?.entityManager?.getRepository(StudentAssessment) ?? this.repo;
+    return assessmentRepo.findOne({
+      select: {
+        id: true,
+        application: {
           id: true,
-          application: {
+          applicationNumber: true,
+          student: {
             id: true,
-            student: {
+            user: {
               id: true,
-              user: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
+              firstName: true,
+              lastName: true,
+              email: true,
             },
           },
         },
-        relations: {
-          application: { student: { user: true } },
-        },
-        where: { id: assessmentId },
-      });
-    if (!studentAssessment) {
-      return null;
-    }
-    const student = studentAssessment.application.student;
-    return {
-      userId: student.user.id,
-      studentId: student.id,
-      givenNames: student.user.firstName,
-      lastName: student.user.lastName,
-      email: student.user.email,
-    };
+      },
+      relations: {
+        application: { student: { user: true } },
+      },
+      where: { id: assessmentId },
+    });
   }
 
   /**
