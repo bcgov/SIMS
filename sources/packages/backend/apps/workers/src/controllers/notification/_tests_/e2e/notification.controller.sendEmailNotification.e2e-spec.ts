@@ -86,23 +86,17 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const { student } = savedApplication;
     // Prepare an existing notification for the same message to ensure a new one
     // is still created when no uniqueness criteria is provided.
-    const existingNotification = createFakeNotification(
-      {
-        user: student.user,
-        notificationMessage: {
-          id: NotificationMessageType.FormerYouthInCareNotification,
-        } as NotificationMessage,
-      },
-      { initialValue: { metadata: null } },
-    );
+    const existingNotification = createFakeNotification({
+      user: student.user,
+      notificationMessage: {
+        id: NotificationMessageType.FormerYouthInCareNotification,
+      } as NotificationMessage,
+    });
     await db.notification.save(existingNotification);
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Student,
       savedApplication.currentAssessment.id,
-      {
-        metadata: {},
-      },
     );
 
     // Act
