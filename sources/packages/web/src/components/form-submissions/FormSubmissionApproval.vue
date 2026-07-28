@@ -486,7 +486,7 @@ export default defineComponent({
               await reloadFormSubmissionItem(decision.submissionItemId);
               // If the form submission was cancelled, scroll to the top of the page to show the user the status chip with the updated status.
               if (error.errorType === FORM_SUBMISSION_CANCELLED) {
-                formSubmissionApprovalHeader.value?.$el?.scrollIntoView({
+                formSubmissionApprovalHeader.value?.$el?.scrollIntoView?.({
                   behavior: "smooth",
                   block: "center",
                 });
