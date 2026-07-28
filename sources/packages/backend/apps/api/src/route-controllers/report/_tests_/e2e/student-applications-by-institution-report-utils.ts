@@ -115,6 +115,10 @@ export async function createVersionedApplicationsDataSetup(
  * Create a single application to test the Ministry_Student_Applications_By_Institution_Report.
  * @param db E2E data sources.
  * @param options method options.
+ * - `student` student to be used in the application.
+ * - `institution` institution to be used in the application.
+ * - `applicationStatus` application status to be used in the application.
+ * - `submissionDate` submission date to be used in the application.
  * @returns the created application.
  */
 export async function createSingleApplicationDataSetup(
@@ -124,7 +128,6 @@ export async function createSingleApplicationDataSetup(
     institution: Institution;
     applicationStatus: ApplicationStatus;
     submissionDate: Date;
-    firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
   const currentApplication = await saveFakeApplicationDisbursements(
