@@ -77,7 +77,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .get(endpoint)
         .auth(studentToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
-        .expect({ formData: { programYear: "2022-2023" } });
+        .expect({ formData: { programYear: "2023-2024" } });
     });
 
     it(`Should throw an unprocessable entity exception when the application is not associated with the student requesting the supplementary data for ${KnownSupplementaryDataKey.ProgramYear}.`, async () => {
@@ -435,7 +435,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect({
           formData: {
             parents: [{ id: parent.id, fullName: parent.fullName }],
-            programYear: "2022-2023",
+            programYear: "2023-2024",
           },
         });
     });

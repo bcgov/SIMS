@@ -8,9 +8,7 @@ import { E2EDataSources } from "../data-source/e2e-data-source";
  * @returns the created program year ready to be saved.
  */
 export function createFakeProgramYear(programYearPrefix?: number): ProgramYear {
-  if (programYearPrefix === undefined) {
-    programYearPrefix = 2022;
-  }
+  programYearPrefix ??= 2023;
   const startingYear = programYearPrefix;
   const endingYear = programYearPrefix + 1;
   const programYear = new ProgramYear();

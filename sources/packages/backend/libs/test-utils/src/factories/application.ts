@@ -33,7 +33,6 @@ import {
   createFakeStudentAssessment,
   createFakeUser,
 } from "..";
-import { createFakeProgramYear } from "./program-year";
 import { createFakeStudent } from "./student";
 
 export function createFakeApplication(
@@ -55,9 +54,9 @@ export function createFakeApplication(
   const now = new Date();
   const application = new Application();
   application.data = options?.initialValue.data ?? ({} as ApplicationData);
-  application.programYear = relations?.programYear ?? createFakeProgramYear();
-  // TODO get programYear from relations instead of setting the id here.
-  application.programYear.id = relations?.programYear?.id ?? 2;
+  // Program Year defaults to 2023-2024 if not provided.
+  application.programYear =
+    relations?.programYear ?? ({ id: 3 } as ProgramYear);
   application.student = relations?.student ?? createFakeStudent();
   application.offeringIntensity =
     options?.initialValue?.offeringIntensity ?? OfferingIntensity.partTime;
