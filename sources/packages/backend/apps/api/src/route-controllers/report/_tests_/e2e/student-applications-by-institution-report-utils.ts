@@ -119,6 +119,7 @@ export async function createVersionedApplicationsDataSetup(
  * - `institution` institution to be used in the application.
  * - `applicationStatus` application status to be used in the application.
  * - `submissionDate` submission date to be used in the application.
+ * - `firstDisbursementInitialValues` initial values to be used in the first disbursement.
  * @returns the created application.
  */
 export async function createSingleApplicationDataSetup(
@@ -128,6 +129,7 @@ export async function createSingleApplicationDataSetup(
     institution: Institution;
     applicationStatus: ApplicationStatus;
     submissionDate: Date;
+    firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
   const currentApplication = await saveFakeApplicationDisbursements(
@@ -144,6 +146,7 @@ export async function createSingleApplicationDataSetup(
       currentAssessmentInitialValues: {
         assessmentDate: addDays(2, options.submissionDate),
       },
+      firstDisbursementInitialValues: options.firstDisbursementInitialValues,
     },
   );
   return currentApplication;
