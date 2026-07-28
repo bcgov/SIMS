@@ -232,6 +232,12 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
+    // Ensure no email contacts are configured for the ministry notification,
+    // clearing any contacts that a previous test may have persisted.
+    await db.notificationMessage.update(
+      NotificationMessageType.FormerYouthInCareNotification,
+      { emailContacts: null },
+    );
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Ministry,
@@ -242,8 +248,8 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const result = await notificationController.sendEmailNotification(payload);
 
     // Asserts
-    // The job fails, raising an incident, since the template is not seeded and
-    // notification messages are no longer created at runtime.
+    // The job fails, raising an incident, since the ministry notification
+    // message has no email contacts configured.
     expect(result).toEqual({
       [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
       [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]:
