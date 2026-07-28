@@ -28,9 +28,10 @@ import { sumAwardAmounts } from "@sims/test-utils/utils";
  * - `originalSubmissionDate` original submission date to be used in the application.
  * - `currentOfferingEndDateOffSet` current offering end date offset to be used in the application.
  * useful when the offering end date must be set in the past.
- * @returns The created application.
+ * - `parentApplicationFirstDisbursementInitialValues` initial values to be used in the parent application first disbursement.
+ * @returns the created application.
  */
-export async function createApplicationsByInstitutionDataSetup(
+export async function createVersionedApplicationsDataSetup(
   db: E2EDataSources,
   options: {
     student: Student;
@@ -107,18 +108,153 @@ export async function createApplicationsByInstitutionDataSetup(
       },
     },
   );
-  currentApplication.versions = [currentApplication, previousApplication];
   return currentApplication;
 }
 
 /**
- * Build Applications by Institution report data.
+ * Create a single application to test the Ministry_Student_Applications_By_Institution_Report.
+ * @param db E2E data sources.
+ * @param options method options.
+ * @returns the created application.
+ */
+export async function createSingleApplicationDataSetup(
+  db: E2EDataSources,
+  options: {
+    student: Student;
+    institution: Institution;
+    applicationStatus: ApplicationStatus;
+    submissionDate: Date;
+    firstDisbursementInitialValues?: Partial<DisbursementSchedule>;
+  },
+): Promise<Application> {
+  const currentApplication = await saveFakeApplicationDisbursements(
+    db.dataSource,
+    {
+      student: options.student,
+      institution: options.institution,
+    },
+    {
+      applicationInitialValues: {
+        applicationStatus: options.applicationStatus,
+        submittedDate: options.submissionDate,
+      },
+      currentAssessmentInitialValues: {
+        assessmentDate: addDays(2, options.submissionDate),
+      },
+    },
+  );
+  return currentApplication;
+}
+
+/**
+ * Build the records expected to be generated in the Ministry_Student_Applications_By_Institution_Report.
+ * Load the application with all the necessary relations to build the expected report record.
+ * Note: objects created by the standard factories do not contain all the necessary relationships
+ * required to build the expected report record.
  * @param application application to generate the expected report record.
  * @returns report data.
  */
-export function buildApplicationsByInstitutionData(
-  application: Application,
-): Record<string, string | number> {
+export async function buildApplicationsByInstitutionData(
+  db: E2EDataSources,
+  applicationId: number,
+): Promise<Record<string, string | number>> {
+  const application = await db.application.findOneOrFail({
+    select: {
+      id: true,
+      applicationNumber: true,
+      submittedDate: true,
+      studentNumber: true,
+      applicationStatus: true,
+      offeringIntensity: true,
+      location: {
+        id: true,
+        name: true,
+        institution: {
+          id: true,
+          operatingName: true,
+          country: true,
+          province: true,
+          classification: true,
+          organizationStatus: true,
+        },
+      },
+      student: {
+        id: true,
+        sinValidation: {
+          id: true,
+          sin: true,
+        },
+        user: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      currentAssessment: {
+        id: true,
+        assessmentDate: true,
+        offering: {
+          id: true,
+          name: true,
+          studyStartDate: true,
+          studyEndDate: true,
+          offeringIntensity: true,
+          educationProgram: {
+            id: true,
+            name: true,
+            credentialType: true,
+            cipCode: true,
+          },
+        },
+        disbursementSchedules: {
+          id: true,
+          disbursementValues: {
+            id: true,
+            valueAmount: true,
+          },
+        },
+      },
+      parentApplication: {
+        id: true,
+        submittedDate: true,
+        versions: {
+          id: true,
+          studentAssessments: {
+            id: true,
+            disbursementSchedules: {
+              id: true,
+              disbursementScheduleStatus: true,
+            },
+          },
+        },
+      },
+    },
+    relations: {
+      currentAssessment: {
+        offering: {
+          educationProgram: true,
+        },
+        disbursementSchedules: {
+          disbursementValues: true,
+        },
+      },
+      location: {
+        institution: true,
+      },
+      student: {
+        user: true,
+        sinValidation: true,
+      },
+      parentApplication: {
+        versions: {
+          studentAssessments: {
+            disbursementSchedules: true,
+          },
+        },
+      },
+    },
+    where: { id: applicationId },
+  });
   const savedOffering = application.currentAssessment.offering;
   const savedEducationProgram = savedOffering.educationProgram;
   const savedInstitution = application.location.institution;
@@ -129,7 +265,7 @@ export function buildApplicationsByInstitutionData(
     application.currentAssessment.disbursementSchedules.flatMap(
       (disbursementSchedule) => disbursementSchedule.disbursementValues ?? [],
     );
-  const disbursed = application.versions
+  const disbursed = application.parentApplication.versions
     .flatMap(
       (applicationVersion) => applicationVersion.studentAssessments ?? [],
     )
@@ -157,9 +293,8 @@ export function buildApplicationsByInstitutionData(
       application.parentApplication.submittedDate,
     ),
     "Last Submission": getPSTPDTDateTime(application.submittedDate),
-    "Assessment Date": getISODateOnlyString(
-      application.currentAssessment.assessmentDate,
-    ),
+    "Assessment Date":
+      getISODateOnlyString(application.currentAssessment.assessmentDate) ?? "",
     "Application Status": application.applicationStatus,
     Disbursed: disbursed ? "Yes" : "No",
     "Study Intensity": savedOffering.offeringIntensity,

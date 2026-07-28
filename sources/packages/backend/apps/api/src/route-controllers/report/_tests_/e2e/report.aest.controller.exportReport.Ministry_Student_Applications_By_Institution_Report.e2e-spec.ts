@@ -3,6 +3,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitution,
+  saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
@@ -16,10 +17,14 @@ import request from "supertest";
 import { addDays } from "@sims/utilities";
 import {
   buildApplicationsByInstitutionData,
-  createApplicationsByInstitutionDataSetup,
+  createSingleApplicationDataSetup,
+  createVersionedApplicationsDataSetup,
 } from "./student-applications-by-institution-report-utils";
 import { ConfigService } from "@sims/utilities/config";
-import { DisbursementScheduleStatus } from "@sims/sims-db/entities";
+import {
+  ApplicationStatus,
+  DisbursementScheduleStatus,
+} from "@sims/sims-db/entities";
 
 describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_By_Institution_Report)", () => {
   let app: INestApplication;
@@ -39,14 +44,14 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
     const now = new Date();
     const student = await saveFakeStudent(db.dataSource);
     const institution = await db.institution.save(createFakeInstitution());
-    const application = await createApplicationsByInstitutionDataSetup(db, {
+    const application = await createVersionedApplicationsDataSetup(db, {
       student,
       institution,
       originalSubmissionDate: now,
     });
     // Application with a different program is created to ensure that the report filters out
     // applications using the program, when a program filter is provided.
-    await createApplicationsByInstitutionDataSetup(db, {
+    await createVersionedApplicationsDataSetup(db, {
       student,
       institution,
       originalSubmissionDate: now,
@@ -72,7 +77,10 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
       AESTGroups.BusinessAdministrators,
     );
     // Expected report records.
-    const expectedRecord = buildApplicationsByInstitutionData(application);
+    const expectedRecord = await buildApplicationsByInstitutionData(
+      db,
+      application.id,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -95,12 +103,12 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
     const student = await saveFakeStudent(db.dataSource);
     const institution = await db.institution.save(createFakeInstitution());
     const applications = await Promise.all([
-      createApplicationsByInstitutionDataSetup(db, {
+      createVersionedApplicationsDataSetup(db, {
         student,
         institution,
         originalSubmissionDate: now,
       }),
-      createApplicationsByInstitutionDataSetup(db, {
+      createVersionedApplicationsDataSetup(db, {
         student,
         institution,
         originalSubmissionDate: now,
@@ -127,8 +135,10 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
       AESTGroups.BusinessAdministrators,
     );
     // Expected report records.
-    const expectedRecords = applications.map((application) =>
-      buildApplicationsByInstitutionData(application),
+    const expectedRecords = await Promise.all(
+      applications.map((application) =>
+        buildApplicationsByInstitutionData(db, application.id),
+      ),
     );
 
     // Act/Assert
@@ -154,12 +164,12 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
     const student = await saveFakeStudent(db.dataSource);
     const institution = await db.institution.save(createFakeInstitution());
     const [application] = await Promise.all([
-      createApplicationsByInstitutionDataSetup(db, {
+      createVersionedApplicationsDataSetup(db, {
         student,
         institution,
         originalSubmissionDate: now,
       }),
-      createApplicationsByInstitutionDataSetup(db, {
+      createVersionedApplicationsDataSetup(db, {
         student,
         institution,
         originalSubmissionDate: now,
@@ -188,7 +198,10 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
       AESTGroups.BusinessAdministrators,
     );
     // Expected report records.
-    const expectedRecord = buildApplicationsByInstitutionData(application);
+    const expectedRecord = await buildApplicationsByInstitutionData(
+      db,
+      application.id,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -205,12 +218,12 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
       });
   });
 
-  it("Should generate the report with disbursed as 'Yes' when a report generation request and the parent application has one disbursement sent.", async () => {
+  it("Should generate the report with disbursed as Yes when a report generation request is made and the parent application has one disbursement sent.", async () => {
     // Arrange
     const now = new Date();
     const student = await saveFakeStudent(db.dataSource);
     const institution = await db.institution.save(createFakeInstitution());
-    const application = await createApplicationsByInstitutionDataSetup(db, {
+    const application = await createVersionedApplicationsDataSetup(db, {
       student,
       institution,
       originalSubmissionDate: now,
@@ -240,7 +253,152 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
       AESTGroups.BusinessAdministrators,
     );
     // Expected report records.
-    const expectedRecord = buildApplicationsByInstitutionData(application);
+    const expectedRecord = await buildApplicationsByInstitutionData(
+      db,
+      application.id,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toEqual([expectedRecord]);
+      });
+  });
+
+  it("Should generate the report including application in different statuses (Completed, Assessment, Enrolment) when a report generation request is made.", async () => {
+    // Arrange
+    const [twoDaysAgo, yesterday, today] = [
+      addDays(-2, new Date()),
+      addDays(-1, new Date()),
+      new Date(),
+    ];
+    const student = await saveFakeStudent(db.dataSource);
+    const institution = await db.institution.save(createFakeInstitution());
+    const applicationInCompletedStatus = await createSingleApplicationDataSetup(
+      db,
+      {
+        student,
+        institution,
+        applicationStatus: ApplicationStatus.Completed,
+        submissionDate: today,
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
+    const applicationInEnrolmentStatus = await createSingleApplicationDataSetup(
+      db,
+      {
+        student,
+        institution,
+        applicationStatus: ApplicationStatus.Assessment,
+        submissionDate: yesterday,
+      },
+    );
+    const applicationInAssessmentStatus =
+      await createSingleApplicationDataSetup(db, {
+        student,
+        institution,
+        applicationStatus: ApplicationStatus.Enrolment,
+        submissionDate: twoDaysAgo,
+      });
+    const payload = {
+      reportName: "Ministry_Student_Applications_By_Institution_Report",
+      params: {
+        institution: institution.id,
+        program: "",
+        // Use a day only period to ensure the report filters out applications
+        // based on the submission of the first ever submitted application.
+        startDate: twoDaysAgo,
+        endDate: addDays(1, today),
+        isLimitedByArchiveDate: true,
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+      },
+    };
+
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+    // Expected report records.
+    const expectedRecords = await Promise.all([
+      buildApplicationsByInstitutionData(db, applicationInAssessmentStatus.id),
+      buildApplicationsByInstitutionData(db, applicationInEnrolmentStatus.id),
+      buildApplicationsByInstitutionData(db, applicationInCompletedStatus.id),
+    ]);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(ministryUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        expect(parsedResult.data).toEqual(
+          expect.arrayContaining(expectedRecords),
+        );
+      });
+  });
+
+  it("Should generate the report for an in-progress application when a report generation request is made.", async () => {
+    // Arrange
+    const now = new Date();
+    const student = await saveFakeStudent(db.dataSource);
+    const institution = await db.institution.save(createFakeInstitution());
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+        institution,
+      },
+      {
+        initialValues: {
+          applicationStatus: ApplicationStatus.InProgress,
+          submittedDate: now,
+        },
+      },
+    );
+    application.versions = [application];
+    application.parentApplication = application;
+    const payload = {
+      reportName: "Ministry_Student_Applications_By_Institution_Report",
+      params: {
+        institution: institution.id,
+        program: "",
+        // Use a day only period to ensure the report filters out applications
+        // based on the submission of the first ever submitted application.
+        startDate: now,
+        endDate: addDays(1, now),
+        isLimitedByArchiveDate: true,
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+      },
+    };
+
+    const ministryUserToken = await getAESTToken(
+      AESTGroups.BusinessAdministrators,
+    );
+    // Expected report records.
+    const expectedRecord = await buildApplicationsByInstitutionData(
+      db,
+      application.id,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
