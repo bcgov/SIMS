@@ -79,7 +79,7 @@ jobs:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -108,7 +108,7 @@ jobs:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -137,7 +137,7 @@ jobs:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -166,7 +166,7 @@ jobs:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -195,7 +195,7 @@ jobs:
       BUILD_REF: ${{ needs.createTag.outputs.newTag }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env

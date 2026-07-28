@@ -151,7 +151,7 @@ jobs:
     needs: env-setup
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -180,7 +180,7 @@ jobs:
     needs: [env-setup, run-db-migrations]
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -211,7 +211,7 @@ jobs:
     needs: [env-setup, run-db-migrations]
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -239,7 +239,7 @@ jobs:
     needs: [env-setup, run-db-migrations]
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env
@@ -268,7 +268,7 @@ jobs:
     needs: [env-setup, run-db-migrations]
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Print env

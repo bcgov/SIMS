@@ -48,7 +48,7 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v1
+        uses: redhat-actions/openshift-tools-installer@v2
         with:
           oc: "4"
       - name: Log in to OpenShift
