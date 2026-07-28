@@ -475,23 +475,21 @@ describe(
       expect(batchSequenceNumberExists).toBe(false);
     });
 
-    /**
-     * Generate the invoice name based on the application.
-     * @param application application with the information to generate the invoice name.
-     * @returns expected invoice name.
-     */
-    function createInvoiceNameFromApplication(
-      application: Application,
-    ): string {
-      const casSupplier = application.student.casSupplier;
-      const [firstDisbursementSchedule] =
-        application.currentAssessment.disbursementSchedules;
-      return `23S${application.currentAssessment.offering.institutionLocation.institutionCode}${casSupplier.supplierNumber}-${firstDisbursementSchedule.documentNumber}-1`;
-    }
-
     afterAll(async () => {
       MockDate.reset();
       await app?.close();
     });
   },
 );
+
+/**
+ * Generate the invoice name based on the application.
+ * @param application application with the information to generate the invoice name.
+ * @returns expected invoice name.
+ */
+function createInvoiceNameFromApplication(application: Application): string {
+  const casSupplier = application.student.casSupplier;
+  const [firstDisbursementSchedule] =
+    application.currentAssessment.disbursementSchedules;
+  return `24S${application.currentAssessment.offering.institutionLocation.institutionCode}${casSupplier.supplierNumber}-${firstDisbursementSchedule.documentNumber}-1`;
+}

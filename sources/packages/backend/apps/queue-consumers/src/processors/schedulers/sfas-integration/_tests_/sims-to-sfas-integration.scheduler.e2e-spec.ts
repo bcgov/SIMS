@@ -850,7 +850,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     }${formatDate(studyStartDate, DATE_FORMAT)}${formatDate(
       studyEndDate,
       DATE_FORMAT,
-    )}20222023${csgpAwardTotal ?? "0000000000"}${
+    )}20232024${csgpAwardTotal ?? "0000000000"}${
       sbsdAwardTotal ?? "0000000000"
     }${cancelledDate}`;
   }
