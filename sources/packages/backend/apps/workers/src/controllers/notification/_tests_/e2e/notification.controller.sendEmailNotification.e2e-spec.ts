@@ -37,8 +37,8 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Student,
+      savedApplication.currentAssessment.id,
       {
-        assessmentId: savedApplication.currentAssessment.id,
         personalisation: {
           givenNames: "studentGivenNames",
           lastName: "studentLastName",
@@ -99,8 +99,8 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Student,
+      savedApplication.currentAssessment.id,
       {
-        assessmentId: savedApplication.currentAssessment.id,
         metadata: {},
       },
     );
@@ -144,8 +144,8 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Student,
+      savedApplication.currentAssessment.id,
       {
-        assessmentId: savedApplication.currentAssessment.id,
         metadata: { parentApplicationId },
       },
     );
@@ -181,8 +181,8 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Ministry,
+      savedApplication.currentAssessment.id,
       {
-        assessmentId: savedApplication.currentAssessment.id,
         personalisation: { applicationNumber: "applicationNumber" },
       },
     );
@@ -235,7 +235,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Ministry,
-      { assessmentId: savedApplication.currentAssessment.id },
+      savedApplication.currentAssessment.id,
     );
 
     // Act
@@ -265,7 +265,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     const payload = createFakeSendEmailNotificationPayload(
       unknownTemplateId,
       EmailNotificationRecipient.Student,
-      { assessmentId: savedApplication.currentAssessment.id },
+      savedApplication.currentAssessment.id,
     );
 
     // Act

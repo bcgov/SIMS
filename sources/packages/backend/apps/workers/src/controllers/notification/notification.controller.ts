@@ -80,29 +80,36 @@ export class NotificationController {
       metadata,
     } = job.variables;
     try {
-      // Load the notification data to resolve the personalisation.
-      const assessment =
-        await this.studentAssessmentService.getAssessmentNotificationDetails(
-          assessmentId,
+      return await this.dataSource.transaction(async (entityManager) => {
+        // Load the notification data to resolve the personalisation. A
+        // pessimistic write lock is acquired on the assessment as soon as the
+        // job starts processing, serializing concurrent executions of the same
+        // job for the same assessment. This keeps the worker idempotent: even if
+        // it runs more than once, the duplicate check performed before saving
+        // the notification stays reliable and a single email is created.
+        const assessment =
+          await this.studentAssessmentService.getAssessmentNotificationDetails(
+            assessmentId,
+            entityManager,
+          );
+        if (!assessment) {
+          const message = `Assessment id ${assessmentId} not found.`;
+          jobLogger.error(message);
+          return job.error(ASSESSMENT_NOT_FOUND, message);
+        }
+        const notificationData =
+          this.buildNotificationPersonalisationData(assessment);
+        const personalisation = this.resolvePersonalisation(
+          personalisationContext,
+          notificationData,
         );
-      if (!assessment) {
-        const message = `Assessment id ${assessmentId} not found.`;
-        jobLogger.error(message);
-        return job.error(ASSESSMENT_NOT_FOUND, message);
-      }
-      const notificationData =
-        this.buildNotificationPersonalisationData(assessment);
-      const personalisation = this.resolvePersonalisation(
-        personalisationContext,
-        notificationData,
-      );
 
-      const notificationMessage =
-        await this.notificationMessageService.getNotificationMessageByTemplateId(
-          templateId,
-        );
+        const notificationMessage =
+          await this.notificationMessageService.getNotificationMessageByTemplateId(
+            templateId,
+            { entityManager },
+          );
 
-      await this.dataSource.transaction(async (entityManager) => {
         switch (recipientType) {
           case EmailNotificationRecipient.Student:
             await this.notificationActionsService.saveWorkflowStudentEmailNotification(
@@ -140,9 +147,9 @@ export class NotificationController {
               `Unsupported notification recipient type: ${recipientType}.`,
             );
         }
+        jobLogger.log("Workflow email notification created.");
+        return job.complete();
       });
-      jobLogger.log("Workflow email notification created.");
-      return job.complete();
     } catch (error: unknown) {
       return createUnexpectedJobFail(error, job, { logger: jobLogger });
     }

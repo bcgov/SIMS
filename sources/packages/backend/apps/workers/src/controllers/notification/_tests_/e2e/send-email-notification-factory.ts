@@ -23,8 +23,8 @@ import { NotificationMetadata } from "@sims/sims-db/entities/notification-metada
 export function createFakeSendEmailNotificationPayload(
   templateId: string,
   recipientType: EmailNotificationRecipient,
+  assessmentId: number,
   options?: {
-    assessmentId?: number;
     personalisation?: NotificationPersonalisationContext;
     metadata?: NotificationMetadata;
   },
@@ -41,7 +41,7 @@ export function createFakeSendEmailNotificationPayload(
     IOutputVariables
   >({
     variables: {
-      assessmentId: options?.assessmentId,
+      assessmentId,
       personalisation: options?.personalisation,
       metadata: options?.metadata,
     },

@@ -326,19 +326,22 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * data used to personalise and address a workflow-triggered email
    * notification. This information is loaded on the API side because it is not
    * available in the workflow due to personal information constraints.
+   * A pessimistic write lock is acquired on the assessment record to serialize
+   * concurrent executions of the same job, keeping the worker idempotent (e.g.
+   * preventing duplicate notifications when the same job is processed more than
+   * once). The lock is scoped to the assessment table only, so it can coexist
+   * with the left joins used to reach the student details.
    * @param assessmentId assessment id used to reach the associated student.
-   * @param options options.
-   * - `entityManager` optional entity manager to execute in transaction.
+   * @param entityManager entity manager to execute within the same transaction,
+   * required to hold the pessimistic lock.
    * @returns assessment with the associated student details, or null when the
    * assessment is not found.
    */
   async getAssessmentNotificationDetails(
     assessmentId: number,
-    options?: { entityManager?: EntityManager },
+    entityManager: EntityManager,
   ): Promise<StudentAssessment | null> {
-    const assessmentRepo =
-      options?.entityManager?.getRepository(StudentAssessment) ?? this.repo;
-    return assessmentRepo.findOne({
+    return entityManager.getRepository(StudentAssessment).findOne({
       select: {
         id: true,
         application: {
@@ -359,6 +362,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         application: { student: { user: true } },
       },
       where: { id: assessmentId },
+      lock: { mode: "pessimistic_write", tables: ["StudentAssessment"] },
     });
   }
 
