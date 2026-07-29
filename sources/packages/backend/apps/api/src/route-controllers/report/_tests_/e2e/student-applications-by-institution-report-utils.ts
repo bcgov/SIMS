@@ -18,6 +18,38 @@ import {
 import { sumAwardAmounts } from "@sims/test-utils/utils";
 
 /**
+ * Creates the payload used to export the Ministry Student Applications By Institution report.
+ * @param options Report filter options.
+ * - `institutionId` institution id to be used in the report.
+ * - `startDate` start date to be used in the report.
+ * - `endDate` end date to be used in the report.
+ * - `program` program name or id to be used in the report.
+ * @returns object payload ready to be sent.
+ */
+export function createApplicationsByInstitutionReportPayload(options: {
+  institutionId: number;
+  startDate: Date;
+  endDate: Date;
+  program?: string | number;
+}): object {
+  const { institutionId, startDate, endDate, program = "" } = options;
+  return {
+    reportName: "Ministry_Student_Applications_By_Institution_Report",
+    params: {
+      institution: institutionId,
+      program,
+      startDate,
+      endDate,
+      isLimitedByArchiveDate: true,
+      offeringIntensity: {
+        "Full Time": true,
+        "Part Time": true,
+      },
+    },
+  };
+}
+
+/**
  * Creates application data setup for testing Ministry_Student_Applications_By_Institution_Report.
  * An application is created with a previous version to ensure that the report filters out applications
  * based on the submission of the first ever submitted application.

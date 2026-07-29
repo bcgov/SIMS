@@ -17,6 +17,7 @@ import request from "supertest";
 import { addDays } from "@sims/utilities";
 import {
   buildApplicationsByInstitutionData,
+  createApplicationsByInstitutionReportPayload,
   createSingleApplicationDataSetup,
   createVersionedApplicationsDataSetup,
 } from "./student-applications-by-institution-report-utils";
@@ -56,22 +57,14 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
       institution,
       originalSubmissionDate: now,
     });
-    const payload = {
-      reportName: "Ministry_Student_Applications_By_Institution_Report",
-      params: {
-        institution: institution.id,
-        program: application.currentAssessment.offering.educationProgram.id,
-        // Use a day only period to ensure the report filters out applications
-        // based on the submission of the first ever submitted application.
-        startDate: now,
-        endDate: addDays(1, now),
-        isLimitedByArchiveDate: true,
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
-        },
-      },
-    };
+    const payload = createApplicationsByInstitutionReportPayload({
+      institutionId: institution.id,
+      program: application.currentAssessment.offering.educationProgram.id,
+      // Use a day only period to ensure the report filters out applications
+      // based on the submission of the first ever submitted application.
+      startDate: now,
+      endDate: addDays(1, now),
+    });
 
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -114,22 +107,13 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         originalSubmissionDate: now,
       }),
     ]);
-    const payload = {
-      reportName: "Ministry_Student_Applications_By_Institution_Report",
-      params: {
-        institution: institution.id,
-        program: "",
-        // Use a day only period to ensure the report filters out applications
-        // based on the submission of the first ever submitted application.
-        startDate: now,
-        endDate: addDays(1, now),
-        isLimitedByArchiveDate: true,
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
-        },
-      },
-    };
+    const payload = createApplicationsByInstitutionReportPayload({
+      institutionId: institution.id,
+      // Use a day only period to ensure the report filters out applications
+      // based on the submission of the first ever submitted application.
+      startDate: now,
+      endDate: addDays(1, now),
+    });
 
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -175,22 +159,13 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         currentOfferingEndDateOffset: -applicationArchiveDays - 1,
       }),
     ]);
-    const payload = {
-      reportName: "Ministry_Student_Applications_By_Institution_Report",
-      params: {
-        institution: institution.id,
-        program: "",
-        // Use a day only period to ensure the report filters out applications
-        // based on the submission of the first ever submitted application.
-        startDate: now,
-        endDate: addDays(1, now),
-        isLimitedByArchiveDate: true,
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
-        },
-      },
-    };
+    const payload = createApplicationsByInstitutionReportPayload({
+      institutionId: institution.id,
+      // Use a day only period to ensure the report filters out applications
+      // based on the submission of the first ever submitted application.
+      startDate: now,
+      endDate: addDays(1, now),
+    });
 
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -230,22 +205,13 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
       },
     });
-    const payload = {
-      reportName: "Ministry_Student_Applications_By_Institution_Report",
-      params: {
-        institution: institution.id,
-        program: "",
-        // Use a day only period to ensure the report filters out applications
-        // based on the submission of the first ever submitted application.
-        startDate: now,
-        endDate: addDays(1, now),
-        isLimitedByArchiveDate: true,
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
-        },
-      },
-    };
+    const payload = createApplicationsByInstitutionReportPayload({
+      institutionId: institution.id,
+      // Use a day only period to ensure the report filters out applications
+      // based on the submission of the first ever submitted application.
+      startDate: now,
+      endDate: addDays(1, now),
+    });
 
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -308,22 +274,13 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         applicationStatus: ApplicationStatus.Enrolment,
         submissionDate: twoDaysAgo,
       });
-    const payload = {
-      reportName: "Ministry_Student_Applications_By_Institution_Report",
-      params: {
-        institution: institution.id,
-        program: "",
-        // Use a day only period to ensure the report filters out applications
-        // based on the submission of the first ever submitted application.
-        startDate: twoDaysAgo,
-        endDate: addDays(1, today),
-        isLimitedByArchiveDate: true,
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
-        },
-      },
-    };
+    const payload = createApplicationsByInstitutionReportPayload({
+      institutionId: institution.id,
+      // Use a day only period to ensure the report filters out applications
+      // based on the submission of the first ever submitted application.
+      startDate: twoDaysAgo,
+      endDate: addDays(1, today),
+    });
 
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
@@ -370,22 +327,13 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
     );
     application.versions = [application];
     application.parentApplication = application;
-    const payload = {
-      reportName: "Ministry_Student_Applications_By_Institution_Report",
-      params: {
-        institution: institution.id,
-        program: "",
-        // Use a day only period to ensure the report filters out applications
-        // based on the submission of the first ever submitted application.
-        startDate: now,
-        endDate: addDays(1, now),
-        isLimitedByArchiveDate: true,
-        offeringIntensity: {
-          "Full Time": true,
-          "Part Time": true,
-        },
-      },
-    };
+    const payload = createApplicationsByInstitutionReportPayload({
+      institutionId: institution.id,
+      // Use a day only period to ensure the report filters out applications
+      // based on the submission of the first ever submitted application.
+      startDate: now,
+      endDate: addDays(1, now),
+    });
 
     const ministryUserToken = await getAESTToken(
       AESTGroups.BusinessAdministrators,
