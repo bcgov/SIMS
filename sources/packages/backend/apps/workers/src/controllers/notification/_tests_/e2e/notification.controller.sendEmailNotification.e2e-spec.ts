@@ -3,6 +3,7 @@ import {
   createFakeNotification,
   E2EDataSources,
   saveFakeApplication,
+  saveFakeNotificationMessage,
 } from "@sims/test-utils";
 import {
   FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
@@ -167,13 +168,14 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const ministryEmailContact = `ministry-${randomUUID()}@example.com`;
-    // Configure the email contacts used to address the ministry notification.
-    await db.notificationMessage.update(
-      NotificationMessageType.FormerYouthInCareNotification,
-      { emailContacts: [ministryEmailContact] },
+    // Create an isolated notification message configured with the email contact used to
+    // address the ministry notification.
+    const ministryNotificationMessage = await saveFakeNotificationMessage(
+      db.dataSource,
+      { initialValue: { emailContacts: [ministryEmailContact] } },
     );
     const payload = createFakeSendEmailNotificationPayload(
-      GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      ministryNotificationMessage.templateId,
       EmailNotificationRecipient.Ministry,
       savedApplication.currentAssessment.id,
       {
@@ -198,9 +200,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       },
       relations: { user: true, notificationMessage: true },
       where: {
-        notificationMessage: {
-          id: NotificationMessageType.FormerYouthInCareNotification,
-        },
+        notificationMessage: { id: ministryNotificationMessage.id },
         user: IsNull(),
       },
       order: { id: "DESC" },
@@ -209,10 +209,10 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       id: expect.any(Number),
       user: null,
       notificationMessage: {
-        id: NotificationMessageType.FormerYouthInCareNotification,
+        id: ministryNotificationMessage.id,
       },
       messagePayload: {
-        template_id: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+        template_id: ministryNotificationMessage.templateId,
         email_address: ministryEmailContact,
         personalisation: {
           applicationNumber: savedApplication.applicationNumber,
@@ -226,12 +226,6 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
-    // Ensure no email contacts are configured for the ministry notification,
-    // clearing any contacts that a previous test may have persisted.
-    await db.notificationMessage.update(
-      NotificationMessageType.FormerYouthInCareNotification,
-      { emailContacts: null },
-    );
     const payload = createFakeSendEmailNotificationPayload(
       GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       EmailNotificationRecipient.Ministry,
