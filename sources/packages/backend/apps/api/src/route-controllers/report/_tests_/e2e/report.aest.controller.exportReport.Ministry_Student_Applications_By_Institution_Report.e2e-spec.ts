@@ -26,7 +26,7 @@ import {
   DisbursementScheduleStatus,
 } from "@sims/sims-db/entities";
 
-describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_By_Institution_Report)", () => {
+describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_By_Institution_Report)", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let applicationArchiveDays: number;
@@ -152,9 +152,7 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
         const parsedResult = parse(fileContent, {
           header: true,
         });
-        expect(parsedResult.data).toEqual(
-          expect.arrayContaining(expectedRecords),
-        );
+        expect(parsedResult.data).toEqual(expectedRecords);
       });
   });
 
@@ -348,9 +346,7 @@ describe("ReportAestController(e2e)-exportReport(Ministry_Student_Applications_B
         const parsedResult = parse(fileContent, {
           header: true,
         });
-        expect(parsedResult.data).toEqual(
-          expect.arrayContaining(expectedRecords),
-        );
+        expect(parsedResult.data).toEqual(expectedRecords);
       });
   });
 
