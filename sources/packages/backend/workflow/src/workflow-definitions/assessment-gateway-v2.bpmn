@@ -951,7 +951,7 @@ Note: the workflow process should continue its execution as a regular reassessme
         <zeebe:taskDefinition type="send-email-notification" />
         <zeebe:taskHeaders>
           <zeebe:header key="templateId" value="636dd0c7-fe23-4a25-826b-03202326b580" />
-          <zeebe:header key="recipientType" value="student" />
+          <zeebe:header key="recipientType" value="Student" />
         </zeebe:taskHeaders>
         <zeebe:ioMapping>
           <zeebe:input source="={givenNames: &#34;studentGivenNames&#34;, lastName: &#34;studentLastName&#34;}" target="personalisation" />

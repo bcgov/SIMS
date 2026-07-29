@@ -268,7 +268,7 @@ export enum NotificationMessageType {
   ProgramSuspensionBlockingApplication = 42,
   /**
    * Student notification sent when the former youth in care question is
-   * answered with anything other than "no" (e.g. "yes" or "prefer not to answer").
+   * answered with anything other than "no" (i.e. "yes" or "prefer not to answer").
    */
   FormerYouthInCareNotification = 43,
 }

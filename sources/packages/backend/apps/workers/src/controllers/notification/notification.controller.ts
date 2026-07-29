@@ -81,12 +81,17 @@ export class NotificationController {
     } = job.variables;
     try {
       return await this.dataSource.transaction(async (entityManager) => {
-        // Load the notification data to resolve the personalisation. A
-        // pessimistic write lock is acquired on the assessment as soon as the
+        // A pessimistic write lock is acquired on the assessment as soon as the
         // job starts processing, serializing concurrent executions of the same
         // job for the same assessment. This keeps the worker idempotent: even if
         // it runs more than once, the duplicate check performed before saving
-        // the notification stays reliable and a single email is created.
+        // the notification stays reliable and a single email is created. The lock
+        // is a requirement of this consumer, not of the service loading the data.
+        await this.studentAssessmentService.acquireAssessmentLock(
+          assessmentId,
+          entityManager,
+        );
+        // Load the notification data to resolve the personalisation.
         const assessment =
           await this.studentAssessmentService.getAssessmentNotificationDetails(
             assessmentId,
@@ -110,16 +115,19 @@ export class NotificationController {
             { entityManager },
           );
 
+        if (!notificationMessage) {
+          throw new Error(
+            `Notification message not found for template id ${templateId}`,
+          );
+        }
+
         switch (recipientType) {
           case EmailNotificationRecipient.Student:
-            await this.notificationActionsService.saveWorkflowStudentEmailNotification(
+            await this.notificationActionsService.saveEmailNotification(
               {
-                templateId,
+                userId: notificationData.studentUserId,
+                emailRecipients: [notificationData.studentEmail],
                 personalisation,
-                student: {
-                  userId: notificationData.studentUserId,
-                  email: notificationData.studentEmail,
-                },
               },
               notificationMessage,
               entityManager,
@@ -136,8 +144,11 @@ export class NotificationController {
               );
             }
 
-            await this.notificationActionsService.saveWorkflowMinistryEmailNotification(
-              { templateId, personalisation },
+            await this.notificationActionsService.saveEmailNotification(
+              {
+                emailRecipients: notificationMessage.emailContacts,
+                personalisation,
+              },
               notificationMessage,
               entityManager,
             );
@@ -181,16 +192,18 @@ export class NotificationController {
    * @param personalisationContext personalisation context provided by the
    * workflow, mapping each variable name to a path in the notification data.
    * @param notificationData notification data resolved on the API side.
-   * @returns personalisation values to be sent to GC Notify.
+   * @returns personalisation values to be sent to GC Notify, or undefined when
+   * no personalisation context is provided, letting the notification action
+   * service decide the fallback.
    */
   private resolvePersonalisation(
     personalisationContext: NotificationPersonalisationContext | undefined,
     notificationData: NotificationPersonalisationData,
-  ): Record<string, string | number | string[]> {
-    const personalisation: Record<string, string | number | string[]> = {};
+  ): Record<string, string | number | string[]> | undefined {
     if (!personalisationContext) {
-      return personalisation;
+      return undefined;
     }
+    const personalisation: Record<string, string | number | string[]> = {};
     for (const [variableName, path] of Object.entries(personalisationContext)) {
       personalisation[variableName] =
         notificationData[path as keyof NotificationPersonalisationData];

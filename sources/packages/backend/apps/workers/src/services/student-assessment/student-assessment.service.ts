@@ -322,18 +322,31 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
+   * Acquires a pessimistic write lock on the assessment record. Serializes
+   * concurrent executions that require exclusive access to the same assessment.
+   * @param assessmentId assessment to lock.
+   * @param entityManager entity manager to execute within the same transaction,
+   * required to hold the pessimistic lock.
+   * @returns the locked assessment, or null when the assessment is not found.
+   */
+  async acquireAssessmentLock(
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<StudentAssessment | null> {
+    return entityManager.getRepository(StudentAssessment).findOne({
+      select: { id: true },
+      where: { id: assessmentId },
+      lock: { mode: "pessimistic_write" },
+    });
+  }
+
+  /**
    * Loads the assessment along with the student details required to build the
    * data used to personalise and address a workflow-triggered email
    * notification. This information is loaded on the API side because it is not
    * available in the workflow due to personal information constraints.
-   * A pessimistic write lock is acquired on the assessment record to serialize
-   * concurrent executions of the same job, keeping the worker idempotent (e.g.
-   * preventing duplicate notifications when the same job is processed more than
-   * once). The lock is scoped to the assessment table only, so it can coexist
-   * with the left joins used to reach the student details.
    * @param assessmentId assessment id used to reach the associated student.
-   * @param entityManager entity manager to execute within the same transaction,
-   * required to hold the pessimistic lock.
+   * @param entityManager entity manager to execute within the same transaction.
    * @returns assessment with the associated student details, or null when the
    * assessment is not found.
    */
@@ -362,7 +375,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         application: { student: { user: true } },
       },
       where: { id: assessmentId },
-      lock: { mode: "pessimistic_write", tables: ["student_assessments"] },
     });
   }
 

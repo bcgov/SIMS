@@ -44,8 +44,7 @@ import {
   SaveNotificationModel,
   StudentAcceptAssessmentReminderNotification,
   ProgramSuspensionBlockingApplicationNotification,
-  WorkflowStudentEmailNotification,
-  WorkflowEmailNotification,
+  EmailNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -430,11 +429,15 @@ export class NotificationActionsService {
   }
 
   /**
-   * Sends a workflow-triggered email notification to the student. The GC Notify
-   * template is resolved from the provided template id, which is expected to be
-   * previously seeded, otherwise an error is raised. The personalisation is
-   * provided already resolved by the caller and sent as is.
+   * Sends a workflow-triggered email notification to the provided recipients.
+   * The GC Notify template is resolved from the notification message, which is
+   * expected to be previously seeded, otherwise an error is raised. The
+   * personalisation is provided already resolved by the caller and sent as is.
+   * The same method addresses both student and Ministry notifications, the
+   * difference being the recipients and whether the notification is associated
+   * with a specific user.
    * @param notification notification details.
+   * @param notificationMessage notification message that provides the template.
    * @param entityManager entity manager to execute in transaction.
    * @param options notification options.
    * - `metadata` when provided with at least one criteria, skips creation
@@ -442,11 +445,10 @@ export class NotificationActionsService {
    * provided criteria, preventing duplicate emails. It allows the uniqueness of
    * the notification to be defined dynamically by the workflow (e.g.
    * `parentApplicationId` results in once per application). When empty or not
-   * provided, the email is always sent, allowing a student to receive multiple
-   * emails.
+   * provided, the email is always sent, allowing multiple emails to be received.
    */
-  async saveWorkflowStudentEmailNotification(
-    notification: WorkflowStudentEmailNotification,
+  async saveEmailNotification(
+    notification: EmailNotification,
     notificationMessage: NotificationMessage,
     entityManager: EntityManager,
     options?: {
@@ -454,7 +456,6 @@ export class NotificationActionsService {
     },
   ): Promise<void> {
     const messageType = notificationMessage.id;
-    const { student } = notification;
     // The metadata is provided by the workflow and defines the uniqueness
     // scope used to prevent duplicate emails (e.g. `parentApplicationId` sends
     // the notification once per application).
@@ -470,45 +471,16 @@ export class NotificationActionsService {
         return;
       }
     }
-    const studentEmailNotification = {
-      userId: student.userId,
-      messageType,
-      messagePayload: {
-        email_address: student.email,
-        template_id: notificationMessage.templateId,
-        personalisation: notification.personalisation ?? {},
-      },
-      metadata,
-    };
-    await this.notificationService.saveNotifications(
-      [studentEmailNotification],
-      this.systemUsersService.systemUser.id,
-      { entityManager },
-    );
-  }
-
-  /**
-   * Sends a workflow-triggered email notification to the Ministry. The GC Notify
-   * template is resolved from the provided template id, which is expected to be
-   * previously seeded, otherwise an error is raised. The
-   * notification is sent to the email contacts configured for the notification
-   * message.
-   * @param notification notification details.
-   * @param entityManager entity manager to execute in transaction.
-   */
-  async saveWorkflowMinistryEmailNotification(
-    notification: WorkflowEmailNotification,
-    notificationMessage: NotificationMessage,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    const notificationsToSend = notificationMessage.emailContacts.map(
-      (emailContact) => ({
-        messageType: notificationMessage.id,
+    const notificationsToSend = notification.emailRecipients.map(
+      (emailRecipient) => ({
+        userId: notification.userId,
+        messageType,
         messagePayload: {
-          email_address: emailContact,
+          email_address: emailRecipient,
           template_id: notificationMessage.templateId,
           personalisation: notification.personalisation ?? {},
         },
+        metadata,
       }),
     );
     await this.notificationService.saveNotifications(

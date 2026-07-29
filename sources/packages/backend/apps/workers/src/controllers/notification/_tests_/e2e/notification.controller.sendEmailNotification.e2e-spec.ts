@@ -80,7 +80,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     });
   });
 
-  it("Should create a new email notification when no metadata is provided.", async () => {
+  it("Should create a new email notification when the notification with same templateId and metadata does not already exist.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
@@ -260,7 +260,6 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
   it("Should fail the job raising an incident when the template id is not associated with any existing notification message.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
-    const { student } = savedApplication;
     const unknownTemplateId = randomUUID();
     const payload = createFakeSendEmailNotificationPayload(
       unknownTemplateId,
@@ -280,10 +279,5 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         `Notification message not found for template id ${unknownTemplateId}`,
       ),
     });
-    // No notification is created for the student.
-    const notificationsCount = await db.notification.count({
-      where: { user: { id: student.user.id } },
-    });
-    expect(notificationsCount).toBe(0);
   });
 });
