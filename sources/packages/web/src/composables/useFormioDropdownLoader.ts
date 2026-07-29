@@ -87,13 +87,18 @@ export function useFormioDropdownLoader() {
    * @param form form in which the dropdown is loaded.
    * @param dropdownName dropdown name.
    * @param options method options:
+   * - `institutionId`: if provided, programs list for that institution is returned.
+   * Used to get programs for a particular institution from the ministry side.
    * - `isIncludeInActiveProgram`: if isIncludeInActiveProgram, then both active
    * and not active education program is considered.
    */
   const loadProgramsForInstitution = async (
-    form: any,
+    form: FormIOForm,
     dropdownName: string,
-    options?: { isIncludeInActiveProgram?: boolean },
+    options?: {
+      institutionId?: number;
+      isIncludeInActiveProgram?: boolean;
+    },
   ) => {
     return loadDropdown(
       form,

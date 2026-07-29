@@ -53,7 +53,7 @@ import {
   createApplicationsDataSetup,
 } from "./unmet-need-report-utils";
 
-describe("ReportAestController(e2e)-exportReport", () => {
+describe("ReportAESTController(e2e)-exportReport", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appDataSource: DataSource;

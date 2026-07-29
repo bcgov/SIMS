@@ -43,6 +43,7 @@ export function createFakeApplication(
     programYear?: ProgramYear;
     currentStudentAssessment?: StudentAssessment;
     applicationException?: ApplicationException;
+    institution?: Institution;
     location?: InstitutionLocation;
     precedingApplication?: Application;
     parentApplication?: Application;
@@ -74,7 +75,9 @@ export function createFakeApplication(
     options?.initialValue?.applicationNumber ??
     faker.number.int({ max: 9999999999, min: 1000000000 }).toString();
   application.applicationException = relations?.applicationException;
-  application.location = relations?.location ?? createFakeInstitutionLocation();
+  application.location =
+    relations?.location ??
+    createFakeInstitutionLocation({ institution: relations?.institution });
   application.pirProgram = relations?.pirProgram;
   application.pirStatus = options?.initialValue?.pirStatus;
   application.pirHash = options?.initialValue?.pirHash;
@@ -123,6 +126,8 @@ export function createFakeApplication(
  * - `firstDisbursementInitialValues` if provided sets the disbursement schedule status for the first disbursement otherwise sets to pending status by default.
  * - `secondDisbursementInitialValues` if provided sets the disbursement schedule status for the second disbursement otherwise sets to pending status by default.
  * - `offeringInitialValues` initial values related to the offering for the original assessment.
+ * - `parentApplication` if provided sets the parent application for the created application.
+ * - `precedingApplication` if provided sets the preceding application for the created application.
  * @returns the created application and its dependencies including the disbursement
  * with the confirmation of enrollment data.
  */
@@ -140,6 +145,8 @@ export async function saveFakeApplicationDisbursements(
     programYear?: ProgramYear;
     pirProgram?: EducationProgram;
     pirApprovalReference?: Application;
+    precedingApplication?: Application;
+    parentApplication?: Application;
   },
   options?: {
     applicationStatus?: ApplicationStatus;
@@ -337,6 +344,7 @@ export async function saveFakeApplication(
     {
       student: savedStudent,
       auditUser: savedUser,
+      institution: relations?.institution,
       location: relations?.institutionLocation,
       programYear: relations?.programYear,
       applicationException: relations?.applicationException,
@@ -348,11 +356,12 @@ export async function saveFakeApplication(
     },
     {
       initialValue: {
-        data: options?.applicationData,
+        data: options?.applicationData ?? options?.initialValues?.data,
         applicationNumber: options?.applicationNumber,
         pirStatus: options?.pirStatus,
         isArchived: options?.isArchived ? options?.isArchived : false,
-        submittedDate: options?.submittedDate,
+        submittedDate:
+          options?.submittedDate ?? options?.initialValues?.submittedDate,
         applicationEditStatus: options?.applicationEditStatus,
         offeringIntensity: options?.offeringIntensity,
         ...options?.initialValues,
