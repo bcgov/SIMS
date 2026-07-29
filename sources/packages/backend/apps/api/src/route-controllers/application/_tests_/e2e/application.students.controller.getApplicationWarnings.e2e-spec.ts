@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
-import { ArrayContains, DataSource, IsNull } from "typeorm";
+import { ArrayContains, DataSource, In, IsNull } from "typeorm";
 import {
   BEARER_AUTH_TYPE,
   createTestingAppModule,
@@ -524,27 +524,20 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
       },
     );
     // Institution restrictions.
-    const isrRestriction = await db.restriction.findOne({
-      select: { id: true },
-      where: {
-        restrictionType: RestrictionType.Institution,
-        restrictionCode: RestrictionCode.ISR,
-      },
-    });
-    const iurRestriction = await db.restriction.findOne({
-      select: { id: true },
-      where: {
-        restrictionType: RestrictionType.Institution,
-        restrictionCode: RestrictionCode.IUR,
-      },
-    });
-    const susRestriction = await db.restriction.findOne({
-      select: { id: true },
-      where: {
-        restrictionType: RestrictionType.Institution,
-        restrictionCode: RestrictionCode.SUS,
-      },
-    });
+    const [isrRestriction, iurRestriction, susRestriction] =
+      await db.restriction.find({
+        select: { id: true },
+        where: {
+          restrictionType: RestrictionType.Institution,
+          restrictionCode: In([
+            RestrictionCode.ISR,
+            RestrictionCode.IUR,
+            RestrictionCode.SUS,
+          ]),
+        },
+        order: { restrictionCode: "ASC" },
+      });
+
     const institution =
       application.currentAssessment.offering.institutionLocation.institution;
     await saveFakeInstitutionRestriction(db, {
