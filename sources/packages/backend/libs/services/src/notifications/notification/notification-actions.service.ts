@@ -440,12 +440,12 @@ export class NotificationActionsService {
    * @param notificationMessage notification message that provides the template.
    * @param entityManager entity manager to execute in transaction.
    * @param options notification options.
-   * - `metadata` when provided with at least one criteria, skips creation
-   * if a notification for the same message already exists matching all the
-   * provided criteria, preventing duplicate emails. It allows the uniqueness of
-   * the notification to be defined dynamically by the workflow (e.g.
-   * `parentApplicationId` results in once per application). When empty or not
-   * provided, the email is always sent, allowing multiple emails to be received.
+   * - `metadata` skips creation if a notification for the same message already
+   * exists matching the provided criteria, preventing duplicate emails. It
+   * allows the uniqueness of the notification to be defined dynamically by the
+   * workflow (e.g. `parentApplicationId` results in once per application). When
+   * not provided, a single notification is allowed for the message type combined
+   * with no metadata, still preventing duplicate emails.
    */
   async saveEmailNotification(
     notification: EmailNotification,
@@ -460,16 +460,14 @@ export class NotificationActionsService {
     // scope used to prevent duplicate emails (e.g. `parentApplicationId` sends
     // the notification once per application).
     const metadata = options?.metadata;
-    if (metadata && Object.keys(metadata).length) {
-      const notificationExists =
-        await this.notificationService.checkNotificationExists(
-          messageType,
-          metadata,
-          entityManager,
-        );
-      if (notificationExists) {
-        return;
-      }
+    const notificationExists =
+      await this.notificationService.checkNotificationExists(
+        messageType,
+        metadata,
+        entityManager,
+      );
+    if (notificationExists) {
+      return;
     }
     const notificationsToSend = notification.emailRecipients.map(
       (emailRecipient) => ({

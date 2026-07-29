@@ -84,3 +84,9 @@ export const FILE_HASH_DUPLICATION_ERROR = "FILE_HASH_DUPLICATION_ERROR";
  */
 export const NOTIFICATION_MISSING_EMAIL_CONTACTS =
   "NOTIFICATION_MISSING_EMAIL_CONTACTS";
+/**
+ * The recipient type provided for a workflow email notification is not
+ * supported, indicating a misconfiguration of the workflow.
+ */
+export const UNSUPPORTED_NOTIFICATION_RECIPIENT_TYPE =
+  "UNSUPPORTED_NOTIFICATION_RECIPIENT_TYPE";

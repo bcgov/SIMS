@@ -142,7 +142,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
     return entityManager.getRepository(Notification).exists({
       where: {
         notificationMessage: { id: notificationMessageType },
-        metadata,
+        metadata: metadata ?? null,
       },
     });
   }

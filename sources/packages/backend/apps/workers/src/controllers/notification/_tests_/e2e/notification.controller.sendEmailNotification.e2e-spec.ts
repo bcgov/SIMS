@@ -85,8 +85,10 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
-    // Prepare an existing notification for the same message to ensure a new one
-    // is still created when no uniqueness criteria is provided.
+    // Prepare an existing notification without metadata to ensure the worker
+    // does not create a duplicate when no uniqueness criteria is provided, as
+    // the message type combined with the absence of metadata is enough to
+    // prevent a second email.
     const existingNotification = createFakeNotification({
       user: student.user,
       notificationMessage: {
@@ -115,8 +117,8 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         },
       },
     });
-    // The prepared notification plus the one created by the worker.
-    expect(notificationsCount).toBe(2);
+    // Only the prepared notification is expected, no duplicate is created.
+    expect(notificationsCount).toBe(1);
   });
 
   it("Should not create a duplicate email notification when a notification with the same metadata already exists.", async () => {

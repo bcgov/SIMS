@@ -22,6 +22,7 @@ import {
   Workers,
   ASSESSMENT_NOT_FOUND,
   NOTIFICATION_MISSING_EMAIL_CONTACTS,
+  UNSUPPORTED_NOTIFICATION_RECIPIENT_TYPE,
 } from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
@@ -87,21 +88,22 @@ export class NotificationController {
         // it runs more than once, the duplicate check performed before saving
         // the notification stays reliable and a single email is created. The lock
         // is a requirement of this consumer, not of the service loading the data.
-        await this.studentAssessmentService.acquireAssessmentLock(
-          assessmentId,
-          entityManager,
-        );
+        const lockedAssessment =
+          await this.studentAssessmentService.acquireAssessmentLock(
+            assessmentId,
+            entityManager,
+          );
+        if (!lockedAssessment) {
+          const message = `Assessment id ${assessmentId} not found.`;
+          jobLogger.error(message);
+          return job.error(ASSESSMENT_NOT_FOUND, message);
+        }
         // Load the notification data to resolve the personalisation.
         const assessment =
           await this.studentAssessmentService.getAssessmentNotificationDetails(
             assessmentId,
             entityManager,
           );
-        if (!assessment) {
-          const message = `Assessment id ${assessmentId} not found.`;
-          jobLogger.error(message);
-          return job.error(ASSESSMENT_NOT_FOUND, message);
-        }
         const notificationData =
           this.buildNotificationPersonalisationData(assessment);
         const personalisation = this.resolvePersonalisation(
@@ -153,10 +155,14 @@ export class NotificationController {
               entityManager,
             );
             break;
-          default:
-            throw new Error(
-              `Unsupported notification recipient type: ${recipientType}.`,
+          default: {
+            const errorMessage = `Unsupported notification recipient type: ${recipientType}.`;
+            jobLogger.error(errorMessage);
+            return job.error(
+              UNSUPPORTED_NOTIFICATION_RECIPIENT_TYPE,
+              errorMessage,
             );
+          }
         }
         jobLogger.log("Workflow email notification created.");
         return job.complete();

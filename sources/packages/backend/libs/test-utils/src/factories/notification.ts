@@ -81,10 +81,10 @@ export function createFakeNotificationMessage(options?: {
 }
 
 /**
- * Persists a fake notification message to be used in isolation by a test. When
- * no id is provided, a negative id is assigned so the created message does not
- * collide with the notification messages seeded by the database seeder, keeping
- * the test isolated from the seeded data.
+ * Persists a fake notification message to be used in isolation by a test. A
+ * negative id is assigned so the created message does not collide with the
+ * notification messages seeded by the database seeder, keeping the test isolated
+ * from the seeded data.
  * @param dataSource data source to persist the notification message.
  * @param options notification message options.
  * - `initialValue` notification message initial values.
@@ -98,13 +98,13 @@ export async function saveFakeNotificationMessage(
 ): Promise<NotificationMessage> {
   const notificationMessageRepo = dataSource.getRepository(NotificationMessage);
   const notificationMessage = createFakeNotificationMessage(options);
-  if (notificationMessage.id == null) {
-    // Use negative ids to avoid colliding with the seeded notification messages.
-    const currentMinId = await notificationMessageRepo
-      .createQueryBuilder("notificationMessage")
-      .select("MIN(notificationMessage.id)", "min")
-      .getRawOne<{ min: number | null }>();
-    notificationMessage.id = Math.min(currentMinId?.min ?? 0, 0) - 1;
-  }
+  // Assign a negative id, decreasing from the current minimum id, so the created
+  // message never collides with the notification messages seeded by the database
+  // seeder, keeping the test isolated from the seeded data.
+  const currentMinId = await notificationMessageRepo
+    .createQueryBuilder("notificationMessage")
+    .select("MIN(notificationMessage.id)", "min")
+    .getRawOne<{ min: number }>();
+  notificationMessage.id = Math.min(currentMinId.min, 0) - 1;
   return notificationMessageRepo.save(notificationMessage);
 }
