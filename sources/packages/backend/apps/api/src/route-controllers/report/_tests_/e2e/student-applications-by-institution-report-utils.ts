@@ -26,7 +26,7 @@ import { sumAwardAmounts } from "@sims/test-utils/utils";
  * - `student` student to be used in the application.
  * - `institution` institution to be used in the applications.
  * - `originalSubmissionDate` original submission date to be used in the application.
- * - `currentOfferingEndDateOffSet` current offering end date offset to be used in the application.
+ * - `currentOfferingEndDateOffset` current offering end date offset to be used in the application.
  * useful when the offering end date must be set in the past.
  * - `parentApplicationFirstDisbursementInitialValues` initial values to be used in the parent application first disbursement.
  * @returns the created application.
@@ -37,7 +37,7 @@ export async function createVersionedApplicationsDataSetup(
     student: Student;
     institution: Institution;
     originalSubmissionDate?: Date;
-    currentOfferingEndDateOffSet?: number;
+    currentOfferingEndDateOffset?: number;
     parentApplicationFirstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
@@ -75,9 +75,9 @@ export async function createVersionedApplicationsDataSetup(
   );
   let currentApplicationStartDate = studyStartDate;
   let currentApplicationStudyEndDate = studyEndDate;
-  if (options?.currentOfferingEndDateOffSet) {
+  if (options?.currentOfferingEndDateOffset) {
     currentApplicationStudyEndDate = getISODateOnlyString(
-      addDays(options.currentOfferingEndDateOffSet, new Date()),
+      addDays(options.currentOfferingEndDateOffset, new Date()),
     );
     // Set start date to be before the end date (just to be consistent with the data).
     // Only the end date is relevant for the report, as it is used to determine if the application is archived or not.

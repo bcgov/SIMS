@@ -172,7 +172,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         institution,
         originalSubmissionDate: now,
         // Set the offering end date to be outside the archive date range to ensure that the application is archived.
-        currentOfferingEndDateOffSet: -applicationArchiveDays - 1,
+        currentOfferingEndDateOffset: -applicationArchiveDays - 1,
       }),
     ]);
     const payload = {
