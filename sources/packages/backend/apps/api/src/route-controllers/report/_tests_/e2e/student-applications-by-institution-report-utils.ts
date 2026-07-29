@@ -5,6 +5,7 @@ import {
   DisbursementScheduleStatus,
   Student,
   DisbursementSchedule,
+  DisbursementValueType,
 } from "@sims/sims-db";
 import {
   addDays,
@@ -12,6 +13,7 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities";
 import {
+  createFakeDisbursementValue,
   E2EDataSources,
   saveFakeApplicationDisbursements,
 } from "@sims/test-utils";
@@ -169,6 +171,22 @@ export async function createSingleApplicationDataSetup(
     {
       student: options.student,
       institution: options.institution,
+      firstDisbursementValues: [
+        createFakeDisbursementValue(
+          DisbursementValueType.CanadaLoan,
+          "CSLP",
+          100,
+        ),
+        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 200),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "BCAG", 300),
+        createFakeDisbursementValue(DisbursementValueType.BCGrant, "BGPD", 400),
+        // BC Total Grant should be excluded from the report, as it is a sum of all BC Grants.
+        createFakeDisbursementValue(
+          DisbursementValueType.BCTotalGrant,
+          "BCSG",
+          700,
+        ),
+      ],
     },
     {
       applicationInitialValues: {
@@ -249,6 +267,7 @@ export async function buildApplicationsByInstitutionData(
           disbursementValues: {
             id: true,
             valueAmount: true,
+            valueType: true,
           },
         },
       },
