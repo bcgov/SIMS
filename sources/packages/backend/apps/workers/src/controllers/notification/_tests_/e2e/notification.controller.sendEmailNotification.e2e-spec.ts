@@ -19,7 +19,10 @@ import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import { randomUUID } from "node:crypto";
 import { IsNull } from "typeorm";
-import { NOTIFICATION_MISSING_EMAIL_CONTACTS } from "@sims/services/constants";
+import {
+  NOTIFICATION_MESSAGE_NOT_FOUND,
+  NOTIFICATION_MISSING_EMAIL_CONTACTS,
+} from "@sims/services/constants";
 
 describe("NotificationController(e2e)-sendEmailNotification", () => {
   let db: E2EDataSources;
@@ -270,10 +273,9 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     // The job fails, raising an incident, since the template is not seeded and
     // notification messages are no longer created at runtime.
     expect(result).toEqual({
-      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Fail,
-      [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: expect.stringContaining(
-        `Notification message not found for template id ${unknownTemplateId}`,
-      ),
+      [FAKE_WORKER_JOB_RESULT_PROPERTY]: MockedZeebeJobResult.Error,
+      [FAKE_WORKER_JOB_ERROR_MESSAGE_PROPERTY]: `Notification message not found for template id ${unknownTemplateId}`,
+      [FAKE_WORKER_JOB_ERROR_CODE_PROPERTY]: NOTIFICATION_MESSAGE_NOT_FOUND,
     });
   });
 });

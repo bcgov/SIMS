@@ -85,6 +85,12 @@ export const FILE_HASH_DUPLICATION_ERROR = "FILE_HASH_DUPLICATION_ERROR";
 export const NOTIFICATION_MISSING_EMAIL_CONTACTS =
   "NOTIFICATION_MISSING_EMAIL_CONTACTS";
 /**
+ * Notification message not found for the provided template id, 
+ * which indicates a misconfiguration of the workflow.
+ */
+export const NOTIFICATION_MESSAGE_NOT_FOUND =
+  "NOTIFICATION_MESSAGE_NOT_FOUND";
+/**
  * The recipient type provided for a workflow email notification is not
  * supported, indicating a misconfiguration of the workflow.
  */

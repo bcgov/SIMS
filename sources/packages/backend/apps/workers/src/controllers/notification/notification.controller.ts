@@ -23,6 +23,7 @@ import {
   ASSESSMENT_NOT_FOUND,
   NOTIFICATION_MISSING_EMAIL_CONTACTS,
   UNSUPPORTED_NOTIFICATION_RECIPIENT_TYPE,
+  NOTIFICATION_MESSAGE_NOT_FOUND,
 } from "@sims/services/constants";
 import { ASSESSMENT_ID } from "@sims/services/workflow/variables/assessment-gateway";
 import {
@@ -118,9 +119,9 @@ export class NotificationController {
           );
 
         if (!notificationMessage) {
-          throw new Error(
-            `Notification message not found for template id ${templateId}`,
-          );
+          const message = `Notification message not found for template id ${templateId}`;
+          jobLogger.error(message);
+          return job.error(NOTIFICATION_MESSAGE_NOT_FOUND, message);
         }
 
         switch (recipientType) {
