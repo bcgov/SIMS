@@ -302,6 +302,12 @@ export class ApplicationRestrictionBypassService {
         )
         .andWhere("applicationRestrictionBypass.isActive = true")
         .getQuery();
+    // Extracted join condition for readability.
+    const institutionRestrictionJoinCondition = [
+      "institutionRestriction.isActive = :isActive",
+      "(institutionRestriction.program = offeringProgram.id OR institutionRestriction.program IS NULL)",
+      "(institutionRestriction.location = institutionLocation.id OR institutionRestriction.location IS NULL)",
+    ].join(" AND ");
     const institutionApplication = await this.applicationRepo
       .createQueryBuilder("application")
       .select([
@@ -326,7 +332,8 @@ export class ApplicationRestrictionBypassService {
       .leftJoin(
         "institution.restrictions",
         "institutionRestriction",
-        "institutionRestriction.isActive = TRUE AND institutionRestriction.program = offeringProgram.id AND institutionRestriction.location = institutionLocation.id",
+        institutionRestrictionJoinCondition,
+        { isActive: true },
       )
       .innerJoin("institutionRestriction.restriction", "instRestrictionDetail")
       .where("application.id = :applicationId", { applicationId })
@@ -371,7 +378,7 @@ export class ApplicationRestrictionBypassService {
     restrictionId: number,
     restrictedParty: RestrictedParty,
   ): Promise<void> {
-    let restrictions: AvailableRestrictionData[] = [];
+    let restrictions: AvailableRestrictionData[];
     if (restrictedParty === RestrictedParty.Student) {
       restrictions =
         await this.getAvailableStudentRestrictionsToBypass(applicationId);

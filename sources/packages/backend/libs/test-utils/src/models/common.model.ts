@@ -171,4 +171,8 @@ export enum RestrictionCode {
    * Institution under review restriction.
    */
   IUR = "IUR",
+  /**
+   * Institution activity suspended restriction.
+   */
+  ISR = "ISR",
 }

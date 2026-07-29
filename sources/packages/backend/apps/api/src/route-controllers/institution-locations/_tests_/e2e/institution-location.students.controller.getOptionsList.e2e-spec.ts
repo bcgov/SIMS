@@ -116,6 +116,58 @@ describe("InstitutionLocationStudentsController(e2e)-getOptionsList", () => {
       });
   });
 
+  it("Should get the list of all designated institution locations, excluding the location that belongs to an institution with activity suspended, when a student requests all locations.", async () => {
+    // Arrange
+    // Create two distinct designation agreements, to have two distinct institutions,
+    // one of them will have activity suspended (ISR).
+    const [newDesignation, newDesignationISR] = await Promise.all([
+      saveFakeDesignationAgreementLocation(db, {
+        numberOfLocations: 1,
+      }),
+      saveFakeDesignationAgreementLocation(db, {
+        numberOfLocations: 1,
+      }),
+    ]);
+    const [designatedLocation] = newDesignation.designationAgreementLocations;
+    const [activitySuspendedLocation] =
+      newDesignationISR.designationAgreementLocations;
+
+    // Associate the ISR restriction to the institution with activity suspended.
+    const isrRestriction = await db.restriction.findOneOrFail({
+      select: { id: true },
+      where: {
+        restrictionType: RestrictionType.Institution,
+        restrictionCode: RestrictionCode.ISR,
+      },
+    });
+    await saveFakeInstitutionRestriction(db, {
+      restriction: isrRestriction,
+      institution: activitySuspendedLocation.institutionLocation.institution,
+    });
+
+    const endpoint = "/students/location/options-list";
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect((response) => {
+        const locationIds = response.body.map(
+          (location: { id: number }) => location.id,
+        );
+        expect(locationIds).toContain(
+          designatedLocation.institutionLocation.id,
+        );
+        expect(locationIds).not.toContain(
+          activitySuspendedLocation.institutionLocation.id,
+        );
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

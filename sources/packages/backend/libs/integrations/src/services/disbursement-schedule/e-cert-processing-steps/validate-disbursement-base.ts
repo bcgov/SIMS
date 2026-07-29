@@ -13,6 +13,7 @@ import {
 import {
   getRestrictionsByActionType,
   logActiveRestrictionsBypasses,
+  logEffectiveRestrictions,
 } from "./e-cert-steps-utils";
 import { RestrictedParty } from "@sims/services";
 
@@ -133,34 +134,37 @@ export abstract class ValidateDisbursementBase {
         );
       }
       if (studentRestrictions.length) {
-        log.info(
-          `Student has an active '${restrictionActionType}' restriction and the disbursement calculation will not proceed.`,
+        logEffectiveRestrictions(
+          RestrictedParty.Student,
+          studentRestrictions,
+          log,
         );
 
         validationResults.push({
           resultType: ECertFailedValidation.HasStopDisbursementRestriction,
           additionalInfo: {
-            restrictionCodes: studentRestrictions.map(
-              (restriction) => restriction.code,
-            ),
+            restrictions: studentRestrictions.map((restriction) => ({
+              code: restriction.code,
+              messages: restriction.metadata?.messages,
+            })),
           },
         });
       }
       if (institutionRestrictions.length) {
-        const program = eCertDisbursement.offering.educationProgram;
-        const location = eCertDisbursement.offering.institutionLocation;
-        log.info(
-          `Institution has an effective '${restrictionActionType}' restriction` +
-            ` for program ${program.id} and location ${location.id} and the disbursement calculation will not proceed.`,
+        logEffectiveRestrictions(
+          RestrictedParty.Institution,
+          institutionRestrictions,
+          log,
         );
 
         validationResults.push({
           resultType:
             ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
           additionalInfo: {
-            restrictionCodes: institutionRestrictions.map(
-              (restriction) => restriction.code,
-            ),
+            restrictions: institutionRestrictions.map((restriction) => ({
+              code: restriction.code,
+              messages: restriction.metadata?.messages,
+            })),
           },
         });
       }

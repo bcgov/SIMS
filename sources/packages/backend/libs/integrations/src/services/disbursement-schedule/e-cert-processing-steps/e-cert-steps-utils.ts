@@ -9,7 +9,7 @@ import {
   EligibleECertDisbursement,
   StudentActiveRestriction,
 } from "../disbursement-schedule.models";
-import { RestrictionCode } from "@sims/services";
+import { RestrictedParty, RestrictionCode } from "@sims/services";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { isRestrictionActionEffective } from "./e-cert-steps-restriction-utils";
 
@@ -62,7 +62,7 @@ export function getRestrictionsByActionType(
 }
 
 /**
- * Adds to the log the lists of all restriction bypasses active.
+ * Adds to the log the list of all restriction bypasses active.
  * @param bypasses active bypasses.
  * @param log log to receive the list.
  */
@@ -81,6 +81,29 @@ export function logActiveRestrictionsBypasses(
     `Current active restriction bypasses [Restriction Code(Restriction ID)]: ${bypassLogInfo.join(
       ", ",
     )}.`,
+  );
+}
+
+/**
+ * Adds to the log the list of all effective restrictions.
+ * @param restrictedParty restricted party that has the effective restrictions.
+ * @param effectiveRestrictions effective restrictions blocking the disbursement.
+ * @param log log to receive the list.
+ */
+export function logEffectiveRestrictions(
+  restrictedParty: RestrictedParty,
+  effectiveRestrictions: ActiveRestriction[],
+  log: ProcessSummary,
+): void {
+  if (!effectiveRestrictions.length) {
+    return;
+  }
+  const restrictionCodes = effectiveRestrictions
+    .map((restriction) => restriction.code)
+    .sort((a, b) => a.localeCompare(b))
+    .join(", ");
+  log.info(
+    `${restrictedParty} has effective restrictions: ${restrictionCodes} and the disbursement calculation will not proceed.`,
   );
 }
 

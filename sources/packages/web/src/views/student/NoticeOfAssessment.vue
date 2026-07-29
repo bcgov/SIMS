@@ -70,12 +70,6 @@
               You have restrictions that block funding on your account. Please
               resolve them in order to move forward with your application.
             </li>
-            <li
-              v-if="acceptValidation.hasStopDisbursementInstitutionRestriction"
-            >
-              Your application is currently pending further review by StudentAid
-              BC.
-            </li>
             <li v-if="acceptValidation.noEstimatedAwardAmounts">
               Your application has been assessed and no funding has been
               awarded. If you believe this is an error, please review your
@@ -173,7 +167,6 @@ export default defineComponent({
       modifiedIndependentStatusNotApproved: false,
       msfaaInvalid: false,
       hasStopDisbursementRestriction: false,
-      hasStopDisbursementInstitutionRestriction: false,
       noEstimatedAwardAmounts: false,
       hasEffectiveAviationRestriction: false,
       institutionRestrictionMessages: [] as string[],
@@ -277,10 +270,6 @@ export default defineComponent({
         hasStopDisbursementRestriction:
           warnings.eCertFailedValidations.includes(
             ECertFailedValidation.HasStopDisbursementRestriction,
-          ),
-        hasStopDisbursementInstitutionRestriction:
-          warnings.eCertFailedValidations.includes(
-            ECertFailedValidation.HasStopDisbursementInstitutionRestriction,
           ),
         noEstimatedAwardAmounts: warnings.eCertFailedValidations.includes(
           ECertFailedValidation.NoEstimatedAwardAmounts,
