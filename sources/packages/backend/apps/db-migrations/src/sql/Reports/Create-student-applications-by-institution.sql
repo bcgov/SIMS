@@ -4,7 +4,7 @@ VALUES
   (
     'Ministry_Student_Applications_By_Institution_Report',
     $$-- student_assessments_total_amounts CTE is used to calculate the total assistance amount for each student assessment.
-      WITH student_assessments_total_amounts AS (
+    WITH student_assessments_total_amounts AS (
       SELECT
         student_assessments.id AS student_assessment_id,
         SUM(disbursement_values.value_amount) AS total_assistance
@@ -18,7 +18,13 @@ VALUES
         INNER JOIN sims.education_programs education_programs ON education_programs.id = education_programs_offerings.program_id
         INNER JOIN sims.institution_locations institution_locations ON institution_locations.id = applications.location_id
       WHERE
-        applications.application_status IN ('Assessment', 'Enrolment', 'Completed')
+        applications.application_status IN (
+          'In Progress',
+          'Assessment',
+          'Enrolment',
+          'Completed'
+        )
+        AND disbursement_values.value_type != 'BC Total Grant'
         -- The below criteria should be kept the same across all queries in this report.
         AND parent_applications.submitted_date BETWEEN :startDate
         AND :endDate
@@ -32,8 +38,8 @@ VALUES
       GROUP BY
         student_assessments.id
     ),
-    -- application_with_assessment_sent CTE is used to identify parent applications that have at least one disbursement sent.
-    application_with_assessment_sent AS (
+    -- application_with_disbursement_sent CTE is used to identify parent applications that have at least one disbursement sent.
+    application_with_disbursement_sent AS (
       SELECT
         DISTINCT(applications.parent_application_id) AS parent_application_id
       FROM
@@ -45,7 +51,8 @@ VALUES
         INNER JOIN sims.education_programs education_programs ON education_programs.id = education_programs_offerings.program_id
         INNER JOIN sims.institution_locations institution_locations ON institution_locations.id = applications.location_id
       WHERE
-        disbursement_schedules.disbursement_schedule_status = 'Sent'
+        -- Reject is also considered as sent, as the disbursement was sent, and later rejected.
+        disbursement_schedules.disbursement_schedule_status IN ('Sent', 'Rejected')
         -- The below criteria should be kept the same across all queries in this report.
         AND parent_applications.submitted_date BETWEEN :startDate
         AND :endDate
@@ -63,8 +70,8 @@ VALUES
       sin_validations.sin AS "SIN",
       applications.student_number AS "Student Number",
       institutions.operating_name AS "Institution Operating Name",
-      institutions.country AS "Country",
-      institutions.province AS "Province",
+      system_lookup_configurations_countries.lookup_value AS "Country",
+      system_lookup_configurations_provinces.lookup_value AS "Province",
       institutions.classification AS "Classification",
       institutions.organization_status AS "Organization Status",
       institution_locations.name AS "Location Name",
@@ -82,7 +89,7 @@ VALUES
       ) AS "Assessment Date",
       applications.application_status AS "Application Status",
       CASE
-        WHEN application_with_assessment_sent.parent_application_id IS NULL THEN 'No'
+        WHEN application_with_disbursement_sent.parent_application_id IS NULL THEN 'No'
         ELSE 'Yes'
       END AS "Disbursed",
       education_programs_offerings.offering_intensity AS "Study Intensity",
@@ -108,8 +115,12 @@ VALUES
       INNER JOIN sims.education_programs education_programs ON education_programs.id = education_programs_offerings.program_id
       INNER JOIN sims.institution_locations institution_locations ON institution_locations.id = applications.location_id
       INNER JOIN sims.institutions institutions ON institutions.id = institution_locations.institution_id
-      LEFT JOIN application_with_assessment_sent ON application_with_assessment_sent.parent_application_id = applications.parent_application_id
+      LEFT JOIN application_with_disbursement_sent ON application_with_disbursement_sent.parent_application_id = applications.parent_application_id
       LEFT JOIN student_assessments_total_amounts ON student_assessments_total_amounts.student_assessment_id = student_assessments.id
+      LEFT JOIN sims.system_lookup_configurations system_lookup_configurations_countries ON system_lookup_configurations_countries.lookup_category = 'Country'
+      AND institutions.country = system_lookup_configurations_countries.lookup_key
+      LEFT JOIN sims.system_lookup_configurations system_lookup_configurations_provinces ON system_lookup_configurations_provinces.lookup_category = 'Province'
+      AND institutions.province = system_lookup_configurations_provinces.lookup_key
     WHERE
       applications.application_status IN (
         'In Progress',
