@@ -63,11 +63,6 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
         templateId,
       },
     });
-    if (!notificationMessage) {
-      throw new Error(
-        `Notification message not found for template id ${templateId}`,
-      );
-    }
     return notificationMessage;
   }
 }
