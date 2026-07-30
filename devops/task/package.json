@@ -6,11 +6,13 @@
     "type": "module",
     "scripts": {
         "dry-run-prune": "tsx src/image-pruner/main.ts",
-        "prune": "tsx src/image-pruner/main.ts --confirm"
+        "prune": "tsx src/image-pruner/main.ts --confirm",
+        "validate-sa-token-expiry": "tsx src/sa-token/main.ts"
     },
     "dependencies": {
         "@kubernetes/client-node": "^1.4.0",
-        "dotenv": "^16.6.1"
+        "dotenv": "^16.6.1",
+        "dayjs": "^1.11.21"
     },
     "devDependencies": {
         "@types/node": "^25.9.3",
