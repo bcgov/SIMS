@@ -92,6 +92,10 @@ export interface ApplicationAssessmentJobOutDTO {
    */
   applicationId: number;
   /**
+   * Parent application id, which remains stable across application edits.
+   */
+  parentApplicationId: number;
+  /**
    * Current status of the application.
    */
   applicationStatus: ApplicationStatus;

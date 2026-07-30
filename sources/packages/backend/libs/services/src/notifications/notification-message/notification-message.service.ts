@@ -35,4 +35,34 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
       },
     });
   }
+
+  /**
+   * Retrieves the notification message associated with the provided GC Notify
+   * template id. The notification messages are expected to be previously seeded
+   * through a database migration, hence an error is raised when none is found
+   * for the provided template id, allowing the caller (e.g. a workflow job) to
+   * fail and raise an incident to be investigated.
+   * @param templateId GC Notify template id.
+   * @param options options.
+   * - `entityManager` external entity manager to run in a transaction.
+   * @returns notification message details for the provided template id.
+   */
+  async getNotificationMessageByTemplateId(
+    templateId: string,
+    options?: { entityManager?: EntityManager },
+  ): Promise<NotificationMessage> {
+    const notificationMessageRepo =
+      options?.entityManager?.getRepository(NotificationMessage) ?? this.repo;
+    const notificationMessage = await notificationMessageRepo.findOne({
+      select: {
+        id: true,
+        templateId: true,
+        emailContacts: true,
+      },
+      where: {
+        templateId,
+      },
+    });
+    return notificationMessage;
+  }
 }

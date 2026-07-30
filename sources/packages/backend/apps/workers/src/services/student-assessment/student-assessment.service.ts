@@ -123,6 +123,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "assessment.id",
         "assessment.triggerType",
         "application.id",
+        "parentApplication.id",
         "application.data",
         "application.applicationStatus",
         "application.applicationEditStatus",
@@ -172,6 +173,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "dynamicFormConfiguration.formCategory",
       ])
       .innerJoin("assessment.application", "application")
+      .innerJoin("application.parentApplication", "parentApplication")
       .innerJoin("application.programYear", "programYear")
       .innerJoin("application.student", "student")
       .leftJoin("assessment.offering", "offering")
@@ -317,6 +319,63 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       auditUserId,
       transactionalEntityManager,
     );
+  }
+
+  /**
+   * Acquires a pessimistic write lock on the assessment record. Serializes
+   * concurrent executions that require exclusive access to the same assessment.
+   * @param assessmentId assessment to lock.
+   * @param entityManager entity manager to execute within the same transaction,
+   * required to hold the pessimistic lock.
+   * @returns the locked assessment, or null when the assessment is not found.
+   */
+  async acquireAssessmentLock(
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<StudentAssessment | null> {
+    return entityManager.getRepository(StudentAssessment).findOne({
+      select: { id: true },
+      where: { id: assessmentId },
+      lock: { mode: "pessimistic_write" },
+    });
+  }
+
+  /**
+   * Loads the assessment along with the student details required to build the
+   * data used to personalise and address a workflow-triggered email
+   * notification. This information is loaded on the API side because it is not
+   * available in the workflow due to personal information constraints.
+   * @param assessmentId assessment id used to reach the associated student.
+   * @param entityManager entity manager to execute within the same transaction.
+   * @returns assessment with the associated student details, or null when the
+   * assessment is not found.
+   */
+  async getAssessmentNotificationDetails(
+    assessmentId: number,
+    entityManager: EntityManager,
+  ): Promise<StudentAssessment | null> {
+    return entityManager.getRepository(StudentAssessment).findOne({
+      select: {
+        id: true,
+        application: {
+          id: true,
+          applicationNumber: true,
+          student: {
+            id: true,
+            user: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      },
+      relations: {
+        application: { student: { user: true } },
+      },
+      where: { id: assessmentId },
+    });
   }
 
   /**

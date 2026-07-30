@@ -11,6 +11,7 @@ import {
   DisbursementController,
   HealthController,
   MetricsController,
+  NotificationController,
 } from "./controllers";
 import {
   StudentAssessmentService,
@@ -67,6 +68,7 @@ import { TerminusModule } from "@nestjs/terminus";
     DisbursementController,
     HealthController,
     MetricsController,
+    NotificationController,
   ],
   providers: [
     ZeebeTransportStrategy,

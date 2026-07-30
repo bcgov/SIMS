@@ -44,6 +44,7 @@ import {
   SaveNotificationModel,
   StudentAcceptAssessmentReminderNotification,
   ProgramSuspensionBlockingApplicationNotification,
+  EmailNotification,
 } from "..";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -423,6 +424,66 @@ export class NotificationActionsService {
     await this.notificationService.saveNotifications(
       [exceptionCompleteNotification],
       auditUserId,
+      { entityManager },
+    );
+  }
+
+  /**
+   * Sends a workflow-triggered email notification to the provided recipients.
+   * The GC Notify template is resolved from the notification message, which is
+   * expected to be previously seeded, otherwise an error is raised. The
+   * personalisation is provided already resolved by the caller and sent as is.
+   * The same method addresses both student and Ministry notifications, the
+   * difference being the recipients and whether the notification is associated
+   * with a specific user.
+   * @param notification notification details.
+   * @param notificationMessage notification message that provides the template.
+   * @param entityManager entity manager to execute in transaction.
+   * @param options notification options.
+   * - `metadata` skips creation if a notification for the same message already
+   * exists matching the provided criteria, preventing duplicate emails. It
+   * allows the uniqueness of the notification to be defined dynamically by the
+   * workflow (e.g. `parentApplicationId` results in once per application). When
+   * not provided, a single notification is allowed for the message type combined
+   * with no metadata, still preventing duplicate emails.
+   */
+  async saveEmailNotification(
+    notification: EmailNotification,
+    notificationMessage: NotificationMessage,
+    entityManager: EntityManager,
+    options?: {
+      metadata?: NotificationMetadata;
+    },
+  ): Promise<void> {
+    const messageType = notificationMessage.id;
+    // The metadata is provided by the workflow and defines the uniqueness
+    // scope used to prevent duplicate emails (e.g. `parentApplicationId` sends
+    // the notification once per application).
+    const metadata = options?.metadata;
+    const notificationExists =
+      await this.notificationService.checkNotificationExists(
+        messageType,
+        metadata,
+        entityManager,
+      );
+    if (notificationExists) {
+      return;
+    }
+    const notificationsToSend = notification.emailRecipients.map(
+      (emailRecipient) => ({
+        userId: notification.userId,
+        messageType,
+        messagePayload: {
+          email_address: emailRecipient,
+          template_id: notificationMessage.templateId,
+          personalisation: notification.personalisation ?? {},
+        },
+        metadata,
+      }),
+    );
+    await this.notificationService.saveNotifications(
+      notificationsToSend,
+      this.systemUsersService.systemUser.id,
       { entityManager },
     );
   }

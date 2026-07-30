@@ -23,6 +23,7 @@ export enum WorkflowServiceTasks {
   SaveDisbursementSchedulesPartTime = "save-disbursement-part-time-task",
   AssociateMSFAA = "associate-msfaa-task",
   VerifyAssessmentCalculationOrderTask = "verify-assessment-calculation-order-task",
+  SendFormerYouthInCareEmail = "send-former-youth-in-care-email-task",
   // Workflow - CRA Integration Income Verification
   CreateIncomeRequest = "create-income-request-task",
   CheckIncomeRequest = "check-income-request-task",
