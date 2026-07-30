@@ -1,12 +1,12 @@
 {
     "name": "studentaid-image-pruner",
-    "description": "Prunes stale OpenShift ImageStream tags for StudentAid environments.",
+    "description": "Executes tasks for regular maintenance.",
     "version": "1.0.0",
     "private": true,
     "type": "module",
     "scripts": {
-        "dry-run": "tsx src/main.ts",
-        "prune": "tsx src/main.ts --confirm"
+        "dry-run-prune": "tsx src/image-pruner/main.ts",
+        "prune": "tsx src/image-pruner/main.ts --confirm"
     },
     "dependencies": {
         "@kubernetes/client-node": "^1.4.0",

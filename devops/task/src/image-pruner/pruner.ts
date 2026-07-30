@@ -1,9 +1,9 @@
-import { OpenshiftClient } from "./clients/openshift.client";
+import { OpenshiftClient } from "../clients/openshift.client";
 import type { PruneConfig } from "./models/prune.model";
 import type {
   ImageStreamResource,
   ImageStreamTag,
-} from "./models/openshift.model";
+} from "../models/openshift.model";
 import {
   extractImageStreamName,
   extractImageTagName,
