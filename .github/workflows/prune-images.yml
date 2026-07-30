@@ -17,11 +17,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working-directory: devops/image-pruner
+        working-directory: devops/task
 
       - name: Prune ImageStream Tags
         run: npm run prune
-        working-directory: devops/image-pruner
+        working-directory: devops/task
         env:
           SA_TOKEN: ${{ secrets.SA_TOKEN }}
           OPENSHIFT_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
