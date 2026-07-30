@@ -250,6 +250,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       personalisation: {
         givenNames: changeRequest.student.user.firstName ?? "",
         lastName: changeRequest.student.user.lastName,
+        application: changeRequest.applicationNumber,
         date: `${getPSTPDTDateTime(now)} PST/PDT`,
       },
     });
@@ -371,6 +372,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       personalisation: {
         givenNames: changeRequest.student.user.firstName ?? "",
         lastName: changeRequest.student.user.lastName,
+        application: changeRequest.applicationNumber,
         date: `${getPSTPDTDateTime(now)} PST/PDT`,
       },
     });
@@ -472,6 +474,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
       personalisation: {
         givenNames: changeRequest.student.user.firstName ?? "",
         lastName: changeRequest.student.user.lastName,
+        application: changeRequest.applicationNumber,
         date: `${getPSTPDTDateTime(now)} PST/PDT`,
       },
     });

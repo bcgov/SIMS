@@ -7,7 +7,6 @@ import {
   FormSubmission,
   getUserFullNameLikeSearch,
   NoteType,
-  Student,
   StudentAppeal,
   User,
 } from "@sims/sims-db";
@@ -109,7 +108,7 @@ export class ApplicationChangeRequestService {
         await Promise.all([
           applicationRepo.save(changeRequestApplication),
           this.saveChangeRequestReviewCompletedNotification(
-            changeRequestApplication.student.id,
+            changeRequestApplication,
             auditUserId,
             transactionalEntityManager,
           ),
@@ -154,7 +153,7 @@ export class ApplicationChangeRequestService {
       await Promise.all([
         applicationRepo.save(changeRequestApplication),
         this.saveChangeRequestReviewCompletedNotification(
-          changeRequestApplication.student.id,
+          changeRequestApplication,
           auditUserId,
           transactionalEntityManager,
         ),
@@ -169,29 +168,24 @@ export class ApplicationChangeRequestService {
 
   /**
    * Creates a student notification when a change request review is completed by the ministry.
-   * @param studentId student ID to load the notification data.
+   * @param changeRequestApplication the change request application with the student information
+   * required to send the notification.
    * @param auditUserId user who completed the change request review.
    * @param entityManager entity manager for the current transaction.
    */
   private async saveChangeRequestReviewCompletedNotification(
-    studentId: number,
+    changeRequestApplication: Application,
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const student = await entityManager.getRepository(Student).findOneOrFail({
-      select: {
-        id: true,
-        user: { id: true, firstName: true, lastName: true, email: true },
-      },
-      relations: { user: true },
-      where: { id: studentId },
-    });
+    const student = changeRequestApplication.student;
     await this.notificationActionsService.saveStudentChangeRequestReviewCompletedNotification(
       {
         givenNames: student.user.firstName,
         lastName: student.user.lastName,
         toAddress: student.user.email,
         userId: student.user.id,
+        applicationNumber: changeRequestApplication.applicationNumber,
       },
       auditUserId,
       entityManager,

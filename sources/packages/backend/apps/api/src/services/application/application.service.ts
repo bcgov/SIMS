@@ -1061,6 +1061,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
             id: true,
             firstName: true,
             lastName: true,
+            email: true,
           },
         },
         ...(options?.loadDynamicData
