@@ -1,19 +1,26 @@
-import { FormIOComponent, FormIOForm, FromIOComponentTypes } from "@/types";
+import {
+  FormIOComponent,
+  FormIOFileComponent,
+  FormIOForm,
+  FormIOComponentTypes,
+} from "@/types";
 import { ClassConstructor, plainToClass } from "class-transformer";
 import { Utils } from "@formio/js";
 import { AppConfigService } from "@/services/AppConfigService";
 
 const UTILS_COMMON_OBJECT_NAME = "custom";
+const MIN_FILE_SIZE = "1B";
+const MAX_FILE_SIZE = "15MB";
 
 /**
  * Hidden components and containers are not visible
  * but they have their _visible property as true.
  * Containers are visible if at least one of their children is visible.
  */
-const NON_VISIBLE_COMPONENT_TYPES = [
-  FromIOComponentTypes.Hidden,
-  FromIOComponentTypes.Container,
-];
+const NON_VISIBLE_COMPONENT_TYPES = new Set([
+  FormIOComponentTypes.Hidden,
+  FormIOComponentTypes.Container,
+]);
 
 /**
  * Result of a component search including the
@@ -224,7 +231,7 @@ export function useFormioUtils() {
    * @returns array of unique file names.
    */
   const getAssociatedFiles = (form: FormIOForm): string[] => {
-    const fileComponents = getComponentsOfType(form, FromIOComponentTypes.File);
+    const fileComponents = getComponentsOfType(form, FormIOComponentTypes.File);
     const associatedFiles: string[] = [];
     fileComponents.forEach((fileComponent) => {
       const fileComponentValue = fileComponent.component.getValue();
@@ -378,18 +385,18 @@ export function useFormioUtils() {
    */
   const isComponentVisible = (component: FormIOComponent): boolean => {
     if (
-      component.type === FromIOComponentTypes.Hidden ||
+      component.type === FormIOComponentTypes.Hidden ||
       component._visible === false
     ) {
       return false;
     }
-    if (component.type === FromIOComponentTypes.Container) {
+    if (component.type === FormIOComponentTypes.Container) {
       // Try to find at least one visible child component.
       const visibleChildren = recursiveSearch(
         component,
         (component) =>
           component._visible === true &&
-          !NON_VISIBLE_COMPONENT_TYPES.includes(component.type),
+          !NON_VISIBLE_COMPONENT_TYPES.has(component.type),
         { stopOnFirstMatch: true },
       );
       if (!visibleChildren.length) {
@@ -397,6 +404,29 @@ export function useFormioUtils() {
       }
     }
     return true;
+  };
+
+  /**
+   * Sets the min and max size for all components of type "file" on the form.
+   * @param form form component.
+   * @param options related options.
+   * - `minFileSize` minimum file size. Specified with a number and a unit (e.g., "1B").
+   * - `maxFileSize` maximum file size. Specified with a number and a unit (e.g., "15MB").
+   */
+  const setFileSizeLimits = (
+    form: FormIOForm,
+    options?: {
+      minFileSize?: string;
+      maxFileSize?: string;
+    },
+  ): void => {
+    const searchResults = getComponentsOfType(form, FormIOComponentTypes.File);
+    searchResults.forEach((searchResult) => {
+      const fileComponent = searchResult.component
+        .component as FormIOFileComponent;
+      fileComponent.fileMinSize = options?.minFileSize ?? MIN_FILE_SIZE;
+      fileComponent.fileMaxSize = options?.maxFileSize ?? MAX_FILE_SIZE;
+    });
   };
 
   return {
@@ -420,5 +450,6 @@ export function useFormioUtils() {
     getFormattedFormDefinition,
     createCacheIdentifier,
     isComponentVisible,
+    setFileSizeLimits,
   };
 }
