@@ -19,19 +19,12 @@ function validateTokenExpiry() {
     throw new Error("Invalid token format.");
   }
 
-  // Decode Base64Url payload
-  const payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-  let payload;
-
-  try {
-    const payloadJson = Buffer.from(payloadBase64, "base64").toString("utf8");
-    payload = JSON.parse(payloadJson);
-  } catch (e) {
-    throw new Error("Failed to parse or decode token payload.");
-  }
+  // Decode Base64Url payload.
+  const payloadJson = Buffer.from(parts[1], "base64url").toString("utf8");
+  const payload: { exp: number } = JSON.parse(payloadJson);
 
   const expValue = payload.exp;
-  if (!expValue || typeof expValue !== "number") {
+  if (typeof expValue !== "number" || !Number.isFinite(expValue)) {
     throw new Error(
       "The property 'exp' is either not found or invalid in SA_TOKEN payload.",
     );
