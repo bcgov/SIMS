@@ -2180,7 +2180,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\r\n<ul>\r\n  <li>Upload a colour copy of your documentation</li>\r\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_Citizenship_ProtectedPerson</strong>\"</li>\r\n  (e.g. JessLee_Citizenship_ProtectedPerson)\r\n</ul>",
+                      "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a colour copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_Citizenship_ProtectedPerson</strong>\"</li>\n  (e.g. JessLee_Citizenship_ProtectedPerson)\n</ul>\n",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html38",
