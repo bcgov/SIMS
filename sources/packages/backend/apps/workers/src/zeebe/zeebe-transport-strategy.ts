@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnApplicationShutdown } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import {
   CustomTransportStrategy,
   Server,
@@ -22,7 +22,7 @@ import {
 @Injectable()
 export class ZeebeTransportStrategy
   extends Server
-  implements CustomTransportStrategy, OnApplicationShutdown
+  implements CustomTransportStrategy
 {
   constructor(
     private readonly zeebeClient: ZeebeGrpcClient,
@@ -132,14 +132,5 @@ export class ZeebeTransportStrategy
    */
   unwrap<T = never>(): T {
     throw new Error("Not available for this transport strategy.");
-  }
-
-  // Step 2: Fully close the Zeebe client connection
-  async onApplicationShutdown(signal?: string): Promise<void> {
-    this.logger.log(
-      `Signal (${signal}) received: Closing Zeebe client connection...`,
-    );
-    await this.close();
-    this.logger.log(`Zeebe client connection closed.`);
   }
 }
