@@ -3,13 +3,16 @@ import { NestFactory } from "@nestjs/core";
 import { LoadTestModule } from "./load-test.module";
 import { KeycloakConfig } from "@sims/auth/config";
 import { LoggerService } from "@sims/utilities/logger";
-import { exit } from "process";
+import { exit } from "node:process";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   await KeycloakConfig.load();
   const app = await NestFactory.create<NestExpressApplication>(LoadTestModule);
+
+  // Listens to termination signals so open connections can be gracefully closed.
+  app.enableShutdownHooks();
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);
@@ -32,7 +35,7 @@ async function bootstrap() {
   await app.listen(loadTestAPIPort);
 
   // Logging node http server error
-  app.getHttpServer().on("error", (error: unknown) => {
+  app.getHttpServer().on("error", (error) => {
     logger.error(`Load test server received ${error}`, undefined, "Bootstrap");
     exit(1);
   });
@@ -41,7 +44,7 @@ async function bootstrap() {
     "Bootstrap",
   );
 }
-bootstrap().catch((error: unknown) => {
+bootstrap().catch((error) => {
   const logger = new LoggerService();
   logger.error(
     `Load test gateway bootstrap exception: ${error}`,
