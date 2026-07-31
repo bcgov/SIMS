@@ -1,0 +1,28 @@
+name: Validate SA Token Expiry
+run-name: Validate SA Token Expiry
+permissions:
+    contents: read
+
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: "0 0 * * 1" # Runs at 12 AM UTC every Monday.
+
+jobs:
+    validate-sa-token-expiry:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v7
+
+            - name: Install dependencies
+              run: npm ci
+              working-directory: devops/task
+
+            - name: Validate SA Token Expiry
+              run: npm run validate-sa-token-expiry
+              working-directory: devops/task
+              env:
+                  SA_TOKEN: ${{ secrets.SA_TOKEN }}
+                  OPENSHIFT_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
+                  LICENSE_PLATE: ${{ vars.OPENSHIFT_LICENSE_PLATE }}
