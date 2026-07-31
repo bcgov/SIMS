@@ -92,27 +92,29 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
 
   it("Should generate the report when a report generation request is made with the appropriate filters, without optional program.", async () => {
     // Arrange
-    const now = new Date();
+    const startDate = new Date();
+    const endDate = addDays(1, startDate);
     const student = await saveFakeStudent(db.dataSource);
     const institution = await db.institution.save(createFakeInstitution());
     const applications = await Promise.all([
       createVersionedApplicationsDataSetup(db, {
         student,
         institution,
-        originalSubmissionDate: now,
+        originalSubmissionDate: startDate,
       }),
       createVersionedApplicationsDataSetup(db, {
         student,
         institution,
-        originalSubmissionDate: now,
+        // Ensure the result order for the proper results assertion.
+        originalSubmissionDate: endDate,
       }),
     ]);
     const payload = createApplicationsByInstitutionReportPayload({
       institutionId: institution.id,
       // Use a day only period to ensure the report filters out applications
       // based on the submission of the first ever submitted application.
-      startDate: now,
-      endDate: addDays(1, now),
+      startDate,
+      endDate,
     });
 
     const ministryUserToken = await getAESTToken(
