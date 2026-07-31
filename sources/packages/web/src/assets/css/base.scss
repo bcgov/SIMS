@@ -4,6 +4,11 @@ html * {
   font-style: $font-style-normal;
   line-height: 20px;
 }
+
+html em {
+  font-style: italic;
+}
+
 // todo: when all v-navigation-drawer is updated, remove this class.
 .body-background {
   background: $default-background;
