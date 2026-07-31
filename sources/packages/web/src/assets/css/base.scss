@@ -20,6 +20,10 @@ strong {
   @extend .font-bold;
 }
 
+em {
+  font-style: italic;
+}
+
 .bold-text {
   @extend .font-bold;
   font-style: $font-style-normal;
