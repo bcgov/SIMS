@@ -1,5 +1,5 @@
 {
-    "name": "studentaid-image-pruner",
+    "name": "sims-task-executor",
     "description": "Executes tasks for regular maintenance.",
     "version": "1.0.0",
     "private": true,

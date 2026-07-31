@@ -20,7 +20,7 @@ jobs:
         working-directory: devops/task
 
       - name: Prune ImageStream Tags
-        run: npm run validate-sa-token-expiry
+        run: npm run prune
         working-directory: devops/task
         env:
           SA_TOKEN: ${{ secrets.SA_TOKEN }}
