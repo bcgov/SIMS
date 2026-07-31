@@ -7,6 +7,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
+  ParseFilePipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -63,6 +64,7 @@ import {
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
+  MinFileSizeValidator,
   MINISTRY_FILE_UPLOAD_GROUP_NAME,
   uploadLimits,
 } from "../../utilities";
@@ -175,7 +177,13 @@ export class StudentAESTController extends BaseController {
   async uploadFile(
     @UserToken() userToken: IUserToken,
     @Param("studentId", ParseIntPipe) studentId: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new MinFileSizeValidator()],
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
+    )
+    file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {

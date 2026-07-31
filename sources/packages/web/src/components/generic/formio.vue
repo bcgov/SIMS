@@ -214,8 +214,8 @@ export default defineComponent({
         });
 
         // Sets the min and max size for all components of type "file" on the form.
-        // Applied globally to ensure consistent behaviour across all forms included newly added forms.
-        setFileSizeLimits(form);
+        // Applied globally to ensure consistent behavior across all forms included newly added ones.
+        //setFileSizeLimits(form);
 
         // When the form submission data is set, the form is rendered again.
         // To visually hide the form until the rendering to be completed, a delay is set.
