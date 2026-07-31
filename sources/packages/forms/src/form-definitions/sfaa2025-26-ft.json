@@ -1850,7 +1850,7 @@
                       "value": ""
                     }
                   ],
-                  "content": "Upload proof of citizenship",
+                  "content": "Upload proof of status",
                   "refreshOnChange": false,
                   "customClass": "header-md",
                   "key": "html49",
@@ -2052,7 +2052,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n  <li><b>Valid Confirmation of SIN document; and</b></li>\n  <li>Notice of Decision (issued by Immigration and Refugee Board) or</li>\n  <li>Verification of Status document (IMM5009) or</li>\n  <li>Confirmation of Protected Persons Status document (IMM5292)</li>\n</ul>",
+                          "content": "<h4 class=\"category-header-medium-small\">Documents Required:</h4>\n<ol>\n  <li>\n    Temporary SIN (900-series) or confirmation of temporary SIN that is valid\n    for the entire period of study; <em>and</em>\n  </li>\n  <li>\n    Proof of Identity\n    <ul>\n      <li>\n        A Refugee Protection Identity Document issued by IRCC as of March 2025,\n        or\n      </li>\n      <li>\n        A Refugee Protection Claimant Document issued by IRCC prior to March\n        2025; <em>and</em>\n      </li>\n    </ul>\n  </li>\n  <li>\n    Proof of Protected Person or Refugee Status\n    <ul>\n      <li>\n        A Notice of Decision issued by the Immigration and Refugee Board\n        confirming status, or\n      </li>\n      <li>\n        Verification of Status document issued by IRCC (Protected Persons\n        Status Document issued prior to January 2013 are acceptable as well)\n      </li>\n    </ul>\n  </li>\n</ol>",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "key": "html15",
@@ -2068,7 +2068,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a photo or scanned copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_Citizenship_ProtectedPerson</strong>\"</li>\n  (e.g. JessLee_Citizenship_ProtectedPerson)\n</ul>\n",
+                          "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a colour copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_Citizenship_ProtectedPerson</strong>\"</li>\n  (e.g. JessLee_Citizenship_ProtectedPerson)\n</ul>\n",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "key": "html38",
