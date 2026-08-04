@@ -2124,7 +2124,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "15MB",
+                      "fileMaxSize": "",
                       "multiple": true,
                       "validate": {
                         "required": true,
@@ -2272,7 +2272,7 @@
                             }
                           ],
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                          "fileMaxSize": "15MB",
+                          "fileMaxSize": "",
                           "multiple": true,
                           "validate": {
                             "required": true,
@@ -2512,7 +2512,7 @@
                             }
                           ],
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                          "fileMaxSize": "15MB",
+                          "fileMaxSize": "",
                           "multiple": true,
                           "key": "marriedCommonLawDomesticViolenceExceptionDocuments",
                           "type": "file",
@@ -3256,7 +3256,7 @@
                             }
                           ],
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                          "fileMaxSize": "15MB",
+                          "fileMaxSize": "",
                           "multiple": true,
                           "key": "otherLivingSituationDocs",
                           "type": "file",
@@ -4094,7 +4094,7 @@
                                 }
                               ],
                               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                              "fileMaxSize": "15MB",
+                              "fileMaxSize": "",
                               "multiple": true,
                               "redrawOn": "dependants.declaredOnTaxes",
                               "validate": {
@@ -4309,7 +4309,7 @@
                                 }
                               ],
                               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                              "fileMaxSize": "15MB",
+                              "fileMaxSize": "",
                               "multiple": true,
                               "validate": {
                                 "required": true,
@@ -5527,7 +5527,7 @@
                             }
                           ],
                           "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                          "fileMaxSize": "15MB",
+                          "fileMaxSize": "",
                           "multiple": true,
                           "validate": {
                             "required": true,

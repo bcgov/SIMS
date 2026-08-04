@@ -242,7 +242,7 @@
                         }
                     ],
                     "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                    "fileMaxSize": "15MB",
+                    "fileMaxSize": "",
                     "multiple": true,
                     "clearOnHide": false,
                     "validate": {

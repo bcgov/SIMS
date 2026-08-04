@@ -285,7 +285,7 @@
         }
       ],
       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-      "fileMaxSize": "15MB",
+      "fileMaxSize": "",
       "multiple": true,
       "validate": {
         "required": true,
