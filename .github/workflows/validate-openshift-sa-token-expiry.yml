@@ -1,5 +1,5 @@
-name: Validate SA Token Expiry
-run-name: Validate SA Token Expiry
+name: Validate OpenShift SA Token Expiry
+run-name: Validate OpenShift SA Token Expiry
 permissions:
     contents: read
 
@@ -20,7 +20,7 @@ jobs:
               working-directory: devops/task
 
             - name: Validate SA Token Expiry
-              run: npm run validate-sa-token-expiry
+              run: npm run validate-oc-sa-token-expiry
               working-directory: devops/task
               env:
                   SA_TOKEN: ${{ secrets.SA_TOKEN }}
