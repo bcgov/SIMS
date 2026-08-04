@@ -6,14 +6,13 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   mockUserLoginInfo,
-  resetMockUserLoginInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
   E2EDataSources,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { FileOriginType } from "@sims/sims-db";
+import { FileOriginType, Student } from "@sims/sims-db";
 import { TestingModule } from "@nestjs/testing";
 
 const MAX_FILE_SIZE = Number(process.env.FILE_UPLOAD_MAX_FILE_SIZE);
@@ -22,6 +21,7 @@ describe("StudentStudentsController(e2e)-uploadFile", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
+  let student: Student;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
@@ -29,20 +29,16 @@ describe("StudentStudentsController(e2e)-uploadFile", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
+    student = await saveFakeStudent(db.dataSource);
   });
 
-  beforeEach(async () => {
-    await resetMockUserLoginInfo(appModule);
-  });
-
-  it("Should upload the file when the request is valid.", async () => {
+  it("Should upload the file when the file passes all validations.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     await mockUserLoginInfo(appModule, student);
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const uniqueFileName = `supporting-document-${student.id}.pdf-guid`;
+    const uniqueFileName = `supporting-document-${student.id}.pdf`;
     const fileName = "supporting-document.pdf";
     const groupName = "Supporting documents";
     const fileContent = Buffer.from("PDF content");
@@ -99,12 +95,11 @@ describe("StudentStudentsController(e2e)-uploadFile", () => {
 
   it("Should reject the upload when the file is smaller than the minimum allowed size.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     await mockUserLoginInfo(appModule, student);
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const uniqueFileName = `empty-file-${student.id}.pdf-guid`;
+    const uniqueFileName = `empty-file-${student.id}.pdf`;
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -126,12 +121,11 @@ describe("StudentStudentsController(e2e)-uploadFile", () => {
 
   it("Should reject the upload when the file is larger than the maximum allowed size.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
     await mockUserLoginInfo(appModule, student);
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const uniqueFileName = `too-large-file-${student.id}.pdf-guid`;
+    const uniqueFileName = `too-large-file-${student.id}.pdf`;
 
     // Act/Assert
     await request(app.getHttpServer())

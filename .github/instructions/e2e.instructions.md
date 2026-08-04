@@ -14,3 +14,5 @@ Every application consumer method must have a corresponding end-to-end (e2e) tes
 - **Code Section**: Structure tests with clear Arrange, Act, and Assert sections for readability.
 - **Data Manipulation**: Declare a global variable `db: E2EDataSources` and use it for all DB related operations.
 
+### Standards
+- Endpoints should be defined via a `getEndpoint` function to ensure consistency and maintainability. The function should be defined at the bottom of the file outside of describe and should return the endpoint string based on the parameters provided.
