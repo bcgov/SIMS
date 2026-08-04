@@ -31,4 +31,5 @@ export function resetZeebeModuleMock(mockedZBClient: ZeebeGrpcClient): void {
   mockedZBClient.createProcessInstance = jest.fn();
   mockedZBClient.publishMessage = jest.fn();
   mockedZBClient.cancelProcessInstance = jest.fn();
+  mockedZBClient.close = jest.fn();
 }
