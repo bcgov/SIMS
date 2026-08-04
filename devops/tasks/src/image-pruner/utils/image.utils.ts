@@ -1,4 +1,4 @@
-import type { ImageStreamTag } from "../models/openshift.model";
+import type { ImageStreamTag } from "../../models/openshift.model";
 
 /**
  * Extracts the ImageStream name from a full image reference string.

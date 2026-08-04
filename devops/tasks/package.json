@@ -1,0 +1,23 @@
+{
+    "name": "sims-tasks-executor",
+    "description": "Executes tasks for regular maintenance.",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dry-run-prune": "tsx src/image-pruner/main.ts",
+        "prune": "tsx src/image-pruner/main.ts --confirm",
+        "validate-oc-sa-token-expiry": "tsx src/sa-token/main.ts"
+    },
+    "dependencies": {
+        "@kubernetes/client-node": "^1.4.0",
+        "dayjs": "^1.11.21",
+        "dotenv": "^16.6.1",
+        "jwt-decode": "^4.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^25.9.3",
+        "tsx": "^4.19.2",
+        "typescript": "^6.0.3"
+    }
+}

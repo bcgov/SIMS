@@ -95,6 +95,10 @@ export MIGRATIONS_JOB_MAX_DURATION := 300
 export CRA_FILE_OVERDUE_DAYS := $(or ${CRA_FILE_OVERDUE_DAYS}, 5)
 # The number of days after which ESDC SIN file processing is considered overdue.
 export ESDC_FILE_OVERDUE_DAYS := $(or ${ESDC_FILE_OVERDUE_DAYS}, 5)
+# Artifactory project template URL.
+export ARTIFACTORY_PROJECT_TEMPLATE_URL := https://raw.githubusercontent.com/bcgov/platform-services-archeobot/master/archeobot/config/samples/tmpl-artifactoryproject.yaml
+# Artifactory service account template URL.
+export ARTIFACTORY_SERVICE_ACCOUNT_TEMPLATE_URL := https://raw.githubusercontent.com/bcgov/platform-services-archeobot/master/archeobot/config/samples/tmpl-artifactoryserviceaccount.yaml
 
 define ZONE_B_SFTP_PRIVATE_KEY
 -----BEGIN OPENSSH PRIVATE KEY-----
@@ -740,6 +744,14 @@ deploy-forms:
 	-p REPLICAS=$(FORMIO_REPLICAS) \
 	| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(FORMS_NAME))
+
+# Execute the following commands to create the artifactory project and service account in the target namespace.
+# The namespace to create the project and service account must be tools namespace.
+create-artifactory-project:
+	@oc -n $(NAMESPACE) process -f $(ARTIFACTORY_PROJECT_TEMPLATE_URL) -p NAME="sims" | oc create -f -
+
+create-artifactory-service-account:
+	@oc -n $(NAMESPACE) process -f $(ARTIFACTORY_SERVICE_ACCOUNT_TEMPLATE_URL) -p NAME="sims" -p DESCRIPTOR="SIMS artifactory service account" | oc create -f -
 
 update-sysdig-team:
 	@echo "Updating Sysdig Team for license plate e0a504.\n"
