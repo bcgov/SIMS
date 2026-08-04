@@ -1,10 +1,18 @@
 import dayjs from "dayjs";
+import { jwtDecode } from "jwt-decode";
 
 /**
  * Number of days before the token expiry to consider it as expiring soon and renew it.
  * Keeping this threshold at 14 days as the job is scheduled weekly.
  */
 const TOKEN_EXPIRY_THRESHOLD_DAYS = 14;
+
+/**
+ * Minimal SA token payload used to validate expiration.
+ */
+type SATokenPayload = {
+  exp?: number;
+};
 
 function validateTokenExpiry() {
   const token = process.env.SA_TOKEN;
@@ -13,15 +21,7 @@ function validateTokenExpiry() {
     throw new Error("Missing value for the environment variable: SA_TOKEN.");
   }
 
-  // JWTs are in 3 parts separated by dots. We need the payload (2nd part).
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    throw new Error("Invalid token format.");
-  }
-
-  // Decode Base64Url payload.
-  const payloadJson = Buffer.from(parts[1], "base64url").toString("utf8");
-  const payload: { exp: number } = JSON.parse(payloadJson);
+  const payload = jwtDecode<SATokenPayload>(token);
 
   const expValue = payload.exp;
   if (typeof expValue !== "number" || !Number.isFinite(expValue)) {
