@@ -35,6 +35,10 @@ export CRA_FILE_OVERDUE_DAYS := $(or ${CRA_FILE_OVERDUE_DAYS}, 5)
 # The number of days after which SIN file processing is considered overdue.
 export ESDC_FILE_OVERDUE_DAYS := $(or ${ESDC_FILE_OVERDUE_DAYS}, 5)
 
+# File Upload Global Config
+export FILE_UPLOAD_MAX_FILE_SIZE := $(or $(FILE_UPLOAD_MAX_FILE_SIZE), 15728640)
+export FILE_UPLOAD_ALLOWED_EXTENSIONS := $(or $(FILE_UPLOAD_ALLOWED_EXTENSIONS), .pdf,.doc,.docx,.jpg,.png)
+
 backend-unit-tests:
 	@cd ../packages/backend && npm i && npm run test:cov
 
