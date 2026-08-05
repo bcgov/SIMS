@@ -526,7 +526,7 @@
               "key": "decreaseInPartnerIncomeSupportingDocuments",
               "multiple": true,
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-              "fileMaxSize": "15MB",
+              "fileMaxSize": "",
               "type": "file",
               "hideLabel": true,
               "storage": "url",

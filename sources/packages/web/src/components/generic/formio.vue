@@ -89,7 +89,7 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { registerUtilsMethod, createCacheIdentifier } =
+    const { registerUtilsMethod, createCacheIdentifier, setFileSizeLimits } =
       useFormioUtils();
     const { currencyFormatter, isLessThanGivenWeeks } = useFormatters();
     const { mapOfferingIntensity } = useOffering();
@@ -212,6 +212,10 @@ export default defineComponent({
         form.on("render", (event: HTMLElement) => {
           context.emit("render", form, event);
         });
+
+        // Sets the min and max size for all components of type "file" on the form.
+        // Applied globally to ensure consistent behavior across all forms included newly added ones.
+        setFileSizeLimits(form);
 
         // When the form submission data is set, the form is rendered again.
         // To visually hide the form until the rendering to be completed, a delay is set.

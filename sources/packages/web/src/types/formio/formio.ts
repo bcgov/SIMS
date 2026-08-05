@@ -93,7 +93,7 @@ export enum FormIOCustomEventTypes {
  * This does not represent all the types available in Form.IO,
  * please expand the list as needed.
  */
-export enum FromIOComponentTypes {
+export enum FormIOComponentTypes {
   Hidden = "hidden",
   Datagrid = "datagrid",
   Button = "button",
@@ -115,6 +115,14 @@ export interface FormIOComponentInternal {
   data: { values: unknown[] };
 }
 
+/**
+ * Minimal implementation of a Form.IO file component to access file specific properties.
+ */
+export interface FormIOFileComponent extends FormIOComponentInternal {
+  fileMinSize: string;
+  fileMaxSize: string;
+}
+
 export interface FormIOComponent {
   id: string;
   key: string;
@@ -125,7 +133,7 @@ export interface FormIOComponent {
   customClass: string;
   redraw: any;
   disabled: boolean;
-  type: FromIOComponentTypes;
+  type: FormIOComponentTypes;
   setValue: (value: unknown) => void;
   getValue: () => unknown;
 }

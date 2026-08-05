@@ -1850,7 +1850,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "15MB",
+                  "fileMaxSize": "",
                   "multiple": true,
                   "validate": {
                     "required": true,
@@ -2199,7 +2199,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "15MB",
+                      "fileMaxSize": "",
                       "multiple": true,
                       "key": "otherLivingSituationDocs",
                       "type": "file",
@@ -3470,7 +3470,7 @@
                                 }
                               ],
                               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                              "fileMaxSize": "15MB",
+                              "fileMaxSize": "",
                               "multiple": true,
                               "redrawOn": "dependants.declaredOnTaxes",
                               "validate": {
@@ -3681,7 +3681,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "15MB",
+                  "fileMaxSize": "",
                   "multiple": true,
                   "validate": {
                     "required": true,
@@ -4295,7 +4295,7 @@
                   "key": "decreaseInPartnerIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "15MB",
+                  "fileMaxSize": "",
                   "type": "file",
                   "storage": "url",
                   "url": "student/files",
@@ -5588,7 +5588,7 @@
                 }
               ],
               "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-              "fileMaxSize": "15MB",
+              "fileMaxSize": "",
               "multiple": true,
               "validate": {
                 "required": true,
@@ -5857,7 +5857,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "15MB",
+                  "fileMaxSize": "",
                   "key": "parentNotBCResidentFileUpload",
                   "type": "file",
                   "input": true,
@@ -6544,7 +6544,7 @@
                   "key": "decreaseInIncomeSupportingDocuments",
                   "multiple": true,
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "15MB",
+                  "fileMaxSize": "",
                   "type": "file",
                   "hideLabel": true,
                   "storage": "url",
@@ -6883,7 +6883,7 @@
                     }
                   ],
                   "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                  "fileMaxSize": "15MB",
+                  "fileMaxSize": "",
                   "multiple": true,
                   "key": "exceptionalExpenseFile",
                   "conditional": {
@@ -7929,7 +7929,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "15MB",
+                      "fileMaxSize": "",
                       "multiple": true,
                       "key": "parentLivingSituationFile",
                       "type": "file",
@@ -8482,7 +8482,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "15MB",
+                      "fileMaxSize": "",
                       "multiple": true,
                       "key": "transportationCostsFile",
                       "customConditional": "show = (data.transportationcostsituation === 'noLimit' || data.transportationcostsituation === 'special' || data.transportationcostsituation === 'educationPlacement');",

@@ -367,7 +367,7 @@
                         }
                       ],
                       "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
-                      "fileMaxSize": "15MB",
+                      "fileMaxSize": "",
                       "multiple": true,
                       "key": "transportationCostsFile",
                       "type": "file",

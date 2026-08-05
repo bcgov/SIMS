@@ -4,8 +4,10 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  HttpStatus,
   Injectable,
   Param,
+  ParseFilePipe,
   Patch,
   Post,
   Query,
@@ -57,6 +59,7 @@ import {
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
+  MinFileSizeValidator,
   PaginatedResults,
   uploadLimits,
 } from "../../utilities";
@@ -252,7 +255,13 @@ export class StudentStudentsController extends BaseController {
   )
   async uploadFile(
     @UserToken() studentUserToken: StudentUserToken,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new MinFileSizeValidator()],
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      }),
+    )
+    file: Express.Multer.File,
     @Body("uniqueFileName") uniqueFileName: string,
     @Body("group") groupName: string,
   ): Promise<FileCreateAPIOutDTO> {
