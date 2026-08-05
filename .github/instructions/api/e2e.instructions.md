@@ -27,6 +27,9 @@ Every API endpoint must have a corresponding end-to-end (e2e) test to validate i
 - **Scenarios**: Test for both success and common failure cases (e.g., 403 Forbidden, 404 Not Found).
 - **Code Section**: Structure tests with clear Arrange, Act, and Assert sections for readability.
 
+### Standards
+- Endpoints should be defined via a `getEndpoint` function to ensure consistency and maintainability. The function should be defined at the bottom of the file outside of `describe` and should return the endpoint string. Include function parameters (e.g. applicationId) when they are required by the endpoint.
+
 ### Boilerplate Code Example for Client Type AEST
 
 Use this template as a starting point for new e2e tests for the AEST client type.
