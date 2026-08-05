@@ -258,7 +258,7 @@ export class StudentStudentsController extends BaseController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [new MinFileSizeValidator()],
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
       }),
     )
     file: Express.Multer.File,

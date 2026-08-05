@@ -122,17 +122,22 @@ export interface MulterFile {
 }
 
 /**
- * Validates whether an uploaded file meets the minimum allowed size.
- * This is implemented as a FileValidator as Multer doesn't have support for minimum file size validation.
+ * Minimum file size validation options.
  */
-export class MinFileSizeValidator extends FileValidator<{
+interface MinFileSizeValidationOptions {
   /**
    * Minimum file size in bytes.
    */
   minFileSize: number;
-}> {
-  constructor(minFileSize = MIN_FILE_SIZE) {
-    super({ minFileSize: minFileSize });
+}
+
+/**
+ * Validates whether an uploaded file meets the minimum allowed size.
+ * This is implemented as a FileValidator as Multer doesn't have support for minimum file size validation.
+ */
+export class MinFileSizeValidator extends FileValidator<MinFileSizeValidationOptions> {
+  constructor(validationOptions?: MinFileSizeValidationOptions) {
+    super(validationOptions ?? { minFileSize: MIN_FILE_SIZE });
   }
 
   /**
