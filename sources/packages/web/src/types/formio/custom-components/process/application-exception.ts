@@ -78,7 +78,7 @@ export const APPLICATION_EXCEPTION_FULL_SCHEMA = {
         storage: "url",
         dir: "Update to something meaningful to be saved to student files table.",
         filePattern: ".pdf,.doc,.docx,.jpg,.png,.txt",
-        fileMaxSize: "15MB",
+        fileMaxSize: "",
         multiple: true,
         validate: {
           required: true,
