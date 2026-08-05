@@ -2100,7 +2100,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a photo or scanned copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_Citizenship_PermanentResidency</strong>\"</li>\n  (e.g. JessLee_Citizenship_PermanentResidency)\n</ul>\n",
+                      "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a photo or scanned copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_ProofOfStatus_PermanentResident</strong>\"</li>\n  (e.g. JessLee_ProofOfStatus_PermanentResident)\n</ul>\n",
                       "refreshOnChange": false,
                       "customClass": "align-bullets",
                       "key": "html14",
@@ -2248,7 +2248,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a colour copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_Citizenship_ProtectedPerson</strong>\"</li>\n  (e.g. JessLee_Citizenship_ProtectedPerson)\n</ul>\n",
+                          "content": "<h4 class=\"category-header-medium-small\">Instructions:</h4>\n<ul>\n  <li>Upload a colour copy of your documentation</li>\n  <li>Rename your document to <br/>\"<strong>FirstnameLastname_ProofOfStatus_ProtectedPerson</strong>\"</li>\n  (e.g. JessLee_ProofOfStatus_ProtectedPerson)\n</ul>\n",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "key": "html38",
