@@ -480,41 +480,46 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     },
   );
 
-  it(`Should throw not found error when the application has ${ApplicationStatus.Edited} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
-    // Arrange
-    const application = await saveFakeApplicationWithApplicationException(
-      appDataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
-    );
-    application.applicationStatus = ApplicationStatus.Edited;
-    const [exceptionRequest] =
-      application.applicationException.exceptionRequests;
-    await db.application.save(application);
-    const payload = {
-      assessedExceptionRequests: [
-        {
-          exceptionRequestId: exceptionRequest.id,
-          exceptionRequestStatus: ApplicationExceptionRequestStatus.Declined,
-        },
-      ],
-      noteDescription: faker.lorem.words(10),
-    };
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+  [ApplicationStatus.Edited, ApplicationStatus.Cancelled].forEach(
+    (applicationStatus) => {
+      it(`Should throw not found error when the application has ${applicationStatus} status and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
+        // Arrange
+        const application = await saveFakeApplicationWithApplicationException(
+          appDataSource,
+          undefined,
+          { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
+        );
+        application.applicationStatus = applicationStatus;
+        const [exceptionRequest] =
+          application.applicationException.exceptionRequests;
+        await db.application.save(application);
+        const payload = {
+          assessedExceptionRequests: [
+            {
+              exceptionRequestId: exceptionRequest.id,
+              exceptionRequestStatus:
+                ApplicationExceptionRequestStatus.Declined,
+            },
+          ],
+          noteDescription: faker.lorem.words(10),
+        };
+        const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+        const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "Student application exception not found.",
-        error: "Not Found",
+        // Act/Assert
+        await request(app.getHttpServer())
+          .patch(endpoint)
+          .send(payload)
+          .auth(token, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.NOT_FOUND)
+          .expect({
+            statusCode: HttpStatus.NOT_FOUND,
+            message: "Student application exception not found.",
+            error: "Not Found",
+          });
       });
-  });
+    },
+  );
 
   it("Should throw bad request error when the payload has one or more assessed exception request with invalid exception request status.", async () => {
     // Arrange

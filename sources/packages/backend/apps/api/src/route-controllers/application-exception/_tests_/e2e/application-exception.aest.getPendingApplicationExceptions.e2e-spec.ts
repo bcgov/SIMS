@@ -9,6 +9,7 @@ import {
 import { ApplicationExceptionStatus, ApplicationStatus } from "@sims/sims-db";
 import { saveFakeApplicationWithApplicationException } from "../application-exception-helper";
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
+import { FieldSortOrder } from "@sims/utilities";
 
 describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions", () => {
   let app: INestApplication;
@@ -20,116 +21,101 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get pending application exceptions when available.", async () => {
+  it.only("Should return two pending application exceptions when the search criteria matches and a custom sort (applicationNumber DESC) is applied.", async () => {
+    const applicationPrefix = "AEEGPAEA";
     // Arrange
-    const application1Promise = saveFakeApplicationWithApplicationException(
-      db.dataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
-    );
-    const application2Promise = saveFakeApplicationWithApplicationException(
-      db.dataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
-    );
-    const application3Promise = saveFakeApplicationWithApplicationException(
-      db.dataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Approved },
-    );
-    const application4Promise = saveFakeApplicationWithApplicationException(
-      db.dataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Declined },
-    );
-    const application5Promise = saveFakeApplicationWithApplicationException(
-      db.dataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
-    );
-    const [
-      application1,
-      application2,
-      application3,
-      application4,
-      application5,
-    ] = await Promise.all([
-      application1Promise,
-      application2Promise,
-      application3Promise,
-      application4Promise,
-      application5Promise,
-    ]);
+    const applicationScenarios: {
+      exceptionStatus: ApplicationExceptionStatus;
+      applicationStatus?: ApplicationStatus;
+    }[] = [
+      { exceptionStatus: ApplicationExceptionStatus.Pending },
+      { exceptionStatus: ApplicationExceptionStatus.Pending },
+      // Approved exceptions should be excluded.
+      { exceptionStatus: ApplicationExceptionStatus.Approved },
+      // Declined exceptions should be excluded.
+      { exceptionStatus: ApplicationExceptionStatus.Declined },
+      // Edited applications should be excluded.
+      {
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+        applicationStatus: ApplicationStatus.Edited,
+      },
+      // Cancelled applications should be excluded.
+      {
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+        applicationStatus: ApplicationStatus.Cancelled,
+      },
+    ];
 
-    application5.applicationStatus = ApplicationStatus.Edited;
-    await db.application.save(application5);
+    const applicationPromises = applicationScenarios.map(
+      ({ exceptionStatus, applicationStatus }, index) =>
+        saveFakeApplicationWithApplicationException(db.dataSource, undefined, {
+          applicationStatus,
+          // Create data specific to this test suite to avoid retrieving data from other test suites.
+          applicationNumber: generateApplicationNumber(
+            applicationPrefix,
+            index,
+          ),
+          applicationExceptionStatus: exceptionStatus,
+        }),
+    );
 
-    const endpoint =
-      "/aest/application-exception?page=0&pageLimit=100&sortField=submittedDate&sortOrder=DESC";
+    const [application1, application2] = await Promise.all(applicationPromises);
+
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(endpoint)
+      .get(getEndpoint(applicationPrefix))
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
-      .then((response) => {
-        const applicationExceptionList = response.body.results;
-        expect(applicationExceptionList).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              applicationId: application1.id,
-              studentId: application1.student.id,
-              applicationNumber: application1.applicationNumber,
-              submittedDate:
-                application1.applicationException.createdAt.toISOString(),
-              givenNames: application1.student.user.firstName,
-              lastName: application1.student.user.lastName,
-            }),
-            expect.objectContaining({
-              applicationId: application2.id,
-              studentId: application2.student.id,
-              applicationNumber: application2.applicationNumber,
-              submittedDate:
-                application2.applicationException.createdAt.toISOString(),
-              givenNames: application2.student.user.firstName,
-              lastName: application2.student.user.lastName,
-            }),
-          ]),
-        );
-        expect(applicationExceptionList).not.toContainEqual(
-          expect.objectContaining({
-            applicationId: application3.id,
-            studentId: application3.student.id,
-            applicationNumber: application3.applicationNumber,
+      .expect(({ body }) => {
+        expect(body.results).toEqual([
+          {
+            applicationId: application2.id,
+            studentId: application2.student.id,
+            applicationNumber: application2.applicationNumber,
+            givenNames: application2.student.user.firstName,
+            lastName: application2.student.user.lastName,
             submittedDate:
-              application3.applicationException.createdAt.toISOString(),
-            givenNames: application3.student.user.firstName,
-            lastName: application3.student.user.lastName,
-          }),
-        );
-        expect(applicationExceptionList).not.toContainEqual(
-          expect.objectContaining({
-            applicationId: application4.id,
-            studentId: application4.student.id,
-            applicationNumber: application4.applicationNumber,
+              application2.applicationException.createdAt.toISOString(),
+          },
+          {
+            applicationId: application1.id,
+            studentId: application1.student.id,
+            applicationNumber: application1.applicationNumber,
+            givenNames: application1.student.user.firstName,
+            lastName: application1.student.user.lastName,
             submittedDate:
-              application4.applicationException.createdAt.toISOString(),
-            givenNames: application4.student.user.firstName,
-            lastName: application4.student.user.lastName,
-          }),
-        );
-        expect(applicationExceptionList).not.toContainEqual(
-          expect.objectContaining({
-            applicationId: application5.id,
-            studentId: application5.student.id,
-            applicationNumber: application5.applicationNumber,
-            submittedDate:
-              application5.applicationException.createdAt.toISOString(),
-            givenNames: application5.student.user.firstName,
-            lastName: application5.student.user.lastName,
-          }),
-        );
+              application1.applicationException.createdAt.toISOString(),
+          },
+        ]);
+        expect(body.count).toEqual(2);
+      });
+  });
+
+  it("Should return no application exceptions when the search criteria doesn't match.", async () => {
+    const applicationPrefix = "AEEGPAEB";
+    // Arrange
+    await saveFakeApplicationWithApplicationException(
+      db.dataSource,
+      undefined,
+      {
+        // Create data specific to this test suite to avoid retrieving data from other test suites.
+        applicationNumber: generateApplicationNumber(applicationPrefix, 0),
+        applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+      },
+    );
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(getEndpoint("NOMATCH"))
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body.results).toEqual([]);
+        expect(body.count).toEqual(0);
       });
   });
 
@@ -137,3 +123,28 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     await app?.close();
   });
 });
+
+/**
+ * Gets the endpoint to retrieve pending application exceptions.
+ * @returns Endpoint for pending application exceptions.
+ * @param searchCriteria Search criteria for filtering application exceptions.
+ * @param sortField Field to sort the results by. Defaults to "submittedDate".
+ * @param sortOrder Order to sort the results. Can be "ASC" or "DESC". Defaults to "DESC".
+ */
+function getEndpoint(
+  searchCriteria: string,
+  sortField: string = "submittedDate",
+  sortOrder: FieldSortOrder = FieldSortOrder.DESC,
+): string {
+  return `/aest/application-exception?page=0&pageLimit=100&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
+}
+
+/**
+ * Generates an application number based on the provided prefix and index.
+ * @param prefix Application number prefix.
+ * @param index Application number index.
+ * @returns Generated application number.
+ */
+function generateApplicationNumber(prefix: string, index: number): string {
+  return `${prefix}${String(index + 1).padStart(2, "0")}`;
+}
