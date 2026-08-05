@@ -43,7 +43,11 @@ export class ZeebeModule implements OnApplicationShutdown {
     this.logger.log(
       `Signal (${signal}) received: Closing Zeebe client connection...`,
     );
-    await this.zeebeClient.close();
-    this.logger.log("Zeebe client connection closed.");
+    try {
+      await this.zeebeClient.close();
+      this.logger.log("Zeebe client connection closed.");
+    } catch (error: unknown) {
+      this.logger.error("Error during Zeebe client teardown:", error);
+    }
   }
 }
