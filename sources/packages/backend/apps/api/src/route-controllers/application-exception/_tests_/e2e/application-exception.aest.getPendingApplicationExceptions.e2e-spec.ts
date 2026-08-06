@@ -21,7 +21,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     db = createE2EDataSources(dataSource);
   });
 
-  it.only("Should return two pending application exceptions when the search criteria matches and a custom sort (applicationNumber DESC) is applied.", async () => {
+  it("Should return two pending application exceptions when the search criteria matches and a custom sort (applicationNumber DESC) is applied.", async () => {
     const applicationPrefix = "AEEGPAEA";
     // Arrange
     const applicationScenarios: {

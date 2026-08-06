@@ -39,7 +39,7 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
     super(dataSource.getRepository(ApplicationException));
   }
 
-  EXCLUDED_APPLICATION_STATUSES = [
+  private readonly EXCLUDED_APPLICATION_STATUSES = [
     ApplicationStatus.Edited,
     ApplicationStatus.Cancelled,
   ];
