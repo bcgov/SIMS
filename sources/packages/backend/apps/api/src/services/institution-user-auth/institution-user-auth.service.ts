@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { RecordDataModelService, InstitutionUserAuth } from "@sims/sims-db";
+import {
+  ORMCacheManager,
+  RecordDataModelService,
+  InstitutionUserAuth,
+} from "@sims/sims-db";
 import { InstitutionUserAuthorizations } from "./institution-user-auth.models";
 import {
   InstitutionUserRoles,
@@ -13,6 +17,7 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
   constructor(
     dataSource: DataSource,
     private readonly locationService: InstitutionLocationService,
+    private readonly ormCacheManager: ORMCacheManager,
   ) {
     super(dataSource.getRepository(InstitutionUserAuth));
   }
@@ -32,6 +37,7 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
         "authType.user_type",
         "authType.user_role",
       ])
+      .cache(this.ormCacheManager.getUserAuthorizationsCacheId(userName))
       .getRawMany();
 
     if (userAuthorizations.length) {
