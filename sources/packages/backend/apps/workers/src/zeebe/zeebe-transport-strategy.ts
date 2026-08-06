@@ -97,7 +97,7 @@ export class ZeebeTransportStrategy
         await lastValueFrom(jobResult);
       }
       return jobResult;
-    } catch (error) {
+    } catch (error: unknown) {
       jobLogger.error(
         `Unhandled exception while processing job ${job.type} from processInstanceKey ${job.processInstanceKey}`,
       );

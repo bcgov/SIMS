@@ -34,9 +34,13 @@ export class ZeebeModule implements OnApplicationShutdown {
 
   /**
    * Closes the shared Zeebe client connection while the application is
-   * gracefully shutting down. The close call is idempotent, so it is safe
-   * even when a transport strategy (e.g. the workers app) has already
-   * closed the same client.
+   * gracefully shutting down. Unlike TypeORM's DataSource or Bull's queues,
+   * the Zeebe client is not auto-managed by NestJS, so it must be closed
+   * explicitly. `close()` already drains every worker created from this
+   * client before closing the underlying gRPC channel, so no additional
+   * per-worker draining logic is required. The close call is idempotent,
+   * so it is safe even when a transport strategy (e.g. the workers app)
+   * has already closed the same client.
    * @param signal signal that triggered the shutdown.
    */
   async onApplicationShutdown(signal?: string): Promise<void> {

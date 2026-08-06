@@ -1,6 +1,5 @@
 import { Global, Logger, Module, OnApplicationShutdown } from "@nestjs/common";
-import { InjectDataSource, TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { DBEntities, ormConfig } from "./data-source";
 
 @Global()
@@ -18,24 +17,16 @@ import { DBEntities, ormConfig } from "./data-source";
 export class DatabaseModule implements OnApplicationShutdown {
   private readonly logger = new Logger(DatabaseModule.name);
 
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-
-  async onApplicationShutdown(signal?: string): Promise<void> {
+  /**
+   * Logs the shutdown signal. The TypeORM DataSource closes itself
+   * automatically during shutdown through its own hook registered by
+   * `@nestjs/typeorm`'s `TypeOrmModule.forRoot`.
+   * @param signal signal that triggered the shutdown.
+   */
+  onApplicationShutdown(signal?: string): void {
     this.logger.log(
-      `Signal (${signal}) received: Closing TypeORM DataSource connection...`,
+      `Signal (${signal}) received: TypeORM DataSource connection will be closed automatically.`,
     );
-
-    if (this.dataSource.isInitialized) {
-      try {
-        // TypeORM root module auto-closes connections, but calling destroy()
-        // explicitly ensures it happens cleanly before module disposal finishes.
-        await this.dataSource.destroy();
-        this.logger.log("TypeORM connection pool successfully closed.");
-      } catch (error) {
-        this.logger.error("Error during TypeORM connection teardown:", error);
-      }
-    } else {
-      this.logger.log("TypeORM DataSource was already disconnected.");
-    }
   }
 }
+

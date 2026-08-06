@@ -35,7 +35,7 @@ async function bootstrap(): Promise<void> {
   await app.listen(loadTestAPIPort);
 
   // Logging node http server error
-  app.getHttpServer().on("error", (error) => {
+  app.getHttpServer().on("error", (error: unknown) => {
     logger.error(`Load test server received ${error}`, undefined, "Bootstrap");
     exit(1);
   });
@@ -44,7 +44,7 @@ async function bootstrap(): Promise<void> {
     "Bootstrap",
   );
 }
-bootstrap().catch((error) => {
+bootstrap().catch((error: unknown) => {
   const logger = new LoggerService();
   logger.error(
     `Load test gateway bootstrap exception: ${error}`,

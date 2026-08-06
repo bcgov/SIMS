@@ -4,10 +4,7 @@ import {
   BullRootModuleOptions,
   BullModuleOptions,
   BullModuleAsyncOptions,
-  getQueueToken,
 } from "@nestjs/bull";
-import { ModuleRef } from "@nestjs/core";
-import { Queue } from "bull";
 import Redis, { Cluster, RedisOptions } from "ioredis";
 import { ConfigModule, ConfigService } from "@sims/utilities/config";
 import { QueueNames } from "@sims/utilities";
@@ -35,46 +32,15 @@ import { DatabaseModule } from "@sims/sims-db";
 export class QueueModule implements OnApplicationShutdown {
   private readonly logger = new Logger(QueueModule.name);
 
-  constructor(private readonly moduleRef: ModuleRef) {}
-
   /**
-   * Invoked during application shutdown. Intercepts and closes each registered
-   * Bull queue while logging the teardown sequence.
+   * Logs the shutdown signal. Each Bull queue closes itself automatically
+   * during shutdown through its own hook registered by `@nestjs/bull`.
+   * @param signal signal that triggered the shutdown.
    */
-  async onApplicationShutdown(signal?: string): Promise<void> {
-    this.logger.log(`Signal (${signal}) received: Closing queue connections.`);
-
-    const queueNames = Object.values(QueueNames);
-
-    await Promise.allSettled(
-      queueNames.map(async (queueName: string) => {
-        try {
-          const queue = this.moduleRef.get<Queue>(getQueueToken(queueName), {
-            strict: false,
-          });
-
-          if (!queue) {
-            this.logger.warn(
-              `Queue '${queueName}' token not found during shutdown.`,
-            );
-            return;
-          }
-
-          this.logger.log(
-            `Closing queue '${queueName}' and its Redis connections...`,
-          );
-
-          // Closing the queue stops processing and closes all underlying Redis clients
-          await queue.close();
-
-          this.logger.log(`Queue '${queueName}' successfully closed.`);
-        } catch (error) {
-          this.logger.error(`Error closing queue '${queueName}':`, error);
-        }
-      }),
+  onApplicationShutdown(signal?: string): void {
+    this.logger.log(
+      `Signal (${signal}) received: queue connections will be closed automatically.`,
     );
-
-    this.logger.log(`Queue client connections closed.`);
   }
 }
 
