@@ -82,7 +82,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Set a date to be used to verify the audit dates.
     const now = new Date();
     MockDate.set(now);
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const endpoint = getEndpoint(application.applicationException.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -199,7 +199,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Set a date to be used to verify the audit dates.
     const now = new Date();
     MockDate.set(now);
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const endpoint = getEndpoint(application.applicationException.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -285,7 +285,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = "/aest/application-exception/9999999";
+    const endpoint = getEndpoint(9999999);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -319,7 +319,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const endpoint = getEndpoint(application.applicationException.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -374,7 +374,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
         ],
         noteDescription: faker.lorem.words(10),
       };
-      const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+      const endpoint = getEndpoint(application.applicationException.id);
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -463,7 +463,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
         })),
         noteDescription: faker.lorem.words(10),
       };
-      const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+      const endpoint = getEndpoint(application.applicationException.id);
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -503,7 +503,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
           ],
           noteDescription: faker.lorem.words(10),
         };
-        const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+        const endpoint = getEndpoint(application.applicationException.id);
         const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
         // Act/Assert
@@ -533,7 +533,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = "/aest/application-exception/1";
+    const endpoint = getEndpoint(1);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -562,7 +562,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       ],
       noteDescription: "",
     };
-    const endpoint = "/aest/application-exception/1";
+    const endpoint = getEndpoint(1);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -582,3 +582,12 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     await app?.close();
   });
 });
+
+/**
+ * Gets the endpoint to approve the application exception.
+ * @param applicationExceptionId Application exception ID.
+ * @returns Endpoint URL to approve the application exception.
+ */
+function getEndpoint(applicationExceptionId: number): string {
+  return `/aest/application-exception/${applicationExceptionId}`;
+}

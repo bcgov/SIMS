@@ -21,36 +21,50 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should return two pending application exceptions when the search criteria matches and a custom sort (applicationNumber DESC) is applied.", async () => {
-    const applicationPrefix = "AEEGPAEA";
+  it("Should return two ordered pending application exceptions when the search criteria matches and a custom sort (applicationNumber DESC) is applied.", async () => {
     // Arrange
     const applicationScenarios: {
       exceptionStatus: ApplicationExceptionStatus;
       applicationStatus?: ApplicationStatus;
     }[] = [
-      { exceptionStatus: ApplicationExceptionStatus.Pending },
-      { exceptionStatus: ApplicationExceptionStatus.Pending },
-      // Approved exceptions should be excluded.
-      { exceptionStatus: ApplicationExceptionStatus.Approved },
-      // Declined exceptions should be excluded.
-      { exceptionStatus: ApplicationExceptionStatus.Declined },
-      // Edited applications should be excluded.
       {
         exceptionStatus: ApplicationExceptionStatus.Pending,
+        applicationStatus: ApplicationStatus.InProgress,
+      },
+      {
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+        applicationStatus: ApplicationStatus.InProgress,
+      },
+      {
+        // Approved exceptions should be excluded.
+        exceptionStatus: ApplicationExceptionStatus.Approved,
+        applicationStatus: ApplicationStatus.Assessment,
+      },
+      {
+        // Declined exceptions should be excluded.
+        exceptionStatus: ApplicationExceptionStatus.Declined,
+        applicationStatus: ApplicationStatus.InProgress,
+      },
+      {
+        exceptionStatus: ApplicationExceptionStatus.Pending,
+        // Edited applications should be excluded.
         applicationStatus: ApplicationStatus.Edited,
       },
-      // Cancelled applications should be excluded.
+
       {
         exceptionStatus: ApplicationExceptionStatus.Pending,
+        // Cancelled applications should be excluded.
         applicationStatus: ApplicationStatus.Cancelled,
       },
     ];
+
+    const applicationPrefix = "AEEGPAEA";
 
     const applicationPromises = applicationScenarios.map(
       ({ exceptionStatus, applicationStatus }, index) =>
         saveFakeApplicationWithApplicationException(db.dataSource, undefined, {
           applicationStatus,
-          // Create data specific to this test suite to avoid retrieving data from other test suites.
+          // Create data specific to this test case to avoid retrieving data from other tests.
           applicationNumber: generateApplicationNumber(
             applicationPrefix,
             index,
@@ -62,10 +76,15 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     const [application1, application2] = await Promise.all(applicationPromises);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = getEndpoint(
+      applicationPrefix,
+      "applicationNumber",
+      FieldSortOrder.DESC,
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(getEndpoint(applicationPrefix))
+      .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
@@ -95,22 +114,25 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
 
   it("Should return no application exceptions when the search criteria doesn't match.", async () => {
     const applicationPrefix = "AEEGPAEB";
+
     // Arrange
     await saveFakeApplicationWithApplicationException(
       db.dataSource,
       undefined,
       {
-        // Create data specific to this test suite to avoid retrieving data from other test suites.
+        applicationStatus: ApplicationStatus.InProgress,
+        // Create data specific to this test case to avoid retrieving data from other tests.
         applicationNumber: generateApplicationNumber(applicationPrefix, 0),
         applicationExceptionStatus: ApplicationExceptionStatus.Pending,
       },
     );
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = getEndpoint("NOMATCH");
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(getEndpoint("NOMATCH"))
+      .get(endpoint)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
