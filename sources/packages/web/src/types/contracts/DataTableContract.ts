@@ -664,7 +664,6 @@ export const STUDENT_FILE_UPLOADS_UPLOADED_BY_HEADER_KEY = "uploadedBy";
 /**
  * Student File Uploads header key for the action that is conditionaly hidden.
  */
-
 export const STUDENT_FILE_UPLOADS_ACTION_HEADER_KEY = "action";
 /**
  * Student File Uploads header.
