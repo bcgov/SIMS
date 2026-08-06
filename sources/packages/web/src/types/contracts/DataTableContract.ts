@@ -657,15 +657,32 @@ export const ScholasticStandingHistoryHeaders = [
 ];
 
 /**
+ * Student File Uploads header key for the uploadedBy, which is conditionally hidden.
+ */
+export const STUDENT_FILE_UPLOADS_UPLOADED_BY_HEADER_KEY = "uploadedBy";
+
+/**
+ * Student File Uploads header key for the action, which is conditionally hidden.
+ */
+export const STUDENT_FILE_UPLOADS_ACTION_HEADER_KEY = "action";
+/**
  * Student File Uploads header.
  */
 export const StudentFileUploadsHeaders = [
   { title: "Document Purpose", sortable: true, key: "groupName" },
-  { title: "Uploaded by", sortable: false, key: "uploadedBy" },
+  {
+    title: "Uploaded by",
+    sortable: false,
+    key: STUDENT_FILE_UPLOADS_UPLOADED_BY_HEADER_KEY,
+  },
   { title: "Application", sortable: false, key: "applicationNumber" },
   { title: "Date Submitted", sortable: false, key: "createdAt" },
   { title: "File", sortable: false, key: "fileName" },
-  { title: "Action", sortable: false, key: "action" },
+  {
+    title: "Action",
+    sortable: false,
+    key: STUDENT_FILE_UPLOADS_ACTION_HEADER_KEY,
+  },
 ];
 
 /**
