@@ -138,6 +138,8 @@ import {
   StudentFileUploadsHeaders,
   StudentFileUploadsDetails,
   ApiProcessError,
+  STUDENT_FILE_UPLOADS_UPLOADED_BY_HEADER_KEY,
+  STUDENT_FILE_UPLOADS_ACTION_HEADER_KEY,
 } from "@/types";
 import { StudentService } from "@/services/StudentService";
 import {
@@ -181,6 +183,11 @@ export default defineComponent({
       default: false,
     },
     canViewUploadedBy: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    canDeleteFiles: {
       type: Boolean,
       required: false,
       default: false,
@@ -252,11 +259,19 @@ export default defineComponent({
     };
 
     const studentFileUploadHeaders = computed(() => {
-      return props.canViewUploadedBy
-        ? StudentFileUploadsHeaders
-        : StudentFileUploadsHeaders.filter(
-            (header) => header.key !== "uploadedBy",
-          );
+      let headers = StudentFileUploadsHeaders;
+      if (!props.canViewUploadedBy) {
+        headers = headers.filter(
+          (header) =>
+            header.key !== STUDENT_FILE_UPLOADS_UPLOADED_BY_HEADER_KEY,
+        );
+      }
+      if (!props.canDeleteFiles) {
+        headers = headers.filter(
+          (header) => header.key !== STUDENT_FILE_UPLOADS_ACTION_HEADER_KEY,
+        );
+      }
+      return headers;
     });
 
     onMounted(loadStudentFileUploads);

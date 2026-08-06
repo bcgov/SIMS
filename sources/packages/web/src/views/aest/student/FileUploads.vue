@@ -1,11 +1,12 @@
 <template>
   <tab-container>
     <student-file-uploads
-      :studentId="studentId"
-      :canUploadFiles="true"
-      :canDownloadFiles="true"
-      :canViewUploadedBy="true"
-      @uploadFile="uploadFile"
+      :student-id="studentId"
+      :can-upload-files="true"
+      :can-download-files="true"
+      :can-view-uploaded-by="true"
+      :can-delete-files="true"
+      @upload-file="uploadFile"
     >
     </student-file-uploads>
   </tab-container>
