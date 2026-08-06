@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import {
   DataModelService,
-  ORMCacheManager,
   SpecificIdentityProviders,
   Student,
   User,
@@ -27,17 +26,11 @@ export class UserService extends DataModelService<User> {
     @InjectRepository(BetaUsersAuthorizations)
     private readonly betaUsersAuthorizationsRepo: Repository<BetaUsersAuthorizations>,
     private readonly configService: ConfigService,
-    private readonly ormCacheManager: ORMCacheManager,
   ) {
     super(dataSource.getRepository(User));
   }
 
-  /**
-   * Retrieves a user by their user name.
-   * @param userName The user name to look up.
-   * @returns The user if found, otherwise null.
-   */
-  async getUser(userName: string): Promise<User | null> {
+  async getUser(userName: string) {
     return this.repo.findOne({
       where: {
         userName,
@@ -80,7 +73,6 @@ export class UserService extends DataModelService<User> {
       .addSelect("user.identityProviderType", "identityProviderType")
       .leftJoin(Student, "student", "student.user.id = user.id")
       .where("user.userName = :userName", { userName })
-      .cache(this.ormCacheManager.getUserLoginCacheId(userName))
       .getRawOne();
 
     if (!user) {
@@ -122,7 +114,7 @@ export class UserService extends DataModelService<User> {
     isActive: boolean,
     auditUserId: number,
   ): Promise<UpdateResult> {
-    const updateResult = await this.repo
+    return this.repo
       .createQueryBuilder()
       .update(User)
       .set({
@@ -131,37 +123,16 @@ export class UserService extends DataModelService<User> {
       })
       .where("id = :id", { id: userId })
       .execute();
-    // Ensures the change takes effect immediately instead of waiting for the
-    // cached login information to expire.
-    const user = await this.repo.findOne({
-      select: { userName: true },
-      where: { id: userId },
-    });
-    if (user) {
-      await this.ormCacheManager.clearUserLoginCache(user.userName);
-    }
-    return updateResult;
   }
 
-  /**
-   * Updates the user's email address.
-   * @param userId The ID of the user to update.
-   * @param email The new email address.
-   * @returns The result of the update operation.
-   */
-  async updateUserEmail(userId: number, email: string): Promise<UpdateResult> {
+  async updateUserEmail(userId: number, email: string) {
     return this.repo.update(
       { id: userId },
       { email, modifier: { id: userId } as User },
     );
   }
 
-  /**
-   * Retrieves an active user by their user name.
-   * @param userName The user name to look up.
-   * @returns The active user if found, otherwise null.
-   */
-  async getActiveUser(userName: string): Promise<User | null> {
+  async getActiveUser(userName: string): Promise<User> {
     return this.repo.findOne({ where: { userName: userName, isActive: true } });
   }
 
@@ -178,7 +149,7 @@ export class UserService extends DataModelService<User> {
     email: string,
     givenNames: string,
     lastName: string,
-  ): Promise<User> {
+  ) {
     let user = await this.getUser(userName);
     if (!user) {
       user = new User();

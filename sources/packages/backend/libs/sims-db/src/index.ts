@@ -5,4 +5,3 @@ export * from "./error-handler";
 export * from "./data-source";
 export * from "./database-utils";
 export * from "./pagination-utils";
-export * from "./orm-cache-manager";

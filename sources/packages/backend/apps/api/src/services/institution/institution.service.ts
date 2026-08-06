@@ -13,7 +13,6 @@ import {
   getUserFullNameLikeSearch,
   Application,
   InstitutionType,
-  ORMCacheManager,
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
 } from "@sims/sims-db";
 import {
@@ -65,7 +64,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     private readonly bceidService: BCeIDService,
     private readonly institutionUserAuthService: InstitutionUserAuthService,
     private readonly userService: UserService,
-    private readonly ormCacheManager: ORMCacheManager,
   ) {
     super(dataSource.getRepository(Institution));
     this.institutionUserRepo = dataSource.getRepository(InstitutionUser);
@@ -568,18 +566,6 @@ export class InstitutionService extends RecordDataModelService<Institution> {
     } finally {
       await queryRunner.release();
     }
-    // Ensures the change takes effect immediately instead of waiting for the
-    // cached authorizations to expire.
-    const institutionUser = await this.institutionUserRepo.findOne({
-      select: { id: true, user: { userName: true } },
-      relations: { user: true },
-      where: { id: institutionUserId },
-    });
-    if (institutionUser) {
-      await this.ormCacheManager.clearUserAuthorizationsCache(
-        institutionUser.user.userName,
-      );
-    }
   }
 
   /**
@@ -767,9 +753,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       where: {
         id: institutionId,
       },
-      cache: this.ormCacheManager.toFindOptionsCache(
-        this.ormCacheManager.getInstitutionTypeCacheId(institutionId),
-      ),
+      // TODO:Implement the cache again after updating cache eviction strategy.
     });
   }
 
@@ -929,13 +913,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       mailingAddress: transformAddressDetails(updateInstitution.mailingAddress),
     };
     institution.modifier = { id: auditUserId } as User;
-    const updatedInstitution = await this.repo.save(institution);
-    if (options?.allowFullUpdate) {
-      // Ensures the change takes effect immediately instead of waiting for
-      // the cached institution type to expire.
-      await this.ormCacheManager.clearInstitutionTypeCache(institutionId);
-    }
-    return updatedInstitution;
+    return this.repo.save(institution);
   }
 
   /**

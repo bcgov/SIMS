@@ -1,7 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DBEntities, ormConfig } from "./data-source";
-import { ORMCacheManager } from "./orm-cache-manager";
 
 @Global()
 @Module({
@@ -13,7 +12,6 @@ import { ORMCacheManager } from "./orm-cache-manager";
     }),
     TypeOrmModule.forFeature(DBEntities),
   ],
-  providers: [ORMCacheManager],
-  exports: [TypeOrmModule, ORMCacheManager],
+  exports: [TypeOrmModule],
 })
 export class DatabaseModule {}

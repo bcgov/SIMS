@@ -1,5 +1,4 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import {
   authorizeUserTokenForLocation,
@@ -23,25 +22,19 @@ import {
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
 } from "@sims/sims-db";
-import { InstitutionUserAuthService } from "../../../../../src/services";
 
 describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAuth", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let institutionUserAuthService: InstitutionUserAuthService;
   let collegeFLocationA: InstitutionLocation;
   let collegeFLocationB: InstitutionLocation;
   let collegeFInstitution: Institution;
   let institutionUserRole: InstitutionUserTypeAndRole;
 
   beforeAll(async () => {
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    institutionUserAuthService = (module as TestingModule).get(
-      InstitutionUserAuthService,
-    );
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -192,12 +185,6 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     );
     await db.institutionUserAuth.save(institutionUserAuth);
     const user = institutionUser.user;
-    // Warms up the authorizations cache with the user's original permissions.
-    const originalAuthorizations =
-      await institutionUserAuthService.getAuthorizationsByUserName(
-        user.userName,
-      );
-    expect(originalAuthorizations.authorizations).toHaveLength(1);
     const payload = {
       permissions: [
         {
@@ -221,13 +208,6 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
-    // The cached authorizations must reflect the new permissions right away
-    // instead of continuing to report the previous ones until the cache expires.
-    const updatedAuthorizations =
-      await institutionUserAuthService.getAuthorizationsByUserName(
-        user.userName,
-      );
-    expect(updatedAuthorizations.authorizations).toHaveLength(2);
     const savedInstitutionUser = await db.institutionUser.findOne({
       select: {
         user: {
