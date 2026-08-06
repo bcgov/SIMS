@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/bcgov/clamav-unprivileged
-  tag: 3a352496562953dc0d371f265d122a6bc06b2b44 # pragma: allowlist secret
+  repository: clamav/clamav
+  tag: 1.5 # pragma: allowlist secret
   pullPolicy: IfNotPresent
 
 priorityClassName: ""
