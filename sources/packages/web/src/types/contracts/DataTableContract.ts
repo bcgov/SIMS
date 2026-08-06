@@ -657,12 +657,12 @@ export const ScholasticStandingHistoryHeaders = [
 ];
 
 /**
- * Student File Uploads header key for the uploadedBy that is conditionaly hidden.
+ * Student File Uploads header key for the uploadedBy, which is conditionally hidden.
  */
 export const STUDENT_FILE_UPLOADS_UPLOADED_BY_HEADER_KEY = "uploadedBy";
 
 /**
- * Student File Uploads header key for the action that is conditionaly hidden.
+ * Student File Uploads header key for the action, which is conditionally hidden.
  */
 export const STUDENT_FILE_UPLOADS_ACTION_HEADER_KEY = "action";
 /**
