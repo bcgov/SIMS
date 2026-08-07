@@ -26,6 +26,14 @@ import { AssessedExceptionRequest } from "..";
 import { NoteSharedService } from "@sims/services";
 
 /**
+ * Application statuses excluded from application exception operations.
+ */
+const EXCLUDED_APPLICATION_STATUSES = [
+  ApplicationStatus.Edited,
+  ApplicationStatus.Cancelled,
+];
+
+/**
  * Manages student applications exceptions detected upon full-time/part-time application
  * submission, usually related to documents uploaded that must be reviewed.
  */
@@ -178,9 +186,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
         .innerJoin("application.student", "student")
         .innerJoin("student.user", "user")
         .where("exception.id = :exceptionId", { exceptionId })
-        .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.Edited,
-        })
+        .andWhere(
+          "application.applicationStatus NOT IN (:...applicationStatuses)",
+          {
+            applicationStatuses: EXCLUDED_APPLICATION_STATUSES,
+          },
+        )
         .getOne();
 
       if (!applicationException) {
@@ -308,9 +319,12 @@ export class ApplicationExceptionService extends RecordDataModelService<Applicat
       .where("exception.exceptionStatus = :exceptionStatus", {
         exceptionStatus: ApplicationExceptionStatus.Pending,
       })
-      .andWhere("application.applicationStatus != :applicationStatus", {
-        applicationStatus: ApplicationStatus.Edited,
-      });
+      .andWhere(
+        "application.applicationStatus NOT IN (:...applicationStatuses)",
+        {
+          applicationStatuses: EXCLUDED_APPLICATION_STATUSES,
+        },
+      );
 
     if (paginationOptions.searchCriteria) {
       applicationExceptionsQuery
