@@ -155,8 +155,10 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo Deploy Environment: ${{ inputs.environment }}
+          echo "Deploy Environment: $DEPLOY_ENVIRONMENT"
           echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
@@ -184,8 +186,10 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
+          echo "Deploy ENVIRONMENT: $DEPLOY_ENVIRONMENT"
           echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
@@ -215,8 +219,10 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
+          echo "BUILD ENVIRONMENT: $DEPLOY_ENVIRONMENT"
           echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
           echo OC CLI Version: $(oc version)
       - name: Checkout Target Branch
@@ -243,8 +249,10 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
+          echo "Deploy ENVIRONMENT: $DEPLOY_ENVIRONMENT"
           echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
@@ -272,8 +280,10 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
+          echo "Deploy ENVIRONMENT: $DEPLOY_ENVIRONMENT"
           echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
           echo BUILD NAMESPACE: $BUILD_NAMESPACE
           echo OC CLI Version: $(oc version)
