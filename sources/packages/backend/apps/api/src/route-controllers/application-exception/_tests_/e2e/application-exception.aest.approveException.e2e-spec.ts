@@ -487,12 +487,13 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
         const application = await saveFakeApplicationWithApplicationException(
           appDataSource,
           undefined,
-          { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
+          {
+            applicationStatus,
+            applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+          },
         );
-        application.applicationStatus = applicationStatus;
         const [exceptionRequest] =
           application.applicationException.exceptionRequests;
-        await db.application.save(application);
         const payload = {
           assessedExceptionRequests: [
             {

@@ -101,6 +101,14 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 export const APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS =
   "APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS";
 
+/**
+ * Application statuses excluded from PIR operations.
+ */
+const PIR_EXCLUDED_APPLICATION_STATUSES = [
+  ApplicationStatus.Edited,
+  ApplicationStatus.Cancelled,
+];
+
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   constructor(
@@ -121,11 +129,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
   ) {
     super(dataSource.getRepository(Application));
   }
-
-  private readonly PIR_EXCLUDED_APPLICATION_STATUSES = [
-    ApplicationStatus.Edited,
-    ApplicationStatus.Cancelled,
-  ];
 
   /**
    * Submits a Student Application.
@@ -978,7 +981,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere(
         "application.applicationStatus NOT IN (:...applicationStatuses)",
         {
-          applicationStatuses: this.PIR_EXCLUDED_APPLICATION_STATUSES,
+          applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
         },
       )
       .getOne();
@@ -1326,7 +1329,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .andWhere(
           "application.applicationStatus NOT IN (:...applicationStatuses)",
           {
-            applicationStatuses: this.PIR_EXCLUDED_APPLICATION_STATUSES,
+            applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
           },
         )
         .andWhere("application.pirStatus = :pirStatus", {
@@ -1517,10 +1520,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere(
         "application.applicationStatus NOT IN (:...applicationStatuses)",
         {
-          applicationStatuses: [
-            ApplicationStatus.Edited,
-            ApplicationStatus.Cancelled,
-          ],
+          applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
         },
       );
 
@@ -1711,7 +1711,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .andWhere(
           "application.applicationStatus NOT IN (:...applicationStatuses)",
           {
-            applicationStatuses: this.PIR_EXCLUDED_APPLICATION_STATUSES,
+            applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
           },
         )
         .andWhere("application.pirStatus = :pirStatus", {
