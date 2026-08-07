@@ -38,6 +38,7 @@ import {
   FormSubmissionUpdateModifiedIndependentAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
+  FormSubmissionUpdateDisabilityOnCancelAction,
   FormSubmissionCancellationService,
 } from "./services";
 import {
@@ -204,6 +205,8 @@ import {
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionUpdateDisabilityOnDecisionAction,
+    FormSubmissionUpdateDisabilityOnCancelAction,
+
     FormSubmissionActionProcessor,
     FormSubmissionService,
   ],
