@@ -7,31 +7,30 @@ import {
 import { EntityManager } from "typeorm";
 import { FormSubmissionActionModel } from "../../form-submission-action-models";
 import { LoggerService } from "@sims/utilities/logger";
-import { FormSubmissionUpdateDisabilityOnDecisionAction } from "../../form-submission-update-disability-on-decision-action";
+import { FormSubmissionUpdateDisabilityOnCancelAction } from "../../form-submission-update-disability-on-cancel-action";
 
-describe("FormSubmissionUpdateDisabilityOnDecisionAction-applyAction", () => {
+describe("FormSubmissionUpdateDisabilityOnCancelAction-applyAction", () => {
   [
-    {
-      formSubmissionStatus: FormSubmissionStatus.Completed,
-      isApplyActionExpected: true,
-    },
-    {
-      formSubmissionStatus: FormSubmissionStatus.Declined,
-      isApplyActionExpected: true,
-    },
     {
       formSubmissionStatus: FormSubmissionStatus.Pending,
       isApplyActionExpected: false,
     },
     {
-      formSubmissionStatus: FormSubmissionStatus.Cancelled,
+      formSubmissionStatus: FormSubmissionStatus.Completed,
       isApplyActionExpected: false,
+    },
+    {
+      formSubmissionStatus: FormSubmissionStatus.Declined,
+      isApplyActionExpected: false,
+    },
+    {
+      formSubmissionStatus: FormSubmissionStatus.Cancelled,
+      isApplyActionExpected: true,
     },
   ].forEach(({ formSubmissionStatus, isApplyActionExpected }) => {
     it(`Should ${isApplyActionExpected ? "call" : "not call"} applyAction when form submission status is ${formSubmissionStatus}.`, async () => {
       // Arrange
-      const action =
-        new ExposedFormSubmissionUpdateDisabilityOnDecisionAction();
+      const action = new ExposedFormSubmissionUpdateDisabilityOnCancelAction();
       const auditUserId = 123;
       const auditDate = new Date();
       const entityManager = {} as EntityManager;
@@ -43,7 +42,7 @@ describe("FormSubmissionUpdateDisabilityOnDecisionAction-applyAction", () => {
         submissionItems: [
           {
             id: 5,
-            actions: [FormSubmissionActionType.UpdateDisabilityOnDecision],
+            actions: [FormSubmissionActionType.UpdateDisabilityOnCancel],
             submittedData: {} as FormSubmissionSubmittedData,
           },
         ],
@@ -73,7 +72,7 @@ describe("FormSubmissionUpdateDisabilityOnDecisionAction-applyAction", () => {
   });
 });
 
-class ExposedFormSubmissionUpdateDisabilityOnDecisionAction extends FormSubmissionUpdateDisabilityOnDecisionAction {
+class ExposedFormSubmissionUpdateDisabilityOnCancelAction extends FormSubmissionUpdateDisabilityOnCancelAction {
   constructor() {
     super(new LoggerService());
   }
