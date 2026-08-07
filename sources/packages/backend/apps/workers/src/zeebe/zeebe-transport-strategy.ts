@@ -35,7 +35,7 @@ export class ZeebeTransportStrategy
    * Identify all Zeebe workers in the controllers and create the
    * respective Zeebe workers to handle all the jobs.
    */
-  async listen(callback: () => void) {
+  async listen(callback: () => void): Promise<void> {
     const initializationLogger = new Logger("Worker Initialization");
     const handlers = this.getHandlers();
     handlers.forEach((handler: MessageHandler, taskType: string) => {
@@ -86,8 +86,8 @@ export class ZeebeTransportStrategy
       // an Observable. The Promise will be returned from a
       // controller when it finishes as expected returning
       // some value. The Observable will be returned as a
-      // result of an unhandled exception when a RpcExecption
-      // will be generated and the RpcExpectionHandler will
+      // result of an unhandled exception when a RpcException
+      // will be generated and the RpcExceptionHandler will
       // wrap this exception as an Observable object.
       const jobResult = await jobHandler(job);
       if (isObservable(jobResult)) {
@@ -110,7 +110,7 @@ export class ZeebeTransportStrategy
   /**
    * Handles the application close.
    */
-  async close() {
+  async close(): Promise<void> {
     if (this.zeebeClient) {
       await this.zeebeClient.close();
     }
@@ -121,7 +121,7 @@ export class ZeebeTransportStrategy
    * This is an abstract method from the Server class.
    * @see https://docs.nestjs.com/microservices/custom-transport#creating-a-strategy
    */
-  on() {
+  on(): void {
     throw new Error("Not available for this transport strategy.");
   }
 

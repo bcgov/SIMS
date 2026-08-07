@@ -6,8 +6,12 @@ import { ZeebeTransportStrategy } from "./zeebe/zeebe-transport-strategy";
 import { ConfigService } from "@sims/utilities/config";
 import { SystemUsersService } from "@sims/services";
 
-(async () => {
+(async (): Promise<void> => {
   const workers = await NestFactory.create(WorkersModule, { bufferLogs: true });
+
+  // Listens to termination signals so open connections can be gracefully closed.
+  workers.enableShutdownHooks();
+
   const config = workers.get(ConfigService);
   // Get the injected logger.
   const logger = await workers.resolve(LoggerService);

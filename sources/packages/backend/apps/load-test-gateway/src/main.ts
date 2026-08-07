@@ -3,13 +3,16 @@ import { NestFactory } from "@nestjs/core";
 import { LoadTestModule } from "./load-test.module";
 import { KeycloakConfig } from "@sims/auth/config";
 import { LoggerService } from "@sims/utilities/logger";
-import { exit } from "process";
+import { exit } from "node:process";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   await KeycloakConfig.load();
   const app = await NestFactory.create<NestExpressApplication>(LoadTestModule);
+
+  // Listens to termination signals so open connections can be gracefully closed.
+  app.enableShutdownHooks();
 
   // Get the injected logger.
   const logger = await app.resolve(LoggerService);

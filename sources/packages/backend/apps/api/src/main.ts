@@ -13,12 +13,15 @@ import helmet from "helmet";
 import { SystemUsersService } from "@sims/services";
 import { AppExternalModule } from "./app.external.module";
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   await KeycloakConfig.load();
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
     bodyParser: false,
   });
+
+  // Listens to termination signals so open connections can be gracefully closed.
+  app.enableShutdownHooks();
 
   // Trust upstream proxy headers to resolve client IP addresses correctly.
   app.set(TRUST_PROXY_SETTING, TRUSTED_PROXY_HOPS);
