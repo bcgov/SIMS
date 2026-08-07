@@ -17,4 +17,5 @@ export const GC_NOTIFY_TEMPLATE_IDS = {
   InstitutionAddsPendingOfferingNotification:
     "9f0a0f79-05a6-4b81-9e71-6a85906601ef",
   FormerYouthInCareNotification: "636dd0c7-fe23-4a25-826b-03202326b580",
+  InstitutionCompletesPIR: "6975ee6a-f988-4955-9153-127aa551a2a3",
 } as const;

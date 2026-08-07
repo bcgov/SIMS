@@ -11,6 +11,8 @@ import { saveFakeApplicationWithApplicationException } from "../application-exce
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 import { FieldSortOrder } from "@sims/utilities";
 
+const APPLICATION_PREFIX = "AEEGPAE";
+
 describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions", () => {
   let app: INestApplication;
   let db: E2EDataSources;
@@ -58,17 +60,12 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
       },
     ];
 
-    const applicationPrefix = "AEEGPAEA";
-
     const applicationPromises = applicationScenarios.map(
       ({ exceptionStatus, applicationStatus }, index) =>
         saveFakeApplicationWithApplicationException(db.dataSource, undefined, {
           applicationStatus,
           // Create data specific to this test case to avoid retrieving data from other tests.
-          applicationNumber: generateApplicationNumber(
-            applicationPrefix,
-            index,
-          ),
+          applicationNumber: generateApplicationNumber(index),
           applicationExceptionStatus: exceptionStatus,
         }),
     );
@@ -77,7 +74,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const endpoint = getEndpoint(
-      applicationPrefix,
+      APPLICATION_PREFIX,
       "applicationNumber",
       FieldSortOrder.DESC,
     );
@@ -113,8 +110,6 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
   });
 
   it("Should return no application exceptions when the search criteria doesn't match.", async () => {
-    const applicationPrefix = "AEEGPAEB";
-
     // Arrange
     await saveFakeApplicationWithApplicationException(
       db.dataSource,
@@ -122,7 +117,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
       {
         applicationStatus: ApplicationStatus.InProgress,
         // Create data specific to this test case to avoid retrieving data from other tests.
-        applicationNumber: generateApplicationNumber(applicationPrefix, 0),
+        applicationNumber: generateApplicationNumber(6),
         applicationExceptionStatus: ApplicationExceptionStatus.Pending,
       },
     );
@@ -162,11 +157,10 @@ function getEndpoint(
 }
 
 /**
- * Generates an application number based on the provided prefix and index.
- * @param prefix Application number prefix.
+ * Generates an application number based on a fixed prefix and index.
  * @param index Application number index.
  * @returns Generated application number.
  */
-function generateApplicationNumber(prefix: string, index: number): string {
-  return `${prefix}${String(index + 1).padStart(2, "0")}`;
+function generateApplicationNumber(index: number): string {
+  return `${APPLICATION_PREFIX}${String(index + 1).padStart(3, "0")}`;
 }
