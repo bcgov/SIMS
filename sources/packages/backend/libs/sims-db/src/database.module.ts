@@ -25,8 +25,7 @@ export class DatabaseModule implements OnApplicationShutdown {
    */
   onApplicationShutdown(signal?: string): void {
     this.logger.log(
-      `Signal (${signal}) received: TypeORM DataSource connection will be closed automatically.`,
+      `Signal (${signal}) received: Closing TypeORM DataSource connections...`,
     );
   }
 }
-

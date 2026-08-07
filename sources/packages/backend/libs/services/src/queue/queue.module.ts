@@ -39,7 +39,7 @@ export class QueueModule implements OnApplicationShutdown {
    */
   onApplicationShutdown(signal?: string): void {
     this.logger.log(
-      `Signal (${signal}) received: queue connections will be closed automatically.`,
+      `Signal (${signal}) received: Closing Queue connections...`,
     );
   }
 }
