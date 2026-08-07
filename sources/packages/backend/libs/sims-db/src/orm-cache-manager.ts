@@ -5,7 +5,7 @@ import { ORM_CACHE_LIFETIME } from "@sims/utilities";
 
 /**
  * Centralizes the creation and invalidation of the TypeORM query result
- * cache identifiers so cached queries can be foun dand removed by their
+ * cache identifiers so cached queries can be found and removed by their
  * business purpose instead of relying on ad-hoc strings spread across
  * the code.
  */
