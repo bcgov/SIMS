@@ -22,9 +22,9 @@ import {
   createE2EDataSources,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
-  createFakeSINValidation,
   E2EDataSources,
   saveFakeApplication,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { PROGRAM_INFO_STATUS } from "@sims/services/workflow/variables/assessment-gateway";
@@ -74,20 +74,17 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
     // Arrange
     const now = new Date();
     MockDate.set(now);
+    // Create student with SIN validation.
+    const student = await saveFakeStudent(db.dataSource);
     const application = await saveFakeApplication(
       db.dataSource,
-      { institutionLocation: collegeFLocation },
+      { institutionLocation: collegeFLocation, student },
       {
         applicationStatus: ApplicationStatus.InProgress,
         offeringIntensity: OfferingIntensity.fullTime,
         pirStatus: ProgramInfoStatus.required,
       },
     );
-    // Student SIN Validation.
-    application.student.sinValidation = createFakeSINValidation({
-      student: application.student,
-    });
-    await db.student.save(application.student);
 
     const offering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering(
@@ -166,13 +163,18 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
 
     // Assert notification.
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        notificationMessage: { templateId: true },
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.InstitutionCompletesPIR,
         },
         dateSent: IsNull(),
       },
+      relations: { notificationMessage: true },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
       template_id: createdNotification.notificationMessage.templateId,
