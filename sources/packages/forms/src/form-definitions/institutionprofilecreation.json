@@ -93,10 +93,13 @@
         },
         {
           "label": "Verified email",
+          "applyMaskOn": "change",
           "tableView": true,
           "validate": {
-            "required": true
+            "required": true,
+            "maxLength": 300
           },
+          "validateWhenHidden": false,
           "key": "userEmail",
           "attributes": {
             "data-cy": "userEmail"
@@ -450,10 +453,13 @@
               "components": [
                 {
                   "label": "Primary email",
+                  "applyMaskOn": "change",
                   "tableView": true,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "maxLength": 64
                   },
+                  "validateWhenHidden": false,
                   "key": "primaryEmail",
                   "attributes": {
                     "data-cy": "primaryEmail"
@@ -504,11 +510,13 @@
         },
         {
           "label": "Institution website",
+          "applyMaskOn": "change",
           "tableView": true,
           "validate": {
             "required": true,
-            "maxLength": 100
+            "maxLength": 64
           },
+          "validateWhenHidden": false,
           "key": "website",
           "attributes": {
             "data-cy": "website"
@@ -628,10 +636,13 @@
               "components": [
                 {
                   "label": "Email",
+                  "applyMaskOn": "change",
                   "tableView": true,
                   "validate": {
-                    "required": true
+                    "required": true,
+                    "maxLength": 64
                   },
+                  "validateWhenHidden": false,
                   "key": "primaryContactEmail",
                   "attributes": {
                     "data-cy": "primaryContactEmail"
