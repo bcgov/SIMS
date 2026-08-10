@@ -236,6 +236,11 @@ export async function saveFakeFormSubmission(
   }
   formSubmission.submissionStatusUpdatedBy =
     options?.initialValues?.submissionStatusUpdatedBy ?? student.user;
+  if (submissionStatus === FormSubmissionStatus.Cancelled) {
+    formSubmission.cancellationReason =
+      options?.initialValues?.cancellationReason ??
+      FormSubmissionCancellationReason.StudentCancelledSubmission;
+  }
   const numberOfItems = options?.numberOfItems ?? 1;
   formSubmission.formSubmissionItems = Array.from(
     { length: numberOfItems },
