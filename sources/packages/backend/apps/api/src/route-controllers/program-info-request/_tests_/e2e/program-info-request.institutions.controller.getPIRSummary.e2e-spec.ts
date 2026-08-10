@@ -51,7 +51,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getPIRSummary", () => {
     // Arrange
     const applicationScenarios: {
       pirStatus: ProgramInfoStatus;
-      applicationStatus?: ApplicationStatus;
+      applicationStatus: ApplicationStatus;
     }[] = [
       {
         pirStatus: ProgramInfoStatus.completed,
@@ -89,7 +89,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getPIRSummary", () => {
           db.dataSource,
           { institutionLocation: collegeFLocation },
           {
-            applicationNumber: generateApplicationNumber(index),
+            applicationNumber: `${APPLICATION_PREFIX}${index}`,
             applicationStatus,
             applicationData,
             pirStatus,
@@ -151,7 +151,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getPIRSummary", () => {
     await saveFakeApplication(db.dataSource, undefined, {
       applicationStatus: ApplicationStatus.InProgress,
       // Create data specific to this test case to avoid retrieving data from other tests.
-      applicationNumber: generateApplicationNumber(5),
+      applicationNumber: `${APPLICATION_PREFIX}5`,
       pirStatus: ProgramInfoStatus.required,
     });
 
@@ -184,13 +184,4 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getPIRSummary", () => {
  */
 function getEndpoint(locationId: number, search: string): string {
   return `/institutions/location/${locationId}/program-info-request?page=0&pageLimit=100&search=${search}`;
-}
-
-/**
- * Generates an application number based on a fixed prefix and index.
- * @param index Application number index.
- * @returns Generated application number.
- */
-function generateApplicationNumber(index: number): string {
-  return `${APPLICATION_PREFIX}${String(index + 1).padStart(3, "0")}`;
 }

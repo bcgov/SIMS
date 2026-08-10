@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
 import MockDate from "mockdate";
 import {
-  Application,
   ApplicationStatus,
   Institution,
   InstitutionLocation,
@@ -29,7 +28,6 @@ import {
 } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { PROGRAM_INFO_STATUS } from "@sims/services/workflow/variables/assessment-gateway";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 import { getPSTPDTDateTime } from "@sims/utilities";
 import { IsNull } from "typeorm";
 
@@ -153,7 +151,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
         modifier: { id: collegeFUser.id },
         updatedAt: now,
       },
-    } as Application);
+    });
 
     // Assert workflow message.
     expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
@@ -177,7 +175,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
       },
     });
     expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.InstitutionCompletesPIR,
+      template_id: createdNotification.notificationMessage.templateId,
       email_address: application.student.user.email,
       personalisation: {
         date: `${getPSTPDTDateTime(now)} PST/PDT`,

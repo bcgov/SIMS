@@ -524,17 +524,18 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
   it("Should throw bad request error when the payload has one or more assessed exception request with invalid exception request status.", async () => {
     // Arrange
+    const EXCEPTION_REQUEST_ID = 1;
     const payload = {
       assessedExceptionRequests: [
         {
-          exceptionRequestId: 1,
+          exceptionRequestId: EXCEPTION_REQUEST_ID,
           // Pending is an invalid status for assessing an exception request.
           exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
         },
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = getEndpoint(1);
+    const endpoint = getEndpoint(EXCEPTION_REQUEST_ID);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -554,16 +555,17 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
   it("Should throw bad request error when payload has empty note description.", async () => {
     // Arrange
+    const EXCEPTION_REQUEST_ID = 1;
     const payload = {
       assessedExceptionRequests: [
         {
-          exceptionRequestId: 1,
+          exceptionRequestId: EXCEPTION_REQUEST_ID,
           exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
         },
       ],
       noteDescription: "",
     };
-    const endpoint = getEndpoint(1);
+    const endpoint = getEndpoint(EXCEPTION_REQUEST_ID);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert

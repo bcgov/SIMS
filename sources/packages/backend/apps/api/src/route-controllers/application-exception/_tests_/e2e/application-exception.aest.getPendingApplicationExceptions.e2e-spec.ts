@@ -27,7 +27,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
     // Arrange
     const applicationScenarios: {
       exceptionStatus: ApplicationExceptionStatus;
-      applicationStatus?: ApplicationStatus;
+      applicationStatus: ApplicationStatus;
     }[] = [
       {
         exceptionStatus: ApplicationExceptionStatus.Pending,
@@ -65,7 +65,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
         saveFakeApplicationWithApplicationException(db.dataSource, undefined, {
           applicationStatus,
           // Create data specific to this test case to avoid retrieving data from other tests.
-          applicationNumber: generateApplicationNumber(index),
+          applicationNumber: `${APPLICATION_PREFIX}${index}`,
           applicationExceptionStatus: exceptionStatus,
         }),
     );
@@ -117,7 +117,7 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
       {
         applicationStatus: ApplicationStatus.InProgress,
         // Create data specific to this test case to avoid retrieving data from other tests.
-        applicationNumber: generateApplicationNumber(6),
+        applicationNumber: `${APPLICATION_PREFIX}6`,
         applicationExceptionStatus: ApplicationExceptionStatus.Pending,
       },
     );
@@ -150,17 +150,8 @@ describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationException
  */
 function getEndpoint(
   searchCriteria: string,
-  sortField: string = "submittedDate",
-  sortOrder: FieldSortOrder = FieldSortOrder.DESC,
+  sortField = "submittedDate",
+  sortOrder = FieldSortOrder.DESC,
 ): string {
   return `/aest/application-exception?page=0&pageLimit=100&sortField=${sortField}&sortOrder=${sortOrder}&searchCriteria=${searchCriteria}`;
-}
-
-/**
- * Generates an application number based on a fixed prefix and index.
- * @param index Application number index.
- * @returns Generated application number.
- */
-function generateApplicationNumber(index: number): string {
-  return `${APPLICATION_PREFIX}${String(index + 1).padStart(3, "0")}`;
 }
