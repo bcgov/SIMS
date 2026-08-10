@@ -22,7 +22,7 @@ import {
 } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 
-const APPLICATION_PREFIX = "PIRSUMM";
+const APPLICATION_PREFIX = "PIRSUMM00";
 
 describe("ProgramInfoRequestInstitutionsController(e2e)-getPIRSummary", () => {
   let app: INestApplication;

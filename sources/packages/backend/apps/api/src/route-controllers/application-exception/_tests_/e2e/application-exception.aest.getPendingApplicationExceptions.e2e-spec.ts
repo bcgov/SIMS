@@ -11,7 +11,7 @@ import { saveFakeApplicationWithApplicationException } from "../application-exce
 import { createE2EDataSources, E2EDataSources } from "@sims/test-utils";
 import { FieldSortOrder } from "@sims/utilities";
 
-const APPLICATION_PREFIX = "AEEGPAE";
+const APPLICATION_PREFIX = "AEEGPAE00";
 
 describe("ApplicationExceptionAESTController(e2e)-getPendingApplicationExceptions", () => {
   let app: INestApplication;
