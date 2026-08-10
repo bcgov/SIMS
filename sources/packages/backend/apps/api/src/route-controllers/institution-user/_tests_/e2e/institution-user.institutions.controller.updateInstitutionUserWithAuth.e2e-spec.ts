@@ -23,7 +23,7 @@ import {
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
 } from "@sims/sims-db";
-import { InstitutionUserAuthService } from "../../../../../src/services";
+import { InstitutionUserAuthService } from "../../../../services";
 
 describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAuth", () => {
   let app: INestApplication;
@@ -192,12 +192,6 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     );
     await db.institutionUserAuth.save(institutionUserAuth);
     const user = institutionUser.user;
-    // Warms up the authorizations cache with the user's original permissions.
-    const originalAuthorizations =
-      await institutionUserAuthService.getAuthorizationsByUserName(
-        user.userName,
-      );
-    expect(originalAuthorizations.authorizations).toHaveLength(1);
     const payload = {
       permissions: [
         {
@@ -216,6 +210,13 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     const endpoint = `/institutions/institution-user/${institutionUser.id}`;
 
     // Act/Assert
+    // Warms up the authorizations cache with the user's original permissions.
+    const originalAuthorizations =
+      await institutionUserAuthService.getAuthorizationsByUserName(
+        user.userName,
+      );
+    expect(originalAuthorizations.authorizations).toHaveLength(1);
+
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)

@@ -20,7 +20,7 @@ import {
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
 } from "@sims/sims-db";
-import { UserService } from "../../../../../src/services";
+import { UserService } from "../../../../services";
 
 describe("InstitutionUserInstitutionsController(e2e)-updateUserStatus", () => {
   let app: INestApplication;
@@ -58,14 +58,14 @@ describe("InstitutionUserInstitutionsController(e2e)-updateUserStatus", () => {
     );
     await db.institutionUserAuth.save(institutionUserAuth);
     const { userName } = institutionUser.user;
+    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const endpoint = getEndpoint(institutionUser.id);
+
+    // Act/Assert
     // Warms up the login information cache with the user still active.
     const activeLoginInfo = await userService.getUserLoginInfo(userName);
     expect(activeLoginInfo.isActive).toBe(true);
 
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
-    const endpoint = `/institutions/institution-user/${institutionUser.id}/status`;
-
-    // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
       .send({ isActive: false })
@@ -87,3 +87,12 @@ describe("InstitutionUserInstitutionsController(e2e)-updateUserStatus", () => {
     await app?.close();
   });
 });
+
+/**
+ * Get the update status endpoint for a specific institution user.
+ * @param institutionUserId institution user identifier.
+ * @returns update status endpoint for the institution user.
+ */
+function getEndpoint(institutionUserId: number): string {
+  return `/institutions/institution-user/${institutionUserId}/status`;
+}

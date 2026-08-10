@@ -25,6 +25,9 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
   async getAuthorizationsByUserName(
     userName: string,
   ): Promise<InstitutionUserAuthorizations> {
+    const cache = this.ormCacheManager.getOptionsCache(
+      this.ormCacheManager.getUserAuthorizationsCacheId(userName),
+    );
     const userAuthorizations = await this.repo
       .createQueryBuilder("userAuth")
       .leftJoin("userAuth.institutionUser", "institutionUser")
@@ -37,7 +40,7 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
         "authType.user_type",
         "authType.user_role",
       ])
-      .cache(this.ormCacheManager.getUserAuthorizationsCacheId(userName))
+      .cache(cache.id, cache.milliseconds)
       .getRawMany();
 
     if (userAuthorizations.length) {

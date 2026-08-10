@@ -17,10 +17,11 @@ import {
   CANADA_COUNTRY_CODE,
   BC_PROVINCE_CODE,
   UNITED_STATES_COUNTRY_CODE,
+  INSTITUTION_TYPE_BC_PRIVATE,
 } from "@sims/sims-db/constant";
 import { ONTARIO_PROVINCE_CODE } from "@sims/test-utils/constants";
 import { getInstitutionProfilePayload } from "./institution.utils";
-import { InstitutionService } from "../../../../../src/services";
+import { InstitutionService } from "../../../../services";
 
 describe("InstitutionAESTController(e2e)-updateInstitution", () => {
   let app: INestApplication;
@@ -52,14 +53,15 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
     payload.classification = InstitutionClassification.Public;
     const endpoint = `/aest/institution/${institution.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
     // Warms up the institution type cache with the original institution type.
     const originalInstitutionType =
       await institutionService.getInstitutionTypeById(institution.id);
-    expect(originalInstitutionType.institutionType.id).not.toBe(
-      OUT_OF_PROVINCE_PUBLIC_INSTITUTION_ID,
+    expect(originalInstitutionType.institutionType.id).toBe(
+      INSTITUTION_TYPE_BC_PRIVATE,
     );
 
-    // Act/Assert
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)

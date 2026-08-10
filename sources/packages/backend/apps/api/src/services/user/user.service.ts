@@ -72,6 +72,9 @@ export class UserService extends DataModelService<User> {
    * @returns User login info if the user was found, otherwise null.
    */
   async getUserLoginInfo(userName: string): Promise<UserLoginInfo> {
+    const cache = this.ormCacheManager.getOptionsCache(
+      this.ormCacheManager.getUserLoginCacheId(userName),
+    );
     const user = await this.repo
       .createQueryBuilder("user")
       .select("user.id", "id")
@@ -80,7 +83,7 @@ export class UserService extends DataModelService<User> {
       .addSelect("user.identityProviderType", "identityProviderType")
       .leftJoin(Student, "student", "student.user.id = user.id")
       .where("user.userName = :userName", { userName })
-      .cache(this.ormCacheManager.getUserLoginCacheId(userName))
+      .cache(cache.id, cache.milliseconds)
       .getRawOne();
 
     if (!user) {

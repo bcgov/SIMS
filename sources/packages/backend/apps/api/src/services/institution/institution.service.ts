@@ -562,23 +562,23 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       // Add new associations.
       await queryRunner.manager.save(newAuthorizationEntries);
       await queryRunner.commitTransaction();
+      // Ensures the change takes effect immediately instead of waiting for the
+      // cached authorizations to expire.
+      const institutionUser = await this.institutionUserRepo.findOne({
+        select: { user: { userName: true } },
+        relations: { user: true },
+        where: { id: institutionUserId },
+      });
+      if (institutionUser) {
+        await this.ormCacheManager.clearUserAuthorizationsCache(
+          institutionUser.user.userName,
+        );
+      }
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
       await queryRunner.release();
-    }
-    // Ensures the change takes effect immediately instead of waiting for the
-    // cached authorizations to expire.
-    const institutionUser = await this.institutionUserRepo.findOne({
-      select: { id: true, user: { userName: true } },
-      relations: { user: true },
-      where: { id: institutionUserId },
-    });
-    if (institutionUser) {
-      await this.ormCacheManager.clearUserAuthorizationsCache(
-        institutionUser.user.userName,
-      );
     }
   }
 
@@ -769,7 +769,7 @@ export class InstitutionService extends RecordDataModelService<Institution> {
       where: {
         id: institutionId,
       },
-      cache: this.ormCacheManager.toFindOptionsCache(
+      cache: this.ormCacheManager.getOptionsCache(
         this.ormCacheManager.getInstitutionTypeCacheId(institutionId),
       ),
     });
