@@ -1,6 +1,5 @@
-FROM artifacts.developer.gov.bc.ca/docker-remote/clamav:1.2
+FROM artifacts.developer.gov.bc.ca/docker-remote/clamav/clamav:1.5.4
 RUN freshclam
 # Copy the clamd.conf file into the container
-COPY clam-av/clamd.conf /etc/clamav/clamd.conf
-COPY "clam-av/scripts/docker-entrypoint-unprivileged.sh" "/init"
-RUN chmod +x /init
+COPY clamd.conf /etc/clamav/clamd.conf
+ENTRYPOINT ["/init-unprivileged"]

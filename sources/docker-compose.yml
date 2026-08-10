@@ -247,8 +247,8 @@ services:
     container_name: clamav
     restart: unless-stopped
     build:
-      context: ./packages/
-      dockerfile: clam-av/Dockerfile.dev
+      context: ./packages/clam-av
+      dockerfile: Dockerfile.dev
     stdin_open: true
     environment:
       - CLAMAV_NO_CLAMD="false"
