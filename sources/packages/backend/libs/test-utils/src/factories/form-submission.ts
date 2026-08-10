@@ -3,6 +3,7 @@ import {
   DynamicFormConfiguration,
   FormCategory,
   FormSubmission,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionItemDecision,
   FormSubmissionStatus,
@@ -122,6 +123,10 @@ export async function saveFakeFormSubmissionFromInputTestData(
   ].includes(testInputData.submissionStatus)
     ? testInputData.ministryAuditUser
     : student.user;
+  formSubmission.cancellationReason =
+    testInputData.submissionStatus === FormSubmissionStatus.Cancelled
+      ? FormSubmissionCancellationReason.StudentCancelledSubmission
+      : null;
   formSubmission.formSubmissionItems = [];
   await db.formSubmission.save(formSubmission);
   for (const itemInputData of testInputData.formSubmissionItems) {

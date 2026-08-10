@@ -11,6 +11,7 @@ import {
   FormCategory,
   FormSubmissionItem,
   FormSubmissionStatus,
+  FormSubmissionCancellationReason,
   Student,
   User,
 } from ".";
@@ -124,4 +125,15 @@ export class FormSubmission extends RecordDataModel {
     type: "timestamptz",
   })
   submissionStatusUpdatedOn: Date;
+
+  /**
+   * Reason for cancellation of the form submission.
+   */
+  @Column({
+    name: "cancellation_reason",
+    type: "enum",
+    enum: FormSubmissionCancellationReason,
+    enumName: "form_submission_cancellation_reasons",
+  })
+  cancellationReason: FormSubmissionCancellationReason;
 }

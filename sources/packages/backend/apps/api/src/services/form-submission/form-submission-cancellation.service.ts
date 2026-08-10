@@ -7,7 +7,11 @@ import {
   FormSubmissionService,
 } from "..";
 import { DataSource, EntityManager } from "typeorm";
-import { FormSubmission, FormSubmissionStatus } from "@sims/sims-db";
+import {
+  FormSubmission,
+  FormSubmissionCancellationReason,
+  FormSubmissionStatus,
+} from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 
 @Injectable()
@@ -83,6 +87,7 @@ export class FormSubmissionCancellationService {
    */
   async cancelFormSubmission(
     submissionId: number,
+    cancellationReason: FormSubmissionCancellationReason,
     auditUserId: number,
     options?: { studentId?: number },
   ): Promise<void> {
@@ -95,18 +100,41 @@ export class FormSubmissionCancellationService {
         },
       );
       await this.validate(submissionId, entityManager, options);
-      const now = new Date();
-      const auditUser = { id: auditUserId };
-      await entityManager.getRepository(FormSubmission).update(
-        { id: submissionId },
-        {
-          submissionStatus: FormSubmissionStatus.Cancelled,
-          submissionStatusUpdatedOn: now,
-          submissionStatusUpdatedBy: auditUser,
-          modifier: auditUser,
-          updatedAt: now,
-        },
+      await this.processCancellation(
+        submissionId,
+        cancellationReason,
+        auditUserId,
+        entityManager,
       );
     });
+  }
+
+  /**
+   * Process the cancellation of a form submission.
+   * The process currently involves updating the form submission status to 'Cancelled' and setting the cancellation reason.
+   * @param formSubmissionId form submission ID to cancel.
+   * @param cancellationReason reason for the cancellation of the form submission.
+   * @param auditUserId ID of the user performing the cancellation.
+   * @param entityManager entity manager to execute in transaction.
+   */
+  private async processCancellation(
+    formSubmissionId: number,
+    cancellationReason: FormSubmissionCancellationReason,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const now = new Date();
+    const auditUser = { id: auditUserId };
+    await entityManager.getRepository(FormSubmission).update(
+      { id: formSubmissionId },
+      {
+        submissionStatus: FormSubmissionStatus.Cancelled,
+        cancellationReason,
+        submissionStatusUpdatedOn: now,
+        submissionStatusUpdatedBy: auditUser,
+        modifier: auditUser,
+        updatedAt: now,
+      },
+    );
   }
 }
