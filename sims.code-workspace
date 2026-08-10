@@ -244,6 +244,8 @@
       "studentdependantsappeal",
       "studentdisabilityappeal",
       "studentfinancialinformationappeal",
+      "studyend",
+      "studystart",
       "supplieraddress",
       "suppliername",
       "suppliernumber",

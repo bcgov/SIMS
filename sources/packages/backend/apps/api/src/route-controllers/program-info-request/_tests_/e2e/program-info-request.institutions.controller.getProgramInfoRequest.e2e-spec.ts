@@ -3,7 +3,6 @@ import request from "supertest";
 import {
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
-  createFakeEducationProgram,
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
@@ -12,6 +11,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
   createFakeUser,
@@ -20,9 +20,11 @@ import {
 } from "@sims/test-utils";
 import {
   ApplicationData,
+  ApplicationExceptionStatus,
   ApplicationStatus,
   InstitutionLocation,
   ProgramInfoStatus,
+  User,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { getUserFullName } from "../../../../utilities";
@@ -31,6 +33,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
+  let sharedUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -49,6 +52,8 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
+    sharedUser = createFakeUser();
+    await db.user.save(sharedUser);
   });
 
   it(
@@ -87,7 +92,10 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
-      const endpoint = `/institutions/location/${collegeFLocation.id}/program-info-request/application/${applicationRequiredPIR.id}`;
+      const endpoint = getEndpoint(
+        collegeFLocation.id,
+        applicationRequiredPIR.id,
+      );
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -125,10 +133,8 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
         studystartDate: getISODateOnlyString(addDays(-30)),
         studyendDate: getISODateOnlyString(addDays(30)),
       } as ApplicationData;
-      // User to be the audit user for the program submission.
-      const user = await db.user.save(createFakeUser());
       const pirProgram = await db.educationProgram.save(
-        createFakeEducationProgram({ user }),
+        createFakeEducationProgram({ auditUser: sharedUser }),
       );
       // Application with PIR required.
       const applicationRequiredPIR = await saveFakeApplication(
@@ -147,7 +153,10 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
-      const endpoint = `/institutions/location/${collegeFLocation.id}/program-info-request/application/${applicationRequiredPIR.id}`;
+      const endpoint = getEndpoint(
+        collegeFLocation.id,
+        applicationRequiredPIR.id,
+      );
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -182,10 +191,8 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
     const pirAssessedDate = addDays(-1);
     // Student to be shared between applications.
     const student = await saveFakeStudent(db.dataSource);
-    // User to be the audit user for the offerings.
-    const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
-      auditUser: savedUser,
+      auditUser: sharedUser,
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
     const pirProgram = pirOffering.educationProgram;
@@ -225,7 +232,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = `/institutions/location/${collegeFLocation.id}/program-info-request/application/${autoCompletedPIR.id}`;
+    const endpoint = getEndpoint(collegeFLocation.id, autoCompletedPIR.id);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -256,7 +263,67 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
       });
   });
 
+  [ApplicationStatus.Edited, ApplicationStatus.Cancelled].forEach(
+    (applicationStatus) => {
+      it(`Should throw not found error when the application has ${applicationStatus} status and the PIR is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
+        // Arrange
+        // Dynamic data used to retrieve PIR information when no offering was provided.
+        const applicationData = {
+          workflowName: "workflowName",
+          studystartDate: getISODateOnlyString(addDays(-30)),
+          studyendDate: getISODateOnlyString(addDays(30)),
+        } as ApplicationData;
+        const pirProgram = await db.educationProgram.save(
+          createFakeEducationProgram({ auditUser: sharedUser }),
+        );
+        // Application with PIR required.
+        const applicationRequiredPIR = await saveFakeApplication(
+          db.dataSource,
+          {
+            institutionLocation: collegeFLocation,
+            pirProgram: pirProgram,
+          },
+          {
+            pirStatus: ProgramInfoStatus.required,
+            applicationStatus: applicationStatus,
+            applicationData,
+          },
+        );
+        // Institution token.
+        const institutionUserToken = await getInstitutionToken(
+          InstitutionTokenTypes.CollegeFUser,
+        );
+        const endpoint = getEndpoint(
+          collegeFLocation.id,
+          applicationRequiredPIR.id,
+        );
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(institutionUserToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.NOT_FOUND)
+          .expect({
+            statusCode: HttpStatus.NOT_FOUND,
+            message:
+              "The application was not found under the provided location or the application is not expecting a Program Information Request (PIR) at this moment.",
+            error: "Not Found",
+          });
+      });
+    },
+  );
+
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/**
+ * Gets the endpoint to retrieve a PIR for an institution location.
+ * @param locationId Institution location ID.
+ * @param applicationId Application ID associated with the PIR.
+ * @returns Endpoint to retrieve the PIR.
+ */
+function getEndpoint(locationId: number, applicationId: number): string {
+  return `/institutions/location/${locationId}/program-info-request/application/${applicationId}`;
+}

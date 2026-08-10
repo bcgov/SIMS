@@ -101,6 +101,14 @@ export const INSUFFICIENT_APPLICATION_SEARCH_PARAMS =
 export const APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS =
   "APPLICATION_CHANGE_REQUEST_ALREADY_IN_PROGRESS";
 
+/**
+ * Application statuses excluded from PIR operations.
+ */
+const PIR_EXCLUDED_APPLICATION_STATUSES = [
+  ApplicationStatus.Edited,
+  ApplicationStatus.Cancelled,
+];
+
 @Injectable()
 export class ApplicationService extends RecordDataModelService<Application> {
   constructor(
@@ -970,9 +978,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.pirStatus != :pirStatus", {
         pirStatus: ProgramInfoStatus.notRequired,
       })
-      .andWhere("application.applicationStatus != :editedStatus", {
-        editedStatus: ApplicationStatus.Edited,
-      })
+      .andWhere(
+        "application.applicationStatus NOT IN (:...applicationStatuses)",
+        {
+          applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
+        },
+      )
       .getOne();
   }
 
@@ -1315,9 +1326,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .innerJoin("student.user", "user")
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
-        .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.Edited,
-        })
+        .andWhere(
+          "application.applicationStatus NOT IN (:...applicationStatuses)",
+          {
+            applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
+          },
+        )
         .andWhere("application.pirStatus = :pirStatus", {
           pirStatus: ProgramInfoStatus.required,
         })
@@ -1503,9 +1517,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
       .andWhere("application.pirStatus != :nonPirStatus", {
         nonPirStatus: ProgramInfoStatus.notRequired,
       })
-      .andWhere("application.applicationStatus != :editedStatus", {
-        editedStatus: ApplicationStatus.Edited,
-      });
+      .andWhere(
+        "application.applicationStatus NOT IN (:...applicationStatuses)",
+        {
+          applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
+        },
+      );
 
     if (search) {
       query.andWhere(
@@ -1691,9 +1708,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
         .innerJoin("student.user", "user")
         .where("application.id = :applicationId", { applicationId })
         .andWhere("application.location.id = :locationId", { locationId })
-        .andWhere("application.applicationStatus != :applicationStatus", {
-          applicationStatus: ApplicationStatus.Edited,
-        })
+        .andWhere(
+          "application.applicationStatus NOT IN (:...applicationStatuses)",
+          {
+            applicationStatuses: PIR_EXCLUDED_APPLICATION_STATUSES,
+          },
+        )
         .andWhere("application.pirStatus = :pirStatus", {
           pirStatus: ProgramInfoStatus.required,
         })
