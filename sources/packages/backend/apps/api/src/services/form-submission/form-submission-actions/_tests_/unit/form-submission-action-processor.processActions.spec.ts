@@ -1,4 +1,5 @@
-import { Mocked, TestBed } from "@suites/unit";
+import type { Mocked } from "@suites/doubles.jest";
+import { TestBed } from "@suites/unit";
 import { EntityManager } from "typeorm";
 import { FormSubmissionActionProcessor } from "../../../form-submission-actions/form-submission-action-processor";
 import { FormSubmissionCreateAppealAssessmentAction } from "../../../form-submission-actions/form-submission-create-appeal-assessment-action";
@@ -29,12 +30,18 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     );
     // Allow setting the action types directly to avoid spying on getters
     // that would not work as expected for protected properties.
-    (formSubmissionCreateAppealAssessmentAction as Record<string, unknown>)[
-      "actionType"
-    ] = FormSubmissionActionType.CreateStudentAppealAssessment;
-    (formSubmissionUpdateModifiedIndependentAction as Record<string, unknown>)[
-      "actionType"
-    ] = FormSubmissionActionType.UpdateModifiedIndependent;
+    (
+      formSubmissionCreateAppealAssessmentAction as unknown as Record<
+        string,
+        unknown
+      >
+    )["actionType"] = FormSubmissionActionType.CreateStudentAppealAssessment;
+    (
+      formSubmissionUpdateModifiedIndependentAction as unknown as Record<
+        string,
+        unknown
+      >
+    )["actionType"] = FormSubmissionActionType.UpdateModifiedIndependent;
   });
 
   beforeEach(() => {
