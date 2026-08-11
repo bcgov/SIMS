@@ -342,7 +342,7 @@
                       ],
                       "content": "Course load:",
                       "refreshOnChange": false,
-                      "key": "html114",
+                      "key": "courseLoadLabel",
                       "type": "htmlelement",
                       "input": false,
                       "tableView": false,
