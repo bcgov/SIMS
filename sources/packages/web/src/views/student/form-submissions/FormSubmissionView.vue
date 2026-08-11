@@ -32,6 +32,12 @@
           </template>
         </body-header>
       </template>
+      <template #alerts>
+        <cancelled-form-submission-banner
+          :is-application-scoped="!!formSubmission?.applicationId"
+          :cancellation-reason="formSubmission?.cancellationReason"
+        />
+      </template>
       <content-group>
         <form-submission-items
           :submission-items="formSubmissionItems"
@@ -46,6 +52,7 @@
 <script setup lang="ts">
 import { PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
+import CancelledFormSubmissionBanner from "@/components/form-submissions/CancelledFormSubmissionBanner.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { BackTarget, FormSubmissionItem } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";
@@ -71,7 +78,7 @@ const props = defineProps({
   },
 });
 const snackBar = useSnackBar();
-const formSubmission = ref<FormSubmissionAPIOutDTO>();
+const formSubmission = ref({} as FormSubmissionAPIOutDTO);
 const formSubmissionItems = ref([] as FormSubmissionItem[]);
 const loading = ref(true);
 

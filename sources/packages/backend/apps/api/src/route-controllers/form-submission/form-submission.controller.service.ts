@@ -122,6 +122,7 @@ export class FormSubmissionControllerService {
       applicationNumber: submission.application?.applicationNumber,
       submittedDate: submission.submittedDate,
       assessedDate: submission.assessedDate,
+      cancellationReason: submission.cancellationReason,
       statusUpdatedDate: submission.submissionStatusUpdatedOn,
       submissionItems: submission.formSubmissionItems.map((item) => ({
         id: item.id,
@@ -285,6 +286,7 @@ export class FormSubmissionControllerService {
       submittedDate: submission.submittedDate,
       studentId: submission.student.id,
       studentFullName: getUserFullName(submission.student.user),
+      cancellationReason: submission.cancellationReason,
       submissionItems,
     };
   }

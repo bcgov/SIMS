@@ -7,6 +7,12 @@
         :loading="formSubmissionLoading"
       />
     </template>
+    <template #alerts>
+      <cancelled-form-submission-banner
+        :is-application-scoped="!!formSubmission?.applicationId"
+        :cancellation-reason="formSubmission?.cancellationReason"
+      />
+    </template>
     <content-group>
       <v-form ref="approvalsForm">
         <error-summary :errors="approvalsForm?.errors" />
@@ -204,13 +210,19 @@ import {
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
 import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
+import CancelledFormSubmissionBanner from "@/components/form-submissions/CancelledFormSubmissionBanner.vue";
 import { SharedRouteConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { HttpStatusCode, isAxiosError } from "axios";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
-  "id" | "formCategory" | "status" | "canAssessFinalDecision"
+  | "id"
+  | "formCategory"
+  | "status"
+  | "canAssessFinalDecision"
+  | "cancellationReason"
+  | "applicationId"
 >;
 
 export default defineComponent({
@@ -222,6 +234,7 @@ export default defineComponent({
     FormSubmissionDecisionHistory,
     ConfirmModal,
     FormSubmissionApprovalHeader,
+    CancelledFormSubmissionBanner,
   },
   props: {
     formSubmissionId: {
@@ -300,9 +313,11 @@ export default defineComponent({
         // Keeps only the necessary properties for this UI.
         formSubmission.value = {
           id: submission.id,
+          applicationId: submission.applicationId,
           formCategory: submission.formCategory,
           status: submission.status,
           canAssessFinalDecision: !!submission.canAssessFinalDecision,
+          cancellationReason: submission.cancellationReason,
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.

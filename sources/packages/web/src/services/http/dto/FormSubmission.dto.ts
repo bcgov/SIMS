@@ -1,5 +1,6 @@
 import {
   FormCategory,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
 } from "@/types";
@@ -41,6 +42,7 @@ interface FormSubmissionBaseAPIOutDTO {
   applicationNumber?: string;
   submittedDate: Date;
   assessedDate?: Date;
+  cancellationReason?: FormSubmissionCancellationReason;
   studentId: number;
   studentFullName: string;
 }

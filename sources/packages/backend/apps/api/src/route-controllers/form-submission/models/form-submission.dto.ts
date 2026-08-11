@@ -1,5 +1,6 @@
 import {
   FormCategory,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   NOTE_DESCRIPTION_MAX_LENGTH,
@@ -66,6 +67,7 @@ abstract class FormSubmissionBaseAPIOutDTO {
   applicationNumber?: string;
   submittedDate: Date;
   assessedDate?: Date;
+  cancellationReason?: FormSubmissionCancellationReason;
 }
 
 /**
