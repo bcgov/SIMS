@@ -138,7 +138,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-bold",
+                      "className": "label-bold d-block mt-2",
                       "attrs": [
                         {
                           "attr": "",
@@ -155,8 +155,8 @@
                     },
                     {
                       "label": "HTML",
-                      "tag": "p",
-                      "className": "label-value mt-2",
+                      "tag": "span",
+                      "className": "label-value",
                       "attrs": [
                         {
                           "attr": "",
@@ -184,7 +184,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-bold",
+                      "className": "label-bold d-block mt-2",
                       "attrs": [
                         {
                           "attr": "",
@@ -202,7 +202,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-value mt-2",
+                      "className": "label-value",
                       "attrs": [
                         {
                           "attr": "",
@@ -241,7 +241,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-bold",
+                      "className": "label-bold d-block mt-2",
                       "attrs": [
                         {
                           "attr": "",
@@ -258,8 +258,8 @@
                     },
                     {
                       "label": "HTML",
-                      "tag": "p",
-                      "className": "label-value mt-2",
+                      "tag": "span",
+                      "className": "label-value",
                       "attrs": [
                         {
                           "attr": "",
@@ -287,7 +287,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-bold",
+                      "className": "label-bold d-block mt-2",
                       "attrs": [
                         {
                           "attr": "",
@@ -305,7 +305,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-value mt-2",
+                      "className": "label-value",
                       "attrs": [
                         {
                           "attr": "",
@@ -333,7 +333,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-bold",
+                      "className": "label-bold d-block mt-2",
                       "attrs": [
                         {
                           "attr": "",
@@ -356,7 +356,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-value mt-2",
+                      "className": "label-value",
                       "attrs": [
                         {
                           "attr": "",
@@ -389,7 +389,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-bold",
+                      "className": "label-bold d-block mt-2",
                       "attrs": [
                         {
                           "attr": "",
@@ -407,7 +407,7 @@
                     {
                       "label": "HTML",
                       "tag": "span",
-                      "className": "label-value mt-2",
+                      "className": "label-value",
                       "attrs": [
                         {
                           "attr": "",
@@ -451,7 +451,8 @@
               "content": "<b>Please note that the funding you receive may differ from the eligible amount.</b>",
               "type": "htmlelement",
               "hideLabel": true,
-              "tableView": false
+              "tableView": false,
+              "className": "mt-2"
             },
             {
               "key": "panelContent",
