@@ -5,7 +5,7 @@ import { getSQLDirPath, getSQLFileData } from "./sqlLoader";
 
 describe("Test SQL Loader", () => {
   it("should exist sql dir", () => {
-    expect(existsSync(getSQLDirPath()));
+    expect(existsSync(getSQLDirPath())).toBe(true);
   });
 
   it("should get sql file data", () => {
