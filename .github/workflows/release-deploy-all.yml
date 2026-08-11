@@ -155,11 +155,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy Environment: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy Environment: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -184,11 +187,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -215,10 +221,13 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo OC CLI Version: $(oc version)
+          echo BUILD ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -243,11 +252,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -272,11 +284,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
