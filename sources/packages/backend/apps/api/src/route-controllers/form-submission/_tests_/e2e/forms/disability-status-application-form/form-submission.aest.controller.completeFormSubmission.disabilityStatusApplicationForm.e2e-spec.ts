@@ -129,6 +129,7 @@ describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINI
                     actions: [
                       FormSubmissionActionType.UpdateDisabilityOnSubmission,
                       FormSubmissionActionType.UpdateDisabilityOnDecision,
+                      FormSubmissionActionType.UpdateDisabilityOnCancel,
                     ],
                     requestedDisabilityStatus,
                   },
@@ -266,6 +267,7 @@ describe(`FormSubmissionAESTController(e2e)-completeFormSubmission-${FORM_DEFINI
                     actions: [
                       FormSubmissionActionType.UpdateDisabilityOnSubmission,
                       FormSubmissionActionType.UpdateDisabilityOnDecision,
+                      FormSubmissionActionType.UpdateDisabilityOnCancel,
                     ],
                     requestedDisabilityStatus,
                   },
