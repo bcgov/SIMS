@@ -44,5 +44,9 @@ jobs:
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Manage ClamAV
         working-directory: "./devops/helm/clam-av/main/"
+        env:
+          ACTION: ${{ inputs.action }}
+          NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          IMAGE_TAG: ${{ inputs.clamavImageTag }}
         run: |
-          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} IMAGE_TAG=${{ inputs.clamavImageTag }}
+          make "$ACTION" NAMESPACE="$NAMESPACE" IMAGE_TAG="$IMAGE_TAG"
