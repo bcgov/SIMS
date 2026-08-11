@@ -96,6 +96,8 @@ describe(`FormSubmissionStudentsController(e2e)-cancelForm-${FORM_DEFINITION_NAM
       disabilityStatus: DisabilityStatus.NotRequested,
       disabilityStatusUpdatedBy: { id: student.user.id },
       disabilityStatusUpdatedOn: now,
+      modifier: { id: student.user.id },
+      updatedAt: now,
     });
   });
 
@@ -145,10 +147,10 @@ describe(`FormSubmissionStudentsController(e2e)-cancelForm-${FORM_DEFINITION_NAM
 
       const updatedStudent = await getStudentDisabilityStatus(db, student.id);
       // Validate that disability status was not updated.
-      expect(updatedStudent!.disabilityStatus).toBe(currentDisabilityStatus);
+      expect(updatedStudent.disabilityStatus).toBe(currentDisabilityStatus);
       // Validate that audit fields were not updated since disability status was not updated.
-      expect(updatedStudent!.disabilityStatusUpdatedBy).toBeNull();
-      expect(updatedStudent!.disabilityStatusUpdatedOn).toBeNull();
+      expect(updatedStudent.disabilityStatusUpdatedBy).toBeNull();
+      expect(updatedStudent.disabilityStatusUpdatedOn).toBeNull();
     });
   });
 
@@ -182,8 +184,10 @@ function getStudentDisabilityStatus(
       disabilityStatus: true,
       disabilityStatusUpdatedBy: { id: true },
       disabilityStatusUpdatedOn: true,
+      modifier: { id: true },
+      updatedAt: true,
     },
-    relations: { disabilityStatusUpdatedBy: true },
+    relations: { disabilityStatusUpdatedBy: true, modifier: true },
     where: { id: studentId },
     loadEagerRelations: false,
   });
