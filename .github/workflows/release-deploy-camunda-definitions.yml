@@ -57,7 +57,7 @@ jobs:
           node-version: "26.x"
       - name: Downloading packages
         working-directory: "./sources/packages/backend"
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Executing deployment
         working-directory: "./sources/packages/backend"
         run: npm run deploy:camunda:definitions
