@@ -172,6 +172,7 @@ export class AssessmentControllerService {
         assessment.disbursementSchedules,
         { maskMSFAA: options?.maskMSFAA },
       ),
+      courseLoad: assessment.offering.courseLoad,
     };
   }
 
