@@ -37,6 +37,7 @@ import {
   InstitutionRestrictionService,
   FormSubmissionService,
   FormSubmissionAuthorizationService,
+  FormSubmissionCancellationService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -201,6 +202,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     InstitutionRestrictionService,
     FormSubmissionAuthorizationService,
     FormSubmissionService,
+    FormSubmissionCancellationService,
     FormSubmissionControllerService,
   ],
 })

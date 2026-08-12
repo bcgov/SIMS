@@ -6,7 +6,7 @@ import {
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
   FormSubmissionService,
 } from "..";
-import { DataSource, EntityManager } from "typeorm";
+import { DataSource, EntityManager, In, Not } from "typeorm";
 import {
   FormSubmission,
   FormSubmissionCancellationReason,
@@ -100,13 +100,48 @@ export class FormSubmissionCancellationService {
         },
       );
       await this.validate(submissionId, entityManager, options);
-      await this.processCancellation(
-        submissionId,
+      await this.processCancellations(
+        [submissionId],
         cancellationReason,
         auditUserId,
         entityManager,
       );
     });
+  }
+
+  /**
+   * Cancel all the form submissions associated with the given application.
+   * @param applicationId The ID of the application whose form submissions are to be cancelled.
+   * @param cancellationReason The reason for cancelling the form submissions.
+   * @param auditUserId The ID of the user performing the cancellation.
+   * @param entityManager The entity manager to execute in transaction.
+   */
+  async cancelApplicationScopedFormSubmissions(
+    applicationId: number,
+    cancellationReason: FormSubmissionCancellationReason,
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const formSubmissionRepo = entityManager.getRepository(FormSubmission);
+    // Acquire a DB lock for the form submissions to prevent concurrent updates.
+    const formSubmissionsToCancel = await formSubmissionRepo.find({
+      select: { id: true },
+      where: {
+        application: { id: applicationId },
+        submissionStatus: Not(FormSubmissionStatus.Cancelled),
+      },
+      lock: { mode: "pessimistic_write" },
+    });
+    // If there is no pending form submission to cancel then return.
+    if (!formSubmissionsToCancel.length) {
+      return;
+    }
+    await this.processCancellations(
+      formSubmissionsToCancel.map((submission) => submission.id),
+      cancellationReason,
+      auditUserId,
+      entityManager,
+    );
   }
 
   /**
@@ -117,8 +152,8 @@ export class FormSubmissionCancellationService {
    * @param auditUserId ID of the user performing the cancellation.
    * @param entityManager entity manager to execute in transaction.
    */
-  private async processCancellation(
-    formSubmissionId: number,
+  private async processCancellations(
+    formSubmissionIds: number[],
     cancellationReason: FormSubmissionCancellationReason,
     auditUserId: number,
     entityManager: EntityManager,
@@ -126,7 +161,7 @@ export class FormSubmissionCancellationService {
     const now = new Date();
     const auditUser = { id: auditUserId };
     await entityManager.getRepository(FormSubmission).update(
-      { id: formSubmissionId },
+      { id: In(formSubmissionIds) },
       {
         submissionStatus: FormSubmissionStatus.Cancelled,
         cancellationReason,

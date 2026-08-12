@@ -18,6 +18,9 @@ import {
   InstitutionUserAuthService,
   ApplicationRestrictionBypassService,
   InstitutionRestrictionService,
+  FormSubmissionCancellationService,
+  FormSubmissionService,
+  FormSubmissionAuthorizationService,
 } from "./services";
 import {
   DisbursementOverawardService,
@@ -64,6 +67,9 @@ import { AuthModule } from "./auth/auth.module";
     WorkflowClientService,
     StudentRestrictionSharedService,
     RestrictionSharedService,
+    FormSubmissionAuthorizationService,
+    FormSubmissionService,
+    FormSubmissionCancellationService,
     DisbursementOverawardService,
     NoteSharedService,
     InstitutionLocationService,

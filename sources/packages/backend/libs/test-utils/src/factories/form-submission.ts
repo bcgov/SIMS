@@ -113,7 +113,11 @@ export async function saveFakeFormSubmissionFromInputTestData(
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;
   formSubmission.submissionStatus = testInputData.submissionStatus;
-  if (testInputData.submissionStatus !== FormSubmissionStatus.Pending) {
+  if (
+    [FormSubmissionStatus.Completed, FormSubmissionStatus.Declined].includes(
+      testInputData.submissionStatus,
+    )
+  ) {
     formSubmission.assessedDate = now;
     formSubmission.assessedBy = testInputData.ministryAuditUser;
   }

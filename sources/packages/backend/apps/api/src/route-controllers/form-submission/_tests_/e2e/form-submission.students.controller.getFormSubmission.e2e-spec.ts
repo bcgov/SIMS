@@ -19,6 +19,7 @@ import {
 import { TestingModule } from "@nestjs/testing";
 import {
   FormCategory,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   User,
@@ -101,6 +102,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
           submittedDate: formSubmission.submittedDate.toISOString(),
           assessedDate: null,
           canCancelSubmission: false,
+          cancellationReason: null,
           statusUpdatedDate:
             formSubmission.submissionStatusUpdatedOn.toISOString(),
           submissionItems: [
@@ -186,6 +188,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
           submittedDate: formSubmission.submittedDate.toISOString(),
           assessedDate: formSubmission.assessedDate.toISOString(),
           canCancelSubmission: false,
+          cancellationReason: null,
           statusUpdatedDate:
             formSubmission.submissionStatusUpdatedOn.toISOString(),
           submissionItems: [
@@ -213,6 +216,71 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
                 formConfigs.studentAppealApplicationB.formDefinitionName,
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Declined,
+              },
+            },
+          ],
+        }),
+      );
+  });
+
+  it("Should get a form submission with cancellation reason when the form submission is cancelled.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource);
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Cancelled,
+      ministryAuditUser: ministryUser,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+          decisions: [
+            {
+              decisionStatus: FormSubmissionDecisionStatus.Pending,
+            },
+          ],
+        },
+      ],
+    });
+    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
+    const endpoint = `/students/form-submission/${formSubmission.id}`;
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, formSubmission.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toEqual({
+          id: formSubmission.id,
+          applicationId: application.id,
+          applicationNumber: application.applicationNumber,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Cancelled,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          assessedDate: null,
+          canCancelSubmission: false,
+          cancellationReason:
+            FormSubmissionCancellationReason.StudentCancelledSubmission,
+          statusUpdatedDate:
+            formSubmission.submissionStatusUpdatedOn.toISOString(),
+          submissionItems: [
+            {
+              id: formSubmissionItemA.id,
+              formType: formConfigs.studentAppealApplicationA.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationA.id,
+              submissionData: formSubmissionItemA.submittedData,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationA.formDefinitionName,
+              currentDecision: {
+                decisionStatus: FormSubmissionDecisionStatus.Pending,
               },
             },
           ],
