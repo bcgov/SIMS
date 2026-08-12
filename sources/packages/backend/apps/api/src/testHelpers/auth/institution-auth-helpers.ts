@@ -32,6 +32,23 @@ import {
 import { DataSource, IsNull } from "typeorm";
 import { InstitutionTokenTypes } from "./institution-token-helpers";
 
+const ormCacheManagers = new WeakMap<DataSource, ORMCacheManager>();
+
+/**
+ * Reuses a single ORMCacheManager instance per data source instead of
+ * creating a new one on every cache invalidation call.
+ * @param dataSource data source the manager will be bound to.
+ * @returns cached ORMCacheManager instance for the given data source.
+ */
+function getOrmCacheManager(dataSource: DataSource): ORMCacheManager {
+  let ormCacheManager = ormCacheManagers.get(dataSource);
+  if (!ormCacheManager) {
+    ormCacheManager = new ORMCacheManager(dataSource, new LoggerService());
+    ormCacheManagers.set(dataSource, ormCacheManager);
+  }
+  return ormCacheManager;
+}
+
 /**
  * Get the institution and user associated with the institution user token type.
  * This data is currently created on DB by the test-db-seeding prior to E2E tests execution.
@@ -108,7 +125,7 @@ async function authorizeUserForLocation(
   locationId: number,
   type: InstitutionUserTypes,
   role?: InstitutionUserRoles,
-) {
+): Promise<void> {
   const userTypeAndRole = await dataSource
     .getRepository(InstitutionUserTypeAndRole)
     .findOne({
@@ -132,8 +149,8 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
-  const ormCacheManager = new ORMCacheManager(dataSource, new LoggerService());
-  await ormCacheManager.clearUserAuthorizationsCache(userName);
+  // Clear the cached authorizations during e2e tests to avoid serving stale data to the user after the new permission is granted.
+  await getOrmCacheManager(dataSource).clearUserAuthorizationsCache(userName);
 }
 
 /**
@@ -153,7 +170,7 @@ export async function authorizeUserTokenForLocation(
   options?: {
     institutionUserType?: InstitutionUserTypes;
   },
-) {
+): Promise<void> {
   const { institution, user } = await getAuthRelatedEntities(
     dataSource,
     userTokenType,
@@ -164,11 +181,9 @@ export async function authorizeUserTokenForLocation(
     // This helper writes directly to the database bypassing the application's
     // own cache invalidation, so the cached institution locations ids must be
     // cleared here to avoid serving a stale list to admin authorizations.
-    const ormCacheManager = new ORMCacheManager(
-      dataSource,
-      new LoggerService(),
+    await getOrmCacheManager(dataSource).clearInstitutionLocationsCache(
+      institution.id,
     );
-    await ormCacheManager.clearInstitutionLocationsCache(institution.id);
   }
   await authorizeUserForLocation(
     dataSource,
@@ -193,7 +208,7 @@ export async function getAuthorizedLocation(
   db: E2EDataSources,
   institutionTokenType: InstitutionTokenTypes,
   institutionUserType: InstitutionUserTypes,
-) {
+): Promise<InstitutionLocation> {
   const { institution } = await getAuthRelatedEntities(
     db.dataSource,
     institutionTokenType,
