@@ -80,6 +80,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         "offering.studyStartDate",
         "offering.studyEndDate",
         "offering.offeringIntensity",
+        "offering.courseLoad",
         "disbursementSchedule.id",
         "disbursementSchedule.documentNumber",
         "disbursementSchedule.disbursementDate",

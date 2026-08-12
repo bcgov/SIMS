@@ -189,6 +189,7 @@ export class AssessmentNOAAPIOutDTO {
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
   offeringName: string;
+  courseLoad?: number;
 }
 
 /**
