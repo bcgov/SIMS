@@ -49,4 +49,8 @@ jobs:
           NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
           IMAGE_TAG: ${{ inputs.clamavImageTag }}
         run: |
+          if [[ ! "$IMAGE_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+            echo "Error: IMAGE_TAG must be a valid OCI image tag."
+            exit 1
+          fi
           make "$ACTION" NAMESPACE="$NAMESPACE" IMAGE_TAG="$IMAGE_TAG"
