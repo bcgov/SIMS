@@ -161,6 +161,14 @@ export async function authorizeUserTokenForLocation(
   if (!location.id) {
     location.institution = institution;
     await dataSource.getRepository(InstitutionLocation).save(location);
+    // This helper writes directly to the database bypassing the application's
+    // own cache invalidation, so the cached institution locations ids must be
+    // cleared here to avoid serving a stale list to admin authorizations.
+    const ormCacheManager = new ORMCacheManager(
+      dataSource,
+      new LoggerService(),
+    );
+    await ormCacheManager.clearInstitutionLocationsCache(institution.id);
   }
   await authorizeUserForLocation(
     dataSource,

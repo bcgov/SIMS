@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   InstitutionLocation,
+  ORMCacheManager,
   User,
   RestrictionActionType,
 } from "@sims/sims-db";
@@ -23,6 +24,7 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
     dataSource: DataSource,
     private readonly designationAgreementLocationService: DesignationAgreementLocationService,
     private readonly restrictionSharedService: RestrictionSharedService,
+    private readonly ormCacheManager: ORMCacheManager,
   ) {
     super(dataSource.getRepository(InstitutionLocation));
   }
@@ -78,7 +80,11 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
       creator: auditUser,
     } as InstitutionLocation;
 
-    return this.repo.save(saveLocation);
+    const savedLocation = await this.repo.save(saveLocation);
+    // Ensures the new location takes effect immediately instead of waiting for
+    // the cached institution locations ids to expire.
+    await this.ormCacheManager.clearInstitutionLocationsCache(institutionId);
+    return savedLocation;
   }
 
   /**
@@ -245,11 +251,15 @@ export class InstitutionLocationService extends RecordDataModelService<Instituti
    * @returns institution locations ids.
    */
   async getInstitutionLocationsIds(institutionId: number): Promise<number[]> {
+    const cache = this.ormCacheManager.getOptionsCache(
+      this.ormCacheManager.getInstitutionLocationsCacheId(institutionId),
+    );
     const allLocations = await this.repo
       .createQueryBuilder("locations")
       .select("locations.id")
       .leftJoin("locations.institution", "institutions")
       .where("institutions.id = :institutionId", { institutionId })
+      .cache(cache.id, cache.milliseconds)
       .getMany();
 
     return allLocations.map((location) => location.id);

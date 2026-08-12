@@ -208,27 +208,26 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     // Institution token.
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
     const endpoint = `/institutions/institution-user/${institutionUser.id}`;
-
-    // Act/Assert
     // Warms up the authorizations cache with the user's original permissions.
     const originalAuthorizations =
       await institutionUserAuthService.getAuthorizationsByUserName(
         user.userName,
       );
-    expect(originalAuthorizations.authorizations).toHaveLength(1);
 
+    // Act
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
+
+    // Assert
     // The cached authorizations must reflect the new permissions right away
     // instead of continuing to report the previous ones until the cache expires.
     const updatedAuthorizations =
       await institutionUserAuthService.getAuthorizationsByUserName(
         user.userName,
       );
-    expect(updatedAuthorizations.authorizations).toHaveLength(2);
     const savedInstitutionUser = await db.institutionUser.findOne({
       select: {
         user: {
@@ -245,6 +244,8 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
       },
       where: { id: institutionUser.id },
     });
+    expect(originalAuthorizations.authorizations).toHaveLength(1);
+    expect(updatedAuthorizations.authorizations).toHaveLength(2);
     expect(savedInstitutionUser.user).toEqual(
       expect.objectContaining({
         userName: user.userName,

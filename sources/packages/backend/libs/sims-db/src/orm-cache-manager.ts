@@ -75,6 +75,25 @@ export class ORMCacheManager {
   }
 
   /**
+   * Cache identifier for the query that loads all location ids of an
+   * institution, used to authorize institution admin users during login.
+   * @param institutionId institution id.
+   * @returns cache identifier.
+   */
+  getInstitutionLocationsCacheId(institutionId: number): string {
+    return `institution-locations_${institutionId}`;
+  }
+
+  /**
+   * Removes the cached institution locations ids. Must be called whenever
+   * a location is added to the institution.
+   * @param institutionId institution id.
+   */
+  async clearInstitutionLocationsCache(institutionId: number): Promise<void> {
+    await this.clearCache(this.getInstitutionLocationsCacheId(institutionId));
+  }
+
+  /**
    * Builds the cache options, using the default ORM cache lifetime, to be
    * used either as the `cache` option of a `find`/`findOne` call or as the
    * arguments of a query builder's `cache` method.
