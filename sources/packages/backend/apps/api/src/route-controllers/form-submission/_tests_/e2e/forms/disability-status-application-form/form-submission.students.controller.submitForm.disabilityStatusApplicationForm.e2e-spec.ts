@@ -18,6 +18,7 @@ import { TestingModule } from "@nestjs/testing";
 import {
   DisabilityStatus,
   DynamicFormConfiguration,
+  FormSubmissionActionType,
   StudentFile,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
@@ -265,8 +266,9 @@ function getDisabilityStatusFormData(
         dynamicConfigurationId: dynamicFormConfigId,
         formData: {
           actions: [
-            "UpdateDisabilityOnSubmission",
-            "UpdateDisabilityOnDecision",
+            FormSubmissionActionType.UpdateDisabilityOnSubmission,
+            FormSubmissionActionType.UpdateDisabilityOnDecision,
+            FormSubmissionActionType.UpdateDisabilityOnCancel,
           ],
           requestedDisabilityStatus: options?.requestedDisabilityStatus ?? "PD",
           disabilityCategories: {

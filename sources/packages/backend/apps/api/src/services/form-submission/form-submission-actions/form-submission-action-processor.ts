@@ -8,6 +8,7 @@ import { FormSubmissionActionModel } from "./form-submission-action-models";
 import { FormSubmissionUpdateNonPunitiveWithdrawalAction } from "./form-submission-update-non-punitive-withdrawal-action";
 import { FormSubmissionUpdateDisabilityOnSubmissionAction } from "./form-submission-update-disability-on-submission-action";
 import { FormSubmissionUpdateDisabilityOnDecisionAction } from "./form-submission-update-disability-on-decision-action";
+import { FormSubmissionUpdateDisabilityOnCancelAction } from "./form-submission-update-disability-on-cancel-action";
 
 /**
  * Keeps a list of all available form submission actions that can potentially
@@ -23,6 +24,7 @@ export class FormSubmissionActionProcessor {
     updateNonPunitiveScholasticStandingWithdrawalAction: FormSubmissionUpdateNonPunitiveWithdrawalAction,
     updateDisabilityOnSubmissionAction: FormSubmissionUpdateDisabilityOnSubmissionAction,
     updateDisabilityOnDecisionAction: FormSubmissionUpdateDisabilityOnDecisionAction,
+    updateDisabilityOnCancelAction: FormSubmissionUpdateDisabilityOnCancelAction,
   ) {
     this.actions = [
       createAppealAssessmentAction,
@@ -30,6 +32,7 @@ export class FormSubmissionActionProcessor {
       updateNonPunitiveScholasticStandingWithdrawalAction,
       updateDisabilityOnSubmissionAction,
       updateDisabilityOnDecisionAction,
+      updateDisabilityOnCancelAction,
     ];
   }
 
