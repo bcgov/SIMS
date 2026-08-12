@@ -340,7 +340,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Course load:",
+                      "content": "Course load",
                       "refreshOnChange": false,
                       "key": "courseLoadLabel",
                       "type": "htmlelement",
@@ -396,7 +396,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Funded Weeks of Study:",
+                      "content": "Funded Weeks of Study",
                       "refreshOnChange": false,
                       "key": "html116",
                       "type": "htmlelement",
