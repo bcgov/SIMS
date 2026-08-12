@@ -1,4 +1,5 @@
-import { Mocked, TestBed } from "@suites/unit";
+import { TestBed } from "@suites/unit";
+import type { Mocked } from "@suites/doubles.jest";
 import { EntityManager } from "typeorm";
 import { FormSubmissionActionProcessor } from "../../../form-submission-actions/form-submission-action-processor";
 import { FormSubmissionCreateAppealAssessmentAction } from "../../../form-submission-actions/form-submission-create-appeal-assessment-action";
