@@ -52,6 +52,7 @@ import {
   FormSubmissionAuthorizationService,
   FormSubmissionUpdateDisabilityOnSubmissionAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
+  FormSubmissionUpdateDisabilityOnCancelAction,
   DisabilityProfileService,
   FormSubmissionCancellationService,
 } from "./services";
@@ -279,6 +280,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     FormSubmissionUpdateNonPunitiveWithdrawalAction,
     FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionUpdateDisabilityOnDecisionAction,
+    FormSubmissionUpdateDisabilityOnCancelAction,
     FormSubmissionActionProcessor,
     FormSubmissionApprovalService,
     DisabilityProfileService,

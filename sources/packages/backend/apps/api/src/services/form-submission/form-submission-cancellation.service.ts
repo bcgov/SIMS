@@ -13,12 +13,14 @@ import {
   FormSubmissionStatus,
 } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
+import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 
 @Injectable()
 export class FormSubmissionCancellationService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly formSubmissionService: FormSubmissionService,
+    private readonly formSubmissionActionProcessor: FormSubmissionActionProcessor,
   ) {}
 
   /**
@@ -104,6 +106,13 @@ export class FormSubmissionCancellationService {
         [submissionId],
         cancellationReason,
         auditUserId,
+        entityManager,
+      );
+      // Process the form submission actions applicable on cancellation.
+      await this.formSubmissionActionProcessor.processActions(
+        submissionId,
+        auditUserId,
+        now,
         entityManager,
       );
     });

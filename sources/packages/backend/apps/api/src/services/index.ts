@@ -34,6 +34,7 @@ export * from "./form-submission/form-submission-actions/form-submission-update-
 export * from "./form-submission/form-submission-actions/form-submission-update-non-punitive-withdrawal-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-submission-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-decision-action";
+export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-cancel-action";
 export * from "./application/application.service";
 export * from "./student-file/student-file.service";
 export * from "./program-year/program-year.service";

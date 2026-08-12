@@ -92,6 +92,11 @@ export enum FormSubmissionActionType {
    * status application form.
    */
   UpdateDisabilityOnDecision = "UpdateDisabilityOnDecision",
+  /**
+   * Action to update the student's disability status when the disability
+   * status application form is cancelled by the student.
+   */
+  UpdateDisabilityOnCancel = "UpdateDisabilityOnCancel",
 }
 
 export interface FormSubmissionSubmittedData extends Record<string, unknown> {
