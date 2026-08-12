@@ -1,5 +1,4 @@
-import { TestBed } from "@suites/unit";
-import type { Mocked } from "@suites/doubles.jest";
+import { Mocked, TestBed } from "@suites/unit";
 import {
   StudentAppealActionsProcessor,
   StudentAppealCreateAssessmentAction,
