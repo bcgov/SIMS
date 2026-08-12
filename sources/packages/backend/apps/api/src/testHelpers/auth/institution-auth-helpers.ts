@@ -6,8 +6,10 @@ import {
   InstitutionUserRoles,
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
+  ORMCacheManager,
   User,
 } from "@sims/sims-db";
+import { LoggerService } from "@sims/utilities/logger";
 import {
   createFakeInstitutionLocation,
   createFakeInstitutionUser,
@@ -92,6 +94,8 @@ export async function getAuthRelatedEntities(
  * @param dataSource manage the database access.
  * @param institutionId related institution.
  * @param userId user to be associated with the institution.
+ * @param userName user name (same as Keycloak) associated with the userId,
+ * needed to invalidate the cached authorizations for the user.
  * @param locationId location to be granted access to.
  * @param type type of authorization.
  * @param role authorization role.
@@ -100,6 +104,7 @@ async function authorizeUserForLocation(
   dataSource: DataSource,
   institutionId: number,
   userId: number,
+  userName: string,
   locationId: number,
   type: InstitutionUserTypes,
   role?: InstitutionUserRoles,
@@ -127,6 +132,8 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
+  const ormCacheManager = new ORMCacheManager(dataSource, new LoggerService());
+  await ormCacheManager.clearUserAuthorizationsCache(userName);
 }
 
 /**
@@ -159,6 +166,7 @@ export async function authorizeUserTokenForLocation(
     dataSource,
     institution.id,
     user.id,
+    user.userName,
     location.id,
     options?.institutionUserType ?? InstitutionUserTypes.user,
   );
