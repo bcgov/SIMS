@@ -55,7 +55,7 @@ jobs:
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Validate Date Time Format
-        if: ${{ inputs.action == 'upgrade' && inputs.restore_enabled }}
+        if: ${{ inputs.action == 'upgrade' && (inputs.restore_enabled || inputs.restore_target != '') }}
         env:
           RESTORE_TARGET: ${{ inputs.restore_target }}
         run: |
