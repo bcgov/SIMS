@@ -123,7 +123,7 @@ export default defineComponent({
     };
 
     const confirmEditApplication = async (applicationId: number) => {
-      if (await editApplicationModal.value.showModal()) {
+      if (await editApplicationModal.value.showModal(applicationId)) {
         await goToApplicationForm(applicationId);
       }
     };

@@ -181,7 +181,7 @@ export default defineComponent({
     };
 
     const confirmEditApplication = async () => {
-      if (await editApplicationModal.value.showModal()) {
+      if (await editApplicationModal.value.showModal(props.id)) {
         await editApplication();
       }
     };

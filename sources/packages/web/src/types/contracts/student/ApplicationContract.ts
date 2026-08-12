@@ -245,3 +245,16 @@ export type StudentApplicationFormData = {
   applicationOfferingIntensityValue: OfferingIntensity;
 } & ApplicationData &
   Record<string, unknown>;
+
+export enum RelationshipStatus {
+  Married = "married",
+  CommonLaw = "common-law",
+  Single = "single",
+  Divorced = "divorced",
+  Widowed = "widowed",
+}
+
+export enum DependantStatus {
+  Dependant = "dependant",
+  Independent = "independent",
+}
