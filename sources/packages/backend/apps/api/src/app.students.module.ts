@@ -206,7 +206,6 @@ import {
     FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionUpdateDisabilityOnDecisionAction,
     FormSubmissionUpdateDisabilityOnCancelAction,
-
     FormSubmissionActionProcessor,
     FormSubmissionService,
   ],

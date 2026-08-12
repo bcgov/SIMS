@@ -12,7 +12,7 @@ import {
   FormSubmissionCancellationReason,
   FormSubmissionStatus,
 } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 
 @Injectable()
@@ -108,13 +108,6 @@ export class FormSubmissionCancellationService {
         auditUserId,
         entityManager,
       );
-      // Process the form submission actions applicable on cancellation.
-      await this.formSubmissionActionProcessor.processActions(
-        submissionId,
-        auditUserId,
-        now,
-        entityManager,
-      );
     });
   }
 
@@ -179,6 +172,17 @@ export class FormSubmissionCancellationService {
         modifier: auditUser,
         updatedAt: now,
       },
+    );
+    // Process the form submission actions applicable for all cancelled form submissions.
+    await processInParallel(
+      (formSubmissionId) =>
+        this.formSubmissionActionProcessor.processActions(
+          formSubmissionId,
+          auditUserId,
+          now,
+          entityManager,
+        ),
+      formSubmissionIds,
     );
   }
 }
