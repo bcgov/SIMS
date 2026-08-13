@@ -6,7 +6,7 @@
         supporting information, potentially delaying your application. Edits and
         re-submission of your application will result in a revised submission
         date, which may trigger an exception and/or require a Funding After End
-        Date appeal.
+        Date appeal. Are you sure you want to proceed?
       </p>
       <p v-if="showPartnerNote">
         Note: If you only need to update your spouse/common-law partner
@@ -37,11 +37,7 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
-import {
-  DependantStatus,
-  OfferingIntensity,
-  RelationshipStatus,
-} from "@/types";
+import { DependantStatus, RelationshipStatus } from "@/types";
 import { computed, ref } from "vue";
 
 const {
@@ -67,11 +63,8 @@ const editApplication = () => {
 };
 
 const showParentNote = computed(() => {
-  // TODO Is the full time check necessary?
   return (
-    applicationData.value?.applicationOfferingIntensity ===
-      OfferingIntensity.fullTime &&
-    applicationData.value?.data?.dependantStatus === DependantStatus.Dependant
+    applicationData.value?.data?.dependantstatus === DependantStatus.Dependant
   );
 });
 
