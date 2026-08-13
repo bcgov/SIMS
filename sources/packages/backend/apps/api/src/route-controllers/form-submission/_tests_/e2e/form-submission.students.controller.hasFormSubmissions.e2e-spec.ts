@@ -114,6 +114,11 @@ describe("FormSubmissionStudentsController(e2e)-hasFormSubmissions", () => {
   });
 });
 
+/**
+ * Returns the endpoint URL for checking if a student has form submissions.
+ * @param applicationId The ID of the application to check.
+ * @returns The endpoint URL as a string.
+ */
 function getEndpoint(applicationId?: number): string {
   let url = `/students/form-submission/exists`;
   if (applicationId) {
