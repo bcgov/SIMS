@@ -5,6 +5,7 @@
 # To allow access to the secrets in both cases, the test users' passwords (or any other secret) are defined at the
 # repository level and also at the `dependabot` secrets for now.
 name: Repo Checks - Tests
+permissions: {}
 
 on: [pull_request]
 
