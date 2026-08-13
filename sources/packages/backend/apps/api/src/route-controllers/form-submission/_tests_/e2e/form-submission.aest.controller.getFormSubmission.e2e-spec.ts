@@ -108,6 +108,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          assessedDate: null,
           studentId: application.student.id,
           studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
           formCategory: FormCategory.StudentAppeal,
@@ -201,6 +202,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
+          assessedDate: null,
           canAssessFinalDecision: false,
           cancellationReason: null,
           id: formSubmission.id,
@@ -265,6 +267,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) => {
         expect(body).toStrictEqual({
+          assessedDate: formSubmission.assessedDate.toISOString(),
           canAssessFinalDecision: false,
           cancellationReason: null,
           id: formSubmission.id,
@@ -356,6 +359,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           cancellationReason: null,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          assessedDate: null,
           studentId: application.student.id,
           studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
           id: formSubmission.id,
@@ -446,6 +450,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
         expect(body).toStrictEqual({
+          assessedDate: formSubmission.assessedDate.toISOString(),
           canAssessFinalDecision: false,
           cancellationReason: null,
           id: formSubmission.id,
@@ -547,6 +552,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          assessedDate: formSubmission.assessedDate.toISOString(),
           cancellationReason: null,
           studentId: application.student.id,
           studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
@@ -633,6 +639,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          assessedDate: null,
           cancellationReason:
             FormSubmissionCancellationReason.StudentCancelledSubmission,
           studentId: application.student.id,
@@ -709,6 +716,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          assessedDate: null,
           cancellationReason:
             FormSubmissionCancellationReason.StudentCancelledSubmission,
           studentId: application.student.id,
@@ -782,6 +790,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           id: formSubmission.id,
           applicationId: application.id,
           applicationNumber: application.applicationNumber,
+          assessedDate: formSubmission.assessedDate.toISOString(),
           cancellationReason:
             FormSubmissionCancellationReason.StudentCancelledSubmission,
           studentId: application.student.id,
