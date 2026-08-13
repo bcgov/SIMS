@@ -396,7 +396,7 @@
                           "value": ""
                         }
                       ],
-                      "content": "Funded Weeks of Study",
+                      "content": "Funded weeks of study",
                       "refreshOnChange": false,
                       "key": "html116",
                       "type": "htmlelement",
