@@ -171,20 +171,15 @@ export class FormSubmissionApi extends HttpBaseClient {
   /**
    * Checks if the student has any form submissions for a given application.
    * @param applicationId ID of the application to check for form submissions.
-   * @param options optional filter options.
-   * - `formCategory` optional form category to filter the form submissions.
    * @returns true if the student has any form submissions for the given application, false otherwise.
    */
   async hasFormSubmissions(
     applicationId: number,
-    options?: { formCategory?: FormCategory },
   ): Promise<FormSubmissionExistsAPIOutDTO> {
-    let url = this.addClientRoot(`form-submission/exists`);
-    url += `?applicationId=${applicationId.toString()}`;
-    if (options?.formCategory) {
-      url += `&formCategory=${options.formCategory}`;
-    }
-    console.log("hasFormSubmissions URL:", url);
-    return await this.getCall<FormSubmissionExistsAPIOutDTO>(url);
+    return await this.getCall<FormSubmissionExistsAPIOutDTO>(
+      this.addClientRoot(
+        `form-submission/exists?applicationId=${applicationId}`,
+      ),
+    );
   }
 }

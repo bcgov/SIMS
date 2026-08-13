@@ -121,7 +121,6 @@ import {
   BannerTypes,
   FormIOForm,
   StudentApplicationFormData,
-  FormCategory,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -453,11 +452,9 @@ export default defineComponent({
     const confirmEditApplication = async () => {
       showAppealsInfo.value = false;
       if (!props.changeRequest) {
+        // Checks if the application has any form submissions to control content in the modal.
         const response = await FormSubmissionService.shared.hasFormSubmissions(
           props.id,
-          {
-            formCategory: FormCategory.StudentAppeal,
-          },
         );
         showAppealsInfo.value = response.hasFormSubmissions;
       }

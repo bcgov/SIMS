@@ -296,9 +296,6 @@ export class FormSubmissionExistsAPIInDTO {
   @IsNotEmpty()
   @IsPositive()
   applicationId: number;
-  @IsOptional()
-  @IsEnum(FormCategory)
-  formCategory?: FormCategory;
 }
 
 /**

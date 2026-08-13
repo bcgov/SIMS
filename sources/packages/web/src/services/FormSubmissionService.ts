@@ -148,17 +148,11 @@ export class FormSubmissionService {
   /**
    * Checks if the student has any form submissions for a given application.
    * @param applicationId ID of the application to check for form submissions.
-   * @param options optional filter options.
-   * - `formCategory` optional form category to filter the form submissions.
    * @returns true if the student has any form submissions for the given application, false otherwise.
    */
   async hasFormSubmissions(
     applicationId: number,
-    options?: { formCategory?: FormCategory },
   ): Promise<FormSubmissionExistsAPIOutDTO> {
-    return ApiClient.FormSubmissionApi.hasFormSubmissions(
-      applicationId,
-      options,
-    );
+    return ApiClient.FormSubmissionApi.hasFormSubmissions(applicationId);
   }
 }

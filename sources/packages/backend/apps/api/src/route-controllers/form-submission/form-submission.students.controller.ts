@@ -139,7 +139,6 @@ export class FormSubmissionStudentsController extends BaseController {
   ): Promise<FormSubmissionExistsAPIOutDTO> {
     const hasFormSubmissions =
       await this.formSubmissionService.hasFormSubmissions(query.applicationId, {
-        formCategory: query.formCategory,
         studentId: userToken.studentId,
       });
     return { hasFormSubmissions };
