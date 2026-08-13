@@ -55,6 +55,11 @@ export function registerOrmCacheManager(
  */
 function getOrmCacheManager(dataSource: DataSource): ORMCacheManager {
   const ormCacheManager = ormCacheManagers.get(dataSource);
+  if (!ormCacheManager) {
+    throw new Error(
+      "ORMCacheManager not registered for the given data source.",
+    );
+  }
   return ormCacheManager;
 }
 
