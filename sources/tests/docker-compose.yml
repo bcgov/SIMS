@@ -175,7 +175,6 @@ services:
     restart: always
     depends_on:
       - postgres
-      - redis
   # - Workers
   # Queue consumers
   queue-consumers:
@@ -239,7 +238,6 @@ services:
     restart: always
     depends_on:
       - postgres
-      - redis
   # - Queues
   # Postgres
   postgres:
