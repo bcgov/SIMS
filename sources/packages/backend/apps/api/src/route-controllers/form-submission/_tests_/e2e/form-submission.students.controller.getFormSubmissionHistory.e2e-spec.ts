@@ -19,6 +19,7 @@ import {
 } from "@sims/test-utils";
 import {
   FormCategory,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   User,
@@ -304,6 +305,162 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () =>
                 formCategory: FormCategory.StudentForm,
                 dynamicFormConfigurationId: formConfigs.studentFormA.id,
                 formDefinitionName: formConfigs.studentFormA.formDefinitionName,
+                currentDecision: {
+                  decisionStatus: FormSubmissionDecisionStatus.Approved,
+                },
+              },
+            ],
+          },
+        ]),
+      );
+  });
+
+  it("Should get the form submission with emulated decision status null for the submission item(s) when the form submission is cancelled without being assessed.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const application = await saveFakeApplication(db.dataSource, {
+      student,
+    });
+
+    // Form submission that is cancelled without being assessed, with an associated application.
+    const cancelledWithoutAssessedAppeal =
+      await saveFakeFormSubmissionFromInputTestData(db, {
+        now: new Date(),
+        application,
+        formCategory: FormCategory.StudentAppeal,
+        submissionStatus: FormSubmissionStatus.Cancelled,
+        ministryAuditUser: ministryUser,
+        // Ensure items are added in alphabetical order DESC to
+        // assert they will be returned in alphabetical order ASC.
+        formSubmissionItems: [
+          {
+            // API is expected to return null for the decision status as it was not assessed but cancelled.
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
+            decisions: [
+              {
+                decisionStatus: FormSubmissionDecisionStatus.Declined,
+              },
+            ],
+          },
+        ],
+      });
+    const [cancelledWithoutAssessedAppealSavedItem] =
+      cancelledWithoutAssessedAppeal.formSubmissionItems;
+    const endpoint = "/students/form-submission";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.submissions).toEqual([
+          // Pending Student Appeal
+          {
+            id: cancelledWithoutAssessedAppeal.id,
+            applicationId: application.id,
+            applicationNumber: application.applicationNumber,
+            formCategory: FormCategory.StudentAppeal,
+            status: FormSubmissionStatus.Cancelled,
+            submittedDate:
+              cancelledWithoutAssessedAppeal.submittedDate.toISOString(),
+            assessedDate: null,
+            canCancelSubmission: false,
+            cancellationReason:
+              FormSubmissionCancellationReason.StudentCancelledSubmission,
+            statusUpdatedDate:
+              cancelledWithoutAssessedAppeal.submissionStatusUpdatedOn.toISOString(),
+            submissionItems: [
+              {
+                id: cancelledWithoutAssessedAppealSavedItem.id,
+                formType: formConfigs.studentAppealApplicationB.formType,
+                formCategory: FormCategory.StudentAppeal,
+                dynamicFormConfigurationId:
+                  formConfigs.studentAppealApplicationB.id,
+                formDefinitionName:
+                  formConfigs.studentAppealApplicationB.formDefinitionName,
+                currentDecision: {
+                  decisionStatus: null,
+                },
+              },
+            ],
+          },
+        ]),
+      );
+  });
+
+  it("Should get the form submission with actual decision status when the form submission is cancelled without being assessed.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const application = await saveFakeApplication(db.dataSource, {
+      student,
+    });
+    // Form submission that is cancelled after being assessed, with an associated application.
+    const cancelledAfterAssessedAppeal =
+      await saveFakeFormSubmissionFromInputTestData(db, {
+        now: new Date(),
+        student,
+        application,
+        formCategory: FormCategory.StudentAppeal,
+        submissionStatus: FormSubmissionStatus.Cancelled,
+        ministryAuditUser: ministryUser,
+        isAssessed: true,
+        formSubmissionItems: [
+          {
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+            decisions: [
+              {
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
+              },
+            ],
+          },
+        ],
+      });
+    const [cancelledAfterAssessedAppealSavedItem] =
+      cancelledAfterAssessedAppeal.formSubmissionItems;
+    const endpoint = "/students/form-submission";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body.submissions).toEqual([
+          {
+            id: cancelledAfterAssessedAppeal.id,
+            applicationId: application.id,
+            applicationNumber: application.applicationNumber,
+            formCategory: FormCategory.StudentAppeal,
+            status: FormSubmissionStatus.Cancelled,
+            submittedDate:
+              cancelledAfterAssessedAppeal.submittedDate.toISOString(),
+            assessedDate:
+              cancelledAfterAssessedAppeal.assessedDate.toISOString(),
+            canCancelSubmission: false,
+            cancellationReason:
+              FormSubmissionCancellationReason.StudentCancelledSubmission,
+            statusUpdatedDate:
+              cancelledAfterAssessedAppeal.submissionStatusUpdatedOn.toISOString(),
+            submissionItems: [
+              {
+                id: cancelledAfterAssessedAppealSavedItem.id,
+                formType: formConfigs.studentAppealApplicationA.formType,
+                formCategory: FormCategory.StudentAppeal,
+                dynamicFormConfigurationId:
+                  formConfigs.studentAppealApplicationA.id,
+                formDefinitionName:
+                  formConfigs.studentAppealApplicationA.formDefinitionName,
                 currentDecision: {
                   decisionStatus: FormSubmissionDecisionStatus.Approved,
                 },

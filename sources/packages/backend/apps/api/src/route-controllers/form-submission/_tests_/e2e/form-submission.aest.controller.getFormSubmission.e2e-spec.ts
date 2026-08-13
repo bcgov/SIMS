@@ -614,10 +614,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     await authorizeDynamicFormConfigurations(
       appModule,
-      [
-        formConfigs.studentAppealApplicationA,
-        formConfigs.studentAppealApplicationB,
-      ],
+      [formConfigs.studentAppealApplicationB],
       [
         FormSubmissionAuthRoles.ViewFormSubmittedData,
         FormSubmissionAuthRoles.ViewDecisionHistory,
@@ -660,6 +657,152 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
                 decisionDate: itemBDecision1.decisionDate.toISOString(),
                 decisionBy: `${itemBDecision1.decisionBy.firstName} ${itemBDecision1.decisionBy.lastName}`,
+                decisionNoteDescription:
+                  itemBDecision1.decisionNote.description,
+              },
+              previousDecisions: [],
+            },
+          ],
+        });
+      });
+  });
+
+  it("Should get a form submission with emulated decision status null when the form submission is cancelled and not assessed and the user does not have the access to assess item decision.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource);
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Cancelled,
+      ministryAuditUser: ministryUser,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
+          decisions: [
+            {
+              decisionStatus: FormSubmissionDecisionStatus.Approved,
+            },
+          ],
+        },
+      ],
+    });
+    const [formSubmissionItemB] = formSubmission.formSubmissionItems;
+    const endpoint = `/aest/form-submission/${formSubmission.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealApplicationB],
+      [
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+      ],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body).toStrictEqual({
+          canAssessFinalDecision: false,
+          id: formSubmission.id,
+          applicationId: application.id,
+          applicationNumber: application.applicationNumber,
+          cancellationReason:
+            FormSubmissionCancellationReason.StudentCancelledSubmission,
+          studentId: application.student.id,
+          studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Cancelled,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          submissionItems: [
+            {
+              canAssessItemDecision: false,
+              id: formSubmissionItemB.id,
+              formType: formConfigs.studentAppealApplicationB.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationB.id,
+              submissionData: formSubmissionItemB.submittedData,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationB.formDefinitionName,
+              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              currentDecision: {
+                decisionStatus: null,
+              },
+              previousDecisions: [],
+            },
+          ],
+        });
+      });
+  });
+
+  it("Should get a form submission with actual decision status when the form submission is cancelled but assessed and the user does not have the access to assess item decision.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource);
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Cancelled,
+      ministryAuditUser: ministryUser,
+      isAssessed: true,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationB,
+          decisions: [
+            {
+              decisionStatus: FormSubmissionDecisionStatus.Approved,
+            },
+          ],
+        },
+      ],
+    });
+    const [formSubmissionItemB] = formSubmission.formSubmissionItems;
+    const [itemBDecision1] = formSubmissionItemB.decisions;
+    const endpoint = `/aest/form-submission/${formSubmission.id}`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await authorizeDynamicFormConfigurations(
+      appModule,
+      [formConfigs.studentAppealApplicationB],
+      [
+        FormSubmissionAuthRoles.ViewFormSubmittedData,
+        FormSubmissionAuthRoles.ViewDecisionHistory,
+      ],
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        expect(body).toStrictEqual({
+          canAssessFinalDecision: false,
+          id: formSubmission.id,
+          applicationId: application.id,
+          applicationNumber: application.applicationNumber,
+          cancellationReason:
+            FormSubmissionCancellationReason.StudentCancelledSubmission,
+          studentId: application.student.id,
+          studentFullName: `${application.student.user.firstName} ${application.student.user.lastName}`,
+          formCategory: FormCategory.StudentAppeal,
+          status: FormSubmissionStatus.Cancelled,
+          submittedDate: formSubmission.submittedDate.toISOString(),
+          submissionItems: [
+            {
+              canAssessItemDecision: false,
+              id: formSubmissionItemB.id,
+              formType: formConfigs.studentAppealApplicationB.formType,
+              formCategory: FormCategory.StudentAppeal,
+              dynamicFormConfigurationId:
+                formConfigs.studentAppealApplicationB.id,
+              submissionData: formSubmissionItemB.submittedData,
+              formDefinitionName:
+                formConfigs.studentAppealApplicationB.formDefinitionName,
+              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              currentDecision: {
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
                 decisionNoteDescription:
                   itemBDecision1.decisionNote.description,
               },

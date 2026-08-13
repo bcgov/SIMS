@@ -90,7 +90,7 @@ abstract class FormSubmissionItemBaseAPIOutDTO {
  */
 export class FormSubmissionItemDecisionAPIOutDTO {
   id?: number;
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   decisionNoteDescription?: string;
 }
 

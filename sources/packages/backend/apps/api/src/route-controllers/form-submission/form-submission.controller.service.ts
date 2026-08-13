@@ -25,6 +25,16 @@ import {
 import { Role } from "../../auth";
 import { getUserFullName } from "../../utilities";
 
+/**
+ * Emulated decision status mapping based on it's form submission status.
+ */
+const EMULATED_DECISION_STATUS_MAPPING: Record<
+  FormSubmissionStatus.Cancelled | FormSubmissionStatus.Pending,
+  FormSubmissionDecisionStatus | null
+> = {
+  [FormSubmissionStatus.Cancelled]: null,
+  [FormSubmissionStatus.Pending]: FormSubmissionDecisionStatus.Pending,
+};
 @Injectable()
 export class FormSubmissionControllerService {
   constructor(
@@ -133,6 +143,7 @@ export class FormSubmissionControllerService {
         formDefinitionName: item.dynamicFormConfiguration.formDefinitionName,
         currentDecision: this.mapCurrentDecision(
           submission.submissionStatus,
+          !!submission.assessedDate,
           item,
           formsUserRoles,
         ),
@@ -147,6 +158,7 @@ export class FormSubmissionControllerService {
    * Used for students and institutions that have different access to the decision details,
    * and for Ministry users with limited access to the decision details.
    * @param submissionStatus form submission status.
+   * @param isAssessed indicates if the form submission has been assessed by the ministry staff.
    * @param submissionItem form submission to determine the decision details to be returned.
    * @param formsUserRoles when provided, it will be used to determine the access to the forms details that
    * the consumer has based on their roles.
@@ -154,6 +166,7 @@ export class FormSubmissionControllerService {
    */
   mapCurrentDecision(
     submissionStatus: FormSubmissionStatus,
+    isAssessed: boolean,
     submissionItem: FormSubmissionItem,
     formsUserRoles?: FormSubmissionUserRolesAuth,
   ): FormSubmissionItemDecisionAPIOutDTO {
@@ -161,18 +174,22 @@ export class FormSubmissionControllerService {
       FormSubmissionAuthRoles.AssessItemDecision,
       [submissionItem.dynamicFormConfiguration.id],
     );
-    if (
-      !submissionItem.currentDecision ||
-      (submissionStatus === FormSubmissionStatus.Pending &&
-        !canAssessItemDecision)
-    ) {
-      // When there is no decision or the submission is pending and the user has no permission to assess the item decision, return 'Pending'.
+    // When there is no current decision, return the status as pending.
+    if (!submissionItem.currentDecision) {
       return {
-        decisionStatus: FormSubmissionDecisionStatus.Pending,
+        decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
       };
     }
+    // When the submission is either assessed or the user can assess the item decision, return the current actual decision status.
+    if (isAssessed || canAssessItemDecision) {
+      return {
+        decisionStatus: submissionItem.currentDecision.decisionStatus,
+      };
+    }
+    // From this point on, the submission is not assessed and the user does not have the permission to assess the item decision.
+    // Hence return the emulated decision status.
     return {
-      decisionStatus: submissionItem.currentDecision.decisionStatus,
+      decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
     };
   }
 
@@ -240,6 +257,7 @@ export class FormSubmissionControllerService {
         updatedAt: formSubmissionItem.updatedAt,
         currentDecision: this.mapCurrentDecisionExtended(
           submission.submissionStatus,
+          !!submission.assessedDate,
           formSubmissionItem,
           canAssessItemDecision,
         ),
@@ -295,6 +313,7 @@ export class FormSubmissionControllerService {
    * Map the current decision for the Ministry users based on their authorization to view
    * the decision details and the form submission status.
    * @param submissionStatus form submission status.
+   * @param isAssessed indicates if the form submission has been assessed by the ministry staff.
    * @param submissionItem form submission item to determine the decision details to be returned.
    * @param canAssessItemDecision indicates if the user has authorization to assess the item decision.
    * @returns the decision that must be exposed to Ministry users based on their authorization and
@@ -302,13 +321,15 @@ export class FormSubmissionControllerService {
    */
   mapCurrentDecisionExtended(
     submissionStatus: FormSubmissionStatus,
+    isAssessed: boolean,
     submissionItem: FormSubmissionItem,
     canAssessItemDecision: boolean,
   ): FormSubmissionItemDecisionMinistryAPIOutDTO {
     if (!submissionItem.currentDecision) {
       // Default when no decision has been made yet.
+      // Return the emulated decision status based on the form submission status.
       return {
-        decisionStatus: FormSubmissionDecisionStatus.Pending,
+        decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
       };
     }
     if (canAssessItemDecision) {
@@ -325,8 +346,8 @@ export class FormSubmissionControllerService {
       };
     }
     // When user does not have access to see the decision details,
-    // return the decision based on the form submission status.
-    if (submissionStatus !== FormSubmissionStatus.Pending) {
+    // return the actual decision status and note only if the submission has been assessed.
+    if (isAssessed) {
       // Status and notes should be available to all Ministry users when a final decision was made.
       return {
         decisionStatus: submissionItem.currentDecision.decisionStatus,
@@ -334,9 +355,10 @@ export class FormSubmissionControllerService {
           submissionItem.currentDecision.decisionNote.description,
       };
     }
-    // Default when the user has no access to see non-completed submissions.
+    // From this point on, the submission is not assessed.
+    // Hence return the emulated decision status.
     return {
-      decisionStatus: FormSubmissionDecisionStatus.Pending,
+      decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
     };
   }
 }

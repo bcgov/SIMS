@@ -87,6 +87,10 @@ export interface FormSubmissionTestInputData {
    * the current decision for the item.
    */
   formSubmissionItems: FormSubmissionItemTestInputData[];
+  /**
+   * Indicates whether the form submission is assessed or not.
+   */
+  isAssessed?: boolean;
 }
 
 /**
@@ -113,11 +117,12 @@ export async function saveFakeFormSubmissionFromInputTestData(
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;
   formSubmission.submissionStatus = testInputData.submissionStatus;
-  if (
+  const isAssessed =
+    testInputData.isAssessed ||
     [FormSubmissionStatus.Completed, FormSubmissionStatus.Declined].includes(
       testInputData.submissionStatus,
-    )
-  ) {
+    );
+  if (isAssessed) {
     formSubmission.assessedDate = now;
     formSubmission.assessedBy = testInputData.ministryAuditUser;
   }
