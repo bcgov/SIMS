@@ -130,8 +130,6 @@ env:
 jobs:
   env-setup:
     name: Setup Dynamic Environment Variables
-    permissions:
-      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     outputs:

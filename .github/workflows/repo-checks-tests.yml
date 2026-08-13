@@ -88,7 +88,6 @@ jobs:
     name: Workflow Workers E2E Tests
     permissions:
       contents: read
-      actions: read
       checks: write
       pull-requests: write
       statuses: write
@@ -121,7 +120,6 @@ jobs:
     name: Workflow E2E Tests
     permissions:
       contents: read
-      actions: read
     runs-on: ubuntu-latest
     steps:
       # Checkout the PR branch.
@@ -136,7 +134,6 @@ jobs:
     name: Queue Consumers E2E Tests
     permissions:
       contents: read
-      actions: read
       checks: write
       pull-requests: write
       statuses: write
@@ -173,7 +170,6 @@ jobs:
     name: Backend Unit Tests
     permissions:
       contents: read
-      actions: read
       checks: write
       pull-requests: write
       statuses: write
