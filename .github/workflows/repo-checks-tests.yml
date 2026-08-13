@@ -5,12 +5,7 @@
 # To allow access to the secrets in both cases, the test users' passwords (or any other secret) are defined at the
 # repository level and also at the `dependabot` secrets for now.
 name: Repo Checks - Tests
-permissions:
-  contents: read
-  actions: read
-  checks: write
-  pull-requests: write
-  statuses: write
+permissions: {}
 
 on: [pull_request]
 
@@ -33,6 +28,11 @@ env:
 jobs:
   api-e2e-tests:
     name: SIMS API E2E Tests
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+      statuses: write
     runs-on: ubuntu-latest
     env:
       API_PORT: 3000
@@ -87,6 +87,11 @@ jobs:
           comment_footer: false
   workers-e2e-tests:
     name: Workflow Workers E2E Tests
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+      statuses: write
     runs-on: ubuntu-latest
     env:
       WORKERS_PORT: 3020
@@ -114,6 +119,8 @@ jobs:
           comment_footer: false
   workflow-e2e-tests:
     name: Workflow E2E Tests
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       # Checkout the PR branch.
@@ -126,6 +133,11 @@ jobs:
           make e2e-tests-workflow
   queue-consumers-e2e-tests:
     name: Queue Consumers E2E Tests
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+      statuses: write
     runs-on: ubuntu-latest
     env:
       QUEUE_CONSUMERS_PORT: 3001
@@ -157,6 +169,11 @@ jobs:
           comment_footer: false
   backend-unit-tests:
     name: Backend Unit Tests
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+      statuses: write
     runs-on: ubuntu-latest
     steps:
       # Checkout the PR branch.
