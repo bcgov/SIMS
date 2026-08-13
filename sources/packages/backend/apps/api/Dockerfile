@@ -15,7 +15,7 @@ ENV PORT 3000
 COPY /*.json /*.js ./
 
 # Installing dependencies
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Copying sources.
 COPY ./apps/api ./apps/api

@@ -44,5 +44,13 @@ jobs:
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}
       - name: Manage ClamAV
         working-directory: "./devops/helm/clam-av/main/"
+        env:
+          ACTION: ${{ inputs.action }}
+          NAMESPACE: ${{ secrets.OPENSHIFT_ENV_NAMESPACE }}
+          IMAGE_TAG: ${{ inputs.clamavImageTag }}
         run: |
-          make ${{ inputs.action }} NAMESPACE=${{ secrets.OPENSHIFT_ENV_NAMESPACE }} IMAGE_TAG=${{ inputs.clamavImageTag }}
+          if [[ ! "$IMAGE_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+            echo "Error: IMAGE_TAG must be a valid OCI image tag."
+            exit 1
+          fi
+          make "$ACTION" NAMESPACE="$NAMESPACE" IMAGE_TAG="$IMAGE_TAG"

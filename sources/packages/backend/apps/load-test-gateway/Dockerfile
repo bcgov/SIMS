@@ -12,7 +12,7 @@ WORKDIR /app
 COPY /*.json /*.js ./
 
 # Installing dependencies
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Copying sources.
 COPY ./apps/load-test-gateway ./apps/load-test-gateway

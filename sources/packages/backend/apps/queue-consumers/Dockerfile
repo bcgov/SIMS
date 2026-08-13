@@ -12,7 +12,7 @@ WORKDIR /app
 COPY /*.json /*.js ./
 
 # Installing dependencies
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Copying sources.
 COPY ./apps/queue-consumers ./apps/queue-consumers
