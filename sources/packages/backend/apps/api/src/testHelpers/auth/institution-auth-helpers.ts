@@ -9,7 +9,6 @@ import {
   ORMCacheManager,
   User,
 } from "@sims/sims-db";
-import { LoggerService } from "@sims/utilities/logger";
 import {
   createFakeInstitutionLocation,
   createFakeInstitutionUser,
@@ -35,16 +34,31 @@ import { InstitutionTokenTypes } from "./institution-token-helpers";
 const ormCacheManagers = new WeakMap<DataSource, ORMCacheManager>();
 
 /**
- * Reuses a single ORMCacheManager instance per data source instead of
- * creating a new one on every cache invalidation call.
- * @param dataSource data source the manager will be bound to.
- * @returns cached ORMCacheManager instance for the given data source.
+ * Registers the ORMCacheManager instance resolved from the NestJS testing
+ * application so this file can reuse the same DI-managed instance instead
+ * of instantiating its own, bypassing the application's dependency graph.
+ * Must be called once, right after the testing application is created.
+ * @param dataSource data source the manager is bound to.
+ * @param ormCacheManager ORMCacheManager instance resolved from the testing module.
+ */
+export function registerOrmCacheManager(
+  dataSource: DataSource,
+  ormCacheManager: ORMCacheManager,
+): void {
+  ormCacheManagers.set(dataSource, ormCacheManager);
+}
+
+/**
+ * Gets the ORMCacheManager instance registered for the given data source.
+ * @param dataSource data source associated with the desired manager.
+ * @returns the registered ORMCacheManager instance.
  */
 function getOrmCacheManager(dataSource: DataSource): ORMCacheManager {
-  let ormCacheManager = ormCacheManagers.get(dataSource);
+  const ormCacheManager = ormCacheManagers.get(dataSource);
   if (!ormCacheManager) {
-    ormCacheManager = new ORMCacheManager(dataSource, new LoggerService());
-    ormCacheManagers.set(dataSource, ormCacheManager);
+    throw new Error(
+      "ORMCacheManager not registered for the given data source. Ensure createTestingAppModule() was used to bootstrap the testing application.",
+    );
   }
   return ormCacheManager;
 }

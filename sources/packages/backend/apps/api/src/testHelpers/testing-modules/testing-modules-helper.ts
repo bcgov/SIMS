@@ -1,6 +1,7 @@
 import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
+import { ORMCacheManager } from "@sims/sims-db";
 import { AppModule } from "../../app.module";
 import { setGlobalPipes } from "../../utilities";
 import { overrideImportsMetadata } from "@sims/test-utils";
@@ -14,6 +15,7 @@ import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { KeycloakConfig } from "@sims/auth/config";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
+import { registerOrmCacheManager } from "../auth/institution-auth-helpers";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -58,6 +60,9 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   await systemUsersService.loadSystemUser();
 
   const dataSource = module.get(DataSource);
+  // Reuses the application's own ORMCacheManager instance so test helpers
+  // that need to invalidate cache entries stay consistent with the app's DI graph.
+  registerOrmCacheManager(dataSource, module.get(ORMCacheManager));
   return {
     nestApplication,
     module,
