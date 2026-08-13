@@ -71,9 +71,12 @@
             >I acknowledge that by editing my application, I may be required to
             resubmit previously approved exception requests. My institution may
             be required to resubmit program information, and my parent or
-            partner may be required to resubmit supporting
-            information.</template
-          >
+            partner may be required to resubmit supporting information.
+            <template v-if="showAppealsInfo">
+              I must resubmit any previously approved application appeals as
+              they will no longer apply to the new version of the application.
+            </template>
+          </template>
         </template>
       </v-checkbox>
       <banner
@@ -118,6 +121,7 @@ import {
   BannerTypes,
   FormIOForm,
   StudentApplicationFormData,
+  FormCategory,
 } from "@/types";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
@@ -130,6 +134,7 @@ import {
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import { FormSubmissionService } from "@/services/FormSubmissionService";
 
 export default defineComponent({
   components: {
@@ -156,7 +161,6 @@ export default defineComponent({
     changeRequest: {
       type: Boolean,
       default: false,
-      required: true,
     },
   },
   setup(props) {
@@ -182,6 +186,7 @@ export default defineComponent({
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const conditionsAccepted = ref(false);
+    const showAppealsInfo = ref(false);
     // automaticDraftSaveInProgress is a boolean that ensures that multiple api calls for save
     // draft are not made while a draft save is in progress.
     let automaticDraftSaveInProgress = false;
@@ -446,6 +451,16 @@ export default defineComponent({
     };
 
     const confirmEditApplication = async () => {
+      showAppealsInfo.value = false;
+      if (!props.changeRequest) {
+        const response = await FormSubmissionService.shared.hasFormSubmissions(
+          props.id,
+          {
+            formCategory: FormCategory.StudentAppeal,
+          },
+        );
+        showAppealsInfo.value = response.hasFormSubmissions;
+      }
       if (await editApplicationModal.value.showModal()) {
         editApplication();
       } else {
@@ -494,6 +509,7 @@ export default defineComponent({
       BannerTypes,
       isDataReady,
       editApplicationModalTitle,
+      showAppealsInfo,
     };
   },
 });

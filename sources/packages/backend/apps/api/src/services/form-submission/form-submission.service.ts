@@ -342,4 +342,28 @@ export class FormSubmissionService {
       throw new CustomNamedError(errorMessage, FORM_SUBMISSION_NOT_FOUND);
     }
   }
+
+  /**
+   * Checks if the application has form submissions with any status.
+   * @param applicationId the application ID to check for form submissions.
+   * @param options
+   * - `formCategory`: optional category of the form submissions to check for.
+   * - `studentId`: optional student ID for data access authorization.
+   * @returns true if there are form submissions for the given application, false otherwise.
+   */
+  async hasFormSubmissions(
+    applicationId: number,
+    options: {
+      formCategory?: FormCategory;
+      studentId?: number;
+    },
+  ): Promise<boolean> {
+    return await this.formSubmissionRepo.exists({
+      where: {
+        application: { id: applicationId },
+        formCategory: options.formCategory,
+        student: { id: options.studentId },
+      },
+    });
+  }
 }

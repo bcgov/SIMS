@@ -241,3 +241,10 @@ export interface FormSubmissionPendingSummaryAPIOutDTO {
   applicationId?: number;
   applicationNumber?: string;
 }
+
+/**
+ * Info on whether the student has any form submissions for a given application.
+ */
+export class FormSubmissionExistsAPIOutDTO {
+  hasFormSubmissions: boolean;
+}

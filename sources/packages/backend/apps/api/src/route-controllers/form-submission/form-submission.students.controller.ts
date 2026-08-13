@@ -20,6 +20,7 @@ import {
   FORM_SUBMISSION_PENDING_DECISION,
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
   FormSubmissionCancellationService,
+  FormSubmissionService,
   FormSubmissionSubmitService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
@@ -40,10 +41,12 @@ import { FormCategory } from "@sims/sims-db";
 import {
   FormSubmissionAPIInDTO,
   FormSubmissionAPIOutDTO,
+  FormSubmissionExistsAPIOutDTO,
   FormSubmissionConfigurationsAPIOutDTO,
   FormSubmissionsAPIOutDTO,
   FormSupplementaryDataAPIInDTO,
   FormSupplementaryDataAPIOutDTO,
+  FormSubmissionExistsAPIInDTO,
 } from "./models/form-submission.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
@@ -63,6 +66,7 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly formSubmissionControllerService: FormSubmissionControllerService,
     private readonly featureTogglesService: FeatureTogglesService,
     private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
+    private readonly formSubmissionService: FormSubmissionService,
   ) {
     super();
   }
@@ -121,6 +125,24 @@ export class FormSubmissionStudentsController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Checks if the application has form submissions with any status.
+   * @param query the query parameters to restrict the search for form submissions.
+   * @returns an object with a boolean property `hasFormSubmissions` indicating if there are form submissions for the given application.
+   */
+  @Get("exists")
+  async hasFormSubmissions(
+    @Query() query: FormSubmissionExistsAPIInDTO,
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionExistsAPIOutDTO> {
+    const hasFormSubmissions =
+      await this.formSubmissionService.hasFormSubmissions(query.applicationId, {
+        formCategory: query.formCategory,
+        studentId: userToken.studentId,
+      });
+    return { hasFormSubmissions };
   }
 
   /**

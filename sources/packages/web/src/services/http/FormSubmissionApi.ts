@@ -11,6 +11,7 @@ import {
   PaginatedResultsAPIOutDTO,
   FormSubmissionAPIOutDTO,
   FormSubmissionsAPIOutDTO,
+  FormSubmissionExistsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormCategory, PaginationOptions } from "@/types";
 import { getPaginationQueryString } from "@/helpers";
@@ -165,5 +166,25 @@ export class FormSubmissionApi extends HttpBaseClient {
       this.addClientRoot(`form-submission/${formSubmissionId}/cancel`),
       undefined,
     );
+  }
+
+  /**
+   * Checks if the student has any form submissions for a given application.
+   * @param applicationId ID of the application to check for form submissions.
+   * @param options optional filter options.
+   * - `formCategory` optional form category to filter the form submissions.
+   * @returns true if the student has any form submissions for the given application, false otherwise.
+   */
+  async hasFormSubmissions(
+    applicationId: number,
+    options?: { formCategory?: FormCategory },
+  ): Promise<FormSubmissionExistsAPIOutDTO> {
+    let url = this.addClientRoot(`form-submission/exists`);
+    url += `?applicationId=${applicationId.toString()}`;
+    if (options?.formCategory) {
+      url += `&formCategory=${options.formCategory}`;
+    }
+    console.log("hasFormSubmissions URL:", url);
+    return await this.getCall<FormSubmissionExistsAPIOutDTO>(url);
   }
 }
