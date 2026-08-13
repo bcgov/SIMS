@@ -29,8 +29,6 @@ jobs:
   # Print variables for logging and debugging purposes.
   checkEnv:
     name: Check Env variables
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
     steps:
