@@ -305,6 +305,7 @@ export class FormSubmissionControllerService {
       studentId: submission.student.id,
       studentFullName: getUserFullName(submission.student.user),
       cancellationReason: submission.cancellationReason,
+      assessedDate: submission.assessedDate,
       submissionItems,
     };
   }
