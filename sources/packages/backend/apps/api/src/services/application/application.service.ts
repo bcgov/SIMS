@@ -291,6 +291,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationId,
         FormSubmissionCancellationReason.ApplicationEdited,
         auditUserId,
+        now,
         transactionalEntityManager,
       );
       // Before the cancellation of application form submissions, there is a remote possibility of a form submission being completed
@@ -1609,29 +1610,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id.
    * @param studentId student id for authorization purposes.
    * @param auditUserId user who is making the changes.
-   * @returns student application update result.
    */
   async cancelStudentApplication(
     applicationId: number,
     studentId: number,
     auditUserId: number,
-  ): Promise<Application> {
-    const application = await this.repo.findOne({
-      select: {
-        id: true,
-        currentAssessment: {
-          id: true,
-          assessmentWorkflowId: true,
-        },
-      },
-      relations: {
-        currentAssessment: true,
-      },
+  ): Promise<void> {
+    const isApplicationInEligibleStatusExists = await this.repo.exists({
       where: {
         id: applicationId,
-        student: {
-          id: studentId,
-        },
+        student: { id: studentId },
         applicationStatus: Not(
           In([
             ApplicationStatus.Completed,
@@ -1641,31 +1629,56 @@ export class ApplicationService extends RecordDataModelService<Application> {
         ),
       },
     });
-    if (!application) {
+    if (!isApplicationInEligibleStatusExists) {
       throw new CustomNamedError(
         "Application not found or it is not in the correct state to be cancelled.",
         APPLICATION_NOT_FOUND,
       );
     }
-    // Updates the application status to cancelled.
-    const now = new Date();
-    const auditUser = { id: auditUserId } as User;
-    application.applicationStatus = ApplicationStatus.Cancelled;
-    application.applicationStatusUpdatedOn = now;
-    application.modifier = auditUser;
-    application.updatedAt = now;
+    await this.dataSource.transaction(async (entityManager) => {
+      const now = new Date();
+      // Cancel all the form submissions associated with the application.
+      await this.formSubmissionCancellationService.cancelApplicationScopedFormSubmissions(
+        applicationId,
+        FormSubmissionCancellationReason.ApplicationCancelled,
+        auditUserId,
+        now,
+        entityManager,
+      );
+      const applicationRepo = entityManager.getRepository(Application);
+      const application = await applicationRepo.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            assessmentWorkflowId: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: applicationId,
+        },
+      });
 
-    // Updates the current assessment status to cancellation requested if there is one. Applications with draft status do not have a current assessment.
-    if (application.currentAssessment) {
-      application.currentAssessment.studentAssessmentStatus =
-        StudentAssessmentStatus.CancellationRequested;
-      application.currentAssessment.modifier = auditUser;
-      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
-      application.currentAssessment.updatedAt = now;
-    }
+      // Updates the application status to cancelled.
+      const auditUser = { id: auditUserId } as User;
+      application.applicationStatus = ApplicationStatus.Cancelled;
+      application.applicationStatusUpdatedOn = now;
+      application.modifier = auditUser;
+      application.updatedAt = now;
 
-    await this.repo.save(application);
-    return application;
+      // Updates the current assessment status to cancellation requested if there is one. Applications with draft status do not have a current assessment.
+      if (application.currentAssessment) {
+        application.currentAssessment.studentAssessmentStatus =
+          StudentAssessmentStatus.CancellationRequested;
+        application.currentAssessment.modifier = auditUser;
+        application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+        application.currentAssessment.updatedAt = now;
+      }
+      await applicationRepo.save(application);
+    });
   }
 
   /**

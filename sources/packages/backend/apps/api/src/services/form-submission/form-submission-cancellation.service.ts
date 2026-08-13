@@ -116,12 +116,14 @@ export class FormSubmissionCancellationService {
    * @param applicationId The ID of the application whose form submissions are to be cancelled.
    * @param cancellationReason The reason for cancelling the form submissions.
    * @param auditUserId The ID of the user performing the cancellation.
+   * @param auditDate The date of the cancellation action.
    * @param entityManager The entity manager to execute in transaction.
    */
   async cancelApplicationScopedFormSubmissions(
     applicationId: number,
     cancellationReason: FormSubmissionCancellationReason,
     auditUserId: number,
+    auditDate: Date,
     entityManager: EntityManager,
   ): Promise<void> {
     const formSubmissionRepo = entityManager.getRepository(FormSubmission);
@@ -143,6 +145,7 @@ export class FormSubmissionCancellationService {
       cancellationReason,
       auditUserId,
       entityManager,
+      { auditDate },
     );
   }
 
@@ -153,14 +156,17 @@ export class FormSubmissionCancellationService {
    * @param cancellationReason reason for the cancellation of the form submission.
    * @param auditUserId ID of the user performing the cancellation.
    * @param entityManager entity manager to execute in transaction.
+   * @param options optional parameters for the cancellation process.
+   * - `auditDate` date of the cancellation action, defaults to current date if not provided.
    */
   private async processCancellations(
     formSubmissionIds: number[],
     cancellationReason: FormSubmissionCancellationReason,
     auditUserId: number,
     entityManager: EntityManager,
+    options?: { auditDate?: Date },
   ): Promise<void> {
-    const now = new Date();
+    const now = options?.auditDate ?? new Date();
     const auditUser = { id: auditUserId };
     await entityManager.getRepository(FormSubmission).update(
       { id: In(formSubmissionIds) },
