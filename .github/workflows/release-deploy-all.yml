@@ -1,8 +1,5 @@
 name: Release - Deploy All
 run-name: Release - Deploy all from ${{ github.ref_name }} to ${{ inputs.environment }}
-permissions:
-  contents: read
-  actions: read
 
 on:
   workflow_dispatch:
@@ -133,6 +130,8 @@ env:
 jobs:
   env-setup:
     name: Setup Dynamic Environment Variables
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     outputs:
@@ -146,6 +145,8 @@ jobs:
   # Run DB migrations.
   run-db-migrations:
     name: Run DB Migrations
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: env-setup
@@ -178,6 +179,8 @@ jobs:
   # Deploy SIMS API.
   deploy-sims-api:
     name: Deploy SIMS-API
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: [env-setup, run-db-migrations]
@@ -210,6 +213,8 @@ jobs:
   # Deploy workers.
   deploy-workers:
     name: Deploy Workers
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     env:
       DISABLE_ORM_CACHE: true
@@ -243,6 +248,8 @@ jobs:
   # Deploy queue consumers.
   deploy-queue-consumers:
     name: Deploy Queue Consumers
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: [env-setup, run-db-migrations]
@@ -275,6 +282,8 @@ jobs:
   # Deploy Web/Frontend.
   deploy-web-frontend:
     name: Deploy Web/Frontend
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: [env-setup, run-db-migrations]
@@ -307,6 +316,8 @@ jobs:
   # Deploy Camunda and Form.io Definitions
   deployCamundaFormioDefinitions:
     name: Deploy Camunda and Form.io definitions
+    permissions:
+      contents: read
     needs: [env-setup, deploy-sims-api]
     uses: ./.github/workflows/release-deploy-camunda-formio-definitions.yml
     with:
