@@ -7,12 +7,6 @@
         :loading="formSubmissionLoading"
       />
     </template>
-    <template #alerts>
-      <cancelled-form-submission-banner
-        :is-application-scoped="!!formSubmission?.applicationId"
-        :cancellation-reason="formSubmission?.cancellationReason"
-      />
-    </template>
     <content-group>
       <v-form ref="approvalsForm">
         <error-summary :errors="approvalsForm?.errors" />
@@ -210,7 +204,6 @@ import {
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import FormSubmissionDecisionHistory from "./FormSubmissionDecisionHistory.vue";
 import FormSubmissionApprovalHeader from "./FormSubmissionApprovalHeader.vue";
-import CancelledFormSubmissionBanner from "@/components/form-submissions/CancelledFormSubmissionBanner.vue";
 import { SharedRouteConst } from "@/constants/routes/RouteConstants";
 import router from "@/router";
 import { HttpStatusCode, isAxiosError } from "axios";
@@ -234,7 +227,6 @@ export default defineComponent({
     FormSubmissionDecisionHistory,
     ConfirmModal,
     FormSubmissionApprovalHeader,
-    CancelledFormSubmissionBanner,
   },
   props: {
     formSubmissionId: {

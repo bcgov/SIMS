@@ -3,9 +3,6 @@
     <v-card v-if="props.enableCardView">
       <v-container :fluid="true">
         <slot name="header"><body-header v-bind="headerProps" /></slot>
-        <div :class="{ 'mt-2': !!slots.alerts }">
-          <slot name="alerts"></slot>
-        </div>
         <div class="mt-2">
           <slot></slot>
         </div>
@@ -13,9 +10,6 @@
     </v-card>
     <div v-else class="mb-3">
       <slot name="header"><body-header v-bind="headerProps" /></slot>
-      <div :class="{ 'mt-2': !!slots.alerts }">
-        <slot name="alerts"></slot>
-      </div>
       <div class="mt-2">
         <slot></slot>
       </div>
@@ -24,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from "vue";
+import { computed } from "vue";
 
 interface Props {
   enableCardView?: boolean;
@@ -58,5 +52,4 @@ const headerProps = computed(() => {
     recordsCount: props.recordsCount,
   };
 });
-const slots = useSlots();
 </script>

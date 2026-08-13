@@ -84,7 +84,7 @@ export enum FormSubmissionCancellationReason {
 
 export interface DecisionHistory {
   id: number;
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   decisionDate?: Date;
   decisionBy?: string;
   decisionNoteDescription?: string;
@@ -92,7 +92,7 @@ export interface DecisionHistory {
 }
 
 export interface FormSubmissionItemDecision {
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   noteDescription?: string;
 }
 

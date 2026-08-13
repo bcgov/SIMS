@@ -1,15 +1,15 @@
 <template>
-  <chip-status :status="chipStatus" :label="status" />
+  <chip-status :status="chipStatus" :label="chipLabel" />
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { FormSubmissionDecisionStatus } from "@/types";
+import { FormSubmissionDecisionStatus, FormSubmissionStatus } from "@/types";
 import { useFormSubmission } from "@/composables";
 
 export default defineComponent({
   props: {
     status: {
-      type: String as PropType<FormSubmissionDecisionStatus>,
+      type: String as PropType<FormSubmissionDecisionStatus | null>,
       required: true,
     },
   },
@@ -18,7 +18,10 @@ export default defineComponent({
     const chipStatus = computed(() => {
       return mapFormSubmissionDecisionStatus(props.status);
     });
-    return { chipStatus };
+    const chipLabel = computed(() => {
+      return props.status ?? FormSubmissionStatus.Cancelled;
+    });
+    return { chipStatus, chipLabel };
   },
 });
 </script>

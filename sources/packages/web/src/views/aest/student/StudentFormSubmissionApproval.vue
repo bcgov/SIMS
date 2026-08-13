@@ -8,6 +8,12 @@
       />
       <form-submission-header-title :form-submission="formSubmission" />
     </template>
+    <template #alerts>
+      <cancelled-form-submission-banner
+        :is-application-scoped="!!formSubmission?.applicationId"
+        :cancellation-reason="formSubmission?.cancellationReason"
+      />
+    </template>
     <form-submission-approval
       :form-submission-id="formSubmissionId"
       :show-decision-details="true"
@@ -21,6 +27,7 @@
 import { PropType, ref } from "vue";
 import FormSubmissionApproval from "@/components/form-submissions/FormSubmissionApproval.vue";
 import FormSubmissionHeaderTitle from "@/components/form-submissions/FormSubmissionHeaderTitle.vue";
+import CancelledFormSubmissionBanner from "@/components/form-submissions/CancelledFormSubmissionBanner.vue";
 import { FormSubmissionMinistryAPIOutDTO } from "@/services/http/dto";
 import { BackTarget, FormCategory } from "@/types";
 

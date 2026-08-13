@@ -15,6 +15,12 @@
         :form-submission="formSubmission"
       />
     </template>
+    <template #alerts>
+      <cancelled-form-submission-banner
+        :is-application-scoped="!!formSubmission?.applicationId"
+        :cancellation-reason="formSubmission?.cancellationReason"
+      />
+    </template>
     <body-header-container>
       <template #header>
         <body-header :title="formSubmission?.formCategory">
@@ -31,12 +37,6 @@
             completed.
           </template>
         </body-header>
-      </template>
-      <template #alerts>
-        <cancelled-form-submission-banner
-          :is-application-scoped="!!formSubmission?.applicationId"
-          :cancellation-reason="formSubmission?.cancellationReason"
-        />
       </template>
       <content-group>
         <form-submission-items

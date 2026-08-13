@@ -89,7 +89,7 @@ export class FormSubmissionsAPIOutDTO {
  */
 export interface FormSubmissionItemDecisionAPIOutDTO {
   id?: number;
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   decisionDate?: Date;
   decisionBy?: string;
   decisionNoteDescription?: string;
@@ -203,7 +203,7 @@ export interface FormSubmissionAPIInDTO {
  * Ministry individual form item decision update.
  */
 export interface FormSubmissionItemDecisionAPIInDTO {
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   noteDescription: string;
   /**
    * Date when the decision record was last updated. Used for concurrency control
