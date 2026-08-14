@@ -1,7 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { DataSource } from "typeorm";
-import { ORMCacheManager } from "@sims/sims-db";
 import { AppModule } from "../../app.module";
 import { setGlobalPipes } from "../../utilities";
 import { overrideImportsMetadata } from "@sims/test-utils";
@@ -59,8 +58,6 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   await systemUsersService.loadSystemUser();
 
   const dataSource = module.get(DataSource);
-  const ormCacheManager = module.get(ORMCacheManager);
-  await ormCacheManager.clear();
   return {
     nestApplication,
     module,
