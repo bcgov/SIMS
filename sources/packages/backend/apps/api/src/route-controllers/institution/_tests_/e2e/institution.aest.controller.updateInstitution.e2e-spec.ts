@@ -11,24 +11,29 @@ import {
   createE2EDataSources,
   createFakeInstitution,
 } from "@sims/test-utils";
-import { InstitutionClassification } from "@sims/sims-db";
+import { InstitutionClassification, InstitutionType } from "@sims/sims-db";
 import {
   CANADA_COUNTRY_CODE,
   BC_PROVINCE_CODE,
   UNITED_STATES_COUNTRY_CODE,
+  INSTITUTION_TYPE_BC_PRIVATE,
 } from "@sims/sims-db/constant";
 import { ONTARIO_PROVINCE_CODE } from "@sims/test-utils/constants";
 import { getInstitutionProfilePayload } from "./institution.utils";
+import { InstitutionService } from "../../../../services";
 
 describe("InstitutionAESTController(e2e)-updateInstitution", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let institutionService: InstitutionService;
   const OUT_OF_PROVINCE_PUBLIC_INSTITUTION_ID = 3;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    institutionService = module.get(InstitutionService);
   });
 
   it("Should update institution when valid update payload is provided.", async () => {
@@ -49,11 +54,26 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
+    // Warms up the institution type cache with the original institution type.
+    const originalInstitutionType =
+      await institutionService.getInstitutionTypeById(institution.id);
+    expect(originalInstitutionType.institutionType.id).toBe(
+      INSTITUTION_TYPE_BC_PRIVATE,
+    );
+
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
+
+    // The cached institution type must reflect the new type right away instead
+    // of continuing to report the previous one until the cache expires.
+    const updatedInstitutionType =
+      await institutionService.getInstitutionTypeById(institution.id);
+    expect(updatedInstitutionType.institutionType.id).toBe(
+      OUT_OF_PROVINCE_PUBLIC_INSTITUTION_ID,
+    );
 
     const savedInstitution = await db.institution.findOne({
       select: {
@@ -131,6 +151,42 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
       organizationStatus: payload.organizationStatus,
       medicalSchoolStatus: payload.medicalSchoolStatus,
     });
+  });
+
+  it("Should return the cached institution type instead of the updated one when the institution type is changed directly in the database bypassing the application cache invalidation.", async () => {
+    // Arrange
+    const institution = await db.institution.save(
+      createFakeInstitution(undefined, {
+        initialValues: {
+          legalOperatingName: "Institution legal operating name",
+        },
+      }),
+    );
+
+    // Act
+    // Warms up the institution type cache with the original institution type.
+    const originalInstitutionType =
+      await institutionService.getInstitutionTypeById(institution.id);
+    // Bypasses the application, and its cache invalidation, updating the
+    // institution type directly in the database.
+    await db.institution.save({
+      id: institution.id,
+      institutionType: {
+        id: OUT_OF_PROVINCE_PUBLIC_INSTITUTION_ID,
+      } as InstitutionType,
+    });
+    const institutionTypeAfterDirectUpdate =
+      await institutionService.getInstitutionTypeById(institution.id);
+
+    // Assert
+    expect(originalInstitutionType.institutionType.id).toBe(
+      INSTITUTION_TYPE_BC_PRIVATE,
+    );
+    // Since the update bypassed the application, the cache is not invalidated,
+    // and the previously cached institution type must still be returned.
+    expect(institutionTypeAfterDirectUpdate.institutionType.id).toBe(
+      originalInstitutionType.institutionType.id,
+    );
   });
 
   it("Should throw unprocessable entity error when invalid country is provided in the update payload.", async () => {

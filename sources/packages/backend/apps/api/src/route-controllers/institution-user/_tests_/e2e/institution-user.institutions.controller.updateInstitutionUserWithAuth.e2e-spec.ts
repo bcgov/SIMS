@@ -1,4 +1,5 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
+import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import {
   authorizeUserTokenForLocation,
@@ -22,19 +23,25 @@ import {
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
 } from "@sims/sims-db";
+import { InstitutionUserAuthService } from "../../../../services";
 
 describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAuth", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let institutionUserAuthService: InstitutionUserAuthService;
   let collegeFLocationA: InstitutionLocation;
   let collegeFLocationB: InstitutionLocation;
   let collegeFInstitution: Institution;
   let institutionUserRole: InstitutionUserTypeAndRole;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    institutionUserAuthService = (module as TestingModule).get(
+      InstitutionUserAuthService,
+    );
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -201,13 +208,26 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     // Institution token.
     const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
     const endpoint = `/institutions/institution-user/${institutionUser.id}`;
+    // Warms up the authorizations cache with the user's original permissions.
+    const originalAuthorizations =
+      await institutionUserAuthService.getAuthorizationsByUserName(
+        user.userName,
+      );
 
-    // Act/Assert
+    // Act
     await request(app.getHttpServer())
       .patch(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
+
+    // Assert
+    // The cached authorizations must reflect the new permissions right away
+    // instead of continuing to report the previous ones until the cache expires.
+    const updatedAuthorizations =
+      await institutionUserAuthService.getAuthorizationsByUserName(
+        user.userName,
+      );
     const savedInstitutionUser = await db.institutionUser.findOne({
       select: {
         user: {
@@ -224,6 +244,8 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
       },
       where: { id: institutionUser.id },
     });
+    expect(originalAuthorizations.authorizations).toHaveLength(1);
+    expect(updatedAuthorizations.authorizations).toHaveLength(2);
     expect(savedInstitutionUser.user).toEqual(
       expect.objectContaining({
         userName: user.userName,

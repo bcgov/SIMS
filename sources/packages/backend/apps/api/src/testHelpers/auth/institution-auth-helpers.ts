@@ -103,7 +103,7 @@ async function authorizeUserForLocation(
   locationId: number,
   type: InstitutionUserTypes,
   role?: InstitutionUserRoles,
-) {
+): Promise<void> {
   const userTypeAndRole = await dataSource
     .getRepository(InstitutionUserTypeAndRole)
     .findOne({
@@ -127,6 +127,7 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
+  dataSource.queryResultCache.clear();
 }
 
 /**
@@ -146,7 +147,7 @@ export async function authorizeUserTokenForLocation(
   options?: {
     institutionUserType?: InstitutionUserTypes;
   },
-) {
+): Promise<void> {
   const { institution, user } = await getAuthRelatedEntities(
     dataSource,
     userTokenType,
@@ -154,6 +155,7 @@ export async function authorizeUserTokenForLocation(
   if (!location.id) {
     location.institution = institution;
     await dataSource.getRepository(InstitutionLocation).save(location);
+    dataSource.queryResultCache.clear();
   }
   await authorizeUserForLocation(
     dataSource,
@@ -177,7 +179,7 @@ export async function getAuthorizedLocation(
   db: E2EDataSources,
   institutionTokenType: InstitutionTokenTypes,
   institutionUserType: InstitutionUserTypes,
-) {
+): Promise<InstitutionLocation> {
   const { institution } = await getAuthRelatedEntities(
     db.dataSource,
     institutionTokenType,
