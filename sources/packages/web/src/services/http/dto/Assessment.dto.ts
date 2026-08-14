@@ -70,6 +70,7 @@ export interface AssessmentNOAAPIOutDTO {
   eligibleAmount: number;
   noaApprovalStatus: AssessmentStatus;
   applicationStatus: ApplicationStatus;
+  courseLoad?: number;
 }
 
 /**

@@ -13,7 +13,8 @@ ENV PORT=3000
 COPY /*.json /*.js ./
 
 # Installing dependencies
-RUN npm ci
+# Allow the postscript to run to rebuild the @suites/doubles.jest package, which is required for unit tests.
+RUN npm ci --ignore-scripts && npm rebuild @suites/doubles.jest
 
 # Copying sources.
 COPY ./apps/api ./apps/api

@@ -183,6 +183,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
       },
       offeringName: assessment.offering.name,
+      courseLoad: assessment.offering.courseLoad,
     };
     // Act/Assert
     await request(app.getHttpServer())
@@ -347,6 +348,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
       },
       offeringName: assessment.offering.name,
+      courseLoad: assessment.offering.courseLoad,
     };
     // Act/Assert
     await request(app.getHttpServer())
@@ -476,6 +478,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentNOA", () => {
         disbursement1EnrolmentDate: enrolmentDate1.toISOString(),
       },
       offeringName: assessment.offering.name,
+      courseLoad: assessment.offering.courseLoad,
     };
 
     // Act/Assert

@@ -1,4 +1,4 @@
-import { Global, Module } from "@nestjs/common";
+import { Global, Logger, Module, OnApplicationShutdown } from "@nestjs/common";
 import {
   BullModule,
   BullRootModuleOptions,
@@ -29,7 +29,20 @@ import { DatabaseModule } from "@sims/sims-db";
   providers: [QueueService],
   exports: [BullModule, QueueService],
 })
-export class QueueModule {}
+export class QueueModule implements OnApplicationShutdown {
+  private readonly logger = new Logger(QueueModule.name);
+
+  /**
+   * Logs the shutdown signal. Each Bull queue closes itself automatically
+   * during shutdown through its own hook registered by `@nestjs/bull`.
+   * @param signal signal that triggered the shutdown.
+   */
+  onApplicationShutdown(signal?: string): void {
+    this.logger.log(
+      `Signal (${signal}) received: Closing Queue connections...`,
+    );
+  }
+}
 
 /**
  * Connection factory which returns connection properties

@@ -1,8 +1,6 @@
 name: Release - Deploy All
 run-name: Release - Deploy all from ${{ github.ref_name }} to ${{ inputs.environment }}
-permissions:
-  contents: read
-  actions: read
+permissions: {}
 
 on:
   workflow_dispatch:
@@ -146,6 +144,8 @@ jobs:
   # Run DB migrations.
   run-db-migrations:
     name: Run DB Migrations
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: env-setup
@@ -155,11 +155,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy Environment: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy Environment: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -175,6 +178,8 @@ jobs:
   # Deploy SIMS API.
   deploy-sims-api:
     name: Deploy SIMS-API
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: [env-setup, run-db-migrations]
@@ -184,11 +189,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -204,6 +212,8 @@ jobs:
   # Deploy workers.
   deploy-workers:
     name: Deploy Workers
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     env:
       DISABLE_ORM_CACHE: true
@@ -215,10 +225,13 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo BUILD ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo OC CLI Version: $(oc version)
+          echo BUILD ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -234,6 +247,8 @@ jobs:
   # Deploy queue consumers.
   deploy-queue-consumers:
     name: Deploy Queue Consumers
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: [env-setup, run-db-migrations]
@@ -243,11 +258,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -263,6 +281,8 @@ jobs:
   # Deploy Web/Frontend.
   deploy-web-frontend:
     name: Deploy Web/Frontend
+    permissions:
+      contents: read
     environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     needs: [env-setup, run-db-migrations]
@@ -272,11 +292,14 @@ jobs:
         with:
           oc: "4"
       - name: Print env
+        env:
+          DEPLOY_ENVIRONMENT: ${{ inputs.environment }}
+          BUILD_REF_OUTPUT: ${{ needs.env-setup.outputs.build-ref }}
         run: |
-          echo Deploy ENVIRONMENT: ${{ inputs.environment }}
-          echo GIT REF: ${{ needs.env-setup.outputs.build-ref }}
-          echo BUILD NAMESPACE: $BUILD_NAMESPACE
-          echo OC CLI Version: $(oc version)
+          echo Deploy ENVIRONMENT: "$DEPLOY_ENVIRONMENT"
+          echo GIT REF: "$BUILD_REF_OUTPUT"
+          echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
+          echo OC CLI Version: "$(oc version)"
       - name: Checkout Target Branch
         uses: actions/checkout@v7
         with:
@@ -292,6 +315,8 @@ jobs:
   # Deploy Camunda and Form.io Definitions
   deployCamundaFormioDefinitions:
     name: Deploy Camunda and Form.io definitions
+    permissions:
+      contents: read
     needs: [env-setup, deploy-sims-api]
     uses: ./.github/workflows/release-deploy-camunda-formio-definitions.yml
     with:

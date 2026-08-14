@@ -8,9 +8,13 @@ import { SystemUsersService } from "@sims/services";
 import cookieParser from "cookie-parser";
 import { NestExpressApplication } from "@nestjs/platform-express";
 
-(async () => {
+(async (): Promise<void> => {
   const app =
     await NestFactory.create<NestExpressApplication>(QueueConsumersModule);
+
+  // Listens to termination signals so open connections can be gracefully closed.
+  app.enableShutdownHooks();
+
   const config = app.get<ConfigService>(ConfigService);
 
   // Trust upstream proxy headers to resolve client IP addresses correctly.

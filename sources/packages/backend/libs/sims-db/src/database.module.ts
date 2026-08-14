@@ -1,4 +1,4 @@
-import { Global, Module } from "@nestjs/common";
+import { Global, Logger, Module, OnApplicationShutdown } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { DBEntities, ormConfig } from "./data-source";
 import { ORMCacheManager } from "./orm-cache-manager";
@@ -16,4 +16,18 @@ import { ORMCacheManager } from "./orm-cache-manager";
   providers: [ORMCacheManager],
   exports: [TypeOrmModule, ORMCacheManager],
 })
-export class DatabaseModule {}
+export class DatabaseModule implements OnApplicationShutdown {
+  private readonly logger = new Logger(DatabaseModule.name);
+
+  /**
+   * Logs the shutdown signal. The TypeORM DataSource closes itself
+   * automatically during shutdown through its own hook registered by
+   * `@nestjs/typeorm`'s `TypeOrmModule.forRoot`.
+   * @param signal signal that triggered the shutdown.
+   */
+  onApplicationShutdown(signal?: string): void {
+    this.logger.log(
+      `Signal (${signal}) received: Closing TypeORM DataSource connections...`,
+    );
+  }
+}

@@ -20,6 +20,10 @@ describe("FormSubmissionUpdateDisabilityOnSubmissionAction-applyAction", () => {
       isApplyActionExpected: false,
     },
     {
+      formSubmissionStatus: FormSubmissionStatus.Cancelled,
+      isApplyActionExpected: false,
+    },
+    {
       formSubmissionStatus: FormSubmissionStatus.Pending,
       isApplyActionExpected: true,
     },

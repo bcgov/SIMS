@@ -82,7 +82,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Set a date to be used to verify the audit dates.
     const now = new Date();
     MockDate.set(now);
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const endpoint = getEndpoint(application.applicationException.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -199,7 +199,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     // Set a date to be used to verify the audit dates.
     const now = new Date();
     MockDate.set(now);
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const endpoint = getEndpoint(application.applicationException.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -285,7 +285,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = "/aest/application-exception/9999999";
+    const endpoint = getEndpoint(9999999);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -319,7 +319,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+    const endpoint = getEndpoint(application.applicationException.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -374,7 +374,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
         ],
         noteDescription: faker.lorem.words(10),
       };
-      const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+      const endpoint = getEndpoint(application.applicationException.id);
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -463,7 +463,7 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
         })),
         noteDescription: faker.lorem.words(10),
       };
-      const endpoint = `/aest/application-exception/${application.applicationException.id}`;
+      const endpoint = getEndpoint(application.applicationException.id);
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
       // Act/Assert
@@ -480,55 +480,62 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     },
   );
 
-  it(`Should throw not found error when the application has ${ApplicationStatus.Edited} and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
-    // Arrange
-    const application = await saveFakeApplicationWithApplicationException(
-      appDataSource,
-      undefined,
-      { applicationExceptionStatus: ApplicationExceptionStatus.Pending },
-    );
-    application.applicationStatus = ApplicationStatus.Edited;
-    const [exceptionRequest] =
-      application.applicationException.exceptionRequests;
-    await db.application.save(application);
-    const payload = {
-      assessedExceptionRequests: [
-        {
-          exceptionRequestId: exceptionRequest.id,
-          exceptionRequestStatus: ApplicationExceptionRequestStatus.Declined,
-        },
-      ],
-      noteDescription: faker.lorem.words(10),
-    };
-    const endpoint = `/aest/application-exception/${application.applicationException.id}`;
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+  [ApplicationStatus.Edited, ApplicationStatus.Cancelled].forEach(
+    (applicationStatus) => {
+      it(`Should throw not found error when the application has ${applicationStatus} status and exception is in ${ApplicationExceptionStatus.Pending} status.`, async () => {
+        // Arrange
+        const application = await saveFakeApplicationWithApplicationException(
+          appDataSource,
+          undefined,
+          {
+            applicationStatus,
+            applicationExceptionStatus: ApplicationExceptionStatus.Pending,
+          },
+        );
+        const [exceptionRequest] =
+          application.applicationException.exceptionRequests;
+        const payload = {
+          assessedExceptionRequests: [
+            {
+              exceptionRequestId: exceptionRequest.id,
+              exceptionRequestStatus:
+                ApplicationExceptionRequestStatus.Declined,
+            },
+          ],
+          noteDescription: faker.lorem.words(10),
+        };
+        const endpoint = getEndpoint(application.applicationException.id);
+        const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send(payload)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "Student application exception not found.",
-        error: "Not Found",
+        // Act/Assert
+        await request(app.getHttpServer())
+          .patch(endpoint)
+          .send(payload)
+          .auth(token, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.NOT_FOUND)
+          .expect({
+            statusCode: HttpStatus.NOT_FOUND,
+            message: "Student application exception not found.",
+            error: "Not Found",
+          });
       });
-  });
+    },
+  );
 
   it("Should throw bad request error when the payload has one or more assessed exception request with invalid exception request status.", async () => {
     // Arrange
+    const EXCEPTION_REQUEST_ID = 1;
     const payload = {
       assessedExceptionRequests: [
         {
-          exceptionRequestId: 1,
+          exceptionRequestId: EXCEPTION_REQUEST_ID,
           // Pending is an invalid status for assessing an exception request.
           exceptionRequestStatus: ApplicationExceptionRequestStatus.Pending,
         },
       ],
       noteDescription: faker.lorem.words(10),
     };
-    const endpoint = "/aest/application-exception/1";
+    const endpoint = getEndpoint(EXCEPTION_REQUEST_ID);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -548,16 +555,17 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
 
   it("Should throw bad request error when payload has empty note description.", async () => {
     // Arrange
+    const EXCEPTION_REQUEST_ID = 1;
     const payload = {
       assessedExceptionRequests: [
         {
-          exceptionRequestId: 1,
+          exceptionRequestId: EXCEPTION_REQUEST_ID,
           exceptionRequestStatus: ApplicationExceptionRequestStatus.Approved,
         },
       ],
       noteDescription: "",
     };
-    const endpoint = "/aest/application-exception/1";
+    const endpoint = getEndpoint(EXCEPTION_REQUEST_ID);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -577,3 +585,12 @@ describe("ApplicationExceptionAESTController(e2e)-approveException", () => {
     await app?.close();
   });
 });
+
+/**
+ * Gets the endpoint to approve the application exception.
+ * @param applicationExceptionId Application exception ID.
+ * @returns Endpoint URL to approve the application exception.
+ */
+function getEndpoint(applicationExceptionId: number): string {
+  return `/aest/application-exception/${applicationExceptionId}`;
+}
