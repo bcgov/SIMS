@@ -1,23 +1,14 @@
 ALTER TABLE
     sims.form_submissions
 ADD
-    COLUMN cancellation_reason sims.form_submission_cancellation_reasons,
-    -- This column is purely added for the purpose of copying the submission_status values
-    -- before updating the submission_status of form submissions which belong to 
-    -- edited and cancelled applications to 'Cancelled' so that rollback can be achieved in a safe manner.
-ADD
-    COLUMN submission_status_before_update sims.form_submission_status;
+    COLUMN cancellation_reason sims.form_submission_cancellation_reasons;
 
 COMMENT ON COLUMN sims.form_submissions.cancellation_reason IS 'Reason for cancellation of the form submission.';
 
-COMMENT ON COLUMN sims.form_submissions.submission_status_before_update IS 'Submission status of the updated form submission before it was updated.';
-
 -- Update the submission_status as 'Cancelled' with cancellation reason for all the form submissions which belong to cancelled applications.
--- While executing this update, we are also storing the previous submission_status in submission_status_before_update column so that rollback can be achieved in a safe manner.
 UPDATE
     sims.form_submissions
 SET
-    submission_status_before_update = submission_status,
     submission_status = 'Cancelled',
     cancellation_reason = 'Application cancelled',
     submission_status_updated_by = (
@@ -38,11 +29,9 @@ WHERE
     AND form_submissions.submission_status != 'Cancelled';
 
 -- Update the submission_status as 'Cancelled' with cancellation reason for all the form submissions which belong to edited applications.
--- While executing this update, we are also storing the previous submission_status in submission_status_before_update column so that rollback can be achieved in a safe manner.
 UPDATE
     sims.form_submissions
 SET
-    submission_status_before_update = submission_status,
     submission_status = 'Cancelled',
     cancellation_reason = 'Application edited',
     submission_status_updated_by = (
