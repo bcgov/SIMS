@@ -78,7 +78,7 @@ const props = defineProps({
   },
 });
 const snackBar = useSnackBar();
-const formSubmission = ref({} as FormSubmissionAPIOutDTO);
+const formSubmission = ref<FormSubmissionAPIOutDTO>();
 const formSubmissionItems = ref([] as FormSubmissionItem[]);
 const loading = ref(true);
 

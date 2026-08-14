@@ -134,6 +134,7 @@ export class FormSubmission extends RecordDataModel {
     type: "enum",
     enum: FormSubmissionCancellationReason,
     enumName: "form_submission_cancellation_reasons",
+    nullable: true,
   })
-  cancellationReason: FormSubmissionCancellationReason;
+  cancellationReason?: FormSubmissionCancellationReason;
 }

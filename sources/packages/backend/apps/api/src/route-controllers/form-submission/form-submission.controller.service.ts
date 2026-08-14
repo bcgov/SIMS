@@ -28,13 +28,13 @@ import { getUserFullName } from "../../utilities";
 /**
  * Emulated decision status mapping based on it's form submission status.
  */
-const EMULATED_DECISION_STATUS_MAPPING: Record<
-  FormSubmissionStatus.Cancelled | FormSubmissionStatus.Pending,
+const EMULATED_DECISION_STATUS_MAP: Map<
+  FormSubmissionStatus,
   FormSubmissionDecisionStatus | null
-> = {
-  [FormSubmissionStatus.Cancelled]: null,
-  [FormSubmissionStatus.Pending]: FormSubmissionDecisionStatus.Pending,
-};
+> = new Map([
+  [FormSubmissionStatus.Cancelled, null],
+  [FormSubmissionStatus.Pending, FormSubmissionDecisionStatus.Pending],
+]);
 @Injectable()
 export class FormSubmissionControllerService {
   constructor(
@@ -174,10 +174,11 @@ export class FormSubmissionControllerService {
       FormSubmissionAuthRoles.AssessItemDecision,
       [submissionItem.dynamicFormConfiguration.id],
     );
-    // When there is no current decision, return the status as pending.
+    // When there is no current decision, the decision status is emulated based on the form submission status.
+    // At this point, the form submission status can be either Pending or Cancelled.
     if (!submissionItem.currentDecision) {
       return {
-        decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
+        decisionStatus: EMULATED_DECISION_STATUS_MAP.get(submissionStatus),
       };
     }
     // When the submission is either assessed or the user can assess the item decision, return the current actual decision status.
@@ -188,8 +189,9 @@ export class FormSubmissionControllerService {
     }
     // From this point on, the submission is not assessed and the user does not have the permission to assess the item decision.
     // Hence return the emulated decision status.
+    // At this point, the form submission status can be either Pending or Cancelled.
     return {
-      decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
+      decisionStatus: EMULATED_DECISION_STATUS_MAP.get(submissionStatus),
     };
   }
 
@@ -327,10 +329,10 @@ export class FormSubmissionControllerService {
     canAssessItemDecision: boolean,
   ): FormSubmissionItemDecisionMinistryAPIOutDTO {
     if (!submissionItem.currentDecision) {
-      // Default when no decision has been made yet.
-      // Return the emulated decision status based on the form submission status.
+      // When there is no current decision, the decision status is emulated based on the form submission status.
+      // At this point, the form submission status can be either Pending or Cancelled.
       return {
-        decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
+        decisionStatus: EMULATED_DECISION_STATUS_MAP.get(submissionStatus),
       };
     }
     if (canAssessItemDecision) {
@@ -358,8 +360,9 @@ export class FormSubmissionControllerService {
     }
     // From this point on, the submission is not assessed.
     // Hence return the emulated decision status.
+    // At this point, the form submission status can be either Pending or Cancelled.
     return {
-      decisionStatus: EMULATED_DECISION_STATUS_MAPPING[submissionStatus],
+      decisionStatus: EMULATED_DECISION_STATUS_MAP.get(submissionStatus),
     };
   }
 }
