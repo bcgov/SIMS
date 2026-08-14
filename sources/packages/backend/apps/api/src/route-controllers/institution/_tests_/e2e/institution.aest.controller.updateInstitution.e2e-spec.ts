@@ -1,5 +1,4 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import {
   AESTGroups,
@@ -34,7 +33,7 @@ describe("InstitutionAESTController(e2e)-updateInstitution", () => {
       await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    institutionService = (module as TestingModule).get(InstitutionService);
+    institutionService = module.get(InstitutionService);
   });
 
   it("Should update institution when valid update payload is provided.", async () => {
