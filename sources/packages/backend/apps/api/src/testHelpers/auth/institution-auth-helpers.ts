@@ -92,8 +92,6 @@ export async function getAuthRelatedEntities(
  * @param dataSource manage the database access.
  * @param institutionId related institution.
  * @param userId user to be associated with the institution.
- * @param userName user name (same as Keycloak) associated with the userId,
- * needed to invalidate the cached authorizations for the user.
  * @param locationId location to be granted access to.
  * @param type type of authorization.
  * @param role authorization role.
@@ -163,7 +161,6 @@ export async function authorizeUserTokenForLocation(
     dataSource,
     institution.id,
     user.id,
-    user.userName,
     location.id,
     options?.institutionUserType ?? InstitutionUserTypes.user,
   );
