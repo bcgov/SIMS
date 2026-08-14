@@ -29,8 +29,7 @@ import {
   mockUserLoginInfo,
   resetMockUserLoginInfo,
 } from "../../../testHelpers";
-import { registerOrmCacheManager } from "../../../testHelpers/auth/institution-auth-helpers";
-import { ORMCacheManager, Student, User } from "@sims/sims-db";
+import { Student, User } from "@sims/sims-db";
 import { AuthTestController } from "../../../testHelpers/controllers/auth-test/auth-test.controller";
 import { SIMS2_COLLE_USER } from "@sims/test-utils/constants";
 import { InstitutionUserTypes } from "../../user-types.enum";
@@ -86,7 +85,6 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
     await app.init();
     const dataSource = moduleFixture.get(DataSource);
     db = createE2EDataSources(dataSource);
-    registerOrmCacheManager(dataSource, moduleFixture.get(ORMCacheManager));
     configServiceMockHelper = new ConfigServiceMockHelper(app);
   });
 

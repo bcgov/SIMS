@@ -129,4 +129,19 @@ export class ORMCacheManager {
       );
     }
   }
+
+  /**
+   * Clears the entire query result cache.
+   */
+  async clear(): Promise<void> {
+    const queryResultCache = this.dataSource.queryResultCache;
+    if (!queryResultCache) {
+      return;
+    }
+    try {
+      await queryResultCache.clear();
+    } catch (error: unknown) {
+      this.logger.error(`Error while clearing the cache.`, error);
+    }
+  }
 }

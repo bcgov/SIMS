@@ -6,7 +6,6 @@ import {
   InstitutionUserRoles,
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
-  ORMCacheManager,
   User,
 } from "@sims/sims-db";
 import {
@@ -30,38 +29,6 @@ import {
 } from "@sims/test-utils/constants";
 import { DataSource, IsNull } from "typeorm";
 import { InstitutionTokenTypes } from "./institution-token-helpers";
-
-const ormCacheManagers = new WeakMap<DataSource, ORMCacheManager>();
-
-/**
- * Registers the ORMCacheManager instance resolved from the NestJS testing
- * application so this file can reuse the same DI-managed instance instead
- * of instantiating its own, bypassing the application's dependency graph.
- * Must be called once, right after the testing application is created.
- * @param dataSource data source the manager is bound to.
- * @param ormCacheManager ORMCacheManager instance resolved from the testing module.
- */
-export function registerOrmCacheManager(
-  dataSource: DataSource,
-  ormCacheManager: ORMCacheManager,
-): void {
-  ormCacheManagers.set(dataSource, ormCacheManager);
-}
-
-/**
- * Gets the ORMCacheManager instance registered for the given data source.
- * @param dataSource data source associated with the desired manager.
- * @returns the registered ORMCacheManager instance.
- */
-function getOrmCacheManager(dataSource: DataSource): ORMCacheManager {
-  const ormCacheManager = ormCacheManagers.get(dataSource);
-  if (!ormCacheManager) {
-    throw new Error(
-      "ORMCacheManager not registered for the given data source.",
-    );
-  }
-  return ormCacheManager;
-}
 
 /**
  * Get the institution and user associated with the institution user token type.
@@ -164,7 +131,6 @@ async function authorizeUserForLocation(
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
   // Clear the cached authorizations during e2e tests to avoid serving stale data to the user after the new permission is granted.
-  await getOrmCacheManager(dataSource).clearUserAuthorizationsCache(userName);
 }
 
 /**
@@ -192,12 +158,6 @@ export async function authorizeUserTokenForLocation(
   if (!location.id) {
     location.institution = institution;
     await dataSource.getRepository(InstitutionLocation).save(location);
-    // This helper writes directly to the database bypassing the application's
-    // own cache invalidation, so the cached institution locations ids must be
-    // cleared here to avoid serving a stale list to admin authorizations.
-    await getOrmCacheManager(dataSource).clearInstitutionLocationsCache(
-      institution.id,
-    );
   }
   await authorizeUserForLocation(
     dataSource,
