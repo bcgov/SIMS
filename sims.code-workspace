@@ -155,6 +155,7 @@
     },
     "js/ts.preferences.importModuleSpecifier": "non-relative",
     "cSpell.words": [
+      "Actioned",
       "addressline",
       "AEST",
       "autodrain",
@@ -216,6 +217,7 @@
       "NSLSC",
       "Overaward",
       "overawards",
+      "papaparse",
       "parentcurrentyearincomeappeal",
       "partnerinformationandincomeappeal",
       "parttime",

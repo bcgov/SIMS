@@ -71,22 +71,22 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     appModule = module;
     db = createE2EDataSources(dataSource);
     // College F.
-    const { institution: collegeF, user } = await getAuthRelatedEntities(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-    );
+    ({ institution: collegeF, user: institutionUser } =
+      await getAuthRelatedEntities(
+        db.dataSource,
+        InstitutionTokenTypes.CollegeFUser,
+      ));
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
-    institutionUser = user;
     await authorizeUserTokenForLocation(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
       collegeFLocation,
     );
     // College C.
-    const { institution: collegeC } = await getAuthRelatedEntities(
+    ({ institution: collegeC } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
-    );
+    ));
     collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
       db.dataSource,
@@ -268,53 +268,52 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   });
 
   it("Should generate the Student Unmet Need Report for a full-time and part-time applications when full-time has a single disbursement and part-time has two disbursements that should be summed.", async () => {
-      // Arrange
-      const { fullTimeApplication, partTimeApplication } =
-        await createApplicationsDataSetup(db, {
-          institution: collegeF,
-          institutionLocation: collegeFLocation,
-          programYear,
-        });
-      const payload = {
-        reportName: "Student_Unmet_Need_Report",
-        params: {
-          offeringIntensity: {
-            "Full Time": true,
-            "Part Time": true,
-          },
-          programYear: programYear.id,
+    // Arrange
+    const { fullTimeApplication, partTimeApplication } =
+      await createApplicationsDataSetup(db, {
+        institution: collegeF,
+        institutionLocation: collegeFLocation,
+        programYear,
+      });
+    const payload = {
+      reportName: "Student_Unmet_Need_Report",
+      params: {
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
         },
-      };
-      const endpoint = "/institutions/report";
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-      // Expected report records.
-      const expectedFullTimeRecord =
-        buildUnmetNeedReportData(fullTimeApplication);
-      const expectedPartTimeRecord =
-        buildUnmetNeedReportData(partTimeApplication);
+        programYear: programYear.id,
+      },
+    };
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    // Expected report records.
+    const expectedFullTimeRecord =
+      buildUnmetNeedReportData(fullTimeApplication);
+    const expectedPartTimeRecord =
+      buildUnmetNeedReportData(partTimeApplication);
 
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          const fileContent = response.request.res["text"];
-          const parsedResult = parse(fileContent, {
-            header: true,
-          });
-          expect(parsedResult.data).toEqual(
-            expect.arrayContaining([
-              expectedFullTimeRecord,
-              expectedPartTimeRecord,
-            ]),
-          );
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
         });
-    },
-  );
+        expect(parsedResult.data).toEqual(
+          expect.arrayContaining([
+            expectedFullTimeRecord,
+            expectedPartTimeRecord,
+          ]),
+        );
+      });
+  });
 
   it("Should throw forbidden error when the institution type is not BC Public.", async () => {
     // Arrange
@@ -337,458 +336,452 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   });
 
   it(`Should generate the COE Requests report for both ${OfferingIntensity.fullTime} and ${OfferingIntensity.partTime} application disbursements and for the given program year when one or more applications which are neither in ${ApplicationStatus.Completed} or ${ApplicationStatus.Enrolment} status exist for the given institution.`, async () => {
-      // Arrange
-      const institution = await db.institution.save(
-        createFakeInstitution({ institutionType: bcPublicInstitutionType }),
-      );
+    // Arrange
+    const institution = await db.institution.save(
+      createFakeInstitution({ institutionType: bcPublicInstitutionType }),
+    );
 
-      // Application in completed status with disbursements.
-      const completedApplication = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student: sharedStudent,
-          institution,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              1000,
-            ),
-          ],
+    // Application in completed status with disbursements.
+    const completedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        institution,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        currentAssessmentInitialValues: {
+          workflowData: {
+            calculatedData: {
+              pdppdStatus: false,
+            },
+          } as WorkflowData,
+          assessmentDate: new Date(),
         },
-        {
-          currentAssessmentInitialValues: {
-            workflowData: {
-              calculatedData: {
-                pdppdStatus: false,
-              },
-            } as WorkflowData,
-            assessmentDate: new Date(),
-          },
-          offeringIntensity: OfferingIntensity.fullTime,
-          applicationStatus: ApplicationStatus.Completed,
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-            coeUpdatedAt: new Date(),
-            tuitionRemittanceRequestedAmount: 100,
-            dateSent: new Date(),
-          },
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          coeUpdatedAt: new Date(),
+          tuitionRemittanceRequestedAmount: 100,
+          dateSent: new Date(),
         },
-      );
-      // Application in enrolment status with disbursements.
-      const enrolmentApplication = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student: sharedStudent,
-          institution,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              1000,
-            ),
-          ],
+      },
+    );
+    // Application in enrolment status with disbursements.
+    const enrolmentApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        institution,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        currentAssessmentInitialValues: {
+          workflowData: {
+            calculatedData: {
+              pdppdStatus: false,
+            },
+          } as WorkflowData,
+          assessmentDate: new Date(),
         },
-        {
-          currentAssessmentInitialValues: {
-            workflowData: {
-              calculatedData: {
-                pdppdStatus: false,
-              },
-            } as WorkflowData,
-            assessmentDate: new Date(),
-          },
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Enrolment,
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.required,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-            tuitionRemittanceRequestedAmount: 100,
-          },
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Enrolment,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          tuitionRemittanceRequestedAmount: 100,
         },
-      );
+      },
+    );
 
-      // Application in assessment status with disbursements.
-      await saveFakeApplicationDisbursements(
-        db.dataSource,
+    // Application in assessment status with disbursements.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        institution,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        currentAssessmentInitialValues: {
+          workflowData: {
+            calculatedData: {
+              pdppdStatus: false,
+            },
+          } as WorkflowData,
+          assessmentDate: new Date(),
+        },
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.Assessment,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          coeUpdatedAt: new Date(),
+          tuitionRemittanceRequestedAmount: 100,
+        },
+      },
+    );
+
+    const programYearDefault = completedApplication.programYear;
+    const payload = {
+      reportName: "COE_Requests",
+      params: {
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+        programYear: programYearDefault.id,
+      },
+    };
+
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
+    await mockInstitutionUserAuthorization(
+      appModule,
+      new InstitutionUserAuthorizations(institution.id, [
         {
-          student: sharedStudent,
-          institution,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              1000,
-            ),
-          ],
+          locationId: null,
+          userRole: null,
+          userType: InstitutionUserTypes.admin,
         },
-        {
-          currentAssessmentInitialValues: {
-            workflowData: {
-              calculatedData: {
-                pdppdStatus: false,
-              },
-            } as WorkflowData,
-            assessmentDate: new Date(),
-          },
-          offeringIntensity: OfferingIntensity.partTime,
-          applicationStatus: ApplicationStatus.Assessment,
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.required,
-            coeUpdatedAt: new Date(),
-            tuitionRemittanceRequestedAmount: 100,
-          },
-        },
-      );
+      ]),
+    );
 
-      const programYearDefault = completedApplication.programYear;
-      const payload = {
-        reportName: "COE_Requests",
-        params: {
-          offeringIntensity: {
-            "Full Time": true,
-            "Part Time": true,
-          },
-          programYear: programYearDefault.id,
-        },
-      };
-
-      const endpoint = "/institutions/report";
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
-      await mockInstitutionUserAuthorization(
-        appModule,
-        new InstitutionUserAuthorizations(institution.id, [
-          {
-            locationId: null,
-            userRole: null,
-            userType: InstitutionUserTypes.admin,
-          },
-        ]),
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          const fileContent = response.request.res["text"];
-          const parsedResult = parse(fileContent, {
-            header: true,
-          });
-          // Build expected result.
-          const [firstReportDisbursement] =
-            enrolmentApplication.currentAssessment.disbursementSchedules;
-          const [secondReportDisbursement] =
-            completedApplication.currentAssessment.disbursementSchedules;
-          const firstReportDisbursementData = buildCOERequestsReportData(
-            firstReportDisbursement,
-            "1000.00",
-            firstReportDisbursement.disbursementDate,
-          );
-          const secondReportDisbursementData = buildCOERequestsReportData(
-            secondReportDisbursement,
-            "1000.00",
-            getISODateOnlyString(secondReportDisbursement.dateSent),
-          );
-          // Expect the disbursement for the application in `Assessment` status is not included in the report.
-          expect(parsedResult.data.length).toBe(2);
-          expect(parsedResult.data).toStrictEqual([
-            firstReportDisbursementData,
-            secondReportDisbursementData,
-          ]);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
         });
-    },
-  );
+        // Build expected result.
+        const [firstReportDisbursement] =
+          enrolmentApplication.currentAssessment.disbursementSchedules;
+        const [secondReportDisbursement] =
+          completedApplication.currentAssessment.disbursementSchedules;
+        const firstReportDisbursementData = buildCOERequestsReportData(
+          firstReportDisbursement,
+          "1000.00",
+          firstReportDisbursement.disbursementDate,
+        );
+        const secondReportDisbursementData = buildCOERequestsReportData(
+          secondReportDisbursement,
+          "1000.00",
+          getISODateOnlyString(secondReportDisbursement.dateSent),
+        );
+        // Expect the disbursement for the application in `Assessment` status is not included in the report.
+        expect(parsedResult.data.length).toBe(2);
+        expect(parsedResult.data).toStrictEqual([
+          firstReportDisbursementData,
+          secondReportDisbursementData,
+        ]);
+      });
+  });
 
   it("Should generate the COE Requests report without including application(s) that are archived when one or more applications which are archived exist for the given institution.", async () => {
-      // Arrange
-      const institution = await db.institution.save(
-        createFakeInstitution({ institutionType: bcPublicInstitutionType }),
-      );
+    // Arrange
+    const institution = await db.institution.save(
+      createFakeInstitution({ institutionType: bcPublicInstitutionType }),
+    );
 
-      // Application in completed status with disbursements and not archived.
-      const notArchivedApplication = await saveFakeApplicationDisbursements(
-        db.dataSource,
+    // Application in completed status with disbursements and not archived.
+    const notArchivedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        institution,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        currentAssessmentInitialValues: {
+          workflowData: {
+            calculatedData: {
+              pdppdStatus: false,
+            },
+          } as WorkflowData,
+          assessmentDate: new Date(),
+        },
+        applicationStatus: ApplicationStatus.Completed,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.completed,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          coeUpdatedAt: new Date(),
+          tuitionRemittanceRequestedAmount: 100,
+          dateSent: new Date(),
+        },
+      },
+    );
+    // Application to be archived.
+    const archivedApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        institution,
+        disbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1000,
+          ),
+        ],
+      },
+      {
+        currentAssessmentInitialValues: {
+          workflowData: {
+            calculatedData: {
+              pdppdStatus: false,
+            },
+          } as WorkflowData,
+          assessmentDate: new Date(),
+        },
+        applicationStatus: ApplicationStatus.Enrolment,
+        firstDisbursementInitialValues: {
+          coeStatus: COEStatus.required,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          coeUpdatedAt: new Date(),
+          tuitionRemittanceRequestedAmount: 100,
+        },
+      },
+    );
+    archivedApplication.isArchived = true;
+    await db.application.save(archivedApplication);
+
+    const programYearDefault = notArchivedApplication.programYear;
+    const payload = {
+      reportName: "COE_Requests",
+      params: {
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
+        },
+        programYear: programYearDefault.id,
+      },
+    };
+
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
+    await mockInstitutionUserAuthorization(
+      appModule,
+      new InstitutionUserAuthorizations(institution.id, [
         {
-          student: sharedStudent,
-          institution,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              1000,
-            ),
-          ],
+          locationId: null,
+          userRole: null,
+          userType: InstitutionUserTypes.admin,
         },
-        {
-          currentAssessmentInitialValues: {
-            workflowData: {
-              calculatedData: {
-                pdppdStatus: false,
-              },
-            } as WorkflowData,
-            assessmentDate: new Date(),
-          },
-          applicationStatus: ApplicationStatus.Completed,
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.completed,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
-            coeUpdatedAt: new Date(),
-            tuitionRemittanceRequestedAmount: 100,
-            dateSent: new Date(),
-          },
-        },
-      );
-      // Application to be archived.
-      const archivedApplication = await saveFakeApplicationDisbursements(
-        db.dataSource,
-        {
-          student: sharedStudent,
-          institution,
-          disbursementValues: [
-            createFakeDisbursementValue(
-              DisbursementValueType.CanadaLoan,
-              "CSLF",
-              1000,
-            ),
-          ],
-        },
-        {
-          currentAssessmentInitialValues: {
-            workflowData: {
-              calculatedData: {
-                pdppdStatus: false,
-              },
-            } as WorkflowData,
-            assessmentDate: new Date(),
-          },
-          applicationStatus: ApplicationStatus.Enrolment,
-          firstDisbursementInitialValues: {
-            coeStatus: COEStatus.required,
-            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-            coeUpdatedAt: new Date(),
-            tuitionRemittanceRequestedAmount: 100,
-          },
-        },
-      );
-      archivedApplication.isArchived = true;
-      await db.application.save(archivedApplication);
+      ]),
+    );
 
-      const programYearDefault = notArchivedApplication.programYear;
-      const payload = {
-        reportName: "COE_Requests",
-        params: {
-          offeringIntensity: {
-            "Full Time": true,
-            "Part Time": true,
-          },
-          programYear: programYearDefault.id,
-        },
-      };
-
-      const endpoint = "/institutions/report";
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
-      await mockInstitutionUserAuthorization(
-        appModule,
-        new InstitutionUserAuthorizations(institution.id, [
-          {
-            locationId: null,
-            userRole: null,
-            userType: InstitutionUserTypes.admin,
-          },
-        ]),
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          const fileContent = response.request.res["text"];
-          const parsedResult = parse(fileContent, {
-            header: true,
-          });
-          // Build expected result.
-          const [firstReportDisbursement] =
-            notArchivedApplication.currentAssessment.disbursementSchedules;
-          const firstReportDisbursementData = buildCOERequestsReportData(
-            firstReportDisbursement,
-            "1000.00",
-            getISODateOnlyString(firstReportDisbursement.dateSent),
-          );
-
-          // Expect the disbursement for the application which is not archived.
-          expect(parsedResult.data.length).toBe(1);
-          expect(parsedResult.data).toStrictEqual([
-            firstReportDisbursementData,
-          ]);
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
         });
-    },
-  );
+        // Build expected result.
+        const [firstReportDisbursement] =
+          notArchivedApplication.currentAssessment.disbursementSchedules;
+        const firstReportDisbursementData = buildCOERequestsReportData(
+          firstReportDisbursement,
+          "1000.00",
+          getISODateOnlyString(firstReportDisbursement.dateSent),
+        );
+
+        // Expect the disbursement for the application which is not archived.
+        expect(parsedResult.data.length).toBe(1);
+        expect(parsedResult.data).toStrictEqual([firstReportDisbursementData]);
+      });
+  });
 
   it("Should generate the COE Requests report without including application(s) that do not have estimated awards when one or more applications exist for the given institution.", async () => {
-      // Arrange
-      const institution = await db.institution.save(
-        createFakeInstitution({ institutionType: bcPublicInstitutionType }),
-      );
+    // Arrange
+    const institution = await db.institution.save(
+      createFakeInstitution({ institutionType: bcPublicInstitutionType }),
+    );
 
-      // Application with disbursements which have estimated awards.
-      const applicationWithEstimatedAwards =
-        await saveFakeApplicationDisbursements(
-          db.dataSource,
-          {
-            student: sharedStudent,
-            institution,
-            disbursementValues: [
-              createFakeDisbursementValue(
-                DisbursementValueType.CanadaLoan,
-                "CSLF",
-                1000,
-              ),
-            ],
-          },
-          {
-            currentAssessmentInitialValues: {
-              assessmentDate: new Date(),
-            },
-            applicationStatus: ApplicationStatus.Completed,
-            firstDisbursementInitialValues: {
-              coeStatus: COEStatus.completed,
-              dateSent: new Date(),
-            },
-          },
-        );
-      // Application with disbursements which don't have estimated awards.
+    // Application with disbursements which have estimated awards.
+    const applicationWithEstimatedAwards =
       await saveFakeApplicationDisbursements(
         db.dataSource,
         {
           student: sharedStudent,
           institution,
-          firstDisbursementValues: [],
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.CanadaLoan,
+              "CSLF",
+              1000,
+            ),
+          ],
         },
         {
+          currentAssessmentInitialValues: {
+            assessmentDate: new Date(),
+          },
           applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            dateSent: new Date(),
+          },
         },
       );
+    // Application with disbursements which don't have estimated awards.
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        student: sharedStudent,
+        institution,
+        firstDisbursementValues: [],
+      },
+      {
+        applicationStatus: ApplicationStatus.Completed,
+      },
+    );
 
-      const programYearDefault = applicationWithEstimatedAwards.programYear;
-      const payload = {
-        reportName: "COE_Requests",
-        params: {
-          offeringIntensity: {
-            "Full Time": true,
-            "Part Time": true,
-          },
-          programYear: programYearDefault.id,
+    const programYearDefault = applicationWithEstimatedAwards.programYear;
+    const payload = {
+      reportName: "COE_Requests",
+      params: {
+        offeringIntensity: {
+          "Full Time": true,
+          "Part Time": true,
         },
-      };
-
-      const endpoint = "/institutions/report";
-      const institutionUserToken = await getInstitutionToken(
-        InstitutionTokenTypes.CollegeFUser,
-      );
-
-      // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
-      await mockInstitutionUserAuthorization(
-        appModule,
-        new InstitutionUserAuthorizations(institution.id, [
-          {
-            locationId: null,
-            userRole: null,
-            userType: InstitutionUserTypes.admin,
-          },
-        ]),
-      );
-
-      // Act/Assert
-      await request(app.getHttpServer())
-        .post(endpoint)
-        .send(payload)
-        .auth(institutionUserToken, BEARER_AUTH_TYPE)
-        .expect(HttpStatus.CREATED)
-        .then((response) => {
-          const fileContent = response.request.res["text"];
-          const parsedResult = parse(fileContent, {
-            header: true,
-          });
-          // Build expected result.
-          const [firstReportDisbursement] =
-            applicationWithEstimatedAwards.currentAssessment
-              .disbursementSchedules;
-          const firstReportDisbursementData = buildCOERequestsReportData(
-            firstReportDisbursement,
-            "1000.00",
-            getISODateOnlyString(firstReportDisbursement.dateSent),
-          );
-          // Expect the disbursement for the application which has estimated awards.
-          expect(parsedResult.data.length).toBe(1);
-          expect(parsedResult.data).toStrictEqual([
-            firstReportDisbursementData,
-          ]);
-        });
-    },
-  );
-
-  /**
-   * Build COE Requests report data.
-   * @param disbursements disbursements part of the report.
-   * @param expectedDisbursementAmount expected total sum of disbursement amount.
-   * @param expectedDisbursementDate expected disbursement date.
-   * @returns report data.
-   */
-  function buildCOERequestsReportData(
-    disbursement: DisbursementSchedule,
-    expectedDisbursementAmount: string,
-    expectedDisbursementDate: string,
-  ): Record<string, string | number> {
-    const application = disbursement.studentAssessment.application;
-    return {
-      "Student First Name": application.student.user.firstName,
-      "Student Last Name": application.student.user.lastName,
-      SIN: application.student.sinValidation.sin,
-      "Student Number": "",
-      "Student Email Address": application.student.user.email,
-      "Student Phone Number": application.student.contactInfo.phone,
-      "Application Number": application.applicationNumber,
-      "Assessment Date": getPSTPDTDateTime(
-        disbursement.studentAssessment.assessmentDate,
-      ),
-      "Program Name":
-        disbursement.studentAssessment.offering.educationProgram.name,
-      "Offering Name": application.currentAssessment.offering.name,
-      "Study Intensity":
-        disbursement.studentAssessment.offering.offeringIntensity,
-      "Profile Disability Status": application.student.disabilityStatus,
-      "Application Disability Status": String(
-        disbursement.studentAssessment.workflowData.calculatedData.pdppdStatus,
-      ),
-      "Study Start Date":
-        disbursement.studentAssessment.offering.studyStartDate,
-      "Study End Date": disbursement.studentAssessment.offering.studyEndDate,
-      "COE Status": disbursement.coeStatus,
-      "COE Actioned": disbursement.coeUpdatedAt
-        ? getPSTPDTDateTime(disbursement.coeUpdatedAt)
-        : "",
-      "Remittance Requested":
-        disbursement.tuitionRemittanceRequestedAmount.toFixed(2),
-      "Remittance Disbursed": disbursement.tuitionRemittanceEffectiveAmount
-        ? disbursement.tuitionRemittanceEffectiveAmount.toFixed(2)
-        : "",
-      "Estimated Disbursement Amount": expectedDisbursementAmount,
-      "Disbursement Date": expectedDisbursementDate,
+        programYear: programYearDefault.id,
+      },
     };
-  }
+
+    const endpoint = "/institutions/report";
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
+    await mockInstitutionUserAuthorization(
+      appModule,
+      new InstitutionUserAuthorizations(institution.id, [
+        {
+          locationId: null,
+          userRole: null,
+          userType: InstitutionUserTypes.admin,
+        },
+      ]),
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        const fileContent = response.request.res["text"];
+        const parsedResult = parse(fileContent, {
+          header: true,
+        });
+        // Build expected result.
+        const [firstReportDisbursement] =
+          applicationWithEstimatedAwards.currentAssessment
+            .disbursementSchedules;
+        const firstReportDisbursementData = buildCOERequestsReportData(
+          firstReportDisbursement,
+          "1000.00",
+          getISODateOnlyString(firstReportDisbursement.dateSent),
+        );
+        // Expect the disbursement for the application which has estimated awards.
+        expect(parsedResult.data.length).toBe(1);
+        expect(parsedResult.data).toStrictEqual([firstReportDisbursementData]);
+      });
+  });
 });
+
+/**
+ * Build COE Requests report data.
+ * @param disbursements disbursements part of the report.
+ * @param expectedDisbursementAmount expected total sum of disbursement amount.
+ * @param expectedDisbursementDate expected disbursement date.
+ * @returns report data.
+ */
+function buildCOERequestsReportData(
+  disbursement: DisbursementSchedule,
+  expectedDisbursementAmount: string,
+  expectedDisbursementDate: string,
+): Record<string, string | number> {
+  const application = disbursement.studentAssessment.application;
+  return {
+    "Student First Name": application.student.user.firstName,
+    "Student Last Name": application.student.user.lastName,
+    SIN: application.student.sinValidation.sin,
+    "Student Number": "",
+    "Student Email Address": application.student.user.email,
+    "Student Phone Number": application.student.contactInfo.phone,
+    "Application Number": application.applicationNumber,
+    "Assessment Date": getPSTPDTDateTime(
+      disbursement.studentAssessment.assessmentDate,
+    ),
+    "Program Name":
+      disbursement.studentAssessment.offering.educationProgram.name,
+    "Offering Name": application.currentAssessment.offering.name,
+    "Study Intensity":
+      disbursement.studentAssessment.offering.offeringIntensity,
+    "Profile Disability Status": application.student.disabilityStatus,
+    "Application Disability Status": String(
+      disbursement.studentAssessment.workflowData.calculatedData.pdppdStatus,
+    ),
+    "Study Start Date": disbursement.studentAssessment.offering.studyStartDate,
+    "Study End Date": disbursement.studentAssessment.offering.studyEndDate,
+    "Number of Funded Weeks":
+      disbursement.studentAssessment.offering.studyBreaks.totalFundedWeeks.toString(),
+    "COE Status": disbursement.coeStatus,
+    "COE Actioned": disbursement.coeUpdatedAt
+      ? getPSTPDTDateTime(disbursement.coeUpdatedAt)
+      : "",
+    "Remittance Requested":
+      disbursement.tuitionRemittanceRequestedAmount.toFixed(2),
+    "Remittance Disbursed": disbursement.tuitionRemittanceEffectiveAmount
+      ? disbursement.tuitionRemittanceEffectiveAmount.toFixed(2)
+      : "",
+    "Estimated Disbursement Amount": expectedDisbursementAmount,
+    "Disbursement Date": expectedDisbursementDate,
+  };
+}
