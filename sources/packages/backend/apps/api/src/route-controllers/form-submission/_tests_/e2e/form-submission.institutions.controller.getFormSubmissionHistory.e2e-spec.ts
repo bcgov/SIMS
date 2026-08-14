@@ -372,7 +372,7 @@ describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", (
       );
   });
 
-  it("Should get the form submission with actual decision status when the form submission is cancelled without being assessed.", async () => {
+  it("Should get the form submission with actual decision status when the form submission is cancelled after being assessed.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const authorizedApplication = await saveFakeApplication(db.dataSource, {
