@@ -6,10 +6,8 @@ import {
   InstitutionUserRoles,
   InstitutionUserTypeAndRole,
   InstitutionUserTypes,
-  ORMCacheManager,
   User,
 } from "@sims/sims-db";
-import { LoggerService } from "@sims/utilities/logger";
 import {
   createFakeInstitutionLocation,
   createFakeInstitutionUser,
@@ -31,21 +29,6 @@ import {
 } from "@sims/test-utils/constants";
 import { DataSource, IsNull } from "typeorm";
 import { InstitutionTokenTypes } from "./institution-token-helpers";
-
-let ormCacheManager: ORMCacheManager;
-
-/**
- * Gets the ORM cache manager.
- * Since the cache manager class cannot be injected, it initializes it on demand.
- * @param dataSource data source used by the application under test.
- * @returns ORM cache manager.
- */
-function getORMCacheManager(dataSource: DataSource): ORMCacheManager {
-  if (!ormCacheManager) {
-    ormCacheManager = new ORMCacheManager(dataSource, new LoggerService());
-  }
-  return ormCacheManager;
-}
 
 /**
  * Get the institution and user associated with the institution user token type.
@@ -119,7 +102,6 @@ async function authorizeUserForLocation(
   dataSource: DataSource,
   institutionId: number,
   userId: number,
-  userName: string,
   locationId: number,
   type: InstitutionUserTypes,
   role?: InstitutionUserRoles,
@@ -147,9 +129,7 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
-  // Parallel specs share the same seeded users, so the authorizations cache can be
-  // repopulated by another spec at any moment and must be invalidated right here.
-  await getORMCacheManager(dataSource).clearUserAuthorizationsCache(userName);
+  dataSource.queryResultCache.clear();
 }
 
 /**
@@ -177,12 +157,7 @@ export async function authorizeUserTokenForLocation(
   if (!location.id) {
     location.institution = institution;
     await dataSource.getRepository(InstitutionLocation).save(location);
-    // This helper writes directly to the database bypassing the application's own
-    // cache invalidation, so the cached institution locations ids must be cleared
-    // here to avoid serving a stale list to admin authorizations.
-    await getORMCacheManager(dataSource).clearInstitutionLocationsCache(
-      institution.id,
-    );
+    dataSource.queryResultCache.clear();
   }
   await authorizeUserForLocation(
     dataSource,
