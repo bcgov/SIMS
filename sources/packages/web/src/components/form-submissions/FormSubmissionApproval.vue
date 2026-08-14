@@ -401,6 +401,7 @@ export default defineComponent({
             props.formSubmissionId,
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
+        emit("loaded", submission);
         const itemToUpdate = formSubmissionItems.value.find(
           (item) => item.decision!.submissionItemId === itemId,
         );
@@ -409,7 +410,6 @@ export default defineComponent({
         }
         // Reload the form submission values.
         formSubmission.value.status = submission.status;
-        formSubmission.value.cancellationReason = submission.cancellationReason;
         formSubmission.value.assessedDate = submission.assessedDate;
         const [reloadedSubmissionItem] = submission.submissionItems;
         assignItemDecisionProperties(
