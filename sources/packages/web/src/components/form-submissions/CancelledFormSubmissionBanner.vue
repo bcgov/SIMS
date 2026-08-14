@@ -32,7 +32,7 @@ const applicationScopedBannerDetails = computed<BannerDetails | undefined>(
     if (!canShowApplicationScopedBanner.value) {
       return;
     }
-    const header = "Appeal no longer active";
+    const header = "Appeal No Longer Active";
     switch (props.cancellationReason) {
       case FormSubmissionCancellationReason.StudentCancelledSubmission:
         return {
