@@ -102,7 +102,6 @@ async function authorizeUserForLocation(
   dataSource: DataSource,
   institutionId: number,
   userId: number,
-  userName: string,
   locationId: number,
   type: InstitutionUserTypes,
   role?: InstitutionUserRoles,
@@ -163,7 +162,6 @@ export async function authorizeUserTokenForLocation(
     dataSource,
     institution.id,
     user.id,
-    user.userName,
     location.id,
     options?.institutionUserType ?? InstitutionUserTypes.user,
   );
