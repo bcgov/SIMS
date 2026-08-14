@@ -22,7 +22,6 @@ interface BannerDetails {
 }
 
 const props = withDefaults(defineProps<CancelledFormSubmissionBannerProps>(), {
-  isApplicationScoped: false,
   cancellationReason: undefined,
 });
 const canShowApplicationScopedBanner = computed(
