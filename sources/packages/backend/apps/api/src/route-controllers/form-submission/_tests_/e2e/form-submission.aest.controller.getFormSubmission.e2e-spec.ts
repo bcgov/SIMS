@@ -614,8 +614,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         },
       ],
     });
-    const [formSubmissionItemB] = formSubmission.formSubmissionItems;
-    const [itemBDecision1] = formSubmissionItemB.decisions;
+    const [formSubmissionItem] = formSubmission.formSubmissionItems;
+    const [itemDecision1] = formSubmissionItem.decisions;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     await authorizeDynamicFormConfigurations(
@@ -650,22 +650,21 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               canAssessItemDecision: true,
-              id: formSubmissionItemB.id,
+              id: formSubmissionItem.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId:
                 formConfigs.studentAppealApplicationB.id,
-              submissionData: formSubmissionItemB.submittedData,
+              submissionData: formSubmissionItem.submittedData,
               formDefinitionName:
                 formConfigs.studentAppealApplicationB.formDefinitionName,
-              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              updatedAt: formSubmissionItem.updatedAt.toISOString(),
               currentDecision: {
-                id: itemBDecision1.id,
+                id: itemDecision1.id,
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
-                decisionDate: itemBDecision1.decisionDate.toISOString(),
-                decisionBy: `${itemBDecision1.decisionBy.firstName} ${itemBDecision1.decisionBy.lastName}`,
-                decisionNoteDescription:
-                  itemBDecision1.decisionNote.description,
+                decisionDate: itemDecision1.decisionDate.toISOString(),
+                decisionBy: `${itemDecision1.decisionBy.firstName} ${itemDecision1.decisionBy.lastName}`,
+                decisionNoteDescription: itemDecision1.decisionNote.description,
               },
               previousDecisions: [],
             },
@@ -674,7 +673,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
       });
   });
 
-  it("Should get a form submission with emulated decision status null when the form submission is cancelled and not assessed and the user does not have the access to assess item decision.", async () => {
+  it("Should get a form submission with emulated decision status null when the form submission is cancelled and not assessed and the user does not have permission to assess item decision.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource);
     const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
@@ -693,7 +692,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         },
       ],
     });
-    const [formSubmissionItemB] = formSubmission.formSubmissionItems;
+    const [formSubmissionItem] = formSubmission.formSubmissionItems;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     await authorizeDynamicFormConfigurations(
@@ -727,15 +726,15 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               canAssessItemDecision: false,
-              id: formSubmissionItemB.id,
+              id: formSubmissionItem.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId:
                 formConfigs.studentAppealApplicationB.id,
-              submissionData: formSubmissionItemB.submittedData,
+              submissionData: formSubmissionItem.submittedData,
               formDefinitionName:
                 formConfigs.studentAppealApplicationB.formDefinitionName,
-              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              updatedAt: formSubmissionItem.updatedAt.toISOString(),
               currentDecision: {
                 decisionStatus: null,
               },
@@ -766,8 +765,8 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
         },
       ],
     });
-    const [formSubmissionItemB] = formSubmission.formSubmissionItems;
-    const [itemBDecision1] = formSubmissionItemB.decisions;
+    const [formSubmissionItem] = formSubmission.formSubmissionItems;
+    const [itemDecision1] = formSubmissionItem.decisions;
     const endpoint = `/aest/form-submission/${formSubmission.id}`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     await authorizeDynamicFormConfigurations(
@@ -801,19 +800,18 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmission", () => {
           submissionItems: [
             {
               canAssessItemDecision: false,
-              id: formSubmissionItemB.id,
+              id: formSubmissionItem.id,
               formType: formConfigs.studentAppealApplicationB.formType,
               formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId:
                 formConfigs.studentAppealApplicationB.id,
-              submissionData: formSubmissionItemB.submittedData,
+              submissionData: formSubmissionItem.submittedData,
               formDefinitionName:
                 formConfigs.studentAppealApplicationB.formDefinitionName,
-              updatedAt: formSubmissionItemB.updatedAt.toISOString(),
+              updatedAt: formSubmissionItem.updatedAt.toISOString(),
               currentDecision: {
                 decisionStatus: FormSubmissionDecisionStatus.Approved,
-                decisionNoteDescription:
-                  itemBDecision1.decisionNote.description,
+                decisionNoteDescription: itemDecision1.decisionNote.description,
               },
               previousDecisions: [],
             },

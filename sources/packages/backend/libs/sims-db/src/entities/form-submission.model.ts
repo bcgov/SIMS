@@ -125,7 +125,6 @@ export class FormSubmission extends RecordDataModel {
     type: "timestamptz",
   })
   submissionStatusUpdatedOn: Date;
-
   /**
    * Reason for cancellation of the form submission.
    */

@@ -243,7 +243,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
         },
       ],
     });
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
+    const [formSubmissionItem] = formSubmission.formSubmissionItems;
     const endpoint = `/students/form-submission/${formSubmission.id}`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -272,12 +272,12 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             formSubmission.submissionStatusUpdatedOn.toISOString(),
           submissionItems: [
             {
-              id: formSubmissionItemA.id,
+              id: formSubmissionItem.id,
               formType: formConfigs.studentAppealApplicationA.formType,
               formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId:
                 formConfigs.studentAppealApplicationA.id,
-              submissionData: formSubmissionItemA.submittedData,
+              submissionData: formSubmissionItem.submittedData,
               formDefinitionName:
                 formConfigs.studentAppealApplicationA.formDefinitionName,
               currentDecision: {
@@ -308,7 +308,7 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
         },
       ],
     });
-    const [formSubmissionItemA] = formSubmission.formSubmissionItems;
+    const [formSubmissionItem] = formSubmission.formSubmissionItems;
     const endpoint = `/students/form-submission/${formSubmission.id}`;
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
@@ -337,12 +337,12 @@ describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
             formSubmission.submissionStatusUpdatedOn.toISOString(),
           submissionItems: [
             {
-              id: formSubmissionItemA.id,
+              id: formSubmissionItem.id,
               formType: formConfigs.studentAppealApplicationA.formType,
               formCategory: FormCategory.StudentAppeal,
               dynamicFormConfigurationId:
                 formConfigs.studentAppealApplicationA.id,
-              submissionData: formSubmissionItemA.submittedData,
+              submissionData: formSubmissionItem.submittedData,
               formDefinitionName:
                 formConfigs.studentAppealApplicationA.formDefinitionName,
               currentDecision: {
