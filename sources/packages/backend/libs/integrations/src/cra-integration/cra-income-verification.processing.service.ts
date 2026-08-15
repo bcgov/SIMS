@@ -322,7 +322,9 @@ export class CRAIncomeVerificationProcessingService {
       statusRecord.requestStatusCode === RequestStatusCodes.successfulRequest &&
       statusRecord.matchStatusCode === MatchStatusCodes.successfulMatch &&
       !!totalIncomeRecord;
-    const income = isValidResponse ? totalIncomeRecord.totalIncomeValue : null;
+    const income = isValidResponse
+      ? totalIncomeRecord.totalIncomeValueAdjusted
+      : null;
 
     const updateResult =
       await this.incomeVerificationService.updateReceivedFile(

@@ -18,7 +18,24 @@ export class CRAResponseTotalIncomeRecord extends CRAResponseRecordIdentificatio
    * for a particular tax year (a.k.a. line 15000).
    * Named as TOTAL-INCOME on CRA documentation.
    */
-  public get totalIncomeValue(): number {
-    return Number(this.line.substr(21, 9));
+  get totalIncomeValue(): number {
+    return Number(this.line.substring(21, 30));
+  }
+
+  /**
+   * Indicates if the total income value returned from CRA is negative.
+   */
+  get totalIncomeValueIsNegative(): boolean {
+    return this.line.substring(30, 31) === "-";
+  }
+
+  /**
+   * Returns the total income value adjusted to be negative
+   * if the total income value has the negative indicator
+   * on the CRA response record.
+   */
+  get totalIncomeValueAdjusted(): number {
+    const value = this.totalIncomeValue;
+    return this.totalIncomeValueIsNegative ? -value : value;
   }
 }
