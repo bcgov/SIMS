@@ -93,6 +93,73 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     ).toBe(true);
   });
 
+  it("Should process SIN response file with a negative income when the file contains a negative 1500 line negative income.", async () => {
+    // Arrange.
+    const student = await saveFakeStudent(db.dataSource);
+    const income = 50099;
+    const formattedIncome = income.toString().padStart(9, "0");
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      { applicationStatus: ApplicationStatus.InProgress },
+    );
+
+    // Create CRA income verifications for student.
+    const studentCRAIncomeVerification = createFakeCRAIncomeVerification({
+      application,
+      applicationEditStatusUpdatedBy: student.user,
+    });
+    await db.craIncomeVerification.save([studentCRAIncomeVerification]);
+    // Queued job.
+    const mockedJob = mockBullJob<void>();
+    mockDownloadFiles(sftpClientMock, [CRA_FILENAME]);
+
+    mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
+      const file = getStructuredRecords(fileContent);
+      file.records[2] = file.records[2].replace(
+        "CRA_INCOME_VERIFICATION",
+        studentCRAIncomeVerification.id.toString().padStart(9, "0"),
+      );
+      file.records[3] = file.records[3].replace(
+        `${formattedIncome} `,
+        `${formattedIncome}-`,
+      );
+      return createFileFromStructuredRecords(file);
+    });
+
+    // Act
+    const processResult = await processor.processQueue(mockedJob.job);
+    // Assert
+    const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);
+
+    // Assert
+    expect(processResult).toEqual(["Processed CRA response files."]);
+    expect(
+      mockedJob.containLogMessages([
+        "CRA response files processed: 1",
+        `Processing file ${downloadedFile}.`,
+        "File contains 2 verifications.",
+        "Processed income verification. Total income record line 5. Status record from line 4.",
+      ]),
+    ).toBe(true);
+    // Load the updated CRA income verification record to
+    // validate the saved values.
+    const updatedStudentCRAIncomeVerification =
+      await db.craIncomeVerification.findOne({
+        select: {
+          id: true,
+          craReportedIncome: true,
+        },
+        where: {
+          id: studentCRAIncomeVerification.id,
+        },
+      });
+    expect(updatedStudentCRAIncomeVerification).toEqual({
+      id: studentCRAIncomeVerification.id,
+      craReportedIncome: -income,
+    });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

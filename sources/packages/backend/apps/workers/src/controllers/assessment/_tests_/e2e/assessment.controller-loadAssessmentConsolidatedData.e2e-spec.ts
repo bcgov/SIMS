@@ -248,6 +248,122 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
     },
   );
 
+  it("Should load assessment consolidated data preventing negative CRA reported incomes when student and partner have negative CRA income verifications.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationData: {
+        relationshipStatus: RelationshipStatus.Married,
+        dependantstatus: "independant",
+        taxReturnIncome: 1,
+        workflowName: "dummy",
+      } as ApplicationData,
+      offeringIntensity: OfferingIntensity.partTime,
+    });
+    // Create supporting user partner.
+    const partner = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Partner,
+          supportingData: { totalIncome: 2 },
+        },
+      },
+    );
+    await db.supportingUser.save(partner);
+    // Create student income verification.
+    const studentCRAIncomeVerification = createFakeCRAIncomeVerification(
+      {
+        application,
+      },
+      {
+        initialValues: { dateReceived: new Date(), craReportedIncome: -500 },
+      },
+    );
+    // Create partner income verification.
+    const partnerCRAIncomeVerification = createFakeCRAIncomeVerification(
+      {
+        application,
+        supportingUser: partner,
+      },
+      {
+        initialValues: { dateReceived: new Date(), craReportedIncome: -750 },
+      },
+    );
+    await db.craIncomeVerification.save([
+      studentCRAIncomeVerification,
+      partnerCRAIncomeVerification,
+    ]);
+
+    const assessment = application.currentAssessment;
+    const offering = assessment.offering;
+    const programYear = application.programYear;
+    const program = offering.educationProgram;
+
+    const customHeaders = {
+      ...createBaseCustomHeaders(),
+      studentDataCRAReportedIncome: "student.craReportedIncome",
+      studentTaxYear: "student.taxYear",
+      partner1SupportingUserId: "supportingUsers.Partner1.id",
+      partner1CRAReportedIncome: "supportingUsers.Partner1.craReportedIncome",
+      partner1TotalIncome:
+        "supportingUsers.Partner1.supportingData.totalIncome",
+    };
+
+    // Act
+    const result = await assessmentController.loadAssessmentConsolidatedData(
+      createFakeLoadAssessmentConsolidatedDataPayload(
+        assessment.id,
+        customHeaders,
+      ),
+    );
+
+    // Asserts
+    expect(result).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+
+    // Validate the output variables.
+    expect(FakeWorkerJobResult.getOutputVariables(result)).toEqual({
+      assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
+      programYearStartDate: programYear.startDate,
+      studentDataRelationshipStatus: RelationshipStatus.Single,
+      studentDataTaxReturnIncome: 1,
+      studentDataDependantstatus: "independant",
+      applicationId: application.id,
+      programYear: programYear.programYear,
+      institutionLocationProvince:
+        offering.institutionLocation?.data.address?.provinceState,
+      institutionType: "BC Private",
+      institutionCountry: "CA",
+      institutionProvince: "BC",
+      institutionClassification: InstitutionClassification.Private,
+      institutionOrganizationStatus: InstitutionOrganizationStatus.Profit,
+      programLength: program.completionYears,
+      programCredentialType: program.credentialType,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: offering.offeringDelivered,
+      offeringStudyEndDate: offering.studyEndDate,
+      offeringStudyStartDate: offering.studyStartDate,
+      offeringProgramRelatedCosts: offering.programRelatedCosts,
+      offeringActualTuitionCosts: offering.actualTuitionCosts,
+      offeringMandatoryFees: offering.mandatoryFees,
+      offeringExceptionalExpenses: offering.exceptionalExpenses,
+      offeringCourseLoad: offering.courseLoad,
+      offeringWeeks: offering.studyBreaks.totalFundedWeeks,
+      applicationStatus: application.applicationStatus,
+      applicationEditStatus: application.applicationEditStatus,
+      applicationHasNOAApproval: false,
+      // CRA reported income must be 0 when CRA returned a negative income.
+      studentDataCRAReportedIncome: 0,
+      studentTaxYear: studentCRAIncomeVerification.taxYear,
+      partner1SupportingUserId: partner.id,
+      // CRA reported income must be 0 when CRA returned a negative income.
+      partner1CRAReportedIncome: 0,
+      partner1TotalIncome: 2,
+    });
+  });
+
   it(
     "Should load assessment consolidated data when the student is single and a dependant" +
       " with both parents reported in the application and the application offering intensity is full-time.",

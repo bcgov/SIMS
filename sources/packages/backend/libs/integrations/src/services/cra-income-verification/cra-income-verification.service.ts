@@ -1,22 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import {
-  Brackets,
-  DataSource,
-  In,
-  IsNull,
-  Repository,
-  UpdateResult,
-} from "typeorm";
-import { RecordDataModelService, CRAIncomeVerification } from "@sims/sims-db";
+import { Brackets, In, IsNull, Repository, UpdateResult } from "typeorm";
+import { CRAIncomeVerification } from "@sims/sims-db";
+import { SystemUsersService } from "@sims/services";
+import { InjectRepository } from "@nestjs/typeorm";
 
 /**
  * Service layer for CRA income verifications.
  */
 @Injectable()
-export class CRAIncomeVerificationsService extends RecordDataModelService<CRAIncomeVerification> {
-  constructor(dataSource: DataSource) {
-    super(dataSource.getRepository(CRAIncomeVerification));
-  }
+export class CRAIncomeVerificationsService {
+  constructor(
+    @InjectRepository(CRAIncomeVerification)
+    private readonly craIncomeVerificationRepo: Repository<CRAIncomeVerification>,
+    private readonly systemUsersService: SystemUsersService,
+  ) {}
 
   /**
    * Gets income verifications that were never sent to CRA (dateSent is null),
@@ -25,7 +22,7 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
    * @returns pending income verifications.
    */
   async getPendingIncomeVerifications(): Promise<CRAIncomeVerification[]> {
-    return this.repo
+    return this.craIncomeVerificationRepo
       .createQueryBuilder("incomeVerification")
       .select([
         "incomeVerification.id",
@@ -86,10 +83,15 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
         "Not all required fields to update an income verification sent file were provided.",
       );
     }
-    const repository = externalRepo ?? this.repo;
+    const repository = externalRepo ?? this.craIncomeVerificationRepo;
     return repository.update(
       { id: In(craVerificationIds) },
-      { dateSent, fileSent },
+      {
+        dateSent,
+        fileSent,
+        modifier: this.systemUsersService.systemUser,
+        updatedAt: new Date(),
+      },
     );
   }
 
@@ -130,8 +132,7 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
         "Not all required fields to update a received income verification file were provided.",
       );
     }
-
-    return this.repo.update(
+    return this.craIncomeVerificationRepo.update(
       { id: craVerificationId, dateReceived: IsNull() },
       {
         craReportedIncome,
@@ -140,6 +141,8 @@ export class CRAIncomeVerificationsService extends RecordDataModelService<CRAInc
         matchStatusCode,
         requestStatusCode,
         inactiveCode,
+        modifier: this.systemUsersService.systemUser,
+        updatedAt: new Date(),
       },
     );
   }
