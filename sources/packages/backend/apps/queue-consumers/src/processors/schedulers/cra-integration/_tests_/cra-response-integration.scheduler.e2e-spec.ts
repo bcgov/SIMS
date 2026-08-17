@@ -107,7 +107,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
   });
 
-  it("Should process SIN response file with a negative income when the file contains a negative 1500 line negative income.", async () => {
+  it("Should process SIN response file with a negative income when the file contains a negative 15000 line negative income.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);

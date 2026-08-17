@@ -327,7 +327,7 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
     expect(FakeWorkerJobResult.getOutputVariables(result)).toEqual({
       assessmentTriggerType: AssessmentTriggerType.OriginalAssessment,
       programYearStartDate: programYear.startDate,
-      studentDataRelationshipStatus: RelationshipStatus.Single,
+      studentDataRelationshipStatus: RelationshipStatus.Married,
       studentDataTaxReturnIncome: 1,
       studentDataDependantstatus: "independant",
       applicationId: application.id,

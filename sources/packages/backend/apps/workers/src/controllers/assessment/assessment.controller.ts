@@ -648,7 +648,7 @@ export class AssessmentController {
             supportingUser.supportingUserType === supportingUserType,
         )
         .forEach((supportingUser, index) => {
-          const craIncome = incomeVerifications.find(
+          const craIncome = incomeVerifications?.find(
             (verification) =>
               verification.supportingUser?.id === supportingUser.id,
           );

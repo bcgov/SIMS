@@ -16,7 +16,7 @@ import {
  * @param applicationId application ID.
  * @param options factory options.
  * - `supportingUserId` supporting user ID for non-student income requests.
- * @returns fake load fake income request data payload.
+ * @returns fake income request data payload.
  */
 export function createFakeCreateIncomeRequestDataPayload(
   applicationId: number,

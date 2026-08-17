@@ -66,7 +66,7 @@ export class CRAIncomeVerificationsService {
    * file that must have the file sent name and date updated.
    * @param fileSent file name of the uploaded file.
    * @param [externalRepo] when provided, it is used instead of the
-   * local repository (this.repo). Useful when the command must be executed,
+   * local repository (this.craIncomeVerificationRepo). Useful when the command must be executed,
    * for instance, as part of an existing transaction manage externally to this
    * service.
    * @returns the result of the update.
