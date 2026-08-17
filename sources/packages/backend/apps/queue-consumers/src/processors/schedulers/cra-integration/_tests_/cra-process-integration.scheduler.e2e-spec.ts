@@ -22,9 +22,10 @@ import {
   CRAIncomeVerification,
   Student,
   SupportingUser,
+  User,
 } from "@sims/sims-db";
 import { getUploadedFile } from "@sims/test-utils/mocks";
-import { IsNull } from "typeorm";
+import { In, IsNull } from "typeorm";
 import MockDate from "mockdate";
 import {
   CRA_PROGRAM_AREA_CODE,
@@ -37,17 +38,19 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
   const SEQUENCE_NAME = `CRA_${CRA_PROGRAM_AREA_CODE}`;
+  let systemUser: User;
 
   beforeAll(async () => {
     process.env.CRA_PROGRAM_AREA_CODE = CRA_PROGRAM_AREA_CODE;
     process.env.CRA_REQUEST_FOLDER = "OUT";
     process.env.CRA_ENVIRONMENT_CODE = "A";
-    const { nestApplication, dataSource, sshClientMock } =
+    const { nestApplication, dataSource, sshClientMock, systemUsersService } =
       await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     sftpClientMock = sshClientMock;
     processor = app.get(CRAProcessIntegrationScheduler);
+    systemUser = systemUsersService.systemUser;
   });
 
   beforeEach(async () => {
@@ -75,6 +78,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     MockDate.set(now);
     // Queued job.
     const mockedJob = mockBullJob<void>();
+    const fileName = "CCRA_REQUEST_A00001.DAT";
 
     // Act
     const result = await processor.processQueue(mockedJob.job);
@@ -82,7 +86,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Assert
     // Assert uploaded file.
     const uploadedFile = getUploadedFile(sftpClientMock);
-    const uploadedFileName = "OUT\\CCRA_REQUEST_A00001.DAT";
+    const uploadedFileName = `OUT\\${fileName}`;
     expect(uploadedFile.remoteFilePath).toBe(uploadedFileName);
     expect(result).toStrictEqual([
       `Generated file: ${uploadedFileName}`,
@@ -131,6 +135,45 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
         totalRecords: 4,
       }),
     ).toBe(true);
+    // Validate updated records.
+    const updatedCRAIncomeVerifications = await db.craIncomeVerification.find({
+      select: {
+        id: true,
+        dateSent: true,
+        fileSent: true,
+        modifier: { id: true },
+        updatedAt: true,
+      },
+      relations: {
+        modifier: true,
+      },
+      where: {
+        id: In([
+          studentCRAIncomeVerification.id,
+          parentCRAIncomeVerification.id,
+        ]),
+      },
+      loadEagerRelations: false,
+      order: {
+        id: "ASC",
+      },
+    });
+    expect(updatedCRAIncomeVerifications).toEqual([
+      {
+        id: studentCRAIncomeVerification.id,
+        dateSent: now,
+        fileSent: fileName,
+        modifier: systemUser,
+        updatedAt: now,
+      },
+      {
+        id: parentCRAIncomeVerification.id,
+        dateSent: now,
+        fileSent: fileName,
+        modifier: systemUser,
+        updatedAt: now,
+      },
+    ]);
   });
 
   it("Should create one CRA file request with one income verification when there are pending requests for a student and a parent and only the student has a SIN.", async () => {
