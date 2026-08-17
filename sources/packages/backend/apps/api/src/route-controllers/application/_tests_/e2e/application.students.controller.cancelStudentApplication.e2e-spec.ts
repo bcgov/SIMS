@@ -339,7 +339,7 @@ describe("ApplicationStudentsController(e2e)-cancelStudentApplication", () => {
 
 /**
  * Get the endpoint for cancelling a student application.
- * @param applicationId
+ * @param applicationId application ID to be cancelled.
  * @returns endpoint for cancelling a student application.
  */
 function getEndpoint(applicationId: number): string {

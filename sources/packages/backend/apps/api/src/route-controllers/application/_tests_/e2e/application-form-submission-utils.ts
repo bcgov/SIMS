@@ -36,6 +36,7 @@ export async function assertCancelledApplicationScopedFormSubmissions(
     where: {
       application: { id: applicationId },
     },
+    order: { id: "ASC" },
     loadEagerRelations: false,
   });
   const auditUser = { id: auditUserId };
@@ -76,7 +77,7 @@ export async function assertFormSubmissionNotUpdated(
   expect(formSubmission.cancellationReason).not.toBe(
     notExpectedCancellationReason,
   );
-  expect(formSubmission.submissionStatusUpdatedOn).not.toBe(
+  expect(formSubmission.submissionStatusUpdatedOn).not.toEqual(
     notExpectedSubmissionStatusDate,
   );
 }

@@ -981,7 +981,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     FormSubmissionStatus.Completed,
     FormSubmissionStatus.Declined,
   ].forEach((submissionStatus) => {
-    it(`Should edit an application and and also cancel the application scoped form submission when the form submission status is ${submissionStatus}.`, async () => {
+    it(`Should edit an application and also cancel the application scoped form submission when the form submission status is ${submissionStatus}.`, async () => {
       // Arrange
       const student = await saveFakeStudent(db.dataSource);
       // Create a submitted application to be edited.
@@ -996,7 +996,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
           offeringIntensity: OfferingIntensity.fullTime,
         },
       );
-      // Create a form submission that is expected to be cancel on application edit.
+      // Create a form submission that is expected to be cancelled on application edit.
       const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
         now: new Date(),
         student,
@@ -1072,7 +1072,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     });
   });
 
-  it("Should edit an application and but not update the application scoped form submission when the form submission status is already cancelled.", async () => {
+  it("Should edit an application but not update the application scoped form submission when the form submission status is already cancelled.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     // Create a submitted application to be edited.
