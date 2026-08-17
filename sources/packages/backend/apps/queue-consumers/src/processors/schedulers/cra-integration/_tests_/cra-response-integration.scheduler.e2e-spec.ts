@@ -144,6 +144,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
     // Act
     const processResult = await processor.processQueue(mockedJob.job);
+
     // Assert
     const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);
 
