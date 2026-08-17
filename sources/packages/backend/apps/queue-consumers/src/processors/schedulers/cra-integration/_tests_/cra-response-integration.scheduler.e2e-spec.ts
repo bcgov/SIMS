@@ -24,6 +24,11 @@ import {
 } from "@sims/test-utils/mocks";
 import { ApplicationStatus, CRAIncomeVerification, User } from "@sims/sims-db";
 import MockDate from "mockdate";
+import {
+  InactiveCodes,
+  MatchStatusCodes,
+  RequestStatusCodes,
+} from "@sims/integrations/cra-integration/cra-integration.models";
 
 const CRA_FILENAME = "CRA_200_PBCSA00000.TXT";
 const FILE_INCOME = 50099;
@@ -102,9 +107,9 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       id: studentCRAIncomeVerification.id,
       craReportedIncome: FILE_INCOME,
       fileReceived: CRA_FILENAME,
-      matchStatusCode: "01",
-      requestStatusCode: "01",
-      inactiveCode: "00",
+      matchStatusCode: MatchStatusCodes.successfulMatch,
+      requestStatusCode: RequestStatusCodes.successfulRequest,
+      inactiveCode: InactiveCodes.inactiveCodeNotSet,
       modifier: systemUser,
       updatedAt: now,
     });
@@ -166,9 +171,9 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       id: studentCRAIncomeVerification.id,
       craReportedIncome: -FILE_INCOME,
       fileReceived: CRA_FILENAME,
-      matchStatusCode: "01",
-      requestStatusCode: "01",
-      inactiveCode: "00",
+      matchStatusCode: MatchStatusCodes.successfulMatch,
+      requestStatusCode: RequestStatusCodes.successfulRequest,
+      inactiveCode: InactiveCodes.inactiveCodeNotSet,
       modifier: systemUser,
       updatedAt: now,
     });
