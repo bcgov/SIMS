@@ -64,7 +64,6 @@ export class CRAIncomeVerificationsService {
    * date that the file was uploaded.
    * @param craVerificationIds records that are part of the generated
    * file that must have the file sent name and date updated.
-   * @param dateSent date that the file was uploaded.
    * @param fileSent file name of the uploaded file.
    * @param [externalRepo] when provided, it is used instead of the
    * local repository (this.repo). Useful when the command must be executed,
@@ -74,23 +73,23 @@ export class CRAIncomeVerificationsService {
    */
   async updateSentFile(
     craVerificationIds: number[],
-    dateSent: Date,
     fileSent: string,
     externalRepo?: Repository<CRAIncomeVerification>,
   ): Promise<UpdateResult> {
-    if (!dateSent || !fileSent) {
+    if (!fileSent) {
       throw new Error(
         "Not all required fields to update an income verification sent file were provided.",
       );
     }
+    const now = new Date();
     const repository = externalRepo ?? this.craIncomeVerificationRepo;
     return repository.update(
       { id: In(craVerificationIds) },
       {
-        dateSent,
+        dateSent: now,
         fileSent,
         modifier: this.systemUsersService.systemUser,
-        updatedAt: new Date(),
+        updatedAt: now,
       },
     );
   }

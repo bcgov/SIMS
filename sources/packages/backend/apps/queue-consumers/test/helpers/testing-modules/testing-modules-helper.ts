@@ -34,6 +34,7 @@ export class CreateTestingModuleResult {
   casServiceMock: CASService;
   clamAVServiceMock: ClamAVService;
   objectStorageServiceMock: ObjectStorageService;
+  systemUsersService: SystemUsersService;
 }
 
 /**
@@ -86,6 +87,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     casServiceMock,
     clamAVServiceMock,
     objectStorageServiceMock,
+    systemUsersService,
   };
 }
 

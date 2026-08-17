@@ -20,10 +20,13 @@ import {
   createFileFromStructuredRecords,
   getStructuredRecords,
   mockDownloadFiles,
+  StructuredFile,
 } from "@sims/test-utils/mocks";
-import { ApplicationStatus } from "@sims/sims-db";
+import { ApplicationStatus, CRAIncomeVerification, User } from "@sims/sims-db";
+import MockDate from "mockdate";
 
 const CRA_FILENAME = "CRA_200_PBCSA00000.TXT";
+const FILE_INCOME = 50099;
 
 describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
   let app: INestApplication;
@@ -31,26 +34,30 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
   let db: E2EDataSources;
   let sftpClientMock: DeepMocked<Client>;
   let craResponseFolder: string;
+  let systemUser: User;
 
   beforeAll(async () => {
     craResponseFolder = join(__dirname, "cra-receive-files");
     process.env.CRA_RESPONSE_FOLDER = craResponseFolder;
-    const { nestApplication, dataSource, sshClientMock } =
+    const { nestApplication, dataSource, sshClientMock, systemUsersService } =
       await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     sftpClientMock = sshClientMock;
+    systemUser = systemUsersService.systemUser;
     processor = app.get(CRAResponseIntegrationScheduler);
   });
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    MockDate.reset();
   });
 
   it("Should process SIN response file ignoring non-SIMS records when the file contains responses from requests that were not created by SIMS.", async () => {
     // Arrange.
+    const now = new Date();
+    MockDate.set(now);
     const student = await saveFakeStudent(db.dataSource);
-
     const application = await saveFakeApplication(
       db.dataSource,
       { student },
@@ -69,10 +76,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
-      file.records[2] = file.records[2].replace(
-        "CRA_INCOME_VERIFICATION",
-        studentCRAIncomeVerification.id.toString().padStart(9, "0"),
-      );
+      replaceCRAIncomeVerificationId(file, studentCRAIncomeVerification.id);
       return createFileFromStructuredRecords(file);
     });
 
@@ -91,13 +95,24 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
         "Processed income verification. Total income record line 5. Status record from line 4.",
       ]),
     ).toBe(true);
+    // Validated updated data.
+    const updatedStudentCRAIncomeVerification = await getUpdatedCRAIncome(
+      studentCRAIncomeVerification.id,
+    );
+    expect(updatedStudentCRAIncomeVerification).toEqual({
+      id: studentCRAIncomeVerification.id,
+      craReportedIncome: FILE_INCOME,
+      modifier: systemUser,
+      updatedAt: now,
+    });
   });
 
   it("Should process SIN response file with a negative income when the file contains a negative 1500 line negative income.", async () => {
-    // Arrange.
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
     const student = await saveFakeStudent(db.dataSource);
-    const income = 50099;
-    const formattedIncome = income.toString().padStart(9, "0");
+    const formattedIncome = FILE_INCOME.toString().padStart(9, "0");
     const application = await saveFakeApplication(
       db.dataSource,
       { student },
@@ -116,10 +131,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
-      file.records[2] = file.records[2].replace(
-        "CRA_INCOME_VERIFICATION",
-        studentCRAIncomeVerification.id.toString().padStart(9, "0"),
-      );
+      replaceCRAIncomeVerificationId(file, studentCRAIncomeVerification.id);
       file.records[3] = file.records[3].replace(
         `${formattedIncome} `,
         `${formattedIncome}-`,
@@ -142,25 +154,59 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
         "Processed income verification. Total income record line 5. Status record from line 4.",
       ]),
     ).toBe(true);
-    // Load the updated CRA income verification record to
-    // validate the saved values.
-    const updatedStudentCRAIncomeVerification =
-      await db.craIncomeVerification.findOne({
-        select: {
-          id: true,
-          craReportedIncome: true,
-        },
-        where: {
-          id: studentCRAIncomeVerification.id,
-        },
-      });
+    // Validated updated data.
+    const updatedStudentCRAIncomeVerification = await getUpdatedCRAIncome(
+      studentCRAIncomeVerification.id,
+    );
     expect(updatedStudentCRAIncomeVerification).toEqual({
       id: studentCRAIncomeVerification.id,
-      craReportedIncome: -income,
+      craReportedIncome: -FILE_INCOME,
+      modifier: systemUser,
+      updatedAt: now,
     });
   });
+
+  /**
+   * Load the updated CRA income verification record to validate the saved values.
+   * @param incomeVerificationId income verification ID.
+   * @returns partial CRA income to be validated.
+   */
+  async function getUpdatedCRAIncome(
+    incomeVerificationId: number,
+  ): Promise<Partial<CRAIncomeVerification>> {
+    return db.craIncomeVerification.findOne({
+      select: {
+        id: true,
+        craReportedIncome: true,
+        modifier: { id: true },
+        updatedAt: true,
+      },
+      relations: {
+        modifier: true,
+      },
+      where: {
+        id: incomeVerificationId,
+      },
+      loadEagerRelations: false,
+    });
+  }
 
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/**
+ * Associate the fake CRA income verification ID to the file to be processed.
+ * @param file file to be mocked to be processed.
+ * @param craIncomeVerification CRA income verification ID to be associated to the file.
+ */
+function replaceCRAIncomeVerificationId(
+  file: StructuredFile,
+  craIncomeVerification: number,
+): void {
+  file.records[2] = file.records[2].replace(
+    "CRA_INCOME_VERIFICATION",
+    craIncomeVerification.toString().padStart(9, "0"),
+  );
+}

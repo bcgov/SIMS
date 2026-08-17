@@ -106,7 +106,6 @@ export class CRAIncomeVerificationProcessingService {
           );
           await this.incomeVerificationService.updateSentFile(
             verificationsIds,
-            getUTCNow(),
             fileInfo.fileName,
             incomeVerificationRepo,
           );
