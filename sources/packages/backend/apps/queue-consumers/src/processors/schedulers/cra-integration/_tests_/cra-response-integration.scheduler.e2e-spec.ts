@@ -58,7 +58,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     MockDate.reset();
   });
 
-  it("Should process SIN response file ignoring non-SIMS records when the file contains responses from requests that were not created by SIMS.", async () => {
+  it("Should process CRA response file ignoring non-SIMS records when the file contains responses from requests that were not created by SIMS.", async () => {
     // Arrange.
     const now = new Date();
     MockDate.set(now);
@@ -115,7 +115,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
   });
 
-  it("Should process SIN response file with a negative income when the file contains a negative 15000 line negative income.", async () => {
+  it("Should process CRA response file with a negative income when the file contains a negative 15000 line negative income.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
