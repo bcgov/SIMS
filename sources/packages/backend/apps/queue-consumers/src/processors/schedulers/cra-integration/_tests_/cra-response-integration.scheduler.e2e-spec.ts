@@ -82,10 +82,9 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
 
     // Act
     const processResult = await processor.processQueue(mockedJob.job);
-    // Assert
-    const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);
 
     // Assert
+    const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);
     expect(processResult).toEqual(["Processed CRA response files."]);
     expect(
       mockedJob.containLogMessages([
@@ -102,6 +101,10 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     expect(updatedStudentCRAIncomeVerification).toEqual({
       id: studentCRAIncomeVerification.id,
       craReportedIncome: FILE_INCOME,
+      fileReceived: CRA_FILENAME,
+      matchStatusCode: "01",
+      requestStatusCode: "01",
+      inactiveCode: "00",
       modifier: systemUser,
       updatedAt: now,
     });
@@ -161,6 +164,10 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     expect(updatedStudentCRAIncomeVerification).toEqual({
       id: studentCRAIncomeVerification.id,
       craReportedIncome: -FILE_INCOME,
+      fileReceived: CRA_FILENAME,
+      matchStatusCode: "01",
+      requestStatusCode: "01",
+      inactiveCode: "00",
       modifier: systemUser,
       updatedAt: now,
     });
@@ -178,6 +185,10 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
       select: {
         id: true,
         craReportedIncome: true,
+        fileReceived: true,
+        matchStatusCode: true,
+        requestStatusCode: true,
+        inactiveCode: true,
         modifier: { id: true },
         updatedAt: true,
       },
