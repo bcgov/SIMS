@@ -67,9 +67,24 @@ export enum FormSubmissionDecisionStatus {
   Declined = "Declined",
 }
 
+export enum FormSubmissionCancellationReason {
+  /**
+   * Form submission was cancelled due to student application edit.
+   */
+  ApplicationEdited = "Application edited",
+  /**
+   * Form submission was cancelled due to student application cancellation.
+   */
+  ApplicationCancelled = "Application cancelled",
+  /**
+   * Form submission was cancelled by the student.
+   */
+  StudentCancelledSubmission = "Student cancelled submission",
+}
+
 export interface DecisionHistory {
   id: number;
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   decisionDate?: Date;
   decisionBy?: string;
   decisionNoteDescription?: string;
@@ -77,7 +92,7 @@ export interface DecisionHistory {
 }
 
 export interface FormSubmissionItemDecision {
-  decisionStatus: FormSubmissionDecisionStatus;
+  decisionStatus: FormSubmissionDecisionStatus | null;
   noteDescription?: string;
 }
 

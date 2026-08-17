@@ -15,6 +15,12 @@
         :form-submission="formSubmission"
       />
     </template>
+    <template #alerts>
+      <cancelled-form-submission-banner
+        :is-application-scoped="!!formSubmission?.applicationId"
+        :cancellation-reason="formSubmission?.cancellationReason"
+      />
+    </template>
     <body-header-container>
       <template #header>
         <body-header :title="formSubmission?.formCategory">
@@ -46,6 +52,7 @@
 <script setup lang="ts">
 import { PropType, ref, watchEffect } from "vue";
 import FormSubmissionItems from "@/components/form-submissions/FormSubmissionItems.vue";
+import CancelledFormSubmissionBanner from "@/components/form-submissions/CancelledFormSubmissionBanner.vue";
 import { FormSubmissionService } from "@/services/FormSubmissionService";
 import { BackTarget, FormSubmissionItem } from "@/types";
 import { FormSubmissionAPIOutDTO } from "@/services/http/dto";

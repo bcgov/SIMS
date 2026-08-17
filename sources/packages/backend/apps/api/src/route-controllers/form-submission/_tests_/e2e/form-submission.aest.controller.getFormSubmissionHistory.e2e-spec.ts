@@ -182,6 +182,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             assessedDate: null,
             canCancelSubmission: false,
+            cancellationReason: null,
             statusUpdatedDate:
               pendingStudentAppeal.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
@@ -220,6 +221,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             submittedDate: completedStudentAppeal.submittedDate.toISOString(),
             assessedDate: completedStudentAppeal.assessedDate.toISOString(),
             canCancelSubmission: false,
+            cancellationReason: null,
             statusUpdatedDate:
               completedStudentAppeal.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
@@ -245,6 +247,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             submittedDate: completedStudentForm.submittedDate.toISOString(),
             assessedDate: completedStudentForm.assessedDate.toISOString(),
             canCancelSubmission: false,
+            cancellationReason: null,
             statusUpdatedDate:
               completedStudentForm.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
@@ -332,6 +335,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             assessedDate: null,
             canCancelSubmission: false,
+            cancellationReason: null,
             statusUpdatedDate:
               pendingStudentAppeal.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [
@@ -414,6 +418,7 @@ describe("FormSubmissionAESTController(e2e)-getFormSubmissionHistory", () => {
             submittedDate: pendingStudentAppeal.submittedDate.toISOString(),
             assessedDate: null,
             canCancelSubmission: true,
+            cancellationReason: null,
             statusUpdatedDate:
               pendingStudentAppeal.submissionStatusUpdatedOn.toISOString(),
             submissionItems: [

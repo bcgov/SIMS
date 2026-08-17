@@ -1,0 +1,1 @@
+DROP TYPE sims.form_submission_cancellation_reasons;

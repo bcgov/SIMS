@@ -36,7 +36,7 @@ import {
 } from "@nestjs/swagger";
 import BaseController from "../BaseController";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { FormCategory } from "@sims/sims-db";
+import { FormCategory, FormSubmissionCancellationReason } from "@sims/sims-db";
 import {
   FormSubmissionAPIInDTO,
   FormSubmissionAPIOutDTO,
@@ -235,6 +235,7 @@ export class FormSubmissionStudentsController extends BaseController {
     try {
       await this.formSubmissionCancellationService.cancelFormSubmission(
         formSubmissionId,
+        FormSubmissionCancellationReason.StudentCancelledSubmission,
         userToken.userId,
         { studentId: userToken.studentId },
       );

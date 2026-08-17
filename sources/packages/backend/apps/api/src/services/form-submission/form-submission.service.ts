@@ -232,6 +232,7 @@ export class FormSubmissionService {
         submittedDate: true,
         assessedDate: true,
         submissionStatusUpdatedOn: true,
+        cancellationReason: true,
         formCategory: true,
         student: { id: true, user: { firstName: true, lastName: true } },
         application: {
