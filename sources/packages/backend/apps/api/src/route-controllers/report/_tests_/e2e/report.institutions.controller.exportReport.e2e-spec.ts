@@ -737,10 +737,10 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
 
 /**
  * Build COE Requests report data.
- * @param disbursements disbursements part of the report.
- * @param expectedDisbursementAmount expected total sum of disbursement amount.
- * @param expectedDisbursementDate expected disbursement date.
- * @returns report data.
+ * @param disbursement Disbursement schedule included in the report.
+ * @param expectedDisbursementAmount Expected total sum of disbursement amounts.
+ * @param expectedDisbursementDate Expected disbursement date.
+ * @returns Report data.
  */
 function buildCOERequestsReportData(
   disbursement: DisbursementSchedule,
@@ -771,7 +771,7 @@ function buildCOERequestsReportData(
     "Study Start Date": disbursement.studentAssessment.offering.studyStartDate,
     "Study End Date": disbursement.studentAssessment.offering.studyEndDate,
     "Number of Funded Weeks":
-      disbursement.studentAssessment.offering.studyBreaks.totalFundedWeeks.toString(),
+      disbursement.studentAssessment.offering.studyBreaks?.totalFundedWeeks?.toString() ?? "", 
     "COE Status": disbursement.coeStatus,
     "COE Actioned": disbursement.coeUpdatedAt
       ? getPSTPDTDateTime(disbursement.coeUpdatedAt)
