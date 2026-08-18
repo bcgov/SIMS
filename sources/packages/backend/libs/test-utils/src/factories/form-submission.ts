@@ -91,6 +91,10 @@ export interface FormSubmissionTestInputData {
    * Indicates whether the form submission is assessed or not.
    */
   isAssessed?: boolean;
+  /**
+   * Form submission cancellation reason.
+   */
+  cancellationReason?: FormSubmissionCancellationReason;
 }
 
 /**
@@ -132,9 +136,12 @@ export async function saveFakeFormSubmissionFromInputTestData(
   ].includes(testInputData.submissionStatus)
     ? testInputData.ministryAuditUser
     : student.user;
+  const cancellationReason =
+    testInputData.cancellationReason ??
+    FormSubmissionCancellationReason.StudentCancelledSubmission;
   formSubmission.cancellationReason =
     testInputData.submissionStatus === FormSubmissionStatus.Cancelled
-      ? FormSubmissionCancellationReason.StudentCancelledSubmission
+      ? cancellationReason
       : null;
   formSubmission.formSubmissionItems = [];
   await db.formSubmission.save(formSubmission);
