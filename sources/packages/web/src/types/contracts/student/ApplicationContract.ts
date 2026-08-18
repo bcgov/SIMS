@@ -245,30 +245,3 @@ export type StudentApplicationFormData = {
   applicationOfferingIntensityValue: OfferingIntensity;
 } & ApplicationData &
   Record<string, unknown>;
-
-export enum RelationshipStatus {
-  /**
-   * Possible relationship status, for an Application
-   */
-  /**
-   * The student who submits the application realtionship status is Married
-   */
-  Married = "married",
-  /**
-   * The student who submits the application realtionship status is Single
-   */
-  Single = "single",
-  /**
-   * The student who submits the application realtionship status is other than married and single
-   */
-  Other = "other",
-  /**
-   * Married/common-law and unable to provide partner income due to domestic abuse
-   */
-  MarriedUnable = "marriedUnable",
-}
-
-export enum DependantStatus {
-  Dependant = "dependant",
-  Independant = "independant",
-}

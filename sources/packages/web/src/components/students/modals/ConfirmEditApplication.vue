@@ -8,13 +8,19 @@
         date, which may trigger an exception and/or require a Funding After End
         Date appeal. Are you sure you want to proceed?
       </p>
-      <p v-if="showPartnerNote">
+      <p
+        v-if="
+          applicationData?.supportingUserType === SupportingUserType.Partner
+        "
+      >
         Note: If you only need to update your spouse/common-law partner
         information, submit an application edit without making any other
         changes. This will create a new supporting user submission form so the
         updated information can be provided.
       </p>
-      <p v-if="showParentNote">
+      <p
+        v-if="applicationData?.supportingUserType === SupportingUserType.Parent"
+      >
         Note: If you only need to update your parent information, submit an
         application edit without making any other changes. This will create a
         new supporting user submission form so the updated information can be
@@ -37,8 +43,8 @@ import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import { useModalDialog } from "@/composables";
 import { ApplicationService } from "@/services/ApplicationService";
 import { ApplicationDataAPIOutDTO } from "@/services/http/dto";
-import { DependantStatus, RelationshipStatus } from "@/types";
-import { computed, ref } from "vue";
+import { SupportingUserType } from "@/types";
+import { ref } from "vue";
 
 const {
   showDialog,
@@ -61,19 +67,6 @@ const dialogClosed = () => {
 const editApplication = () => {
   resolvePromise(true);
 };
-
-const showParentNote = computed(() => {
-  return (
-    applicationData.value?.data?.dependantstatus === DependantStatus.Dependant
-  );
-});
-
-const showPartnerNote = computed(() => {
-  return (
-    applicationData.value?.data?.relationshipStatus ===
-    RelationshipStatus.Married
-  );
-});
 
 defineExpose({ showModal });
 </script>

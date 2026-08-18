@@ -175,6 +175,8 @@ export class ApplicationDataAPIOutDTO extends ApplicationBaseAPIOutDTO {
   programYearEndDate: string;
   submittedDate?: Date;
   hasPreviouslyCompletedPIR: boolean;
+  hasFormSubmissions: boolean;
+  supportingUserType?: SupportingUserType;
 }
 
 export class ApplicationDataChangeAPIOutDTO {

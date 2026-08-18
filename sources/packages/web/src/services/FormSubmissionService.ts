@@ -11,7 +11,6 @@ import {
   FormSubmissionPendingSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   FormSubmissionsAPIOutDTO,
-  FormSubmissionExistsAPIOutDTO,
 } from "@/services/http/dto";
 import { FormCategory, PaginationOptions } from "@/types";
 
@@ -143,16 +142,5 @@ export class FormSubmissionService {
    */
   async cancelFormSubmission(formSubmissionId: number): Promise<void> {
     await ApiClient.FormSubmissionApi.cancelFormSubmission(formSubmissionId);
-  }
-
-  /**
-   * Checks if the student has any form submissions for a given application.
-   * @param applicationId ID of the application to check for form submissions.
-   * @returns true if the student has any form submissions for the given application, false otherwise.
-   */
-  async hasFormSubmissions(
-    applicationId: number,
-  ): Promise<FormSubmissionExistsAPIOutDTO> {
-    return ApiClient.FormSubmissionApi.hasFormSubmissions(applicationId);
   }
 }

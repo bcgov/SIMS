@@ -288,19 +288,3 @@ export class FormSubmissionCompletionAPIInDTO {
   @Type(() => FormSubmissionCompletionItemAPIInDTO)
   items: FormSubmissionCompletionItemAPIInDTO[];
 }
-
-/**
- * Checks if the student has any form submissions for a given application.
- */
-export class FormSubmissionExistsAPIInDTO {
-  @IsNotEmpty()
-  @IsPositive()
-  applicationId: number;
-}
-
-/**
- * Info on whether the student has any form submissions for a given application.
- */
-export class FormSubmissionExistsAPIOutDTO {
-  hasFormSubmissions: boolean;
-}

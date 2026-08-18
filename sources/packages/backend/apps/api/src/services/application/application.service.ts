@@ -1075,6 +1075,12 @@ export class ApplicationService extends RecordDataModelService<Application> {
             email: true,
           },
         },
+        formSubmissions: {
+          id: true,
+        },
+        supportingUsers: {
+          supportingUserType: true,
+        },
         ...(options?.loadDynamicData
           ? {
               studentAssessments: {
@@ -1105,6 +1111,8 @@ export class ApplicationService extends RecordDataModelService<Application> {
         precedingApplication: {
           currentAssessment: { offering: true, studentAppeal: true },
         },
+        formSubmissions: true,
+        supportingUsers: true,
         ...(options?.loadDynamicData
           ? { studentAssessments: { offering: { educationProgram: true } } }
           : {}),

@@ -133,7 +133,6 @@ import {
 import StudentApplication from "@/components/common/StudentApplication.vue";
 import { AppConfigService } from "@/services/AppConfigService";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
-import { FormSubmissionService } from "@/services/FormSubmissionService";
 
 export default defineComponent({
   components: {
@@ -185,7 +184,6 @@ export default defineComponent({
     const existingApplication = ref({} as ApplicationDataAPIOutDTO);
     const editApplicationModal = ref({} as ModalDialog<boolean>);
     const conditionsAccepted = ref(false);
-    const showAppealsInfo = ref(false);
     // automaticDraftSaveInProgress is a boolean that ensures that multiple api calls for save
     // draft are not made while a draft save is in progress.
     let automaticDraftSaveInProgress = false;
@@ -450,14 +448,6 @@ export default defineComponent({
     };
 
     const confirmEditApplication = async () => {
-      showAppealsInfo.value = false;
-      if (!props.changeRequest) {
-        // Checks if the application has any form submissions to control content in the modal.
-        const response = await FormSubmissionService.shared.hasFormSubmissions(
-          props.id,
-        );
-        showAppealsInfo.value = response.hasFormSubmissions;
-      }
       if (await editApplicationModal.value.showModal()) {
         editApplication();
       } else {
@@ -482,6 +472,10 @@ export default defineComponent({
 
     const editApplicationModalTitle = computed(() => {
       return props.changeRequest ? "Change request" : "Edit application";
+    });
+
+    const showAppealsInfo = computed(() => {
+      return existingApplication.value.hasFormSubmissions;
     });
 
     return {
