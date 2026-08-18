@@ -1,131 +1,113 @@
 <template>
-  <v-form ref="viewRestrictionForm">
-    <modal-dialog-base title="View restriction" :showDialog="showDialog">
-      <template #content>
-        <error-summary :errors="viewRestrictionForm.errors" />
-        <h3 class="category-header-medium">Restriction information</h3>
-        <content-group>
+  <user-note-confirm-modal
+    title="View restriction"
+    ref="viewRestrictionModal"
+    :allowed-role="allowedRole"
+    :ok-label="allowUserToEdit ? 'Resolve restriction' : 'Close'"
+    :show-secondary-button="allowUserToEdit"
+    notes-label="Resolution reason"
+    :show-notes="allowUserToEdit"
+  >
+    <template #content>
+      <h3 class="category-header-medium">Restriction information</h3>
+      <content-group>
+        <title-value
+          property-title="Category"
+          :property-value="restrictionData?.restrictionCategory"
+        />
+        <title-value
+          property-title="Reason"
+          :property-value="restrictionData?.description"
+        />
+        <title-value
+          v-if="restrictionData?.restrictionNote"
+          property-title="Notes"
+          :property-value="restrictionData?.restrictionNote"
+        />
+        <v-row
+          ><v-col
+            ><title-value
+              property-title="Date created"
+              :property-value="
+                dateOnlyLongString(restrictionData?.createdAt)
+              " /></v-col
+          ><v-col
+            ><title-value
+              property-title="Created by"
+              :property-value="restrictionData?.createdBy" /></v-col
+          ><v-col
+            ><title-value property-title="Status" /><status-chip-restriction
+              :is-active="!!restrictionData?.isActive"
+              :deleted-at="restrictionData?.deletedAt" /></v-col
+        ></v-row>
+      </content-group>
+      <template v-if="showResolution">
+        <h3 class="category-header-medium mt-2">Resolution</h3>
+        <content-group
+          v-if="
+            !restrictionData?.isActive &&
+            restrictionData?.restrictionType !== RestrictionType.Federal
+          "
+        >
           <title-value
-            propertyTitle="Category"
-            :propertyValue="restrictionData.restrictionCategory"
-          />
-          <title-value
-            propertyTitle="Reason"
-            :propertyValue="restrictionData.description"
-          />
-          <title-value
-            v-if="restrictionData.restrictionNote"
-            propertyTitle="Notes"
-            :propertyValue="restrictionData.restrictionNote"
+            property-title="Resolution reason"
+            :property-value="restrictionData?.resolutionNote"
           />
           <v-row
             ><v-col
               ><title-value
-                propertyTitle="Date created"
-                :propertyValue="
-                  dateOnlyLongString(restrictionData.createdAt)
+                property-title="Date resolved"
+                :property-value="
+                  dateOnlyLongString(restrictionData?.resolvedAt)
                 " /></v-col
             ><v-col
               ><title-value
-                propertyTitle="Created by"
-                :propertyValue="restrictionData.createdBy" /></v-col
-            ><v-col
-              ><title-value propertyTitle="Status" /><status-chip-restriction
-                :is-active="restrictionData.isActive"
-                :deleted-at="restrictionData.deletedAt" /></v-col
+                property-title="Resolved by"
+                :property-value="restrictionData?.resolvedBy" /></v-col
           ></v-row>
         </content-group>
-        <template v-if="showResolution">
-          <h3 class="category-header-medium mt-2">Resolution</h3>
-          <v-textarea
-            v-if="allowUserToEdit"
-            label="Resolution reason"
-            v-model="formModel.resolutionNote"
-            variant="outlined"
-            :rules="[(v) => checkResolutionNotesLength(v)]"
+      </template>
+      <template v-if="showDeletion">
+        <h3 class="category-header-medium mt-2">Deletion</h3>
+        <content-group>
+          <title-value
+            property-title="Deletion reason"
+            :property-value="restrictionData?.deletionNote"
           />
-          <content-group
-            v-if="
-              !restrictionData.isActive &&
-              restrictionData.restrictionType !== RestrictionType.Federal
-            "
-          >
-            <title-value
-              propertyTitle="Resolution reason"
-              :propertyValue="restrictionData.resolutionNote"
-            />
-            <v-row
-              ><v-col
-                ><title-value
-                  propertyTitle="Date resolved"
-                  :propertyValue="
-                    dateOnlyLongString(restrictionData.resolvedAt)
-                  " /></v-col
-              ><v-col
-                ><title-value
-                  propertyTitle="Resolved by"
-                  :propertyValue="restrictionData.resolvedBy" /></v-col
-            ></v-row>
-          </content-group>
-        </template>
-        <template v-if="showDeletion">
-          <h3 class="category-header-medium mt-2">Deletion</h3>
-          <content-group>
-            <title-value
-              propertyTitle="Deletion reason"
-              :propertyValue="restrictionData.deletionNote"
-            />
-            <v-row
-              ><v-col
-                ><title-value
-                  propertyTitle="Date deleted"
-                  :propertyValue="
-                    dateOnlyLongString(restrictionData.deletedAt)
-                  " /></v-col
-              ><v-col
-                ><title-value
-                  propertyTitle="Deleted by"
-                  :propertyValue="restrictionData.deletedBy" /></v-col
-            ></v-row>
-          </content-group>
-        </template>
+          <v-row
+            ><v-col
+              ><title-value
+                property-title="Date deleted"
+                :property-value="
+                  dateOnlyLongString(restrictionData?.deletedAt)
+                " /></v-col
+            ><v-col
+              ><title-value
+                property-title="Deleted by"
+                :property-value="restrictionData?.deletedBy" /></v-col
+          ></v-row>
+        </content-group>
       </template>
-      <template #footer>
-        <check-permission-role :role="allowedRole">
-          <template #="{ notAllowed }">
-            <footer-buttons
-              :primaryLabel="allowUserToEdit ? 'Resolve restriction' : 'Close'"
-              secondaryLabel="Cancel"
-              @primaryClick="allowUserToEdit ? submit() : cancel()"
-              @secondaryClick="cancel"
-              :disablePrimaryButton="allowUserToEdit && notAllowed"
-              :showSecondaryButton="allowUserToEdit"
-            />
-          </template>
-        </check-permission-role>
-      </template>
-    </modal-dialog-base>
-  </v-form>
+    </template>
+  </user-note-confirm-modal>
 </template>
 
 <script lang="ts">
 import { PropType, ref, reactive, computed, defineComponent } from "vue";
-import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
-import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { useFormatters, useModalDialog, useValidators } from "@/composables";
-import { Role, RestrictionType, VForm, RestrictionStatus } from "@/types";
-import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import UserNoteConfirmModal, {
+  UserNoteModal,
+} from "@/components/common/modals/UserNoteConfirmModal.vue";
+import { ModalDialog, useFormatters } from "@/composables";
+import { Role, RestrictionType, RestrictionStatus } from "@/types";
 import { RestrictionDetailAPIOutDTO } from "@/services/http/dto";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
 import TitleValue from "@/components/generic/TitleValue.vue";
 
 export default defineComponent({
   components: {
-    ModalDialogBase,
-    CheckPermissionRole,
-    ErrorSummary,
     StatusChipRestriction,
     TitleValue,
+    UserNoteConfirmModal,
   },
   props: {
     restrictionData: {
@@ -143,42 +125,28 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const NOTES_MAX_CHARACTERS = 500;
-    const { checkMaxCharacters } = useValidators();
     const { dateOnlyLongString } = useFormatters();
-    const { showDialog, showModal, resolvePromise } = useModalDialog<
-      RestrictionDetailAPIOutDTO | false
-    >();
-    const viewRestrictionForm = ref({} as VForm);
+    const viewRestrictionModal = ref(
+      {} as ModalDialog<UserNoteModal<unknown> | false>,
+    );
     const formModel = reactive({} as RestrictionDetailAPIOutDTO);
 
-    const submit = async () => {
-      const validationResult = await viewRestrictionForm.value.validate();
-      if (!validationResult.valid) {
-        return;
+    const showModal = async (): Promise<RestrictionDetailAPIOutDTO | false> => {
+      if (!props.restrictionData) {
+        return false;
+      }
+      const modalResult = await viewRestrictionModal.value.showModal();
+      if (!modalResult) {
+        return false;
       }
       formModel.restrictionId = props.restrictionData.restrictionId;
-      resolvePromise(formModel);
-    };
-
-    const cancel = () => {
-      viewRestrictionForm.value.reset();
-      viewRestrictionForm.value.resetValidation();
-      resolvePromise(false);
-    };
-
-    const checkResolutionNotesLength = (notes: string) => {
-      if (notes) {
-        return (
-          checkMaxCharacters(notes, NOTES_MAX_CHARACTERS) ||
-          `Max ${NOTES_MAX_CHARACTERS} characters.`
-        );
-      }
-      return "Resolution reason is required.";
+      formModel.resolutionNote = modalResult.note;
+      return formModel;
     };
 
     const allowUserToEdit = computed(
       () =>
+        !!props.restrictionData &&
         !props.restrictionData.deletedAt &&
         props.restrictionData.isActive &&
         props.restrictionData.restrictionType !== RestrictionType.Federal &&
@@ -186,6 +154,9 @@ export default defineComponent({
     );
 
     const showResolution = computed(() => {
+      if (!props.restrictionData) {
+        return false;
+      }
       if (props.restrictionData.deletedAt) {
         // Show resolution section if the restriction was deleted, but has some note.
         return !!props.restrictionData.resolutionNote;
@@ -201,20 +172,16 @@ export default defineComponent({
     });
 
     const showDeletion = computed(() => {
-      return !!props.restrictionData.deletedAt;
+      return !!props.restrictionData?.deletedAt;
     });
 
     return {
-      showDialog,
+      viewRestrictionModal,
       showModal,
       RestrictionType,
-      submit,
-      cancel,
-      viewRestrictionForm,
       Role,
       formModel,
       RestrictionStatus,
-      checkResolutionNotesLength,
       allowUserToEdit,
       showResolution,
       showDeletion,

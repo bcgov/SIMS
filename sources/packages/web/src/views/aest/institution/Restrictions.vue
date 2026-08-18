@@ -59,7 +59,7 @@
               <v-btn
                 color="primary"
                 variant="outlined"
-                @click="viewIInstitutionRestriction(item.restrictionId)"
+                @click="viewInstitutionRestriction(item.restrictionId)"
               >
                 View
               </v-btn>
@@ -166,7 +166,7 @@ export default defineComponent({
       ]);
     };
 
-    const viewIInstitutionRestriction = async (restrictionId: number) => {
+    const viewInstitutionRestriction = async (restrictionId: number) => {
       institutionRestriction.value =
         await RestrictionService.shared.getInstitutionRestrictionDetail(
           props.institutionId,
@@ -267,7 +267,7 @@ export default defineComponent({
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       institutionRestriction,
-      viewIInstitutionRestriction,
+      viewInstitutionRestriction,
       viewRestriction,
       showModal,
       resolveRestriction,

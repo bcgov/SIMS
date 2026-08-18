@@ -9,6 +9,7 @@
         <error-summary :errors="modalNotesForm.errors" />
         <slot name="content" :show-parameter="showParameter">{{ text }}</slot>
         <v-textarea
+          v-if="showNotes"
           :label="notesLabel"
           variant="outlined"
           hide-details="auto"
@@ -21,7 +22,22 @@
         </p>
       </template>
       <template #footer>
+        <check-permission-role v-if="allowedRole" :role="allowedRole">
+          <template #="{ notAllowed }">
+            <footer-buttons
+              :primary-label="okLabel"
+              :secondary-label="cancelLabel"
+              @primary-click="resolvePromise(true)"
+              @secondary-click="resolvePromise(false)"
+              :disable-primary-button="disablePrimaryButton || notAllowed"
+              :show-secondary-button="showSecondaryButton"
+              :processing="loading"
+            />
+          </template>
+        </check-permission-role>
+
         <footer-buttons
+          v-else
           :primary-label="okLabel"
           :secondary-label="cancelLabel"
           @primary-click="resolvePromise(true)"
@@ -36,10 +52,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
+import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import { useModalDialog, useRules } from "@/composables";
-import { VForm } from "@/types";
+import { Role, VForm } from "@/types";
 
 export interface UserNoteModal<T> {
   showParameter: T;
@@ -48,6 +65,7 @@ export interface UserNoteModal<T> {
 
 export default defineComponent({
   components: {
+    CheckPermissionRole,
     ModalDialogBase,
   },
   props: {
@@ -62,12 +80,10 @@ export default defineComponent({
     },
     okLabel: {
       type: String,
-      required: true,
       default: "Ok",
     },
     cancelLabel: {
       type: String,
-      required: true,
       default: "Cancel",
     },
     maxWidth: {
@@ -91,6 +107,15 @@ export default defineComponent({
     },
     notesDescription: {
       type: String,
+      default: undefined,
+    },
+    showNotes: {
+      type: Boolean,
+      default: true,
+    },
+    allowedRole: {
+      type: String as PropType<Role>,
+      required: false,
       default: undefined,
     },
   },
