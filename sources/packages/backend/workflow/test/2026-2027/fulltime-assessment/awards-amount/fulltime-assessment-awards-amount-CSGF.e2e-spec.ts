@@ -29,7 +29,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     expect(calculatedAssessment.variables.federalAwardNetCSGFAmount).toBe(6300);
   });
 
-  it("Should set the CSGF amount at a minimum amount of 100 when award is eligible.", async () => {
+  it("Should set the amount at a minimum amount of 100 when award is eligible.", async () => {
     // Arrange
     const assessmentConsolidatedData =
       createFakeConsolidatedFulltimeData(PROGRAM_YEAR);
