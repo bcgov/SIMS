@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnFullTimeAssessmentDecisions" name="dmnFullTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.46.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnFullTimeAssessmentDecisions" name="dmnFullTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnFullTimeProgramYearMaximums" name="dmnFullTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -2687,7 +2687,8 @@
       </input>
       <output id="OutputClause_1wgs16b" label="limitAwardCSGPAmount" name="limitAwardCSGPAmount" typeRef="string" />
       <output id="OutputClause_1n9ubqe" label="limitAwardCSGDWeeklyRate" name="limitAwardCSGDWeeklyRate" typeRef="string" biodi:width="218" />
-      <output id="OutputClause_1t1gc34" label="limitAwardCSGDMinAward" name="limitAwardCSGDMinAward" typeRef="string" />
+      <output id="OutputClause_1t1gc34" label="limitAwardCSGDMinAward" name="limitAwardCSGDMinAward" typeRef="string" biodi:width="192" />
+      <output id="OutputClause_1donr5a" label="limitAwardCSGFMinAward" name="limitAwardCSGFMinAward" typeRef="string" biodi:width="192" />
       <output id="OutputClause_03jyuzn" label="limitAwardCSGFAmount" name="limitAwardCSGFAmount" typeRef="string" />
       <output id="OutputClause_0004ypj" label="limitAwardCSGFWeeklyRate" name="limitAwardCSGFWeeklyRate" typeRef="string" biodi:width="240" />
       <output id="OutputClause_0uaxqsy" label="limitAwardCSGTProratedAmount" name="limitAwardCSGTProratedAmount" typeRef="string" />
@@ -2714,6 +2715,9 @@
           <text>3200 / 8 * 12 / 52</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16p6pyf">
+          <text>100</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_1bvrd97">
           <text>100</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0ndsy0d">
@@ -2775,6 +2779,9 @@
         <outputEntry id="LiteralExpression_1gq6z9v">
           <text>100</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_0b1optz">
+          <text>100</text>
+        </outputEntry>
         <outputEntry id="LiteralExpression_0m30qdj">
           <text>4200</text>
         </outputEntry>
@@ -2834,6 +2841,9 @@
         <outputEntry id="LiteralExpression_1daeanc">
           <text>100</text>
         </outputEntry>
+        <outputEntry id="LiteralExpression_1v70dve">
+          <text>100</text>
+        </outputEntry>
         <outputEntry id="LiteralExpression_1rq1wim">
           <text>6300</text>
         </outputEntry>
@@ -2891,6 +2901,9 @@
           <text>round half up(2240 * (1/8) * 12 * (1/52),2)</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1gajigv">
+          <text>100</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_07x5lii">
           <text>100</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_11xiwxw">
