@@ -79,6 +79,7 @@ import {
   CONNECTION_REQUEST_TIMEOUT,
   ORM_CACHE_LIFETIME,
   ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+  ORM_CACHE_REDIS_CONNECT_TIMEOUT,
   ORM_CACHE_REDIS_RETRY_INTERVAL,
 } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
@@ -144,6 +145,8 @@ function getORMCacheConfig(): ORMCacheConfig | false {
         port: config.redis.redisPort,
         password: config.redis.redisPassword,
         commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+        connectTimeout: ORM_CACHE_REDIS_CONNECT_TIMEOUT,
+        enableOfflineQueue: false, // Fail cache commands immediately while disconnected.
         retryStrategy,
       },
       ignoreErrors: true,
@@ -160,7 +163,9 @@ function getORMCacheConfig(): ORMCacheConfig | false {
         redisOptions: {
           password: config.redis.redisPassword,
           commandTimeout: ORM_CACHE_REDIS_COMMAND_TIMEOUT,
+          connectTimeout: ORM_CACHE_REDIS_CONNECT_TIMEOUT,
         },
+        enableOfflineQueue: false,
         clusterRetryStrategy: retryStrategy,
       },
     },
