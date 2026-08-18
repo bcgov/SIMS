@@ -28,7 +28,6 @@ import {
   User,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
-import { beforeEach } from "node:test";
 import {
   DynamicConfigurationTestData,
   createFakeFormConfigurations,
@@ -66,7 +65,7 @@ describe("ApplicationStudentsController(e2e)-cancelStudentApplication", () => {
 
   it(
     `Should cancel a student application and update the current assessment status to ${StudentAssessmentStatus.CancellationRequested}` +
-      ` when the application has current assessment created and application status is ${ApplicationStatus.Assessment}`,
+      ` when the application has current assessment created and application status is ${ApplicationStatus.Assessment}.`,
     async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource, undefined, {
