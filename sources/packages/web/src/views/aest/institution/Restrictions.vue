@@ -70,7 +70,6 @@
       <view-restriction-modal
         ref="viewRestriction"
         :restriction-data="institutionRestriction"
-        @submit-resolution-data="resolveRestriction"
         :allowed-role="Role.InstitutionResolveRestriction"
         :can-resolve-restriction="true"
       />

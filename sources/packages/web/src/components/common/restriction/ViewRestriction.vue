@@ -3,8 +3,9 @@
     title="View restriction"
     ref="viewRestrictionModal"
     :allowed-role="allowedRole"
-    :ok-label="allowUserToEdit ? 'Resolve restriction' : 'Close'"
-    :show-secondary-button="allowUserToEdit"
+    :show-primary-button="allowUserToEdit"
+    ok-label="Resolve restriction"
+    :cancel-label="allowUserToEdit ? 'Cancel' : 'Close'"
     notes-label="Resolution reason"
     :show-notes="allowUserToEdit"
   >
@@ -132,9 +133,6 @@ export default defineComponent({
     const formModel = reactive({} as RestrictionDetailAPIOutDTO);
 
     const showModal = async (): Promise<RestrictionDetailAPIOutDTO | false> => {
-      if (!props.restrictionData) {
-        return false;
-      }
       const modalResult = await viewRestrictionModal.value.showModal();
       if (!modalResult) {
         return false;
@@ -154,9 +152,6 @@ export default defineComponent({
     );
 
     const showResolution = computed(() => {
-      if (!props.restrictionData) {
-        return false;
-      }
       if (props.restrictionData.deletedAt) {
         // Show resolution section if the restriction was deleted, but has some note.
         return !!props.restrictionData.resolutionNote;
@@ -172,7 +167,7 @@ export default defineComponent({
     });
 
     const showDeletion = computed(() => {
-      return !!props.restrictionData?.deletedAt;
+      return !!props.restrictionData.deletedAt;
     });
 
     return {

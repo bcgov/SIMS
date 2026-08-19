@@ -29,6 +29,7 @@
               :secondary-label="cancelLabel"
               @primary-click="resolvePromise(true)"
               @secondary-click="resolvePromise(false)"
+              :show-primary-button="showPrimaryButton"
               :disable-primary-button="disablePrimaryButton || notAllowed"
               :show-secondary-button="showSecondaryButton"
               :processing="loading"
@@ -90,6 +91,11 @@ export default defineComponent({
       type: Number,
       required: false,
       default: undefined,
+    },
+    showPrimaryButton: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
     disablePrimaryButton: {
       type: Boolean,
