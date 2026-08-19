@@ -4,14 +4,14 @@
       <header-navigator
         title="Request an Application Change"
         sub-title="Request a Change"
-        :routeLocation="goBackRouteParams"
+        :route-location="goBackRouteParams"
       />
     </template>
     <request-a-change-form
-      :locationId="locationId"
-      :offeringId="activeOfferingId"
-      :studentName="studentName"
-      :applicationNumber="applicationNumber"
+      :location-id="locationId"
+      :offering-id="activeOfferingId"
+      :student-name="studentName"
+      :application-number="applicationNumber"
     >
       <v-form ref="requestAChangeForm">
         <v-autocomplete
@@ -25,7 +25,7 @@
           item-value="id"
           class="mt-4"
           v-model="selectedProgram"
-          @update:modelValue="selectedProgramChanged"
+          @update:model-value="selectedProgramChanged"
           :rules="[(v: string) => checkNullOrEmptyRule(v, 'Program')]"
         />
         <v-autocomplete
@@ -39,8 +39,8 @@
           item-title="description"
           item-value="id"
           v-model="selectedOffering"
-          :rules="[(v:string) => checkNullOrEmptyRule(v, 'Offering')]"
-          @update:modelValue="offeringOnChange"
+          :rules="[(v: string) => checkNullOrEmptyRule(v, 'Offering')]"
+          @update:model-value="offeringOnChange"
         />
         <banner
           v-if="isPastOfferingEndDate"
@@ -56,18 +56,15 @@
           hide-details="auto"
           class="mt-4"
           v-model="reasonForChange"
-          :rules="[(v:string) => checkLengthRule(v, 500, 'Reason for change')]"
+          :rules="[(v: string) => checkLengthRule(v, 500, 'Reason for change')]"
         />
-        <p class="mt-1 brand-gray-text">
-          This note is visible to students and StudentAid BC staff.
-        </p>
       </v-form>
       <footer-buttons
         :processing="processing"
-        primaryLabel="Submit requested change"
-        @primaryClick="submit"
-        @secondaryClick="cancel"
-        :disablePrimaryButton="isReadOnlyUser(locationId)"
+        primary-label="Submit requested change"
+        @primary-click="submit"
+        @secondary-click="cancel"
+        :disable-primary-button="isReadOnlyUser(locationId)"
       />
     </request-a-change-form>
   </full-page-container>
@@ -179,7 +176,7 @@ export default defineComponent({
           params: {
             locationId: props.locationId,
           },
-        } as RouteLocationRaw),
+        }) as RouteLocationRaw,
     );
 
     const cancel = () => {

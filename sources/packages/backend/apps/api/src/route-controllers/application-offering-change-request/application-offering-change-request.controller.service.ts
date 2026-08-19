@@ -5,7 +5,7 @@ import {
   ApplicationOfferingDetailsAPIOutDTO,
   ApplicationOfferingChangeDetailsAPIOutDTO,
 } from "./models/application-offering-change-request.dto";
-import { getUserFullName } from "../../utilities";
+import { getOfferingNameAndPeriod, getUserFullName } from "../../utilities";
 
 @Injectable()
 export class ApplicationOfferingChangeRequestControllerService {
@@ -117,7 +117,9 @@ export class ApplicationOfferingChangeRequestControllerService {
       ...applicationOfferingDetails,
       id: request.id,
       applicationId: request.application.id,
-      requestedOfferingDescription: request.requestedOffering.name,
+      requestedOfferingDescription: getOfferingNameAndPeriod(
+        request.requestedOffering,
+      ),
       requestedOfferingProgramId: request.requestedOffering.educationProgram.id,
       requestedOfferingProgramName:
         request.requestedOffering.educationProgram.name,

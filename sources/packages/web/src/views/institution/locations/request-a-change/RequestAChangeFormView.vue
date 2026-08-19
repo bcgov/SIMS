@@ -4,14 +4,14 @@
       <header-navigator
         title="Request an Application Change"
         :sub-title="subTitle"
-        :routeLocation="goBackRouteParams"
+        :route-location="goBackRouteParams"
       />
     </template>
     <request-a-change-form
-      :locationId="locationId"
-      :offeringId="changeRequest.activeOfferingId"
-      :studentName="changeRequest.studentFullName"
-      :applicationNumber="changeRequest.applicationNumber"
+      :location-id="locationId"
+      :offering-id="changeRequest.activeOfferingId"
+      :student-name="changeRequest.studentFullName"
+      :application-number="changeRequest.applicationNumber"
       :status="changeRequest.status"
     >
       <v-text-field
@@ -36,18 +36,20 @@
         class="mt-4"
         v-model="changeRequest.reason"
       />
-      <p class="mt-1 brand-gray-text">
-        This note is visible to students and StudentAid BC staff.
-      </p>
-      <v-textarea
-        v-if="showNotesFromStudentAidBC"
-        :readonly="true"
-        label="Notes from StudentAid BC"
-        variant="outlined"
-        hide-details="auto"
-        class="mt-4"
-        v-model="changeRequest.assessedNoteDescription"
-      />
+      <template v-if="showNotesFromStudentAidBC">
+        <p class="mt-1 brand-gray-text">
+          This note is visible to students and StudentAid BC staff.
+        </p>
+        <v-textarea
+          v-if="showNotesFromStudentAidBC"
+          :readonly="true"
+          label="Notes from StudentAid BC"
+          variant="outlined"
+          hide-details="auto"
+          class="mt-4"
+          v-model="changeRequest.assessedNoteDescription"
+        />
+      </template>
     </request-a-change-form>
   </full-page-container>
 </template>
@@ -101,7 +103,7 @@ export default defineComponent({
           params: {
             locationId: props.locationId,
           },
-        } as RouteLocationRaw),
+        }) as RouteLocationRaw,
     );
 
     const showNotesFromStudentAidBC = computed(() => {
