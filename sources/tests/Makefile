@@ -44,7 +44,7 @@ backend-unit-tests:
 
 e2e-tests-api:
 	@echo "+\n++ Make: Starting infrastructure containers for API E2E tests \n+"
-	@docker compose up -d --wait mongo formio postgres
+	@docker compose up -d --wait mongo formio postgres redis
 	@echo "+\n++ Make: Deploying form definitions \n+"
 	@cd ../packages/forms && npm ci && npm run deploy
 	@echo "+\n++ Make: Running API E2E tests \n+"

@@ -33,6 +33,7 @@ import {
   APPLICATION_EDIT_STATUS_IN_PROGRESS_VALUES,
   RestrictionActionType,
   NotificationMessageType,
+  FormSubmissionCancellationReason,
 } from "@sims/sims-db";
 import { StudentFileService } from "../student-file/student-file.service";
 import {
@@ -84,7 +85,7 @@ import {
   StudentSubmittedChangeRequestNotification,
 } from "@sims/services/notifications";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
-import { StudentService } from "..";
+import { FormSubmissionCancellationService, StudentService } from "..";
 import { INVALID_OPERATION_IN_THE_CURRENT_STATE } from "@sims/services/constants";
 
 export const APPLICATION_DRAFT_NOT_FOUND = "APPLICATION_DRAFT_NOT_FOUND";
@@ -126,6 +127,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
     private readonly studentService: StudentService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly restrictionSharedService: RestrictionSharedService,
+    private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
   ) {
     super(dataSource.getRepository(Application));
   }
@@ -274,51 +276,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
       });
       return { application, createdAssessment: originalAssessment };
     }
-    /**
-     * If a student submit/re-submit and an existing application that is not in draft state,
-     * (i.e existing application should be in any one of these status, submitted, In Progress,
-     * Assessment, Enrollment) then the execution will come here, then the existing application
-     * status is set to `Edited` and applicationStatusUpdatedOn is updated and delete the
-     * corresponding workflow and creates a new Application with same Application Number and
-     * Program Year as that of the Edited Application and with newly submitted payload.
-     */
 
-    // Updating existing Application status to edited
-    // and updating the ApplicationStatusUpdatedOn.
-    application.applicationStatus = ApplicationStatus.Edited;
-    application.applicationStatusUpdatedOn = now;
-
-    // Creating New Application with same Application Number and Program Year as
-    // that of the Edited Application and with newly submitted payload with
-    // application status submitted.
-    const newApplication = new Application();
-    // Current date is set as submitted date.
-    newApplication.submittedDate = now;
-    newApplication.applicationNumber = application.applicationNumber;
-    newApplication.offeringIntensity = application.offeringIntensity;
-    newApplication.relationshipStatus = applicationData.relationshipStatus;
-    newApplication.studentNumber = applicationData.studentNumber;
-    newApplication.programYear = application.programYear;
-    newApplication.data = applicationData;
-    newApplication.applicationStatus = ApplicationStatus.Submitted;
-    newApplication.applicationEditStatus = ApplicationEditStatus.Edited;
-    newApplication.applicationEditStatusUpdatedOn = now;
-    newApplication.applicationEditStatusUpdatedBy = auditUser;
-    newApplication.parentApplication = {
-      id: application.parentApplication.id,
-    } as Application;
-    newApplication.precedingApplication = {
-      id: application.id,
-    } as Application;
-    newApplication.applicationStatusUpdatedOn = now;
-    newApplication.student = { id: studentId } as Student;
-    newApplication.studentFiles = await this.getSyncedApplicationFiles(
-      studentId,
-      [],
-      associatedFiles,
-    );
-    newApplication.location = institutionLocation;
-    newApplication.creator = auditUser;
     // While editing an application, a new application record is created and a new
     // assessment record is also created to be the used as a "current Assessment" record.
     // The application and the assessment records have a DB relationship and the
@@ -328,6 +286,67 @@ export class ApplicationService extends RecordDataModelService<Application> {
     // "cyclic dependency error" on Typeorm. Saving the application record and later
     // having it associated with the assessment solves the issue.
     await this.dataSource.transaction(async (transactionalEntityManager) => {
+      // Cancel any form submissions associated with the application that is being edited.
+      await this.formSubmissionCancellationService.cancelApplicationScopedFormSubmissions(
+        applicationId,
+        FormSubmissionCancellationReason.ApplicationEdited,
+        auditUserId,
+        now,
+        transactionalEntityManager,
+      );
+      // Before the cancellation of application form submissions, there is a remote possibility of a form submission being completed
+      // which will create a re-assessment for the application. And if the re-assessment is created, then the current assessment
+      // of the application will not be the same as the one at the start of this method.
+      // So in order to ensure the current assessment of the application is the most recent one,
+      // we must fetch the current assessment of the application after the cancellation of form submissions.
+      const currentApplication = await this.getApplicationById(applicationId, {
+        entityManager: transactionalEntityManager,
+      });
+      /**
+       * If a student submit/re-submit and an existing application that is not in draft state,
+       * (i.e existing application should be in any one of these status, submitted, In Progress,
+       * Assessment, Enrollment) then the execution will come here, then the existing application
+       * status is set to `Edited` and applicationStatusUpdatedOn is updated and delete the
+       * corresponding workflow and creates a new Application with same Application Number and
+       * Program Year as that of the Edited Application and with newly submitted payload.
+       */
+
+      // Updating existing Application status to edited
+      // and updating the ApplicationStatusUpdatedOn.
+      currentApplication.applicationStatus = ApplicationStatus.Edited;
+      currentApplication.applicationStatusUpdatedOn = now;
+
+      // Creating New Application with same Application Number and Program Year as
+      // that of the Edited Application and with newly submitted payload with
+      // application status submitted.
+      const newApplication = new Application();
+      // Current date is set as submitted date.
+      newApplication.submittedDate = now;
+      newApplication.applicationNumber = currentApplication.applicationNumber;
+      newApplication.offeringIntensity = currentApplication.offeringIntensity;
+      newApplication.relationshipStatus = applicationData.relationshipStatus;
+      newApplication.studentNumber = applicationData.studentNumber;
+      newApplication.programYear = currentApplication.programYear;
+      newApplication.data = applicationData;
+      newApplication.applicationStatus = ApplicationStatus.Submitted;
+      newApplication.applicationEditStatus = ApplicationEditStatus.Edited;
+      newApplication.applicationEditStatusUpdatedOn = now;
+      newApplication.applicationEditStatusUpdatedBy = auditUser;
+      newApplication.parentApplication = {
+        id: currentApplication.parentApplication.id,
+      } as Application;
+      newApplication.precedingApplication = {
+        id: currentApplication.id,
+      } as Application;
+      newApplication.applicationStatusUpdatedOn = now;
+      newApplication.student = { id: studentId } as Student;
+      newApplication.studentFiles = await this.getSyncedApplicationFiles(
+        studentId,
+        [],
+        associatedFiles,
+      );
+      newApplication.location = institutionLocation;
+      newApplication.creator = auditUser;
       const applicationRepository =
         transactionalEntityManager.getRepository(Application);
       await applicationRepository.save(newApplication);
@@ -344,12 +363,13 @@ export class ApplicationService extends RecordDataModelService<Application> {
       newApplication.currentAssessment = originalAssessment;
 
       // Updates the current assessment status to cancellation requested.
-      application.currentAssessment.studentAssessmentStatus =
+      currentApplication.currentAssessment.studentAssessmentStatus =
         StudentAssessmentStatus.CancellationRequested;
-      application.currentAssessment.modifier = auditUser;
-      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
-      application.currentAssessment.updatedAt = now;
-      await applicationRepository.save([application, newApplication]);
+      currentApplication.currentAssessment.modifier = auditUser;
+      currentApplication.currentAssessment.studentAssessmentStatusUpdatedOn =
+        now;
+      currentApplication.currentAssessment.updatedAt = now;
+      await applicationRepository.save([currentApplication, newApplication]);
       await this.saveApplicationEditedTooManyTimesNotification(
         newApplication.applicationNumber,
         studentId,
@@ -1023,6 +1043,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         applicationNumber: true,
         pirDeniedOtherDesc: true,
         submittedDate: true,
+        parentApplication: { id: true },
         precedingApplication: {
           id: true,
           currentAssessment: {
@@ -1111,6 +1132,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         precedingApplication: {
           currentAssessment: { offering: true, studentAppeal: true },
         },
+        parentApplication: true,
         formSubmissions: true,
         supportingUsers: true,
         ...(options?.loadDynamicData
@@ -1596,29 +1618,16 @@ export class ApplicationService extends RecordDataModelService<Application> {
    * @param applicationId application id.
    * @param studentId student id for authorization purposes.
    * @param auditUserId user who is making the changes.
-   * @returns student application update result.
    */
   async cancelStudentApplication(
     applicationId: number,
     studentId: number,
     auditUserId: number,
-  ): Promise<Application> {
-    const application = await this.repo.findOne({
-      select: {
-        id: true,
-        currentAssessment: {
-          id: true,
-          assessmentWorkflowId: true,
-        },
-      },
-      relations: {
-        currentAssessment: true,
-      },
+  ): Promise<void> {
+    const isApplicationInEligibleStatusExists = await this.repo.exists({
       where: {
         id: applicationId,
-        student: {
-          id: studentId,
-        },
+        student: { id: studentId },
         applicationStatus: Not(
           In([
             ApplicationStatus.Completed,
@@ -1628,31 +1637,56 @@ export class ApplicationService extends RecordDataModelService<Application> {
         ),
       },
     });
-    if (!application) {
+    if (!isApplicationInEligibleStatusExists) {
       throw new CustomNamedError(
         "Application not found or it is not in the correct state to be cancelled.",
         APPLICATION_NOT_FOUND,
       );
     }
-    // Updates the application status to cancelled.
-    const now = new Date();
-    const auditUser = { id: auditUserId } as User;
-    application.applicationStatus = ApplicationStatus.Cancelled;
-    application.applicationStatusUpdatedOn = now;
-    application.modifier = auditUser;
-    application.updatedAt = now;
+    await this.dataSource.transaction(async (entityManager) => {
+      const now = new Date();
+      // Cancel all the form submissions associated with the application.
+      await this.formSubmissionCancellationService.cancelApplicationScopedFormSubmissions(
+        applicationId,
+        FormSubmissionCancellationReason.ApplicationCancelled,
+        auditUserId,
+        now,
+        entityManager,
+      );
+      const applicationRepo = entityManager.getRepository(Application);
+      const application = await applicationRepo.findOne({
+        select: {
+          id: true,
+          currentAssessment: {
+            id: true,
+            assessmentWorkflowId: true,
+          },
+        },
+        relations: {
+          currentAssessment: true,
+        },
+        where: {
+          id: applicationId,
+        },
+      });
 
-    // Updates the current assessment status to cancellation requested if there is one. Applications with draft status do not have a current assessment.
-    if (application.currentAssessment) {
-      application.currentAssessment.studentAssessmentStatus =
-        StudentAssessmentStatus.CancellationRequested;
-      application.currentAssessment.modifier = auditUser;
-      application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
-      application.currentAssessment.updatedAt = now;
-    }
+      // Updates the application status to cancelled.
+      const auditUser = { id: auditUserId } as User;
+      application.applicationStatus = ApplicationStatus.Cancelled;
+      application.applicationStatusUpdatedOn = now;
+      application.modifier = auditUser;
+      application.updatedAt = now;
 
-    await this.repo.save(application);
-    return application;
+      // Updates the current assessment status to cancellation requested if there is one. Applications with draft status do not have a current assessment.
+      if (application.currentAssessment) {
+        application.currentAssessment.studentAssessmentStatus =
+          StudentAssessmentStatus.CancellationRequested;
+        application.currentAssessment.modifier = auditUser;
+        application.currentAssessment.studentAssessmentStatusUpdatedOn = now;
+        application.currentAssessment.updatedAt = now;
+      }
+      await applicationRepo.save(application);
+    });
   }
 
   /**

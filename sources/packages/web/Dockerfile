@@ -19,7 +19,7 @@ COPY ./public ./public
 COPY ./index.html ./vite.config.ts ./tsconfig.json ./package*.json ./
 
 # Installing dependencies.
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Replace ${PORT} variable in the template and save as default.conf.
 RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf

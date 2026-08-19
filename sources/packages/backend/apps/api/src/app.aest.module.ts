@@ -54,6 +54,7 @@ import {
   FormSubmissionUpdateDisabilityOnDecisionAction,
   FormSubmissionUpdateDisabilityOnCancelAction,
   DisabilityProfileService,
+  FormSubmissionCancellationService,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -272,6 +273,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     SupplementaryDataScholasticStandingWithdrawals,
     SupplementaryDataLoader,
     FormSubmissionService,
+    FormSubmissionCancellationService,
     // Form submission actions.
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateModifiedIndependentAction,

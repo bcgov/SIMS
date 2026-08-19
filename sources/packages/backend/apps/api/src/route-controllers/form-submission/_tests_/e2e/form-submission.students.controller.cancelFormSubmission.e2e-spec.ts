@@ -21,6 +21,7 @@ import MockDate from "mockdate";
 import {
   FormCategory,
   FormSubmission,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
   User,
@@ -313,6 +314,7 @@ async function assertDBUpdatesOnCancellation(
     select: {
       id: true,
       submissionStatus: true,
+      cancellationReason: true,
       submissionStatusUpdatedBy: { id: true },
       submissionStatusUpdatedOn: true,
       modifier: { id: true },
@@ -326,6 +328,8 @@ async function assertDBUpdatesOnCancellation(
   expect(updatedFormSubmission).toEqual({
     id: formSubmission.id,
     submissionStatus: FormSubmissionStatus.Cancelled,
+    cancellationReason:
+      FormSubmissionCancellationReason.StudentCancelledSubmission,
     submissionStatusUpdatedBy: expectedAuditUser,
     submissionStatusUpdatedOn: auditDate,
     modifier: expectedAuditUser,

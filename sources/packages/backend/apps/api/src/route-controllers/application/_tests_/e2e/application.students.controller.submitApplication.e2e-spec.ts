@@ -3,9 +3,11 @@ import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import { DataSource } from "typeorm";
 import {
+  AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   FakeStudentUsersTypes,
+  getAESTUser,
   getStudentToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
@@ -22,17 +24,25 @@ import {
   RestrictionCode,
   ensureProgramYearExistsForPartTimeOnly,
   saveFakeInstitutionRestriction,
+  saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import {
   Application,
   ApplicationData,
   ApplicationStatus,
   EducationProgramOffering,
+  FormCategory,
+  FormSubmissionCancellationReason,
+  FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
   OfferingIntensity,
   ProgramYear,
+  RelationshipStatus,
   RestrictionType,
   Student,
+  User,
 } from "@sims/sims-db";
+import MockDate from "mockdate";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { SaveApplicationAPIInDTO } from "../../models/application.dto";
 import { FormNames, FormService } from "../../../../services";
@@ -41,6 +51,14 @@ import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sf
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 import { ACTIVE_INSTITUTION_RESTRICTION } from "../../../../constants";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "../../../form-submission/_tests_/e2e/form-submission-utils";
+import {
+  assertCancelledApplicationScopedFormSubmissions,
+  assertFormSubmissionNotUpdated,
+} from "./application-form-submission-utils";
 
 describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;
@@ -50,6 +68,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let formService: FormService;
   let recentActiveProgramYear: ProgramYear;
   let configServiceMockHelper: ConfigServiceMockHelper;
+  let formConfigs: DynamicConfigurationTestData;
+  let ministryUser: User;
   // All tests in this describe mock the Form.io dryRunSubmission because the application
   // form has too many required fields. The minimal stub payloads are intentionally
   // incomplete to test specific application submission business logic (e.g., study date
@@ -74,6 +94,12 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       where: { active: true },
       order: { startDate: "DESC" },
     });
+    formConfigs = await createFakeFormConfigurations(app, db);
+    const auditUser = await getAESTUser(
+      dataSource,
+      AESTGroups.BusinessAdministrators,
+    );
+    ministryUser = { id: auditUser.id } as User;
     // To check the study dates overlap error, the BYPASS_APPLICATION_SUBMIT_VALIDATIONS needs to be set false.
     process.env.BYPASS_APPLICATION_SUBMIT_VALIDATIONS = "false";
   });
@@ -81,6 +107,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   beforeEach(() => {
     resetMockJWTUserInfo(appModule);
     configServiceMockHelper.allowBetaUsersOnly(false);
+    MockDate.reset();
   });
 
   it("Should throw study dates overlap error when an application submitted for a student via the SIMS system has overlapping study start or study end dates with another application.", async () => {
@@ -948,6 +975,190 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       ).toBe(true);
     },
   );
+
+  [
+    FormSubmissionStatus.Pending,
+    FormSubmissionStatus.Completed,
+    FormSubmissionStatus.Declined,
+  ].forEach((submissionStatus) => {
+    it(`Should edit an application and also cancel the application scoped form submission when the form submission status is ${submissionStatus}.`, async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      // Create a submitted application to be edited.
+      const application = await saveFakeApplication(
+        db.dataSource,
+        {
+          student,
+          programYear: recentActiveProgramYear,
+        },
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      );
+      // Create a form submission that is expected to be cancelled on application edit.
+      const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+        now: new Date(),
+        student,
+        application,
+        formCategory: FormCategory.StudentAppeal,
+        submissionStatus,
+        ministryAuditUser: ministryUser,
+        formSubmissionItems: [
+          {
+            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+            decisions: [
+              {
+                decisionStatus: FormSubmissionDecisionStatus.Approved,
+              },
+            ],
+          },
+        ],
+      });
+      const offering = application.currentAssessment.offering;
+      const applicationData = {
+        selectedProgram: offering.educationProgram.id,
+        selectedOffering: offering.id,
+        selectedLocation: offering.institutionLocation.id,
+        relationshipStatus: RelationshipStatus.Single,
+        studentNumber: "1001",
+      };
+      const payload = {
+        associatedFiles: [],
+        data: applicationData,
+        programYearId: recentActiveProgramYear.id,
+      } as SaveApplicationAPIInDTO;
+      const endpoint = `/students/application/${application.id}/submit`;
+      const token = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.Application,
+        data: { data: applicationData },
+      });
+      formService.dryRunSubmission = dryRunSubmissionMock;
+      // Mock the user received in the token.
+      await mockJWTUserInfo(appModule, student.user);
+      const now = new Date();
+      MockDate.set(now);
+
+      // Act
+      await request(app.getHttpServer())
+        .patch(endpoint)
+        .send(payload)
+        .auth(token, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({});
+
+      // Assert
+      // Assert that the application status is updated to Edited.
+      const isApplicationEdited = await db.application.exists({
+        where: {
+          id: application.id,
+          applicationStatus: ApplicationStatus.Edited,
+        },
+      });
+      expect(isApplicationEdited).toBe(true);
+      // Verify if all the application scoped form submissions are cancelled.
+      await assertCancelledApplicationScopedFormSubmissions(
+        db,
+        application.id,
+        FormSubmissionCancellationReason.ApplicationEdited,
+        [formSubmission.id],
+        student.user.id,
+        now,
+      );
+    });
+  });
+
+  it("Should edit an application but not update the application scoped form submission when the form submission status is already cancelled.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    // Create a submitted application to be edited.
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        student,
+        programYear: recentActiveProgramYear,
+      },
+      {
+        applicationStatus: ApplicationStatus.Enrolment,
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
+    );
+    // Create a form submission that is already cancelled.
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      now: new Date(),
+      student,
+      application,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Cancelled,
+      ministryAuditUser: ministryUser,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
+          decisions: [
+            {
+              decisionStatus: FormSubmissionDecisionStatus.Approved,
+            },
+          ],
+        },
+      ],
+    });
+    const offering = application.currentAssessment.offering;
+    const applicationData = {
+      selectedProgram: offering.educationProgram.id,
+      selectedOffering: offering.id,
+      selectedLocation: offering.institutionLocation.id,
+      relationshipStatus: RelationshipStatus.Single,
+      studentNumber: "1001",
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: recentActiveProgramYear.id,
+    } as SaveApplicationAPIInDTO;
+    const endpoint = `/students/application/${application.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: applicationData },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({});
+
+    // Assert
+    // Assert that the application status is updated to Edited.
+    const isApplicationEdited = await db.application.exists({
+      where: {
+        id: application.id,
+        applicationStatus: ApplicationStatus.Edited,
+      },
+    });
+    expect(isApplicationEdited).toBe(true);
+    // Verify if the application scoped form submission is not updated since it was already cancelled.
+    await assertFormSubmissionNotUpdated(
+      db,
+      formSubmission.id,
+      FormSubmissionCancellationReason.ApplicationEdited,
+      now,
+    );
+  });
 
   it("Should submit a full-time application when the student is configured as a beta user.", async () => {
     // Arrange

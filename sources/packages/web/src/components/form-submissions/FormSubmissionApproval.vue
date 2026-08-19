@@ -19,7 +19,7 @@
             <template
               v-if="
                 canShowDecisionSection(
-                  formSubmission.status,
+                  !!formSubmission.assessedDate,
                   decision.canAssessItemDecision,
                 )
               "
@@ -210,7 +210,13 @@ import { HttpStatusCode, isAxiosError } from "axios";
 
 type FormSubmission = Pick<
   FormSubmissionMinistryAPIOutDTO,
-  "id" | "formCategory" | "status" | "canAssessFinalDecision"
+  | "id"
+  | "formCategory"
+  | "status"
+  | "canAssessFinalDecision"
+  | "cancellationReason"
+  | "applicationId"
+  | "assessedDate"
 >;
 
 export default defineComponent({
@@ -300,9 +306,12 @@ export default defineComponent({
         // Keeps only the necessary properties for this UI.
         formSubmission.value = {
           id: submission.id,
+          applicationId: submission.applicationId,
           formCategory: submission.formCategory,
           status: submission.status,
           canAssessFinalDecision: !!submission.canAssessFinalDecision,
+          cancellationReason: submission.cancellationReason,
+          assessedDate: submission.assessedDate,
         };
         // Adapt the items to a UI model to render each item
         // and a internal modal to provide the approval.
@@ -392,14 +401,16 @@ export default defineComponent({
             props.formSubmissionId,
             { itemId },
           )) as FormSubmissionMinistryAPIOutDTO;
+        emit("loaded", submission);
         const itemToUpdate = formSubmissionItems.value.find(
           (item) => item.decision!.submissionItemId === itemId,
         );
         if (!itemToUpdate?.decision) {
           throw new Error("Expected item to be updated was not found.");
         }
-        // Reload the form submission status.
+        // Reload the form submission values.
         formSubmission.value.status = submission.status;
+        formSubmission.value.assessedDate = submission.assessedDate;
         const [reloadedSubmissionItem] = submission.submissionItems;
         assignItemDecisionProperties(
           reloadedSubmissionItem,
@@ -572,20 +583,15 @@ export default defineComponent({
 
     /**
      * The decision section is shown either when the final decision(s) are made or when the user has access to make decisions.
-     * @param formSubmissionStatus form submission status.
+     * @param isAssessed indicates if the main submission is already assessed.
      * @param canUserAssessItemDecision checks if the user has access to make decisions for the form submission item.
      * @returns true if the decision section should be shown, otherwise false.
      */
     const canShowDecisionSection = (
-      formSubmissionStatus: FormSubmissionStatus,
+      isAssessed: boolean,
       canUserAssessItemDecision: boolean,
     ): boolean => {
-      return (
-        [
-          FormSubmissionStatus.Completed,
-          FormSubmissionStatus.Declined,
-        ].includes(formSubmissionStatus) || canUserAssessItemDecision
-      );
+      return isAssessed || canUserAssessItemDecision;
     };
 
     watchEffect(async () => {

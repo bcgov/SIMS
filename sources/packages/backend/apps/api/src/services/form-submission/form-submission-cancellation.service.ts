@@ -6,9 +6,13 @@ import {
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
   FormSubmissionService,
 } from "..";
-import { DataSource, EntityManager } from "typeorm";
-import { FormSubmission, FormSubmissionStatus } from "@sims/sims-db";
-import { CustomNamedError } from "@sims/utilities";
+import { DataSource, EntityManager, In, Not } from "typeorm";
+import {
+  FormSubmission,
+  FormSubmissionCancellationReason,
+  FormSubmissionStatus,
+} from "@sims/sims-db";
+import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { FormSubmissionActionProcessor } from "./form-submission-actions/form-submission-action-processor";
 
 @Injectable()
@@ -85,6 +89,7 @@ export class FormSubmissionCancellationService {
    */
   async cancelFormSubmission(
     submissionId: number,
+    cancellationReason: FormSubmissionCancellationReason,
     auditUserId: number,
     options?: { studentId?: number },
   ): Promise<void> {
@@ -97,25 +102,93 @@ export class FormSubmissionCancellationService {
         },
       );
       await this.validate(submissionId, entityManager, options);
-      const now = new Date();
-      const auditUser = { id: auditUserId };
-      await entityManager.getRepository(FormSubmission).update(
-        { id: submissionId },
-        {
-          submissionStatus: FormSubmissionStatus.Cancelled,
-          submissionStatusUpdatedOn: now,
-          submissionStatusUpdatedBy: auditUser,
-          modifier: auditUser,
-          updatedAt: now,
-        },
-      );
-      // Process the form submission actions applicable on cancellation.
-      await this.formSubmissionActionProcessor.processActions(
-        submissionId,
+      await this.processCancellations(
+        [submissionId],
+        cancellationReason,
         auditUserId,
-        now,
         entityManager,
       );
     });
+  }
+
+  /**
+   * Cancel all the form submissions associated with the given application.
+   * @param applicationId The ID of the application whose form submissions are to be cancelled.
+   * @param cancellationReason The reason for cancelling the form submissions.
+   * @param auditUserId The ID of the user performing the cancellation.
+   * @param auditDate The date of the cancellation action.
+   * @param entityManager The entity manager to execute in transaction.
+   */
+  async cancelApplicationScopedFormSubmissions(
+    applicationId: number,
+    cancellationReason: FormSubmissionCancellationReason,
+    auditUserId: number,
+    auditDate: Date,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    const formSubmissionRepo = entityManager.getRepository(FormSubmission);
+    // Acquire a DB lock for the form submissions to prevent concurrent updates.
+    const formSubmissionsToCancel = await formSubmissionRepo.find({
+      select: { id: true },
+      where: {
+        application: { id: applicationId },
+        submissionStatus: Not(FormSubmissionStatus.Cancelled),
+      },
+      lock: { mode: "pessimistic_write" },
+    });
+    // If there is no pending form submission to cancel then return.
+    if (!formSubmissionsToCancel.length) {
+      return;
+    }
+    await this.processCancellations(
+      formSubmissionsToCancel.map((submission) => submission.id),
+      cancellationReason,
+      auditUserId,
+      entityManager,
+      { auditDate },
+    );
+  }
+
+  /**
+   * Process the cancellation of a form submission.
+   * The process currently involves updating the form submission status to 'Cancelled' and setting the cancellation reason.
+   * @param formSubmissionId form submission ID to cancel.
+   * @param cancellationReason reason for the cancellation of the form submission.
+   * @param auditUserId ID of the user performing the cancellation.
+   * @param entityManager entity manager to execute in transaction.
+   * @param options optional parameters for the cancellation process.
+   * - `auditDate` date of the cancellation action, defaults to current date if not provided.
+   */
+  private async processCancellations(
+    formSubmissionIds: number[],
+    cancellationReason: FormSubmissionCancellationReason,
+    auditUserId: number,
+    entityManager: EntityManager,
+    options?: { auditDate?: Date },
+  ): Promise<void> {
+    const now = options?.auditDate ?? new Date();
+    const auditUser = { id: auditUserId };
+    await entityManager.getRepository(FormSubmission).update(
+      { id: In(formSubmissionIds) },
+      {
+        submissionStatus: FormSubmissionStatus.Cancelled,
+        cancellationReason,
+        submissionStatusUpdatedOn: now,
+        submissionStatusUpdatedBy: auditUser,
+        modifier: auditUser,
+        updatedAt: now,
+      },
+    );
+    // Process the form submission actions applicable for all cancelled form submissions.
+    await processInParallel(
+      (formSubmissionId) =>
+        this.formSubmissionActionProcessor.processActions(
+          formSubmissionId,
+          auditUserId,
+          now,
+          entityManager,
+        ),
+      formSubmissionIds,
+    );
   }
 }

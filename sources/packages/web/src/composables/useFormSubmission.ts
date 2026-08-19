@@ -2,7 +2,7 @@ import { FormSubmissionDecisionStatus, StatusChipTypes } from "@/types";
 
 export function useFormSubmission() {
   const mapFormSubmissionDecisionStatus = (
-    status: FormSubmissionDecisionStatus,
+    status: FormSubmissionDecisionStatus | null,
   ): StatusChipTypes => {
     switch (status) {
       case FormSubmissionDecisionStatus.Approved:
@@ -10,6 +10,7 @@ export function useFormSubmission() {
       case FormSubmissionDecisionStatus.Pending:
         return StatusChipTypes.Warning;
       case FormSubmissionDecisionStatus.Declined:
+      case null:
         return StatusChipTypes.Error;
       default:
         return StatusChipTypes.Inactive;

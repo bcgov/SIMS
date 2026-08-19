@@ -3,6 +3,7 @@ import {
   DynamicFormConfiguration,
   FormCategory,
   FormSubmission,
+  FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionItemDecision,
   FormSubmissionStatus,
@@ -86,6 +87,14 @@ export interface FormSubmissionTestInputData {
    * the current decision for the item.
    */
   formSubmissionItems: FormSubmissionItemTestInputData[];
+  /**
+   * Indicates whether the form submission is assessed or not.
+   */
+  isAssessed?: boolean;
+  /**
+   * Form submission cancellation reason.
+   */
+  cancellationReason?: FormSubmissionCancellationReason;
 }
 
 /**
@@ -112,7 +121,12 @@ export async function saveFakeFormSubmissionFromInputTestData(
   formSubmission.submittedDate = now;
   formSubmission.formCategory = testInputData.formCategory;
   formSubmission.submissionStatus = testInputData.submissionStatus;
-  if (testInputData.submissionStatus !== FormSubmissionStatus.Pending) {
+  const isAssessed =
+    testInputData.isAssessed ||
+    [FormSubmissionStatus.Completed, FormSubmissionStatus.Declined].includes(
+      testInputData.submissionStatus,
+    );
+  if (isAssessed) {
     formSubmission.assessedDate = now;
     formSubmission.assessedBy = testInputData.ministryAuditUser;
   }
@@ -122,6 +136,13 @@ export async function saveFakeFormSubmissionFromInputTestData(
   ].includes(testInputData.submissionStatus)
     ? testInputData.ministryAuditUser
     : student.user;
+  const cancellationReason =
+    testInputData.cancellationReason ??
+    FormSubmissionCancellationReason.StudentCancelledSubmission;
+  formSubmission.cancellationReason =
+    testInputData.submissionStatus === FormSubmissionStatus.Cancelled
+      ? cancellationReason
+      : null;
   formSubmission.formSubmissionItems = [];
   await db.formSubmission.save(formSubmission);
   for (const itemInputData of testInputData.formSubmissionItems) {
@@ -231,6 +252,11 @@ export async function saveFakeFormSubmission(
   }
   formSubmission.submissionStatusUpdatedBy =
     options?.initialValues?.submissionStatusUpdatedBy ?? student.user;
+  if (submissionStatus === FormSubmissionStatus.Cancelled) {
+    formSubmission.cancellationReason =
+      options?.initialValues?.cancellationReason ??
+      FormSubmissionCancellationReason.StudentCancelledSubmission;
+  }
   const numberOfItems = options?.numberOfItems ?? 1;
   formSubmission.formSubmissionItems = Array.from(
     { length: numberOfItems },

@@ -175,6 +175,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         ),
         programName: assessment.offering.educationProgram.name,
         offeringName: assessment.offering.name,
+        courseLoad: assessment.offering.courseLoad,
       });
   });
 
@@ -336,6 +337,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         ),
         programName: assessment.offering.educationProgram.name,
         offeringName: assessment.offering.name,
+        courseLoad: assessment.offering.courseLoad,
       });
   });
 
@@ -458,6 +460,7 @@ describe("AssessmentInstitutionsController(e2e)-getAssessmentNOA", () => {
         ),
         programName: assessment.offering.educationProgram.name,
         offeringName: assessment.offering.name,
+        courseLoad: assessment.offering.courseLoad,
       });
   });
 

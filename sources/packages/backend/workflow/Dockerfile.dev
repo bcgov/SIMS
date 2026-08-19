@@ -13,7 +13,7 @@ COPY ./*.json ./
 COPY ./*.js ./
 
 # Installing dependencies
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Adding a nonroot user
 RUN addgroup -S nonroot \
