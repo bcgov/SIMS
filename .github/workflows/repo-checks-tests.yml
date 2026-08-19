@@ -122,8 +122,6 @@ jobs:
     permissions:
       contents: read
     runs-on: ubuntu-latest
-    env:
-      DISABLE_ORM_CACHE: "true"
     steps:
       # Checkout the PR branch.
       - name: Checkout Target Branch
