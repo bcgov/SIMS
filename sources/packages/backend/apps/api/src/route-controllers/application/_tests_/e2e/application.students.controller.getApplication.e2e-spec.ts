@@ -385,7 +385,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       .expect(({ body }) => expect(body.data.pirSummary).toBeUndefined());
   });
 
-  it("Should get the student full time application details when the application has form submissions and a Parent supporting user.", async () => {
+  it("Should get the student full-time application details when the application has form submissions and a Parent supporting user.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,
@@ -400,11 +400,10 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         },
       },
     );
-    await db.application.save(application);
 
     await saveFakeFormSubmission(
       db,
-      { student: application.student, application },
+      { student, application },
       {
         initialValues: {
           formCategory: FormCategory.StudentAppeal,
@@ -469,7 +468,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       });
   });
 
-  it("Should get the student part time application details when the application has a Partner supporting user.", async () => {
+  it("Should get the student part-time application details when the application has a Partner supporting user.", async () => {
     // Arrange
     const application = await saveFakeApplication(
       db.dataSource,

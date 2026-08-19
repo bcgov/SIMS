@@ -477,6 +477,9 @@ export class Application extends RecordDataModel {
   })
   pirAssessedBy?: User;
 
+  /**
+   * Form submissions associated with this application.
+   */
   @OneToMany(
     () => FormSubmission,
     (formSubmission) => formSubmission.application,
