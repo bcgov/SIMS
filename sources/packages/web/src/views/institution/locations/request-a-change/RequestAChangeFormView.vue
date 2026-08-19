@@ -41,7 +41,6 @@
           This note is visible to students and StudentAid BC staff.
         </p>
         <v-textarea
-          v-if="showNotesFromStudentAidBC"
           :readonly="true"
           label="Notes from StudentAid BC"
           variant="outlined"
