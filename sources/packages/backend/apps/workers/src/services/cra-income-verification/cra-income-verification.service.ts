@@ -7,7 +7,7 @@ import {
   SupportingUser,
 } from "@sims/sims-db";
 import { ConfigService } from "@sims/utilities/config";
-import { WorkflowClientService } from "@sims/services";
+import { SystemUsersService, WorkflowClientService } from "@sims/services";
 
 /**
  * Service layer for CRA income verifications.
@@ -18,6 +18,7 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
     dataSource: DataSource,
     private readonly configService: ConfigService,
     private readonly workflowClientService: WorkflowClientService,
+    private readonly systemUsersService: SystemUsersService,
   ) {
     super(dataSource.getRepository(CRAIncomeVerification));
   }
@@ -44,6 +45,8 @@ export class CRAIncomeVerificationService extends RecordDataModelService<CRAInco
     newVerification.application = { id: applicationId } as Application;
     newVerification.taxYear = taxYear;
     newVerification.reportedIncome = reportedIncome;
+    newVerification.creator = this.systemUsersService.systemUser;
+    newVerification.createdAt = new Date();
     if (supportingUserId) {
       newVerification.supportingUser = {
         id: supportingUserId,

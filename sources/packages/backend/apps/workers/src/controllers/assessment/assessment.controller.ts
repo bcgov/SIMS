@@ -550,7 +550,8 @@ export class AssessmentController {
     hasNOAApproval: boolean,
   ): ApplicationAssessmentJobOutDTO {
     const application = assessment.application;
-    const [studentCRAIncome] = application.craIncomeVerifications?.filter(
+    // The student CRA income is the one that does not have a supporting user associated with it.
+    const studentCRAIncome = application.craIncomeVerifications?.find(
       (verification) => !verification.supportingUser?.id,
     );
     const offering = assessment.offering;
@@ -599,7 +600,9 @@ export class AssessmentController {
           institutionLocation?.data.address?.provinceState,
       },
       student: {
-        craReportedIncome: studentCRAIncome?.craReportedIncome,
+        craReportedIncome: this.getAdjustedCRAReportedIncome(
+          studentCRAIncome?.craReportedIncome,
+        ),
         taxYear: studentCRAIncome?.taxYear,
       },
       supportingUsers: this.flattenSupportingUsersArray(
@@ -645,7 +648,7 @@ export class AssessmentController {
             supportingUser.supportingUserType === supportingUserType,
         )
         .forEach((supportingUser, index) => {
-          const [craIncome] = incomeVerifications?.filter(
+          const craIncome = incomeVerifications?.find(
             (verification) =>
               verification.supportingUser?.id === supportingUser.id,
           );
@@ -653,11 +656,28 @@ export class AssessmentController {
             id: supportingUser.id,
             supportingUserType: supportingUser.supportingUserType,
             supportingData: supportingUser.supportingData,
-            craReportedIncome: craIncome?.craReportedIncome,
+            craReportedIncome: this.getAdjustedCRAReportedIncome(
+              craIncome?.craReportedIncome,
+            ),
           };
         });
     });
     return flattenedSupportingUsers;
+  }
+
+  /**
+   * If the CRA reported income is defined, its value is adjusted to be at least 0.
+   * Negative values are not meaningful for workflow calculations.
+   * @param craReportedIncome CRA reported income to be adjusted.
+   * @returns undefined if the CRA reported income is undefined or null, otherwise the adjusted value.
+   */
+  private getAdjustedCRAReportedIncome(
+    craReportedIncome?: number,
+  ): number | undefined {
+    if (craReportedIncome === undefined || craReportedIncome === null) {
+      return undefined;
+    }
+    return Math.max(craReportedIncome, 0);
   }
 
   /**

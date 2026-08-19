@@ -13,6 +13,7 @@ export class CreateTestingModuleResult {
   nestApplication: INestApplication;
   module: TestingModule;
   dataSource: DataSource;
+  systemUsersService: SystemUsersService;
 }
 
 /**
@@ -41,5 +42,6 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     nestApplication,
     module,
     dataSource,
+    systemUsersService,
   };
 }
