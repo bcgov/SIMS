@@ -288,6 +288,9 @@ export class ApplicationOfferingChangeRequestService {
         requestedOffering: {
           id: true,
           name: true,
+          studyStartDate: true,
+          studyEndDate: true,
+          yearOfStudy: true,
           educationProgram: {
             id: true,
             name: true,
