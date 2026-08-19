@@ -22,15 +22,15 @@
     "bootstrap-icons": "^1.13.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-    "dayjs": "^1.11.21",
+    "dayjs": "^1.11.23",
     "http-status-codes": "^2.3.0",
     "keycloak-js": "^26.2.4",
     "mitt": "^3.0.1",
     "tslib": "^2.8.1",
-    "uuid": "^14.0.1",
+    "uuid": "^14.0.2",
     "vue": "^3.5.41",
     "vue-router": "^5.2.0",
-    "vuetify": "^4.1.8",
+    "vuetify": "^4.1.11",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
