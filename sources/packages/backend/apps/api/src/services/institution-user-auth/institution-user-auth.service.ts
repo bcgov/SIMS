@@ -11,6 +11,7 @@ import {
   InstitutionUserTypes,
 } from "../../auth/user-types.enum";
 import { InstitutionLocationService } from "../institution-location/institution-location.service";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class InstitutionUserAuthService extends RecordDataModelService<InstitutionUserAuth> {
@@ -18,6 +19,7 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
     dataSource: DataSource,
     private readonly locationService: InstitutionLocationService,
     private readonly ormCacheManager: ORMCacheManager,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(InstitutionUserAuth));
   }
@@ -28,6 +30,8 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
     const cache = this.ormCacheManager.getOptionsCache(
       this.ormCacheManager.getUserAuthorizationsCacheId(userName),
     );
+    // Logs the elapsed time of this cached query for the Redis timeout investigation.
+    const startTime = Date.now();
     const userAuthorizations = await this.repo
       .createQueryBuilder("userAuth")
       .leftJoin("userAuth.institutionUser", "institutionUser")
@@ -42,6 +46,9 @@ export class InstitutionUserAuthService extends RecordDataModelService<Instituti
       ])
       .cache(cache.id, cache.milliseconds)
       .getRawMany();
+    this.logger.log(
+      `[TIMING] getAuthorizationsByUserName took ${Date.now() - startTime}ms.`,
+    );
 
     if (userAuthorizations.length) {
       // Load all the authorizations (admin and locations).

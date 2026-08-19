@@ -19,6 +19,7 @@ import { UserLoginInfo } from "./user.model";
 import { BetaUsersAuthorizations } from "@sims/sims-db/entities";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ConfigService } from "@sims/utilities/config";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class UserService extends DataModelService<User> {
@@ -28,6 +29,7 @@ export class UserService extends DataModelService<User> {
     private readonly betaUsersAuthorizationsRepo: Repository<BetaUsersAuthorizations>,
     private readonly configService: ConfigService,
     private readonly ormCacheManager: ORMCacheManager,
+    private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(User));
   }
@@ -75,6 +77,8 @@ export class UserService extends DataModelService<User> {
     const cache = this.ormCacheManager.getOptionsCache(
       this.ormCacheManager.getUserLoginCacheId(userName),
     );
+    // Logs the elapsed time of this cached query for the Redis timeout investigation.
+    const startTime = Date.now();
     const user = await this.repo
       .createQueryBuilder("user")
       .select("user.id", "id")
@@ -85,6 +89,9 @@ export class UserService extends DataModelService<User> {
       .where("user.userName = :userName", { userName })
       .cache(cache.id, cache.milliseconds)
       .getRawOne();
+    this.logger.log(
+      `[TIMING] getUserLoginInfo took ${Date.now() - startTime}ms.`,
+    );
 
     if (!user) {
       // When users logins for the first time there will be no users records.
