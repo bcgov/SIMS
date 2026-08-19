@@ -48,7 +48,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.programLength =
       ProgramLengthOptions.TwoToThreeYears;
     assessmentConsolidatedData.offeringWeeks = 8;
-    // Set the value close to the limit of the limitAwardCSGFThresholdIncome for a family size of 1 for.
     assessmentConsolidatedData.studentDataTaxReturnIncome = 96000;
     assessmentConsolidatedData.studentDataDependants = [
       createFakeStudentDependentEligibleForChildcareCost(
@@ -65,7 +64,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-CS
 
     // Assert
     expect(calculatedAssessment.variables.awardEligibilityCSGD).toBe(true);
-    // Ensure federalAwardNetCSGDAmount is less than 100.
+    // Ensure federalAwardCSGDAmount is less than 100.
     expect(calculatedAssessment.variables.federalAwardCSGDAmount).toBeLessThan(
       100,
     );

@@ -38,7 +38,6 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-awards-amount-CS
     assessmentConsolidatedData.programLength =
       ProgramLengthOptions.TwoToThreeYears;
     assessmentConsolidatedData.offeringWeeks = 16;
-    // Set the value close to the limit of the limitAwardCSGFThresholdIncome for a family size of 1 for.
     assessmentConsolidatedData.studentDataTaxReturnIncome = 69980;
 
     // Act
