@@ -13,6 +13,7 @@ import {
   ApplicationRestrictionBypass,
   CRAIncomeVerification,
   EducationProgram,
+  FormSubmission,
   InstitutionLocation,
   Note,
   OfferingIntensity,
@@ -475,6 +476,18 @@ export class Application extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   pirAssessedBy?: User;
+
+  /**
+   * Form submissions associated with this application.
+   */
+  @OneToMany(
+    () => FormSubmission,
+    (formSubmission) => formSubmission.application,
+    {
+      nullable: false,
+    },
+  )
+  formSubmissions: FormSubmission[];
 }
 
 /**

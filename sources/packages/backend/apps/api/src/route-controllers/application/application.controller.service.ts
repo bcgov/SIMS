@@ -700,6 +700,9 @@ export class ApplicationControllerService {
       applicationDetail.programYear.id,
       applicationDetail.offeringIntensity,
     );
+    // An application can have a partner, parent(s) or none so just check the first one.
+    const [supportingUser] = applicationDetail.supportingUsers ?? [];
+    const supportingUserType = supportingUser?.supportingUserType;
     return {
       id: applicationDetail.id,
       isArchived: applicationDetail.isArchived,
@@ -730,6 +733,8 @@ export class ApplicationControllerService {
         applicationDetail.programYear,
       ),
       hasPreviouslyCompletedPIR,
+      hasFormSubmissions: applicationDetail.formSubmissions?.length > 0,
+      supportingUserType,
     };
   }
 

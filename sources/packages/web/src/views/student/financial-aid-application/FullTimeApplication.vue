@@ -71,9 +71,12 @@
             >I acknowledge that by editing my application, I may be required to
             resubmit previously approved exception requests. My institution may
             be required to resubmit program information, and my parent or
-            partner may be required to resubmit supporting
-            information.</template
-          >
+            partner may be required to resubmit supporting information.
+            <template v-if="showAppealsInfo">
+              I must resubmit any previously approved application appeals as
+              they will no longer apply to the new version of the application.
+            </template>
+          </template>
         </template>
       </v-checkbox>
       <banner
@@ -156,7 +159,6 @@ export default defineComponent({
     changeRequest: {
       type: Boolean,
       default: false,
-      required: true,
     },
   },
   setup(props) {
@@ -472,6 +474,10 @@ export default defineComponent({
       return props.changeRequest ? "Change request" : "Edit application";
     });
 
+    const showAppealsInfo = computed(() => {
+      return existingApplication.value.hasFormSubmissions;
+    });
+
     return {
       initialData,
       isStudyEndDateWithinDeadline,
@@ -494,6 +500,7 @@ export default defineComponent({
       BannerTypes,
       isDataReady,
       editApplicationModalTitle,
+      showAppealsInfo,
     };
   },
 });

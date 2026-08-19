@@ -11,16 +11,21 @@ import {
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
+  createFakeSupportingUser,
   E2EDataSources,
   saveFakeApplication,
+  saveFakeFormSubmission,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
   Application,
   ApplicationStatus,
+  FormCategory,
+  FormSubmissionStatus,
   OfferingIntensity,
   ProgramInfoStatus,
   Student,
+  SupportingUserType,
 } from "@sims/sims-db";
 import { getDateOnlyFormat } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
@@ -45,7 +50,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
   });
 
   it("Should throw not found error when application is not found.", async () => {
-    const endpoint = `/students/application/99999999`;
+    const endpoint = getEndpoint(99999999);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -74,7 +79,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
     );
 
     await db.application.save(application);
-    const endpoint = `/students/application/${application.id}`;
+    const endpoint = getEndpoint(application.id);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -107,6 +112,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         submittedDate: null,
         isChangeRequestAllowedForPY: false,
         hasPreviouslyCompletedPIR: false,
+        hasFormSubmissions: false,
       });
   });
 
@@ -128,7 +134,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
     );
 
     await db.application.save(application);
-    const endpoint = `/students/application/${application.id}`;
+    const endpoint = getEndpoint(application.id);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -164,6 +170,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         submittedDate: application.submittedDate?.toISOString(),
         isChangeRequestAllowedForPY: false,
         hasPreviouslyCompletedPIR: false,
+        hasFormSubmissions: false,
       });
   });
 
@@ -185,7 +192,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
     );
 
     await db.application.save(application);
-    const endpoint = `/students/application/${application.id}`;
+    const endpoint = getEndpoint(application.id);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -234,6 +241,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         submittedDate: application.submittedDate?.toISOString(),
         isChangeRequestAllowedForPY: false,
         hasPreviouslyCompletedPIR: true,
+        hasFormSubmissions: false,
       });
   });
 
@@ -273,7 +281,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       },
     );
 
-    const endpoint = `/students/application/${currentApplication.id}`;
+    const endpoint = getEndpoint(currentApplication.id);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -313,6 +321,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         submittedDate: currentApplication.submittedDate?.toISOString(),
         isChangeRequestAllowedForPY: false,
         hasPreviouslyCompletedPIR: true,
+        hasFormSubmissions: false,
       });
   });
 
@@ -328,7 +337,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       },
     );
     const savedOffering = application.currentAssessment!.offering!;
-    const endpoint = `/students/application/${application.id}`;
+    const endpoint = getEndpoint(application.id);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -362,7 +371,7 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
         pirStatus: ProgramInfoStatus.notRequired,
       },
     );
-    const endpoint = `/students/application/${application.id}`;
+    const endpoint = getEndpoint(application.id);
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
@@ -376,7 +385,173 @@ describe("ApplicationStudentsController(e2e)-getApplication", () => {
       .expect(({ body }) => expect(body.data.pirSummary).toBeUndefined());
   });
 
+  it("Should get the student full-time application details when the application has form submissions and a Parent supporting user.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        offeringIntensity: OfferingIntensity.fullTime,
+        applicationData: {
+          programName: "My Program",
+          programDescription: "This is my program.",
+          workflowName: "",
+        },
+      },
+    );
+
+    await saveFakeFormSubmission(
+      db,
+      { student, application },
+      {
+        initialValues: {
+          formCategory: FormCategory.StudentAppeal,
+          submissionStatus: FormSubmissionStatus.Pending,
+        },
+      },
+    );
+    const partner = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Parent,
+        },
+      },
+    );
+    await db.supportingUser.save(partner);
+
+    const endpoint = getEndpoint(application.id);
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        id: application.id,
+        isArchived: false,
+        assessmentId: application.currentAssessment?.id,
+        data: {
+          programName: "My Program",
+          workflowName: "",
+          programDescription: "This is my program.",
+        },
+        applicationStatus: application.applicationStatus,
+        applicationEditStatus: application.applicationEditStatus,
+        applicationStatusUpdatedOn:
+          application.applicationStatusUpdatedOn.toISOString(),
+        applicationNumber: application.applicationNumber,
+        applicationOfferingIntensity: application.offeringIntensity,
+        applicationStartDate: getDateOnlyFormat(
+          application.currentAssessment?.offering?.studyStartDate,
+        ),
+        applicationEndDate: getDateOnlyFormat(
+          application.currentAssessment?.offering?.studyEndDate,
+        ),
+        applicationInstitutionName: application.location.name,
+        applicationPIRStatus: application.pirStatus,
+        applicationAssessmentStatus: null,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: application.programYear.id,
+        programYearStartDate: application.programYear.startDate,
+        programYearEndDate: application.programYear.endDate,
+        submittedDate: application.submittedDate?.toISOString(),
+        isChangeRequestAllowedForPY: false,
+        hasPreviouslyCompletedPIR: false,
+        hasFormSubmissions: true,
+        supportingUserType: SupportingUserType.Parent,
+      });
+  });
+
+  it("Should get the student part-time application details when the application has a Partner supporting user.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student },
+      {
+        applicationStatus: ApplicationStatus.InProgress,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationData: {
+          programName: "My Program",
+          programDescription: "This is my program.",
+          workflowName: "",
+        },
+      },
+    );
+    await db.application.save(application);
+
+    const partner = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          supportingUserType: SupportingUserType.Partner,
+        },
+      },
+    );
+    await db.supportingUser.save(partner);
+
+    const endpoint = getEndpoint(application.id);
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, application.student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        id: application.id,
+        isArchived: false,
+        assessmentId: application.currentAssessment?.id,
+        data: {
+          programName: "My Program",
+          workflowName: "",
+          programDescription: "This is my program.",
+        },
+        applicationStatus: application.applicationStatus,
+        applicationEditStatus: application.applicationEditStatus,
+        applicationStatusUpdatedOn:
+          application.applicationStatusUpdatedOn.toISOString(),
+        applicationNumber: application.applicationNumber,
+        applicationOfferingIntensity: application.offeringIntensity,
+        applicationStartDate: getDateOnlyFormat(
+          application.currentAssessment?.offering?.studyStartDate,
+        ),
+        applicationEndDate: getDateOnlyFormat(
+          application.currentAssessment?.offering?.studyEndDate,
+        ),
+        applicationInstitutionName: application.location.name,
+        applicationPIRStatus: application.pirStatus,
+        applicationAssessmentStatus: null,
+        applicationFormName: "SFAA2022-23",
+        applicationProgramYearID: application.programYear.id,
+        programYearStartDate: application.programYear.startDate,
+        programYearEndDate: application.programYear.endDate,
+        submittedDate: application.submittedDate?.toISOString(),
+        isChangeRequestAllowedForPY: false,
+        hasPreviouslyCompletedPIR: false,
+        hasFormSubmissions: false,
+        supportingUserType: SupportingUserType.Partner,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/**
+ * Returns the endpoint URL for a student's application.
+ * @param applicationId The ID of the application.
+ * @returns The endpoint URL as a string.
+ */
+function getEndpoint(applicationId: number): string {
+  return `/students/application/${applicationId}`;
+}
