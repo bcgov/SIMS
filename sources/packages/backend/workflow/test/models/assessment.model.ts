@@ -78,10 +78,7 @@ export interface StudentAdditionalTransportationAppealData extends JSONDoc {
 }
 
 export type RelationshipStatusType =
-  | "single"
-  | "other"
-  | "married"
-  | "marriedUnable";
+  "single" | "other" | "married" | "marriedUnable";
 
 export type DependantStatusType = "independant" | "dependant";
 
@@ -484,6 +481,7 @@ export interface CalculatedAssessmentModel {
   // CSGF
   assessmentEligibilityCSGF: boolean;
   awardEligibilityCSGF: number;
+  federalAwardCSGFAmount: number;
   federalAwardNetCSGFAmount: number;
   provincialAwardNetCSGFAmount: number;
   // BCAG
