@@ -168,6 +168,7 @@ function getORMCacheConfig(): ORMCacheConfig | false {
           connectTimeout: ORM_CACHE_REDIS_CONNECT_TIMEOUT,
           maxRetriesPerRequest: ORM_CACHE_REDIS_MAX_RETRIES_PER_REQUEST,
         },
+        enableOfflineQueue: false, // Fail cache commands immediately while disconnected.
         clusterRetryStrategy: retryStrategy,
       },
     },
