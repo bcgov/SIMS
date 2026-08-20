@@ -128,6 +128,7 @@ env:
   FEATURE_TOGGLES: ${{ vars.FEATURE_TOGGLES }}
   CRA_FILE_OVERDUE_DAYS: ${{ vars.CRA_FILE_OVERDUE_DAYS }}
   ESDC_FILE_OVERDUE_DAYS: ${{ vars.ESDC_FILE_OVERDUE_DAYS }}
+  REDIS_ENABLE_OFFLINE_QUEUE: ${{ vars.REDIS_ENABLE_OFFLINE_QUEUE }}
 jobs:
   env-setup:
     name: Setup Dynamic Environment Variables

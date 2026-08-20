@@ -36,9 +36,9 @@ export const ORM_CACHE_REDIS_COMMAND_TIMEOUT = 5 * 1000;
 export const ORM_CACHE_REDIS_CONNECT_TIMEOUT = 2 * 1000;
 
 /**
- * Redis maximum number of reconnection attempts a queued ORM cache command waits for before failing.
+ * Redis maximum number of retries per command before failing when the connection is unavailable.
  */
-export const ORM_CACHE_REDIS_MAX_RETRIES_PER_REQUEST = 1;
+export const ORM_CACHE_REDIS_MAX_RETRIES_PER_REQUEST = 3;
 
 /**
  * Maximum number of open connections that
