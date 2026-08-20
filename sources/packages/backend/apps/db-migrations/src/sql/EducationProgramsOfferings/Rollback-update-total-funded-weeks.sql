@@ -15,4 +15,8 @@ SET
 WHERE
     study_breaks_before_update IS NOT NULL;
 
--- The column study_breaks_before_update is not dropped to be available for any investigation if required.
+ALTER TABLE
+    sims.education_programs_offerings DROP COLUMN study_breaks_before_update;
+
+ALTER TABLE
+    sims.education_programs_offerings_history DROP COLUMN study_breaks_before_update;
