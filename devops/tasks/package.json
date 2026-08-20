@@ -10,13 +10,13 @@
         "validate-oc-sa-token-expiry": "tsx src/sa-token/main.ts"
     },
     "dependencies": {
-        "@kubernetes/client-node": "^1.4.0",
-        "dayjs": "^1.11.21",
-        "dotenv": "^16.6.1",
+        "@kubernetes/client-node": "^2.0.0",
+        "dayjs": "^1.11.23",
+        "dotenv": "^17.4.2",
         "jwt-decode": "^4.0.0"
     },
     "devDependencies": {
-        "@types/node": "^25.9.3",
+        "@types/node": "^26.2.0",
         "tsx": "^4.19.2",
         "typescript": "^6.0.3"
     }
