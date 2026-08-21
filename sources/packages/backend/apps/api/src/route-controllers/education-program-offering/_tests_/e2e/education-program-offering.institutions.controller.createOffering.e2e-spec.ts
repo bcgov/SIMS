@@ -465,7 +465,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     });
   });
 
-  it("Should create a new offering limiting the funded weeks to 52 when the funded offering period exceeds an year.", async () => {
+  it("Should create a new offering limiting the funded weeks to 52 when the funded offering period exceeds a year.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
