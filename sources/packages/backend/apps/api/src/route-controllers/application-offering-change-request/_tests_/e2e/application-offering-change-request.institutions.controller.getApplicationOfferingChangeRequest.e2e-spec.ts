@@ -109,7 +109,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-getApplica
           applicationOfferingChange.application.location.id,
           applicationOfferingChange.id,
         ),
-      ) // Non-existing application offering change request id.
+      ) // Location id with no access to the institution user.
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
