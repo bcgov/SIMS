@@ -7,13 +7,18 @@ SET
     study_breaks = jsonb_set(
         study_breaks,
         '{totalFundedWeeks}',
-        to_jsonb(
-            (study_breaks_before_update -> 'totalFundedWeeks') :: SMALLINT
-        ),
+        (study_breaks_before_update -> 'totalFundedWeeks'),
         false
     )
 WHERE
-    study_breaks_before_update IS NOT NULL;
+    study_breaks_before_update IS NOT NULL
+    AND (study_breaks_before_update ->> 'totalDays') = (study_breaks ->> 'totalDays')
+    AND (
+        study_breaks_before_update ->> 'fundedStudyPeriodDays'
+    ) = (study_breaks ->> 'fundedStudyPeriodDays')
+    AND (
+        study_breaks_before_update ->> 'unfundedStudyPeriodDays'
+    ) = (study_breaks ->> 'unfundedStudyPeriodDays');
 
 ALTER TABLE
     sims.education_programs_offerings DROP COLUMN study_breaks_before_update;

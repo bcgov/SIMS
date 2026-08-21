@@ -45,7 +45,7 @@ import {
   OfferingYesNoOptions,
   OnlineInstructionModeOptions,
 } from "../../../../services";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { IsNull } from "typeorm";
 import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
@@ -453,6 +453,125 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
             breakDays: 32,
             eligibleBreakDays: 21,
             ineligibleBreakDays: 11,
+          },
+        ],
+        totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,
+        fundedStudyPeriodDays: studyPeriodBreakdown.fundedStudyPeriodDays,
+        unfundedStudyPeriodDays: studyPeriodBreakdown.unfundedStudyPeriodDays,
+      },
+      offeringDeclaration: payload.offeringDeclaration,
+      offeringStatus: OfferingStatus.CreationPending,
+      onlineInstructionMode: payload.onlineInstructionMode,
+    });
+  });
+
+  it("Should create a new offering limiting the funded weeks to 52 when the funded offering period exceeds an year.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreak = {
+      breakStartDate: getISODateOnlyString(addDays(10)),
+      breakEndDate: getISODateOnlyString(addDays(20)),
+    };
+    const studyPeriodBreakdown = {
+      totalDays: 451,
+      totalFundedWeeks: 52,
+      fundedStudyPeriodDays: 451,
+      unfundedStudyPeriodDays: 0,
+    };
+    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Online,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
+      studyStartDate: getISODateOnlyString(new Date()),
+      // The study end date is set to 450 days from now, which exceeds one year.
+      studyEndDate: getISODateOnlyString(addDays(450)),
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      onlineInstructionMode: OnlineInstructionModeOptions.SynchronousOnly,
+    };
+
+    // Act/Assert
+    let educationProgramOfferingId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        educationProgramOfferingId = response.body.id;
+      });
+    const createdEducationProgramOffering =
+      await db.educationProgramOffering.findOne({
+        select: {
+          name: true,
+          studyStartDate: true,
+          studyEndDate: true,
+          actualTuitionCosts: true,
+          programRelatedCosts: true,
+          mandatoryFees: true,
+          exceptionalExpenses: true,
+          offeringDelivered: true,
+          lacksStudyBreaks: true,
+          offeringType: true,
+          offeringIntensity: true,
+          yearOfStudy: true,
+          isAviationOffering: true,
+          hasOfferingWILComponent: true,
+          studyBreaks: true as unknown,
+          offeringDeclaration: true,
+          offeringStatus: true,
+          onlineInstructionMode: true,
+        },
+        where: { id: educationProgramOfferingId },
+      });
+    expect(createdEducationProgramOffering).toEqual({
+      name: payload.offeringName,
+      studyStartDate: payload.studyStartDate,
+      studyEndDate: payload.studyEndDate,
+      actualTuitionCosts: payload.actualTuitionCosts,
+      programRelatedCosts: payload.programRelatedCosts,
+      mandatoryFees: payload.mandatoryFees,
+      exceptionalExpenses: payload.exceptionalExpenses,
+      offeringDelivered: payload.offeringDelivered,
+      lacksStudyBreaks: payload.lacksStudyBreaks,
+      offeringType: payload.offeringType,
+      offeringIntensity: payload.offeringIntensity,
+      yearOfStudy: payload.yearOfStudy,
+      isAviationOffering: payload.isAviationOffering,
+      hasOfferingWILComponent: payload.hasOfferingWILComponent,
+      studyBreaks: {
+        totalDays: studyPeriodBreakdown.totalDays,
+        studyBreaks: [
+          {
+            breakStartDate: studyBreak.breakStartDate,
+            breakEndDate: studyBreak.breakEndDate,
+            breakDays: 11,
+            eligibleBreakDays: 11,
+            ineligibleBreakDays: 0,
           },
         ],
         totalFundedWeeks: studyPeriodBreakdown.totalFundedWeeks,

@@ -25,4 +25,4 @@ SET
         false
     )
 WHERE
-    (study_breaks -> 'totalFundedWeeks') :: SMALLINT > 52;
+    (study_breaks ->> 'totalFundedWeeks') :: INT > 52;
