@@ -322,6 +322,7 @@ export class ConfigService {
       redisPort: +process.env.REDIS_PORT || 6379,
       redisPassword: process.env.REDIS_PASSWORD,
       redisStandaloneMode: process.env.REDIS_STANDALONE_MODE === "true",
+      enableOfflineQueue: process.env.REDIS_ENABLE_OFFLINE_QUEUE === "true",
     });
   }
 
