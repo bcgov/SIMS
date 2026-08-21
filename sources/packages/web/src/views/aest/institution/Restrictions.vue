@@ -101,7 +101,6 @@ import {
   Role,
   InstitutionRestrictionsHeaders,
   ApiProcessError,
-  RestrictionDetail,
   RestrictedParty,
 } from "@/types";
 import StatusChipRestriction from "@/components/generic/StatusChipRestriction.vue";
@@ -139,7 +138,7 @@ export default defineComponent({
     const { updateInstitutionRestrictionState } =
       useInstitutionRestrictionState();
     const showModal = ref(false);
-    const viewRestriction = ref({} as ModalDialog<RestrictionDetail | false>);
+    const viewRestriction = ref({} as ModalDialog<RestrictionDetailAPIOutDTO>);
     const addRestriction = ref(
       {} as ModalDialog<AssignInstitutionRestrictionAPIInDTO | false>,
     );
@@ -179,14 +178,12 @@ export default defineComponent({
           institutionRestriction.value.updatedAt,
         );
       }
-      const viewInstitutionRestrictionData =
-        await viewRestriction.value.showModal();
-      if (viewInstitutionRestrictionData) {
-        await resolveRestriction(viewInstitutionRestrictionData);
-      }
+      await viewRestriction.value.showModal(undefined, resolveRestriction);
     };
 
-    const resolveRestriction = async (data: RestrictionDetailAPIOutDTO) => {
+    const resolveRestriction = async (
+      data: RestrictionDetailAPIOutDTO,
+    ): Promise<boolean> => {
       try {
         const payload = {
           noteDescription: data.resolutionNote,
@@ -200,12 +197,14 @@ export default defineComponent({
         snackBar.success(
           "The given restriction has been resolved and resolution notes added.",
         );
+        return true;
       } catch (error: unknown) {
         if (error instanceof ApiProcessError) {
           snackBar.error(error.message);
-          return;
+        } else {
+          snackBar.error("Unexpected error while resolving the restriction.");
         }
-        snackBar.error("Unexpected error while resolving the restriction.");
+        return false;
       }
     };
 

@@ -146,8 +146,10 @@ const submit = async () => {
 
   formModel.restrictionId = props.restrictionData.restrictionId;
   const payload = { ...formModel };
-  resolvePromise(payload);
-  viewRestrictionForm.value.reset();
+  const resolved = await resolvePromise(payload);
+  if (resolved) {
+    viewRestrictionForm.value.reset();
+  }
 };
 
 const cancel = () => {
