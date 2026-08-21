@@ -47,6 +47,12 @@ export const OFFERING_STUDY_BREAK_MIN_DAYS = 6;
  */
 export const OFFERING_STUDY_BREAK_MAX_DAYS = 21;
 /**
+ * Maximum amount of funded weeks allowed for an offering.
+ * Even if the total funded study period days leads to a greater amount of weeks
+ * the total funded weeks will be capped to this value.
+ */
+export const OFFERING_MAX_FUNDED_WEEKS = 52;
+/**
  * Minimal value to an offering year of study.
  */
 export const OFFERING_YEAR_OF_STUDY_MIN_VALUE = 1;
