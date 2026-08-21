@@ -119,6 +119,39 @@
             </v-card-text>
           </v-card>
         </body-header-container>
+        <!-- For Parents or Partners -->
+        <body-header-container
+          title="For Parents or Partners"
+          :enable-card-view="true"
+        >
+          <v-card border="1" flat>
+            <v-card-text>
+              <v-row class="align-center">
+                <v-col cols="12" sm="3" class="d-flex justify-center">
+                  <v-img
+                    min-height="150"
+                    min-width="100"
+                    height="150"
+                    width="150"
+                    alt="An illustration of a woman working at a desk with her laptop. Illustration by Storyset."
+                    src="@/assets/images/happy-parent.svg"
+                  />
+                </v-col>
+                <v-col cols="12" sm="9" class="text-center text-sm-start">
+                  <p class="category-header-medium mb-2">
+                    Supporting User Portal
+                  </p>
+                  <p class="mb-4">
+                    Parents or partners, with an active BC Services Card, must
+                    use the Supporting Users Portal to submit their information.
+                    Do not create a Student Account. Wait until the student
+                    receives an email with instructions for you to log in.
+                  </p>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </body-header-container>
       </v-container>
     </v-main>
   </div>
