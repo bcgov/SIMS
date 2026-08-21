@@ -1,6 +1,6 @@
 -- Update the study_breaks JSONB column to restore the original totalFundedWeeks value before the previous update.
 -- Update is only applied to rows where the study_breaks_before_update column is not null
--- indicating that the total funded weeks were updated only on these rows where the study_breaks_before_update was populated with the original value before the update.
+-- and the totalDays, fundedStudyPeriodDays, and unfundedStudyPeriodDays values match between the study_breaks and study_breaks_before_update columns.
 UPDATE
     sims.education_programs_offerings
 SET

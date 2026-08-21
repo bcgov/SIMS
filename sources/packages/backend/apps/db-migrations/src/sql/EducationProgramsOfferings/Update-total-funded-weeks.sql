@@ -13,7 +13,7 @@ ADD
 
 COMMENT ON COLUMN sims.education_programs_offerings_history.study_breaks_before_update IS 'Historical data from the original table. See original table comments for details.';
 
--- Update the totalFundedWeeks to 52 if it is greater than 52 and store the previous study_breaks value in funded_weeks_before_update column for rollback.
+-- Update the totalFundedWeeks to 52 if it is greater than 52 and store the previous study_breaks value in study_breaks_before_update column for rollback.
 UPDATE
     sims.education_programs_offerings
 SET
