@@ -43,23 +43,26 @@ objects:
                 requests:
                   cpu: ${CPU_REQUEST}
                   memory: ${MEMORY_REQUEST}
-              readinessProbe:
-                failureThreshold: 3
-                successThreshold: 1
+              startupProbe:
                 httpGet:
                   path: /
                   port: "${{PORT}}"
-                initialDelaySeconds: 20
+                periodSeconds: 3
+                timeoutSeconds: 2
+                failureThreshold: 20
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: "${{PORT}}"
                 periodSeconds: 30
                 timeoutSeconds: 15
               livenessProbe:
                 failureThreshold: 3
-                successThreshold: 1
                 httpGet:
                   path: /
                   port: "${{PORT}}"
                   scheme: HTTP
-                initialDelaySeconds: 10
                 periodSeconds: 30
                 timeoutSeconds: 15
   - apiVersion: v1
