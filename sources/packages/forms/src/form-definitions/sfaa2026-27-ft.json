@@ -6863,7 +6863,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<p>A detailed letter explaining how your circumstances meet one or more of the exception criteria listed above, including an estimate of the weekly travel distance between your home to your institution or practicum location(in kilometers), with a description of the calculation method you used to determine the weekly kilometers traveled.</p>",
+                          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<p>A detailed letter explaining how your circumstances meet one or more of the exception criteria listed above, including an estimate of the weekly travel distance between your home to your institution or practicum location (in kilometers), with a description of the calculation method you used to determine the weekly kilometers traveled.</p>",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "key": "html28",
