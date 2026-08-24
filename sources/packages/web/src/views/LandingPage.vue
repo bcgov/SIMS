@@ -130,7 +130,7 @@
                 <v-col cols="12" sm="3" class="d-flex justify-center">
                   <v-img
                     min-height="150"
-                    min-width="100"
+                    min-width="150"
                     height="150"
                     width="150"
                     alt="An illustration of a woman working at a desk with her laptop. Illustration by Storyset."
@@ -142,8 +142,11 @@
                     Supporting User Portal
                   </p>
                   <p class="mb-4">
-                    Parents or partners, with an active BC Services Card, must
-                    use the Supporting Users Portal to submit their information.
+                    <strong
+                      >Parents or partners, with an active BC Services Card,
+                      must use the Supporting User Portal to submit their
+                      information.</strong
+                    >
                     Do not create a Student Account. Wait until the student
                     receives an email with instructions for you to log in.
                   </p>
