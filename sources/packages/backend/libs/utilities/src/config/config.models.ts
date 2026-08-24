@@ -132,6 +132,7 @@ export interface RedisConfiguration {
   redisPort: number;
   redisPassword: string;
   redisStandaloneMode: boolean;
+  enableOfflineQueue: boolean;
 }
 
 export interface CASIntegrationConfig {
