@@ -37,9 +37,10 @@ jobs:
       FORMIO_REPLICAS: ${{ vars.FORMIO_REPLICAS }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3
+        uses: redhat-actions/openshift-tools-installer@144527c7d98999f2652264c048c7a9bd103f8a82
         with:
           oc: "4"
+          skip_cache: true
       - name: Print env
         run: |
           echo NAMESPACE: $NAMESPACE
