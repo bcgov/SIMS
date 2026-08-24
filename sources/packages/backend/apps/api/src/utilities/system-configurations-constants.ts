@@ -47,6 +47,10 @@ export const OFFERING_STUDY_BREAK_MIN_DAYS = 6;
  */
 export const OFFERING_STUDY_BREAK_MAX_DAYS = 21;
 /**
+ * Maximum number of study break entries allowed for an offering.
+ */
+export const OFFERING_STUDY_BREAK_MAX_ENTRIES = 15;
+/**
  * Minimal value to an offering year of study.
  */
 export const OFFERING_YEAR_OF_STUDY_MIN_VALUE = 1;

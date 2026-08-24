@@ -35,6 +35,7 @@ import { faker } from "@faker-js/faker";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+  OFFERING_STUDY_BREAK_MAX_ENTRIES,
 } from "../../../../utilities";
 import {
   EducationProgramOfferingAPIInDTO,
@@ -1340,6 +1341,121 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         statusCode: HttpStatus.BAD_REQUEST,
         message: [
           `Mandatory fees must be not greater than ${MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE}.`,
+        ],
+        error: "The validated offerings have critical errors.",
+      });
+  });
+
+  it(`Should return an error when trying to create a new offering with overlapping study break entries.`, async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
+      studyStartDate: "2024-01-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      studyBreaks: [
+        { breakStartDate: "2024-03-01", breakEndDate: "2024-03-10" },
+        { breakStartDate: "2024-03-10", breakEndDate: "2024-03-12" },
+      ],
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ["Study breaks has periods with overlaps."],
+        error: "The validated offerings have critical errors.",
+      });
+  });
+
+  it(`Should return error when trying to create a new offering with more than ${OFFERING_STUDY_BREAK_MAX_ENTRIES} study break entries.`, async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
+      studyStartDate: "2024-01-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+    };
+
+    // Create a studyBreaks array with more than OFFERING_STUDY_BREAK_MAX_ENTRIES entries.
+    // Entries are non-overlapping to avoid triggering the overlap validation error.
+    payload.studyBreaks = Array.from(
+      { length: OFFERING_STUDY_BREAK_MAX_ENTRIES + 1 },
+      (_, index) => {
+        const breakStartDate = new Date(2024, 3, 2 * index + 1);
+        const breakEndDate = new Date(2024, 3, 2 * index + 2);
+
+        return {
+          breakStartDate: breakStartDate.toISOString().slice(0, 10),
+          breakEndDate: breakEndDate.toISOString().slice(0, 10),
+        };
+      },
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: [
+          `Study breaks must not have more than ${OFFERING_STUDY_BREAK_MAX_ENTRIES} entries.`,
         ],
         error: "The validated offerings have critical errors.",
       });
