@@ -15,6 +15,7 @@ import {
   MaxLength,
   Min,
   ValidateIf,
+  ValidateNested,
 } from "class-validator";
 import {
   EducationProgram,
@@ -753,6 +754,7 @@ export class OfferingValidationModel {
    * For offerings with some study break, represents all study break periods.
    */
   @Type(() => StudyBreak)
+  @ValidateNested({ each: true })
   @ArrayMaxSize(OFFERING_STUDY_BREAK_MAX_ENTRIES, {
     message: `${userFriendlyNames.studyBreaks} must not have more than ${OFFERING_STUDY_BREAK_MAX_ENTRIES} entries.`,
   })

@@ -36,6 +36,7 @@ import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
   OFFERING_STUDY_BREAK_MAX_ENTRIES,
+  OFFERING_STUDY_BREAK_MIN_DAYS,
 } from "../../../../utilities";
 import {
   EducationProgramOfferingAPIInDTO,
@@ -46,7 +47,7 @@ import {
   OfferingYesNoOptions,
   OnlineInstructionModeOptions,
 } from "../../../../services";
-import { getISODateOnlyString } from "@sims/utilities";
+import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { IsNull } from "typeorm";
 import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
@@ -1380,7 +1381,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       exceptionalExpenses: 555,
       studyBreaks: [
         { breakStartDate: "2024-03-01", breakEndDate: "2024-03-10" },
-        { breakStartDate: "2024-03-10", breakEndDate: "2024-03-12" },
+        { breakStartDate: "2024-03-10", breakEndDate: "2024-03-16" },
       ],
     };
 
@@ -1393,6 +1394,65 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
         message: ["Study breaks has periods with overlaps."],
+        error: "The validated offerings have critical errors.",
+      });
+  });
+
+  it(`Should return an error when trying to create a new offering with study break length under ${OFFERING_STUDY_BREAK_MIN_DAYS} days .`, async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const break1StartDate = "2024-03-01";
+    const studyBreaks = [
+      {
+        breakStartDate: break1StartDate,
+        breakEndDate: getISODateOnlyString(
+          addDays(OFFERING_STUDY_BREAK_MIN_DAYS - 2, new Date(break1StartDate)),
+        ),
+      },
+    ];
+    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.fullTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
+      studyStartDate: "2024-01-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      studyBreaks: studyBreaks,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: [
+          "Study break end date, the number of day(s) between Mar 01 2024 and Mar 05 2024 must be at least 6.",
+        ],
         error: "The validated offerings have critical errors.",
       });
   });
@@ -1421,7 +1481,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: OfferingYesNoOptions.No,
       studyStartDate: "2024-01-01",
-      studyEndDate: "2024-06-30",
+      studyEndDate: "2024-08-30",
       lacksStudyBreaks: false,
       offeringType: OfferingTypes.Public,
       offeringDeclaration: true,
@@ -1436,12 +1496,19 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     payload.studyBreaks = Array.from(
       { length: OFFERING_STUDY_BREAK_MAX_ENTRIES + 1 },
       (_, index) => {
-        const breakStartDate = new Date(2024, 3, 2 * index + 1);
-        const breakEndDate = new Date(2024, 3, 2 * index + 2);
+        const breakStartDate = new Date(
+          2024,
+          2,
+          1 + index * (OFFERING_STUDY_BREAK_MIN_DAYS + 1),
+        );
+        const breakEndDate = addDays(
+          OFFERING_STUDY_BREAK_MIN_DAYS,
+          breakStartDate,
+        );
 
         return {
-          breakStartDate: breakStartDate.toISOString().slice(0, 10),
-          breakEndDate: breakEndDate.toISOString().slice(0, 10),
+          breakStartDate: getISODateOnlyString(breakStartDate),
+          breakEndDate: getISODateOnlyString(breakEndDate),
         };
       },
     );
