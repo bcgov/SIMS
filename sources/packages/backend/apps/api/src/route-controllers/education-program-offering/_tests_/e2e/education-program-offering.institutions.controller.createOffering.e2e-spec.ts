@@ -483,7 +483,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     // The study end date is set to 450 days after the study start date.
     const studyEndDate = getISODateOnlyString(addDays(450, studyStartDate));
     // Added 10 days of study break which will fall under eligible break days limit
-    // and keep total funded days more that 365 days.
+    // and keep total funded days more than 365 days.
     const studyBreak = {
       breakStartDate: getISODateOnlyString(addDays(10, studyStartDate)),
       breakEndDate: getISODateOnlyString(addDays(20, studyStartDate)),

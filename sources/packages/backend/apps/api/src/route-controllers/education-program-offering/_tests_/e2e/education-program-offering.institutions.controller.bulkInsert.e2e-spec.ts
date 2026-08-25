@@ -249,21 +249,21 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     },
   );
 
-  it.only(
+  it(
     `Should create an offering with status ${OfferingStatus.CreationPending} and limit the total funded weeks to ${OFFERING_MAX_FUNDED_WEEKS}` +
       ` when an offering is created with bulk upload and the total funded study period days is more than ${OFFERING_STUDY_PERIOD_MAX_DAYS}.`,
     async () => {
       // Arrange
-      const multipleOfferingFilePath = join(
+      const singleUploadExceedingMaxStudyDaysPath = join(
         __dirname,
-        "bulk-insert/single-upload-exceeding-total-days.csv",
+        "bulk-insert/single-upload-exceeding-maximum-study-days.csv",
       );
 
       let createdOfferingId: number;
       // Act/Assert
       await request(app.getHttpServer())
         .post(endpoint)
-        .attach("file", multipleOfferingFilePath)
+        .attach("file", singleUploadExceedingMaxStudyDaysPath)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
         .expect(({ body }) => {
