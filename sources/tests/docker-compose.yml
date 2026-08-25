@@ -94,7 +94,7 @@ services:
       formio:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
   # - API
   # MongoDB (required by Form.io)
   mongo:
@@ -263,6 +263,16 @@ services:
     command: "--port ${REDIS_PORT} --requirepass ${REDIS_PASSWORD}"
     networks:
       - local-network-tests
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "redis-cli -p ${REDIS_PORT} -a '${REDIS_PASSWORD}' ping | grep PONG",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 50
+      start_period: 5s
   # - Redis
   # - services
   # Networks
