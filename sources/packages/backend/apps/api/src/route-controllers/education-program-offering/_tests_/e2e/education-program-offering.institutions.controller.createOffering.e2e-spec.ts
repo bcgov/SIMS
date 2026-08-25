@@ -41,6 +41,7 @@ import {
 import {
   EducationProgramOfferingAPIInDTO,
   StudyBreakAPIOutDTO,
+  StudyBreakInDTO,
   StudyBreaksAndWeeksOutDTO,
 } from "../../models/education-program-offering.dto";
 import {
@@ -1347,7 +1348,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       });
   });
 
-  it(`Should return an error when trying to create a new offering with overlapping study break entries.`, async () => {
+  it(`Should return an error when trying to create a new offering with a study break outside of the offering period.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -1363,27 +1364,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
-    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
-      offeringName: "Offering 1",
-      yearOfStudy: 1,
-      offeringIntensity: OfferingIntensity.fullTime,
-      offeringDelivered: OfferingDeliveryOptions.Onsite,
-      isAviationOffering: OfferingYesNoOptions.No,
-      hasOfferingWILComponent: OfferingYesNoOptions.No,
-      studyStartDate: "2024-01-01",
-      studyEndDate: "2024-06-30",
-      lacksStudyBreaks: false,
-      offeringType: OfferingTypes.Public,
-      offeringDeclaration: true,
-      actualTuitionCosts: 1234,
-      programRelatedCosts: 3211,
-      mandatoryFees: 456,
-      exceptionalExpenses: 555,
-      studyBreaks: [
-        { breakStartDate: "2024-03-01", breakEndDate: "2024-03-10" },
-        { breakStartDate: "2024-03-10", breakEndDate: "2024-03-16" },
-      ],
-    };
+    const studyBreaks = [
+      {
+        breakStartDate: "2025-01-01",
+        breakEndDate: "2025-01-07",
+      },
+    ];
+    const payload = generatePayload(studyBreaks);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1393,7 +1380,9 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: ["Study breaks has periods with overlaps."],
+        message: [
+          "Study breaks must have all dates between Jan 01 2024 and Dec 31 2024.",
+        ],
         error: "The validated offerings have critical errors.",
       });
   });
@@ -1414,33 +1403,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
-    const break1StartDate = "2024-03-01";
     const studyBreaks = [
       {
-        breakStartDate: break1StartDate,
-        breakEndDate: getISODateOnlyString(
-          addDays(OFFERING_STUDY_BREAK_MIN_DAYS - 2, new Date(break1StartDate)),
-        ),
+        breakStartDate: "2024-03-01",
+        breakEndDate: "2024-03-05",
       },
     ];
-    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
-      offeringName: "Offering 1",
-      yearOfStudy: 1,
-      offeringIntensity: OfferingIntensity.fullTime,
-      offeringDelivered: OfferingDeliveryOptions.Onsite,
-      isAviationOffering: OfferingYesNoOptions.No,
-      hasOfferingWILComponent: OfferingYesNoOptions.No,
-      studyStartDate: "2024-01-01",
-      studyEndDate: "2024-06-30",
-      lacksStudyBreaks: false,
-      offeringType: OfferingTypes.Public,
-      offeringDeclaration: true,
-      actualTuitionCosts: 1234,
-      programRelatedCosts: 3211,
-      mandatoryFees: 456,
-      exceptionalExpenses: 555,
-      studyBreaks: studyBreaks,
-    };
+    const payload = generatePayload(studyBreaks);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1453,6 +1422,41 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         message: [
           "Study break end date, the number of day(s) between Mar 01 2024 and Mar 05 2024 must be at least 6.",
         ],
+        error: "The validated offerings have critical errors.",
+      });
+  });
+
+  it(`Should return an error when trying to create a new offering with overlapping study break entries.`, async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    fakeEducationProgram.sabcCode = faker.string.alpha({
+      length: 4,
+      casing: "upper",
+    });
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreaks = [
+      { breakStartDate: "2024-03-01", breakEndDate: "2024-03-10" },
+      { breakStartDate: "2024-03-10", breakEndDate: "2024-03-16" },
+    ];
+    const payload = generatePayload(studyBreaks);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: ["Study breaks has periods with overlaps."],
         error: "The validated offerings have critical errors.",
       });
   });
@@ -1473,27 +1477,10 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
-    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
-      offeringName: "Offering 1",
-      yearOfStudy: 1,
-      offeringIntensity: OfferingIntensity.fullTime,
-      offeringDelivered: OfferingDeliveryOptions.Onsite,
-      isAviationOffering: OfferingYesNoOptions.No,
-      hasOfferingWILComponent: OfferingYesNoOptions.No,
-      studyStartDate: "2024-01-01",
-      studyEndDate: "2024-08-30",
-      lacksStudyBreaks: false,
-      offeringType: OfferingTypes.Public,
-      offeringDeclaration: true,
-      actualTuitionCosts: 1234,
-      programRelatedCosts: 3211,
-      mandatoryFees: 456,
-      exceptionalExpenses: 555,
-    };
 
     // Create a studyBreaks array with more than OFFERING_STUDY_BREAK_MAX_ENTRIES entries.
     // Entries are non-overlapping to avoid triggering the overlap validation error.
-    payload.studyBreaks = Array.from(
+    const studyBreaks = Array.from(
       { length: OFFERING_STUDY_BREAK_MAX_ENTRIES + 1 },
       (_, index) => {
         const breakStartDate = new Date(
@@ -1512,6 +1499,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         };
       },
     );
+
+    const payload = generatePayload(studyBreaks);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1532,3 +1521,31 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     await app?.close();
   });
 });
+
+/**
+ * Generates a payload for creating an education program offering with the specified study breaks.
+ * @param studyBreaks - An array of study breaks to include in the payload.
+ * @returns A partial EducationProgramOfferingAPIInDTO object with the specified study breaks.
+ */
+function generatePayload(
+  studyBreaks: StudyBreakInDTO[],
+): Partial<EducationProgramOfferingAPIInDTO> {
+  return {
+    offeringName: "Offering 1",
+    yearOfStudy: 1,
+    offeringIntensity: OfferingIntensity.fullTime,
+    offeringDelivered: OfferingDeliveryOptions.Onsite,
+    isAviationOffering: OfferingYesNoOptions.No,
+    hasOfferingWILComponent: OfferingYesNoOptions.No,
+    studyStartDate: "2024-01-01",
+    studyEndDate: "2024-12-31",
+    lacksStudyBreaks: false,
+    offeringType: OfferingTypes.Public,
+    offeringDeclaration: true,
+    actualTuitionCosts: 1234,
+    programRelatedCosts: 3211,
+    mandatoryFees: 456,
+    exceptionalExpenses: 555,
+    studyBreaks: studyBreaks,
+  };
+}
