@@ -4478,7 +4478,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "Upload proof of your dependants income tax return for {{data.calculatedTaxYear}}",
+                              "content": "Upload proof that you have been approved to claim the Disability Tax Credit on behalf of your dependent for {{data.calculatedTaxYear}}",
                               "refreshOnChange": false,
                               "key": "html63",
                               "type": "htmlelement",
