@@ -35,6 +35,8 @@ import { faker } from "@faker-js/faker";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+  OFFERING_MAX_FUNDED_WEEKS,
+  OFFERING_STUDY_PERIOD_MAX_DAYS,
 } from "../../../../utilities";
 import {
   EducationProgramOfferingAPIInDTO,
@@ -465,7 +467,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     });
   });
 
-  it("Should create a new offering limiting the funded weeks to 52 when the funded offering period exceeds a year.", async () => {
+  it(`Should create a new offering limiting the total funded weeks to ${OFFERING_MAX_FUNDED_WEEKS} when the total funded study period days is more than ${OFFERING_STUDY_PERIOD_MAX_DAYS}.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -477,9 +479,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
     const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyStartDate = getISODateOnlyString(new Date());
+    // The study end date is set to 450 days after the study start date.
+    const studyEndDate = getISODateOnlyString(addDays(450, studyStartDate));
+    // Added 10 days of study break which will fall under eligible break days limit
+    // and keep total funded days more that 365 days.
     const studyBreak = {
-      breakStartDate: getISODateOnlyString(addDays(10)),
-      breakEndDate: getISODateOnlyString(addDays(20)),
+      breakStartDate: getISODateOnlyString(addDays(10, studyStartDate)),
+      breakEndDate: getISODateOnlyString(addDays(20, studyStartDate)),
     };
     const studyPeriodBreakdown = {
       totalDays: 451,
@@ -494,9 +501,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       offeringDelivered: OfferingDeliveryOptions.Online,
       isAviationOffering: OfferingYesNoOptions.No,
       hasOfferingWILComponent: OfferingYesNoOptions.No,
-      studyStartDate: getISODateOnlyString(new Date()),
-      // The study end date is set to 450 days from now, which exceeds one year.
-      studyEndDate: getISODateOnlyString(addDays(450)),
+      studyStartDate,
+      studyEndDate,
       lacksStudyBreaks: false,
       studyBreaks: [
         {
