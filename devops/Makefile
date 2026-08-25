@@ -535,6 +535,7 @@ deploy-api:
 		-p EXTERNAL_THROTTLE_LIMIT=$(EXTERNAL_THROTTLE_LIMIT) \
 		-p FORMS_URL=$(FORMS_URL) \
 		-p FEATURE_TOGGLES=$(FEATURE_TOGGLES) \
+		-p REDIS_ENABLE_OFFLINE_QUEUE=$(REDIS_ENABLE_OFFLINE_QUEUE) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(API))
 

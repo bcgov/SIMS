@@ -260,6 +260,8 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: FEATURE_TOGGLES
                   value: ${FEATURE_TOGGLES}
+                - name: REDIS_ENABLE_OFFLINE_QUEUE
+                  value: ${REDIS_ENABLE_OFFLINE_QUEUE}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -679,3 +681,5 @@ parameters:
     required: false
   - name: FORMS_URL
     required: true
+  - name: REDIS_ENABLE_OFFLINE_QUEUE
+    value: "false"

@@ -1,4 +1,3 @@
-
 /**
  * Maximum allowed number of days that an MSFAA is considered
  * valid and could be reused for a new Student Application.
@@ -30,6 +29,16 @@ export const ORM_CACHE_LIFETIME = 10 * 60 * 1000;
  * Redis command timeout of the ORM cache in milliseconds.
  */
 export const ORM_CACHE_REDIS_COMMAND_TIMEOUT = 5 * 1000;
+
+/**
+ * Redis connect timeout of the ORM cache in milliseconds.
+ */
+export const ORM_CACHE_REDIS_CONNECT_TIMEOUT = 2 * 1000;
+
+/**
+ * Redis maximum number of retries per command before failing when the connection is unavailable.
+ */
+export const ORM_CACHE_REDIS_MAX_RETRIES_PER_REQUEST = 3;
 
 /**
  * Maximum number of open connections that
