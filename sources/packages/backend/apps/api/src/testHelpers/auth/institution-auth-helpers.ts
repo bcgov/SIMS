@@ -120,7 +120,7 @@ async function authorizeUserForLocation(
     });
   // Associate user to the institution.
   const institutionUser = createFakeInstitutionUser(
-    user as User,
+    { id: user.id } as User,
     { id: institutionId } as Institution,
   );
   const savedInstitutionUser = await dataSource
