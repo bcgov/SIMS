@@ -24,7 +24,7 @@ export const ECERT_FAILED_MESSAGES: EcertFailedValidationDetail[] = [
   {
     failedType: ECertFailedValidation.ModifiedIndependentStatusNotApproved,
     failedMessage:
-      "You have indicated in your application that you should be considered a modified independent; however, the modified independent status on your student profile is not approved. If you have not submitted one yet, please submit a modified independent appeal for review. Please use the 'Appeals' menu to start the appeal process.",
+      "You have indicated in your application that you should be considered a modified independent; however, the modified independent status on your student profile is not approved. If you have not submitted one yet, please submit a modified independent appeal for review. Please use the 'Forms' menu to start the appeal process.",
   },
   {
     failedType: ECertFailedValidation.MSFAANotSigned,
