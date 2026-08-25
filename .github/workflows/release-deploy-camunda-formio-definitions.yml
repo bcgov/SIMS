@@ -48,9 +48,10 @@ jobs:
       FORMS_SECRET_NAME: ${{ secrets.FORMS_SECRET_NAME }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3
+        uses: redhat-actions/openshift-tools-installer@v3.1
         with:
           oc: "4"
+          skip_cache: true
       - name: Print env
         run: |
           echo BUILD NAMESPACE: "$BUILD_NAMESPACE"
