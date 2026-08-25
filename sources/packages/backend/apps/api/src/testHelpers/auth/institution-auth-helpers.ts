@@ -95,7 +95,8 @@ export async function getAuthRelatedEntities(
  * Authorize a user to have access to a location.
  * @param dataSource manage the database access.
  * @param institutionId related institution.
- * @param userId user to be associated with the institution.
+ * @param user user to be associated with the institution. While the ID is required
+ * to create the association, the userName is required to clear the cache.
  * @param locationId location to be granted access to.
  * @param type type of authorization.
  * @param role authorization role.
@@ -103,7 +104,7 @@ export async function getAuthRelatedEntities(
 async function authorizeUserForLocation(
   dataSource: DataSource,
   institutionId: number,
-  userId: number,
+  user: Pick<User, "id" | "userName">,
   locationId: number,
   type: InstitutionUserTypes,
   role?: InstitutionUserRoles,
@@ -119,7 +120,7 @@ async function authorizeUserForLocation(
     });
   // Associate user to the institution.
   const institutionUser = createFakeInstitutionUser(
-    { id: userId } as User,
+    user as User,
     { id: institutionId } as Institution,
   );
   const savedInstitutionUser = await dataSource
@@ -131,10 +132,7 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
-  await clearUserAuthorizationsCache(
-    dataSource,
-    savedInstitutionUser.user.userName,
-  );
+  await clearUserAuthorizationsCache(dataSource, user.userName);
 }
 
 /**
@@ -167,7 +165,7 @@ export async function authorizeUserTokenForLocation(
   await authorizeUserForLocation(
     dataSource,
     institution.id,
-    user.id,
+    user,
     location.id,
     options?.institutionUserType ?? InstitutionUserTypes.user,
   );
