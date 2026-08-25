@@ -760,7 +760,10 @@ export class OfferingValidationModel {
   })
   @ValidateIf(
     (offering: OfferingValidationModel) =>
-      !!offering.studyStartDate && !!offering.studyEndDate,
+      !!offering.studyStartDate &&
+      !!offering.studyEndDate &&
+      offering.studyBreaks !== null &&
+      offering.studyBreaks !== undefined,
   )
   @HasNoPeriodOverlap(userFriendlyNames.studyBreaks)
   @PeriodsAreBetweenLimits(
