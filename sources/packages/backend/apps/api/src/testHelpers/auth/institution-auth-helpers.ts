@@ -29,6 +29,10 @@ import {
 } from "@sims/test-utils/constants";
 import { DataSource, IsNull } from "typeorm";
 import { InstitutionTokenTypes } from "./institution-token-helpers";
+import {
+  clearInstitutionLocationsCache,
+  clearUserAuthorizationsCache,
+} from "@sims/test-utils/utils";
 
 /**
  * Get the institution and user associated with the institution user token type.
@@ -127,7 +131,10 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
-  dataSource.queryResultCache?.clear();
+  await clearUserAuthorizationsCache(
+    dataSource,
+    savedInstitutionUser.user.userName,
+  );
 }
 
 /**
@@ -155,7 +162,7 @@ export async function authorizeUserTokenForLocation(
   if (!location.id) {
     location.institution = institution;
     await dataSource.getRepository(InstitutionLocation).save(location);
-    dataSource.queryResultCache?.clear();
+    await clearInstitutionLocationsCache(dataSource, institution.id);
   }
   await authorizeUserForLocation(
     dataSource,
