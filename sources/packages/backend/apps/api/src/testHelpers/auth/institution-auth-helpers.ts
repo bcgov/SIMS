@@ -127,7 +127,6 @@ async function authorizeUserForLocation(
   authorization.institutionUser = savedInstitutionUser;
   authorization.location = { id: locationId } as InstitutionLocation;
   await dataSource.getRepository(InstitutionUserAuth).save(authorization);
-  dataSource.queryResultCache?.clear();
 }
 
 /**
