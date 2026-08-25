@@ -85,23 +85,23 @@ objects:
                   memory: "${MEMORY_REQUEST}"
                 limits:
                   memory: "${MEMORY_LIMIT}"
+              startupProbe:
+                tcpSocket:
+                  port: 3001
+                periodSeconds: 5
+                timeoutSeconds: 1
+                failureThreshold: 20
               livenessProbe:
                 tcpSocket:
-                  path: "/ops/healthz"
                   port: 3001
-                  scheme: HTTP
                 timeoutSeconds: 1
                 periodSeconds: 10
-                successThreshold: 1
                 failureThreshold: 3
               readinessProbe:
                 tcpSocket:
-                  path: "/ops/readyz"
                   port: 3001
-                  scheme: HTTP
                 timeoutSeconds: 1
                 periodSeconds: 10
-                successThreshold: 1
                 failureThreshold: 3
               terminationMessagePath: "/dev/termination-log"
               terminationMessagePolicy: File
