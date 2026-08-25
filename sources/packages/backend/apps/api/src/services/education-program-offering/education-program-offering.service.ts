@@ -45,6 +45,7 @@ import {
   OFFERING_VALIDATIONS_STUDY_BREAK_COMBINED_PERCENTAGE_THRESHOLD,
   OfferingPaginationOptions,
   PaginationOptions,
+  OFFERING_MAX_FUNDED_WEEKS,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -1687,7 +1688,10 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       studyBreaks,
       fundedStudyPeriodDays: decimalRound(fundedStudyPeriodDays),
       totalDays,
-      totalFundedWeeks: Math.ceil(fundedStudyPeriodDays / 7),
+      totalFundedWeeks: Math.min(
+        Math.ceil(fundedStudyPeriodDays / 7),
+        OFFERING_MAX_FUNDED_WEEKS,
+      ),
       unfundedStudyPeriodDays: decimalRound(unfundedStudyPeriodDays),
       sumOfTotalEligibleBreakDays,
       sumOfTotalIneligibleBreakDays,

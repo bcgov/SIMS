@@ -33,6 +33,8 @@ import { OfferingValidationWarnings } from "../../../../services";
 import {
   MAX_ALLOWED_OFFERING_AMOUNT,
   MONEY_VALUE_FOR_UNKNOWN_MAX_VALUE,
+  OFFERING_MAX_FUNDED_WEEKS,
+  OFFERING_STUDY_PERIOD_MAX_DAYS,
 } from "../../../../utilities";
 import { PrimaryIdentifierAPIOutDTO } from "../../../models/primary.identifier.dto";
 
@@ -243,6 +245,56 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       expect(offeringSBC2).toHaveProperty(
         "offeringStatus",
         OfferingStatus.Approved,
+      );
+    },
+  );
+
+  it(
+    `Should create an offering with status ${OfferingStatus.CreationPending} and limit the total funded weeks to ${OFFERING_MAX_FUNDED_WEEKS}` +
+      ` when an offering is created with bulk upload and the total funded study period days is more than ${OFFERING_STUDY_PERIOD_MAX_DAYS}.`,
+    async () => {
+      // Arrange
+      const singleUploadExceedingMaxStudyDaysPath = join(
+        __dirname,
+        "bulk-insert/single-upload-exceeding-maximum-study-days.csv",
+      );
+
+      let createdOfferingId: number;
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .attach("file", singleUploadExceedingMaxStudyDaysPath)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .expect(({ body }) => {
+          expect(body).toHaveLength(1);
+          createdOfferingId = body[0].id;
+          expect(createdOfferingId).toBeGreaterThan(0);
+        });
+
+      // Checking the created offering.
+      const createdOffering = await db.educationProgramOffering.findOne({
+        select: {
+          id: true,
+          offeringStatus: true,
+          studyBreaks: true,
+          name: true,
+        },
+        where: {
+          id: createdOfferingId,
+        },
+        order: {
+          name: "ASC",
+        },
+      });
+      expect(createdOffering.offeringStatus).toBe(
+        OfferingStatus.CreationPending,
+      );
+      expect(createdOffering.studyBreaks.fundedStudyPeriodDays).toBeGreaterThan(
+        OFFERING_STUDY_PERIOD_MAX_DAYS,
+      );
+      expect(createdOffering.studyBreaks.totalFundedWeeks).toBe(
+        OFFERING_MAX_FUNDED_WEEKS,
       );
     },
   );
