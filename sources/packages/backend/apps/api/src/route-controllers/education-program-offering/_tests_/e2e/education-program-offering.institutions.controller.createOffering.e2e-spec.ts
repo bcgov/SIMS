@@ -1512,7 +1512,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       });
   });
 
-  it(`Should return an error when trying to create a new offering with study break length under ${OFFERING_STUDY_BREAK_MIN_DAYS} days .`, async () => {
+  it(`Should return an error when trying to create a new offering with study break length under ${OFFERING_STUDY_BREAK_MIN_DAYS} days.`, async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
