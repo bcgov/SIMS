@@ -410,6 +410,8 @@ export interface CalculatedAssessmentModel {
   calculatedDataTotalEligibleParent1Dependants?: number;
   calculatedDataTotalEligibleParent2Dependants?: number;
   calculatedDataTotalParentEligibleDependants?: number;
+  calculatedDataTotalEligibleParent1ContributionDependants?: number;
+  calculatedDataTotalEligibleParent2ContributionDependants?: number;
   calculatedDataTotalParentEligibleContributionDependants?: number;
   calculatedDataFamilySize: number;
   totalFederalContribution: number;
