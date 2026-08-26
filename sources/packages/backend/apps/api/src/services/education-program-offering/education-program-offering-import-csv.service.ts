@@ -102,7 +102,7 @@ export class EducationProgramOfferingImportCSVService {
       offeringValidationModel.studyBreaks =
         csvModel.hasStudyBreaks === YesNoOptions.Yes
           ? csvModel.studyBreaks
-          : null;
+          : [];
       offeringValidationModel.actualTuitionCosts = csvModel.actualTuitionCosts;
       offeringValidationModel.programRelatedCosts =
         csvModel.programRelatedCosts;

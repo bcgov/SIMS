@@ -586,6 +586,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           totalFundedWeeks: 11,
           fundedStudyPeriodDays: 77,
           unfundedStudyPeriodDays: 0,
+          studyBreaks: [],
         },
         submittedBy: { id: collegeFUser.id },
         submittedDate: expect.any(Date),
