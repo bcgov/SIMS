@@ -57,8 +57,8 @@
               considered a modified independent; however, the modified
               independent status on your student profile is not approved. If you
               have not submitted one yet, please submit a modified independent
-              appeal for review. Please use the 'Appeals' menu to start the
-              appeal process.
+              appeal for review. Please use the 'Forms' menu to start the appeal
+              process.
             </li>
             <li v-if="acceptValidation.msfaaInvalid">
               Your MSFAA is not valid. Please complete your MSFAA with the

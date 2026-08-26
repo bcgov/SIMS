@@ -18,9 +18,10 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3
+        uses: redhat-actions/openshift-tools-installer@v3.1
         with:
           oc: "4"
+          skip_cache: true
       - name: Log in to OpenShift
         run: |
           oc login --token=${{ secrets.SA_TOKEN }} --server=${{ vars.OPENSHIFT_CLUSTER_URL }}

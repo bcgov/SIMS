@@ -1,3 +1,8 @@
+import { addDays, getISODateOnlyString } from "@sims/utilities";
+import {
+  OFFERING_MAX_FUNDED_WEEKS,
+  OFFERING_STUDY_PERIOD_MAX_DAYS,
+} from "../../../../utilities";
 import { OfferingStudyBreakCalculationContext } from "../../education-program-offering-validation.models";
 import { EducationProgramOfferingService } from "../../education-program-offering.service";
 
@@ -242,6 +247,51 @@ describe("EducationProgramOfferingService-getCalculatedStudyBreaksAndWeeks", () 
       totalDays: 124,
       totalFundedWeeks: 17,
       unfundedStudyPeriodDays: 10.6,
+    });
+  });
+
+  it(`Should calculate and limit the total funded weeks to ${OFFERING_MAX_FUNDED_WEEKS} when the total funded study period days is more than ${OFFERING_STUDY_PERIOD_MAX_DAYS}.`, () => {
+    //Arrange
+    const studyStartDate = "2023-05-29";
+    // The study end date is set to 400 days after the study start date to exceed a year.
+    const studyEndDate = getISODateOnlyString(addDays(400, studyStartDate));
+    const offeringStudyBreakCalculationContext: OfferingStudyBreakCalculationContext =
+      {
+        studyStartDate,
+        studyEndDate,
+        // The study break is set to 11 days to be within the allowable limit and ensure total funded days is more than 365.
+        studyBreaks: [
+          {
+            breakStartDate: "2023-06-08",
+            breakEndDate: "2023-06-18",
+          },
+        ],
+      };
+
+    // Act
+    const calculatedStudyBreaksAndWeeks =
+      EducationProgramOfferingService.getCalculatedStudyBreaksAndWeeks(
+        offeringStudyBreakCalculationContext,
+      );
+
+    // Assert
+    expect(calculatedStudyBreaksAndWeeks).toStrictEqual({
+      allowableStudyBreaksDaysAmount: 40.1,
+      fundedStudyPeriodDays: 401,
+      studyBreaks: [
+        {
+          breakDays: 11,
+          breakStartDate: "2023-06-08",
+          breakEndDate: "2023-06-18",
+          eligibleBreakDays: 11,
+          ineligibleBreakDays: 0,
+        },
+      ],
+      sumOfTotalEligibleBreakDays: 11,
+      sumOfTotalIneligibleBreakDays: 0,
+      totalDays: 401,
+      totalFundedWeeks: OFFERING_MAX_FUNDED_WEEKS,
+      unfundedStudyPeriodDays: 0,
     });
   });
 });

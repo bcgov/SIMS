@@ -2967,7 +2967,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Your account status indicates you have not been approved as a modified independent yet.</strong>\n<br />If you answer 'yes' to this question, your application will be blocked until a Modified Independent appeal is submitted and approved. To submit an appeal, use the 'Appeals' button at the top menu, select 'Other' appeals, and then 'Modified Independent Appeal'.",
+              "content": "<strong> Your account status indicates you have not been approved as a modified independent yet.</strong>\n<br />If you answer 'yes' to this question, your application will be blocked until a Modified Independent appeal is submitted and approved. To submit an appeal, use the 'Forms' button at the top menu, select 'Other' appeals, and then 'Modified Independent Appeal'.",
               "refreshOnChange": false,
               "customClass": "banner-warning",
               "key": "html16",
@@ -4478,7 +4478,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "Upload proof of your dependants income tax return for {{data.calculatedTaxYear}}",
+                              "content": "Upload proof that you have been approved to claim the Disability Tax Credit on behalf of your dependent for {{data.calculatedTaxYear}}",
                               "refreshOnChange": false,
                               "key": "html63",
                               "type": "htmlelement",
@@ -6497,7 +6497,7 @@
                   "value": ""
                 }
               ],
-              "content": "You may be eligible for an additional transportation allowance if you are the primary operator of your vehicle and there is limited or no local transit where you live, or if you have special circumstances that require extra travel.",
+              "content": "If there is limited or no local transit where you live, you must commute more than one hour each way to and from your post-secondary institution, additional transportation for a work-integrated learning placement is required, or if you have special circumstances that require extra travel, you may be eligible for an additional transportation allowance.",
               "refreshOnChange": false,
               "key": "html103",
               "type": "htmlelement",
@@ -6505,7 +6505,7 @@
               "tableView": false
             },
             {
-              "label": "Do you want to be assessed for additional transportation costs?",
+              "label": "I have exceptional circumstances that meet the eligibility requirements to be considered for additional transportation allowance and want to be assessed for additional transportation cost.",
               "optionsLabelPosition": "right",
               "inline": false,
               "tableView": false,
@@ -6525,6 +6525,7 @@
                 "required": true,
                 "onlyAvailableItems": true
               },
+              "validateWhenHidden": false,
               "key": "additionalTransportRequested",
               "type": "radio",
               "input": true,
@@ -6587,7 +6588,7 @@
                       "attr": ""
                     }
                   ],
-                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<ul>\n<li>Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.</li>\n<li>I am in a clinical or practicum placement that requires additional travel.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>\n</ul>",
+                  "content": "<strong> Please confirm that you match the criteria below and are eligible for this exception category.</strong>\n<br />\nYou require additional financial support for transportation due to one of the following criteria:\n<ul>\n<li>There is no public transit, or public transit takes more than two hours to your school roundtrip from your neighborhood by the quickest/more direct route.</li>\n<li>I am in a clinical or practicum placement and the commute to the placement location takes more than two hours roundtrip from your neighborhood by the quickest/more direct route.</li>\n<li>I have special circumstances that require additional travel (work, family responsibilities, living distance from school).</li>\n</ul>",
                   "refreshOnChange": false,
                   "key": "additionalTransportExceptionPanelContent",
                   "type": "htmlelement",
@@ -6705,12 +6706,12 @@
                       "tableView": false,
                       "values": [
                         {
-                          "label": "Public transit takes more than two hours from your neighborhood to your school and back by the quickest/most direct route.",
+                          "label": "There is no public transit, or public transit takes more than two hours to your school roundtrip from your neighborhood by the quickest/more direct route.",
                           "value": "noLimit",
                           "shortcut": ""
                         },
                         {
-                          "label": "I am in a clinical or practicum placement that requires additional travel.",
+                          "label": "I am in a clinical or practicum placement and the commute to the placement location takes more than two hours roundtrip from your neighborhood by the quickest/more direct route.",
                           "value": "educationPlacement",
                           "shortcut": ""
                         },
@@ -6720,13 +6721,14 @@
                           "shortcut": ""
                         }
                       ],
-                      "key": "transportationcostsituation",
-                      "type": "radio",
-                      "input": true,
                       "validate": {
                         "required": true,
                         "onlyAvailableItems": true
-                      }
+                      },
+                      "validateWhenHidden": false,
+                      "key": "transportationcostsituation",
+                      "type": "radio",
+                      "input": true
                     },
                     {
                       "input": true,
@@ -6861,7 +6863,7 @@
                               "value": ""
                             }
                           ],
-                          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<ul>\n<li><b>A statement</b> describing how you calculated your weekly kilometers between your residence and school in relation to the following:</li>\n<ul>\n<li>If it’s required for <b>clinical</b> or <b>practicum purposes</b>, please provide a <b>schedule and letter of explanation which includes the location.</b></li>\n<li>If it’s required for <b>family related responsibilities</b> (e.g. driving children to and from school or daycare), please provide a <b>statement that outlines your circumstances.</b></li>\n<li>If you are <b>unable to move closer to your school,</b> please provide a <b>statement that outlines your circumstances.</b></li>\n</ul>\n</ul>\n<h4 class=\"category-header-medium-small\">AND</h4>\n<ul>\n<li><b>A copy of your vehicle insurance:</b></li>\n<ul>\n<li><b>Must</b> be insured for proper vehicle use (e.g. “to or from work or school a one-way distance in excess of XXkm…”)</li>\n<li><b>Must</b> be listed as a driver of the vehicle or the registered owner.</li>\n</ul>\n</ul>",
+                          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<p>A detailed letter explaining how your circumstances meet one or more of the exception criteria listed above, including an estimate of the weekly travel distance between your home to your institution or practicum location (in kilometers), with a description of the calculation method you used to determine the weekly kilometers traveled.</p>",
                           "refreshOnChange": false,
                           "customClass": "align-bullets",
                           "key": "html28",
