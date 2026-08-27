@@ -753,7 +753,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       });
   });
 
-  it("Should return a validation error when the study breaks overlap. ", async () => {
+  it("Should return a validation error when the study breaks overlap.", async () => {
     // Arrange
     // Upload file with 1 line.
     // The upload file line 1 has two study breaks that overlap with each other.

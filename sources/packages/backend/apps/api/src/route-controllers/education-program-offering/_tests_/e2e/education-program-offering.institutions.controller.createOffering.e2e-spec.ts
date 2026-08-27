@@ -1473,7 +1473,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       });
   });
 
-  it(`Should return an error when trying to create a new offering with a study break outside of the offering period.`, async () => {
+  it("Should return an error when trying to create a new offering with a study break outside of the offering period.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -1495,7 +1495,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         breakEndDate: "2025-01-07",
       },
     ];
-    const payload = generatePayload(studyBreaks);
+    const payload = generatePayload({ studyBreaks });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1534,7 +1534,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         breakEndDate: "2024-03-05",
       },
     ];
-    const payload = generatePayload(studyBreaks);
+    const payload = generatePayload({ studyBreaks });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1571,7 +1571,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       { breakStartDate: "2024-03-01", breakEndDate: "2024-03-10" },
       { breakStartDate: "2024-03-10", breakEndDate: "2024-03-16" },
     ];
-    const payload = generatePayload(studyBreaks);
+    const payload = generatePayload({ studyBreaks });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1625,7 +1625,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
     );
 
-    const payload = generatePayload(studyBreaks);
+    const payload = generatePayload({ studyBreaks });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1649,12 +1649,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
 
 /**
  * Generates a payload for creating an education program offering with the specified study breaks.
- * @param studyBreaks - An array of study breaks to include in the payload.
+ * @param options payload options.
+ * - `studyBreaks` - An array of study breaks to include in the payload.
  * @returns A partial EducationProgramOfferingAPIInDTO object with the specified study breaks.
  */
-function generatePayload(
-  studyBreaks: StudyBreakInDTO[],
-): Partial<EducationProgramOfferingAPIInDTO> {
+function generatePayload(options?: {
+  studyBreaks?: StudyBreakInDTO[];
+}): Partial<EducationProgramOfferingAPIInDTO> {
   return {
     offeringName: "Offering 1",
     yearOfStudy: 1,
@@ -1671,6 +1672,6 @@ function generatePayload(
     programRelatedCosts: 3211,
     mandatoryFees: 456,
     exceptionalExpenses: 555,
-    studyBreaks: studyBreaks,
+    studyBreaks: options?.studyBreaks ?? [],
   };
 }
