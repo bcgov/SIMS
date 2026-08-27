@@ -80,6 +80,7 @@ export const InstitutionRoutesConst = {
   VIEW_LOCATION_PROGRAMS: Symbol(),
   EDIT_LOCATION_PROGRAMS: Symbol(),
   ADD_LOCATION_PROGRAMS: Symbol(),
+  EDIT_LOCATION_PROGRAMS_1: Symbol(),
   LOCATION_PROGRAMS: Symbol(),
   ADD_LOCATION_OFFERINGS: Symbol(),
   EDIT_LOCATION_OFFERINGS: Symbol(),

@@ -29,6 +29,7 @@ import ManageInstitutionSideBar from "@/components/layouts/Institution/sidebar/M
 import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/HomeSideBar.vue";
 import InstitutionApplicationSideBar from "@/components/layouts/Institution/sidebar/InstitutionApplicationSideBar.vue";
 import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
+import EditProgram from "@/views/institution/locations/programs/EditProgram.vue";
 import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOfferingCreate from "@/views/institution/locations/offerings/OfferingCreate.vue";
@@ -507,6 +508,32 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: LocationProgramAddEdit,
         props: (route) => ({
           locationId: Number.parseInt(route.params.locationId as string),
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.LocationProgramsEdit1,
+        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS_1,
+        component: EditProgram,
+        props: (route) => ({
+          programId: Number.parseInt(route.params.programId as string),
+          locationId: Number.parseInt(route.params.locationId as string),
+          backTarget: {
+            name: "Programs",
+            to: {
+              name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+            },
+            params: {
+              programId: Number.parseInt(route.params.programId as string),
+              locationId: Number.parseInt(route.params.locationId as string),
+            },
+          },
         }),
         meta: {
           clientType: ClientIdType.Institution,
