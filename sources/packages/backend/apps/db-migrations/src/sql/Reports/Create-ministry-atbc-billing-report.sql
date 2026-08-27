@@ -5,24 +5,24 @@ VALUES
     'Ministry_ATBC_Billing_Report',
     $$
     SELECT
-      u.first_name AS "Given name",
-      u.last_name AS "Last name",
-      to_char(s.birth_date, 'YYYY-MM-DD') AS "Date of birth",
-      submitted_data ->> 'requestedDisabilityStatus' AS "PD or PPD status",
-      fsid.decision_status AS "Outcome",
-      concat_ws(' ', au.first_name, au.last_name) AS "Completed by",
-      to_char(fs.assessed_date, 'YYYY-MM-DD') AS "Date completed"
+      students_users.first_name AS "Given Name",
+      students_users.last_name AS "Last Name",
+      to_char(students.birth_date, 'YYYY-MM-DD') AS "Date Of Birth",
+      form_submission_items.submitted_data ->> 'requestedDisabilityStatus' AS "Disability Status",
+      form_submission_item_decisions.decision_status AS "Outcome",
+      concat_ws(' ', aest_users.first_name, aest_users.last_name) AS "Completed By",
+      to_char(form_submissions.assessed_date, 'YYYY-MM-DD') AS "Date Completed"
     FROM
-      sims.form_submissions fs
-      INNER JOIN sims.form_submission_items fsi ON fs.id = fsi.form_submission_id
-      INNER JOIN sims.form_submission_item_decisions fsid ON fsi.current_decision_id = fsid.id
-      INNER JOIN sims.students s ON fs.student_id = s.id
-      INNER JOIN sims.users u ON s.user_id = u.id
-      INNER JOIN sims.users au ON fs.assessed_by = au.id
-      INNER JOIN sims.dynamic_form_configurations dfc ON fsi.dynamic_form_configuration_id = dfc.id
+	  sims.form_submission_items form_submission_items
+      INNER JOIN sims.form_submissions form_submissions ON form_submission_items.form_submission_id = form_submissions.id
+      INNER JOIN sims.form_submission_item_decisions form_submission_item_decisions ON form_submission_items.current_decision_id = form_submission_item_decisions.id
+	  INNER JOIN sims.dynamic_form_configurations dynamic_form_configurations ON form_submission_items.dynamic_form_configuration_id = dynamic_form_configurations.id
+      INNER JOIN sims.students students ON form_submissions.student_id = students.id
+      INNER JOIN sims.users students_users ON students.user_id = students_users.id
+      INNER JOIN sims.users aest_users ON form_submissions.assessed_by = aest_users.id
     WHERE
-      dfc.form_definition_name = 'disabilitystatusapplicationform'
-      AND fs.submission_status = 'Completed'
-	  AND fs.assessed_date between :startDate and :endDate
-	ORDER BY fs.assessed_date ASC $$
+      dynamic_form_configurations.form_definition_name = 'disabilitystatusapplicationform'
+      AND form_submissions.submission_status in ('Completed', 'Declined')
+	  AND form_submissions.assessed_date::date between :startDate and :endDate
+	ORDER BY form_submissions.assessed_date ASC$$
   )
