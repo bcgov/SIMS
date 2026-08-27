@@ -722,7 +722,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     // Arrange
     // Upload file with 1 line.
     // The upload file line 1 has a study break outside of the offering period.
-    const overlappingStudyBreaksFilePath = join(
+    const studyBreaksOutsideOfferingFilePath = join(
       __dirname,
       "bulk-insert/single-upload-study-breaks-outside-offering.csv",
     );
@@ -730,7 +730,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .attach("file", overlappingStudyBreaksFilePath)
+      .attach("file", studyBreaksOutsideOfferingFilePath)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
