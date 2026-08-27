@@ -1056,13 +1056,19 @@
                   "defaultValue": [
                     {
                       "breakStartDate": "",
-                      "breakEndDate": ""
+                      "breakEndDate": "",
+                      "summary": {
+                        "totalDays": 0,
+                        "eligibleDays": 0,
+                        "ineligibleDays": 0
+                      }
                     }
                   ],
                   "validate": {
                     "required": true,
-                    "maxLength": "5"
+                    "maxLength": "15"
                   },
+                  "validateWhenHidden": false,
                   "key": "studyBreaks",
                   "tags": [
                     "execute-validation",

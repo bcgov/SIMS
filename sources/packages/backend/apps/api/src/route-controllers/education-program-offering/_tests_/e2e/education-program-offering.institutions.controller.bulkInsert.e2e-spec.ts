@@ -638,6 +638,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
           totalFundedWeeks: 11,
           fundedStudyPeriodDays: 77,
           unfundedStudyPeriodDays: 0,
+          studyBreaks: [],
         },
         submittedBy: { id: collegeFUser.id },
         submittedDate: expect.any(Date),
@@ -716,6 +717,74 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         });
     },
   );
+
+  it("Should return a validation error when there is a study break outside of the offering period.", async () => {
+    // Arrange
+    // Upload file with 1 line.
+    // The upload file line 1 has a study break outside of the offering period.
+    const studyBreaksOutsideOfferingFilePath = join(
+      __dirname,
+      "bulk-insert/single-upload-study-breaks-outside-offering.csv",
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .attach("file", studyBreaksOutsideOfferingFilePath)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "An offering has invalid data.",
+        errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+        objectInfo: [
+          {
+            recordIndex: 0,
+            locationCode: csvLocationCodeYESK,
+            sabcProgramCode: csvProgramSABCCodeSBC2,
+            startDate: "2023-06-01",
+            endDate: "2023-10-31",
+            errors: [
+              "Study breaks must have all dates between Jun 01 2023 and Oct 31 2023.",
+            ],
+            infos: [],
+            warnings: [],
+          },
+        ],
+      });
+  });
+
+  it("Should return a validation error when the study breaks overlap.", async () => {
+    // Arrange
+    // Upload file with 1 line.
+    // The upload file line 1 has two study breaks that overlap with each other.
+    const overlappingStudyBreaksFilePath = join(
+      __dirname,
+      "bulk-insert/single-upload-overlapping-study-breaks.csv",
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .attach("file", overlappingStudyBreaksFilePath)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "An offering has invalid data.",
+        errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+        objectInfo: [
+          {
+            recordIndex: 0,
+            locationCode: csvLocationCodeYESK,
+            sabcProgramCode: csvProgramSABCCodeSBC2,
+            startDate: "2023-06-01",
+            endDate: "2023-12-31",
+            errors: ["Study breaks has periods with overlaps."],
+            infos: [],
+            warnings: [],
+          },
+        ],
+      });
+  });
 
   afterAll(async () => {
     await app?.close();

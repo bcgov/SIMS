@@ -1,4 +1,5 @@
 import {
+  ArrayMaxSize,
   IsArray,
   IsBoolean,
   IsDateString,
@@ -14,6 +15,7 @@ import {
   MaxLength,
   Min,
   ValidateIf,
+  ValidateNested,
 } from "class-validator";
 import {
   EducationProgram,
@@ -58,6 +60,7 @@ import {
   OFFERING_MAXIMUM_ONLINE_DURATION_PERCENTAGE,
   OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE,
   OFFERING_STUDY_BREAK_MAX_DAYS,
+  OFFERING_STUDY_BREAK_MAX_ENTRIES,
   OFFERING_STUDY_BREAK_MIN_DAYS,
   OFFERING_STUDY_PERIOD_MAX_DAYS,
   OFFERING_STUDY_PERIOD_MIN_FUNDED_WEEKS_FULL_TIME,
@@ -751,6 +754,10 @@ export class OfferingValidationModel {
    * For offerings with some study break, represents all study break periods.
    */
   @Type(() => StudyBreak)
+  @ValidateNested({ each: true })
+  @ArrayMaxSize(OFFERING_STUDY_BREAK_MAX_ENTRIES, {
+    message: `${userFriendlyNames.studyBreaks} must not have more than ${OFFERING_STUDY_BREAK_MAX_ENTRIES} entries.`,
+  })
   @ValidateIf(
     (offering: OfferingValidationModel) =>
       !!offering.studyStartDate && !!offering.studyEndDate,
