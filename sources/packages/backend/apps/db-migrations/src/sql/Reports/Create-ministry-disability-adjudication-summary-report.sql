@@ -7,11 +7,17 @@ VALUES
     SELECT
       students_users.first_name AS "Given Name",
       students_users.last_name AS "Last Name",
-      to_char(students.birth_date, 'YYYY-MM-DD') AS "Date Of Birth",
+      to_char(
+        students.birth_date AT TIME ZONE 'America/Vancouver',
+        'YYYY-MM-DD'
+      ) AS "Date Of Birth",
       form_submission_items.submitted_data ->> 'requestedDisabilityStatus' AS "Disability Status",
       form_submission_item_decisions.decision_status AS "Outcome",
       concat_ws(' ', aest_users.first_name, aest_users.last_name) AS "Completed By",
-      to_char(form_submissions.assessed_date, 'YYYY-MM-DD') AS "Date Completed"
+      to_char(
+        form_submissions.assessed_date AT TIME ZONE 'America/Vancouver',
+        'YYYY-MM-DD'
+      ) AS "Date Completed"
     FROM
       sims.form_submission_items form_submission_items
       INNER JOIN sims.form_submissions form_submissions ON form_submission_items.form_submission_id = form_submissions.id
@@ -23,7 +29,7 @@ VALUES
     WHERE
       dynamic_form_configurations.form_definition_name = 'disabilitystatusapplicationform'
       AND form_submissions.submission_status IN ('Completed', 'Declined')
-	  AND form_submissions.assessed_date >= CAST(:startDate AS timestamptz)
+      AND form_submissions.assessed_date >= CAST(:startDate AS timestamptz)
       AND form_submissions.assessed_date < CAST(:endDate AS timestamptz) + INTERVAL '1 DAY'
     ORDER BY
       form_submissions.assessed_date ASC $$
