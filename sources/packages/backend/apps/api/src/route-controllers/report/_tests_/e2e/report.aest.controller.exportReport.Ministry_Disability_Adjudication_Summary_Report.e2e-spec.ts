@@ -27,7 +27,7 @@ import {
   User,
 } from "@sims/sims-db/entities";
 
-describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)", () => {
+describe("ReportAESTController(e2e)-exportReport(Ministry_Disability_Adjudication_Summary_Report)", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let formConfig: DynamicFormConfiguration;
@@ -38,7 +38,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
   const startDate = new Date("2026-01-01");
   const endDate = addDays(1, startDate);
   const payload = {
-    reportName: "Ministry_ATBC_Billing_Report",
+    reportName: "Ministry_Disability_Adjudication_Summary_Report",
     params: {
       startDate,
       endDate,
@@ -127,8 +127,8 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
     );
     // Expected report records.
     const expectedRecords = [
-      buildATBCBillingReportData(approvedPD),
-      buildATBCBillingReportData(declinedPPD),
+      buildDisabilityAdjudicationSummaryReportData(approvedPD),
+      buildDisabilityAdjudicationSummaryReportData(declinedPPD),
     ];
 
     // Act/Assert
@@ -236,14 +236,14 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
 });
 
 /**
- * Builds the expected report data for the Ministry_ATBC_Billing_Report based on the form submission.
+ * Builds the expected report data for the Ministry_Disability_Adjudication_Summary_Report based on the form submission.
  * @param formSubmission The form submission to build the report data from.
  * @returns The expected report data.
  */
-function buildATBCBillingReportData(
+function buildDisabilityAdjudicationSummaryReportData(
   formSubmission: FormSubmission,
 ): Record<string, string> {
-  const formSubmissionItem = formSubmission.formSubmissionItems[0];
+  const [formSubmissionItem] = formSubmission.formSubmissionItems;
   return {
     "Given Name": formSubmission.student.user.firstName,
     "Last Name": formSubmission.student.user.lastName,
