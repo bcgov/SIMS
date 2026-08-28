@@ -14,7 +14,7 @@ import {
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import request from "supertest";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { addDays, getPSTPDTDateFormatted } from "@sims/utilities";
 import {
   DisabilityStatus,
   DynamicFormConfiguration,
@@ -247,7 +247,7 @@ function buildDisabilityAdjudicationSummaryReportData(
   return {
     "Given Name": formSubmission.student.user.firstName,
     "Last Name": formSubmission.student.user.lastName,
-    "Date Of Birth": formSubmission.student.birthDate,
+    "Date Of Birth": getPSTPDTDateFormatted(formSubmission.student.birthDate),
     "Disability Status": formSubmissionItem.submittedData
       .requestedDisabilityStatus as string,
     Outcome: formSubmissionItem.decisions[0].decisionStatus,
@@ -255,6 +255,6 @@ function buildDisabilityAdjudicationSummaryReportData(
       formSubmission.assessedBy?.firstName +
       " " +
       formSubmission.assessedBy?.lastName,
-    "Date Completed": getISODateOnlyString(formSubmission.assessedDate),
+    "Date Completed": getPSTPDTDateFormatted(formSubmission.assessedDate),
   };
 }
