@@ -26,7 +26,6 @@ import {
   Student,
   User,
 } from "@sims/sims-db/entities";
-import { Not } from "typeorm";
 
 describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)", () => {
   let app: INestApplication;
@@ -62,10 +61,10 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
   });
 
   beforeEach(async () => {
-    // Cancel form submission to keep the test data clean.
+    // Cancel form submissions for this student to keep the test data clean.
     await db.formSubmission.update(
       {
-        submissionStatus: Not(FormSubmissionStatus.Cancelled),
+        student: { id: student.id },
       },
       {
         submissionStatus: FormSubmissionStatus.Cancelled,

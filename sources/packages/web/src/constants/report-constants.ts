@@ -11,7 +11,7 @@ export const INSTITUTION_REPORTS: OptionItemAPIOutDTO[] = [
 
 export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
   {
-    description: "ATBC Billing Report",
+    description: "ATBC Billing",
     id: "Ministry_ATBC_Billing_Report",
   },
   {
