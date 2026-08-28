@@ -34,11 +34,14 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
   let ministryUser: User;
   let student: Student;
   const endpoint = "/aest/report";
+  // Choose a date range unique to this test suite.
+  const startDate = new Date("2026-01-01");
+  const endDate = addDays(1, startDate);
   const payload = {
     reportName: "Ministry_ATBC_Billing_Report",
     params: {
-      startDate: addDays(-1),
-      endDate: new Date(),
+      startDate,
+      endDate,
       isLimitedByArchiveDate: false,
     },
   };
@@ -96,7 +99,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
           },
         },
       ],
-      now: addDays(-1),
+      now: startDate,
     });
     const declinedPPD = await saveFakeFormSubmissionFromInputTestData(db, {
       student,
@@ -116,6 +119,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
           },
         },
       ],
+      now: endDate,
     });
 
     const ministryUserToken = await getAESTToken(
@@ -164,6 +168,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
           },
         },
       ],
+      now: startDate,
     });
 
     const ministryUserToken = await getAESTToken(
@@ -207,7 +212,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_ATBC_Billing_Report)",
           },
         },
       ],
-      now: addDays(-3),
+      now: addDays(-1, startDate),
     });
 
     const ministryUserToken = await getAESTToken(
