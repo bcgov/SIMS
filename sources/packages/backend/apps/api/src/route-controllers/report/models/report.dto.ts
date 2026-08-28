@@ -25,7 +25,7 @@ export enum MinistryReportNames {
   ProgramAndOfferingStatus = "Program_And_Offering_Status_Report",
   CASSupplierMaintenanceUpdates = "CAS_Supplier_Maintenance_Updates_Report",
   MinistryStudentApplicationsByInstitution = "Ministry_Student_Applications_By_Institution_Report",
-  DisabilityAdjudication_Summary = "Ministry_Disability_Adjudication_Summary_Report",
+  DisabilityAdjudicationSummary = "Ministry_Disability_Adjudication_Summary_Report",
 }
 
 /**
