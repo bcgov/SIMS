@@ -14,6 +14,10 @@ export const MINISTRY_REPORTS: OptionItemAPIOutDTO[] = [
     description: "CAS Supplier Maintenance Updates",
     id: "CAS_Supplier_Maintenance_Updates_Report",
   },
+  {
+    description: "Disability Adjudication Summary",
+    id: "Ministry_Disability_Adjudication_Summary_Report",
+  },
   { description: "Disbursements", id: "Disbursement_Report" },
   {
     description: "Disbursements Without Valid Supplier",
