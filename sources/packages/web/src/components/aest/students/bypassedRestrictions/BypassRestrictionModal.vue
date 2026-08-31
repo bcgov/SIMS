@@ -17,7 +17,7 @@
             label="I want this application to bypass the following restriction"
             density="compact"
             :items="restrictionsToBypass"
-            item-title="restrictionCode"
+            item-title="restrictionLabel"
             item-value="restrictionId"
             v-model="formModel.restrictionId"
             variant="outlined"
@@ -46,11 +46,12 @@
             </template>
           </v-select>
           <v-radio-group
+            v-if="selectedRestriction && !isIURRestrictionSelected"
             label="Until"
             inline
             v-model="formModel.bypassBehavior"
             color="primary"
-            class="mt-2"
+            class="pt-2"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Until')]"
             :disabled="readOnly"
           >
@@ -65,6 +66,11 @@
               color="primary"
             ></v-radio>
           </v-radio-group>
+          <div v-else-if="selectedRestriction" class="pt-2 text-body-2">
+            The student creates a new version of the application or a ministry
+            user removes the bypass. Note: This bypass only allows the student
+            to accept their application.
+          </div>
           <v-textarea
             label="Notes"
             variant="outlined"
@@ -72,6 +78,7 @@
             v-model="formModel.note"
             :rules="[checkNotesLengthRule]"
             required
+            class="pt-2"
             v-if="!readOnly"
           />
           <title-value
@@ -146,7 +153,7 @@ import {
   RestrictionBypassBehaviors,
   VForm,
 } from "@/types";
-import { ref, defineComponent } from "vue";
+import { computed, ref, defineComponent, watch } from "vue";
 import {
   useRules,
   useModalDialog,
@@ -164,6 +171,7 @@ import { ApplicationRestrictionBypassService } from "@/services/ApplicationRestr
 
 interface RestrictionBypassItem {
   restrictionCode: string;
+  restrictionLabel: string;
   restrictionId: number;
   restrictedParty: RestrictedParty;
 }
@@ -181,7 +189,7 @@ export default defineComponent({
     const restrictionBypassDetails = ref(
       {} as ApplicationRestrictionBypassAPIOutDTO,
     );
-    const formModel = ref({} as BypassRestrictionAPIInDTO);
+    const formModel = ref({} as Partial<BypassRestrictionAPIInDTO>);
     const availableRestrictionsToBypass = ref(
       {} as AvailableRestrictionsAPIOutDTO,
     );
@@ -194,6 +202,23 @@ export default defineComponent({
     const bypassRestrictionForm = ref({} as VForm);
     const { checkNullOrEmptyRule, checkNotesLengthRule } = useRules();
     const note = ref("");
+    const selectedRestriction = computed(() =>
+      restrictionsToBypass.value.find(
+        (restriction) =>
+          restriction.restrictionId === formModel.value.restrictionId,
+      ),
+    );
+    const isIURRestrictionSelected = computed(
+      () => selectedRestriction.value?.restrictionCode === "IUR",
+    );
+    watch(
+      () => formModel.value.restrictionId,
+      () => {
+        if (isIURRestrictionSelected.value) {
+          delete formModel.value.bypassBehavior;
+        }
+      },
+    );
     const cancel = () => {
       restrictionBypassDetails.value =
         {} as ApplicationRestrictionBypassAPIOutDTO;
@@ -217,7 +242,7 @@ export default defineComponent({
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
           restrictedParty: foundRestriction.restrictedParty,
-        });
+        } as BypassRestrictionAPIInDTO);
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
       } catch (error: unknown) {
@@ -241,7 +266,8 @@ export default defineComponent({
     ): RestrictionBypassItem => {
       const formattedDate = dateOnlyLongString(createdDate);
       return {
-        restrictionCode: `${restrictionCode} added on ${formattedDate}`,
+        restrictionCode,
+        restrictionLabel: `${restrictionCode} added on ${formattedDate}`,
         restrictionId,
         restrictedParty,
       };
@@ -313,6 +339,8 @@ export default defineComponent({
       BannerTypes,
       readOnly,
       RestrictionBypassBehaviors,
+      isIURRestrictionSelected,
+      selectedRestriction,
     };
   },
 });

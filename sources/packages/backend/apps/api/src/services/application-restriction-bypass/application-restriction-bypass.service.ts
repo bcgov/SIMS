@@ -45,6 +45,15 @@ const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
 ]);
 
 /**
+ * Application statuses that allow the IUR institution restriction to be bypassed.
+ */
+const IUR_BYPASS_ELIGIBLE_APPLICATION_STATUSES = new Set([
+  ApplicationStatus.Submitted,
+  ApplicationStatus.InProgress,
+  ApplicationStatus.Assessment,
+]);
+
+/**
  * Service layer for application restriction bypasses.
  */
 @Injectable()
@@ -312,6 +321,7 @@ export class ApplicationRestrictionBypassService {
       .createQueryBuilder("application")
       .select([
         "application.id",
+        "application.applicationStatus",
         "currentAssessment.id",
         "offering.id",
         "offering.offeringIntensity",
@@ -358,7 +368,15 @@ export class ApplicationRestrictionBypassService {
             institutionRestriction.restriction.actionType.includes(actionType),
           ),
       );
-    return filteredInstitutionRestrictions.map((institutionRestriction) => ({
+    const availableInstitutionRestrictions =
+      filteredInstitutionRestrictions.filter(
+        (institutionRestriction) =>
+          institutionRestriction.restriction.restrictionCode !== "IUR" ||
+          IUR_BYPASS_ELIGIBLE_APPLICATION_STATUSES.has(
+            institutionApplication.applicationStatus,
+          ),
+      );
+    return availableInstitutionRestrictions.map((institutionRestriction) => ({
       restrictionId: institutionRestriction.id,
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       restrictionCreatedAt: institutionRestriction.createdAt,
@@ -572,11 +590,13 @@ export class ApplicationRestrictionBypassService {
           RestrictionActionType.StopFullTimeBCLoan,
           RestrictionActionType.StopFullTimeBCGrants,
           RestrictionActionType.StopFullTimeDisbursement,
+          RestrictionActionType.StopFullTimeAcceptAssessment,
         ];
       case OfferingIntensity.partTime:
         return [
           RestrictionActionType.StopPartTimeBCGrants,
           RestrictionActionType.StopPartTimeDisbursement,
+          RestrictionActionType.StopPartTimeAcceptAssessment,
         ];
       default:
         throw new Error("Invalid offering intensity.");
