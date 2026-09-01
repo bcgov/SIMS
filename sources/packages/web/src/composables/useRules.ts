@@ -61,6 +61,32 @@ export function useRules() {
     return "Required field.";
   };
 
+  /**
+   * Check if the value matches a regex pattern.
+   * @param value value to be checked.
+   * @param regex regex pattern to be matched.
+   * @param fieldName friendly field name to be added to the validation message.
+   * @param isRequiredField whether the field is required.
+   * @returns true if the value matches the regex pattern, otherwise a validation message.
+   */
+  const checkRegexPattern = (
+    value: string,
+    regex: RegExp,
+    fieldName: string,
+    isRequiredField = true,
+  ) => {
+    if (value) {
+      return regex.test(value) || `${fieldName} format is invalid.`;
+    }
+    if (!isRequiredField) {
+      return true;
+    }
+    if (fieldName) {
+      return `${fieldName} is required.`;
+    }
+    return "Required field.";
+  };
+
   const checkStringDateFormatRule = (dateString: string) => {
     if (dateString) {
       return (
@@ -155,5 +181,6 @@ export function useRules() {
     checkLastNameLengthRule,
     checkEmailLengthRule,
     checkEmailValidationRule,
+    checkRegexPattern,
   };
 }

@@ -1,4 +1,9 @@
-import { ProgramStatus, StatusChipTypes } from "@/types";
+import {
+  ProgramDeliveryTypes,
+  ProgramDeliveryTypeValues,
+  ProgramStatus,
+  StatusChipTypes,
+} from "@/types";
 
 export function useProgram() {
   const mapProgramChipStatus = (
@@ -20,5 +25,15 @@ export function useProgram() {
     }
   };
 
-  return { mapProgramChipStatus };
+  const mapToProgramDeliveryTypeValues = (
+    programDeliveryTypes: ProgramDeliveryTypes,
+  ): ProgramDeliveryTypeValues[] =>
+    [
+      programDeliveryTypes.deliveredOnSite && ProgramDeliveryTypeValues.Onsite,
+      programDeliveryTypes.deliveredOnline && ProgramDeliveryTypeValues.Online,
+    ].filter((deliveryType): deliveryType is ProgramDeliveryTypeValues =>
+      Boolean(deliveryType),
+    );
+
+  return { mapProgramChipStatus, mapToProgramDeliveryTypeValues };
 }

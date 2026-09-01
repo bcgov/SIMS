@@ -54,3 +54,13 @@ export interface SelectItemType {
 export interface Event {
   target: { value: string };
 }
+
+export interface RadioItemType {
+  title: string;
+  value: string | number;
+}
+
+export interface CheckboxItemType {
+  title: string;
+  value: string | number;
+}

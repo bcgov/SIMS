@@ -36,6 +36,11 @@ export interface ProgramDeliveryTypes {
   deliveredOnline: boolean;
 }
 
+export enum ProgramDeliveryTypeValues {
+  Onsite = "onsite",
+  Online = "online",
+}
+
 export class EntranceRequirements {
   @Expose()
   hasMinimumAge: boolean;
