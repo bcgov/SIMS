@@ -3,7 +3,13 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionBypassBehaviors,
 } from "@sims/sims-db";
-import { IsPositive, IsEnum, MaxLength, IsNotEmpty } from "class-validator";
+import {
+  IsPositive,
+  IsEnum,
+  MaxLength,
+  IsNotEmpty,
+  IsOptional,
+} from "class-validator";
 
 /**
  * DTO class for application restriction bypass summary.
@@ -31,8 +37,9 @@ export class BypassRestrictionAPIInDTO {
   restrictionId: number;
   @IsEnum(RestrictedParty)
   restrictedParty: RestrictedParty;
+  @IsOptional()
   @IsEnum(RestrictionBypassBehaviors)
-  bypassBehavior: RestrictionBypassBehaviors;
+  bypassBehavior?: RestrictionBypassBehaviors;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;

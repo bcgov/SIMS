@@ -5,7 +5,7 @@ export interface BypassRestrictionData {
   applicationId: number;
   restrictionId: number;
   restrictedParty: RestrictedParty;
-  bypassBehavior: RestrictionBypassBehaviors;
+  bypassBehavior?: RestrictionBypassBehaviors;
   note: string;
 }
 
