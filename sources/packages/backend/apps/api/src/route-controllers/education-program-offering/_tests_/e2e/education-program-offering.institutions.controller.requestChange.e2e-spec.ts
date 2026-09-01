@@ -98,6 +98,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
           studyStartDate: "2023-09-01",
           studyEndDate: "2024-06-30",
           submittedDate: new Date(),
+          lacksStudyBreaks: false,
         },
       },
     );
