@@ -74,11 +74,13 @@ export default defineComponent({
         data.canadaPostalCode =
           bcscParsedToken.address?.postal_code?.replaceAll(/\s+/g, "") ?? "";
       }
-      data.country = bcscParsedToken.address?.country;
-      data.selectedCountry =
-        bcscParsedToken.address?.country === CANADA_COUNTRY_CODE
-          ? "Canada"
-          : "other";
+      if (bcscParsedToken.address?.country) {
+        data.country = bcscParsedToken.address.country;
+        data.selectedCountry =
+          bcscParsedToken.address.country === CANADA_COUNTRY_CODE
+            ? "Canada"
+            : "other";
+      }
     };
 
     const populateBCSCUserData = (data: StudentProfileFormModel) => {
