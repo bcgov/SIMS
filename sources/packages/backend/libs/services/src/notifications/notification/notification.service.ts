@@ -61,15 +61,41 @@ export class NotificationService extends RecordDataModelService<Notification> {
       entityManager?: EntityManager;
     },
   ): Promise<number[]> {
-    const newNotifications = notifications.map((notification) => ({
-      user: { id: notification.userId } as User,
-      creator: { id: auditUserId } as User,
-      messagePayload: notification.messagePayload,
-      notificationMessage: {
-        id: notification.messageType,
-      } as NotificationMessage,
-      metadata: notification.metadata,
-    }));
+    const newNotifications = notifications.map((notification) => {
+      const legacyMessagePayload =
+        notification.messagePayload as NotificationEmailMessage;
+      const { application_file: applicationFile, ...params } =
+        legacyMessagePayload.personalisation;
+      const messagePayload = {
+        params,
+        attachments: applicationFile
+          ? [
+              {
+                file: applicationFile["file"],
+                filename: applicationFile["filename"],
+                contentType: applicationFile["content_type"],
+              },
+            ]
+          : undefined,
+      };
+      if (legacyMessagePayload.personalisation.application_file) {
+        delete legacyMessagePayload.personalisation.application_file[
+          "content_type"
+        ];
+      }
+      return {
+        user: { id: notification.userId } as User,
+        creator: { id: auditUserId } as User,
+        messagePayload: legacyMessagePayload,
+        notificationMessage: {
+          id: notification.messageType,
+        } as NotificationMessage,
+        metadata: notification.metadata,
+        templateId: legacyMessagePayload.template_id,
+        recipients: [legacyMessagePayload.email_address],
+        message: messagePayload,
+      };
+    });
     const repository =
       options?.entityManager?.getRepository(Notification) ?? this.repo;
     // Breaks the execution in chunks to allow the inserts of a huge amount of records.

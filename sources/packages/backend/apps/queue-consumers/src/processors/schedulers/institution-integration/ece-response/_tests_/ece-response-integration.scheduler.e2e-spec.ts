@@ -337,6 +337,29 @@ describe(
             },
             template_id: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
           },
+          templateId: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
+          recipients: [emailAddress],
+          message: {
+            params: {
+              institutionCode: locationCONF.institutionCode,
+              fileParsingErrors: 0,
+              totalRecords: 2,
+              totalRecordsSkipped: 1,
+              totalDisbursements: 1,
+              disbursementsSuccessfullyProcessed: 1,
+              disbursementsSkipped: 0,
+              duplicateDisbursements: 0,
+              disbursementsFailedToProcess: 0,
+              date: expect.any(String),
+            },
+            attachments: [
+              {
+                file: expect.any(String),
+                filename: "Processing_Summary_Report.txt",
+                contentType: "text/plain",
+              },
+            ],
+          },
         },
       ]);
       // Expect the COE status of the updated disbursement to be completed.

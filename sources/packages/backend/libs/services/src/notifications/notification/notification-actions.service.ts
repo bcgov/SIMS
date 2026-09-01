@@ -722,6 +722,7 @@ export class NotificationActionsService {
             file: base64Encode(notification.attachmentFileContent),
             filename: ECE_RESPONSE_ATTACHMENT_FILE_NAME,
             sending_method: "attach",
+            content_type: "text/plain",
           },
         },
       };
@@ -1191,6 +1192,7 @@ export class NotificationActionsService {
             file: base64Encode(notification.attachmentFileContent),
             filename: notification.fileName,
             sending_method: "attach",
+            content_type: "text/csv",
           },
         },
       } as NotificationEmailMessage,

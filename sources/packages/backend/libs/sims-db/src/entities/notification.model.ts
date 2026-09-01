@@ -86,6 +86,31 @@ export class Notification extends RecordDataModel {
     nullable: true,
   })
   metadata?: NotificationMetadata;
+  /**
+   * Template ID used to send the notification.
+   */
+  @Column({
+    name: "template_id",
+    type: "uuid",
+  })
+  templateId: string;
+  /**
+   * Notification recipient email addresses.
+   */
+  @Column({
+    name: "recipients",
+    array: true,
+    type: "varchar",
+  })
+  recipients: string[];
+  /**
+   * Message associated with this notification.
+   */
+  @Column({
+    name: "message",
+    type: "jsonb",
+  })
+  message: unknown;
 }
 
 /**
