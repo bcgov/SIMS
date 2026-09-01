@@ -220,6 +220,72 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     });
   });
 
+  it("Should be able to create a bypass for an institution restriction with an accept assessment action type.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      offeringIntensity: OfferingIntensity.fullTime,
+    });
+    const acceptAssessmentInstitutionRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionCode: "IUR-TEST",
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.StopFullTimeAcceptAssessment],
+        },
+      }),
+    );
+    const institutionRestriction = await saveFakeInstitutionRestriction(db, {
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
+      restriction: acceptAssessmentInstitutionRestriction,
+      creator: sharedMinistryUser,
+      program: application.currentAssessment.offering.educationProgram,
+      location: application.currentAssessment.offering.institutionLocation,
+    });
+
+    const payload = {
+      applicationId: application.id,
+      restrictionId: institutionRestriction.id,
+      restrictedParty: RestrictedParty.Institution,
+      note: "accept assessment bypass test note",
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    let applicationRestrictionBypassId: number;
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        applicationRestrictionBypassId = response.body.id;
+      });
+
+    const applicationRestrictionBypass =
+      await db.applicationRestrictionBypass.findOne({
+        select: {
+          id: true,
+          application: { id: true },
+          institutionRestriction: { id: true },
+          isActive: true,
+        },
+        relations: {
+          application: true,
+          institutionRestriction: true,
+        },
+        where: { id: applicationRestrictionBypassId },
+      });
+
+    expect(applicationRestrictionBypass).toEqual({
+      id: applicationRestrictionBypassId,
+      application: { id: application.id },
+      institutionRestriction: { id: institutionRestriction.id },
+      isActive: true,
+    });
+  });
+
   it("Should throw an HTTP error while creating a bypass when there is an active bypass for the same active student restriction.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
+  ApplicationRestrictionBypass,
   InstitutionRestriction,
   OfferingIntensity,
   QueryAndParamsForExecution,
@@ -12,6 +13,7 @@ import {
   Brackets,
   DataSource,
   EntityManager,
+  In,
   ObjectLiteral,
   Repository,
 } from "typeorm";
@@ -32,6 +34,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     private readonly institutionRestrictionRepo: Repository<InstitutionRestriction>,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(ApplicationRestrictionBypass)
+    private readonly applicationRestrictionBypassRepo: Repository<ApplicationRestrictionBypass>,
   ) {
     super(dataSource.getRepository(Restriction));
   }
@@ -206,10 +210,15 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
         offering.institutionLocation.id,
         { programId: offering.educationProgram.id, actionTypes: [action] },
       );
-    if (effectiveInstitutionRestrictions.length) {
+    const restrictionsPreventingAcceptance =
+      await this.filterInstitutionRestrictionsWithActiveBypasses(
+        applicationId,
+        effectiveInstitutionRestrictions,
+      );
+    if (restrictionsPreventingAcceptance.length) {
       return {
         canAcceptAssessment: false,
-        restrictions: effectiveInstitutionRestrictions.map((restriction) => ({
+        restrictions: restrictionsPreventingAcceptance.map((restriction) => ({
           code: restriction.restriction.restrictionCode,
           message:
             restriction.restriction.metadata?.messages?.studentAcceptAssessment,
@@ -220,5 +229,39 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       canAcceptAssessment: true,
       restrictions: [],
     };
+  }
+
+  /**
+   * Removes institution restrictions that have an active application bypass.
+   * @param applicationId application ID to check.
+   * @param effectiveInstitutionRestrictions institution restrictions currently affecting the application.
+   * @returns institution restrictions that are not bypassed.
+   */
+  private async filterInstitutionRestrictionsWithActiveBypasses(
+    applicationId: number,
+    effectiveInstitutionRestrictions: InstitutionRestriction[],
+  ): Promise<InstitutionRestriction[]> {
+    if (!effectiveInstitutionRestrictions.length) {
+      return [];
+    }
+    const institutionRestrictionIds = effectiveInstitutionRestrictions.map(
+      (restriction) => restriction.id,
+    );
+    const activeBypasses = await this.applicationRestrictionBypassRepo.find({
+      select: { institutionRestriction: { id: true } },
+      relations: { institutionRestriction: true },
+      where: {
+        application: { id: applicationId },
+        institutionRestriction: { id: In(institutionRestrictionIds) },
+        isActive: true,
+      },
+    });
+    // Any active bypass suppresses the associated institution restriction for this evaluation.
+    const bypassedInstitutionRestrictionIds = new Set(
+      activeBypasses.map((bypass) => bypass.institutionRestriction.id),
+    );
+    return effectiveInstitutionRestrictions.filter(
+      (restriction) => !bypassedInstitutionRestrictionIds.has(restriction.id),
+    );
   }
 }
