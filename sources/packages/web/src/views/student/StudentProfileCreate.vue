@@ -61,22 +61,22 @@ export default defineComponent({
 
     const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
       // BCSC users address fields to StudentProfileFormModel.
-      if (bcscParsedToken.address.street_address) {
+      if (bcscParsedToken.address?.street_address) {
         data.addressLine1 = bcscParsedToken.address.street_address.replace(
           /\r\n|\n/g,
           " ",
         );
       }
-      data.city = bcscParsedToken.address.locality;
-      if (bcscParsedToken.address.country === CANADA_COUNTRY_CODE) {
-        data.provinceState = bcscParsedToken.address.region;
+      data.city = bcscParsedToken.address?.locality;
+      if (bcscParsedToken.address?.country === CANADA_COUNTRY_CODE) {
+        data.provinceState = bcscParsedToken.address?.region;
         // Remove spaces from postal code.
         data.canadaPostalCode =
-          bcscParsedToken.address.postal_code?.replaceAll(/\s+/g, "") ?? "";
+          bcscParsedToken.address?.postal_code?.replaceAll(/\s+/g, "") ?? "";
       }
-      data.country = bcscParsedToken.address.country;
+      data.country = bcscParsedToken.address?.country;
       data.selectedCountry =
-        bcscParsedToken.address.country === CANADA_COUNTRY_CODE
+        bcscParsedToken.address?.country === CANADA_COUNTRY_CODE
           ? "Canada"
           : "other";
     };
