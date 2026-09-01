@@ -60,23 +60,26 @@ export default defineComponent({
     const isDataReady = ref(false);
 
     const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
+      if (!bcscParsedToken.address) {
+        return;
+      }
       // BCSC users address fields to StudentProfileFormModel.
-      if (bcscParsedToken.address?.street_address) {
+      if (bcscParsedToken.address.street_address) {
         data.addressLine1 = bcscParsedToken.address.street_address.replace(
           /\r\n|\n/g,
           " ",
         );
       }
-      if (bcscParsedToken.address?.locality) {
-        data.city = bcscParsedToken.address?.locality;
+      if (bcscParsedToken.address.locality) {
+        data.city = bcscParsedToken.address.locality;
       }
-      if (bcscParsedToken.address?.country === CANADA_COUNTRY_CODE) {
-        data.provinceState = bcscParsedToken.address?.region;
+      if (bcscParsedToken.address.country === CANADA_COUNTRY_CODE) {
+        data.provinceState = bcscParsedToken.address.region;
         // Remove spaces from postal code.
         data.canadaPostalCode =
-          bcscParsedToken.address?.postal_code?.replaceAll(/\s+/g, "") ?? "";
+          bcscParsedToken.address.postal_code?.replaceAll(/\s+/g, "") ?? "";
       }
-      if (bcscParsedToken.address?.country) {
+      if (bcscParsedToken.address.country) {
         data.country = bcscParsedToken.address.country;
         data.selectedCountry =
           bcscParsedToken.address.country === CANADA_COUNTRY_CODE
