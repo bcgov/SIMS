@@ -67,7 +67,9 @@ export default defineComponent({
           " ",
         );
       }
-      data.city = bcscParsedToken.address?.locality;
+      if (bcscParsedToken.address?.locality) {
+        data.city = bcscParsedToken.address?.locality;
+      }
       if (bcscParsedToken.address?.country === CANADA_COUNTRY_CODE) {
         data.provinceState = bcscParsedToken.address?.region;
         // Remove spaces from postal code.
