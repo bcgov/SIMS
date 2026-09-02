@@ -60,6 +60,9 @@ export default defineComponent({
     const isDataReady = ref(false);
 
     const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
+      if (!bcscParsedToken.address) {
+        return;
+      }
       // BCSC users address fields to StudentProfileFormModel.
       if (bcscParsedToken.address.street_address) {
         data.addressLine1 = bcscParsedToken.address.street_address.replace(
@@ -67,18 +70,22 @@ export default defineComponent({
           " ",
         );
       }
-      data.city = bcscParsedToken.address.locality;
+      if (bcscParsedToken.address.locality) {
+        data.city = bcscParsedToken.address.locality;
+      }
       if (bcscParsedToken.address.country === CANADA_COUNTRY_CODE) {
         data.provinceState = bcscParsedToken.address.region;
         // Remove spaces from postal code.
         data.canadaPostalCode =
           bcscParsedToken.address.postal_code?.replaceAll(/\s+/g, "") ?? "";
       }
-      data.country = bcscParsedToken.address.country;
-      data.selectedCountry =
-        bcscParsedToken.address.country === CANADA_COUNTRY_CODE
-          ? "Canada"
-          : "other";
+      if (bcscParsedToken.address.country) {
+        data.country = bcscParsedToken.address.country;
+        data.selectedCountry =
+          bcscParsedToken.address.country === CANADA_COUNTRY_CODE
+            ? "Canada"
+            : "other";
+      }
     };
 
     const populateBCSCUserData = (data: StudentProfileFormModel) => {
