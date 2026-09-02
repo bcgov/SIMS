@@ -252,16 +252,13 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
-    let applicationRestrictionBypassId: number;
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-        applicationRestrictionBypassId = response.body.id;
-      });
+      .expect(HttpStatus.CREATED);
+    expect(response.body.id).toBeGreaterThan(0);
+    const applicationRestrictionBypassId = response.body.id;
 
     const applicationRestrictionBypass =
       await db.applicationRestrictionBypass.findOne({
