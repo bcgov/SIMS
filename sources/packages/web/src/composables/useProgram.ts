@@ -35,5 +35,23 @@ export function useProgram() {
       Boolean(deliveryType),
     );
 
-  return { mapProgramChipStatus, mapToProgramDeliveryTypeValues };
+  /**
+   * Converts an object model with boolean values into an array of keys where the value is true.
+   * @param objectModel object model with boolean values.
+   * @returns An array of keys from the objectModel where the value is true.
+   */
+  const convertCheckboxObjectModelToArray = <T>(objectModel?: object): T[] => {
+    if (!objectModel) {
+      return [];
+    }
+    return Object.entries(objectModel)
+      .filter(([, value]) => value)
+      .map(([key]) => key as T);
+  };
+
+  return {
+    mapProgramChipStatus,
+    mapToProgramDeliveryTypeValues,
+    convertCheckboxObjectModelToArray,
+  };
 }

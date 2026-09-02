@@ -1,4 +1,4 @@
-import { FormYesNoOptions, MenuItemModel, RadioItemType } from "@/types";
+import { FormYesNoOptions, MenuItemModel, ComponentItemType } from "@/types";
 
 /**
  * Basic divider for the menu sections.
@@ -11,9 +11,9 @@ export const DIVIDER_MENU_ITEM: MenuItemModel = {
 };
 
 /**
- * Item values to populate the Yes/No radio buttons.
+ * Item values to populate the Yes/No options.
  */
-export const YES_NO_VALUES_RADIO_ITEMS: RadioItemType[] = [
+export const YES_NO_VALUE_ITEMS: ComponentItemType[] = [
   { title: "Yes", value: FormYesNoOptions.Yes },
   { title: "No", value: FormYesNoOptions.No },
 ];

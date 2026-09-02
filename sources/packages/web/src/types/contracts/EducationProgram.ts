@@ -37,8 +37,18 @@ export interface ProgramDeliveryTypes {
 }
 
 export enum ProgramDeliveryTypeValues {
-  Onsite = "onsite",
-  Online = "online",
+  Onsite = "deliveredOnSite",
+  Online = "deliveredOnline",
+}
+
+export enum ProgramCourseLoadCalculationTypes {
+  Credit = "credit",
+  Hours = "hours",
+}
+
+export enum ProgramESLPercentage {
+  LessThan20 = "lessThan20",
+  GreaterThanEqual20 = "20OrMore",
 }
 
 export class EntranceRequirements {

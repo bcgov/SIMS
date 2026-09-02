@@ -15,14 +15,14 @@
 </template>
 
 <script setup lang="ts">
-import type { CheckboxItemType } from "@/types";
+import type { ComponentItemType } from "@/types";
 type ModelType = string[] | boolean[] | number[];
 
 // Automatically handles the v-model binding.
 const model = defineModel<ModelType>();
 
 defineProps<{
-  items: CheckboxItemType[];
+  items: ComponentItemType[];
   label: string;
   rules?: ((v: ModelType) => boolean | string)[];
 }>();
