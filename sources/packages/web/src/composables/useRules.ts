@@ -168,6 +168,17 @@ export function useRules() {
     return true;
   };
 
+  /**
+   * Check if a declaration checkbox is checked.
+   * @param value value to be checked.
+   * @param message optional message to be displayed if not checked.
+   * @returns true if the checkbox is checked, otherwise a validation message.
+   */
+  const requiredDeclarationRule = (
+    value: boolean,
+    message = "You must confirm to proceed.",
+  ) => value || message;
+
   return {
     sinValidationRule,
     checkNotesLengthRule,
@@ -182,5 +193,6 @@ export function useRules() {
     checkEmailLengthRule,
     checkEmailValidationRule,
     checkRegexPattern,
+    requiredDeclarationRule,
   };
 }

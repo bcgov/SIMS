@@ -1,17 +1,19 @@
 <template>
-  <v-label class="text-wrap">{{ label }}</v-label>
-  <template v-for="item in items" :key="item.value">
-    <v-checkbox
-      class="ml-3"
-      density="compact"
-      :label="item.title"
-      :value="item.value"
-      v-model="model"
-      v-bind="$attrs"
-      hide-details
-    ></v-checkbox>
-  </template>
-  <v-input :model-value="model" hide-details="auto" :rules="rules"> </v-input>
+  <div class="my-3">
+    <v-label class="text-wrap">{{ label }}</v-label>
+    <template v-for="item in items" :key="item.value">
+      <v-checkbox
+        class="ml-3"
+        density="compact"
+        :label="item.title"
+        :value="item.value"
+        v-model="model"
+        v-bind="$attrs"
+        hide-details
+      ></v-checkbox>
+    </template>
+    <v-input :model-value="model" hide-details="auto" :rules="rules"> </v-input>
+  </div>
 </template>
 
 <script setup lang="ts">

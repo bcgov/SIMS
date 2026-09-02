@@ -1,5 +1,10 @@
 <template>
-  <v-radio-group v-model="model" v-bind="$attrs">
+  <v-radio-group
+    v-model="model"
+    v-bind="$attrs"
+    hide-details="auto"
+    class="my-3"
+  >
     <v-label class="text-wrap">{{ label }}</v-label>
     <template v-for="item in items" :key="item.value">
       <v-radio :label="item.title" :value="item.value"></v-radio>
