@@ -7,11 +7,35 @@
         sub-title="Edit Program"
       />
     </template>
+    <template #alerts>
+      <banner
+        v-if="canEditOnlyBasicInfo"
+        :type="BannerTypes.Success"
+        header="Program details no longer editable"
+        summary="This program has study period offerings attached to it, and the program details can no longer be edited. If revisions are required other than to program name or program description, you must create a new program with the correct details."
+      >
+        <template #actions>
+          <v-btn
+            color="success"
+            @click="createNewProgram"
+            class="btn-font-color-light"
+            v-if="!isReadonly"
+          >
+            Create program
+          </v-btn>
+        </template>
+      </banner>
+      <institution-restriction-banner
+        :scope="InstitutionRestrictionDisplayScope.Program"
+        :location-id="locationId"
+        :program-id="programId"
+      />
+    </template>
     <body-header-container title="Program"
       ><content-group>
         <error-summary :errors="editProgramForm.errors" />
         <v-skeleton-loader :loading="loading" type="article, text@5">
-          <v-form ref="editProgramForm">
+          <v-form ref="editProgramForm" :readonly="isReadonly">
             <body-header-container title="Program details" header-size="medium">
               <content-group>
                 <v-text-field
@@ -59,6 +83,7 @@
                         'Classification of Instructional Programs (CIP)',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
                 <v-text-field
                   :model-value="editProgramFormModel.fieldOfStudyCode"
@@ -83,6 +108,7 @@
                         false,
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
                 <v-text-field
                   v-model="editProgramFormModel.sabcCode"
@@ -100,6 +126,7 @@
                         false,
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
                 <v-text-field
                   v-model="editProgramFormModel.institutionProgramCode"
@@ -116,6 +143,7 @@
                         false,
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 /> </content-group
             ></body-header-container>
             <body-header-container
@@ -135,6 +163,7 @@
                         'Are students able to take this on a part time basis?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-checkbox
                   v-model="editProgramFormModel.programDeliveryTypes"
@@ -146,30 +175,31 @@
                       v.length > 0 ||
                       'At least one program delivery type must be selected.',
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-checkbox>
                 <program-eligibility-banner
                   v-if="bannerDisplayConditions.showBCPrivateOnlyOnlineBanner"
                   header="This program requires review by StudentAid BC to determine eligibility."
                 />
                 <option-items-radio
-                  v-if="
-                    componentDisplayConditions.showDeliveredOnlineAlsoOnsite
-                  "
+                  v-if="componentDisplayConditions.deliveredOnlineAlsoOnsite"
                   v-model="editProgramFormModel.deliveredOnlineAlsoOnsite"
                   color="primary"
                   label="Will the program also be offered and delivered at 100% course load on site?"
                   :items="YES_NO_VALUE_ITEMS"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
-                  v-if="componentDisplayConditions.showSameOnlineCreditsEarned"
+                  v-if="componentDisplayConditions.sameOnlineCreditsEarned"
                   v-model="editProgramFormModel.sameOnlineCreditsEarned"
                   color="primary"
                   label="Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?"
                   :items="YES_NO_VALUE_ITEMS"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
                   v-if="
-                    componentDisplayConditions.showAcademicCreditsOtherInstitution
+                    componentDisplayConditions.earnAcademicCreditsOtherInstitution
                   "
                   v-model="
                     editProgramFormModel.earnAcademicCreditsOtherInstitution
@@ -177,6 +207,7 @@
                   color="primary"
                   label="Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?"
                   :items="YES_NO_VALUE_ITEMS"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="
@@ -191,6 +222,7 @@
                   variant="outlined"
                   hide-details="auto"
                   :rules="[(v) => checkNullOrEmptyRule(v, 'Program length')]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
                 <option-items-radio
                   v-model="editProgramFormModel.courseLoadCalculation"
@@ -204,9 +236,10 @@
                         'Program course load calculation:',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
-                  v-if="componentDisplayConditions.showMinHoursWeek"
+                  v-if="componentDisplayConditions.minHoursWeek"
                   v-model="editProgramFormModel.minHoursWeek"
                   color="primary"
                   label="Does this program include a minimum of 20 instructional hours per week?"
@@ -218,6 +251,7 @@
                         'Does this program include a minimum of 20 instructional hours per week?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="bannerDisplayConditions.showLessThanMinHoursWeekBanner"
@@ -236,9 +270,10 @@
                         'Which regulatory body does this program belong to?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
                 <v-text-field
-                  v-if="componentDisplayConditions.showOtherRegulatoryBody"
+                  v-if="componentDisplayConditions.otherRegulatoryBody"
                   v-model="editProgramFormModel.otherRegulatoryBody"
                   density="compact"
                   label="Other institution regulatory body"
@@ -252,6 +287,7 @@
                         'Other institution regulatory body',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
               </content-group>
             </body-header-container>
@@ -270,6 +306,7 @@
                       v.length > 0 ||
                       'At least one entrance requirement must be selected.',
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-checkbox>
                 <program-eligibility-banner
                   v-if="
@@ -296,6 +333,7 @@
                         'What percentage of the program has ESL Content?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="bannerDisplayConditions.showExceedingESLBanner"
@@ -320,10 +358,11 @@
                         'Is the program offered jointly or in partnership with other institutions?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
                   v-if="
-                    componentDisplayConditions.showHasJointDesignatedInstitution
+                    componentDisplayConditions.hasJointDesignatedInstitution
                   "
                   v-model="editProgramFormModel.hasJointDesignatedInstitution"
                   color="primary"
@@ -336,6 +375,7 @@
                         'Are all institutions you partner with for this program designated by StudentAid BC?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="
@@ -379,9 +419,10 @@
                         'Does this program have a WIL component?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
-                  v-if="componentDisplayConditions.showIsWILApproved"
+                  v-if="componentDisplayConditions.isWILApproved"
                   v-model="editProgramFormModel.isWILApproved"
                   color="primary"
                   label="Is the WIL approved by your regulator or oversight body?"
@@ -393,17 +434,19 @@
                         'Is the WIL approved by your regulator or oversight body?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="bannerDisplayConditions.showWILNotApprovalBanner"
                   summary="The work-integrated learning component must be approved by your regulator or oversight body first."
                 />
                 <option-items-radio
-                  v-if="componentDisplayConditions.showWILProgramEligibility"
+                  v-if="componentDisplayConditions.wilProgramEligibility"
                   v-model="editProgramFormModel.wilProgramEligibility"
                   color="primary"
                   label="Does the WIL meet the program eligibility requirements according to StudentAid BC policy?"
                   :items="YES_NO_VALUE_ITEMS"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="bannerDisplayConditions.showWILEligibilityBanner"
@@ -428,9 +471,10 @@
                         'Is a field trip, field placement or travel part of this program?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
-                  v-if="componentDisplayConditions.showTravelProgramEligibility"
+                  v-if="componentDisplayConditions.travelProgramEligibility"
                   v-model="editProgramFormModel.travelProgramEligibility"
                   color="primary"
                   label="Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?"
@@ -442,6 +486,7 @@
                         'Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <program-eligibility-banner
                   v-if="bannerDisplayConditions.showTravelEligibilityBanner"
@@ -466,10 +511,11 @@
                         'Does the program have an international exchange?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-radio
                   v-if="
-                    componentDisplayConditions.showIntlExchangeProgramEligibility
+                    componentDisplayConditions.intlExchangeProgramEligibility
                   "
                   v-model="editProgramFormModel.intlExchangeProgramEligibility"
                   color="primary"
@@ -482,6 +528,7 @@
                         'Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
               </content-group>
             </body-header-container>
@@ -499,9 +546,10 @@
                         'Does this program contain aviation?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
                 <option-items-checkbox
-                  v-if="componentDisplayConditions.showAviationDetails"
+                  v-if="componentDisplayConditions.credentialTypesAviation"
                   v-model="editProgramFormModel.credentialTypesAviation"
                   color="primary"
                   label="Which credential type(s) are included? (Select all that apply)"
@@ -511,9 +559,10 @@
                       v.length > 0 ||
                       'At least one credential type must be selected.',
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-checkbox>
                 <option-items-radio
-                  v-if="componentDisplayConditions.showAviationDetails"
+                  v-if="componentDisplayConditions.minHoursWeekAvi"
                   v-model="editProgramFormModel.minHoursWeekAvi"
                   color="primary"
                   label="Does this program include a minimum of 15 instructional hours per week?"
@@ -525,6 +574,7 @@
                         'Does this program include a minimum of 15 instructional hours per week?',
                       ),
                   ]"
+                  :readonly="canEditOnlyBasicInfo"
                 ></option-items-radio>
               </content-group>
             </body-header-container>
@@ -539,6 +589,7 @@
                   v-model="editProgramFormModel.programDeclaration"
                   hide-details="auto"
                   :rules="[requiredDeclarationRule]"
+                  :readonly="canEditOnlyBasicInfo"
                 />
               </content-group>
             </body-header-container>
@@ -561,7 +612,7 @@ import {
   INSTITUTION_PROGRAM_CODE_MAX_LENGTH,
   OTHER_REGULATORY_BODY_MAX_LENGTH,
 } from "@/constants/program-constants";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import type { BackTarget, ComponentItemType, VForm } from "@/types";
 import {
   FormYesNoOptions,
@@ -569,6 +620,8 @@ import {
   ProgramCourseLoadCalculationTypes,
   ProgramDeliveryTypeValues,
   ProgramESLPercentage,
+  BannerTypes,
+  InstitutionRestrictionDisplayScope,
 } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { useRouter } from "vue-router";
@@ -576,10 +629,12 @@ import OptionItemsRadio from "@/components/generic/OptionItemsRadio.vue";
 import OptionItemsCheckbox from "@/components/generic/OptionItemsCheckbox.vue";
 import ProgramEligibilityBanner from "@/components/institutions/banners/ProgramEligibilityBanner.vue";
 import { YES_NO_VALUE_ITEMS } from "@/constants";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 
 interface EditProgramProps {
   locationId: number;
   programId: number;
+  readOnly: boolean;
   backTarget: BackTarget;
 }
 
@@ -621,8 +676,7 @@ interface EditProgramModel {
 
 interface ProgramContext {
   hasOfferings: boolean;
-  isActive: boolean;
-  isExpired: boolean;
+  isReadonly: boolean;
 }
 
 interface InstitutionContext {
@@ -718,12 +772,12 @@ const router = useRouter();
 const editProgramFormModel = ref<EditProgramModel>({} as EditProgramModel);
 const programContext = ref<ProgramContext>();
 const institutionContext = ref<InstitutionContext>();
-// const canEditOnlyBasicInfo = computed(
-//   () => !!program.value && !program.value.hasOfferings,
-// );
-// const isReadonly = computed(
-//   () => !program.value || !program.value.isActive || program.value.isExpired,
-// );
+const canEditOnlyBasicInfo = computed(
+  () => !!programContext.value && programContext.value.hasOfferings,
+);
+const isReadonly = computed(
+  () => props.readOnly || programContext.value?.isReadonly,
+);
 const {
   checkLengthRule,
   checkRegexPattern,
@@ -732,89 +786,91 @@ const {
 } = useRules();
 const { convertCheckboxObjectModelToArray } = useProgram();
 const editProgramForm = ref({} as VForm);
+
+// Ensure that the form model key is same as display condition key.
+// This will ensure that the form model value is reset when the component is hidden.
 const componentDisplayConditions = computed(() => {
+  const canShowAviationDetails =
+    editProgramFormModel.value.isAviationProgram === FormYesNoOptions.Yes;
   return {
-    showDeliveredOnlineAlsoOnsite:
+    deliveredOnlineAlsoOnsite:
       !institutionContext.value?.isBCInstitution &&
       editProgramFormModel.value.programDeliveryTypes?.includes(
         ProgramDeliveryTypeValues.Online,
       ),
-    showSameOnlineCreditsEarned:
+    sameOnlineCreditsEarned:
       editProgramFormModel.value.deliveredOnlineAlsoOnsite ===
       FormYesNoOptions.No,
-    showAcademicCreditsOtherInstitution:
+    earnAcademicCreditsOtherInstitution:
       editProgramFormModel.value.sameOnlineCreditsEarned ===
       FormYesNoOptions.No,
-    showMinHoursWeek:
+    minHoursWeek:
       editProgramFormModel.value.courseLoadCalculation ===
       ProgramCourseLoadCalculationTypes.Hours,
-    showOtherRegulatoryBody:
+    otherRegulatoryBody:
       editProgramFormModel.value.regulatoryBody === REGULATORY_BODY_OTHER,
-    showHasJointDesignatedInstitution:
+    hasJointDesignatedInstitution:
       editProgramFormModel.value.hasJointInstitution === FormYesNoOptions.Yes,
-    showIsWILApproved:
+    isWILApproved:
       editProgramFormModel.value.hasWILComponent === FormYesNoOptions.Yes,
-    showWILProgramEligibility:
+    wilProgramEligibility:
       editProgramFormModel.value.isWILApproved === FormYesNoOptions.Yes,
-    showTravelProgramEligibility:
+    travelProgramEligibility:
       editProgramFormModel.value.hasTravel === FormYesNoOptions.Yes,
-    showIntlExchangeProgramEligibility:
+    intlExchangeProgramEligibility:
       editProgramFormModel.value.hasIntlExchange === FormYesNoOptions.Yes,
-    showAviationDetails:
-      editProgramFormModel.value.isAviationProgram === FormYesNoOptions.Yes,
+    minHoursWeekAvi: canShowAviationDetails,
+    credentialTypesAviation: canShowAviationDetails,
   };
 });
-const bannerDisplayConditions = computed(() => {
-  return {
-    showBCPrivateOnlyOnlineBanner:
-      institutionContext.value?.isBCPrivate &&
-      editProgramFormModel.value.programDeliveryTypes?.length === 1 &&
-      editProgramFormModel.value.programDeliveryTypes[0] ===
-        ProgramDeliveryTypeValues.Online,
-    showNonBCInstitutionAcademicCreditsBanner:
-      !institutionContext.value?.isBCInstitution &&
-      editProgramFormModel.value.deliveredOnlineAlsoOnsite ===
-        FormYesNoOptions.No &&
-      editProgramFormModel.value.sameOnlineCreditsEarned ===
-        FormYesNoOptions.No &&
-      editProgramFormModel.value.earnAcademicCreditsOtherInstitution ===
-        FormYesNoOptions.No,
-    showLessThanMinHoursWeekBanner:
-      editProgramFormModel.value.courseLoadCalculation ===
-        ProgramCourseLoadCalculationTypes.Hours &&
-      editProgramFormModel.value.minHoursWeek === FormYesNoOptions.No &&
-      editProgramFormModel.value.isAviationProgram === FormYesNoOptions.No,
-    showNoEntranceRequirementsBanner:
-      editProgramFormModel.value.entranceRequirements?.length === 1 &&
-      editProgramFormModel.value.entranceRequirements[0] ===
-        NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
-    showExceedingESLBanner:
-      editProgramFormModel.value.eslEligibility ===
-      ProgramESLPercentage.GreaterThanEqual20,
-    showJointDesignatedInstitutionBanner:
-      editProgramFormModel.value.hasJointDesignatedInstitution ===
-      FormYesNoOptions.Yes,
-    showJointNonDesignatedInstitutionBanner:
-      editProgramFormModel.value.hasJointDesignatedInstitution ===
+const bannerDisplayConditions = computed(() => ({
+  showBCPrivateOnlyOnlineBanner:
+    institutionContext.value?.isBCPrivate &&
+    editProgramFormModel.value.programDeliveryTypes?.length === 1 &&
+    editProgramFormModel.value.programDeliveryTypes[0] ===
+      ProgramDeliveryTypeValues.Online,
+  showNonBCInstitutionAcademicCreditsBanner:
+    !institutionContext.value?.isBCInstitution &&
+    editProgramFormModel.value.deliveredOnlineAlsoOnsite ===
+      FormYesNoOptions.No &&
+    editProgramFormModel.value.sameOnlineCreditsEarned ===
+      FormYesNoOptions.No &&
+    editProgramFormModel.value.earnAcademicCreditsOtherInstitution ===
       FormYesNoOptions.No,
-    showWILNotApprovalBanner:
-      editProgramFormModel.value.isWILApproved === FormYesNoOptions.No,
-    showWILEligibilityBanner:
-      editProgramFormModel.value.wilProgramEligibility === FormYesNoOptions.No,
-    showTravelEligibilityBanner:
-      editProgramFormModel.value.travelProgramEligibility ===
-      FormYesNoOptions.No,
-    showIntlExchangeEligibilityBanner:
-      editProgramFormModel.value.intlExchangeProgramEligibility ===
-      FormYesNoOptions.No,
-    showPrivatePilotTrainingBanner:
-      editProgramFormModel.value.credentialTypesAviation?.includes(
-        AVIATION_PRIVATE_PILOT_TRAINING,
-      ),
-    showAviationMinHoursWeekBanner:
-      editProgramFormModel.value.minHoursWeekAvi === FormYesNoOptions.No,
-  };
-});
+  showLessThanMinHoursWeekBanner:
+    editProgramFormModel.value.courseLoadCalculation ===
+      ProgramCourseLoadCalculationTypes.Hours &&
+    editProgramFormModel.value.minHoursWeek === FormYesNoOptions.No &&
+    editProgramFormModel.value.isAviationProgram === FormYesNoOptions.No,
+  showNoEntranceRequirementsBanner:
+    editProgramFormModel.value.entranceRequirements?.length === 1 &&
+    editProgramFormModel.value.entranceRequirements[0] ===
+      NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+  showExceedingESLBanner:
+    editProgramFormModel.value.eslEligibility ===
+    ProgramESLPercentage.GreaterThanEqual20,
+  showJointDesignatedInstitutionBanner:
+    editProgramFormModel.value.hasJointDesignatedInstitution ===
+    FormYesNoOptions.Yes,
+  showJointNonDesignatedInstitutionBanner:
+    editProgramFormModel.value.hasJointDesignatedInstitution ===
+    FormYesNoOptions.No,
+  showWILNotApprovalBanner:
+    editProgramFormModel.value.isWILApproved === FormYesNoOptions.No,
+  showWILEligibilityBanner:
+    editProgramFormModel.value.wilProgramEligibility === FormYesNoOptions.No,
+  showTravelEligibilityBanner:
+    editProgramFormModel.value.travelProgramEligibility === FormYesNoOptions.No,
+  showIntlExchangeEligibilityBanner:
+    editProgramFormModel.value.intlExchangeProgramEligibility ===
+    FormYesNoOptions.No,
+  showPrivatePilotTrainingBanner:
+    editProgramFormModel.value.credentialTypesAviation?.includes(
+      AVIATION_PRIVATE_PILOT_TRAINING,
+    ),
+  showAviationMinHoursWeekBanner:
+    editProgramFormModel.value.minHoursWeekAvi === FormYesNoOptions.No,
+}));
 const submit = async () => {
   const { valid } = await editProgramForm.value.validate();
   if (!valid) {
@@ -882,8 +938,7 @@ const loadProgram = async () => {
     };
     programContext.value = {
       hasOfferings: programDetails.hasOfferings,
-      isActive: programDetails.isActive,
-      isExpired: programDetails.isExpired,
+      isReadonly: !programDetails.isActive || programDetails.isExpired,
     };
     institutionContext.value = {
       isBCPrivate: programDetails.isBCPrivate,
@@ -896,7 +951,28 @@ const loadProgram = async () => {
     loading.value = false;
   }
 };
+
+const createNewProgram = () => {
+  router.push({
+    name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+    params: {
+      locationId: props.locationId,
+    },
+  });
+};
 watchEffect(async () => {
   await loadProgram();
 });
+watch(
+  componentDisplayConditions,
+  (conditions) => {
+    Object.entries(conditions).forEach(([key, value]) => {
+      if (!value && editProgramFormModel.value[key] !== undefined) {
+        // Reset the form model value when the component is hidden.
+        editProgramFormModel.value[key] = undefined;
+      }
+    });
+  },
+  { immediate: true },
+);
 </script>
