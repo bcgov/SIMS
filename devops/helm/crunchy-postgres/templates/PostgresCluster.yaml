@@ -121,11 +121,15 @@ spec:
         # Support both PVC and s3 backups
         repo1-retention-full: {{ .Values.pgBackRest.retention | quote }}
         repo1-retention-full-type: {{ .Values.pgBackRest.retentionFullType }}
+        repo1-bundle: 'y'
+        repo1-block: 'y'
         {{- if .Values.pgBackRest.s3.enabled }}
         repo2-retention-full: {{ .Values.pgBackRest.retention | quote }}
         repo2-retention-full-type: {{ .Values.pgBackRest.retentionFullType }}
         repo2-path: {{ .Values.pgBackRest.s3.s3Path }}
         repo2-s3-uri-style: {{ .Values.pgBackRest.s3.s3UriStyle }}
+        repo2-bundle: 'y'
+        repo2-block: 'y'
         {{- end }}
       repos:
         # hardcoding repo1 until we solution allowing multiple repos
