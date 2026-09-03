@@ -298,6 +298,7 @@
               <content-group>
                 <option-items-checkbox
                   v-model="editProgramFormModel.entranceRequirements"
+                  @update:model-value="updateEntranceRequirements"
                   color="primary"
                   label="What are the entrance requirements for this program? (Select all that apply)"
                   :items="ENTRANCE_REQUIREMENT_ITEMS"
@@ -786,6 +787,7 @@ const {
 } = useRules();
 const { convertCheckboxObjectModelToArray } = useProgram();
 const editProgramForm = ref({} as VForm);
+let previousEntranceRequirements: string[] = [];
 
 // Ensure that the form model key is same as display condition key.
 // This will ensure that the form model value is reset when the component is hidden.
@@ -878,6 +880,32 @@ const submit = async () => {
   }
   console.log("Program updated:", editProgramFormModel.value);
 };
+const updateEntranceRequirements = () => {
+  const currentEntranceRequirements =
+    editProgramFormModel.value.entranceRequirements;
+  if (!currentEntranceRequirements.length) {
+    previousEntranceRequirements = [];
+    return;
+  }
+  const isNonePreviouslySelected =
+    previousEntranceRequirements[0] === NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS;
+  if (isNonePreviouslySelected) {
+    editProgramFormModel.value.entranceRequirements =
+      currentEntranceRequirements.filter(
+        (requirement) =>
+          requirement !== NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+      );
+  } else {
+    editProgramFormModel.value.entranceRequirements =
+      currentEntranceRequirements.includes(
+        NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+      )
+        ? [NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS]
+        : currentEntranceRequirements;
+  }
+  previousEntranceRequirements =
+    editProgramFormModel.value.entranceRequirements;
+};
 const cancel = async () => {
   router.push(props.backTarget.to);
 };
@@ -945,6 +973,8 @@ const loadProgram = async () => {
       isBCPublic: programDetails.isBCPublic,
       isBCInstitution: programDetails.isBCPrivate || programDetails.isBCPublic,
     };
+    previousEntranceRequirements =
+      editProgramFormModel.value.entranceRequirements;
   } catch {
     snackBar.error("Unexpected error while loading program data.");
   } finally {
