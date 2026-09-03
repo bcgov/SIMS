@@ -525,6 +525,54 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       });
   });
 
+  it("Should throw an HTTP error while creating a bypass when the restriction other than IUR is bypassed and bypass behavior is not provided.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      offeringIntensity: OfferingIntensity.fullTime,
+    });
+    const nonIURRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionCode: "NON-IUR",
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.StopFullTimeDisbursement],
+        },
+      }),
+    );
+    const nonIURInstitutionRestriction = await saveFakeInstitutionRestriction(
+      db,
+      {
+        institution:
+          application.currentAssessment.offering.institutionLocation
+            .institution,
+        restriction: nonIURRestriction,
+        creator: sharedMinistryUser,
+        program: application.currentAssessment.offering.educationProgram,
+        location: application.currentAssessment.offering.institutionLocation,
+      },
+    );
+
+    const payload = {
+      applicationId: application.id,
+      restrictionId: nonIURInstitutionRestriction.id,
+      restrictedParty: RestrictedParty.Institution,
+      note: "note to stop full-time disbursement",
+    };
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "Bypass behavior is required for non-IUR restrictions.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   afterAll(async () => {
     await app?.close();
   });

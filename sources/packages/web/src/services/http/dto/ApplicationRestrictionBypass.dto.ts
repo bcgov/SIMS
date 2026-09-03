@@ -69,5 +69,5 @@ export interface ApplicationRestrictionBypassAPIOutDTO {
   removedDate?: string;
   removedBy?: string;
   removalNote?: string;
-  bypassBehavior: string;
+  bypassBehavior?: string;
 }

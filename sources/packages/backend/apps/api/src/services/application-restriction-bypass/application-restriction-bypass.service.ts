@@ -8,6 +8,7 @@ import {
   NoteType,
   OfferingIntensity,
   RestrictionActionType,
+  RestrictionBypassBehaviors,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
@@ -425,6 +426,12 @@ export class ApplicationRestrictionBypassService {
     payload: BypassRestrictionData,
     auditUserId: number,
   ): Promise<ApplicationRestrictionBypass> {
+    const checkIfBypassBehaviorRequiredPromise =
+      this.checkForBypassBehaviorRequired(
+        payload.restrictionId,
+        payload.restrictedParty,
+        payload.bypassBehavior,
+      );
     const checkForActiveApplicationRestrictionBypassesPromise =
       this.checkForActiveApplicationRestrictionBypasses(
         payload.applicationId,
@@ -438,6 +445,7 @@ export class ApplicationRestrictionBypassService {
     const checkForApplicationInValidStatePromise =
       this.checkForApplicationInValidState(payload.applicationId);
     await Promise.all([
+      checkIfBypassBehaviorRequiredPromise,
       checkForActiveApplicationRestrictionBypassesPromise,
       checkForActiveRestrictionPromise,
       checkForApplicationInValidStatePromise,
@@ -600,6 +608,49 @@ export class ApplicationRestrictionBypassService {
         ];
       default:
         throw new Error("Invalid offering intensity.");
+    }
+  }
+
+  /**
+   * Checks if a bypass behavior is required for the given restriction.
+   * @throws an error if a bypass behavior is required but not provided.
+   * @param restrictionId student or institution restriction id of the restriction to check.
+   * @param restrictedParty the party (student or institution) to which the restriction applies.
+   * @param bypassBehavior the bypass behavior to check for.
+   */
+  private async checkForBypassBehaviorRequired(
+    restrictionId: number,
+    restrictedParty: RestrictedParty,
+    bypassBehavior: RestrictionBypassBehaviors,
+  ): Promise<void> {
+    let studentRestriction: StudentRestriction,
+      institutionRestriction: InstitutionRestriction;
+    if (restrictedParty === RestrictedParty.Student) {
+      studentRestriction = await this.studentRestrictionRepo.findOne({
+        select: { id: true, restriction: { id: true, restrictionCode: true } },
+        relations: { restriction: true },
+        where: { id: restrictionId },
+      });
+    } else {
+      institutionRestriction = await this.institutionRestrictionRepo.findOne({
+        select: {
+          id: true,
+          restriction: { id: true, restrictionCode: true },
+        },
+        relations: { restriction: true },
+        where: { id: restrictionId },
+      });
+    }
+    const restrictionCode =
+      restrictedParty === RestrictedParty.Student
+        ? studentRestriction?.restriction.restrictionCode
+        : institutionRestriction?.restriction.restrictionCode;
+    // Validate the payload to have a bypassBehavior if the restriction is not IUR.
+    if (restrictionCode !== "IUR" && !bypassBehavior) {
+      throw new CustomNamedError(
+        "Bypass behavior is required for non-IUR restrictions.",
+        RESTRICTION_BYPASS_NOT_ELIGIBLE,
+      );
     }
   }
 

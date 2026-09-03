@@ -84,8 +84,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
     const bypasses = applicationRestrictionBypasses.map(
       (item: ApplicationRestrictionBypass) => {
         const bypassedRestriction: (
-          | StudentRestriction
-          | InstitutionRestriction
+          StudentRestriction | InstitutionRestriction
         ) & { deletedAt?: Date } =
           item.studentRestriction ?? item.institutionRestriction;
         return {
@@ -180,7 +179,8 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       "cannot create a bypass when student restriction is not active  or " +
       "could not find institution restriction for the given id or " +
       "cannot create a bypass when institution restriction is not active or" +
-      "cannot create a bypass when application is in invalid state.",
+      "cannot create a bypass when application is in invalid state or" +
+      "bypass behavior is required for non-IUR restrictions.",
   })
   @Roles(Role.AESTBypassStudentRestriction)
   @Post()

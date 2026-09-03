@@ -73,5 +73,5 @@ export class ApplicationRestrictionBypassAPIOutDTO {
   removedDate?: string;
   removedBy?: string;
   removalNote?: string;
-  bypassBehavior: string;
+  bypassBehavior?: string;
 }
