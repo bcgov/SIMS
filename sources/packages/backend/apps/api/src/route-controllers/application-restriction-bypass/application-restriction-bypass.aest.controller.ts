@@ -126,6 +126,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       restrictionId: restriction.id,
       restrictionCode: restriction.restriction.restrictionCode,
       restrictedParty: applicationRestrictionBypass.getRestrictedParty(),
+      actionTypes: restriction.restriction.actionType,
       creationNote: applicationRestrictionBypass.creationNote.description,
       removalNote: applicationRestrictionBypass.removalNote?.description,
       createdBy: getUserFullName(applicationRestrictionBypass.bypassCreatedBy),
@@ -161,6 +162,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
           restrictedParty: item.restrictedParty,
           restrictionCode: item.restrictionCode,
           restrictionCreatedAt: item.restrictionCreatedAt,
+          actionTypes: item.actionTypes,
         }),
       ),
     };

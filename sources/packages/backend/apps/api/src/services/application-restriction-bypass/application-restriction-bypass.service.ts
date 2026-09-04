@@ -4,6 +4,7 @@ import {
   Application,
   ApplicationRestrictionBypass,
   ApplicationStatus,
+  AssessmentStatus,
   InstitutionRestriction,
   NoteType,
   OfferingIntensity,
@@ -46,12 +47,11 @@ const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
 ]);
 
 /**
- * Application statuses that allow the IUR institution restriction to be bypassed.
+ * Restriction actions that prevent an assessment from being accepted.
  */
-const IUR_BYPASS_ELIGIBLE_APPLICATION_STATUSES = new Set([
-  ApplicationStatus.Submitted,
-  ApplicationStatus.InProgress,
-  ApplicationStatus.Assessment,
+const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
+  RestrictionActionType.StopFullTimeAcceptAssessment,
+  RestrictionActionType.StopPartTimeAcceptAssessment,
 ]);
 
 /**
@@ -133,13 +133,17 @@ export class ApplicationRestrictionBypassService {
         studentRestriction: {
           id: true,
           restriction: {
+            id: true,
             restrictionCode: true,
+            actionType: true,
           },
         },
         institutionRestriction: {
           id: true,
           restriction: {
+            id: true,
             restrictionCode: true,
+            actionType: true,
           },
         },
         creationNote: {
@@ -286,10 +290,11 @@ export class ApplicationRestrictionBypassService {
       )
       .map((studentRestriction) => ({
         restrictionId: studentRestriction.id,
-        restrictionCode: studentRestriction.restriction.restrictionCode,
-        restrictionCreatedAt: studentRestriction.createdAt,
-        restrictedParty: RestrictedParty.Student,
-      }));
+      restrictionCode: studentRestriction.restriction.restrictionCode,
+      restrictionCreatedAt: studentRestriction.createdAt,
+      restrictedParty: RestrictedParty.Student,
+      actionTypes: studentRestriction.restriction.actionType,
+    }));
   }
 
   /**
@@ -324,6 +329,7 @@ export class ApplicationRestrictionBypassService {
         "application.id",
         "application.applicationStatus",
         "currentAssessment.id",
+        "currentAssessment.noaApprovalStatus",
         "offering.id",
         "offering.offeringIntensity",
         "offeringProgram.id",
@@ -370,18 +376,23 @@ export class ApplicationRestrictionBypassService {
           ),
       );
     const availableInstitutionRestrictions =
-      filteredInstitutionRestrictions.filter(
-        (institutionRestriction) =>
-          institutionRestriction.restriction.restrictionCode !== "IUR" ||
-          IUR_BYPASS_ELIGIBLE_APPLICATION_STATUSES.has(
-            institutionApplication.applicationStatus,
-          ),
-      );
+      filteredInstitutionRestrictions.filter((institutionRestriction) => {
+        const hasAcceptAssessmentAction =
+          institutionRestriction.restriction.actionType.some((actionType) =>
+            ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS.has(actionType),
+          );
+        return (
+          !hasAcceptAssessmentAction ||
+          institutionApplication.currentAssessment.noaApprovalStatus ===
+            AssessmentStatus.required
+        );
+      });
     return availableInstitutionRestrictions.map((institutionRestriction) => ({
       restrictionId: institutionRestriction.id,
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       restrictionCreatedAt: institutionRestriction.createdAt,
       restrictedParty: RestrictedParty.Institution,
+      actionTypes: institutionRestriction.restriction.actionType,
     }));
   }
 

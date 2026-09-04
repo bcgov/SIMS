@@ -1,6 +1,7 @@
 import { RestrictedParty } from "@sims/services";
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
+  RestrictionActionType,
   RestrictionBypassBehaviors,
 } from "@sims/sims-db";
 import {
@@ -56,6 +57,7 @@ export class AvailableRestrictionAPIOutDTO {
   restrictedParty: RestrictedParty;
   restrictionCode: string;
   restrictionCreatedAt: Date;
+  actionTypes: RestrictionActionType[];
 }
 
 export class AvailableRestrictionsAPIOutDTO {
@@ -67,6 +69,7 @@ export class ApplicationRestrictionBypassAPIOutDTO {
   restrictionId: number;
   restrictionCode: string;
   restrictedParty: RestrictedParty;
+  actionTypes: RestrictionActionType[];
   createdDate: string;
   createdBy: string;
   creationNote: string;

@@ -1,4 +1,8 @@
-import { RestrictedParty, RestrictionBypassBehaviors } from "@/types";
+import {
+  RestrictedParty,
+  RestrictionActionType,
+  RestrictionBypassBehaviors,
+} from "@/types";
 
 /**
  * Application restriction bypass summary.
@@ -28,6 +32,7 @@ export interface AvailableRestrictionAPIOutDTO {
   restrictionCode: string;
   restrictionCreatedAt: Date;
   restrictedParty: RestrictedParty;
+  actionTypes: RestrictionActionType[];
 }
 
 /**
@@ -63,6 +68,7 @@ export interface ApplicationRestrictionBypassAPIOutDTO {
   restrictionId: number;
   restrictionCode: string;
   restrictedParty: RestrictedParty;
+  actionTypes: RestrictionActionType[];
   createdDate: Date;
   createdBy: string;
   creationNote: string;
