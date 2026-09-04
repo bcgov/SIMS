@@ -522,7 +522,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       });
   });
 
-  it("Should throw an HTTP error while creating a bypass when the restriction other than IUR is bypassed and bypass behavior is not provided.", async () => {
+  it("Should throw an HTTP error while creating a bypass when a restriction other than accept assessment type restriction is bypassed and bypass behavior is not provided.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.fullTime,
@@ -530,7 +530,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const nonIURRestriction = await db.restriction.save(
       createFakeRestriction({
         initialValues: {
-          restrictionCode: "NON-IUR",
+          restrictionCode: "NON-ACCEPT-ASSESSMENT-RESTRICTION",
           restrictionType: RestrictionType.Institution,
           actionType: [RestrictionActionType.StopFullTimeDisbursement],
         },
@@ -564,7 +564,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
-        message: "Bypass behavior is required for non-IUR restrictions.",
+        message:
+          "Bypass behavior is required for non accept assessment type restrictions.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });

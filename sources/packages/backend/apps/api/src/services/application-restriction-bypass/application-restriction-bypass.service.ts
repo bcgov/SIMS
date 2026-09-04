@@ -665,7 +665,7 @@ export class ApplicationRestrictionBypassService {
     // Validate the payload to have a bypassBehavior if the restriction is not IUR.
     if (restrictionCode !== "IUR" && !bypassBehavior) {
       throw new CustomNamedError(
-        "Bypass behavior is required for non-IUR restrictions.",
+        "Bypass behavior is required for non accept assessment type restrictions.",
         RESTRICTION_BYPASS_NOT_ELIGIBLE,
       );
     }

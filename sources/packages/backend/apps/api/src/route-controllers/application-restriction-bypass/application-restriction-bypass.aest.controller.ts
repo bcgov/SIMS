@@ -182,7 +182,7 @@ export class ApplicationRestrictionBypassAESTController extends BaseController {
       "could not find institution restriction for the given id or " +
       "cannot create a bypass when institution restriction is not active or" +
       "cannot create a bypass when application is in invalid state or" +
-      "bypass behavior is required for non-IUR restrictions.",
+      "bypass behavior is required for non accept assessment type restrictions.",
   })
   @Roles(Role.AESTBypassStudentRestriction)
   @Post()
