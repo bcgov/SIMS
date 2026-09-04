@@ -62,6 +62,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
    * @param institutionId institution id.
    * @param locationId location id.
    * @param options options to filter the restrictions.
+   * - `applicationId` application id used to filter out the restrictions that have been bypassed for the given application.
    * - `programId` program id. It may not be provided if the program is not available yet,
    * for instance, during a PIR process.
    * - `restrictionCode` restriction code.
@@ -74,6 +75,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     institutionId: number,
     locationId: number,
     options?: {
+      applicationId?: number;
       programId?: number;
       restrictionCode?: RestrictionCode;
       actionTypes?: RestrictionActionType[];
@@ -121,6 +123,19 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       query.andWhere("restriction.actionType @> :actionTypes", {
         actionTypes: options.actionTypes,
       });
+    }
+    // Filter out restrictions that have already been bypassed for the given application.
+    if (options?.applicationId) {
+      query.andWhere(
+        `NOT EXISTS (
+          SELECT 1
+          FROM application_restriction_bypass arb
+          WHERE arb.institution_restriction_id = institutionRestriction.id
+            AND arb.application_id = :applicationId
+            AND arb.is_active = TRUE
+        )`,
+        { applicationId: options.applicationId },
+      );
     }
     if (options?.limitOne) {
       query.limit(1);
@@ -204,7 +219,11 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       await this.getEffectiveInstitutionRestrictions(
         offering.institutionLocation.institution.id,
         offering.institutionLocation.id,
-        { programId: offering.educationProgram.id, actionTypes: [action] },
+        {
+          applicationId,
+          programId: offering.educationProgram.id,
+          actionTypes: [action],
+        },
       );
     if (effectiveInstitutionRestrictions.length) {
       return {

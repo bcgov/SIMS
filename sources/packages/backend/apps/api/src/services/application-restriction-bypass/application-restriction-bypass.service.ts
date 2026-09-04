@@ -8,6 +8,7 @@ import {
   NoteType,
   OfferingIntensity,
   RestrictionActionType,
+  RestrictionBypassBehaviors,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
@@ -42,6 +43,20 @@ const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
   ApplicationStatus.Draft,
   ApplicationStatus.Cancelled,
   ApplicationStatus.Edited,
+]);
+
+/**
+ * Restriction actions that prevent an assessment from being accepted.
+ */
+const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
+  RestrictionActionType.StopFullTimeAcceptAssessment,
+  RestrictionActionType.StopPartTimeAcceptAssessment,
+]);
+
+const INVALID_STATUSES_FOR_RESTRICTION_BYPASS = new Set([
+  ApplicationStatus.Draft,
+  ApplicationStatus.Completed,
+  ApplicationStatus.Cancelled,
 ]);
 
 /**
@@ -123,13 +138,17 @@ export class ApplicationRestrictionBypassService {
         studentRestriction: {
           id: true,
           restriction: {
+            id: true,
             restrictionCode: true,
+            actionType: true,
           },
         },
         institutionRestriction: {
           id: true,
           restriction: {
+            id: true,
             restrictionCode: true,
+            actionType: true,
           },
         },
         creationNote: {
@@ -279,6 +298,7 @@ export class ApplicationRestrictionBypassService {
         restrictionCode: studentRestriction.restriction.restrictionCode,
         restrictionCreatedAt: studentRestriction.createdAt,
         restrictedParty: RestrictedParty.Student,
+        actionTypes: studentRestriction.restriction.actionType,
       }));
   }
 
@@ -312,7 +332,9 @@ export class ApplicationRestrictionBypassService {
       .createQueryBuilder("application")
       .select([
         "application.id",
+        "application.applicationStatus",
         "currentAssessment.id",
+        "currentAssessment.noaApprovalStatus",
         "offering.id",
         "offering.offeringIntensity",
         "offeringProgram.id",
@@ -358,11 +380,25 @@ export class ApplicationRestrictionBypassService {
             institutionRestriction.restriction.actionType.includes(actionType),
           ),
       );
-    return filteredInstitutionRestrictions.map((institutionRestriction) => ({
+    const availableInstitutionRestrictions =
+      filteredInstitutionRestrictions.filter((institutionRestriction) => {
+        const hasAcceptAssessmentAction =
+          institutionRestriction.restriction.actionType.some((actionType) =>
+            ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS.has(actionType),
+          );
+        return (
+          !hasAcceptAssessmentAction ||
+          !INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(
+            institutionApplication.applicationStatus,
+          )
+        );
+      });
+    return availableInstitutionRestrictions.map((institutionRestriction) => ({
       restrictionId: institutionRestriction.id,
       restrictionCode: institutionRestriction.restriction.restrictionCode,
       restrictionCreatedAt: institutionRestriction.createdAt,
       restrictedParty: RestrictedParty.Institution,
+      actionTypes: institutionRestriction.restriction.actionType,
     }));
   }
 
@@ -407,6 +443,12 @@ export class ApplicationRestrictionBypassService {
     payload: BypassRestrictionData,
     auditUserId: number,
   ): Promise<ApplicationRestrictionBypass> {
+    const checkIfBypassBehaviorRequiredPromise =
+      this.checkForBypassBehaviorRequired(
+        payload.restrictionId,
+        payload.restrictedParty,
+        payload.bypassBehavior,
+      );
     const checkForActiveApplicationRestrictionBypassesPromise =
       this.checkForActiveApplicationRestrictionBypasses(
         payload.applicationId,
@@ -420,6 +462,7 @@ export class ApplicationRestrictionBypassService {
     const checkForApplicationInValidStatePromise =
       this.checkForApplicationInValidState(payload.applicationId);
     await Promise.all([
+      checkIfBypassBehaviorRequiredPromise,
       checkForActiveApplicationRestrictionBypassesPromise,
       checkForActiveRestrictionPromise,
       checkForApplicationInValidStatePromise,
@@ -572,14 +615,59 @@ export class ApplicationRestrictionBypassService {
           RestrictionActionType.StopFullTimeBCLoan,
           RestrictionActionType.StopFullTimeBCGrants,
           RestrictionActionType.StopFullTimeDisbursement,
+          RestrictionActionType.StopFullTimeAcceptAssessment,
         ];
       case OfferingIntensity.partTime:
         return [
           RestrictionActionType.StopPartTimeBCGrants,
           RestrictionActionType.StopPartTimeDisbursement,
+          RestrictionActionType.StopPartTimeAcceptAssessment,
         ];
       default:
         throw new Error("Invalid offering intensity.");
+    }
+  }
+
+  /**
+   * Checks if a bypass behavior is required for the given restriction.
+   * @throws an error if a bypass behavior is required but not provided.
+   * @param restrictionId student or institution restriction id of the restriction to check.
+   * @param restrictedParty the party (student or institution) to which the restriction applies.
+   * @param bypassBehavior the bypass behavior to check for.
+   */
+  private async checkForBypassBehaviorRequired(
+    restrictionId: number,
+    restrictedParty: RestrictedParty,
+    bypassBehavior: RestrictionBypassBehaviors,
+  ): Promise<void> {
+    let studentRestriction: StudentRestriction,
+      institutionRestriction: InstitutionRestriction;
+    if (restrictedParty === RestrictedParty.Student) {
+      studentRestriction = await this.studentRestrictionRepo.findOne({
+        select: { id: true, restriction: { id: true, restrictionCode: true } },
+        relations: { restriction: true },
+        where: { id: restrictionId },
+      });
+    } else {
+      institutionRestriction = await this.institutionRestrictionRepo.findOne({
+        select: {
+          id: true,
+          restriction: { id: true, restrictionCode: true },
+        },
+        relations: { restriction: true },
+        where: { id: restrictionId },
+      });
+    }
+    const restrictionCode =
+      restrictedParty === RestrictedParty.Student
+        ? studentRestriction?.restriction.restrictionCode
+        : institutionRestriction?.restriction.restrictionCode;
+    // Validate the payload to have a bypassBehavior if the restriction is not IUR.
+    if (restrictionCode !== "IUR" && !bypassBehavior) {
+      throw new CustomNamedError(
+        "Bypass behavior is required for non accept assessment type restrictions.",
+        RESTRICTION_BYPASS_NOT_ELIGIBLE,
+      );
     }
   }
 

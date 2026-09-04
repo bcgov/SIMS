@@ -222,6 +222,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               removedApplicationRestrictionsBypass.studentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes:
+              removedApplicationRestrictionsBypass.studentRestriction
+                .restriction.actionType,
           },
           {
             restrictionId: stopPartTimeBCFundingStudentRestriction.id,
@@ -229,6 +232,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               stopPartTimeBCFundingStudentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes:
+              stopPartTimeBCFundingStudentRestriction.restriction.actionType,
           },
           {
             restrictionId: stopPartTimeDisbursementStudentRestriction.id,
@@ -236,6 +241,8 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               stopPartTimeDisbursementStudentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes:
+              stopPartTimeDisbursementStudentRestriction.restriction.actionType,
           },
           {
             restrictionId: ptssrStudentRestriction.id,
@@ -243,6 +250,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               ptssrStudentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes: ptssrStudentRestriction.restriction.actionType,
           },
           {
             restrictionId: institutionRestriction.id,
@@ -250,6 +258,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               institutionRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Institution,
+            actionTypes: institutionRestriction.restriction.actionType,
           },
           {
             restrictionId:
@@ -260,6 +269,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               removedInstitutionRestrictionBypass.institutionRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Institution,
+            actionTypes:
+              removedInstitutionRestrictionBypass.institutionRestriction
+                .restriction.actionType,
           },
         ],
       });
@@ -352,6 +364,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               removedApplicationRestrictionsBypass.studentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes:
+              removedApplicationRestrictionsBypass.studentRestriction
+                .restriction.actionType,
           },
           {
             restrictionId: stopFullTimeBCFundingStudentRestriction.id,
@@ -359,6 +374,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               stopFullTimeBCFundingStudentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes: stopFullTimeBCFundingRestriction.actionType,
           },
           {
             restrictionId: stopFullTimeStudentRestriction.id,
@@ -366,6 +382,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               stopFullTimeStudentRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Student,
+            actionTypes: stopFullTimeStudentRestriction.restriction.actionType,
           },
         ],
       });
@@ -404,6 +421,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
             restrictionCreatedAt:
               institutionRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Institution,
+            actionTypes: institutionRestriction.restriction.actionType,
           },
         ],
       });
