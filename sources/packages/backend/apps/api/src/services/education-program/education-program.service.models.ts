@@ -86,3 +86,29 @@ export class PendingEducationProgram {
   };
   selectedLocationId: number;
 }
+
+/**
+ * Keys of calculated data for education programs.
+ */
+export enum KnownCalculatedDataKey {
+  FieldOfStudyCode = "fieldOfStudyCode",
+  ProgramStatus = "programStatus",
+}
+
+/**
+ * Evaluation result for calculated data of education programs.
+ */
+export interface EvaluationResult {
+  [KnownCalculatedDataKey.FieldOfStudyCode]?: number;
+  [KnownCalculatedDataKey.ProgramStatus]?: string;
+}
+
+export interface EvaluationProgramData {
+  credentialType: string;
+  cipCode: string;
+}
+
+export interface EvaluationProgramContext {
+  isBCPublic: boolean;
+  isBCPrivate: boolean;
+}
