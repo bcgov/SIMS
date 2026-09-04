@@ -4,7 +4,6 @@ import {
   Application,
   ApplicationRestrictionBypass,
   ApplicationStatus,
-  AssessmentStatus,
   InstitutionRestriction,
   NoteType,
   OfferingIntensity,
@@ -52,6 +51,12 @@ const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
 const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
   RestrictionActionType.StopFullTimeAcceptAssessment,
   RestrictionActionType.StopPartTimeAcceptAssessment,
+]);
+
+const INVALID_STATUSES_FOR_RESTRICTION_BYPASS = new Set([
+  ApplicationStatus.Draft,
+  ApplicationStatus.Completed,
+  ApplicationStatus.Cancelled,
 ]);
 
 /**
@@ -290,11 +295,11 @@ export class ApplicationRestrictionBypassService {
       )
       .map((studentRestriction) => ({
         restrictionId: studentRestriction.id,
-      restrictionCode: studentRestriction.restriction.restrictionCode,
-      restrictionCreatedAt: studentRestriction.createdAt,
-      restrictedParty: RestrictedParty.Student,
-      actionTypes: studentRestriction.restriction.actionType,
-    }));
+        restrictionCode: studentRestriction.restriction.restrictionCode,
+        restrictionCreatedAt: studentRestriction.createdAt,
+        restrictedParty: RestrictedParty.Student,
+        actionTypes: studentRestriction.restriction.actionType,
+      }));
   }
 
   /**
@@ -383,8 +388,9 @@ export class ApplicationRestrictionBypassService {
           );
         return (
           !hasAcceptAssessmentAction ||
-          institutionApplication.currentAssessment.noaApprovalStatus ===
-            AssessmentStatus.required
+          !INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(
+            institutionApplication.applicationStatus,
+          )
         );
       });
     return availableInstitutionRestrictions.map((institutionRestriction) => ({
