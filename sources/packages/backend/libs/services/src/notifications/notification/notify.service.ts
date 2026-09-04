@@ -1,46 +1,34 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { AxiosError } from "axios";
-import {
-  NotificationEmailMessage,
-  GCNotifyErrorResponse,
-  GCNotifyResult,
-} from "./gc-notify.model";
+import { GCNotifyErrorResponse } from "./gc-notify.model";
 import { LoggerService } from "@sims/utilities/logger";
-import { ConfigService, GCNotify } from "@sims/utilities/config";
+import { ConfigService, Notify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
+import { NotifyAPIMessagePayload } from "@sims/services/notifications/notification/notify.model";
 
 @Injectable()
-export class GCNotifyService {
-  private readonly gcNotifyConfig: GCNotify;
+export class NotifyService {
+  private readonly notifyConfig: Notify;
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly logger: LoggerService,
   ) {
-    this.gcNotifyConfig = this.configService.notify;
+    this.notifyConfig = this.configService.notify;
   }
 
   /**
-   * Send email notification by passing the requestPayload.
+   * Send email notification.
    * @param payload email message payload.
-   * @returns GC Notify API call response.
+   * @returns Notify API call response.
    */
-  async sendEmailNotification(
-    payload: NotificationEmailMessage,
-  ): Promise<GCNotifyResult> {
+  async sendEmailNotification(payload: NotifyAPIMessagePayload): Promise<void> {
     try {
-      const response = await this.httpService.axiosRef.post(
-        this.gcNotifyConfig.url,
-        payload,
-        {
-          headers: {
-            Authorization: this.gcNotifyConfig.apiKey,
-          },
-        },
-      );
-      return response.data as GCNotifyResult;
+      await this.httpService.axiosRef.post(this.notifyConfig.url, payload, {
+        headers: { "x-api-key": this.notifyConfig.apiKey },
+      });
     } catch (error: unknown) {
       const axiosError = error as AxiosError<GCNotifyErrorResponse>;
       if (
@@ -52,18 +40,14 @@ export class GCNotifyService {
             axiosError.response.data,
           )}`,
         );
-        // When the error is identified to be GC Notify error
-        // throw a custom error with all GC Notify error details.
+        // BAD_REQUEST errors are considered permanent failures, which means that the notification will not be retried.
         throw new CustomNamedError(
           axiosError.message,
           NOTIFY_PERMANENT_FAILURE_ERROR,
           axiosError.response.data,
         );
       }
-      this.logger.error(
-        `Error while sending email notification: ${error}),
-          )}`,
-      );
+      this.logger.error("Error while sending email notification.", error);
       throw error;
     }
   }

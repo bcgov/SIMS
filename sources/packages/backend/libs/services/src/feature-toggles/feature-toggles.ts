@@ -34,4 +34,16 @@ export class FeatureTogglesService {
       `${TOGGLE_PREFIX_DISABLE}-${formDefinitionName}`,
     );
   }
+
+  /**
+   * Determine when the BC Notify template should be used, instead legacy GC Notify template.
+   * @param templateId ID of the template to check.
+   * @returns true if the template should be used, false otherwise.
+   */
+  useNotifyTemplate(templateId: string): boolean {
+    return (
+      this.isFeatureToggleEnabled(`use-notify-template-all`) ||
+      this.isFeatureToggleEnabled(`use-notify-template-${templateId}`)
+    );
+  }
 }

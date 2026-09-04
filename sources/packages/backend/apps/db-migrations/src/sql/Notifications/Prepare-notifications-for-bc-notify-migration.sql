@@ -1,17 +1,17 @@
 ALTER TABLE
     sims.notifications
 ADD
-    COLUMN template_id UUID NULL,
+    COLUMN template_id UUID,
 ADD
-    COLUMN recipients varchar(254) ARRAY NULL,
+    COLUMN recipients varchar(254) ARRAY,
 ADD
-    COLUMN message jsonb NULL;
+    COLUMN message_content jsonb;
 
 COMMENT ON COLUMN sims.notifications.template_id IS 'Template ID used to send the notification.';
 
 COMMENT ON COLUMN sims.notifications.recipients IS 'Notification recipient email addresses.';
 
-COMMENT ON COLUMN sims.notifications.message IS 'JSON data containing the notification message.';
+COMMENT ON COLUMN sims.notifications.message_content IS 'JSON data containing the notification message content.';
 
 -- Populate all new columns with data from the existing message_payload column.
 UPDATE
@@ -19,7 +19,7 @@ UPDATE
 SET
     template_id = (message_payload ->> 'template_id') :: UUID,
     recipients = ARRAY [message_payload ->> 'email_address'],
-    message = jsonb_build_object(
+    message_content = jsonb_build_object(
         'params',
         (message_payload -> 'personalisation') - 'application_file'
     ) || CASE
@@ -31,7 +31,7 @@ SET
                     message_payload -> 'personalisation' -> 'application_file' ->> 'file',
                     'filename',
                     message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
-                    'contentType',
+                    'mimeType',
                     CASE
                         WHEN lower(
                             right(
@@ -66,6 +66,6 @@ ALTER COLUMN
 SET
     NOT NULL,
 ALTER COLUMN
-    message
+    message_content
 SET
     NOT NULL;

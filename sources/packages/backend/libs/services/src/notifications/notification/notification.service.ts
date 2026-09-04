@@ -26,7 +26,13 @@ import {
   GCNotifyErrorResponse,
 } from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
-import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import {
+  NotifyAPIMessagePayload,
+  NotifyMessageContent,
+} from "@sims/services/notifications/notification/notify.model";
+import { FeatureTogglesService } from "@sims/services";
+import { NotifyService } from "@sims/services/notifications/notification/notify.service";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -39,7 +45,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
   constructor(
     dataSource: DataSource,
     private readonly gcNotifyService: GCNotifyService,
+    private readonly notifyService: NotifyService,
     private readonly logger: LoggerService,
+    private readonly featureTogglesService: FeatureTogglesService,
   ) {
     super(dataSource.getRepository(Notification));
   }
@@ -181,18 +189,37 @@ export class NotificationService extends RecordDataModelService<Notification> {
   private async sendEmailNotification(
     notification: Notification,
   ): Promise<boolean> {
-    // Call GC Notify send email method.
     try {
-      await this.gcNotifyService.sendEmailNotification(
-        notification.messagePayload as NotificationEmailMessage,
-      );
+      if (
+        this.featureTogglesService.useNotifyTemplate(notification.templateId)
+      ) {
+        const notifyMessageContent =
+          notification.messagePayload as NotifyMessageContent;
+        const notifyAPIMessagePayload: NotifyAPIMessagePayload = {
+          params: notifyMessageContent.params,
+          email: {
+            recipients: {
+              to: notification.recipients,
+            },
+            content: {
+              templateId: notification.templateId,
+            },
+            attachments: notifyMessageContent.attachments,
+          },
+        };
+        await this.notifyService.sendEmailNotification(notifyAPIMessagePayload);
+      } else {
+        await this.gcNotifyService.sendEmailNotification(
+          notification.messagePayload as NotificationEmailMessage,
+        );
+      }
       await this.updateNotification(notification.id);
       return true;
     } catch (error: unknown) {
       this.logger.error(`Error while processing notification: ${error}`);
       if (
         error instanceof CustomNamedError &&
-        error.name === GC_NOTIFY_PERMANENT_FAILURE_ERROR
+        error.name === NOTIFY_PERMANENT_FAILURE_ERROR
       ) {
         const processNotificationError =
           error.objectInfo as GCNotifyErrorResponse;
