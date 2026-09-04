@@ -27,10 +27,6 @@ import {
 } from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
-import {
-  NotifyAPIMessagePayload,
-  NotifyMessageContent,
-} from "@sims/services/notifications/notification/notify.model";
 import { FeatureTogglesService } from "@sims/services";
 import { NotifyService } from "@sims/services/notifications/notification/notify.service";
 
@@ -70,38 +66,19 @@ export class NotificationService extends RecordDataModelService<Notification> {
     },
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => {
-      const legacyMessagePayload =
-        notification.messagePayload as NotificationEmailMessage;
-      const { application_file: applicationFile, ...params } =
-        legacyMessagePayload.personalisation;
-      const messagePayload = {
-        params,
-        attachments: applicationFile
-          ? [
-              {
-                file: applicationFile["file"],
-                filename: applicationFile["filename"],
-                contentType: applicationFile["content_type"],
-              },
-            ]
-          : undefined,
-      };
-      if (legacyMessagePayload.personalisation.application_file) {
-        delete legacyMessagePayload.personalisation.application_file[
-          "content_type"
-        ];
-      }
+      const { messagePayload, messageContent } =
+        this.getNotificationMessages(notification);
       return {
         user: { id: notification.userId } as User,
         creator: { id: auditUserId } as User,
-        messagePayload: legacyMessagePayload,
+        messagePayload,
         notificationMessage: {
           id: notification.messageType,
         } as NotificationMessage,
         metadata: notification.metadata,
-        templateId: legacyMessagePayload.template_id,
-        recipients: [legacyMessagePayload.email_address],
-        message: messagePayload,
+        templateId: messagePayload.template_id,
+        recipients: [messagePayload.email_address],
+        messageContent,
       };
     });
     const repository =
@@ -123,6 +100,45 @@ export class NotificationService extends RecordDataModelService<Notification> {
     return insertResults
       .flatMap((insertResult) => insertResult.identifiers)
       .map((identifier) => +identifier.id);
+  }
+
+  /**
+   * Create the GC Notify payload and BC Notify message content to be saved
+   * and allow any notification be sent to either notification API.
+   * This is a temporary message conversion to be refactored once GC Notify is removed.
+   * @param notification notification to be processed.
+   * @returns an object containing the GC Notify message payload and the
+   * BC Notify message content.
+   */
+  private getNotificationMessages(notification: SaveNotificationModel): {
+    messagePayload: NotificationEmailMessage;
+    messageContent: unknown;
+  } {
+    const messagePayload =
+      notification.messagePayload as NotificationEmailMessage;
+    const { application_file: applicationFile, ...params } =
+      messagePayload.personalisation;
+    const messageContent = {
+      params,
+      attachments: applicationFile
+        ? [
+            {
+              file: applicationFile["file"],
+              filename: applicationFile["filename"],
+              mimeType: applicationFile["mimeType"],
+            },
+          ]
+        : undefined,
+    };
+    if (messagePayload.personalisation.application_file) {
+      // Removed additional property that is unknown to GC Notify
+      // and used only for the new Notify API.
+      delete messagePayload.personalisation.application_file["mimeType"];
+    }
+    return {
+      messagePayload,
+      messageContent,
+    };
   }
 
   /**
@@ -190,29 +206,12 @@ export class NotificationService extends RecordDataModelService<Notification> {
     notification: Notification,
   ): Promise<boolean> {
     try {
-      if (
-        this.featureTogglesService.useNotifyTemplate(notification.templateId)
-      ) {
-        const notifyMessageContent =
-          notification.messagePayload as NotifyMessageContent;
-        const notifyAPIMessagePayload: NotifyAPIMessagePayload = {
-          params: notifyMessageContent.params,
-          email: {
-            recipients: {
-              to: notification.recipients,
-            },
-            content: {
-              templateId: notification.templateId,
-            },
-            attachments: notifyMessageContent.attachments,
-          },
-        };
-        await this.notifyService.sendEmailNotification(notifyAPIMessagePayload);
-      } else {
-        await this.gcNotifyService.sendEmailNotification(
-          notification.messagePayload as NotificationEmailMessage,
-        );
-      }
+      const notificationService = this.featureTogglesService.useNotifyTemplate(
+        notification.templateId,
+      )
+        ? this.notifyService
+        : this.gcNotifyService;
+      await notificationService.sendEmailNotification(notification);
       await this.updateNotification(notification.id);
       return true;
     } catch (error: unknown) {

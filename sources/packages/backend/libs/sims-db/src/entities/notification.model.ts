@@ -107,10 +107,10 @@ export class Notification extends RecordDataModel {
    * Message associated with this notification.
    */
   @Column({
-    name: "message",
+    name: "message_content",
     type: "jsonb",
   })
-  message: unknown;
+  messageContent: unknown;
 }
 
 /**

@@ -10,6 +10,7 @@ import { ConfigService, GCNotify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
+import { Notification } from "@sims/sims-db";
 
 @Injectable()
 export class GCNotifyService {
@@ -28,9 +29,10 @@ export class GCNotifyService {
    * @returns GC Notify API call response.
    */
   async sendEmailNotification(
-    payload: NotificationEmailMessage,
+    notification: Notification,
   ): Promise<GCNotifyResult> {
     try {
+      const payload = notification.messagePayload as NotificationEmailMessage;
       const response = await this.httpService.axiosRef.post(
         this.gcNotifyConfig.url,
         payload,

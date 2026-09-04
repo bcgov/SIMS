@@ -57,7 +57,7 @@ export interface NotificationEmailMessage {
           file: string;
           filename: string;
           sending_method: "attach" | "link";
-          content_type: string;
+          mimeType: string;
         };
   };
 }

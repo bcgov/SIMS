@@ -6,7 +6,11 @@ import { ConfigService, Notify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
-import { NotifyAPIMessagePayload } from "@sims/services/notifications/notification/notify.model";
+import {
+  NotifyAPIMessagePayload,
+  NotifyMessageContent,
+} from "@sims/services/notifications/notification/notify.model";
+import { Notification } from "@sims/sims-db";
 
 @Injectable()
 export class NotifyService {
@@ -24,8 +28,9 @@ export class NotifyService {
    * @param payload email message payload.
    * @returns Notify API call response.
    */
-  async sendEmailNotification(payload: NotifyAPIMessagePayload): Promise<void> {
+  async sendEmailNotification(notification: Notification): Promise<void> {
     try {
+      const payload = this.createNotifyAPIMessagePayload(notification);
       await this.httpService.axiosRef.post(this.notifyConfig.url, payload, {
         headers: { "x-api-key": this.notifyConfig.apiKey },
       });
@@ -50,5 +55,30 @@ export class NotifyService {
       this.logger.error("Error while sending email notification.", error);
       throw error;
     }
+  }
+
+  /**
+   * Create the Notify API message payload from the given notification.
+   * @param notification notification containing the message payload and recipients.
+   * @returns Notify API message payload.
+   */
+  private createNotifyAPIMessagePayload(
+    notification: Notification,
+  ): NotifyAPIMessagePayload {
+    const notifyMessageContent =
+      notification.messagePayload as NotifyMessageContent;
+    const notifyAPIMessagePayload: NotifyAPIMessagePayload = {
+      params: notifyMessageContent.params,
+      email: {
+        recipients: {
+          to: notification.recipients,
+        },
+        content: {
+          templateId: notification.templateId,
+        },
+        attachments: notifyMessageContent.attachments,
+      },
+    };
+    return notifyAPIMessagePayload;
   }
 }
