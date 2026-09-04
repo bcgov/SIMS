@@ -32,7 +32,6 @@ spec:
           cpu: {{ .Values.instances.requests.cpu }}
           memory: {{ .Values.instances.requests.memory }}
         limits:
-          cpu: {{ .Values.instances.limits.cpu }}
           memory: {{ .Values.instances.limits.memory }}
       sidecars:
         replicaCertCopy:
@@ -41,7 +40,6 @@ spec:
               cpu: {{ .Values.instances.replicaCertCopy.requests.cpu }}
               memory: {{ .Values.instances.replicaCertCopy.requests.memory }}
             limits:
-              cpu: {{ .Values.instances.replicaCertCopy.limits.cpu }}
               memory: {{ .Values.instances.replicaCertCopy.limits.memory }}
       dataVolumeClaimSpec:
         accessModes:
@@ -121,15 +119,15 @@ spec:
         # Support both PVC and s3 backups
         repo1-retention-full: {{ .Values.pgBackRest.retention | quote }}
         repo1-retention-full-type: {{ .Values.pgBackRest.retentionFullType }}
-        repo1-bundle: 'y'
-        repo1-block: 'y'
+        repo1-bundle: {{ .Values.pgBackRest.repos.bundle | squote }}
+        repo1-block: {{ .Values.pgBackRest.repos.block | squote }}
         {{- if .Values.pgBackRest.s3.enabled }}
         repo2-retention-full: {{ .Values.pgBackRest.retention | quote }}
         repo2-retention-full-type: {{ .Values.pgBackRest.retentionFullType }}
         repo2-path: {{ .Values.pgBackRest.s3.s3Path }}
         repo2-s3-uri-style: {{ .Values.pgBackRest.s3.s3UriStyle }}
-        repo2-bundle: 'y'
-        repo2-block: 'y'
+        repo2-bundle: {{ .Values.pgBackRest.s3.bundle | squote }}
+        repo2-block: {{ .Values.pgBackRest.s3.block | squote }}
         {{- end }}
       repos:
         # hardcoding repo1 until we solution allowing multiple repos
@@ -162,7 +160,6 @@ spec:
             cpu: {{ .Values.pgBackRest.repoHost.requests.cpu }}
             memory: {{ .Values.pgBackRest.repoHost.requests.memory }}
           limits:
-            cpu: {{ .Values.pgBackRest.repoHost.limits.cpu }}
             memory: {{ .Values.pgBackRest.repoHost.limits.memory }}
       sidecars:
         # this stuff is for the "pgbackrest" container in the "postgres-crunchy-ha" set of pods
@@ -172,7 +169,6 @@ spec:
               cpu: {{ .Values.pgBackRest.sidecars.pgbackrest.requests.cpu }}
               memory: {{ .Values.pgBackRest.sidecars.pgbackrest.requests.memory }}
             limits:
-              cpu: {{ .Values.pgBackRest.sidecars.pgbackrest.limits.cpu }}
               memory: {{ .Values.pgBackRest.sidecars.pgbackrest.limits.memory }}
         pgbackrestConfig:
           resources:
@@ -180,7 +176,6 @@ spec:
               cpu: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.requests.cpu }}
               memory: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.requests.memory }}
             limits:
-              cpu: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.limits.cpu }}
               memory: {{ .Values.pgBackRest.sidecars.pgbackrestConfig.limits.memory }}
   standby:
     enabled: {{ .Values.standby.enabled }}
@@ -219,7 +214,6 @@ spec:
           cpu: {{ .Values.proxy.pgBouncer.requests.cpu }}
           memory: {{ .Values.proxy.pgBouncer.requests.memory }}
         limits:
-          cpu: {{ .Values.proxy.pgBouncer.limits.cpu }}
           memory: {{ .Values.proxy.pgBouncer.limits.memory }}
       affinity:
         podAntiAffinity:
