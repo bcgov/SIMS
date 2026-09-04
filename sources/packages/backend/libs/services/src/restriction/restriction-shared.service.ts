@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
-  ApplicationRestrictionBypass,
   InstitutionRestriction,
   OfferingIntensity,
   QueryAndParamsForExecution,
@@ -33,8 +32,6 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     private readonly institutionRestrictionRepo: Repository<InstitutionRestriction>,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
-    @InjectRepository(ApplicationRestrictionBypass)
-    private readonly applicationRestrictionBypassRepo: Repository<ApplicationRestrictionBypass>,
   ) {
     super(dataSource.getRepository(Restriction));
   }
