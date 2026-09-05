@@ -106,7 +106,7 @@ export enum ProgramESLPercentage {
 /**
  * Keys of calculated data for education programs.
  */
-export enum KnownCalculatedDataKey {
+export enum ProgramCalculatedDataKey {
   FieldOfStudyCode = "fieldOfStudyCode",
   ProgramStatus = "programStatus",
 }
@@ -114,12 +114,12 @@ export enum KnownCalculatedDataKey {
 /**
  * Evaluation result for calculated data of education programs.
  */
-export interface EvaluationResult {
-  [KnownCalculatedDataKey.FieldOfStudyCode]?: number;
-  [KnownCalculatedDataKey.ProgramStatus]?: ProgramStatus;
+export interface ProgramEvaluationResult {
+  [ProgramCalculatedDataKey.FieldOfStudyCode]?: number;
+  [ProgramCalculatedDataKey.ProgramStatus]?: ProgramStatus;
 }
 
-export interface EvaluationProgramData {
+export interface ProgramEvaluationData {
   credentialType: string;
   cipCode: string;
   programDeliveryTypes: ProgramDeliveryTypeValues[];
@@ -145,7 +145,7 @@ export interface EvaluationProgramData {
   minHoursWeekAvi: FormYesNoOptions;
 }
 
-export interface EvaluationProgramContext {
+export interface ProgramEvaluationContext {
   isBCPublic: boolean;
   isBCPrivate: boolean;
 }

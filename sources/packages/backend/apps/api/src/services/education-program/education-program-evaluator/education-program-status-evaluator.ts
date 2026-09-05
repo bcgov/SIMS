@@ -1,18 +1,25 @@
 import { FormYesNoOptions, ProgramStatus } from "@sims/sims-db";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
 import {
-  EvaluationProgramData,
-  EvaluationProgramContext,
+  ProgramEvaluationData,
+  ProgramEvaluationContext,
   ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
   ProgramESLPercentage,
+  ProgramCalculatedDataKey,
 } from "../education-program.service.models";
 import { NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS } from "../constants";
-
+import { Injectable } from "@nestjs/common";
+@Injectable()
 export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluator<ProgramStatus> {
+  /**
+   * The key representing the calculated data of the evaluator.
+   */
+  readonly key = ProgramCalculatedDataKey.ProgramStatus;
+
   evaluate(
-    data: Partial<EvaluationProgramData>,
-    context: EvaluationProgramContext,
+    data: Partial<ProgramEvaluationData>,
+    context: ProgramEvaluationContext,
   ): ProgramStatus {
     const isWithoutAcademicCredits = this.GetIsWithoutAcademicCredits(data);
     const isBCPrivateOnlineOnly = this.GetIsBCPrivateOnlineOnly(data, context);
@@ -49,8 +56,8 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @returns True if the program is a BC private online-only program, otherwise false.
    */
   private GetIsBCPrivateOnlineOnly(
-    data: Partial<EvaluationProgramData>,
-    context: EvaluationProgramContext,
+    data: Partial<ProgramEvaluationData>,
+    context: ProgramEvaluationContext,
   ): boolean {
     return (
       context.isBCPrivate &&
@@ -65,7 +72,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @returns True if the program is a non-BC program without academic credits, otherwise false.
    */
   private GetIsWithoutAcademicCredits(
-    data: Partial<EvaluationProgramData>,
+    data: Partial<ProgramEvaluationData>,
   ): boolean {
     return (
       data.deliveredOnlineAlsoOnsite === FormYesNoOptions.No &&
@@ -80,7 +87,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @returns True if the program has less than the minimum hours per week, otherwise false.
    */
   private GetIsLessThanMinHoursWeek(
-    data: Partial<EvaluationProgramData>,
+    data: Partial<ProgramEvaluationData>,
   ): boolean {
     return (
       data.courseLoadCalculation === ProgramCourseLoadCalculationTypes.Hours &&
@@ -95,7 +102,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @returns True if the program has no entrance requirements, otherwise false.
    */
   private GetHasNoEntranceRequirements(
-    data: Partial<EvaluationProgramData>,
+    data: Partial<ProgramEvaluationData>,
   ): boolean {
     return data.entranceRequirements?.includes(
       NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
@@ -107,7 +114,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @param data The program data to evaluate.
    * @returns True if the program has a WIL component that is not approved, otherwise false.
    */
-  private GetIsWILNotApproved(data: Partial<EvaluationProgramData>): boolean {
+  private GetIsWILNotApproved(data: Partial<ProgramEvaluationData>): boolean {
     return (
       data.hasWILComponent === FormYesNoOptions.Yes &&
       data.isWILApproved === FormYesNoOptions.No
@@ -119,7 +126,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @param data The program data to evaluate.
    * @returns True if the program has a WIL component that is not eligible, otherwise false.
    */
-  private GetIsWILNotEligible(data: Partial<EvaluationProgramData>): boolean {
+  private GetIsWILNotEligible(data: Partial<ProgramEvaluationData>): boolean {
     return (
       data.hasWILComponent === FormYesNoOptions.Yes &&
       data.isWILApproved === FormYesNoOptions.Yes &&
@@ -133,7 +140,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @returns True if the program has a travel component that is not eligible, otherwise false.
    */
   private GetIsTravelNotEligible(
-    data: Partial<EvaluationProgramData>,
+    data: Partial<ProgramEvaluationData>,
   ): boolean {
     return (
       data.hasTravel === FormYesNoOptions.Yes &&
@@ -147,7 +154,7 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
    * @returns True if the program has an international exchange component that is not eligible, otherwise false.
    */
   private GetIsIntlExchangeNotEligible(
-    data: Partial<EvaluationProgramData>,
+    data: Partial<ProgramEvaluationData>,
   ): boolean {
     return (
       data.hasIntlExchange === FormYesNoOptions.Yes &&

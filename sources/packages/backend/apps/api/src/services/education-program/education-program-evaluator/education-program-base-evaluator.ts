@@ -1,6 +1,7 @@
 import {
-  EvaluationProgramContext,
-  EvaluationProgramData,
+  ProgramEvaluationContext,
+  ProgramEvaluationData,
+  ProgramCalculatedDataKey,
 } from "../education-program.service.models";
 
 /**
@@ -8,13 +9,16 @@ import {
  */
 export abstract class EducationProgramBaseEvaluator<T> {
   /**
-   * Evaluates the specified calculated data keys for the given education program data within the provided context.
-   * @param calculatedDataKeys The keys of the calculated data to evaluate.
+   * The key representing the calculated data of the evaluator.
+   */
+  readonly key: ProgramCalculatedDataKey;
+  /**
+   * Evaluates the calculated data for the given education program data within the provided context.
    * @param data The education program data to be evaluated.
    * @param context The context in which the evaluation is performed.
    */
   abstract evaluate(
-    data: Partial<EvaluationProgramData>,
-    context: EvaluationProgramContext,
+    data: Partial<ProgramEvaluationData>,
+    context: ProgramEvaluationContext,
   ): T;
 }

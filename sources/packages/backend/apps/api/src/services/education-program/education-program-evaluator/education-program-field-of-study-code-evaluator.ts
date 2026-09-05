@@ -1,8 +1,23 @@
-import { EvaluationProgramData } from "../education-program.service.models";
+import { Injectable } from "@nestjs/common";
+import {
+  ProgramCalculatedDataKey,
+  ProgramEvaluationData,
+} from "../education-program.service.models";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
 
+@Injectable()
 export class EducationProgramFieldOfStudyCodeEvaluator extends EducationProgramBaseEvaluator<number> {
-  evaluate(data: Partial<EvaluationProgramData>): number {
+  /**
+   * The key representing the calculated data of the evaluator.
+   */
+  readonly key = ProgramCalculatedDataKey.FieldOfStudyCode;
+
+  /**
+   * Evaluates the field of study code based on the provided program evaluation data.
+   * @param data Partial program evaluation data.
+   * @returns Field of study code based on the evaluation data.
+   */
+  evaluate(data: Partial<ProgramEvaluationData>): number {
     if (!data.cipCode || !data.credentialType) {
       return 20;
     }
