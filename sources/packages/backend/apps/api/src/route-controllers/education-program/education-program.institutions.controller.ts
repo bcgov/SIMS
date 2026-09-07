@@ -21,6 +21,8 @@ import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
+  ProgramEvaluationAPIInDTO,
+  ProgramEvaluationAPIOutDTO,
 } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import {
@@ -41,6 +43,7 @@ import { EducationProgramControllerService } from "../../route-controllers/educa
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
 import { isSameOrAfterDate } from "@sims/utilities";
+import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -49,6 +52,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   constructor(
     private readonly educationProgramService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
+    private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
   ) {
     super();
   }
@@ -227,5 +231,28 @@ export class EducationProgramInstitutionsController extends BaseController {
       programId,
       userToken.authorizations.institutionId,
     );
+  }
+
+  /**
+   * Evaluate a program based on the provided data and key.
+   * @param payload contains the data and key for evaluation.
+   * @param userToken the token of the user making the request.
+   * @returns the calculated data based on the evaluation.
+   */
+  @Post("evaluate")
+  async evaluate(
+    @Body() payload: ProgramEvaluationAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<ProgramEvaluationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
+    const calculatedData =
+      await this.educationProgramEvaluationService.evaluate(
+        userToken.authorizations.institutionId,
+        payload.calculatedDataKeys,
+        payload.data,
+      );
+    return { calculatedData };
   }
 }

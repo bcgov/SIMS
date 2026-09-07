@@ -5,6 +5,9 @@ import {
 } from "../education-program.service.models";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
 
+/**
+ * Evaluator for determining the field of study code based on program evaluation data.
+ */
 @Injectable()
 export class EducationProgramFieldOfStudyCodeEvaluator extends EducationProgramBaseEvaluator<number> {
   /**
