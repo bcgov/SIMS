@@ -3,12 +3,10 @@ import { EducationProgramBaseEvaluator } from "./education-program-base-evaluato
 import {
   ProgramEvaluationData,
   ProgramEvaluationContext,
-  ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
   ProgramESLPercentage,
   ProgramCalculatedDataKey,
 } from "../education-program.service.models";
-import { NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS } from "../constants";
 import { Injectable } from "@nestjs/common";
 @Injectable()
 export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluator<ProgramStatus> {
@@ -61,8 +59,8 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
   ): boolean {
     return (
       context.isBCPrivate &&
-      data.programDeliveryTypes?.includes(ProgramDeliveryTypeValues.Online) &&
-      !data.programDeliveryTypes?.includes(ProgramDeliveryTypeValues.Onsite)
+      data.programDeliveryTypes?.deliveredOnline &&
+      !data.programDeliveryTypes?.deliveredOnSite
     );
   }
 
@@ -104,8 +102,8 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
   private GetHasNoEntranceRequirements(
     data: Partial<ProgramEvaluationData>,
   ): boolean {
-    return data.entranceRequirements?.includes(
-      NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+    return (
+      data.entranceRequirements?.noneOfTheAboveEntranceRequirements === true
     );
   }
 

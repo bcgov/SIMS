@@ -122,15 +122,14 @@ export interface ProgramEvaluationResult {
 export interface ProgramEvaluationData {
   credentialType: string;
   cipCode: string;
-  programDeliveryTypes: ProgramDeliveryTypeValues[];
+  programDeliveryTypes: ProgramDeliveryTypes;
   deliveredOnlineAlsoOnsite: FormYesNoOptions;
   sameOnlineCreditsEarned: FormYesNoOptions;
   earnAcademicCreditsOtherInstitution: FormYesNoOptions;
   courseLoadCalculation: ProgramCourseLoadCalculationTypes;
   minHoursWeek: FormYesNoOptions;
-  entranceRequirements: string[];
+  entranceRequirements: EntranceRequirements;
   eslEligibility: ProgramESLPercentage;
-  regulatoryBody: string;
   hasJointInstitution: FormYesNoOptions;
   hasJointDesignatedInstitution: FormYesNoOptions;
   hasWILComponent: FormYesNoOptions;
@@ -141,8 +140,6 @@ export interface ProgramEvaluationData {
   intlExchangeProgramEligibility: FormYesNoOptions;
   hasIntlExchange: FormYesNoOptions;
   isAviationProgram: FormYesNoOptions;
-  credentialTypesAviation: string[];
-  minHoursWeekAvi: FormYesNoOptions;
 }
 
 export interface ProgramEvaluationContext {
