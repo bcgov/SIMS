@@ -28,7 +28,7 @@ import {
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { FeatureTogglesService } from "@sims/services";
-import { NotifyService } from "@sims/services/notifications/notification/notify.service";
+import { NotifyService } from "@sims/services/notifications";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -67,7 +67,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
   ): Promise<number[]> {
     const newNotifications = notifications.map((notification) => {
       const { messagePayload, messageContent } =
-        this.getNotificationMessages(notification);
+        this.getNotificationMessage(notification);
       return {
         user: { id: notification.userId } as User,
         creator: { id: auditUserId } as User,
@@ -110,7 +110,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * @returns an object containing the GC Notify message payload and the
    * BC Notify message content.
    */
-  private getNotificationMessages(notification: SaveNotificationModel): {
+  private getNotificationMessage(notification: SaveNotificationModel): {
     messagePayload: NotificationEmailMessage;
     messageContent: unknown;
   } {

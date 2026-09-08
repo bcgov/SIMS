@@ -9,7 +9,7 @@ import { HttpService } from "@nestjs/axios";
 import {
   NotifyAPIMessagePayload,
   NotifyMessageContent,
-} from "@sims/services/notifications/notification/notify.model";
+} from "@sims/services/notifications";
 import { Notification } from "@sims/sims-db";
 
 @Injectable()
@@ -26,7 +26,6 @@ export class NotifyService {
   /**
    * Send email notification.
    * @param payload email message payload.
-   * @returns Notify API call response.
    */
   async sendEmailNotification(notification: Notification): Promise<void> {
     try {

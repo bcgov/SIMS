@@ -25,12 +25,3 @@ export interface NotifyAPIMessagePayload {
     attachments?: NotificationAttachment[];
   };
 }
-
-export interface NotifyAPIErrorResponse {
-  statusCode: number;
-  message: string;
-  errors: string[];
-  fieldErrors: {
-    [key: string]: string;
-  };
-}
