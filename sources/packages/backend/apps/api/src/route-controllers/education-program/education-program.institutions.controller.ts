@@ -234,7 +234,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Evaluate a program based on the provided data and key.
+   * Evaluate program's calculated data based on the provided data and key.
    * @param payload contains the data and key for evaluation.
    * @param userToken the token of the user making the request.
    * @returns the calculated data based on the evaluation.

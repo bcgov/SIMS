@@ -5,6 +5,8 @@ import {
 } from "../education-program.service.models";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
 
+const DEFAULT_FIELD_OF_STUDY_CODE = 20;
+
 /**
  * Evaluator for determining the field of study code based on program evaluation data.
  */
@@ -22,14 +24,14 @@ export class EducationProgramFieldOfStudyCodeEvaluator extends EducationProgramB
    */
   evaluate(data: Partial<ProgramEvaluationData>): number {
     if (!data.cipCode || !data.credentialType) {
-      return 20;
+      return DEFAULT_FIELD_OF_STUDY_CODE;
     }
     const sabcCode = this.getSABCCodes()[data.cipCode.substring(0, 2)];
     const levelOfStudyCode = this.getLevelOfStudyCodes()[data.credentialType];
     const returnValue =
       !!sabcCode && !!levelOfStudyCode
         ? this.getFieldOfStudyCodes()[`${sabcCode}${levelOfStudyCode}`]
-        : 20;
+        : DEFAULT_FIELD_OF_STUDY_CODE;
     return returnValue;
   }
 
