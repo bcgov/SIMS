@@ -26,6 +26,8 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
     data: Partial<ProgramEvaluationData>,
     context: ProgramEvaluationContext,
   ): ProgramStatus {
+    // Validate the program data.
+    this.validate(data);
     if (this.getIsBCPrivateOnlineOnly(data, context)) {
       return ProgramStatus.Pending;
     }
@@ -162,5 +164,28 @@ export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluat
       data.hasIntlExchange === FormYesNoOptions.Yes &&
       data.intlExchangeProgramEligibility === FormYesNoOptions.No
     );
+  }
+
+  /**
+   * Validate if the required minimal data is present to evaluate program status.
+   * @param data The program data to validate.
+   * @param context The evaluation context.
+   */
+  private validate(data: Partial<ProgramEvaluationData>): void {
+    if (
+      !data.programDeliveryTypes ||
+      Object.keys(data.programDeliveryTypes).length === 0 ||
+      !data.courseLoadCalculation ||
+      !data.entranceRequirements ||
+      Object.keys(data.entranceRequirements).length === 0 ||
+      !data.eslEligibility ||
+      !data.hasJointInstitution ||
+      !data.hasWILComponent ||
+      !data.hasTravel ||
+      !data.hasIntlExchange ||
+      !data.isAviationProgram
+    ) {
+      throw new Error("Missing required data to evaluate program status.");
+    }
   }
 }

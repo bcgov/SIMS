@@ -48,48 +48,48 @@ describe("EducationProgramStatusEvaluator-evaluate", () => {
   const testData = [
     {
       scenario: "all conditions are met for approval",
-      data: {},
-      context: {},
+      scenarioData: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Approved,
     },
     {
       scenario:
         "program is BC private and delivered online only, making it pending",
-      data: {
+      scenarioData: {
         programDeliveryTypes: {
           deliveredOnSite: false,
           deliveredOnline: true,
         },
       },
-      context: { isBCPrivate: true },
+      scenarioContext: { isBCPrivate: true },
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario: "program has a joint institution, making it pending",
-      data: { hasJointInstitution: FormYesNoOptions.Yes },
-      context: {},
+      scenarioData: { hasJointInstitution: FormYesNoOptions.Yes },
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program is delivered without academic credits, making it pending",
-      data: {
+      scenarioData: {
         deliveredOnlineAlsoOnsite: FormYesNoOptions.No,
         sameOnlineCreditsEarned: FormYesNoOptions.No,
         earnAcademicCreditsOtherInstitution: FormYesNoOptions.No,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario: "program ESL eligibility is 20 or more, making it pending",
-      data: { eslEligibility: ProgramESLPercentage.GreaterThanEqual20 },
-      context: {},
+      scenarioData: { eslEligibility: ProgramESLPercentage.GreaterThanEqual20 },
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario: "program has no entrance requirements, making it pending",
-      data: {
+      scenarioData: {
         entranceRequirements: {
           hasMinimumAge: false,
           minHighSchool: false,
@@ -98,114 +98,129 @@ describe("EducationProgramStatusEvaluator-evaluate", () => {
           noneOfTheAboveEntranceRequirements: true,
         },
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program has less than the minimum expected hours per week, making it pending",
-      data: {
+      scenarioData: {
         courseLoadCalculation: ProgramCourseLoadCalculationTypes.Hours,
         minHoursWeek: FormYesNoOptions.No,
         isAviationProgram: FormYesNoOptions.No,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario: "program is an aviation program, making it pending",
-      data: { isAviationProgram: FormYesNoOptions.Yes },
-      context: {},
+      scenarioData: { isAviationProgram: FormYesNoOptions.Yes },
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program has a WIL component that is not approved, making it pending",
-      data: {
+      scenarioData: {
         hasWILComponent: FormYesNoOptions.Yes,
         isWILApproved: FormYesNoOptions.No,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program has an approved WIL component that is not eligible, making it pending",
-      data: {
+      scenarioData: {
         hasWILComponent: FormYesNoOptions.Yes,
         isWILApproved: FormYesNoOptions.Yes,
         wilProgramEligibility: FormYesNoOptions.No,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program has an approved and eligible WIL component, making it approved",
-      data: {
+      scenarioData: {
         hasWILComponent: FormYesNoOptions.Yes,
         isWILApproved: FormYesNoOptions.Yes,
         wilProgramEligibility: FormYesNoOptions.Yes,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Approved,
     },
     {
       scenario:
         "program has a travel component that is not eligible, making it pending",
-      data: {
+      scenarioData: {
         hasTravel: FormYesNoOptions.Yes,
         travelProgramEligibility: FormYesNoOptions.No,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program has a travel component that is eligible, making it approved",
-      data: {
+      scenarioData: {
         hasTravel: FormYesNoOptions.Yes,
         travelProgramEligibility: FormYesNoOptions.Yes,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Approved,
     },
     {
       scenario:
         "program has an international exchange component that is not eligible, making it pending",
-      data: {
+      scenarioData: {
         hasIntlExchange: FormYesNoOptions.Yes,
         intlExchangeProgramEligibility: FormYesNoOptions.No,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Pending,
     },
     {
       scenario:
         "program has an international exchange component that is eligible, making it approved",
-      data: {
+      scenarioData: {
         hasIntlExchange: FormYesNoOptions.Yes,
         intlExchangeProgramEligibility: FormYesNoOptions.Yes,
       },
-      context: {},
+      scenarioContext: {},
       expectedResult: ProgramStatus.Approved,
     },
   ];
 
-  testData.forEach(({ scenario, data, context, expectedResult }) => {
-    it(`Should return ${expectedResult} when ${scenario}.`, () => {
-      // Arrange
-      const evaluationData = { ...baseData, ...data };
-      const evaluationContext = { ...baseContext, ...context };
+  testData.forEach(
+    ({ scenario, scenarioData, scenarioContext, expectedResult }) => {
+      it(`Should return ${expectedResult} when ${scenario}.`, () => {
+        // Arrange
+        const evaluationData = { ...baseData, ...scenarioData };
+        const evaluationContext = { ...baseContext, ...scenarioContext };
 
-      // Act
-      const result = evaluator.evaluate(
-        evaluationData as Partial<ProgramEvaluationData>,
-        evaluationContext,
-      );
+        // Act
+        const result = evaluator.evaluate(
+          evaluationData as Partial<ProgramEvaluationData>,
+          evaluationContext,
+        );
 
-      // Assert
-      expect(result).toBe(expectedResult);
-    });
+        // Assert
+        expect(result).toBe(expectedResult);
+      });
+    },
+  );
+
+  it("Should throw an error when program evaluation data is incomplete.", () => {
+    // Act and Assert
+    expect(() =>
+      evaluator.evaluate(
+        {
+          programDeliveryTypes: {},
+          courseLoadCalculation: ProgramCourseLoadCalculationTypes.Credit,
+        } as Partial<ProgramEvaluationData>,
+        baseContext,
+      ),
+    ).toThrow("Missing required data to evaluate program status.");
   });
 });
