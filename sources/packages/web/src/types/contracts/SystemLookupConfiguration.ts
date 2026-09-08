@@ -23,19 +23,19 @@ export enum SystemLookupCategory {
    */
   DisabilityImpairment = "Disability impairment",
   /**
-   * Category which consists of program length lookup values.
+   * Program length lookup values.
    */
   ProgramLength = "Program length",
   /**
-   * Category which consists of institution regulatory body lookup values.
+   * Institution regulatory body lookup values.
    */
   InstitutionRegulatoryBody = "Institution regulatory body",
   /**
-   * Category which consists of program entrance requirement lookup values.
+   * Program entrance requirement lookup values.
    */
   ProgramEntranceRequirement = "Program entrance requirement",
   /**
-   * Category which consists of program aviation credential lookup values.
+   * Program aviation credential lookup values.
    */
   ProgramAviationCredential = "Program aviation credential",
 }

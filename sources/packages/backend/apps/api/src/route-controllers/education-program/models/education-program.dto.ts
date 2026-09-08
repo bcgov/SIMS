@@ -129,7 +129,6 @@ export class ProgramEvaluationAPIInDTO {
    */
   @IsNotEmptyObject()
   data: ProgramEvaluationDataAPIInDTO;
-  // Restricted to expose only field of study code for evaluation.
   /**
    * Keys of the calculated data to be evaluated.
    */

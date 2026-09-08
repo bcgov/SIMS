@@ -256,6 +256,7 @@
       "supplierprotected",
       "suppliersitecode",
       "timestamptz",
+      "BCITA",
       "typeorm",
       "unparse",
       "unzipper",

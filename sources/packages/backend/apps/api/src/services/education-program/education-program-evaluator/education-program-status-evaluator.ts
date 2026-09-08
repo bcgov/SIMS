@@ -9,6 +9,9 @@ import {
 } from "../education-program.service.models";
 import { Injectable } from "@nestjs/common";
 
+/**
+ * Evaluator for determining the status of an education program based on program evaluation data and context.
+ */
 @Injectable()
 export class EducationProgramStatusEvaluator extends EducationProgramBaseEvaluator<ProgramStatus> {
   /**

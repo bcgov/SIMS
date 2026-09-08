@@ -30,35 +30,27 @@ describe("EducationProgramFieldOfStudyCodeEvaluator-evaluate", () => {
       data: { credentialType: "undergraduateDegree", cipCode: "77.1234" },
       expectedResult: 20,
     },
+    {
+      data: { cipCode: "12.1234" },
+      expectedResult: 20,
+    },
+    {
+      data: { credentialType: "undergraduateDegree" },
+      expectedResult: 20,
+    },
+    {
+      data: {},
+      expectedResult: 20,
+    },
   ];
 
   testData.forEach(({ data, expectedResult }) => {
-    it(`Should return ${expectedResult} when credential type is ${data.credentialType} and CIP code is ${data.cipCode}.`, () => {
+    it(`Should return ${expectedResult} when credential type is ${data.credentialType ?? "not provided"} and CIP code is ${data.cipCode ?? "not provided"}.`, () => {
       // Act
       const result = evaluator.evaluate(data as Partial<ProgramEvaluationData>);
 
       // Assert
       expect(result).toBe(expectedResult);
     });
-  });
-
-  it("Should return 20 when CIP code is not provided.", () => {
-    // Act
-    const result = evaluator.evaluate({
-      credentialType: "undergraduateCertificate",
-    } as Partial<ProgramEvaluationData>);
-
-    // Assert
-    expect(result).toBe(20);
-  });
-
-  it("Should return 20 when credential type is not provided.", () => {
-    // Act
-    const result = evaluator.evaluate({
-      cipCode: "12.1234",
-    } as Partial<ProgramEvaluationData>);
-
-    // Assert
-    expect(result).toBe(20);
   });
 });

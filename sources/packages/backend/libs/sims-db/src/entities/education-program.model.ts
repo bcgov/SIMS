@@ -45,6 +45,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "credential_type",
+    length: CREDENTIAL_TYPE_MAX_LENGTH,
   })
   credentialType: string;
   /**
@@ -52,6 +53,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "cip_code",
+    length: CIP_CODE_MAX_LENGTH,
   })
   cipCode: string;
   /**

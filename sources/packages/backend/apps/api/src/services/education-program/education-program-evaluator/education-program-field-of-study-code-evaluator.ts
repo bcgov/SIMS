@@ -28,11 +28,11 @@ export class EducationProgramFieldOfStudyCodeEvaluator extends EducationProgramB
     }
     const sabcCode = this.getSABCCodes()[data.cipCode.substring(0, 2)];
     const levelOfStudyCode = this.getLevelOfStudyCodes()[data.credentialType];
-    const returnValue =
+    const fieldOfStudyCode =
       !!sabcCode && !!levelOfStudyCode
         ? this.getFieldOfStudyCodes()[`${sabcCode}${levelOfStudyCode}`]
         : DEFAULT_FIELD_OF_STUDY_CODE;
-    return returnValue;
+    return fieldOfStudyCode;
   }
 
   /**
