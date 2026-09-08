@@ -1,13 +1,25 @@
-import { Allow, IsDateString, IsNotEmpty, MaxLength } from "class-validator";
+import {
+  Allow,
+  IsDateString,
+  IsIn,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  MaxLength,
+} from "class-validator";
 import {
   EntranceRequirements,
+  ProgramCalculatedDataKey,
   ProgramDeliveryTypes,
+  ProgramEvaluationResult,
 } from "../../../services/education-program/education-program.service.models";
 import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   ProgramStatus,
   ProgramIntensity,
   AviationProgramCredentialTypes,
+  CREDENTIAL_TYPE_MAX_LENGTH,
+  CIP_CODE_MAX_LENGTH,
 } from "@sims/sims-db";
 import { IsDateAfter } from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
@@ -100,6 +112,32 @@ export class EducationProgramsSummaryLocationAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
+}
+
+export class ProgramEvaluationDataAPIInDTO {
+  @IsOptional()
+  @MaxLength(CREDENTIAL_TYPE_MAX_LENGTH)
+  credentialType?: string;
+  @IsOptional()
+  @MaxLength(CIP_CODE_MAX_LENGTH)
+  cipCode?: string;
+}
+
+export class ProgramEvaluationAPIInDTO {
+  /**
+   * Program evaluation data.
+   */
+  @IsNotEmptyObject()
+  data: ProgramEvaluationDataAPIInDTO;
+  /**
+   * Keys of the calculated data to be evaluated.
+   */
+  @IsIn([ProgramCalculatedDataKey.FieldOfStudyCode], { each: true })
+  calculatedDataKeys: ProgramCalculatedDataKey[];
+}
+
+export class ProgramEvaluationAPIOutDTO {
+  calculatedData: ProgramEvaluationResult;
 }
 
 /**

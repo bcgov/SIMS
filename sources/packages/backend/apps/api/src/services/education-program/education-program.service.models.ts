@@ -1,5 +1,6 @@
 import {
   AviationProgramCredentialTypes,
+  FormYesNoOptions,
   ProgramIntensity,
   ProgramStatus,
 } from "@sims/sims-db";
@@ -85,4 +86,63 @@ export class PendingEducationProgram {
     operatingName: string;
   };
   selectedLocationId: number;
+}
+
+export enum ProgramDeliveryTypeValues {
+  Onsite = "deliveredOnSite",
+  Online = "deliveredOnline",
+}
+
+export enum ProgramCourseLoadCalculationTypes {
+  Credit = "credit",
+  Hours = "hours",
+}
+
+export enum ProgramESLPercentage {
+  LessThan20 = "lessThan20",
+  GreaterThanEqual20 = "20OrMore",
+}
+
+/**
+ * Keys of calculated data for education programs.
+ */
+export enum ProgramCalculatedDataKey {
+  FieldOfStudyCode = "fieldOfStudyCode",
+  ProgramStatus = "programStatus",
+}
+
+/**
+ * Evaluation result for calculated data of education programs.
+ */
+export interface ProgramEvaluationResult {
+  [ProgramCalculatedDataKey.FieldOfStudyCode]?: number;
+  [ProgramCalculatedDataKey.ProgramStatus]?: ProgramStatus;
+}
+
+export interface ProgramEvaluationData {
+  credentialType: string;
+  cipCode: string;
+  programDeliveryTypes: ProgramDeliveryTypes;
+  deliveredOnlineAlsoOnsite: FormYesNoOptions;
+  sameOnlineCreditsEarned: FormYesNoOptions;
+  earnAcademicCreditsOtherInstitution: FormYesNoOptions;
+  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
+  minHoursWeek: FormYesNoOptions;
+  entranceRequirements: EntranceRequirements;
+  eslEligibility: ProgramESLPercentage;
+  hasJointInstitution: FormYesNoOptions;
+  hasJointDesignatedInstitution: FormYesNoOptions;
+  hasWILComponent: FormYesNoOptions;
+  isWILApproved: FormYesNoOptions;
+  wilProgramEligibility: FormYesNoOptions;
+  hasTravel: FormYesNoOptions;
+  travelProgramEligibility: FormYesNoOptions;
+  intlExchangeProgramEligibility: FormYesNoOptions;
+  hasIntlExchange: FormYesNoOptions;
+  isAviationProgram: FormYesNoOptions;
+}
+
+export interface ProgramEvaluationContext {
+  isBCPublic: boolean;
+  isBCPrivate: boolean;
 }

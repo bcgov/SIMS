@@ -110,6 +110,11 @@ import {
   SFASPartTimeApplicationsService,
 } from "@sims/services/sfas";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
+import {
+  EducationProgramEvaluationService,
+  EducationProgramFieldOfStudyCodeEvaluator,
+  EducationProgramStatusEvaluator,
+} from "./services/education-program/education-program-evaluator";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],
@@ -218,6 +223,9 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     FormSubmissionService,
     FormSubmissionCancellationService,
     FormSubmissionControllerService,
+    EducationProgramFieldOfStudyCodeEvaluator,
+    EducationProgramStatusEvaluator,
+    EducationProgramEvaluationService,
   ],
 })
 export class AppInstitutionsModule {}
