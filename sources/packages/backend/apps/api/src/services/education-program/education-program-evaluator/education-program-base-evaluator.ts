@@ -11,7 +11,7 @@ export abstract class EducationProgramBaseEvaluator<T> {
   /**
    * The key representing the calculated data of the evaluator.
    */
-  readonly key: ProgramCalculatedDataKey;
+  abstract readonly key: ProgramCalculatedDataKey;
   /**
    * Evaluates the calculated data for the given education program data within the provided context.
    * @param data The education program data to be evaluated.
@@ -19,6 +19,6 @@ export abstract class EducationProgramBaseEvaluator<T> {
    */
   abstract evaluate(
     data: Partial<ProgramEvaluationData>,
-    context: ProgramEvaluationContext,
+    context?: ProgramEvaluationContext,
   ): T;
 }

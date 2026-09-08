@@ -4,6 +4,7 @@ import {
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsOptional,
   MaxLength,
 } from "class-validator";
 import {
@@ -22,7 +23,6 @@ import {
 } from "@sims/sims-db";
 import { IsDateAfter } from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
-import { Optional } from "@nestjs/common";
 
 /**
  * Education program complete information.
@@ -115,10 +115,10 @@ export class EducationProgramsSummaryLocationAPIOutDTO {
 }
 
 export class ProgramEvaluationDataAPIInDTO {
-  @Optional()
+  @IsOptional()
   @MaxLength(CREDENTIAL_TYPE_MAX_LENGTH)
   credentialType?: string;
-  @Optional()
+  @IsOptional()
   @MaxLength(CIP_CODE_MAX_LENGTH)
   cipCode?: string;
 }
@@ -130,6 +130,9 @@ export class ProgramEvaluationAPIInDTO {
   @IsNotEmptyObject()
   data: ProgramEvaluationDataAPIInDTO;
   // Restricted to expose only field of study code for evaluation.
+  /**
+   * Keys of the calculated data to be evaluated.
+   */
   @IsIn([ProgramCalculatedDataKey.FieldOfStudyCode], { each: true })
   calculatedDataKeys: ProgramCalculatedDataKey[];
 }

@@ -82,25 +82,25 @@ FROM
             (
                 'Institution regulatory body',
                 'Private Act of B.C. Legislature',
-                'skilledTradesBC',
+                'privateActLegislature',
                 3
             ),
             (
                 'Institution regulatory body',
                 'Skilled Trades BC',
-                'icbc',
+                'skilledTradesBC',
                 4
             ),
             (
                 'Institution regulatory body',
                 'ICBC',
-                'senateOrEducationCouncil',
+                'icbc',
                 5
             ),
             (
                 'Institution regulatory body',
                 'Senate, Academic Council, Education Council, and/or Program Council and Board of Governors',
-                '4YearsToLessThan5Years',
+                'senateOrEducationCouncil',
                 6
             ),
             (

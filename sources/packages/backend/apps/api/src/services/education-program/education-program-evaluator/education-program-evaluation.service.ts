@@ -40,6 +40,7 @@ export class EducationProgramEvaluationService {
   ): Promise<ProgramEvaluationResult> {
     const institution = await this.institutionRepo.findOne({
       select: { id: true, institutionType: { id: true } },
+      relations: { institutionType: true },
       where: { id: institutionId },
     });
     if (!institution) {
