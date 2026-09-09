@@ -149,6 +149,16 @@ objects:
                     secretKeyRef:
                       key: ${GC_NOTIFY_API_KEY_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: NOTIFY_URL
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${NOTIFY_URL_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: NOTIFY_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${NOTIFY_API_KEY_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: SFAS_RECEIVE_FOLDER
                   valueFrom:
                     secretKeyRef:
@@ -474,6 +484,10 @@ parameters:
     value: gc-notify-url
   - name: GC_NOTIFY_API_KEY_NAME_KEY
     value: gc-notify-api-key
+  - name: NOTIFY_URL_NAME_KEY
+    value: notify-url
+  - name: NOTIFY_API_KEY_NAME_KEY
+    value: notify-api-key
   - name: SFAS_RECEIVE_FOLDER_NAME_KEY
     value: sfas-receive-folder
   - name: SFAS_SEND_FOLDER_NAME_KEY

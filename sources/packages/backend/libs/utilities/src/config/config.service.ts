@@ -56,12 +56,23 @@ export class ConfigService {
   }
 
   /**
+   * GC Notification API configuration to be replaced
+   * by the BC Notify.
+   */
+  get gcNotify(): GCNotify {
+    return this.getCachedConfig("gcNotifyConfig", {
+      url: process.env.GC_NOTIFY_URL,
+      apiKey: process.env.GC_NOTIFY_API_KEY,
+    });
+  }
+
+  /**
    * Notification API configuration.
    */
   get notify(): GCNotify {
     return this.getCachedConfig("notifyConfig", {
-      url: process.env.GC_NOTIFY_URL,
-      apiKey: process.env.GC_NOTIFY_API_KEY,
+      url: process.env.NOTIFY_URL,
+      apiKey: process.env.NOTIFY_API_KEY,
     });
   }
 

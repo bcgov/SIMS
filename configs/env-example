@@ -63,6 +63,11 @@ BCeID_WEB_SERVICE_AUTH_USER_PASSWORD=
 GC_NOTIFY_URL=https://api.notification.canada.ca/v2/notifications/email
 GC_NOTIFY_API_KEY=
 
+# Notify Web Service - These variables are used to send Email notifications.
+
+NOTIFY_URL=https://notify.digital.gov.bc.ca/api/v1/
+NOTIFY_API_KEY=
+
 # Devops/openshift Make init-zone-b-sftp-secret
 
 INIT_ZONE_B_SFTP_SERVER=

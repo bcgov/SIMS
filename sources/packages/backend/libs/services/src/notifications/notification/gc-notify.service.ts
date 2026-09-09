@@ -20,7 +20,7 @@ export class GCNotifyService {
     private readonly httpService: HttpService,
     private readonly logger: LoggerService,
   ) {
-    this.gcNotifyConfig = this.configService.notify;
+    this.gcNotifyConfig = this.configService.gcNotify;
   }
 
   /**
