@@ -97,8 +97,9 @@ export default defineComponent({
     });
 
     const fillStudentForm = async (): Promise<void> => {
-      const formIsValid = standaloneFormsSelectionForm.value.validate();
-      if (!formIsValid) {
+      const validationResult =
+        await standaloneFormsSelectionForm.value.validate();
+      if (!validationResult.valid) {
         return;
       }
       await router.push({

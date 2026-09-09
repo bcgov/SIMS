@@ -44,6 +44,7 @@ export class FormSubmissionConfigurationAPIOutDTO {
   formDescription: string;
   allowBundledSubmission: boolean;
   hasApplicationScope: boolean;
+  blockedReason?: FormSubmissionBlockedReason;
 }
 
 /**
@@ -289,4 +290,14 @@ export class FormSubmissionCompletionAPIInDTO {
   @ValidateNested({ each: true })
   @Type(() => FormSubmissionCompletionItemAPIInDTO)
   items: FormSubmissionCompletionItemAPIInDTO[];
+}
+
+/**
+ * Reason why a form submission may be blocked from submission.
+ */
+export enum FormSubmissionBlockedReason {
+  /**
+   * Modified Independent status already approved.
+   */
+  ModifiedIndependentStatusAlreadyApproved = "Modified Independent status already approved",
 }

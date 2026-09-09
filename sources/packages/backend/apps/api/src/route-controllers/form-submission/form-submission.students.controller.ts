@@ -21,6 +21,7 @@ import {
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
   FormSubmissionCancellationService,
   FormSubmissionSubmitService,
+  StudentService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
 import {
@@ -63,6 +64,7 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly formSubmissionControllerService: FormSubmissionControllerService,
     private readonly featureTogglesService: FeatureTogglesService,
     private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -72,13 +74,18 @@ export class FormSubmissionStudentsController extends BaseController {
    * @returns form configurations that allow student submissions.
    */
   @Get("forms")
-  async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
+  async getSubmissionForms(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionConfigurationsAPIOutDTO> {
     const studentForms = this.dynamicFormConfigurationService
       .getFormsByCategory(FormCategory.StudentForm, FormCategory.StudentAppeal)
       .filter(
         (form) =>
           !this.featureTogglesService.isFormDisabled(form.formDefinitionName),
       );
+    const student = await this.studentService.getStudentById(
+      userToken.studentId,
+    );
     return {
       configurations: studentForms.map((configuration) => ({
         id: configuration.id,
@@ -88,6 +95,10 @@ export class FormSubmissionStudentsController extends BaseController {
         formDescription: configuration.formDescription,
         allowBundledSubmission: configuration.allowBundledSubmission,
         hasApplicationScope: configuration.hasApplicationScope,
+        blockedReason: this.formSubmissionControllerService.checkIfFormBlocked(
+          configuration,
+          student,
+        ),
       })),
     };
   }
