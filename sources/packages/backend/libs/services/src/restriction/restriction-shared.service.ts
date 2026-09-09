@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
+  ApplicationRestrictionBypass,
   InstitutionRestriction,
   OfferingIntensity,
   QueryAndParamsForExecution,
@@ -32,6 +33,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     private readonly institutionRestrictionRepo: Repository<InstitutionRestriction>,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(ApplicationRestrictionBypass)
+    private readonly applicationRestrictionBypassRepo: Repository<ApplicationRestrictionBypass>,
   ) {
     super(dataSource.getRepository(Restriction));
   }
@@ -126,16 +129,21 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     }
     // Filter out restrictions that have already been bypassed for the given application.
     if (options?.applicationId) {
-      query.andWhere(
-        `NOT EXISTS (
-          SELECT 1
-          FROM application_restriction_bypasses arb
-          WHERE arb.institution_restriction_id = institutionRestriction.id
-            AND arb.application_id = :applicationId
-            AND arb.is_active = TRUE
-        )`,
-        { applicationId: options.applicationId },
-      );
+      const activeInstitutionRestrictionBypasses =
+        this.applicationRestrictionBypassRepo
+          .createQueryBuilder("applicationRestrictionBypass")
+          .select("1")
+          .where(
+            "applicationRestrictionBypass.institutionRestriction.id = institutionRestriction.id",
+          )
+          .andWhere(
+            "applicationRestrictionBypass.application.id = :applicationId",
+          )
+          .andWhere("applicationRestrictionBypass.isActive = true")
+          .getQuery();
+      query.andWhere(`NOT EXISTS (${activeInstitutionRestrictionBypasses})`, {
+        applicationId: options.applicationId,
+      });
     }
     if (options?.limitOne) {
       query.limit(1);

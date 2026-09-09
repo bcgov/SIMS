@@ -388,7 +388,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       });
   });
 
-  it("Should return an institution-scoped institution restriction for a full-time application when not already bypassed.", async () => {
+  it("Should return institution-scoped institution restrictions for a full-time application when not already bypassed.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.fullTime,
@@ -403,6 +403,17 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
       institution:
         application.currentAssessment.offering.institutionLocation.institution,
       restriction: isrRestriction,
+    });
+
+    const iurRestriction = await db.restriction.findOne({
+      where: { restrictionCode: RestrictionCode.IUR },
+    });
+
+    // Add an IUR restriction that should be available to be bypassed because the restriction has an action type "Stop full time accept assessment".
+    const iurInstitutionRestriction = await saveFakeInstitutionRestriction(db, {
+      institution:
+        application.currentAssessment.offering.institutionLocation.institution,
+      restriction: iurRestriction,
     });
 
     const endpoint = `/aest/application-restriction-bypass/application/${application.id}/options-list`;
@@ -422,6 +433,15 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getAvailableRestrictio
               institutionRestriction.createdAt.toISOString(),
             restrictedParty: RestrictedParty.Institution,
             actionTypes: institutionRestriction.restriction.actionType,
+          },
+          {
+            restrictionId: iurInstitutionRestriction.id,
+            restrictionCode:
+              iurInstitutionRestriction.restriction.restrictionCode,
+            restrictionCreatedAt:
+              iurInstitutionRestriction.createdAt.toISOString(),
+            restrictedParty: RestrictedParty.Institution,
+            actionTypes: iurInstitutionRestriction.restriction.actionType,
           },
         ],
       });

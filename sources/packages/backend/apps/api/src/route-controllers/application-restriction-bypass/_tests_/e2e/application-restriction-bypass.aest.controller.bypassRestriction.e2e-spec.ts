@@ -220,7 +220,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     });
   });
 
-  it("Should be able to create a bypass for an institution restriction with an accept assessment action type.", async () => {
+  it("Should be able to create a bypass for an institution restriction when an accept assessment action type is provided.", async () => {
     // Arrange
     const application = await saveFakeApplication(db.dataSource, undefined, {
       offeringIntensity: OfferingIntensity.fullTime,

@@ -45,37 +45,37 @@
               </v-list-item>
             </template>
           </v-select>
-          <v-radio-group
-            v-if="
-              selectedRestriction && !isAcceptAssessmentTypeRestrictionSelected
-            "
-            label="Until"
-            inline
-            v-model="formModel.bypassBehavior"
-            color="primary"
-            class="pt-2"
-            :rules="[(v) => checkNullOrEmptyRule(v, 'Until')]"
-            :disabled="readOnly"
-          >
-            <v-radio
-              label="The next scheduled disbursement has been issued. Note: If the application is reassessed, the next disbursement will be ignored."
-              :value="RestrictionBypassBehaviors.NextDisbursementOnly"
+          <template v-if="selectedRestriction">
+            <v-radio-group
+              v-if="!isAcceptAssessmentTypeRestrictionSelected"
+              label="Until"
+              inline
+              v-model="formModel.bypassBehavior"
               color="primary"
-            ></v-radio>
-            <v-radio
-              label="All disbursements associated with this application have been issued."
-              :value="RestrictionBypassBehaviors.AllDisbursements"
-              color="primary"
-            ></v-radio>
-          </v-radio-group>
-          <div v-else-if="selectedRestriction" class="pt-2 pb-3 text-body-2">
-            <v-label class="d-block">Until</v-label>
-            <div class="mt-2">
-              The student creates a new version of the application or a ministry
-              user removes the bypass. Note: This bypass only allows the student
-              to accept their application.
+              class="pt-2"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Until')]"
+              :disabled="readOnly"
+            >
+              <v-radio
+                label="The next scheduled disbursement has been issued. Note: If the application is reassessed, the next disbursement will be ignored."
+                :value="RestrictionBypassBehaviors.NextDisbursementOnly"
+                color="primary"
+              ></v-radio>
+              <v-radio
+                label="All disbursements associated with this application have been issued."
+                :value="RestrictionBypassBehaviors.AllDisbursements"
+                color="primary"
+              ></v-radio>
+            </v-radio-group>
+            <div v-else class="pt-2 pb-3 text-body-2">
+              <v-label class="d-block">Until</v-label>
+              <div class="mt-2">
+                The student creates a new version of the application or a
+                ministry user removes the bypass. Note: This bypass only allows
+                the student to accept their application.
+              </div>
             </div>
-          </div>
+          </template>
           <v-textarea
             label="Notes"
             variant="outlined"

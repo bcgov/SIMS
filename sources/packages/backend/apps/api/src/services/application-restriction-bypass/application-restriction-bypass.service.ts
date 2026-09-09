@@ -44,7 +44,7 @@ const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
   RestrictionActionType.StopPartTimeAcceptAssessment,
 ]);
 
-const INVALID_STATUSES_FOR_RESTRICTION_BYPASS = new Set([
+const INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS = new Set([
   ApplicationStatus.Draft,
   ApplicationStatus.Completed,
   ApplicationStatus.Cancelled,
@@ -377,9 +377,11 @@ export class ApplicationRestrictionBypassService {
           institutionRestriction.restriction.actionType.some((actionType) =>
             ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS.has(actionType),
           );
+        // Only if the restriction does not have an accept assessment action,
+        // check the application status against invalid statuses for accept assessment type restriction bypass.
         return (
           !hasAcceptAssessmentAction ||
-          !INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(
+          !INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS.has(
             institutionApplication.applicationStatus,
           )
         );
@@ -525,7 +527,9 @@ export class ApplicationRestrictionBypassService {
       },
     });
     if (
-      INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(application.applicationStatus)
+      INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS.has(
+        application.applicationStatus,
+      )
     ) {
       throw new CustomNamedError(
         "Cannot create a bypass when application is in invalid state.",
@@ -637,7 +641,7 @@ export class ApplicationRestrictionBypassService {
       institutionRestriction: InstitutionRestriction;
     if (restrictedParty === RestrictedParty.Student) {
       studentRestriction = await this.studentRestrictionRepo.findOne({
-        select: { id: true, restriction: { id: true, restrictionCode: true } },
+        select: { id: true, restriction: { id: true, actionType: true } },
         relations: { restriction: true },
         where: { id: restrictionId },
       });
@@ -645,18 +649,22 @@ export class ApplicationRestrictionBypassService {
       institutionRestriction = await this.institutionRestrictionRepo.findOne({
         select: {
           id: true,
-          restriction: { id: true, restrictionCode: true },
+          restriction: { id: true, actionType: true },
         },
         relations: { restriction: true },
         where: { id: restrictionId },
       });
     }
-    const restrictionCode =
+    const actionType =
       restrictedParty === RestrictedParty.Student
-        ? studentRestriction?.restriction.restrictionCode
-        : institutionRestriction?.restriction.restrictionCode;
-    // Validate the payload to have a bypassBehavior if the restriction is not IUR.
-    if (restrictionCode !== "IUR" && !bypassBehavior) {
+        ? studentRestriction?.restriction.actionType
+        : institutionRestriction?.restriction.actionType;
+    const hasAcceptAssessmentRestrictionAction =
+      actionType?.some((type) =>
+        ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS.has(type),
+      ) ?? false;
+    // Validate the payload to have a bypassBehavior if the restriction is not an accept assessment type.
+    if (!hasAcceptAssessmentRestrictionAction && !bypassBehavior) {
       throw new CustomNamedError(
         "Bypass behavior is required for non accept assessment type restrictions.",
         RESTRICTION_BYPASS_NOT_ELIGIBLE,
