@@ -32,7 +32,6 @@ import { AppStudentsModule } from "./app.students.module";
 import { AppSupportingUsersModule } from "./app.supporting-users.module";
 import {
   ClamAntivirusModule,
-  FeatureTogglesModule,
   GlobalHttpModule,
   ZeebeModule,
 } from "@sims/services";
@@ -68,7 +67,6 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
     AppSupportingUsersModule,
     QueueModule,
     ClamAntivirusModule,
-    FeatureTogglesModule,
     TerminusModule,
     DynamicFormConfigurationModule,
     SystemLookupConfigurationModule,
