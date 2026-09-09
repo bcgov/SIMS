@@ -27,8 +27,8 @@ import {
 } from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
-import { FeatureTogglesService } from "@sims/services";
-import { NotifyService } from "@sims/services/notifications";
+import { FeatureTogglesService } from "../../feature-toggles/feature-toggles";
+import { NotifyService } from "./notify.service";
 
 /**
  * While performing a possible huge amount of inserts,

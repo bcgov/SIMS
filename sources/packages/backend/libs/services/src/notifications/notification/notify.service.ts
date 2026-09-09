@@ -9,7 +9,7 @@ import { HttpService } from "@nestjs/axios";
 import {
   NotifyAPIMessagePayload,
   NotifyMessageContent,
-} from "@sims/services/notifications";
+} from "./notify.model";
 import { Notification } from "@sims/sims-db";
 
 @Injectable()

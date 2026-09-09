@@ -8,6 +8,7 @@ import {
 } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
+import { NotificationEmailMessage } from "./gc-notify.model";
 import {
   StudentRestrictionAddedNotification,
   MinistryStudentFileUploadNotification,
@@ -15,7 +16,6 @@ import {
   StudentFileUploadNotification,
   StudentNotification,
   ECEResponseFileProcessingNotification,
-  NotificationEmailMessage,
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
@@ -45,7 +45,7 @@ import {
   StudentAcceptAssessmentReminderNotification,
   ProgramSuspensionBlockingApplicationNotification,
   EmailNotification,
-} from "..";
+} from "./notification.model";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
@@ -722,7 +722,7 @@ export class NotificationActionsService {
             file: base64Encode(notification.attachmentFileContent),
             filename: ECE_RESPONSE_ATTACHMENT_FILE_NAME,
             sending_method: "attach",
-            content_type: "text/plain",
+            mimeType: "text/plain",
           },
         },
       };
@@ -1192,7 +1192,7 @@ export class NotificationActionsService {
             file: base64Encode(notification.attachmentFileContent),
             filename: notification.fileName,
             sending_method: "attach",
-            content_type: "text/csv",
+            mimeType: "text/csv",
           },
         },
       } as NotificationEmailMessage,
