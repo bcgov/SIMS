@@ -616,6 +616,7 @@ deploy-queue-consumers:
 		-p REPLICAS=$(QUEUE_CONSUMERS_REPLICAS) \
 		-p CRA_FILE_OVERDUE_DAYS=$(CRA_FILE_OVERDUE_DAYS) \
 		-p ESDC_FILE_OVERDUE_DAYS=$(ESDC_FILE_OVERDUE_DAYS) \
+		-p FEATURE_TOGGLES=$(FEATURE_TOGGLES) \
 		| oc -n $(NAMESPACE) apply -f -
 	$(call rollout_and_wait,deployment/$(QUEUE_CONSUMERS))
 

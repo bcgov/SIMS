@@ -236,6 +236,7 @@ services:
       - CAS_BASE_URL=${CAS_BASE_URL}
       - CAS_CLIENT_ID=${CAS_CLIENT_ID}
       - CAS_CLIENT_SECRET=${CAS_CLIENT_SECRET}
+      - FEATURE_TOGGLES=${FEATURE_TOGGLES}
     networks:
       - local-network-tests
     restart: always

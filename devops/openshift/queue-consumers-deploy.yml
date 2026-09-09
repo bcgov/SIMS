@@ -279,6 +279,8 @@ objects:
                   value: ${CRA_FILE_OVERDUE_DAYS}
                 - name: ESDC_FILE_OVERDUE_DAYS
                   value: ${ESDC_FILE_OVERDUE_DAYS}
+                - name: FEATURE_TOGGLES
+                  value: ${FEATURE_TOGGLES}
               image: ${IMAGE_REGISTRY}/${BUILD_NAMESPACE}/${IMAGE_STREAM_TAG}
               imagePullPolicy: Always
               name: ${NAME}
@@ -550,3 +552,5 @@ parameters:
     required: true
   - name: ESDC_FILE_OVERDUE_DAYS
     required: true
+  - name: FEATURE_TOGGLES
+    required: false
