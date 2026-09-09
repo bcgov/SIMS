@@ -530,7 +530,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
     const nonIURRestriction = await db.restriction.save(
       createFakeRestriction({
         initialValues: {
-          restrictionCode: "NON-ACCEPT-ASSESSMENT-RESTRICTION",
+          restrictionCode: "NON-AA-RES",
           restrictionType: RestrictionType.Institution,
           actionType: [RestrictionActionType.StopFullTimeDisbursement],
         },

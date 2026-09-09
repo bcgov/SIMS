@@ -44,10 +44,17 @@ const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
   RestrictionActionType.StopPartTimeAcceptAssessment,
 ]);
 
+const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
+  ApplicationStatus.Draft,
+  ApplicationStatus.Cancelled,
+  ApplicationStatus.Edited,
+]);
+
 const INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS = new Set([
   ApplicationStatus.Draft,
   ApplicationStatus.Completed,
   ApplicationStatus.Cancelled,
+  ApplicationStatus.Edited,
 ]);
 
 /**
@@ -527,9 +534,7 @@ export class ApplicationRestrictionBypassService {
       },
     });
     if (
-      INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS.has(
-        application.applicationStatus,
-      )
+      INVALID_STATUSES_FOR_BYPASS_OPERATION.has(application.applicationStatus)
     ) {
       throw new CustomNamedError(
         "Cannot create a bypass when application is in invalid state.",
@@ -740,7 +745,7 @@ export class ApplicationRestrictionBypassService {
       );
     }
     if (
-      INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS.has(
+      INVALID_STATUSES_FOR_BYPASS_OPERATION.has(
         applicationRestrictionBypass.application.applicationStatus,
       )
     ) {
