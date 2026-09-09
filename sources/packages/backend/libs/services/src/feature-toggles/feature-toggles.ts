@@ -3,6 +3,8 @@ import { ConfigService } from "@sims/utilities/config";
 
 const FORMS_SUBMISSION = "FORMS_SUBMISSION";
 const TOGGLE_PREFIX_DISABLE = "disable";
+const NOTIFY_TEMPLATE_PREFIX = "notify-template";
+const NOTIFY_TEMPLATE_ALL = `${NOTIFY_TEMPLATE_PREFIX}-all`;
 
 @Injectable()
 export class FeatureTogglesService {
@@ -42,8 +44,8 @@ export class FeatureTogglesService {
    */
   useNotifyTemplate(templateId: string): boolean {
     return (
-      this.isFeatureToggleEnabled(`use-notify-template-all`) ||
-      this.isFeatureToggleEnabled(`use-notify-template-${templateId}`)
+      this.isFeatureToggleEnabled(NOTIFY_TEMPLATE_ALL) ||
+      this.isFeatureToggleEnabled(`${NOTIFY_TEMPLATE_PREFIX}-${templateId}`)
     );
   }
 }
