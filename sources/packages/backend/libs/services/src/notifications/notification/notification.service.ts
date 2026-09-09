@@ -76,7 +76,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
           id: notification.messageType,
         } as NotificationMessage,
         metadata: notification.metadata,
-        templateId: messagePayload.template_id,
+        templateId: notification.notifyTemplateId,
         recipients: [messagePayload.email_address],
         messageContent,
       };

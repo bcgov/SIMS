@@ -22,12 +22,18 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   async getNotificationMessageDetails(
     notificationMessageTypeId: NotificationMessageType,
     options?: { entityManager?: EntityManager },
-  ): Promise<Pick<NotificationMessage, "templateId" | "emailContacts">> {
+  ): Promise<
+    Pick<
+      NotificationMessage,
+      "templateId" | "notifyTemplateId" | "emailContacts"
+    >
+  > {
     const notificationMessageRepo =
       options?.entityManager?.getRepository(NotificationMessage) ?? this.repo;
     return notificationMessageRepo.findOneOrFail({
       select: {
         templateId: true,
+        notifyTemplateId: true,
         emailContacts: true,
       },
       where: {
@@ -37,12 +43,13 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
   }
 
   /**
-   * Retrieves the notification message associated with the provided GC Notify
-   * template id. The notification messages are expected to be previously seeded
+   * Retrieves the notification message associated with the provided template ID.
+   * The notification messages are expected to be previously seeded
    * through a database migration, hence an error is raised when none is found
    * for the provided template id, allowing the caller (e.g. a workflow job) to
    * fail and raise an incident to be investigated.
-   * @param templateId GC Notify template id.
+   * @param templateId GC Notify or BC Notify template ID. Both are supported
+   * to allow the transition between different notification systems.
    * @param options options.
    * - `entityManager` external entity manager to run in a transaction.
    * @returns notification message details for the provided template id.
@@ -57,11 +64,10 @@ export class NotificationMessageService extends RecordDataModelService<Notificat
       select: {
         id: true,
         templateId: true,
+        notifyTemplateId: true,
         emailContacts: true,
       },
-      where: {
-        templateId,
-      },
+      where: [{ templateId }, { notifyTemplateId: templateId }],
     });
     return notificationMessage;
   }
