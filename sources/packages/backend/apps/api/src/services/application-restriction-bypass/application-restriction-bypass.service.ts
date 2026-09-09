@@ -740,7 +740,7 @@ export class ApplicationRestrictionBypassService {
       );
     }
     if (
-      INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(
+      INVALID_STATUSES_ACCEPT_ASSESSMENT_TYPE_RESTRICTION_BYPASS.has(
         applicationRestrictionBypass.application.applicationStatus,
       )
     ) {
