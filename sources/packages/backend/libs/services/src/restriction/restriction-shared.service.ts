@@ -129,7 +129,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       query.andWhere(
         `NOT EXISTS (
           SELECT 1
-          FROM application_restriction_bypass arb
+          FROM application_restriction_bypasses arb
           WHERE arb.institution_restriction_id = institutionRestriction.id
             AND arb.application_id = :applicationId
             AND arb.is_active = TRUE

@@ -37,15 +37,6 @@ import {
 import { NoteSharedService, RestrictedParty } from "@sims/services";
 
 /**
- * Invalid application statuses for bypass creation or removal.
- */
-const INVALID_STATUSES_FOR_BYPASS_OPERATION = new Set([
-  ApplicationStatus.Draft,
-  ApplicationStatus.Cancelled,
-  ApplicationStatus.Edited,
-]);
-
-/**
  * Restriction actions that prevent an assessment from being accepted.
  */
 const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
@@ -534,7 +525,7 @@ export class ApplicationRestrictionBypassService {
       },
     });
     if (
-      INVALID_STATUSES_FOR_BYPASS_OPERATION.has(application.applicationStatus)
+      INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(application.applicationStatus)
     ) {
       throw new CustomNamedError(
         "Cannot create a bypass when application is in invalid state.",
@@ -616,11 +607,13 @@ export class ApplicationRestrictionBypassService {
           RestrictionActionType.StopFullTimeBCGrants,
           RestrictionActionType.StopFullTimeDisbursement,
           RestrictionActionType.StopFullTimeAcceptAssessment,
+          RestrictionActionType.StopFullTimeAcceptAssessment,
         ];
       case OfferingIntensity.partTime:
         return [
           RestrictionActionType.StopPartTimeBCGrants,
           RestrictionActionType.StopPartTimeDisbursement,
+          RestrictionActionType.StopPartTimeAcceptAssessment,
           RestrictionActionType.StopPartTimeAcceptAssessment,
         ];
       default:
@@ -739,7 +732,7 @@ export class ApplicationRestrictionBypassService {
       );
     }
     if (
-      INVALID_STATUSES_FOR_BYPASS_OPERATION.has(
+      INVALID_STATUSES_FOR_RESTRICTION_BYPASS.has(
         applicationRestrictionBypass.application.applicationStatus,
       )
     ) {
