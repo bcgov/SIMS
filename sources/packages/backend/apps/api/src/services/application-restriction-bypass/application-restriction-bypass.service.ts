@@ -616,13 +616,11 @@ export class ApplicationRestrictionBypassService {
           RestrictionActionType.StopFullTimeBCGrants,
           RestrictionActionType.StopFullTimeDisbursement,
           RestrictionActionType.StopFullTimeAcceptAssessment,
-          RestrictionActionType.StopFullTimeAcceptAssessment,
         ];
       case OfferingIntensity.partTime:
         return [
           RestrictionActionType.StopPartTimeBCGrants,
           RestrictionActionType.StopPartTimeDisbursement,
-          RestrictionActionType.StopPartTimeAcceptAssessment,
           RestrictionActionType.StopPartTimeAcceptAssessment,
         ];
       default:

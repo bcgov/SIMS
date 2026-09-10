@@ -19,7 +19,8 @@
             :items="restrictionsToBypass"
             item-title="restrictionCode"
             item-value="restrictionId"
-            v-model="formModel.restrictionId"
+            v-model="selectedRestriction"
+            return-object
             variant="outlined"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Restriction')]"
             :disabled="readOnly"
@@ -69,11 +70,11 @@
             </v-radio-group>
             <div v-else class="pt-2 pb-3 text-body-2">
               <v-label class="d-block">Until</v-label>
-              <div class="mt-2">
+              <p class="mt-2">
                 The student creates a new version of the application or a
                 ministry user removes the bypass. Note: This bypass only allows
                 the student to accept their application.
-              </div>
+              </p>
             </div>
           </template>
           <v-textarea
@@ -168,7 +169,6 @@ import {
 } from "@/composables";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
-  AvailableRestrictionAPIOutDTO,
   AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
@@ -213,26 +213,18 @@ export default defineComponent({
     const bypassRestrictionForm = ref({} as VForm);
     const { checkNullOrEmptyRule, checkNotesLengthRule } = useRules();
     const note = ref("");
-    const selectedRestriction = computed(() =>
-      restrictionsToBypass.value.find(
-        (restriction) =>
-          restriction.restrictionId === formModel.value.restrictionId,
-      ),
-    );
+    const selectedRestriction = ref<RestrictionBypassItem>();
     const isAcceptAssessmentTypeRestrictionSelected = computed(
       () =>
         selectedRestriction.value?.actionTypes?.some((actionType) =>
           ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS.has(actionType),
         ) ?? false,
     );
-    watch(
-      () => formModel.value.restrictionId,
-      () => {
-        if (isAcceptAssessmentTypeRestrictionSelected.value) {
-          delete formModel.value.bypassBehavior;
-        }
-      },
-    );
+    watch(selectedRestriction, () => {
+      if (isAcceptAssessmentTypeRestrictionSelected.value) {
+        delete formModel.value.bypassBehavior;
+      }
+    });
     const cancel = () => {
       restrictionBypassDetails.value =
         {} as ApplicationRestrictionBypassAPIOutDTO;
@@ -244,18 +236,17 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
+      if (!selectedRestriction.value) {
+        return;
+      }
       try {
         loading.value = true;
-        const foundRestriction =
-          availableRestrictionsToBypass.value.availableRestrictionsToBypass?.find(
-            (r) => r.restrictionId === formModel.value.restrictionId,
-          ) as AvailableRestrictionAPIOutDTO;
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
           applicationId: applicationId.value,
-          restrictionId: formModel.value.restrictionId,
+          restrictionId: selectedRestriction.value.restrictionId,
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
-          restrictedParty: foundRestriction.restrictedParty,
+          restrictedParty: selectedRestriction.value.restrictedParty,
         } as BypassRestrictionAPIInDTO);
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
@@ -293,6 +284,7 @@ export default defineComponent({
       applicationRestrictionBypassId?: number;
     }) => {
       formModel.value = {} as BypassRestrictionAPIInDTO;
+      selectedRestriction.value = undefined;
       if (params.applicationId) {
         readOnly.value = false;
         applicationId.value = params.applicationId;
@@ -320,17 +312,15 @@ export default defineComponent({
           await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypass(
             params.applicationRestrictionBypassId,
           );
-        restrictionsToBypass.value = [
-          getRestrictionToBypassOption(
-            restrictionBypassDetails.value.restrictionCode,
-            restrictionBypassDetails.value.createdDate,
-            restrictionBypassDetails.value.restrictionId,
-            restrictionBypassDetails.value.restrictedParty,
-            restrictionBypassDetails.value.actionTypes,
-          ),
-        ];
-        formModel.value.restrictionId =
-          restrictionBypassDetails.value.restrictionId;
+        const restriction = getRestrictionToBypassOption(
+          restrictionBypassDetails.value.restrictionCode,
+          restrictionBypassDetails.value.createdDate,
+          restrictionBypassDetails.value.restrictionId,
+          restrictionBypassDetails.value.restrictedParty,
+          restrictionBypassDetails.value.actionTypes,
+        );
+        restrictionsToBypass.value = [restriction];
+        selectedRestriction.value = restriction;
         formModel.value.bypassBehavior = restrictionBypassDetails.value
           .bypassBehavior as RestrictionBypassBehaviors;
         formModel.value.note = restrictionBypassDetails.value.creationNote;

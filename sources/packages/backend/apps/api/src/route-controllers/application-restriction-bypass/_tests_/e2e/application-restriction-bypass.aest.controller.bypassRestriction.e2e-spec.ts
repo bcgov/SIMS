@@ -565,7 +565,7 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-bypassRestriction", ()
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message:
-          "Bypass behavior is required for non accept assessment type restrictions.",
+          "Bypass behavior is required for non-accept assessment type restrictions.",
         error: "Unprocessable Entity",
         statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
       });
