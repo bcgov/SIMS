@@ -192,7 +192,13 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
       );
       // Validate notification for legacy change request (pre-2025-26 program year).
       const createdNotification = await db.notification.findOne({
-        select: { id: true, messagePayload: true },
+        select: {
+          id: true,
+          messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
+        },
         where: {
           notificationMessage: {
             id: NotificationMessageType.MinistryChangeRequestSubmitted,
@@ -200,16 +206,31 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           dateSent: IsNull(),
         },
       });
-      expect(createdNotification.messagePayload).toStrictEqual({
-        template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
-        email_address: MINISTRY_EMAIL_ADDRESS,
-        personalisation: {
-          givenNames: student.user.firstName,
-          lastName: student.user.lastName,
-          birthDate: getDateOnlyFormat(student.birthDate),
-          studentEmail: student.user.email,
-          applicationNumber: application.applicationNumber,
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+      expect(createdNotification).toEqual({
+        id: expect.any(Number),
+        messagePayload: {
+          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
+          email_address: MINISTRY_EMAIL_ADDRESS,
+          personalisation: {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: getDateOnlyFormat(student.birthDate),
+            studentEmail: student.user.email,
+            applicationNumber: application.applicationNumber,
+            dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          },
+        },
+        templateId: GC_NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
+        recipients: [MINISTRY_EMAIL_ADDRESS],
+        messageContent: {
+          params: {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: getDateOnlyFormat(student.birthDate),
+            studentEmail: student.user.email,
+            applicationNumber: application.applicationNumber,
+            dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          },
         },
       });
     },
@@ -746,7 +767,13 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
     );
     // Validate notification for new appeal (2025-26+ program year).
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.StudentAppealSubmitted,
@@ -754,16 +781,31 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
         dateSent: IsNull(),
       },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
-      email_address: MINISTRY_EMAIL_ADDRESS,
-      personalisation: {
-        givenNames: student.user.firstName,
-        lastName: student.user.lastName,
-        birthDate: getDateOnlyFormat(student.birthDate),
-        studentEmail: student.user.email,
-        applicationNumber: application.applicationNumber,
-        dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
+        email_address: MINISTRY_EMAIL_ADDRESS,
+        personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          applicationNumber: application.applicationNumber,
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          applicationNumber: application.applicationNumber,
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
       },
     });
   });

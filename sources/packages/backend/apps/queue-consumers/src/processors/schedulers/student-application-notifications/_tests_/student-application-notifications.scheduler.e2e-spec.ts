@@ -165,6 +165,19 @@ describe(
               applicationNumber: application.applicationNumber,
             },
           });
+          expect(notification!.templateId).toBe(
+            "7faea39f-cf8e-41ee-af02-c4790cac5b26",
+          );
+          expect(notification!.recipients).toStrictEqual([
+            application.student.user.email,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
+              lastName: application.student.user.lastName,
+              givenNames: application.student.user.firstName,
+              applicationNumber: application.applicationNumber,
+            },
+          });
         },
       );
 
@@ -334,6 +347,19 @@ describe(
               applicationNumber: application.applicationNumber,
             },
           });
+          expect(notification!.templateId).toBe(
+            "7faea39f-cf8e-41ee-af02-c4790cac5b26",
+          );
+          expect(notification!.recipients).toStrictEqual([
+            application.student.user.email,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
+              lastName: application.student.user.lastName,
+              givenNames: application.student.user.firstName,
+              applicationNumber: application.applicationNumber,
+            },
+          });
         },
       );
     });
@@ -387,6 +413,18 @@ describe(
             email_address: application.student.user.email,
             template_id: "55fcf228-b899-49a7-ab80-9b854c0bd884",
             personalisation: {
+              lastName: application.student.user.lastName,
+              givenNames: application.student.user.firstName,
+            },
+          });
+          expect(notification!.templateId).toBe(
+            "55fcf228-b899-49a7-ab80-9b854c0bd884",
+          );
+          expect(notification!.recipients).toStrictEqual([
+            application.student.user.email,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
               lastName: application.student.user.lastName,
               givenNames: application.student.user.firstName,
             },
@@ -546,6 +584,19 @@ describe(
             email_address: application.student.user.email,
             template_id: "4da67f87-ec53-4d9b-809c-4610e1c76362",
             personalisation: {
+              lastName: application.student.user.lastName,
+              givenNames: application.student.user.firstName,
+              applicationNumber: application.applicationNumber,
+            },
+          });
+          expect(notification!.templateId).toBe(
+            "4da67f87-ec53-4d9b-809c-4610e1c76362",
+          );
+          expect(notification!.recipients).toStrictEqual([
+            application.student.user.email,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
               lastName: application.student.user.lastName,
               givenNames: application.student.user.firstName,
               applicationNumber: application.applicationNumber,
@@ -792,6 +843,19 @@ describe(
               type: FileProcessingIssueType.CRA,
             },
           });
+          expect(notification!.templateId).toBe(
+            GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
+          );
+          expect(notification!.recipients).toStrictEqual([
+            MINISTRY_EMAIL_ADDRESS,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
+              dateSent: getPSTPDTDateTime(craVerification1.dateSent!),
+              fileName: craVerification1.fileSent,
+              type: FileProcessingIssueType.CRA,
+            },
+          });
         });
       });
 
@@ -925,6 +989,19 @@ describe(
               type: FileProcessingIssueType.SIN,
             },
           });
+          expect(notification!.templateId).toBe(
+            GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
+          );
+          expect(notification!.recipients).toStrictEqual([
+            MINISTRY_EMAIL_ADDRESS,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
+              dateSent: getPSTPDTDateTime(student1.sinValidation.dateSent!),
+              fileName: student1.sinValidation.fileSent,
+              type: FileProcessingIssueType.SIN,
+            },
+          });
         });
       });
 
@@ -1018,6 +1095,19 @@ describe(
             email_address: application.student.user.email,
             template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAcceptAssessmentOverdue,
             personalisation: {
+              lastName: application.student.user.lastName,
+              givenNames: application.student.user.firstName,
+              applicationNumber: application.applicationNumber,
+            },
+          });
+          expect(notification!.templateId).toBe(
+            GC_NOTIFY_TEMPLATE_IDS.StudentAcceptAssessmentOverdue,
+          );
+          expect(notification!.recipients).toStrictEqual([
+            application.student.user.email,
+          ]);
+          expect(notification!.messageContent).toStrictEqual({
+            params: {
               lastName: application.student.user.lastName,
               givenNames: application.student.user.firstName,
               applicationNumber: application.applicationNumber,
@@ -1307,6 +1397,22 @@ describe(
             institutionOperatingName: institution.operatingName,
           },
         });
+        expect(notification!.templateId).toEqual(expect.any(String));
+        expect(notification!.recipients).toStrictEqual([
+          MINISTRY_EMAIL_ADDRESS,
+        ]);
+        expect(notification!.messageContent).toStrictEqual({
+          params: {
+            dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+            lastName: student.user.lastName,
+            birthDate: getDateOnlyFormat(student.birthDate),
+            givenNames: student.user.firstName,
+            programName: program.name,
+            studentEmail: student.user.email,
+            applicationNumber: application.applicationNumber,
+            institutionOperatingName: institution.operatingName,
+          },
+        });
         expect(notification!.metadata).toStrictEqual({
           assessmentId: application.currentAssessment!.id,
         });
@@ -1427,6 +1533,9 @@ describe(
         select: {
           id: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           metadata: true,
         },
         relations: { notificationMessage: true },

@@ -107,6 +107,9 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
           select: {
             id: true,
             messagePayload: true,
+            templateId: true,
+            recipients: true,
+            messageContent: true,
             notificationMessage: { id: true, templateId: true },
           },
           where: {
@@ -129,14 +132,30 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
           description: payload.note,
         },
       });
-      expect(scholasticStandingReversalNotification.messagePayload).toEqual({
-        email_address: application.student.user.email,
-        template_id:
+      expect(scholasticStandingReversalNotification).toEqual({
+        id: expect.any(Number),
+        notificationMessage:
+          scholasticStandingReversalNotification.notificationMessage,
+        messagePayload: {
+          email_address: application.student.user.email,
+          template_id:
+            scholasticStandingReversalNotification.notificationMessage
+              .templateId,
+          personalisation: {
+            givenNames: application.student.user.firstName,
+            lastName: application.student.user.lastName,
+            applicationNumber: application.applicationNumber,
+          },
+        },
+        templateId:
           scholasticStandingReversalNotification.notificationMessage.templateId,
-        personalisation: {
-          givenNames: application.student.user.firstName,
-          lastName: application.student.user.lastName,
-          applicationNumber: application.applicationNumber,
+        recipients: [application.student.user.email],
+        messageContent: {
+          params: {
+            givenNames: application.student.user.firstName,
+            lastName: application.student.user.lastName,
+            applicationNumber: application.applicationNumber,
+          },
         },
       });
 

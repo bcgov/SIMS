@@ -297,6 +297,9 @@ describe(
           id: true,
           dateSent: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           notificationMessage: { templateId: true },
           user: { email: true, firstName: true, lastName: true },
         },
@@ -317,6 +320,16 @@ describe(
         email_address: notification.user.email,
         template_id: notification.notificationMessage.templateId,
         personalisation: {
+          lastName: notification.user.lastName,
+          givenNames: notification.user.firstName,
+        },
+      });
+      expect(notification.templateId).toBe(
+        notification.notificationMessage.templateId,
+      );
+      expect(notification.recipients).toStrictEqual([notification.user.email]);
+      expect(notification.messageContent).toStrictEqual({
+        params: {
           lastName: notification.user.lastName,
           givenNames: notification.user.firstName,
         },

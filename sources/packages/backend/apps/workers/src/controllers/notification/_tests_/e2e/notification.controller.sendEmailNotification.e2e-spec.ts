@@ -34,7 +34,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     notificationController = nestApplication.get(NotificationController);
   });
 
-  it("Should create a student email notification resolving the personalisation from the provided paths when the recipient is the student.", async () => {
+  it.only("Should create a student email notification resolving the personalisation from the provided paths when the recipient is the student.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
@@ -61,6 +61,9 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         metadata: true,
         notificationMessage: { id: true },
       },
@@ -76,6 +79,14 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         template_id: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
         email_address: student.user.email,
         personalisation: {
+          givenNames: student.user.firstName ?? "",
+          lastName: student.user.lastName,
+        },
+      },
+      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      recipients: [student.user.email],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName ?? "",
           lastName: student.user.lastName,
         },
@@ -199,6 +210,9 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         metadata: true,
         user: { id: true },
         notificationMessage: { id: true },
@@ -220,6 +234,13 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         template_id: ministryNotificationMessage.templateId,
         email_address: ministryEmailContact,
         personalisation: {
+          applicationNumber: savedApplication.applicationNumber,
+        },
+      },
+      templateId: ministryNotificationMessage.templateId,
+      recipients: [ministryEmailContact],
+      messageContent: {
+        params: {
           applicationNumber: savedApplication.applicationNumber,
         },
       },

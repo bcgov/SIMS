@@ -2476,6 +2476,9 @@ describe(
           select: {
             id: true,
             messagePayload: true,
+            templateId: true,
+            recipients: true,
+            messageContent: true,
           },
           where: {
             dateSent: IsNull(),
@@ -2493,6 +2496,20 @@ describe(
             email_address: MINISTRY_NOTIFICATION_EMAIL,
             template_id: expect.any(String),
             personalisation: {
+              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              lastName: student.user.lastName,
+              givenNames: student.user.firstName,
+              birthDate: getDateOnlyFormat(student.birthDate),
+              studentEmail: student.user.email,
+              applicationNumber: application.applicationNumber,
+              programName: program.name,
+              institutionOperatingName: institution.operatingName,
+            },
+          },
+          templateId: expect.any(String),
+          recipients: [MINISTRY_NOTIFICATION_EMAIL],
+          messageContent: {
+            params: {
               dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
@@ -2561,6 +2578,9 @@ describe(
           select: {
             id: true,
             messagePayload: true,
+            templateId: true,
+            recipients: true,
+            messageContent: true,
           },
           where: {
             dateSent: IsNull(),
@@ -2578,6 +2598,20 @@ describe(
             email_address: MINISTRY_NOTIFICATION_EMAIL,
             template_id: expect.any(String),
             personalisation: {
+              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              lastName: student.user.lastName,
+              givenNames: student.user.firstName,
+              birthDate: getDateOnlyFormat(student.birthDate),
+              studentEmail: student.user.email,
+              applicationNumber: application.applicationNumber,
+              programName: program.name,
+              institutionOperatingName: institution.operatingName,
+            },
+          },
+          templateId: expect.any(String),
+          recipients: [MINISTRY_NOTIFICATION_EMAIL],
+          messageContent: {
+            params: {
               dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
               lastName: student.user.lastName,
               givenNames: student.user.firstName,

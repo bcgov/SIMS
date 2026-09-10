@@ -356,6 +356,19 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
             givenNames: savedApplication.student.user.firstName,
           },
         });
+        expect(notification.templateId).toBe(
+          notification.notificationMessage.templateId,
+        );
+        expect(notification.recipients).toStrictEqual([
+          savedApplication.student.user.email,
+        ]);
+        expect(notification.messageContent).toStrictEqual({
+          params: {
+            supportingUserType: "partner",
+            lastName: savedApplication.student.user.lastName,
+            givenNames: savedApplication.student.user.firstName,
+          },
+        });
       });
     }
   });
@@ -443,6 +456,21 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         givenNames: savedApplication.student.user.firstName,
       },
     });
+    expect(notification.templateId).toBe(
+      notification.notificationMessage.templateId,
+    );
+    expect(notification.recipients).toStrictEqual([
+      savedApplication.student.user.email,
+    ]);
+    expect(notification.messageContent).toStrictEqual({
+      params: {
+        applicationNumber: savedApplication.applicationNumber,
+        parentFullName,
+        supportingUserType: "parent",
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName,
+      },
+    });
   }
 
   /**
@@ -459,6 +487,9 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         id: true,
         dateSent: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         notificationMessage: { id: true, templateId: true },
         user: { id: true, email: true, firstName: true, lastName: true },
       },

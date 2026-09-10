@@ -260,6 +260,23 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
           dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
+      templateId: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          formCategory: FormCategory.StudentAppeal,
+          formNames: [
+            formConfigs.studentAppealApplicationA.formType,
+            formConfigs.studentAppealApplicationB.formType,
+          ],
+          applicationNumber: application.applicationNumber,
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
     });
   });
 
@@ -411,6 +428,20 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
         email_address: MINISTRY_EMAIL_ADDRESS,
         template_id: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
         personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          formCategory: FormCategory.StudentForm,
+          formNames: [formConfigs.studentFormA.formType],
+          applicationNumber: "N/A",
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           birthDate: getDateOnlyFormat(student.birthDate),

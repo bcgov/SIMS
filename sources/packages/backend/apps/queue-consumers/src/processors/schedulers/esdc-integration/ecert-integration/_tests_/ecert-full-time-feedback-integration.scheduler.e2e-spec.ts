@@ -427,6 +427,9 @@ describe(
         select: {
           id: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           notificationMessage: {
             id: true,
             templateId: true,
@@ -445,6 +448,21 @@ describe(
         email_address: notification.notificationMessage.emailContacts[0],
         template_id: notification.notificationMessage.templateId,
         personalisation: {
+          lastName: application.student.user.lastName,
+          givenNames: application.student.user.firstName,
+          applicationNumber: application.applicationNumber,
+          documentNumber: SHARED_DOCUMENT_NUMBER,
+          errorCodes: ["EDU-00033", "EDU-00034"],
+        },
+      });
+      expect(notification.templateId).toBe(
+        notification.notificationMessage.templateId,
+      );
+      expect(notification.recipients).toStrictEqual([
+        notification.notificationMessage.emailContacts[0],
+      ]);
+      expect(notification.messageContent).toStrictEqual({
+        params: {
           lastName: application.student.user.lastName,
           givenNames: application.student.user.firstName,
           applicationNumber: application.applicationNumber,

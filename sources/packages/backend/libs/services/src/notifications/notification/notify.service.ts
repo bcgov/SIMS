@@ -8,11 +8,11 @@ import { HttpService } from "@nestjs/axios";
 import { NotifyAPIMessagePayload, NotifyMessageContent } from "./notify.model";
 import { Notification } from "@sims/sims-db";
 
-const NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS = [
+const NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS = new Set([
   HttpStatus.BAD_REQUEST,
   HttpStatus.UNPROCESSABLE_ENTITY,
   HttpStatus.PAYLOAD_TOO_LARGE,
-];
+]);
 
 const NO_ERROR_DATA_AVAILABLE = "Error data is not available";
 
@@ -41,9 +41,7 @@ export class NotifyService {
       const axiosError = error as AxiosError;
       if (
         axiosError.isAxiosError &&
-        NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS.includes(
-          axiosError.response?.status,
-        )
+        NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS.has(axiosError.response?.status)
       ) {
         this.logger.error(
           `Error while sending email notification ID ${notification.id}: ${JSON.stringify(

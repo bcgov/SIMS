@@ -117,23 +117,43 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
       },
       where: {
         user: { id: student.user.id },
       },
     });
-    expect(notification.messagePayload).toEqual({
-      template_id: notificationMessage.templateId,
-      email_address: "test@test.com",
-      personalisation: {
-        dateTime: expect.any(String),
-        lastName: student.user.lastName,
-        birthDate: getDateOnlyFormat(student.birthDate),
-        fileNames: [studentFile1.fileName, studentFile2.fileName],
-        givenNames: student.user.firstName,
-        studentEmail: student.user.email,
-        documentPurpose: payload.submittedForm.documentPurpose,
-        applicationNumber: payload.submittedForm.applicationNumber,
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: notificationMessage.templateId,
+        email_address: "test@test.com",
+        personalisation: {
+          dateTime: expect.any(String),
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          fileNames: [studentFile1.fileName, studentFile2.fileName],
+          givenNames: student.user.firstName,
+          studentEmail: student.user.email,
+          documentPurpose: payload.submittedForm.documentPurpose,
+          applicationNumber: payload.submittedForm.applicationNumber,
+        },
+      },
+      templateId: notificationMessage.templateId,
+      recipients: ["test@test.com"],
+      messageContent: {
+        params: {
+          dateTime: expect.any(String),
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          fileNames: [studentFile1.fileName, studentFile2.fileName],
+          givenNames: student.user.firstName,
+          studentEmail: student.user.email,
+          documentPurpose: payload.submittedForm.documentPurpose,
+          applicationNumber: payload.submittedForm.applicationNumber,
+        },
       },
     });
   });

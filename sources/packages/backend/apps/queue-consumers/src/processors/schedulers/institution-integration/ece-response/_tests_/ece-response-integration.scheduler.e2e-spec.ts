@@ -337,9 +337,9 @@ describe(
             },
             template_id: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
           },
-          templateId: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
+          templateId: "4f98f056-adae-43de-9594-e2530788f2a4",
           recipients: [emailAddress],
-          message: {
+          messageContent: {
             params: {
               institutionCode: locationCONF.institutionCode,
               fileParsingErrors: 0,
@@ -356,7 +356,7 @@ describe(
               {
                 file: expect.any(String),
                 filename: "Processing_Summary_Report.txt",
-                contentType: "text/plain",
+                mimeType: "text/plain",
               },
             ],
           },

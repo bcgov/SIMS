@@ -84,6 +84,19 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
         supportingUserType: "parents",
       },
     });
+    expect(createdNotification.templateId).toBe(
+      SUPPORTING_USER_INFO_TEMPLATE_ID,
+    );
+    expect(createdNotification.recipients).toStrictEqual([
+      savedApplication.student.user.email,
+    ]);
+    expect(createdNotification.messageContent).toStrictEqual({
+      params: {
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName ?? "",
+        supportingUserType: "parents",
+      },
+    });
   });
 
   it("Should create a parent supporting user when requested.", async () => {
@@ -135,6 +148,19 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
         supportingUserType: "parent",
       },
     });
+    expect(createdNotification.templateId).toBe(
+      SUPPORTING_USER_INFO_TEMPLATE_ID,
+    );
+    expect(createdNotification.recipients).toStrictEqual([
+      savedApplication.student.user.email,
+    ]);
+    expect(createdNotification.messageContent).toStrictEqual({
+      params: {
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName ?? "",
+        supportingUserType: "parent",
+      },
+    });
   });
 
   it("Should create partner supporting user when requested.", async () => {
@@ -181,6 +207,19 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
       template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
       email_address: savedApplication.student.user.email,
       personalisation: {
+        lastName: savedApplication.student.user.lastName,
+        givenNames: savedApplication.student.user.firstName ?? "",
+        supportingUserType: "partner",
+      },
+    });
+    expect(createdNotification.templateId).toBe(
+      SUPPORTING_USER_INFO_TEMPLATE_ID,
+    );
+    expect(createdNotification.recipients).toStrictEqual([
+      savedApplication.student.user.email,
+    ]);
+    expect(createdNotification.messageContent).toStrictEqual({
+      params: {
         lastName: savedApplication.student.user.lastName,
         givenNames: savedApplication.student.user.firstName ?? "",
         supportingUserType: "partner",
@@ -244,6 +283,9 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
         id: true,
         user: { id: true },
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
       },
       relations: { user: true },
       where: {

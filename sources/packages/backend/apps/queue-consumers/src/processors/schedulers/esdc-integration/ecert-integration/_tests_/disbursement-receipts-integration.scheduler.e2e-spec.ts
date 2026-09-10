@@ -417,6 +417,9 @@ describe(
           id: true,
           dateSent: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           notificationMessage: { id: true, templateId: true },
         },
         relations: { notificationMessage: true },
@@ -440,6 +443,22 @@ describe(
             sending_method: "attach",
           },
         },
+      });
+      expect(createdNotification.templateId).toBe(
+        createdNotification.notificationMessage.templateId,
+      );
+      expect(createdNotification.recipients).toStrictEqual([TEST_EMAIL]);
+      expect(createdNotification.messageContent).toStrictEqual({
+        params: {},
+        attachments: [
+          {
+            file: createdNotification.messagePayload["personalisation"][
+              "application_file"
+            ]["file"],
+            filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
+            mimeType: "text/csv",
+          },
+        ],
       });
     });
 
@@ -537,6 +556,9 @@ describe(
           id: true,
           dateSent: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           notificationMessage: { id: true, templateId: true },
         },
         relations: { notificationMessage: true },
@@ -559,6 +581,22 @@ describe(
             sending_method: "attach",
           },
         },
+      });
+      expect(createdNotification.templateId).toBe(
+        createdNotification.notificationMessage.templateId,
+      );
+      expect(createdNotification.recipients).toStrictEqual([TEST_EMAIL]);
+      expect(createdNotification.messageContent).toStrictEqual({
+        params: {},
+        attachments: [
+          {
+            file: createdNotification.messagePayload["personalisation"][
+              "application_file"
+            ]["file"],
+            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
+            mimeType: "text/csv",
+          },
+        ],
       });
       // Verify the file content as expected.
       const file =
@@ -694,6 +732,9 @@ describe(
           id: true,
           dateSent: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           notificationMessage: { id: true, templateId: true },
         },
         relations: { notificationMessage: true },
@@ -717,6 +758,22 @@ describe(
             sending_method: "attach",
           },
         },
+      });
+      expect(createdNotification.templateId).toBe(
+        createdNotification.notificationMessage.templateId,
+      );
+      expect(createdNotification.recipients).toStrictEqual([TEST_EMAIL]);
+      expect(createdNotification.messageContent).toStrictEqual({
+        params: {},
+        attachments: [
+          {
+            file: createdNotification.messagePayload["personalisation"][
+              "application_file"
+            ]["file"],
+            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
+            mimeType: "text/csv",
+          },
+        ],
       });
     });
 
@@ -765,6 +822,9 @@ describe(
           id: true,
           dateSent: true,
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           notificationMessage: { id: true, templateId: true },
         },
         relations: { notificationMessage: true },
@@ -788,6 +848,22 @@ describe(
             sending_method: "attach",
           },
         },
+      });
+      expect(createdNotification.templateId).toBe(
+        createdNotification.notificationMessage.templateId,
+      );
+      expect(createdNotification.recipients).toStrictEqual([TEST_EMAIL]);
+      expect(createdNotification.messageContent).toStrictEqual({
+        params: {},
+        attachments: [
+          {
+            file: createdNotification.messagePayload["personalisation"][
+              "application_file"
+            ]["file"],
+            filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
+            mimeType: "text/csv",
+          },
+        ],
       });
     });
 

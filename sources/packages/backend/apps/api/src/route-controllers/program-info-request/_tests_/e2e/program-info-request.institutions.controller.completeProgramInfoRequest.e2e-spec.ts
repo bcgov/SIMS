@@ -166,6 +166,9 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         notificationMessage: { templateId: true },
       },
       where: {
@@ -176,14 +179,27 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
       },
       relations: { notificationMessage: true },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: createdNotification.notificationMessage.templateId,
-      email_address: application.student.user.email,
-      personalisation: {
-        date: `${getPSTPDTDateTime(now)} PST/PDT`,
-        givenNames: application.student.user.firstName,
-        lastName: application.student.user.lastName,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: createdNotification.notificationMessage.templateId,
+        email_address: application.student.user.email,
+        personalisation: {
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+        },
       },
+      templateId: createdNotification.notificationMessage.templateId,
+      recipients: [application.student.user.email],
+      messageContent: {
+        params: {
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          givenNames: application.student.user.firstName,
+          lastName: application.student.user.lastName,
+        },
+      },
+      notificationMessage: createdNotification.notificationMessage,
     });
   });
 
