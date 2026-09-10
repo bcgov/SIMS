@@ -59,7 +59,7 @@ export class GCNotifyService {
         throw new CustomNamedError(
           axiosError.message,
           NOTIFY_PERMANENT_FAILURE_ERROR,
-          axiosError.response.data,
+          axiosError.response.data.errors,
         );
       }
       this.logger.error(

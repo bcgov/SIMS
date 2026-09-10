@@ -4,7 +4,6 @@ import {
   Notification,
   User,
   NotificationMessage,
-  PermanentFailureError,
   NotificationMessageType,
 } from "@sims/sims-db";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
@@ -21,10 +20,7 @@ import {
   SaveNotificationModel,
 } from "./notification.model";
 import { LoggerService } from "@sims/utilities/logger";
-import {
-  NotificationEmailMessage,
-  GCNotifyErrorResponse,
-} from "./gc-notify.model";
+import { NotificationEmailMessage } from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { FeatureTogglesService } from "../../feature-toggles/feature-toggles";
@@ -149,7 +145,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
    */
   async updateNotification(
     notificationId: number,
-    permanentFailureError?: PermanentFailureError[],
+    permanentFailureError?: unknown,
   ): Promise<UpdateResult> {
     return this.repo.update(
       {
@@ -220,12 +216,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
         error instanceof CustomNamedError &&
         error.name === NOTIFY_PERMANENT_FAILURE_ERROR
       ) {
-        const processNotificationError =
-          error.objectInfo as GCNotifyErrorResponse;
-        await this.updateNotification(
-          notification.id,
-          processNotificationError.errors,
-        );
+        await this.updateNotification(notification.id, error.objectInfo);
         return false;
       }
       throw error;

@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { AxiosError } from "axios";
-import { GCNotifyErrorResponse } from "./gc-notify.model";
 import { LoggerService } from "@sims/utilities/logger";
 import { ConfigService, Notify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
@@ -8,6 +7,14 @@ import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
 import { NotifyAPIMessagePayload, NotifyMessageContent } from "./notify.model";
 import { Notification } from "@sims/sims-db";
+
+const NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS = [
+  HttpStatus.BAD_REQUEST,
+  HttpStatus.UNPROCESSABLE_ENTITY,
+  HttpStatus.PAYLOAD_TOO_LARGE,
+];
+
+const NO_ERROR_DATA_AVAILABLE = "Error data is not available";
 
 @Injectable()
 export class NotifyService {
@@ -31,25 +38,29 @@ export class NotifyService {
         headers: { "x-api-key": this.notifyConfig.apiKey },
       });
     } catch (error: unknown) {
-      const axiosError = error as AxiosError<GCNotifyErrorResponse>;
+      const axiosError = error as AxiosError;
       if (
         axiosError.isAxiosError &&
-        // TODO: add 422 errors.
-        axiosError.response?.data?.status_code === HttpStatus.BAD_REQUEST
+        NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS.includes(
+          axiosError.response?.status,
+        )
       ) {
         this.logger.error(
-          `Error while sending email notification: ${JSON.stringify(
+          `Error while sending email notification ID ${notification.id}: ${JSON.stringify(
             axiosError.response.data,
           )}`,
         );
-        // BAD_REQUEST errors are considered permanent failures, which means that the notification will not be retried.
+        // These errors are considered permanent failures, which means that the notification will not be retried.
         throw new CustomNamedError(
           axiosError.message,
           NOTIFY_PERMANENT_FAILURE_ERROR,
-          axiosError.response.data,
+          axiosError.response?.data ?? NO_ERROR_DATA_AVAILABLE,
         );
       }
-      this.logger.error("Error while sending email notification.", error);
+      this.logger.error(
+        `Error while sending email notification ID ${notification.id}.`,
+        error,
+      );
       throw error;
     }
   }
