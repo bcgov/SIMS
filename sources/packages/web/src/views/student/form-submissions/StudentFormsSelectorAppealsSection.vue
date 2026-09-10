@@ -140,7 +140,7 @@
                     class="my-2"
                     :type="BannerTypes.Error"
                     :header="form.blockedReason"
-                    :summary="BLOCKED_REASON_MESSAGES[form.blockedReason]"
+                    :summary="getBlockedReasonMessage(form.blockedReason)"
                   />
                 </template>
               </template>
@@ -150,7 +150,7 @@
               hide-details="auto"
               :rules="[
                 (v) => checkNullOrEmptyRule(v, 'At least one appeal'),
-                checkUnavailableSubmissions,
+                checkBlockedSubmissions,
               ]"
             >
             </v-input>
@@ -334,7 +334,7 @@ export default defineComponent({
       });
     };
 
-    const checkUnavailableSubmissions = async () => {
+    const checkBlockedSubmissions = async () => {
       const selectedForm = standaloneAppealsForms.value.find(
         (form) => form.id === selectedStandaloneAppealsForm.value?.[0],
       );
@@ -342,6 +342,15 @@ export default defineComponent({
         return "At least one valid appeal is required.";
       }
       return true;
+    };
+
+    const getBlockedReasonMessage = (
+      blockedReason: FormSubmissionBlockedReason,
+    ) => {
+      return (
+        BLOCKED_REASON_MESSAGES[blockedReason] ??
+        "This appeal is currently unavailable."
+      );
     };
 
     return {
@@ -362,7 +371,8 @@ export default defineComponent({
       fillApplicationAppeals,
       fillStudentAppeals,
       BLOCKED_REASON_MESSAGES,
-      checkUnavailableSubmissions,
+      getBlockedReasonMessage,
+      checkBlockedSubmissions,
     };
   },
 });

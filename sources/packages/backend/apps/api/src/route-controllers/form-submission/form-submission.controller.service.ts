@@ -8,6 +8,7 @@ import {
   FormSubmissionService,
   FormSubmissionAuthorizationService,
   FormSubmissionUserRolesAuth,
+  FormNames,
 } from "../../services";
 import {
   DynamicFormConfiguration,
@@ -381,7 +382,7 @@ export class FormSubmissionControllerService {
     form: DynamicFormConfiguration,
     student: Student,
   ): FormSubmissionBlockedReason | undefined {
-    if (form.formDefinitionName === "modifiedindependentappeal") {
+    if (form.formDefinitionName === FormNames.ModifiedIndependentAppeal) {
       return student.modifiedIndependentStatus ===
         ModifiedIndependentStatus.Approved
         ? FormSubmissionBlockedReason.ModifiedIndependentStatusAlreadyApproved

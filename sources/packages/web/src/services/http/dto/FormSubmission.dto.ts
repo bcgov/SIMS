@@ -253,5 +253,4 @@ export enum FormSubmissionBlockedReason {
    * Modified Independent status already approved.
    */
   ModifiedIndependentStatusAlreadyApproved = "Modified Independent status already approved",
-  StudentAppealA = "Student appeal A",
 }
