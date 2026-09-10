@@ -104,6 +104,11 @@ import {
   SupplementaryDataLoader,
   SupplementaryDataScholasticStandingWithdrawals,
 } from "./services/form-submission/form-supplementary-data";
+import {
+  EducationProgramFieldOfStudyCodeEvaluator,
+  EducationProgramStatusEvaluator,
+  EducationProgramEvaluationService,
+} from "./services/education-program/education-program-evaluator";
 
 @Module({
   imports: [
@@ -208,6 +213,9 @@ import {
     FormSubmissionUpdateDisabilityOnCancelAction,
     FormSubmissionActionProcessor,
     FormSubmissionService,
+    EducationProgramFieldOfStudyCodeEvaluator,
+    EducationProgramStatusEvaluator,
+    EducationProgramEvaluationService,
   ],
 })
 export class AppStudentsModule {}

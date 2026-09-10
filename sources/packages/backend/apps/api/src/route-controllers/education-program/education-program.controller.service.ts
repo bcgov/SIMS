@@ -8,7 +8,6 @@ import {
 import {
   EducationProgramOfferingService,
   EducationProgramService,
-  FormService,
   InstitutionUserAuthorizations,
 } from "../../services";
 import {
@@ -45,7 +44,6 @@ export class EducationProgramControllerService {
   constructor(
     private readonly programService: EducationProgramService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
-    private readonly formService: FormService,
     private readonly institutionService: InstitutionService,
     private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
   ) {}
@@ -418,18 +416,22 @@ export class EducationProgramControllerService {
           PROGRAM_ENTRANCE_REQUIREMENT_NONE,
         ),
     };
-    const credentialTypesAviation: AviationProgramCredentialTypes = {
-      commercialPilotTraining: programData.credentialTypesAviation.includes(
-        "commercialPilotTraining",
-      ),
-      endorsements:
-        programData.credentialTypesAviation.includes("endorsements"),
-      instructorsRating:
-        programData.credentialTypesAviation.includes("instructorsRating"),
-      privatePilotTraining: programData.credentialTypesAviation.includes(
-        "privatePilotTraining",
-      ),
-    };
+    const credentialTypesAviation: AviationProgramCredentialTypes =
+      programData.credentialTypesAviation
+        ? {
+            commercialPilotTraining:
+              programData.credentialTypesAviation.includes(
+                "commercialPilotTraining",
+              ),
+            endorsements:
+              programData.credentialTypesAviation.includes("endorsements"),
+            instructorsRating:
+              programData.credentialTypesAviation.includes("instructorsRating"),
+            privatePilotTraining: programData.credentialTypesAviation.includes(
+              "privatePilotTraining",
+            ),
+          }
+        : undefined;
     return {
       ...programData,
       programDeliveryTypes,
