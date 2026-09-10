@@ -79,8 +79,9 @@ export class ApplicationRestrictionBypass extends RecordDataModel {
     type: "enum",
     enum: RestrictionBypassBehaviors,
     enumName: "RestrictionBypassBehaviors",
+    nullable: true,
   })
-  bypassBehavior: RestrictionBypassBehaviors;
+  bypassBehavior?: RestrictionBypassBehaviors;
 
   /**
    * Indicates if the bypass should be considered active.

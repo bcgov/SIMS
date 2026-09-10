@@ -51,7 +51,7 @@ describe("ApplicationStudentsController(e2e)-getApplicationWarnings", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should still return when application is not in 'Completed' status.", async () => {
+  it(`Should still return when application is not in ${ApplicationStatus.Completed} status.`, async () => {
     // Arrange
     const application = await saveFakeApplicationDisbursements(
       appDataSource,
