@@ -253,6 +253,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
       select: {
         id: true,
         messagePayload: true,
+        messageContent: true,
+        recipients: true,
+        templateId: true,
       },
       where: {
         dateSent: IsNull(),

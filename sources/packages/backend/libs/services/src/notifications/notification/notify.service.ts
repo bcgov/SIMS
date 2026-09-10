@@ -6,10 +6,7 @@ import { ConfigService, Notify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
-import {
-  NotifyAPIMessagePayload,
-  NotifyMessageContent,
-} from "./notify.model";
+import { NotifyAPIMessagePayload, NotifyMessageContent } from "./notify.model";
 import { Notification } from "@sims/sims-db";
 
 @Injectable()
@@ -37,6 +34,7 @@ export class NotifyService {
       const axiosError = error as AxiosError<GCNotifyErrorResponse>;
       if (
         axiosError.isAxiosError &&
+        // TODO: add 422 errors.
         axiosError.response?.data?.status_code === HttpStatus.BAD_REQUEST
       ) {
         this.logger.error(
@@ -65,7 +63,7 @@ export class NotifyService {
     notification: Notification,
   ): NotifyAPIMessagePayload {
     const notifyMessageContent =
-      notification.messagePayload as NotifyMessageContent;
+      notification.messageContent as NotifyMessageContent;
     const notifyAPIMessagePayload: NotifyAPIMessagePayload = {
       params: notifyMessageContent.params,
       email: {

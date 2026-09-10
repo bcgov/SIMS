@@ -177,7 +177,7 @@ export async function getUnsentECEResponseNotifications(
     select: {
       id: true,
       messagePayload: true,
-      message: true,
+      messageContent: true,
       recipients: true,
       templateId: true,
     },
