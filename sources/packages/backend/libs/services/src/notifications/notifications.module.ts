@@ -4,11 +4,9 @@ import { NotificationActionsService } from "./notification/notification-actions.
 import { GCNotifyService } from "./notification/gc-notify.service";
 import { NotifyService } from "./notification/notify.service";
 import { NotificationService } from "./notification/notification.service";
-import { FeatureTogglesModule } from "../feature-toggles/feature-toggles.module";
 
 @Global()
 @Module({
-  imports: [FeatureTogglesModule],
   providers: [
     NotifyService,
     GCNotifyService,
