@@ -1,16 +1,23 @@
 import {
-  Allow,
+  Equals,
+  IsBoolean,
   IsDateString,
+  IsEnum,
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
   IsOptional,
+  Matches,
   MaxLength,
+  ValidateIf,
+  ValidateNested,
 } from "class-validator";
 import {
   EntranceRequirements,
   ProgramCalculatedDataKey,
+  ProgramCourseLoadCalculationTypes,
   ProgramDeliveryTypes,
+  ProgramESLPercentage,
   ProgramEvaluationResult,
 } from "../../../services/education-program/education-program.service.models";
 import {
@@ -20,9 +27,23 @@ import {
   AviationProgramCredentialTypes,
   CREDENTIAL_TYPE_MAX_LENGTH,
   CIP_CODE_MAX_LENGTH,
+  PROGRAM_NAME_MAX_LENGTH,
+  PROGRAM_DESCRIPTION_MAX_LENGTH,
+  FormYesNoOptions,
+  INSTITUTION_PROGRAM_CODE_MAX_LENGTH,
+  INSTITUTION_REGULATORY_BODY_MAX_LENGTH,
+  OTHER_REGULATORY_BODY_MAX_LENGTH,
+  PROGRAM_COMPLETION_YEARS_MAX_LENGTH,
 } from "@sims/sims-db";
-import { IsDateAfter } from "../../../utilities/class-validation";
+import { AllowIf, IsDateAfter } from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
+import { Transform, Type } from "class-transformer";
+import {
+  CIP_CODE_REGEX,
+  NOC_REGEX,
+  OTHER_REGULATORY_BODY,
+  SABC_PROGRAM_CODE_REGEX,
+} from "../../../services/education-program/constants";
 
 /**
  * Education program complete information.
@@ -140,92 +161,362 @@ export class ProgramEvaluationAPIOutDTO {
   calculatedData: ProgramEvaluationResult;
 }
 
+class ProgramDeliveryTypesAPIInDTO {
+  @IsBoolean()
+  deliveredOnSite: boolean;
+  @IsBoolean()
+  deliveredOnline: boolean;
+}
+
+class EntranceRequirementsAPIInDTO {
+  @IsBoolean()
+  hasMinimumAge: boolean;
+  @IsBoolean()
+  minHighSchool: boolean;
+  @IsBoolean()
+  requirementsByInstitution: boolean;
+  @IsBoolean()
+  requirementsByBCITA: boolean;
+  @IsBoolean()
+  noneOfTheAboveEntranceRequirements: boolean;
+}
+
+class AviationProgramCredentialTypesAPIInDTO {
+  @IsBoolean()
+  commercialPilotTraining: boolean;
+  @IsBoolean()
+  instructorsRating: boolean;
+  @IsBoolean()
+  endorsements: boolean;
+  @IsBoolean()
+  privatePilotTraining: boolean;
+}
+
 /**
  * Complete program information used to create or
  * update an education program.
- **The validations will be applied during a form.io dryRun.
  */
 export class EducationProgramAPIInDTO {
-  @Allow()
+  /**
+   * Program name.
+   */
+  @IsNotEmpty()
+  @MaxLength(PROGRAM_NAME_MAX_LENGTH)
   name: string;
-  @Allow()
+  /**
+   * Program description.
+   */
+  @ValidateIf((_, value: string) => !!value)
+  @MaxLength(PROGRAM_DESCRIPTION_MAX_LENGTH)
   description?: string;
-  @Allow()
+  /**
+   * Credential type of the program.
+   */
+  @IsNotEmpty()
+  @MaxLength(CREDENTIAL_TYPE_MAX_LENGTH)
   credentialType: string;
-  @Allow()
+  /**
+   * CIP code of the program.
+   */
+  @IsNotEmpty()
+  @Matches(CIP_CODE_REGEX)
   cipCode: string;
-  @Allow()
-  nocCode: string;
-  @Allow()
-  sabcCode: string;
-  @Allow()
-  regulatoryBody: string;
-  @Allow()
-  otherRegulatoryBody?: string;
-  @Allow()
-  programDeliveryTypes: ProgramDeliveryTypes;
-  @Allow()
-  deliveredOnlineAlsoOnsite?: string;
-  @Allow()
-  sameOnlineCreditsEarned?: string;
-  @Allow()
-  earnAcademicCreditsOtherInstitution?: string;
-  @Allow()
-  courseLoadCalculation: string;
-  @Allow()
-  completionYears: string;
-  @Allow()
-  eslEligibility: string;
-  @Allow()
-  hasJointInstitution: string;
-  @Allow()
-  hasJointDesignatedInstitution: string;
-  @Allow()
-  programIntensity: ProgramIntensity;
-  @Allow()
+  /**
+   * NOC code of the program.
+   */
+  @ValidateIf((_, value: string) => !!value)
+  @Matches(NOC_REGEX)
+  nocCode?: string;
+  /**
+   * SABC code of the program.
+   */
+  @ValidateIf((_, value: string) => !!value)
+  @Matches(SABC_PROGRAM_CODE_REGEX)
+  sabcCode?: string;
+  /**
+   * Institution program code.
+   */
+  @ValidateIf((_, value: string) => !!value)
+  @MaxLength(INSTITUTION_PROGRAM_CODE_MAX_LENGTH)
   institutionProgramCode?: string;
-  @Allow()
-  minHoursWeek?: string;
-  @Allow()
-  isAviationProgram?: string;
-  @Allow()
-  credentialTypesAviation?: AviationProgramCredentialTypes;
-  @Allow()
-  minHoursWeekAvi?: string;
-  @Allow()
-  entranceRequirements: EntranceRequirements;
-  @Allow()
-  hasWILComponent: string;
-  @Allow()
-  isWILApproved?: string;
-  @Allow()
-  wilProgramEligibility?: string;
-  @Allow()
-  hasTravel: string;
-  @Allow()
-  travelProgramEligibility?: string;
-  @Allow()
-  hasIntlExchange?: string;
-  @Allow()
-  intlExchangeProgramEligibility?: string;
-  @Allow()
+  /**
+   * Program intensity.
+   */
+  @IsEnum(ProgramIntensity)
+  programIntensity: ProgramIntensity;
+  /**
+   * Program delivery types.
+   */
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => ProgramDeliveryTypesAPIInDTO)
+  programDeliveryTypes: ProgramDeliveryTypesAPIInDTO;
+  /**
+   * Regulatory body of the program.
+   */
+  @IsNotEmpty()
+  @MaxLength(INSTITUTION_REGULATORY_BODY_MAX_LENGTH)
+  regulatoryBody: string;
+  /**
+   * The name of the other regulatory body.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value || EducationProgramAPIInDTO.isOtherRegulatoryBodyAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isOtherRegulatoryBodyAllowed)
+  @MaxLength(OTHER_REGULATORY_BODY_MAX_LENGTH)
+  otherRegulatoryBody?: string;
+  /**
+   * Indicates whether the program delivered online is also offered onsite.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value ||
+      EducationProgramAPIInDTO.isDeliveredOnlineAlsoOnsiteAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isDeliveredOnlineAlsoOnsiteAllowed)
+  @IsEnum(FormYesNoOptions)
+  deliveredOnlineAlsoOnsite?: FormYesNoOptions;
+  /**
+   * Indicates whether the same online credits as onsite credits are earned for the program.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value ||
+      EducationProgramAPIInDTO.isSameOnlineCreditsEarnedAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isSameOnlineCreditsEarnedAllowed)
+  @IsEnum(FormYesNoOptions)
+  sameOnlineCreditsEarned?: FormYesNoOptions;
+  /**
+   * Indicates whether the program earns academic credits from other institutions.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value ||
+      EducationProgramAPIInDTO.isAcademicCreditsOtherInstitutionAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isAcademicCreditsOtherInstitutionAllowed)
+  @IsEnum(FormYesNoOptions)
+  earnAcademicCreditsOtherInstitution?: FormYesNoOptions;
+  /**
+   * Indicates the method used to calculate the program's course load.
+   */
+  @IsEnum(ProgramCourseLoadCalculationTypes)
+  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
+  /**
+   * Indicates if the program meets the minimum weekly hours requirement.
+   */
+  @IsOptional()
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value || EducationProgramAPIInDTO.isMinHoursWeekAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isMinHoursWeekAllowed)
+  minHoursWeek?: FormYesNoOptions;
+  /**
+   * Indicates the number of years required to complete the program.
+   */
+  @IsNotEmpty()
+  @MaxLength(PROGRAM_COMPLETION_YEARS_MAX_LENGTH)
+  completionYears: string;
+  /**
+   * Indicates the ESL eligibility percentage for the program.
+   */
+  @IsEnum(ProgramESLPercentage)
+  eslEligibility: ProgramESLPercentage;
+  /**
+   * Indicates whether the program has a joint institution.
+   */
+  @IsEnum(FormYesNoOptions)
+  hasJointInstitution: FormYesNoOptions;
+  /**
+   * Indicates whether the program has joint institution(s) which are designated.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value ||
+      EducationProgramAPIInDTO.isHasJointDesignatedInstitutionAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isHasJointDesignatedInstitutionAllowed)
+  @IsEnum(FormYesNoOptions)
+  hasJointDesignatedInstitution?: FormYesNoOptions;
+  /**
+   * Entrance requirements for the program.
+   */
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => EntranceRequirementsAPIInDTO)
+  entranceRequirements: EntranceRequirementsAPIInDTO;
+  /**
+   * Indicates whether the program has a Work-Integrated Learning (WIL) component.
+   */
+  @IsEnum(FormYesNoOptions)
+  hasWILComponent: FormYesNoOptions;
+  /**
+   * Indicates whether the Work-Integrated Learning (WIL) component is approved.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value || EducationProgramAPIInDTO.isWILApprovedAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isWILApprovedAllowed)
+  @IsEnum(FormYesNoOptions)
+  isWILApproved?: FormYesNoOptions;
+  /**
+   * Indicates whether the approved Work-Integrated Learning (WIL) component is eligible.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value || EducationProgramAPIInDTO.isWILProgramEligibilityAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isWILProgramEligibilityAllowed)
+  @IsEnum(FormYesNoOptions)
+  wilProgramEligibility?: FormYesNoOptions;
+  /**
+   * Indicates whether the program has a travel.
+   */
+  @IsEnum(FormYesNoOptions)
+  hasTravel: FormYesNoOptions;
+  /**
+   * Indicates whether the travel program component is eligible.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value ||
+      EducationProgramAPIInDTO.isTravelProgramEligibilityAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isTravelProgramEligibilityAllowed)
+  @IsEnum(FormYesNoOptions)
+  travelProgramEligibility?: FormYesNoOptions;
+  /**
+   * Indicates whether the program has an international exchange.
+   */
+  @IsEnum(FormYesNoOptions)
+  hasIntlExchange: FormYesNoOptions;
+  /**
+   * Indicates whether the international exchange is eligible.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value || EducationProgramAPIInDTO.isIntlProgramEligibilityAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isIntlProgramEligibilityAllowed)
+  @IsEnum(FormYesNoOptions)
+  intlExchangeProgramEligibility?: FormYesNoOptions;
+  /**
+   * Indicates whether the program is an aviation program.
+   */
+  @IsEnum(FormYesNoOptions)
+  isAviationProgram: FormYesNoOptions;
+  /**
+   * Aviation program credential types.
+   */
+  @Transform(({ value, obj: data }) =>
+    EducationProgramAPIInDTO.isCredentialTypesAviationAllowed(data)
+      ? value
+      : undefined,
+  )
+  @ValidateIf(
+    (
+      data: EducationProgramAPIInDTO,
+      value: AviationProgramCredentialTypesAPIInDTO,
+    ) =>
+      !!value ||
+      EducationProgramAPIInDTO.isCredentialTypesAviationAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isCredentialTypesAviationAllowed)
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => AviationProgramCredentialTypesAPIInDTO)
+  credentialTypesAviation?: AviationProgramCredentialTypesAPIInDTO;
+  /**
+   * Indicates if the aviation program has a minimum hours per week requirement.
+   */
+  @ValidateIf(
+    (data: EducationProgramAPIInDTO, value: string) =>
+      !!value || EducationProgramAPIInDTO.isMinHoursWeekAviAllowed(data),
+  )
+  @AllowIf(EducationProgramAPIInDTO.isMinHoursWeekAviAllowed)
+  @IsEnum(FormYesNoOptions)
+  minHoursWeekAvi?: FormYesNoOptions;
+  @Equals(true)
   programDeclaration: boolean;
-  @Allow()
-  fieldOfStudyCode: number;
-  /**
-   * Indicates the institution type as BC Private. isBCPrivate is part of the form and defines if the dynamic
-   * area of the form.io definition will be visible or not. It will impact the validation using the dryrun.
-   * Since this value has the source of truth on the institution, it must be populated by the API prior to
-   * the dryrun validation and it is part of DTO to make explicit its place in the form payload submitted.
-   * It will also be ignored by Nestjs because it does not have a decorator.
-   */
-  @Allow()
+  @IsBoolean()
   isBCPrivate: boolean;
-  /**
-   * Indicates the institution type as BC Public. It follows the same reasoning as isBCPrivate.
-   */
-  @Allow()
+  @IsBoolean()
   isBCPublic: boolean;
+  static isCredentialTypesAviationAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return data.isAviationProgram === FormYesNoOptions.Yes;
+  }
+  static isMinHoursWeekAviAllowed(data: EducationProgramAPIInDTO): boolean {
+    return data.isAviationProgram === FormYesNoOptions.Yes;
+  }
+  static isOtherRegulatoryBodyAllowed(data: EducationProgramAPIInDTO): boolean {
+    return data.regulatoryBody === OTHER_REGULATORY_BODY;
+  }
+  static isDeliveredOnlineAlsoOnsiteAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return (
+      !data.isBCPrivate &&
+      !data.isBCPublic &&
+      data.programDeliveryTypes?.deliveredOnline
+    );
+  }
+  static isSameOnlineCreditsEarnedAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return (
+      !data.isBCPrivate &&
+      !data.isBCPublic &&
+      data.deliveredOnlineAlsoOnsite === FormYesNoOptions.No
+    );
+  }
+  static isAcademicCreditsOtherInstitutionAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return (
+      !data.isBCPrivate &&
+      !data.isBCPublic &&
+      data.deliveredOnlineAlsoOnsite === FormYesNoOptions.No &&
+      data.sameOnlineCreditsEarned === FormYesNoOptions.No
+    );
+  }
+  static isMinHoursWeekAllowed(data: EducationProgramAPIInDTO): boolean {
+    return (
+      data.courseLoadCalculation === ProgramCourseLoadCalculationTypes.Hours
+    );
+  }
+  static isHasJointDesignatedInstitutionAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return data.hasJointInstitution === FormYesNoOptions.Yes;
+  }
+  static isWILApprovedAllowed(data: EducationProgramAPIInDTO): boolean {
+    return data.hasWILComponent === FormYesNoOptions.Yes;
+  }
+  static isWILProgramEligibilityAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return (
+      data.hasWILComponent === FormYesNoOptions.Yes &&
+      data.isWILApproved === FormYesNoOptions.Yes
+    );
+  }
+  static isTravelProgramEligibilityAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return data.hasTravel === FormYesNoOptions.Yes;
+  }
+  static isIntlProgramEligibilityAllowed(
+    data: EducationProgramAPIInDTO,
+  ): boolean {
+    return data.hasIntlExchange === FormYesNoOptions.Yes;
+  }
 }
 
 export class ApproveProgramAPIInDTO {

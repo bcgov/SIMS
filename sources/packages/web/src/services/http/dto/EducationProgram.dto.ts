@@ -149,11 +149,12 @@ export class EducationProgramAPIInDTO {
   intlExchangeProgramEligibility?: string;
   @Expose()
   programDeclaration: boolean;
-  @Expose()
   fieldOfStudyCode: number;
   @Expose()
   credentialTypesAviation?: AviationProgramCredentialTypes;
+  @Expose()
   isBCPrivate: boolean;
+  @Expose()
   isBCPublic: boolean;
 }
 

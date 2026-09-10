@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -52,12 +53,7 @@ export class EducationProgramControllerService {
     auditUserId: number,
     programId?: number,
   ): Promise<EducationProgram> {
-    // Check if institution is private/public and append it to the payload.
-    const { institutionType } =
-      await this.institutionService.getInstitutionTypeById(institutionId);
-    payload.isBCPrivate = institutionType.isBCPrivate;
-    payload.isBCPublic = institutionType.isBCPublic;
-
+    await this.validateSaveProgramData(institutionId, payload);
     const submissionResult =
       await this.formService.dryRunSubmission<SaveEducationProgram>(
         FormNames.EducationProgram,
@@ -294,5 +290,43 @@ export class EducationProgramControllerService {
       id: program.id,
       description: program.name,
     }));
+  }
+
+  /**
+   * Validate the program data before persisting it.
+   * @param institutionId ID of the institution.
+   * @param programData Program data to be validated.
+   */
+  private async validateSaveProgramData(
+    institutionId: number,
+    programData: EducationProgramAPIInDTO,
+  ): Promise<void> {
+    const { institutionType } =
+      await this.institutionService.getInstitutionTypeById(institutionId);
+    if (
+      programData.isBCPublic !== institutionType.isBCPublic ||
+      programData.isBCPrivate !== institutionType.isBCPrivate
+    ) {
+      throw new UnprocessableEntityException(
+        "The provided BC Public and BC Private status does not match the actual institution type status.",
+      );
+    }
+    const selectedProgramDeliveryTypes = Object.entries(
+      programData.programDeliveryTypes,
+    ).filter(([, value]) => value).length;
+    if (!selectedProgramDeliveryTypes) {
+      throw new BadRequestException(
+        "At least one program delivery type must be selected.",
+      );
+    }
+
+    const selectedEntranceRequirements = Object.entries(
+      programData.entranceRequirements,
+    ).filter(([, value]) => value).length;
+    if (!selectedEntranceRequirements) {
+      throw new BadRequestException(
+        "At least one entrance requirement must be selected.",
+      );
+    }
   }
 }
