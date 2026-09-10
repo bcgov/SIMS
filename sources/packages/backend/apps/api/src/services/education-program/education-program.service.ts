@@ -33,6 +33,7 @@ import {
   SaveEducationProgram,
   PendingEducationProgram,
   EducationProgramSummary,
+  ProgramCalculatedDataKey,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -66,6 +67,7 @@ import {
   INACTIVE_PROGRAM,
   OTHER_REGULATORY_BODY,
 } from "../education-program/constants";
+import { EducationProgramEvaluationService } from "./education-program-evaluator";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -77,6 +79,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     private readonly institutionService: InstitutionService,
     private readonly userService: UserService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -197,7 +200,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
-      program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
+      const calculatedData =
+        await this.educationProgramEvaluationService.evaluate(
+          institutionId,
+          [
+            ProgramCalculatedDataKey.FieldOfStudyCode,
+            ProgramCalculatedDataKey.ProgramStatus,
+          ],
+          educationProgram,
+        );
+      program.fieldOfStudyCode =
+        calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
       program.nocCode = educationProgram.nocCode;
@@ -227,7 +240,8 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.hasJointInstitution = educationProgram.hasJointInstitution;
       program.hasJointDesignatedInstitution =
         educationProgram.hasJointDesignatedInstitution;
-      program.programStatus = educationProgram.programStatus;
+      program.programStatus =
+        calculatedData[ProgramCalculatedDataKey.ProgramStatus];
       program.programIntensity = educationProgram.programIntensity;
       program.institutionProgramCode = educationProgram.institutionProgramCode;
       program.minHoursWeek = educationProgram.minHoursWeek;

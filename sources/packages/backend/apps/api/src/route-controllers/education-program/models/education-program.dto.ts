@@ -1,4 +1,5 @@
 import {
+  ArrayMinSize,
   Equals,
   IsBoolean,
   IsDateString,
@@ -10,13 +11,13 @@ import {
   Matches,
   MaxLength,
   ValidateIf,
-  ValidateNested,
 } from "class-validator";
 import {
   EntranceRequirements,
   ProgramCalculatedDataKey,
   ProgramCourseLoadCalculationTypes,
   ProgramDeliveryTypes,
+  ProgramDeliveryTypeValues,
   ProgramESLPercentage,
   ProgramEvaluationResult,
 } from "../../../services/education-program/education-program.service.models";
@@ -37,7 +38,7 @@ import {
 } from "@sims/sims-db";
 import { AllowIf, IsDateAfter } from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
-import { Transform, Type } from "class-transformer";
+import { Transform } from "class-transformer";
 import {
   CIP_CODE_REGEX,
   NOC_REGEX,
@@ -161,37 +162,6 @@ export class ProgramEvaluationAPIOutDTO {
   calculatedData: ProgramEvaluationResult;
 }
 
-class ProgramDeliveryTypesAPIInDTO {
-  @IsBoolean()
-  deliveredOnSite: boolean;
-  @IsBoolean()
-  deliveredOnline: boolean;
-}
-
-class EntranceRequirementsAPIInDTO {
-  @IsBoolean()
-  hasMinimumAge: boolean;
-  @IsBoolean()
-  minHighSchool: boolean;
-  @IsBoolean()
-  requirementsByInstitution: boolean;
-  @IsBoolean()
-  requirementsByBCITA: boolean;
-  @IsBoolean()
-  noneOfTheAboveEntranceRequirements: boolean;
-}
-
-class AviationProgramCredentialTypesAPIInDTO {
-  @IsBoolean()
-  commercialPilotTraining: boolean;
-  @IsBoolean()
-  instructorsRating: boolean;
-  @IsBoolean()
-  endorsements: boolean;
-  @IsBoolean()
-  privatePilotTraining: boolean;
-}
-
 /**
  * Complete program information used to create or
  * update an education program.
@@ -247,10 +217,9 @@ export class EducationProgramAPIInDTO {
   /**
    * Program delivery types.
    */
-  @IsNotEmptyObject()
-  @ValidateNested()
-  @Type(() => ProgramDeliveryTypesAPIInDTO)
-  programDeliveryTypes: ProgramDeliveryTypesAPIInDTO;
+  @ArrayMinSize(1)
+  @IsEnum(ProgramDeliveryTypeValues, { each: true })
+  programDeliveryTypes: ProgramDeliveryTypeValues[];
   /**
    * Regulatory body of the program.
    */
@@ -345,10 +314,8 @@ export class EducationProgramAPIInDTO {
   /**
    * Entrance requirements for the program.
    */
-  @IsNotEmptyObject()
-  @ValidateNested()
-  @Type(() => EntranceRequirementsAPIInDTO)
-  entranceRequirements: EntranceRequirementsAPIInDTO;
+  @ArrayMinSize(1)
+  entranceRequirements: string[];
   /**
    * Indicates whether the program has a Work-Integrated Learning (WIL) component.
    */
@@ -419,18 +386,13 @@ export class EducationProgramAPIInDTO {
       : undefined,
   )
   @ValidateIf(
-    (
-      data: EducationProgramAPIInDTO,
-      value: AviationProgramCredentialTypesAPIInDTO,
-    ) =>
-      !!value ||
+    (data: EducationProgramAPIInDTO, value: string[]) =>
+      !!value?.length ||
       EducationProgramAPIInDTO.isCredentialTypesAviationAllowed(data),
   )
   @AllowIf(EducationProgramAPIInDTO.isCredentialTypesAviationAllowed)
-  @IsNotEmptyObject()
-  @ValidateNested()
-  @Type(() => AviationProgramCredentialTypesAPIInDTO)
-  credentialTypesAviation?: AviationProgramCredentialTypesAPIInDTO;
+  @ArrayMinSize(1)
+  credentialTypesAviation?: string[];
   /**
    * Indicates if the aviation program has a minimum hours per week requirement.
    */
@@ -464,7 +426,7 @@ export class EducationProgramAPIInDTO {
     return (
       !data.isBCPrivate &&
       !data.isBCPublic &&
-      data.programDeliveryTypes?.deliveredOnline
+      data.programDeliveryTypes?.includes(ProgramDeliveryTypeValues.Online)
     );
   }
   static isSameOnlineCreditsEarnedAllowed(

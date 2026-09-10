@@ -11,24 +11,34 @@ import {
   FormService,
   InstitutionUserAuthorizations,
 } from "../../services";
-import { EducationProgram } from "@sims/sims-db";
+import {
+  AviationProgramCredentialTypes,
+  EducationProgram,
+  SystemLookupCategory,
+} from "@sims/sims-db";
 import {
   EducationProgramAPIOutDTO,
   EducationProgramAPIInDTO,
 } from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
-import { FormNames } from "../../services/form/constants";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
 import { ApiProcessError } from "../../types";
-import { SaveEducationProgram } from "../../services/education-program/education-program.service.models";
+import {
+  EntranceRequirements,
+  ProgramDeliveryTypes,
+  ProgramDeliveryTypeValues,
+  SaveEducationProgram,
+} from "../../services/education-program/education-program.service.models";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InstitutionUserTypes } from "../../auth";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
+import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "../../services/education-program/constants";
+import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -37,6 +47,7 @@ export class EducationProgramControllerService {
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly formService: FormService,
     private readonly institutionService: InstitutionService,
+    private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
   ) {}
 
   /**
@@ -54,17 +65,7 @@ export class EducationProgramControllerService {
     programId?: number,
   ): Promise<EducationProgram> {
     await this.validateSaveProgramData(institutionId, payload);
-    const submissionResult =
-      await this.formService.dryRunSubmission<SaveEducationProgram>(
-        FormNames.EducationProgram,
-        payload,
-      );
-
-    if (!submissionResult.valid) {
-      throw new UnprocessableEntityException(
-        "Not able to a save the program due to an invalid request.",
-      );
-    }
+    const saveProgramData = this.buildSaveProgramData(payload);
 
     try {
       // The payload returned from form.io contains the approvalStatus as
@@ -73,7 +74,7 @@ export class EducationProgramControllerService {
       return await this.programService.saveEducationProgram(
         institutionId,
         auditUserId,
-        submissionResult.data.data,
+        saveProgramData,
         programId,
       );
     } catch (error: unknown) {
@@ -303,6 +304,7 @@ export class EducationProgramControllerService {
   ): Promise<void> {
     const { institutionType } =
       await this.institutionService.getInstitutionTypeById(institutionId);
+    // Validate institution types.
     if (
       programData.isBCPublic !== institutionType.isBCPublic ||
       programData.isBCPrivate !== institutionType.isBCPrivate
@@ -311,22 +313,128 @@ export class EducationProgramControllerService {
         "The provided BC Public and BC Private status does not match the actual institution type status.",
       );
     }
-    const selectedProgramDeliveryTypes = Object.entries(
-      programData.programDeliveryTypes,
-    ).filter(([, value]) => value).length;
-    if (!selectedProgramDeliveryTypes) {
+    // Validate entrance requirements.
+    if (
+      programData.entranceRequirements.includes(
+        PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+      ) &&
+      programData.entranceRequirements.length > 1
+    ) {
       throw new BadRequestException(
-        "At least one program delivery type must be selected.",
+        "None of the above entrance requirement cannot be provided along with other entrance requirements.",
       );
     }
+    this.validateLookupValues(programData);
+  }
 
-    const selectedEntranceRequirements = Object.entries(
-      programData.entranceRequirements,
-    ).filter(([, value]) => value).length;
-    if (!selectedEntranceRequirements) {
-      throw new BadRequestException(
-        "At least one entrance requirement must be selected.",
+  /**
+   * Validate the lookup values in the program data.
+   * @param programData Program data containing lookup values to be validated.
+   */
+  private validateLookupValues(programData: EducationProgramAPIInDTO): void {
+    const invalidSystemLookupMessages = [];
+    const isInvalidProgramLength =
+      !this.systemLookupConfigurationService.isValidSystemLookup(
+        SystemLookupCategory.ProgramLength,
+        programData.completionYears,
+      );
+    const invalidEntranceRequirementLookups =
+      programData.entranceRequirements.filter(
+        (requirement) =>
+          !this.systemLookupConfigurationService.isValidSystemLookup(
+            SystemLookupCategory.ProgramEntranceRequirement,
+            requirement,
+          ),
+      );
+    const isInvalidRegulatoryBody =
+      !this.systemLookupConfigurationService.isValidSystemLookup(
+        SystemLookupCategory.InstitutionRegulatoryBody,
+        programData.regulatoryBody,
+      );
+
+    const invalidAviationCredentials = programData.credentialTypesAviation
+      ? programData.credentialTypesAviation.filter(
+          (credential) =>
+            !this.systemLookupConfigurationService.isValidSystemLookup(
+              SystemLookupCategory.ProgramAviationCredential,
+              credential,
+            ),
+        )
+      : [];
+    if (isInvalidProgramLength) {
+      invalidSystemLookupMessages.push(
+        `Program length ${programData.completionYears}`,
       );
     }
+    if (invalidEntranceRequirementLookups.length) {
+      invalidSystemLookupMessages.push(
+        `Entrance requirements ${invalidEntranceRequirementLookups.join(" ")}`,
+      );
+    }
+    if (isInvalidRegulatoryBody) {
+      invalidSystemLookupMessages.push(
+        `Regulatory body ${programData.regulatoryBody}`,
+      );
+    }
+    if (invalidAviationCredentials.length) {
+      invalidSystemLookupMessages.push(
+        `Aviation credentials ${invalidAviationCredentials.join(" ")}`,
+      );
+    }
+    if (invalidSystemLookupMessages.length) {
+      throw new BadRequestException(
+        `Invalid values for the following lookup fields: ${invalidSystemLookupMessages.join(", ")}.`,
+      );
+    }
+  }
+
+  /**
+   * Builds the data structure required to save an education program.
+   * @param programData The education program data received from the API.
+   * @returns The transformed education program data to save.
+   */
+  private buildSaveProgramData(
+    programData: EducationProgramAPIInDTO,
+  ): SaveEducationProgram {
+    const programDeliveryTypes: ProgramDeliveryTypes = {
+      deliveredOnSite: programData.programDeliveryTypes.includes(
+        ProgramDeliveryTypeValues.Onsite,
+      ),
+      deliveredOnline: programData.programDeliveryTypes.includes(
+        ProgramDeliveryTypeValues.Online,
+      ),
+    };
+    const entranceRequirements: EntranceRequirements = {
+      hasMinimumAge: programData.entranceRequirements.includes("hasMinimumAge"),
+      minHighSchool: programData.entranceRequirements.includes("minHighSchool"),
+      requirementsByInstitution: programData.entranceRequirements.includes(
+        "requirementsByInstitution",
+      ),
+      requirementsByBCITA: programData.entranceRequirements.includes(
+        "requirementsByBCITA",
+      ),
+      noneOfTheAboveEntranceRequirements:
+        programData.entranceRequirements.includes(
+          PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+        ),
+    };
+    const credentialTypesAviation: AviationProgramCredentialTypes = {
+      commercialPilotTraining: programData.credentialTypesAviation.includes(
+        "commercialPilotTraining",
+      ),
+      endorsements:
+        programData.credentialTypesAviation.includes("endorsements"),
+      instructorsRating:
+        programData.credentialTypesAviation.includes("instructorsRating"),
+      privatePilotTraining: programData.credentialTypesAviation.includes(
+        "privatePilotTraining",
+      ),
+    };
+    return {
+      ...programData,
+      programDeliveryTypes,
+      entranceRequirements,
+      credentialTypesAviation,
+    };
   }
 }
