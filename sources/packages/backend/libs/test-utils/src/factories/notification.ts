@@ -1,4 +1,3 @@
-import { NotificationEmailMessage } from "@sims/services";
 import {
   Notification,
   NotificationMessage,
@@ -7,21 +6,6 @@ import {
 } from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
 import { DataSource } from "typeorm";
-
-/**
- * Creates a fake message payload.
- * @returns created message payload.
- */
-function createDummyMessagePayload(): NotificationEmailMessage {
-  return {
-    email_address: faker.internet.email(),
-    template_id: faker.string.uuid(),
-    personalisation: {
-      givenNames: faker.person.firstName(),
-      lastName: faker.person.lastName(),
-    },
-  };
-}
 
 /**
  *
@@ -43,6 +27,10 @@ export function createFakeNotification(
     initialValue?: Partial<Notification>;
   },
 ): Notification {
+  const emailAddress = faker.internet.email();
+  const templateId = faker.string.uuid();
+  const givenNames = faker.person.firstName();
+  const lastName = faker.person.lastName();
   const notification = new Notification();
   notification.user = relations?.user;
   notification.notificationMessage =
@@ -51,8 +39,22 @@ export function createFakeNotification(
       id: NotificationMessageType.StudentFileUpload,
     } as NotificationMessage);
   notification.metadata = options?.initialValue?.metadata ?? null;
-  notification.messagePayload =
-    options?.initialValue?.messagePayload ?? createDummyMessagePayload();
+  notification.messagePayload = options?.initialValue?.messagePayload ?? {
+    email_address: emailAddress,
+    template_id: templateId,
+    personalisation: {
+      givenNames,
+      lastName,
+    },
+  };
+  notification.templateId = options?.initialValue?.templateId ?? templateId;
+  notification.recipients = options?.initialValue?.recipients ?? [emailAddress];
+  notification.messageContent = options?.initialValue?.messageContent ?? {
+    params: {
+      givenNames,
+      lastName,
+    },
+  };
   notification.creator = relations?.auditUser ?? null;
   notification.createdAt = options?.initialValue?.createdAt;
   notification.dateSent = options?.initialValue?.dateSent;
