@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
+  FORM_SUBMISSION_BLOCKED,
   FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
   FORM_SUBMISSION_NOT_FOUND,
@@ -20,6 +21,7 @@ import {
   FORM_SUBMISSION_PENDING_DECISION,
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
   FormSubmissionCancellationService,
+  FormSubmissionService,
   FormSubmissionSubmitService,
   StudentService,
 } from "../../services";
@@ -64,6 +66,7 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly formSubmissionControllerService: FormSubmissionControllerService,
     private readonly featureTogglesService: FeatureTogglesService,
     private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
+    private readonly formSubmissionService: FormSubmissionService,
     private readonly studentService: StudentService,
   ) {
     super();
@@ -95,10 +98,15 @@ export class FormSubmissionStudentsController extends BaseController {
         formDescription: configuration.formDescription,
         allowBundledSubmission: configuration.allowBundledSubmission,
         hasApplicationScope: configuration.hasApplicationScope,
-        blockedReason: this.formSubmissionControllerService.checkIfFormBlocked(
-          configuration,
-          student,
-        ),
+        // Blocked reason is currently only used for standalone appeals.
+        ...(configuration.formCategory === FormCategory.StudentAppeal &&
+          !configuration.hasApplicationScope &&
+          !configuration.allowBundledSubmission && {
+            blockedReason: this.formSubmissionService.checkIfFormBlocked(
+              configuration.formDefinitionName,
+              student,
+            ),
+          }),
       })),
     };
   }
@@ -187,7 +195,8 @@ export class FormSubmissionStudentsController extends BaseController {
       "one or more forms in the submission do not allow bundled submissions or " +
       "all forms in the submission must share the same form category or " +
       "the application is not eligible for an appeal or " +
-      "the submitted appeal form(s) is/are not eligible for the application.",
+      "the submitted appeal form(s) is/are not eligible for the application or " +
+      "the form is currently blocked from submission.",
   })
   @ApiBadRequestResponse({
     description: "Failed to submit the form due to invalid dynamic data.",
@@ -216,6 +225,7 @@ export class FormSubmissionStudentsController extends BaseController {
               "Failed to submit the form due to invalid dynamic data.",
             );
           case FORM_SUBMISSION_PENDING_DECISION:
+          case FORM_SUBMISSION_BLOCKED:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

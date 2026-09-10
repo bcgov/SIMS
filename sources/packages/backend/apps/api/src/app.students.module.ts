@@ -96,6 +96,7 @@ import {
   ConfigurationContextValidator,
   PendingConcurrencyValidator,
   ApplicationEligibleAppealsValidator,
+  SubmissionBlockedValidator,
   FormSubmissionValidator,
 } from "./services/form-submission/form-submission-validator";
 import {
@@ -190,6 +191,7 @@ import {
     ConfigurationContextValidator,
     PendingConcurrencyValidator,
     ApplicationEligibleAppealsValidator,
+    SubmissionBlockedValidator,
     FormSubmissionValidator,
     // Form Supplementary Data Loaders
     SupplementaryDataProgramYear,

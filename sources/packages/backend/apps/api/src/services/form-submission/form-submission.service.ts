@@ -12,8 +12,13 @@ import {
   FormSubmission,
   FormSubmissionStatus,
   getUserFullNameLikeSearch,
+  ModifiedIndependentStatus,
+  Student,
 } from "@sims/sims-db";
-import { FormSubmissionPendingSummary } from "./form-submission.models";
+import {
+  FormSubmissionBlockedReason,
+  FormSubmissionPendingSummary,
+} from "./form-submission.models";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
@@ -23,6 +28,7 @@ import {
 import { Role } from "../../auth";
 import {
   FORM_SUBMISSION_NOT_FOUND,
+  FormNames,
   FormSubmissionAuthorizationService,
   FormSubmissionAuthRoles,
 } from "../../services";
@@ -342,5 +348,25 @@ export class FormSubmissionService {
         : `Form submission with submission item ID ${findOptions.submissionItemId} not found.`;
       throw new CustomNamedError(errorMessage, FORM_SUBMISSION_NOT_FOUND);
     }
+  }
+
+  /**
+   * Checks whether the specified form is blocked from submission for the specified student.
+   * Logic is specific to the form definition.
+   * @param form The dynamic form configuration to check for blockage.
+   * @param student The student for whom the form blockage is being checked.
+   * @returns The reason why the form is blocked from submission, or undefined if it is not blocked.
+   */
+  checkIfFormBlocked(
+    formDefinitionName: string,
+    student: Student,
+  ): FormSubmissionBlockedReason | undefined {
+    if (formDefinitionName === FormNames.ModifiedIndependentAppeal) {
+      return student.modifiedIndependentStatus ===
+        ModifiedIndependentStatus.Approved
+        ? FormSubmissionBlockedReason.ModifiedIndependentStatusAlreadyApproved
+        : undefined;
+    }
+    return undefined;
   }
 }

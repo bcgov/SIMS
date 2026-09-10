@@ -7,6 +7,7 @@ import {
 } from "@sims/sims-db";
 import { JSON_20KB } from "../../../constants";
 import {
+  FormSubmissionBlockedReason,
   KnownSupplementaryData,
   KnownSupplementaryDataKey,
 } from "../../../services/form-submission/form-submission.models";
@@ -290,14 +291,4 @@ export class FormSubmissionCompletionAPIInDTO {
   @ValidateNested({ each: true })
   @Type(() => FormSubmissionCompletionItemAPIInDTO)
   items: FormSubmissionCompletionItemAPIInDTO[];
-}
-
-/**
- * Reason why a form submission may be blocked from submission.
- */
-export enum FormSubmissionBlockedReason {
-  /**
-   * Modified Independent status already approved.
-   */
-  ModifiedIndependentStatusAlreadyApproved = "Modified Independent status already approved",
 }

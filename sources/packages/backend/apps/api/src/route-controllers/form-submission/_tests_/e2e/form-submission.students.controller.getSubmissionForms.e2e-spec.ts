@@ -15,8 +15,7 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { FormNames } from "../../../../services";
-import { FormSubmissionBlockedReason } from "../../models/form-submission.dto";
+import { FormNames, FormSubmissionBlockedReason } from "../../../../services";
 
 describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
   let app: INestApplication;
@@ -54,7 +53,7 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
       );
   });
 
-  it(`Should get a blocked ${FormNames.ModifiedIndependentAppeal} when the student has already been approved for modified independent status.`, async () => {
+  it(`Should get the ${FormNames.ModifiedIndependentAppeal} form with a blocked reason when the student has already been approved for modified independent status.`, async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {
@@ -66,6 +65,7 @@ describe("FormSubmissionStudentsController(e2e)-getSubmissionForms", () => {
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
+    // Mock the user received in the token.
     await mockJWTUserInfo(appModule, student.user);
 
     // Act/Assert
