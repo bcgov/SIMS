@@ -70,7 +70,7 @@
             </v-radio-group>
             <div v-else class="pt-2 pb-3 text-body-2">
               <v-label class="d-block">Until</v-label>
-              <p class="mt-2">
+              <p>
                 The student creates a new version of the application or a
                 ministry user removes the bypass. Note: This bypass only allows
                 the student to accept their application.
