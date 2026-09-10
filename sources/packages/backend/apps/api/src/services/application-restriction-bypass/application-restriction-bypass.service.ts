@@ -669,7 +669,7 @@ export class ApplicationRestrictionBypassService {
     // Validate the payload to have a bypassBehavior if the restriction is not an accept assessment type.
     if (!hasAcceptAssessmentRestrictionAction && !bypassBehavior) {
       throw new CustomNamedError(
-        "Bypass behavior is required for non accept assessment type restrictions.",
+        "Bypass behavior is required for non-accept assessment type restrictions.",
         RESTRICTION_BYPASS_NOT_ELIGIBLE,
       );
     }
