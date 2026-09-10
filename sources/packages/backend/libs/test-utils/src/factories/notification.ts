@@ -78,6 +78,8 @@ export function createFakeNotificationMessage(options?: {
     `Fake notification message ${faker.string.alpha({ length: 10 })}`;
   notificationMessage.templateId =
     options?.initialValue?.templateId ?? faker.string.uuid();
+  notificationMessage.notifyTemplateId =
+    options?.initialValue?.notifyTemplateId ?? faker.string.uuid();
   notificationMessage.emailContacts = options?.initialValue?.emailContacts;
   return notificationMessage;
 }

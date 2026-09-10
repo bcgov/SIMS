@@ -37,7 +37,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
     notificationController = nestApplication.get(NotificationController);
   });
 
-  it.only("Should create a student email notification resolving the personalisation from the provided paths when the recipient is the student.", async () => {
+  it("Should create a student email notification resolving the personalisation from the provided paths when the recipient is the student.", async () => {
     // Arrange
     const savedApplication = await saveFakeApplication(db.dataSource);
     const { student } = savedApplication;
@@ -240,7 +240,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
           applicationNumber: savedApplication.applicationNumber,
         },
       },
-      templateId: ministryNotificationMessage.templateId,
+      templateId: ministryNotificationMessage.notifyTemplateId,
       recipients: [ministryEmailContact],
       messageContent: {
         params: {
