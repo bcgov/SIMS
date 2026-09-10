@@ -31,7 +31,10 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
 import { STUDENT_HAS_PENDING_APPEAL } from "../../../../constants";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let app: INestApplication;
@@ -197,7 +200,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
+      templateId: NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
       recipients: [MINISTRY_EMAIL_ADDRESS],
       messageContent: {
         params: {

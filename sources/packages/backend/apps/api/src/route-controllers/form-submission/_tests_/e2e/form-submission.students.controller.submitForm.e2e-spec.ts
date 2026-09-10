@@ -260,7 +260,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
           dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+      templateId: "4679a627-7c55-4a20-bd30-4dbd1b0992b7",
       recipients: [MINISTRY_EMAIL_ADDRESS],
       messageContent: {
         params: {
@@ -438,7 +438,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
           dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+      templateId: "4679a627-7c55-4a20-bd30-4dbd1b0992b7",
       recipients: [MINISTRY_EMAIL_ADDRESS],
       messageContent: {
         params: {

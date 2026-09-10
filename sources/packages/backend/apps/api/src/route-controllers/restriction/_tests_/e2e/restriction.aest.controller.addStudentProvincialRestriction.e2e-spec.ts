@@ -73,7 +73,7 @@ describe("RestrictionAESTController(e2e)-addStudentProvincialRestriction.", () =
           givenNames: student.user.firstName,
         },
       },
-      templateId: "2b64245f-770c-4493-9d3c-4e0f86773987",
+      templateId: "21af88bf-74ca-4805-bf2c-c6134d911ef3",
       recipients: [student.user.email],
       messageContent: {
         params: {

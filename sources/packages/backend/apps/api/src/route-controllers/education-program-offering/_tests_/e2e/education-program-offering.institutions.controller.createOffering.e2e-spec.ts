@@ -53,7 +53,10 @@ import {
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { IsNull } from "typeorm";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -359,7 +362,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         },
       },
       templateId:
-        GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification,
+        NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification,
       recipients: [MINISTRY_EMAIL_ADDRESS],
       messageContent: {
         params: {

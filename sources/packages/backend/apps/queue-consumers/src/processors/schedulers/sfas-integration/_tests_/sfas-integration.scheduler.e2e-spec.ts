@@ -253,7 +253,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
           dateTime: expect.any(String),
         },
       },
-      templateId: "69d5f064-1efa-4109-a45a-5857a6acb612",
+      templateId: "3f2e8f9a-7627-433d-be17-c72041ef7c14",
       recipients: [LEGACY_RESTRICTION_EMAIL],
       messageContent: {
         params: {

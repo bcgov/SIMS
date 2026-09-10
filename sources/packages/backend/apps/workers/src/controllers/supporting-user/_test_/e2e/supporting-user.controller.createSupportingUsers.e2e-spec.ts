@@ -18,7 +18,10 @@ import {
 } from "../../supporting-user.dto";
 import { createFakeCreateSupportingUsersPayload } from "./create-supporting-users";
 import { ICustomHeaders } from "@camunda8/sdk/dist/zeebe/types";
-const SUPPORTING_USER_INFO_TEMPLATE_ID = "46f36b94-9c14-406d-a03c-bbec618726e4";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("SupportingUserController(e2e)-createSupportingUsers", () => {
   let db: E2EDataSources;
@@ -75,26 +78,26 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     const createdNotification = await getCreatedNotification(
       savedApplication.student.user.id,
     );
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
-      email_address: savedApplication.student.user.email,
-      personalisation: {
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName ?? "",
-        supportingUserType: "parents",
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      user: { id: savedApplication.student.user.id },
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.SupportingUserInfoTemplateId,
+        email_address: savedApplication.student.user.email,
+        personalisation: {
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName ?? "",
+          supportingUserType: "parents",
+        },
       },
-    });
-    expect(createdNotification.templateId).toBe(
-      SUPPORTING_USER_INFO_TEMPLATE_ID,
-    );
-    expect(createdNotification.recipients).toStrictEqual([
-      savedApplication.student.user.email,
-    ]);
-    expect(createdNotification.messageContent).toStrictEqual({
-      params: {
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName ?? "",
-        supportingUserType: "parents",
+      templateId: NOTIFY_TEMPLATE_IDS.SupportingUserInfoTemplateId,
+      recipients: [savedApplication.student.user.email],
+      messageContent: {
+        params: {
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName ?? "",
+          supportingUserType: "parents",
+        },
       },
     });
   });
@@ -139,26 +142,26 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     const createdNotification = await getCreatedNotification(
       savedApplication.student.user.id,
     );
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
-      email_address: savedApplication.student.user.email,
-      personalisation: {
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName ?? "",
-        supportingUserType: "parent",
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      user: { id: savedApplication.student.user.id },
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.SupportingUserInfoTemplateId,
+        email_address: savedApplication.student.user.email,
+        personalisation: {
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName ?? "",
+          supportingUserType: "parent",
+        },
       },
-    });
-    expect(createdNotification.templateId).toBe(
-      SUPPORTING_USER_INFO_TEMPLATE_ID,
-    );
-    expect(createdNotification.recipients).toStrictEqual([
-      savedApplication.student.user.email,
-    ]);
-    expect(createdNotification.messageContent).toStrictEqual({
-      params: {
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName ?? "",
-        supportingUserType: "parent",
+      templateId: NOTIFY_TEMPLATE_IDS.SupportingUserInfoTemplateId,
+      recipients: [savedApplication.student.user.email],
+      messageContent: {
+        params: {
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName ?? "",
+          supportingUserType: "parent",
+        },
       },
     });
   });
@@ -203,26 +206,26 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
     const createdNotification = await getCreatedNotification(
       savedApplication.student.user.id,
     );
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: SUPPORTING_USER_INFO_TEMPLATE_ID,
-      email_address: savedApplication.student.user.email,
-      personalisation: {
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName ?? "",
-        supportingUserType: "partner",
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      user: { id: savedApplication.student.user.id },
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.SupportingUserInfoTemplateId,
+        email_address: savedApplication.student.user.email,
+        personalisation: {
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName ?? "",
+          supportingUserType: "partner",
+        },
       },
-    });
-    expect(createdNotification.templateId).toBe(
-      SUPPORTING_USER_INFO_TEMPLATE_ID,
-    );
-    expect(createdNotification.recipients).toStrictEqual([
-      savedApplication.student.user.email,
-    ]);
-    expect(createdNotification.messageContent).toStrictEqual({
-      params: {
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName ?? "",
-        supportingUserType: "partner",
+      templateId: NOTIFY_TEMPLATE_IDS.SupportingUserInfoTemplateId,
+      recipients: [savedApplication.student.user.email],
+      messageContent: {
+        params: {
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName ?? "",
+          supportingUserType: "partner",
+        },
       },
     });
   });
@@ -278,7 +281,7 @@ describe("SupportingUserController(e2e)-createSupportingUsers", () => {
    * @returns notification record.
    */
   async function getCreatedNotification(userId: number): Promise<Notification> {
-    return await db.notification.findOne({
+    return db.notification.findOneOrFail({
       select: {
         id: true,
         user: { id: true },

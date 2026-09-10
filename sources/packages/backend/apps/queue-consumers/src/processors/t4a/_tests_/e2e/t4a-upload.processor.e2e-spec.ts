@@ -162,7 +162,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
             date: expect.any(String),
           },
         },
-        templateId: "0b1abf34-d607-4f5c-8669-71fd4a2e57fe",
+        templateId: "4bb7a661-162f-4d28-8777-bfc28979c119",
         recipients: [student.user.email],
         messageContent: {
           params: {

@@ -15,7 +15,10 @@ import { createTestingAppModule } from "../../../../../test/helpers";
 import { NotificationController } from "../../notification.controller";
 import { createFakeSendEmailNotificationPayload } from "./send-email-notification-factory";
 import { EmailNotificationRecipient } from "@sims/services/notifications";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import { randomUUID } from "node:crypto";
 import { IsNull } from "typeorm";
@@ -83,7 +86,7 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
           lastName: student.user.lastName,
         },
       },
-      templateId: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      templateId: NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
       recipients: [student.user.email],
       messageContent: {
         params: {

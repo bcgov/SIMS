@@ -55,7 +55,10 @@ import {
   RestrictionCode,
   SystemUsersService,
 } from "@sims/services";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe(
   describeProcessorRootTest(QueueNames.StudentApplicationNotifications),
@@ -166,7 +169,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            "7faea39f-cf8e-41ee-af02-c4790cac5b26",
+            "360cdd14-3c97-4eac-ba74-cef35b057abc",
           );
           expect(notification!.recipients).toStrictEqual([
             application.student.user.email,
@@ -348,7 +351,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            "7faea39f-cf8e-41ee-af02-c4790cac5b26",
+            "360cdd14-3c97-4eac-ba74-cef35b057abc",
           );
           expect(notification!.recipients).toStrictEqual([
             application.student.user.email,
@@ -418,7 +421,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            "55fcf228-b899-49a7-ab80-9b854c0bd884",
+            "3089e5fa-737f-4c50-94c4-8a971881a0fd",
           );
           expect(notification!.recipients).toStrictEqual([
             application.student.user.email,
@@ -590,7 +593,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            "4da67f87-ec53-4d9b-809c-4610e1c76362",
+            "e46eebb9-5a48-4385-9212-3400656626e7",
           );
           expect(notification!.recipients).toStrictEqual([
             application.student.user.email,
@@ -844,7 +847,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
+            NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
           );
           expect(notification!.recipients).toStrictEqual([
             MINISTRY_EMAIL_ADDRESS,
@@ -990,7 +993,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
+            NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
           );
           expect(notification!.recipients).toStrictEqual([
             MINISTRY_EMAIL_ADDRESS,
@@ -1101,7 +1104,7 @@ describe(
             },
           });
           expect(notification!.templateId).toBe(
-            GC_NOTIFY_TEMPLATE_IDS.StudentAcceptAssessmentOverdue,
+            NOTIFY_TEMPLATE_IDS.StudentAcceptAssessmentOverdue,
           );
           expect(notification!.recipients).toStrictEqual([
             application.student.user.email,

@@ -45,7 +45,10 @@ import {
   APPLICATION_HAS_PENDING_APPEAL,
   APPLICATION_IS_NOT_ELIGIBLE_FOR_AN_APPEAL,
 } from "../../../../constants";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
   let app: INestApplication;
@@ -220,7 +223,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
             dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
           },
         },
-        templateId: GC_NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
+        templateId: NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
         recipients: [MINISTRY_EMAIL_ADDRESS],
         messageContent: {
           params: {
@@ -795,7 +798,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
+      templateId: NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
       recipients: [MINISTRY_EMAIL_ADDRESS],
       messageContent: {
         params: {

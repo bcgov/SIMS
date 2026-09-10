@@ -24,7 +24,10 @@ import {
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import MockDate from "mockdate";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 import { getPSTPDTDateTime } from "@sims/utilities";
 
 describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeRequest", () => {
@@ -262,7 +265,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           date: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
       recipients: [changeRequest.student.user.email],
       messageContent: {
         params: {
@@ -403,7 +406,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           date: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
       recipients: [changeRequest.student.user.email],
       messageContent: {
         params: {
@@ -524,7 +527,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           date: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
-      templateId: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
       recipients: [changeRequest.student.user.email],
       messageContent: {
         params: {

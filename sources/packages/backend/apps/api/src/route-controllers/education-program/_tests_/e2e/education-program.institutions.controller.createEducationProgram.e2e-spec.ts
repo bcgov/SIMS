@@ -25,7 +25,10 @@ import request from "supertest";
 import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { IsNull } from "typeorm";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -260,7 +263,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         },
       },
       templateId:
-        GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingProgramNotification,
+        NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingProgramNotification,
       recipients: [MINISTRY_EMAIL_ADDRESS],
       messageContent: {
         params: {
