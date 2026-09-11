@@ -130,19 +130,15 @@
                     </v-list-item-action>
                   </template>
                 </v-list-item>
-                <template
+                <banner
                   v-if="
-                    selectedStandaloneAppealsForm?.[0] === form.id &&
-                    form.blockedReason
+                    selectedStandaloneForm?.id === form.id && form.blockedReason
                   "
-                >
-                  <banner
-                    class="my-2"
-                    :type="BannerTypes.Error"
-                    :header="form.blockedReason"
-                    :summary="getBlockedReasonMessage(form.blockedReason)"
-                  />
-                </template>
+                  class="my-2"
+                  :type="BannerTypes.Error"
+                  :header="form.blockedReason"
+                  :summary="getBlockedReasonMessage(form.blockedReason)"
+                />
               </template>
             </v-list>
             <v-input
@@ -334,11 +330,8 @@ export default defineComponent({
       });
     };
 
-    const checkBlockedSubmissions = async () => {
-      const selectedForm = standaloneAppealsForms.value.find(
-        (form) => form.id === selectedStandaloneAppealsForm.value?.[0],
-      );
-      if (selectedForm?.blockedReason) {
+    const checkBlockedSubmissions = () => {
+      if (selectedStandaloneForm.value?.blockedReason) {
         return "At least one valid appeal is required.";
       }
       return true;
@@ -349,9 +342,15 @@ export default defineComponent({
     ) => {
       return (
         BLOCKED_REASON_MESSAGES[blockedReason] ??
-        "This appeal is currently unavailable."
+        "The form is currently blocked from submission."
       );
     };
+
+    const selectedStandaloneForm = computed(() =>
+      standaloneAppealsForms.value.find(
+        (form) => form.id === selectedStandaloneAppealsForm.value?.[0],
+      ),
+    );
 
     return {
       BannerTypes,
@@ -370,9 +369,9 @@ export default defineComponent({
       selectedStandaloneAppealsForm,
       fillApplicationAppeals,
       fillStudentAppeals,
-      BLOCKED_REASON_MESSAGES,
       getBlockedReasonMessage,
       checkBlockedSubmissions,
+      selectedStandaloneForm,
     };
   },
 });
