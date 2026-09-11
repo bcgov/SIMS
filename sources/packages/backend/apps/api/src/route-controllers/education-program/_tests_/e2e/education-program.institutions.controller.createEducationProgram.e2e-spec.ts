@@ -475,6 +475,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     {
       scenario: "invalid lookup values are provided",
       scenarioData: {
+        credentialType: "invalidCredentialType",
         completionYears: "invalidProgramLength",
         entranceRequirements: ["invalidEntranceRequirement"],
         regulatoryBody: "invalidRegulatoryBody",
@@ -484,7 +485,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         credentialTypesAviation: ["invalidAviationCredential"],
       },
       errorMessage:
-        "Invalid values for the following lookup fields: Program length: invalidProgramLength," +
+        "Invalid values for the following lookup fields: Program credential type: invalidCredentialType," +
+        " Program length: invalidProgramLength," +
         " Entrance requirements: invalidEntranceRequirement," +
         " Regulatory body: invalidRegulatoryBody, Aviation credentials: invalidAviationCredential.",
     },
@@ -563,7 +565,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   /**
    * Returns a payload with the passed sabcCode.
-   * @param programStatus program status.
    * @param options options to customize the payload
    * - `sabcCode` SABC code.
    */

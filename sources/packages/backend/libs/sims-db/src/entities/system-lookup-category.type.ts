@@ -23,6 +23,10 @@ export enum SystemLookupCategory {
    */
   DisabilityImpairment = "Disability impairment",
   /**
+   * Program credential type lookup values.
+   */
+  ProgramCredentialType = "Program credential type",
+  /**
    * Program length lookup values.
    */
   ProgramLength = "Program length",

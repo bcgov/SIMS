@@ -331,6 +331,11 @@ export class EducationProgramControllerService {
    */
   private validateLookupValues(programData: EducationProgramAPIInDTO): void {
     const invalidSystemLookupMessages = [];
+    const isInvalidCredentialType =
+      !this.systemLookupConfigurationService.isValidSystemLookup(
+        SystemLookupCategory.ProgramCredentialType,
+        programData.credentialType,
+      );
     const isInvalidProgramLength =
       !this.systemLookupConfigurationService.isValidSystemLookup(
         SystemLookupCategory.ProgramLength,
@@ -359,6 +364,11 @@ export class EducationProgramControllerService {
             ),
         )
       : [];
+    if (isInvalidCredentialType) {
+      invalidSystemLookupMessages.push(
+        `Program credential type: ${programData.credentialType}`,
+      );
+    }
     if (isInvalidProgramLength) {
       invalidSystemLookupMessages.push(
         `Program length: ${programData.completionYears}`,
