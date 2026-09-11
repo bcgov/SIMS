@@ -8,13 +8,13 @@ import { HttpService } from "@nestjs/axios";
 import { NotifyAPIMessagePayload, NotifyMessageContent } from "./notify.model";
 import { Notification } from "@sims/sims-db";
 
+const AUTH_HEADER = "x-api-key";
+const NO_ERROR_DATA_AVAILABLE = "Error data is not available";
 const NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS = new Set([
   HttpStatus.BAD_REQUEST,
   HttpStatus.UNPROCESSABLE_ENTITY,
   HttpStatus.PAYLOAD_TOO_LARGE,
 ]);
-
-const NO_ERROR_DATA_AVAILABLE = "Error data is not available";
 
 @Injectable()
 export class NotifyService {
@@ -29,13 +29,13 @@ export class NotifyService {
 
   /**
    * Send email notification.
-   * @param payload email message payload.
+   * @param notification data to create the email to be sent.
    */
   async sendEmailNotification(notification: Notification): Promise<void> {
     try {
       const payload = this.createNotifyAPIMessagePayload(notification);
       await this.httpService.axiosRef.post(this.notifyConfig.url, payload, {
-        headers: { "x-api-key": this.notifyConfig.apiKey },
+        headers: { [AUTH_HEADER]: this.notifyConfig.apiKey },
       });
     } catch (error: unknown) {
       const axiosError = error as AxiosError;
@@ -65,7 +65,7 @@ export class NotifyService {
 
   /**
    * Create the Notify API message payload from the given notification.
-   * @param notification notification containing the message payload and recipients.
+   * @param notification data to create the email payload to be sent.
    * @returns Notify API message payload.
    */
   private createNotifyAPIMessagePayload(
