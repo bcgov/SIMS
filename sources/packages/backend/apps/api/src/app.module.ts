@@ -54,7 +54,6 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
 
 @Module({
   imports: [
-    FeatureTogglesModule,
     GlobalHttpModule,
     DatabaseModule,
     LoggerModule,
@@ -69,6 +68,7 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
     AppSupportingUsersModule,
     QueueModule,
     ClamAntivirusModule,
+    FeatureTogglesModule,
     TerminusModule,
     DynamicFormConfigurationModule,
     SystemLookupConfigurationModule,

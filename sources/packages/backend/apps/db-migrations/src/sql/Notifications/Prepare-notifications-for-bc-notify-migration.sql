@@ -58,8 +58,7 @@ SET
 FROM
     sims.notification_messages AS notification_message
 WHERE
-    notification.notification_message_id = notification_message.id
-    AND notification.message_payload IS NOT NULL;
+    notification.notification_message_id = notification_message.id;
 
 -- Add NOT NULL constraints to the new columns after populating them with data from message_payload.
 ALTER TABLE

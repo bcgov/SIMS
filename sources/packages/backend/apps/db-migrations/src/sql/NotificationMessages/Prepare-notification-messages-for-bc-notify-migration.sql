@@ -232,14 +232,6 @@ FROM
 WHERE
     notification_message.template_id = template_mapping.template_id;
 
--- Populate the new notify_template_id column with data from the existing template_id column.
-UPDATE
-    sims.notification_messages
-SET
-    notify_template_id = template_id :: UUID
-WHERE
-    notify_template_id IS NULL;
-
 -- Add NOT NULL constraint to the new notify_template_id column after populating it with data from template_id.
 ALTER TABLE
     sims.notification_messages
