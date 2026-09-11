@@ -38,7 +38,6 @@ import {
 } from "@sims/sims-db";
 import { AllowIf, IsDateAfter } from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
-import { Transform } from "class-transformer";
 import {
   CIP_CODE_REGEX,
   NOC_REGEX,
@@ -380,11 +379,6 @@ export class EducationProgramAPIInDTO {
   /**
    * Aviation program credential types.
    */
-  @Transform(({ value, obj: data }) =>
-    EducationProgramAPIInDTO.isCredentialTypesAviationAllowed(data)
-      ? value
-      : undefined,
-  )
   @ValidateIf(
     (data: EducationProgramAPIInDTO, value: string[]) =>
       !!value?.length ||
