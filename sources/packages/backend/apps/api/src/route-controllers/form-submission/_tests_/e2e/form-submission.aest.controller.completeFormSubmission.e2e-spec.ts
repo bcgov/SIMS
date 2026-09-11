@@ -40,7 +40,10 @@ import {
   FormSubmissionAuthRoles,
 } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
   let app: INestApplication;
@@ -173,6 +176,15 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
           date: `${getPSTPDTDateTime(now)} PST/PDT`,
         },
       },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
+      recipients: [student.user.email],
+      messageContent: {
+        params: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
     });
     // Validate target action for the form submission.
     const updatedApplication = await db.application.findOne({
@@ -294,6 +306,15 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
             email_address: student.user.email,
             template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
             personalisation: {
+              givenNames: student.user.firstName,
+              lastName: student.user.lastName,
+              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+            },
+          },
+          templateId: NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
+          recipients: [student.user.email],
+          messageContent: {
+            params: {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
               date: `${getPSTPDTDateTime(now)} PST/PDT`,
@@ -436,6 +457,15 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         email_address: student.user.email,
         template_id: GC_NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
         personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
+      recipients: [student.user.email],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           date: `${getPSTPDTDateTime(now)} PST/PDT`,

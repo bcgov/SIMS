@@ -29,6 +29,8 @@ export const NOTIFY_TEMPLATE_IDS = {
   MinistryAppealCompleted: "99d5e448-aee1-4ec8-b351-f6c5b93272de",
   MinistryChangeRequestSubmitted: "34855186-715a-4046-a550-c7dfa5e26332",
   StudentChangeRequestReviewCompleted: "6aade73f-1991-4473-8e6d-e01fc9df00b2",
+  MinistryFormSubmitted: "4679a627-7c55-4a20-bd30-4dbd1b0992b7",
+  StudentFormCompleted: "5fbe0f20-2af7-4513-966a-1802c011b3ed",
   MinistryFileProcessingIssue: "a82c0d03-50fb-4c45-afa8-f6217ff7e972",
   StudentAcceptAssessmentOverdue: "3fb4ad38-3b90-49ee-92eb-0780315ceaba",
   InstitutionAddsPendingProgramNotification:

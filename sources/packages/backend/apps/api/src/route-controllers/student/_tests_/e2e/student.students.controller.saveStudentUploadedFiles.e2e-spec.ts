@@ -77,10 +77,6 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
       ],
     };
 
-    const notificationMessage = await db.notificationMessage.findOne({
-      where: { id: NotificationMessageType.StudentFileUpload },
-    });
-
     const endpoint = "/students/student/save-uploaded-files";
 
     // Mock user service to return the saved student.
@@ -128,7 +124,7 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
     expect(notification).toEqual({
       id: expect.any(Number),
       messagePayload: {
-        template_id: notificationMessage.templateId,
+        template_id: "15646bc8-035c-46a5-8ca1-a46ef4e808b5",
         email_address: "test@test.com",
         personalisation: {
           dateTime: expect.any(String),
@@ -141,7 +137,7 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
           applicationNumber: payload.submittedForm.applicationNumber,
         },
       },
-      templateId: notificationMessage.templateId,
+      templateId: "52a34645-8bee-4482-b145-7c3067289887",
       recipients: ["test@test.com"],
       messageContent: {
         params: {
