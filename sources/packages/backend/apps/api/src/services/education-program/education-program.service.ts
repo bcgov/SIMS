@@ -33,6 +33,7 @@ import {
   SaveEducationProgram,
   PendingEducationProgram,
   EducationProgramSummary,
+  ProgramCalculatedDataKey,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -66,6 +67,7 @@ import {
   INACTIVE_PROGRAM,
   OTHER_REGULATORY_BODY,
 } from "../education-program/constants";
+import { EducationProgramEvaluationService } from "./education-program-evaluator";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -77,6 +79,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     private readonly institutionService: InstitutionService,
     private readonly userService: UserService,
     private readonly notificationActionsService: NotificationActionsService,
+    private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -197,10 +200,20 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     // Assign attributes for update from payload only if existing program has no offering(s).
     if (!hasExistingOffering) {
-      program.fieldOfStudyCode = educationProgram.fieldOfStudyCode;
+      const calculatedData =
+        await this.educationProgramEvaluationService.evaluate(
+          institutionId,
+          [
+            ProgramCalculatedDataKey.FieldOfStudyCode,
+            ProgramCalculatedDataKey.ProgramStatus,
+          ],
+          educationProgram,
+        );
+      program.fieldOfStudyCode =
+        calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
       program.credentialType = educationProgram.credentialType;
       program.cipCode = educationProgram.cipCode;
-      program.nocCode = educationProgram.nocCode;
+      program.nocCode = educationProgram.nocCode || null;
       // Save SABC code as null in case of not answered in the form.
       // This way it can be saved when multiple programs does not have a SABC code.
       program.sabcCode = educationProgram.sabcCode?.trim() || null;
@@ -214,11 +227,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.deliveredOnline =
         educationProgram.programDeliveryTypes.deliveredOnline ?? false;
       program.deliveredOnlineAlsoOnsite =
-        educationProgram.deliveredOnlineAlsoOnsite;
+        educationProgram.deliveredOnlineAlsoOnsite || null;
       program.sameOnlineCreditsEarned =
-        educationProgram.sameOnlineCreditsEarned;
+        educationProgram.sameOnlineCreditsEarned || null;
       program.earnAcademicCreditsOtherInstitution =
-        educationProgram.earnAcademicCreditsOtherInstitution;
+        educationProgram.earnAcademicCreditsOtherInstitution || null;
       program.courseLoadCalculation = educationProgram.courseLoadCalculation;
       program.completionYears = educationProgram.completionYears;
       program.hasMinimumAge =
@@ -226,15 +239,17 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.eslEligibility = educationProgram.eslEligibility;
       program.hasJointInstitution = educationProgram.hasJointInstitution;
       program.hasJointDesignatedInstitution =
-        educationProgram.hasJointDesignatedInstitution;
-      program.programStatus = educationProgram.programStatus;
+        educationProgram.hasJointDesignatedInstitution || null;
+      program.programStatus =
+        calculatedData[ProgramCalculatedDataKey.ProgramStatus];
       program.programIntensity = educationProgram.programIntensity;
-      program.institutionProgramCode = educationProgram.institutionProgramCode;
-      program.minHoursWeek = educationProgram.minHoursWeek;
+      program.institutionProgramCode =
+        educationProgram.institutionProgramCode || null;
+      program.minHoursWeek = educationProgram.minHoursWeek || null;
       program.isAviationProgram = educationProgram.isAviationProgram;
       program.credentialTypesAviation =
-        educationProgram.credentialTypesAviation;
-      program.minHoursWeekAvi = educationProgram.minHoursWeekAvi;
+        educationProgram.credentialTypesAviation || null;
+      program.minHoursWeekAvi = educationProgram.minHoursWeekAvi || null;
       program.minHighSchool =
         educationProgram.entranceRequirements.minHighSchool;
       program.requirementsByInstitution =
@@ -244,14 +259,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.noneOfTheAboveEntranceRequirements =
         educationProgram.entranceRequirements.noneOfTheAboveEntranceRequirements;
       program.hasWILComponent = educationProgram.hasWILComponent;
-      program.isWILApproved = educationProgram.isWILApproved;
-      program.wilProgramEligibility = educationProgram.wilProgramEligibility;
+      program.isWILApproved = educationProgram.isWILApproved || null;
+      program.wilProgramEligibility =
+        educationProgram.wilProgramEligibility || null;
       program.hasTravel = educationProgram.hasTravel;
       program.travelProgramEligibility =
-        educationProgram.travelProgramEligibility;
+        educationProgram.travelProgramEligibility || null;
       program.hasIntlExchange = educationProgram.hasIntlExchange;
       program.intlExchangeProgramEligibility =
-        educationProgram.intlExchangeProgramEligibility;
+        educationProgram.intlExchangeProgramEligibility || null;
       program.programDeclaration = educationProgram.programDeclaration;
     }
     program.id = programId;

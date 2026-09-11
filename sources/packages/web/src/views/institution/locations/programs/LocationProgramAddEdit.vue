@@ -67,6 +67,7 @@ import { BannerTypes } from "@/types/contracts/Banner";
 import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  ProgramFormModel,
 } from "@/services/http/dto";
 import { InstitutionService } from "@/services/InstitutionService";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
@@ -212,13 +213,21 @@ export default defineComponent({
       return "";
     });
 
-    const submitted = async (form: FormIOForm<EducationProgramAPIInDTO>) => {
+    const submitted = async (form: FormIOForm<ProgramFormModel>) => {
       if (isInstitutionUser.value) {
+        const saveProgramData = {
+          ...form.data,
+          programDeliveryTypes: form.data.convertedValues.programDeliveryTypes,
+          entranceRequirements: form.data.convertedValues.entranceRequirements,
+          credentialTypesAviation:
+            form.data.convertedValues.credentialTypesAviation,
+        };
+
         try {
           processing.value = true;
           const typedData = excludeExtraneousValues(
             EducationProgramAPIInDTO,
-            form.data,
+            saveProgramData,
           );
           if (props.programId) {
             await EducationProgramService.shared.updateEducationProgram(

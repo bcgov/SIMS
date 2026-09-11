@@ -2018,6 +2018,16 @@
       "input": true,
       "tableView": false,
       "lockKey": true
+    },
+    {
+      "label": "Converted checkbox object values",
+      "calculateValue": "const programDeliveryTypesInput = data.programDeliveryTypes || {};\nconst entranceRequirementsInput = data.entranceRequirements || {};\nconst credentialTypesAviationInput = data.credentialTypesAviation || {};\n\nconst programDeliveryTypes = Object.entries(programDeliveryTypesInput).filter(([, value]) => value).map(([key]) => key);\nconst entranceRequirements = Object.entries(entranceRequirementsInput).filter(([, value]) => value).map(([key]) => key);\nconst credentialTypesAviation = Object.entries(credentialTypesAviationInput).filter(([, value]) => value).map(([key]) => key);\n\nvalue = {programDeliveryTypes, entranceRequirements, credentialTypesAviation};",
+      "calculateServer": true,
+      "key": "convertedValues",
+      "type": "hidden",
+      "input": true,
+      "tableView": false,
+      "lockKey": true
     }
   ]
 }

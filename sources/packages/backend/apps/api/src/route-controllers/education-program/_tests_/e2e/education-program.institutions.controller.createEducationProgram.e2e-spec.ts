@@ -1,23 +1,19 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   EducationProgram,
+  FormYesNoOptions,
   Institution,
-  InstitutionLocation,
   NotificationMessageType,
+  ProgramIntensity,
   ProgramStatus,
   User,
 } from "@sims/sims-db";
-import {
-  E2EDataSources,
-  createE2EDataSources,
-  createFakeInstitutionLocation,
-} from "@sims/test-utils";
+import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
 import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
   InstitutionTokenTypes,
   getInstitutionToken,
-  authorizeUserTokenForLocation,
   getAuthRelatedEntities,
   createFakeEducationProgram,
 } from "../../../../testHelpers";
@@ -26,14 +22,26 @@ import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { IsNull } from "typeorm";
 import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  ProgramCourseLoadCalculationTypes,
+  ProgramDeliveryTypeValues,
+  ProgramESLPercentage,
+} from "../../../../services/education-program/education-program.service.models";
+import {
+  CIP_CODE_REGEX,
+  OTHER_REGULATORY_BODY,
+  PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+} from "../../../../services/education-program/constants";
+import { EducationProgramAPIInDTO } from "../../models/education-program.dto";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let collegeF: Institution;
-  let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
   const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
+  const TEST_SABC_CODE = "GGG9";
+  const ENDPOINT = "/institutions/education-program";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -44,12 +52,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       InstitutionTokenTypes.CollegeFUser,
     );
     collegeF = institution;
-    collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
-    await authorizeUserTokenForLocation(
-      db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
-      collegeFLocation,
-    );
     collegeFUser = institutionUser;
 
     // Update fake email contacts to send ministry notifications.
@@ -71,22 +73,26 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       },
       { dateSent: new Date() },
     );
+    // Reset the SABC Code to avoid data conflicts.
+    await db.educationProgram.update(
+      {
+        sabcCode: TEST_SABC_CODE,
+      },
+      { sabcCode: null },
+    );
   });
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
-    const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
-    const payload = getPayload(sabcCode);
-    const programStatus = ProgramStatus.Approved;
+    const payload = getPayload();
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -162,8 +168,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         sabcCode: payload.sabcCode,
         regulatoryBody: payload.regulatoryBody,
         otherRegulatoryBody: payload.otherRegulatoryBody,
-        deliveredOnSite: payload.programDeliveryTypes.deliveredOnSite,
-        deliveredOnline: payload.programDeliveryTypes.deliveredOnline,
+        deliveredOnSite: true,
+        deliveredOnline: false,
         deliveredOnlineAlsoOnsite: null,
         sameOnlineCreditsEarned: null,
         earnAcademicCreditsOtherInstitution: null,
@@ -172,19 +178,17 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         eslEligibility: payload.eslEligibility,
         hasJointInstitution: payload.hasJointInstitution,
         hasJointDesignatedInstitution: null,
-        programStatus,
+        programStatus: ProgramStatus.Approved,
         programIntensity: payload.programIntensity,
         institutionProgramCode: payload.institutionProgramCode,
         minHoursWeek: null,
         isAviationProgram: "no",
         minHoursWeekAvi: null,
-        hasMinimumAge: payload.entranceRequirements.hasMinimumAge,
-        minHighSchool: payload.entranceRequirements.minHighSchool,
-        requirementsByInstitution:
-          payload.entranceRequirements.requirementsByInstitution,
-        requirementsByBCITA: payload.entranceRequirements.requirementsByBCITA,
-        noneOfTheAboveEntranceRequirements:
-          payload.entranceRequirements.noneOfTheAboveEntranceRequirements,
+        hasMinimumAge: true,
+        minHighSchool: true,
+        requirementsByInstitution: true,
+        requirementsByBCITA: true,
+        noneOfTheAboveEntranceRequirements: false,
         hasWILComponent: payload.hasWILComponent,
         isWILApproved: null,
         wilProgramEligibility: null,
@@ -195,7 +199,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         programDeclaration: payload.programDeclaration,
         assessedDate: null,
         effectiveEndDate: null,
-        fieldOfStudyCode: Number.parseInt(payload.fieldOfStudyCode),
+        fieldOfStudyCode: 15,
         institution: {
           id: collegeF.id,
         },
@@ -206,21 +210,83 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
+  // Test programs created in pending status.
+  [
+    {
+      scenario: "program is offered jointly or in partnership",
+      scenarioData: {
+        hasJointInstitution: FormYesNoOptions.Yes,
+        hasJointDesignatedInstitution: FormYesNoOptions.Yes,
+      },
+      institutionUserType: InstitutionTokenTypes.CollegeFUser,
+    },
+    {
+      scenario: "program has more than 20 percent ESL Content",
+      scenarioData: { eslEligibility: ProgramESLPercentage.GreaterThanEqual20 },
+      institutionUserType: InstitutionTokenTypes.CollegeFUser,
+    },
+    {
+      scenario: "program has no entrance requirements",
+      scenarioData: {
+        entranceRequirements: [PROGRAM_ENTRANCE_REQUIREMENT_NONE],
+      },
+      institutionUserType: InstitutionTokenTypes.CollegeFUser,
+    },
+    {
+      scenario:
+        "program belongs to BC Private institution and delivered only online",
+      scenarioData: {
+        programDeliveryTypes: [ProgramDeliveryTypeValues.Online],
+        isBCPublic: false,
+        isBCPrivate: true,
+      },
+      // BC Private institution user.
+      institutionUserType: InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
+    },
+  ].forEach(({ scenario, scenarioData, institutionUserType }) => {
+    it(`Should create an education program in status ${ProgramStatus.Pending} when ${scenario}.`, async () => {
+      // Arrange
+      const payload = { ...getPayload(), ...scenarioData };
+      const institutionUserToken =
+        await getInstitutionToken(institutionUserType);
+
+      // Act/Assert
+      let educationProgramId: number;
+      await request(app.getHttpServer())
+        .post(ENDPOINT)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED)
+        .then(({ body }) => {
+          expect(body.id).toBeGreaterThan(0);
+          educationProgramId = body.id;
+        });
+      // Validate status of the created education program in the database.
+      const createdProgram = await db.educationProgram.findOne({
+        select: { id: true, programStatus: true },
+        where: { id: educationProgramId },
+      });
+      expect(createdProgram).toEqual({
+        id: educationProgramId,
+        programStatus: ProgramStatus.Pending,
+      });
+    });
+  });
+
   it("Should create an education program pending notification when the program is pending.", async () => {
     // Arrange
     const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
-    const payload = getPayload(sabcCode);
+    const payload = getPayload({ sabcCode });
     // Set program status to pending to trigger creation of pending notification by setting course load calculation to 'hours'.
-    payload.courseLoadCalculation = "hours";
-    payload.minHoursWeek = "no";
+    payload.courseLoadCalculation = ProgramCourseLoadCalculationTypes.Hours;
+    payload.minHoursWeek = FormYesNoOptions.No;
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -258,11 +324,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
+      .send(getPayload())
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
@@ -274,17 +340,15 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC code.", async () => {
     // Arrange
-    const sameSabcCode = "GGG9";
-    await saveEducationProgram(sameSabcCode);
-    const payload = getPayload(sameSabcCode);
+    await saveEducationProgram(TEST_SABC_CODE);
+    const payload = getPayload({ sabcCode: TEST_SABC_CODE });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -296,22 +360,20 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when SABC code passed exists for an expired education program.", async () => {
     // Arrange
-    const sameSabcCode = "TTT8";
     await saveEducationProgram(
-      sameSabcCode,
+      TEST_SABC_CODE,
       true,
       getISODateOnlyString(new Date()),
     );
-    const payload = getPayload(sameSabcCode);
+    const payload = getPayload({ sabcCode: TEST_SABC_CODE });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -332,22 +394,20 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when SABC code passed exists for an education program flagged as inactive.", async () => {
     // Arrange
-    const sameSabcCode = "MMM7";
     await saveEducationProgram(
-      sameSabcCode,
+      TEST_SABC_CODE,
       false,
       getISODateOnlyString(addDays(1)),
     );
-    const payload = getPayload(sameSabcCode);
+    const payload = getPayload({ sabcCode: TEST_SABC_CODE });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -366,6 +426,115 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
+  // Test bad request data.
+  [
+    {
+      scenario: "CIP code format is invalid",
+      scenarioData: {
+        cipCode: "12",
+      },
+      errorMessage: [`cipCode must match ${CIP_CODE_REGEX} regular expression`],
+    },
+    {
+      scenario: "program declaration is not true",
+      scenarioData: { programDeclaration: false },
+      errorMessage: ["programDeclaration must be equal to true"],
+    },
+    {
+      scenario:
+        "international exchange program eligibility is missing for an international program",
+      scenarioData: {
+        hasIntlExchange: FormYesNoOptions.Yes,
+        intlExchangeProgramEligibility: undefined,
+      },
+      errorMessage: [
+        "intlExchangeProgramEligibility must be one of the following values: yes, no",
+      ],
+    },
+    {
+      scenario:
+        "aviation credential type is provided for a non-aviation program",
+      scenarioData: {
+        isAviationProgram: FormYesNoOptions.No,
+        credentialTypesAviation: ["privatePilotTraining"],
+      },
+      errorMessage: ["credentialTypesAviation input is not allowed."],
+    },
+    {
+      scenario:
+        "none of the entrance requirements is provided along with other entrance requirements",
+      scenarioData: {
+        entranceRequirements: [
+          PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+          "minHighSchool",
+        ],
+      },
+      errorMessage:
+        "None of the above entrance requirement cannot be provided along with other entrance requirements.",
+    },
+    {
+      scenario: "invalid lookup values are provided",
+      scenarioData: {
+        credentialType: "invalidCredentialType",
+        completionYears: "invalidProgramLength",
+        entranceRequirements: ["invalidEntranceRequirement"],
+        regulatoryBody: "invalidRegulatoryBody",
+        otherRegulatoryBody: undefined,
+        isAviationProgram: FormYesNoOptions.Yes,
+        minHoursWeekAvi: FormYesNoOptions.Yes,
+        credentialTypesAviation: ["invalidAviationCredential"],
+      },
+      errorMessage:
+        "Invalid values for the following lookup fields: Program credential type: invalidCredentialType," +
+        " Program length: invalidProgramLength," +
+        " Entrance requirements: invalidEntranceRequirement," +
+        " Regulatory body: invalidRegulatoryBody, Aviation credentials: invalidAviationCredential.",
+    },
+  ].forEach(({ scenario, scenarioData, errorMessage }) => {
+    it(`Should throw bad request error when ${scenario}.`, async () => {
+      // Arrange
+      const payload = { ...getPayload(), ...scenarioData };
+      const institutionUserToken = await getInstitutionToken(
+        InstitutionTokenTypes.CollegeFUser,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(ENDPOINT)
+        .send(payload)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: errorMessage,
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    });
+  });
+
+  // Test unprocessable entity errors.
+  it(`Should unprocessable entity error when BC Private and BC Public status does not match with the institution type.`, async () => {
+    // Arrange
+    const payload = { ...getPayload(), isBCPrivate: false, isBCPublic: true };
+    // BC Private institution user.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(ENDPOINT)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "The provided BC Public and BC Private status does not match the actual institution type.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
   /**
    * Saves an education program with parameters.
    * @param sabcCode SABC code.
@@ -377,7 +546,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     sabcCode: string,
     isActive?: boolean,
     effectiveEndDate?: string,
-  ) {
+  ): Promise<EducationProgram> {
     const educationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
@@ -396,46 +565,46 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   /**
    * Returns a payload with the passed sabcCode.
-   * @param programStatus program status.
-   * @param sabcCode SABC code.
+   * @param options options to customize the payload
+   * - `sabcCode` SABC code.
    */
-  function getPayload(sabcCode: string) {
+  function getPayload(options?: {
+    sabcCode?: string;
+  }): EducationProgramAPIInDTO {
     return {
       name: faker.lorem.words(5),
       description: faker.lorem.words(5),
       credentialType: "undergraduateCertificate",
       cipCode: "11.1111",
-      fieldOfStudyCode: "15",
       nocCode: "21740",
-      sabcCode: sabcCode,
+      sabcCode:
+        options?.sabcCode ??
+        `${faker.string.alpha({ length: 3, casing: "upper" })}1`,
       institutionProgramCode: faker.string.alpha({
         length: 3,
         casing: "upper",
       }),
-      programIntensity: "Full Time and Part Time",
-      programDeliveryTypes: {
-        deliveredOnSite: true,
-        deliveredOnline: false,
-      },
+      programIntensity: ProgramIntensity.fullTimePartTime,
+      programDeliveryTypes: [ProgramDeliveryTypeValues.Onsite],
       completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: "credit",
-      regulatoryBody: "other",
+      courseLoadCalculation: ProgramCourseLoadCalculationTypes.Credit,
+      regulatoryBody: OTHER_REGULATORY_BODY,
       otherRegulatoryBody: "Other RB test",
-      entranceRequirements: {
-        minHighSchool: true,
-        hasMinimumAge: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-      },
-      isAviationProgram: "no",
-      eslEligibility: "lessThan20",
-      hasJointInstitution: "no",
-      hasWILComponent: "no",
-      hasTravel: "no",
-      hasIntlExchange: "no",
+      entranceRequirements: [
+        "minHighSchool",
+        "hasMinimumAge",
+        "requirementsByInstitution",
+        "requirementsByBCITA",
+      ],
+      isAviationProgram: FormYesNoOptions.No,
+      eslEligibility: ProgramESLPercentage.LessThan20,
+      hasJointInstitution: FormYesNoOptions.No,
+      hasWILComponent: FormYesNoOptions.No,
+      hasTravel: FormYesNoOptions.No,
+      hasIntlExchange: FormYesNoOptions.No,
       programDeclaration: true,
-      minHoursWeek: "",
+      isBCPublic: true,
+      isBCPrivate: false,
     };
   }
 

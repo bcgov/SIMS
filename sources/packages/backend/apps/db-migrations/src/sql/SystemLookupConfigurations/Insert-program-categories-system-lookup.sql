@@ -162,6 +162,60 @@ FROM
                 'Private Pilot Training',
                 'privatePilotTraining',
                 4
+            ),
+            (
+                'Program credential type',
+                'Undergraduate Certificate',
+                'undergraduateCertificate',
+                1
+            ),
+            (
+                'Program credential type',
+                'Undergraduate Citation',
+                'undergraduateCitation',
+                2
+            ),
+            (
+                'Program credential type',
+                'Undergraduate Diploma',
+                'undergraduateDiploma',
+                3
+            ),
+            (
+                'Program credential type',
+                'Undergraduate Degree',
+                'undergraduateDegree',
+                4
+            ),
+            (
+                'Program credential type',
+                'Graduate Certificate',
+                'graduateCertificate',
+                5
+            ),
+            (
+                'Program credential type',
+                'Graduate Diploma',
+                'graduateDiploma',
+                6
+            ),
+            (
+                'Program credential type',
+                'Graduate Degree / Master''s',
+                'graduateDegreeOrMasters',
+                7
+            ),
+            (
+                'Program credential type',
+                'Post-Graduate / Doctorate',
+                'postGraduateOrDoctorate',
+                8
+            ),
+            (
+                'Program credential type',
+                'Qualifying Studies',
+                'qualifyingStudies',
+                9
             )
     ) AS lookup_data(
         lookup_category,

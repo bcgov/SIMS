@@ -144,6 +144,11 @@ import {
   StudentFileSharedService,
 } from "@sims/services";
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
+import {
+  EducationProgramFieldOfStudyCodeEvaluator,
+  EducationProgramStatusEvaluator,
+  EducationProgramEvaluationService,
+} from "./services/education-program/education-program-evaluator";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],
@@ -285,6 +290,9 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     FormSubmissionApprovalService,
     DisabilityProfileService,
     DisabilityProfileControllerService,
+    EducationProgramFieldOfStudyCodeEvaluator,
+    EducationProgramStatusEvaluator,
+    EducationProgramEvaluationService,
   ],
 })
 export class AppAESTModule {}
