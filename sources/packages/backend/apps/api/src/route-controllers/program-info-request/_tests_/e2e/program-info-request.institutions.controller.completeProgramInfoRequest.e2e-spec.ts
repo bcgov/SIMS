@@ -169,7 +169,6 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
         templateId: true,
         recipients: true,
         messageContent: true,
-        notificationMessage: { templateId: true },
       },
       where: {
         notificationMessage: {
@@ -177,12 +176,11 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
         },
         dateSent: IsNull(),
       },
-      relations: { notificationMessage: true },
     });
     expect(createdNotification).toEqual({
       id: expect.any(Number),
       messagePayload: {
-        template_id: createdNotification.notificationMessage.templateId,
+        template_id: "6975ee6a-f988-4955-9153-127aa551a2a3",
         email_address: application.student.user.email,
         personalisation: {
           date: `${getPSTPDTDateTime(now)} PST/PDT`,
@@ -190,7 +188,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
           lastName: application.student.user.lastName,
         },
       },
-      templateId: createdNotification.notificationMessage.templateId,
+      templateId: "e42e97ce-5dcc-40ac-9bc7-fbf8951c0e2a",
       recipients: [application.student.user.email],
       messageContent: {
         params: {
@@ -199,7 +197,6 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
           lastName: application.student.user.lastName,
         },
       },
-      notificationMessage: createdNotification.notificationMessage,
     });
   });
 
