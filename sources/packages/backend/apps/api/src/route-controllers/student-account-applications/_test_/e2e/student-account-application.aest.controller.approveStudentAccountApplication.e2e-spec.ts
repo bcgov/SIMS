@@ -110,7 +110,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       notificationMessage: notification.notificationMessage,
       messagePayload: {
         email_address: TEST_EMAIL,
-        template_id: expect.any(String),
+        template_id: "2108329e-7939-46a0-a8f1-bae05f7ce2a2",
         personalisation: {
           lastName: user.lastName,
           givenNames: user.firstName,
@@ -120,7 +120,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
           matchTime: expect.any(String),
         },
       },
-      templateId: expect.any(String),
+      templateId: "c1518247-a040-4c8d-9efc-72ee64d2dcf7",
       recipients: [TEST_EMAIL],
       messageContent: {
         params: {
@@ -182,7 +182,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       notificationMessage: notification.notificationMessage,
       messagePayload: {
         email_address: TEST_EMAIL,
-        template_id: expect.any(String),
+        template_id: "2108329e-7939-46a0-a8f1-bae05f7ce2a2",
         personalisation: {
           lastName: user.lastName,
           givenNames: user.firstName,
@@ -192,7 +192,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
           matchTime: expect.any(String),
         },
       },
-      templateId: expect.any(String),
+      templateId: "c1518247-a040-4c8d-9efc-72ee64d2dcf7",
       recipients: [TEST_EMAIL],
       messageContent: {
         params: {
@@ -255,7 +255,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       notificationMessage: notification.notificationMessage,
       messagePayload: {
         email_address: TEST_EMAIL,
-        template_id: expect.any(String),
+        template_id: "2108329e-7939-46a0-a8f1-bae05f7ce2a2",
         personalisation: {
           lastName: user.lastName,
           givenNames: user.firstName,
@@ -265,7 +265,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
           matchTime: expect.any(String),
         },
       },
-      templateId: expect.any(String),
+      templateId: "c1518247-a040-4c8d-9efc-72ee64d2dcf7",
       recipients: [TEST_EMAIL],
       messageContent: {
         params: {
