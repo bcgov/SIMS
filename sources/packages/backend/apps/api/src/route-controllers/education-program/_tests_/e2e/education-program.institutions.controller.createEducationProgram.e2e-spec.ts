@@ -28,6 +28,7 @@ import {
   ProgramESLPercentage,
 } from "../../../../services/education-program/education-program.service.models";
 import {
+  CIP_CODE_REGEX,
   OTHER_REGULATORY_BODY,
   PROGRAM_ENTRANCE_REQUIREMENT_NONE,
 } from "../../../../services/education-program/constants";
@@ -432,9 +433,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       scenarioData: {
         cipCode: "12",
       },
-      errorMessage: [
-        "cipCode must match /^[0-9]{2}\\.[0-9]{4}$/ regular expression",
-      ],
+      errorMessage: [`cipCode must match ${CIP_CODE_REGEX} regular expression`],
     },
     {
       scenario: "program declaration is not true",
