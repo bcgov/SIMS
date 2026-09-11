@@ -238,4 +238,6 @@ ALTER TABLE
 ALTER COLUMN
     notify_template_id
 SET
-    NOT NULL;
+    NOT NULL,
+ADD
+    CONSTRAINT notification_messages_notify_template_id_unique UNIQUE (notify_template_id);
