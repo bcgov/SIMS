@@ -3052,6 +3052,800 @@
                       }
                     ]
                   ]
+                },
+                {
+                  "label": "HTML",
+                  "tag": "h3",
+                  "className": "category-header-medium primary-color",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "Assessed Contributions",
+                  "refreshOnChange": false,
+                  "key": "html184",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                },
+                {
+                  "label": "Table",
+                  "numRows": 11,
+                  "cellAlignment": "left",
+                  "customClass": "formio-bordered formio-table-last-col-background extra-small",
+                  "hover": true,
+                  "condensed": true,
+                  "key": "table7",
+                  "type": "table",
+                  "input": false,
+                  "tableView": false,
+                  "rows": [
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "Student financial contributions",
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Student financial contributions</strong>",
+                            "refreshOnChange": false,
+                            "key": "assessedCosts6",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Federal",
+                            "tag": "o",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Federal</strong>",
+                            "refreshOnChange": false,
+                            "key": "federal6",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Provincial",
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Provincial</strong>",
+                            "refreshOnChange": false,
+                            "key": "provincial5",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content1",
+                            "label": "Student expected contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "content": "<strong>Student expected contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text1",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentExpectedFederalContribution, '-');",
+                            "customClass": "font-weight-bold",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text21",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentExpectedProvincialContribution, '-');",
+                            "customClass": "font-weight-bold",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content10",
+                            "label": "Fixed student contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "grid-row-indentation-first-level",
+                            "content": "Fixed student contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text22",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentTotalFederalContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text23",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.studentTotalProvincialContribution, '-');",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content11",
+                            "label": "Scholarships and bursaries contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "grid-row-indentation-first-level",
+                            "content": "Scholarships and bursaries contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text24",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.scholarshipsBursariesContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text25",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.scholarshipsBursariesContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content12",
+                            "label": "Targeted resources",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "grid-row-indentation-first-level",
+                            "content": "Targeted resources",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text26",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.targetedResources, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text27",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.targetedResources, '-');",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content13",
+                            "label": "Partner expected contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "content": "<strong>Partner expected contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text28",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerExpectedContribution, '-');",
+                            "customClass": "font-weight-bold",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text29",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.partnerExpectedContribution, '-');",
+                            "customClass": "font-weight-bold",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content14",
+                            "label": "Parental expected contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "content": "<strong>Parental expected contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentAssessedContribution, '-');",
+                            "validateWhenHidden": false,
+                            "key": "table5Text30",
+                            "type": "textfield",
+                            "input": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "label": "Text",
+                            "applyMaskOn": "change",
+                            "customClass": "font-weight-bold",
+                            "hideLabel": true,
+                            "spellcheck": false,
+                            "disabled": true,
+                            "tableView": false,
+                            "persistent": false,
+                            "inputFormat": "html",
+                            "clearOnHide": false,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentAssessedContribution, '-');",
+                            "validateWhenHidden": false,
+                            "key": "table5Text31",
+                            "type": "textfield",
+                            "input": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content15",
+                            "label": "Parental income contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "grid-row-indentation-first-level",
+                            "content": "Parental income contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text32",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalDiscretionaryContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text33",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalDiscretionaryContribution, '-');",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content16",
+                            "label": "Parental asset contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "grid-row-indentation-first-level",
+                            "content": "Parental asset contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text34",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
+                            "disabled": true,
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text35",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalAssetContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Content17",
+                            "label": "Parental voluntary contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "className": "grid-row-indentation-first-level",
+                            "content": "Parental voluntary contribution",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text36",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalVoluntaryContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text37",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.parentalVoluntaryContribution, '-');",
+                            "disabled": true
+                          }
+                        ]
+                      }
+                    ],
+                    [
+                      {
+                        "components": [
+                          {
+                            "key": "table5Totalstudentcontribution1",
+                            "label": "Total student contribution",
+                            "input": false,
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "value": "",
+                                "attr": ""
+                              }
+                            ],
+                            "content": "<strong>Total student contribution</strong>",
+                            "type": "htmlelement",
+                            "hideLabel": true,
+                            "tableView": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text38",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalFederalContribution, '-');",
+                            "customClass": "font-weight-bold",
+                            "disabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table5Text39",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.totalProvincialContribution, '-');",
+                            "disabled": true,
+                            "customClass": "font-weight-bold"
+                          }
+                        ]
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "label": "HTML",
+                  "tag": "h3",
+                  "className": "category-header-medium primary-color",
+                  "attrs": [
+                    {
+                      "attr": "",
+                      "value": ""
+                    }
+                  ],
+                  "content": "Total assessed need = total costs - total resources",
+                  "refreshOnChange": false,
+                  "key": "html197",
+                  "type": "htmlelement",
+                  "input": false,
+                  "tableView": false
+                },
+                {
+                  "label": "Table",
+                  "numRows": 1,
+                  "cellAlignment": "left",
+                  "customClass": "formio-bordered formio-table-last-col-background extra-small",
+                  "condensed": true,
+                  "key": "table8",
+                  "type": "table",
+                  "input": false,
+                  "tableView": false,
+                  "rows": [
+                    [
+                      {
+                        "components": [
+                          {
+                            "label": "HTML",
+                            "tag": "p",
+                            "attrs": [
+                              {
+                                "attr": "",
+                                "value": ""
+                              }
+                            ],
+                            "content": "<strong>Total assessed need</strong>",
+                            "refreshOnChange": false,
+                            "key": "html24",
+                            "type": "htmlelement",
+                            "input": false,
+                            "tableView": false,
+                            "hideOnChildrenHidden": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table4Text1",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.federalAssessmentNeed, '(Not eligible)');",
+                            "customClass": "font-weight-bold",
+                            "isNew": false
+                          }
+                        ]
+                      },
+                      {
+                        "components": [
+                          {
+                            "input": true,
+                            "tableView": false,
+                            "label": "Text",
+                            "key": "table4Text3",
+                            "persistent": false,
+                            "clearOnHide": false,
+                            "spellcheck": false,
+                            "type": "textfield",
+                            "inputFormat": "html",
+                            "hideLabel": true,
+                            "disabled": true,
+                            "calculateValue": "value = utils.custom.currencyFormatter(data.assessment?.provincialAssessmentNeed, '(Not eligible)');",
+                            "customClass": "font-weight-bold",
+                            "isNew": false
+                          }
+                        ]
+                      }
+                    ]
+                  ]
                 }
               ]
             },
