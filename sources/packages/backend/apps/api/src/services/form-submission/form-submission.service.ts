@@ -353,8 +353,8 @@ export class FormSubmissionService {
   /**
    * Checks whether the specified form is blocked from submission for the specified student.
    * Logic is specific to the form definition.
-   * @param form The dynamic form configuration to check for blockage.
-   * @param student The student for whom the form blockage is being checked.
+   * @param formDefinitionName The name of the form definition to check for a block.
+   * @param student The student for whom the form block is being checked.
    * @returns The reason why the form is blocked from submission, or undefined if it is not blocked.
    */
   checkIfFormBlocked(
