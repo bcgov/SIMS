@@ -60,6 +60,7 @@ import {
   ConfigurationContextValidator,
   PendingConcurrencyValidator,
   ApplicationEligibleAppealsValidator,
+  SubmissionBlockedValidator,
   FormSubmissionValidator,
 } from "./services/form-submission/form-submission-validator";
 import {
@@ -266,6 +267,7 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
     ConfigurationContextValidator,
     PendingConcurrencyValidator,
     ApplicationEligibleAppealsValidator,
+    SubmissionBlockedValidator,
     FormSubmissionValidator,
     // Form supplementary data loaders.
     SupplementaryDataProgramYear,

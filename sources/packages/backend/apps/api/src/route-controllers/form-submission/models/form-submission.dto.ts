@@ -7,6 +7,7 @@ import {
 } from "@sims/sims-db";
 import { JSON_20KB } from "../../../constants";
 import {
+  FormSubmissionBlockedReason,
   KnownSupplementaryData,
   KnownSupplementaryDataKey,
 } from "../../../services/form-submission/form-submission.models";
@@ -44,6 +45,7 @@ export class FormSubmissionConfigurationAPIOutDTO {
   formDescription: string;
   allowBundledSubmission: boolean;
   hasApplicationScope: boolean;
+  blockedReason?: FormSubmissionBlockedReason;
 }
 
 /**

@@ -5,6 +5,7 @@ import {
   PendingConcurrencyValidator,
   ConfigurationContextValidator,
   ApplicationEligibleAppealsValidator,
+  SubmissionBlockedValidator,
 } from ".";
 
 /**
@@ -19,11 +20,13 @@ export class FormSubmissionValidator {
     private readonly configurationContextValidator: ConfigurationContextValidator,
     private readonly pendingConcurrencyValidator: PendingConcurrencyValidator,
     private readonly applicationEligibleAppealsValidator: ApplicationEligibleAppealsValidator,
+    private readonly submissionBlockedValidator: SubmissionBlockedValidator,
   ) {
     this.validators = [
       this.configurationContextValidator,
       this.pendingConcurrencyValidator,
       this.applicationEligibleAppealsValidator,
+      this.submissionBlockedValidator,
     ];
   }
 

@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import {
   DynamicFormConfigurationService,
+  FORM_SUBMISSION_BLOCKED,
   FORM_SUBMISSION_CANCELLED,
   FORM_SUBMISSION_INVALID_DYNAMIC_DATA,
   FORM_SUBMISSION_NOT_FOUND,
@@ -20,7 +21,9 @@ import {
   FORM_SUBMISSION_PENDING_DECISION,
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
   FormSubmissionCancellationService,
+  FormSubmissionService,
   FormSubmissionSubmitService,
+  StudentService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
 import {
@@ -63,6 +66,8 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly formSubmissionControllerService: FormSubmissionControllerService,
     private readonly featureTogglesService: FeatureTogglesService,
     private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
+    private readonly formSubmissionService: FormSubmissionService,
+    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -72,13 +77,18 @@ export class FormSubmissionStudentsController extends BaseController {
    * @returns form configurations that allow student submissions.
    */
   @Get("forms")
-  async getSubmissionForms(): Promise<FormSubmissionConfigurationsAPIOutDTO> {
+  async getSubmissionForms(
+    @UserToken() userToken: StudentUserToken,
+  ): Promise<FormSubmissionConfigurationsAPIOutDTO> {
     const studentForms = this.dynamicFormConfigurationService
       .getFormsByCategory(FormCategory.StudentForm, FormCategory.StudentAppeal)
       .filter(
         (form) =>
           !this.featureTogglesService.isFormDisabled(form.formDefinitionName),
       );
+    const student = await this.studentService.getStudentById(
+      userToken.studentId,
+    );
     return {
       configurations: studentForms.map((configuration) => ({
         id: configuration.id,
@@ -88,6 +98,10 @@ export class FormSubmissionStudentsController extends BaseController {
         formDescription: configuration.formDescription,
         allowBundledSubmission: configuration.allowBundledSubmission,
         hasApplicationScope: configuration.hasApplicationScope,
+        blockedReason: this.formSubmissionService.checkIfFormBlocked(
+          configuration.formDefinitionName,
+          student,
+        ),
       })),
     };
   }
@@ -176,7 +190,8 @@ export class FormSubmissionStudentsController extends BaseController {
       "one or more forms in the submission do not allow bundled submissions or " +
       "all forms in the submission must share the same form category or " +
       "the application is not eligible for an appeal or " +
-      "the submitted appeal form(s) is/are not eligible for the application.",
+      "the submitted appeal form(s) is/are not eligible for the application or " +
+      "the form is currently blocked from submission.",
   })
   @ApiBadRequestResponse({
     description: "Failed to submit the form due to invalid dynamic data.",
@@ -205,6 +220,7 @@ export class FormSubmissionStudentsController extends BaseController {
               "Failed to submit the form due to invalid dynamic data.",
             );
           case FORM_SUBMISSION_PENDING_DECISION:
+          case FORM_SUBMISSION_BLOCKED:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
             );

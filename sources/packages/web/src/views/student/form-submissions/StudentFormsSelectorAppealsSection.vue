@@ -110,29 +110,44 @@
               variant="elevated"
               v-model:selected="selectedStandaloneAppealsForm"
             >
-              <v-list-item
+              <template
                 v-for="form in standaloneAppealsForms"
                 :key="form.formDefinitionName"
-                :title="form.formType"
-                :subtitle="form.formDescription"
-                :value="form.id"
-                prepend-icon="mdi-scale-balance"
               >
-                <template #prepend="{ isSelected, select }">
-                  <v-list-item-action start>
-                    <v-checkbox-btn
-                      color="primary"
-                      :model-value="isSelected"
-                      @update:model-value="select"
-                    ></v-checkbox-btn>
-                  </v-list-item-action>
-                </template>
-              </v-list-item>
+                <v-list-item
+                  :title="form.formType"
+                  :subtitle="form.formDescription"
+                  :value="form.id"
+                  prepend-icon="mdi-scale-balance"
+                >
+                  <template #prepend="{ isSelected, select }">
+                    <v-list-item-action start>
+                      <v-checkbox-btn
+                        color="primary"
+                        :model-value="isSelected"
+                        @update:model-value="select"
+                      ></v-checkbox-btn>
+                    </v-list-item-action>
+                  </template>
+                </v-list-item>
+                <banner
+                  v-if="
+                    selectedStandaloneForm?.id === form.id && form.blockedReason
+                  "
+                  class="my-2"
+                  :type="BannerTypes.Error"
+                  :header="form.blockedReason"
+                  :summary="getBlockedReasonMessage(form.blockedReason)"
+                />
+              </template>
             </v-list>
             <v-input
               :model-value="selectedStandaloneAppealsForm"
               hide-details="auto"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
+              :rules="[
+                (v) => checkNullOrEmptyRule(v, 'At least one appeal'),
+                checkBlockedSubmissions,
+              ]"
             >
             </v-input>
           </v-form>
@@ -156,13 +171,23 @@ import {
   EligibleApplicationForAppealAPIOutDTO,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { FormCategory, BannerTypes, VForm } from "@/types";
+import {
+  FormSubmissionBlockedReason,
+  FormCategory,
+  BannerTypes,
+  VForm,
+} from "@/types";
 import { StudentAppealService } from "@/services/StudentAppealService";
 
 enum AppealTypes {
   Application = "Application",
   Other = "Other",
 }
+
+const BLOCKED_REASON_MESSAGES = {
+  [FormSubmissionBlockedReason.ModifiedIndependentStatusAlreadyApproved]:
+    "You have already been approved for Modified Independent status. You do not need to submit this appeal again.",
+};
 
 export default defineComponent({
   props: {
@@ -279,8 +304,8 @@ export default defineComponent({
     );
 
     const fillApplicationAppeals = async (): Promise<void> => {
-      const formIsValid = appealsSelectionForm.value.validate();
-      if (!formIsValid) {
+      const validationResult = await appealsSelectionForm.value.validate();
+      if (!validationResult.valid) {
         return;
       }
       await router.push({
@@ -296,8 +321,9 @@ export default defineComponent({
     };
 
     const fillStudentAppeals = async (): Promise<void> => {
-      const formIsValid = standaloneAppealsSelectionForm.value.validate();
-      if (!formIsValid) {
+      const validationResult =
+        await standaloneAppealsSelectionForm.value.validate();
+      if (!validationResult.valid) {
         return;
       }
       await router.push({
@@ -307,6 +333,28 @@ export default defineComponent({
         },
       });
     };
+
+    const checkBlockedSubmissions = () => {
+      if (selectedStandaloneForm.value?.blockedReason) {
+        return "At least one valid appeal is required.";
+      }
+      return true;
+    };
+
+    const getBlockedReasonMessage = (
+      blockedReason: FormSubmissionBlockedReason,
+    ) => {
+      return (
+        BLOCKED_REASON_MESSAGES[blockedReason] ??
+        "The form is currently blocked from submission."
+      );
+    };
+
+    const selectedStandaloneForm = computed(() =>
+      standaloneAppealsForms.value.find(
+        (form) => form.id === selectedStandaloneAppealsForm.value?.[0],
+      ),
+    );
 
     return {
       BannerTypes,
@@ -325,6 +373,9 @@ export default defineComponent({
       selectedStandaloneAppealsForm,
       fillApplicationAppeals,
       fillStudentAppeals,
+      getBlockedReasonMessage,
+      checkBlockedSubmissions,
+      selectedStandaloneForm,
     };
   },
 });
