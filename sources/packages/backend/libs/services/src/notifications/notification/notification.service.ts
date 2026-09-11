@@ -119,7 +119,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
       attachments: applicationFile
         ? [
             {
-              file: applicationFile["file"],
+              content: applicationFile["file"],
               filename: applicationFile["filename"],
               mimeType: applicationFile["mimeType"],
             },

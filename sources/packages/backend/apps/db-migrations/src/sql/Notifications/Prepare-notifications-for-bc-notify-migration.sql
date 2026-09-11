@@ -13,35 +13,39 @@ COMMENT ON COLUMN sims.notifications.recipients IS 'Notification recipient email
 
 COMMENT ON COLUMN sims.notifications.message_content IS 'JSON data containing the notification message content.';
 
--- Populate all new columns with data from the existing message_payload column.
+-- Populate all new columns with data from the existing message_payload column and mapped notification message.
 UPDATE
-    sims.notifications
+    sims.notifications AS notification
 SET
-    template_id = (message_payload ->> 'template_id') :: UUID,
-    recipients = ARRAY [message_payload ->> 'email_address'],
+    template_id = notification_message.notify_template_id,
+    recipients = ARRAY [notification.message_payload ->> 'email_address'],
     message_content = jsonb_build_object(
         'params',
-        (message_payload -> 'personalisation') - 'application_file'
+        (
+            notification.message_payload -> 'personalisation'
+        ) - 'application_file'
     ) || CASE
-        WHEN (message_payload -> 'personalisation') ? 'application_file' THEN jsonb_build_object(
+        WHEN (
+            notification.message_payload -> 'personalisation'
+        ) ? 'application_file' THEN jsonb_build_object(
             'attachments',
             jsonb_build_array(
                 jsonb_build_object(
                     'content',
-                    message_payload -> 'personalisation' -> 'application_file' ->> 'file',
+                    notification.message_payload -> 'personalisation' -> 'application_file' ->> 'file',
                     'filename',
-                    message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
+                    notification.message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
                     'mimeType',
                     CASE
                         WHEN lower(
                             right(
-                                message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
+                                notification.message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
                                 4
                             )
                         ) = '.txt' THEN 'text/plain'
                         WHEN lower(
                             right(
-                                message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
+                                notification.message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
                                 4
                             )
                         ) = '.csv' THEN 'text/csv'
@@ -51,8 +55,11 @@ SET
         )
         ELSE '{}' :: jsonb
     END
+FROM
+    sims.notification_messages AS notification_message
 WHERE
-    message_payload IS NOT NULL;
+    notification.notification_message_id = notification_message.id
+    AND notification.message_payload IS NOT NULL;
 
 -- Add NOT NULL constraints to the new columns after populating them with data from message_payload.
 ALTER TABLE

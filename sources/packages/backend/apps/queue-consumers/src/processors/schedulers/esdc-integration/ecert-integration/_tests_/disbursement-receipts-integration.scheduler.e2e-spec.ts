@@ -451,7 +451,7 @@ describe(
           params: {},
           attachments: [
             {
-              file,
+              content: file,
               filename,
               mimeType: "text/csv",
             },
@@ -587,7 +587,7 @@ describe(
           params: {},
           attachments: [
             {
-              file,
+              content: file,
               filename: filename,
               mimeType: "text/csv",
             },
@@ -758,7 +758,7 @@ describe(
           params: {},
           attachments: [
             {
-              file: file,
+              content: file,
               filename: filename,
               mimeType: "text/csv",
             },
@@ -846,7 +846,7 @@ describe(
           params: {},
           attachments: [
             {
-              file,
+              content: file,
               filename,
               mimeType: "text/csv",
             },

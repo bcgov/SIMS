@@ -354,7 +354,7 @@ describe(
             },
             attachments: [
               {
-                file: expect.any(String),
+                content: expect.any(String),
                 filename: "Processing_Summary_Report.txt",
                 mimeType: "text/plain",
               },

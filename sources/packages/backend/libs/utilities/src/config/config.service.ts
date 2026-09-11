@@ -18,6 +18,7 @@ import {
   T4AIntegrationConfig,
   ThrottleOptions,
   ThrottleSettings,
+  Notify,
 } from "./config.models";
 
 @Injectable()
@@ -69,7 +70,7 @@ export class ConfigService {
   /**
    * Notification API configuration.
    */
-  get notify(): GCNotify {
+  get notify(): Notify {
     return this.getCachedConfig("notifyConfig", {
       url: process.env.NOTIFY_URL,
       apiKey: process.env.NOTIFY_API_KEY,

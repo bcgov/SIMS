@@ -9,8 +9,10 @@ const NOTIFY_TEMPLATE_ALL = `${NOTIFY_TEMPLATE_PREFIX}-all`;
 @Injectable()
 export class FeatureTogglesService {
   readonly isFormSubmissionEnabled: boolean = false;
+  readonly featureToggles: string[] | undefined;
 
   constructor(private readonly configService: ConfigService) {
+    this.featureToggles = this.configService.featureToggles;
     this.isFormSubmissionEnabled =
       this.isFeatureToggleEnabled(FORMS_SUBMISSION);
   }
@@ -21,7 +23,7 @@ export class FeatureTogglesService {
    * @returns true if the feature toggle is enabled, false otherwise.
    */
   private isFeatureToggleEnabled(featureToggle: string): boolean {
-    return this.configService.featureToggles?.includes(featureToggle) ?? false;
+    return this.featureToggles?.includes(featureToggle) ?? false;
   }
 
   /**
@@ -32,7 +34,7 @@ export class FeatureTogglesService {
    * @returns true if the form is disabled, false otherwise.
    */
   isFormDisabled(formDefinitionName: string): boolean {
-    return !!this.configService.featureToggles?.includes(
+    return !!this.featureToggles?.includes(
       `${TOGGLE_PREFIX_DISABLE}-${formDefinitionName}`,
     );
   }
