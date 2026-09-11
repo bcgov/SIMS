@@ -337,7 +337,7 @@ describe(
             },
             template_id: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
           },
-          templateId: "4f98f056-adae-43de-9594-e2530788f2a4",
+          templateId: "11990ef0-dcfc-407c-8a1f-ebca135bdfe7",
           recipients: [emailAddress],
           messageContent: {
             params: {
