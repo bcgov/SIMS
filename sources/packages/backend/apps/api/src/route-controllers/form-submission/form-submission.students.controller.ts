@@ -98,15 +98,10 @@ export class FormSubmissionStudentsController extends BaseController {
         formDescription: configuration.formDescription,
         allowBundledSubmission: configuration.allowBundledSubmission,
         hasApplicationScope: configuration.hasApplicationScope,
-        // Blocked reason is currently only used for standalone appeals.
-        ...(configuration.formCategory === FormCategory.StudentAppeal &&
-          !configuration.hasApplicationScope &&
-          !configuration.allowBundledSubmission && {
-            blockedReason: this.formSubmissionService.checkIfFormBlocked(
-              configuration.formDefinitionName,
-              student,
-            ),
-          }),
+        blockedReason: this.formSubmissionService.checkIfFormBlocked(
+          configuration.formDefinitionName,
+          student,
+        ),
       })),
     };
   }

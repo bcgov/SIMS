@@ -1,5 +1,6 @@
 import {
   FormCategory,
+  FormSubmissionBlockedReason,
   FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
@@ -243,14 +244,4 @@ export interface FormSubmissionPendingSummaryAPIOutDTO {
   formNames: string[];
   applicationId?: number;
   applicationNumber?: string;
-}
-
-/**
- * Reason why a form submission may be blocked from submission.
- */
-export enum FormSubmissionBlockedReason {
-  /**
-   * Modified Independent status already approved.
-   */
-  ModifiedIndependentStatusAlreadyApproved = "Modified Independent status already approved",
 }

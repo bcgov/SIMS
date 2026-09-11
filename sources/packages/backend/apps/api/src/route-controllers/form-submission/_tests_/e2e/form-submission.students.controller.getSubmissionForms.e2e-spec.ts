@@ -99,11 +99,11 @@ function getEndpoint(): string {
 
 /**
  * Gets the expected form configurations for the student form submission forms.
- * @param miaBlockedReason The blocked reason for the Modified Independent Appeal form, if applicable.
+ * @param modifiedIndependentBlockedReason The blocked reason for the Modified Independent Appeal form, if applicable.
  * @returns An array of expected form configurations for the student form submission forms.
  */
 function getExpectedConfigurations(
-  miaBlockedReason?: FormSubmissionBlockedReason,
+  modifiedIndependentBlockedReason?: FormSubmissionBlockedReason,
 ): unknown[] {
   return [
     {
@@ -125,7 +125,7 @@ function getExpectedConfigurations(
         "Submit this appeal to change your classification from a dependent student to an independent student based on exceptional circumstances.",
       allowBundledSubmission: false,
       hasApplicationScope: false,
-      blockedReason: miaBlockedReason,
+      blockedReason: modifiedIndependentBlockedReason,
     },
     {
       id: expect.any(Number),

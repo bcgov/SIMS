@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { FormSubmissionConfig } from "../form-submission.models";
-import { FormCategory } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { FormSubmissionValidatorBase } from ".";
 import { FormSubmissionService, StudentService } from "../..";
@@ -27,14 +26,6 @@ export class SubmissionBlockedValidator implements FormSubmissionValidatorBase {
   ): Promise<void> {
     // All forms in the submission share the same context, so we can use the first one as reference for the validation.
     const [referencedConfig] = formSubmissionConfigs;
-    if (
-      referencedConfig.formCategory !== FormCategory.StudentAppeal ||
-      referencedConfig.hasApplicationScope ||
-      referencedConfig.allowBundledSubmission
-    ) {
-      // Blocked reason (and hence form validator) is currently only used for standalone appeals.
-      return;
-    }
     const student = await this.studentService.getStudentById(studentId);
     const blockedReason = this.formSubmissionService.checkIfFormBlocked(
       referencedConfig.formDefinitionName,

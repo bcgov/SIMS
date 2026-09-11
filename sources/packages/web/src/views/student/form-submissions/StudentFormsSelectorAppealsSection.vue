@@ -169,10 +169,14 @@ import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
   FormSubmissionConfigurationAPIOutDTO,
   EligibleApplicationForAppealAPIOutDTO,
-  FormSubmissionBlockedReason,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { FormCategory, BannerTypes, VForm } from "@/types";
+import {
+  FormSubmissionBlockedReason,
+  FormCategory,
+  BannerTypes,
+  VForm,
+} from "@/types";
 import { StudentAppealService } from "@/services/StudentAppealService";
 
 enum AppealTypes {
