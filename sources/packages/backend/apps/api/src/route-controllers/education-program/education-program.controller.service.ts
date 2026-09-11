@@ -308,7 +308,7 @@ export class EducationProgramControllerService {
       programData.isBCPrivate !== institutionType.isBCPrivate
     ) {
       throw new UnprocessableEntityException(
-        "The provided BC Public and BC Private status does not match the actual institution type status.",
+        "The provided BC Public and BC Private status does not match the actual institution type.",
       );
     }
     // Validate entrance requirements.
@@ -361,22 +361,22 @@ export class EducationProgramControllerService {
       : [];
     if (isInvalidProgramLength) {
       invalidSystemLookupMessages.push(
-        `Program length ${programData.completionYears}`,
+        `Program length: ${programData.completionYears}`,
       );
     }
     if (invalidEntranceRequirementLookups.length) {
       invalidSystemLookupMessages.push(
-        `Entrance requirements ${invalidEntranceRequirementLookups.join(" ")}`,
+        `Entrance requirements: ${invalidEntranceRequirementLookups.join(" ")}`,
       );
     }
     if (isInvalidRegulatoryBody) {
       invalidSystemLookupMessages.push(
-        `Regulatory body ${programData.regulatoryBody}`,
+        `Regulatory body: ${programData.regulatoryBody}`,
       );
     }
     if (invalidAviationCredentials.length) {
       invalidSystemLookupMessages.push(
-        `Aviation credentials ${invalidAviationCredentials.join(" ")}`,
+        `Aviation credentials: ${invalidAviationCredentials.join(" ")}`,
       );
     }
     if (invalidSystemLookupMessages.length) {

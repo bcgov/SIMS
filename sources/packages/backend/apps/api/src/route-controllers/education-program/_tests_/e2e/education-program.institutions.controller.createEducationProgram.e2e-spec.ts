@@ -40,6 +40,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   let collegeFUser: User;
   const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
   const TEST_SABC_CODE = "GGG9";
+  const ENDPOINT = "/institutions/education-program";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -86,12 +87,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -248,12 +248,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       const payload = { ...getPayload(), ...scenarioData };
       const institutionUserToken =
         await getInstitutionToken(institutionUserType);
-      const endpoint = "/institutions/education-program";
 
       // Act/Assert
       let educationProgramId: number;
       await request(app.getHttpServer())
-        .post(endpoint)
+        .post(ENDPOINT)
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
@@ -283,11 +282,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -325,11 +323,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(getPayload())
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
@@ -347,11 +344,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -372,12 +368,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -407,12 +402,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
-    const endpoint = "/institutions/education-program";
 
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(endpoint)
+      .post(ENDPOINT)
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -434,17 +428,18 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   // Test bad request data.
   [
     {
-      scenario: "CIP code format is invalid.",
+      scenario: "CIP code format is invalid",
       scenarioData: {
         cipCode: "12",
       },
-      errorMessage:
+      errorMessage: [
         "cipCode must match /^[0-9]{2}\\.[0-9]{4}$/ regular expression",
+      ],
     },
     {
       scenario: "program declaration is not true",
       scenarioData: { programDeclaration: false },
-      errorMessage: "programDeclaration must be equal to true",
+      errorMessage: ["programDeclaration must be equal to true"],
     },
     {
       scenario:
@@ -453,8 +448,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         hasIntlExchange: FormYesNoOptions.Yes,
         intlExchangeProgramEligibility: undefined,
       },
-      errorMessage:
+      errorMessage: [
         "intlExchangeProgramEligibility must be one of the following values: yes, no",
+      ],
     },
     {
       scenario:
@@ -463,7 +459,35 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         isAviationProgram: FormYesNoOptions.No,
         credentialTypesAviation: ["privatePilotTraining"],
       },
-      errorMessage: "credentialTypesAviation input is not allowed.",
+      errorMessage: ["credentialTypesAviation input is not allowed."],
+    },
+    {
+      scenario:
+        "none of the entrance requirements is provided along with other entrance requirements",
+      scenarioData: {
+        entranceRequirements: [
+          PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+          "minHighSchool",
+        ],
+      },
+      errorMessage:
+        "None of the above entrance requirement cannot be provided along with other entrance requirements.",
+    },
+    {
+      scenario: "invalid lookup values are provided",
+      scenarioData: {
+        completionYears: "invalidProgramLength",
+        entranceRequirements: ["invalidEntranceRequirement"],
+        regulatoryBody: "invalidRegulatoryBody",
+        otherRegulatoryBody: undefined,
+        isAviationProgram: FormYesNoOptions.Yes,
+        minHoursWeekAvi: FormYesNoOptions.Yes,
+        credentialTypesAviation: ["invalidAviationCredential"],
+      },
+      errorMessage:
+        "Invalid values for the following lookup fields: Program length: invalidProgramLength," +
+        " Entrance requirements: invalidEntranceRequirement," +
+        " Regulatory body: invalidRegulatoryBody, Aviation credentials: invalidAviationCredential.",
     },
   ].forEach(({ scenario, scenarioData, errorMessage }) => {
     it(`Should throw bad request error when ${scenario}.`, async () => {
@@ -472,20 +496,42 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
-      const endpoint = "/institutions/education-program";
 
       // Act/Assert
       await request(app.getHttpServer())
-        .post(endpoint)
+        .post(ENDPOINT)
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
-          message: [errorMessage],
+          message: errorMessage,
           error: "Bad Request",
           statusCode: HttpStatus.BAD_REQUEST,
         });
     });
+  });
+
+  // Test unprocessable entity errors.
+  it(`Should unprocessable entity error when BC Private and BC Public status does not match with the institution type.`, async () => {
+    // Arrange
+    const payload = { ...getPayload(), isBCPrivate: false, isBCPublic: true };
+    // BC Private institution user.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(ENDPOINT)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message:
+          "The provided BC Public and BC Private status does not match the actual institution type.",
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
   });
 
   /**

@@ -35,6 +35,7 @@ import {
   INSTITUTION_REGULATORY_BODY_MAX_LENGTH,
   OTHER_REGULATORY_BODY_MAX_LENGTH,
   PROGRAM_COMPLETION_YEARS_MAX_LENGTH,
+  LOOKUP_KEY_MAX_LENGTH,
 } from "@sims/sims-db";
 import { AllowIf, IsDateAfter } from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
@@ -314,6 +315,7 @@ export class EducationProgramAPIInDTO {
    * Entrance requirements for the program.
    */
   @ArrayMinSize(1)
+  @MaxLength(LOOKUP_KEY_MAX_LENGTH, { each: true })
   entranceRequirements: string[];
   /**
    * Indicates whether the program has a Work-Integrated Learning (WIL) component.
@@ -386,6 +388,7 @@ export class EducationProgramAPIInDTO {
   )
   @AllowIf(EducationProgramAPIInDTO.isCredentialTypesAviationAllowed)
   @ArrayMinSize(1)
+  @MaxLength(LOOKUP_KEY_MAX_LENGTH, { each: true })
   credentialTypesAviation?: string[];
   /**
    * Indicates if the aviation program has a minimum hours per week requirement.
