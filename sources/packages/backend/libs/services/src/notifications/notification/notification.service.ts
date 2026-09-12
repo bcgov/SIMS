@@ -4,7 +4,6 @@ import {
   Notification,
   User,
   NotificationMessage,
-  PermanentFailureError,
   NotificationMessageType,
 } from "@sims/sims-db";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
@@ -21,12 +20,16 @@ import {
   SaveNotificationModel,
 } from "./notification.model";
 import { LoggerService } from "@sims/utilities/logger";
-import {
-  NotificationEmailMessage,
-  GCNotifyErrorResponse,
-} from "./gc-notify.model";
+import { NotificationEmailMessage } from "./gc-notify.model";
 import { CustomNamedError, processInParallel } from "@sims/utilities";
-import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { FeatureTogglesService } from "../../feature-toggles/feature-toggles";
+import { NotifyService } from "./notify.service";
+import {
+  NotificationAttachment,
+  NotificationParams,
+  NotifyMessageContent,
+} from "@sims/services/notifications";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -39,7 +42,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
   constructor(
     dataSource: DataSource,
     private readonly gcNotifyService: GCNotifyService,
+    private readonly notifyService: NotifyService,
     private readonly logger: LoggerService,
+    private readonly featureTogglesService: FeatureTogglesService,
   ) {
     super(dataSource.getRepository(Notification));
   }
@@ -61,15 +66,22 @@ export class NotificationService extends RecordDataModelService<Notification> {
       entityManager?: EntityManager;
     },
   ): Promise<number[]> {
-    const newNotifications = notifications.map((notification) => ({
-      user: { id: notification.userId } as User,
-      creator: { id: auditUserId } as User,
-      messagePayload: notification.messagePayload,
-      notificationMessage: {
-        id: notification.messageType,
-      } as NotificationMessage,
-      metadata: notification.metadata,
-    }));
+    const newNotifications = notifications.map((notification) => {
+      const { messagePayload, messageContent } =
+        this.getNotificationMessage(notification);
+      return {
+        user: { id: notification.userId } as User,
+        creator: { id: auditUserId } as User,
+        messagePayload,
+        notificationMessage: {
+          id: notification.messageType,
+        } as NotificationMessage,
+        metadata: notification.metadata,
+        templateId: notification.notifyTemplateId,
+        recipients: [messagePayload.email_address],
+        messageContent,
+      };
+    });
     const repository =
       options?.entityManager?.getRepository(Notification) ?? this.repo;
     // Breaks the execution in chunks to allow the inserts of a huge amount of records.
@@ -92,6 +104,45 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   /**
+   * Create the GC Notify payload and BC Notify message content to be saved
+   * and allow any notification be sent to either notification API.
+   * This is a temporary message conversion to be refactored once GC Notify is removed.
+   * @param notification notification to be processed.
+   * @returns an object containing the GC Notify message payload and the
+   * BC Notify message content.
+   */
+  private getNotificationMessage(notification: SaveNotificationModel): {
+    messagePayload: NotificationEmailMessage;
+    messageContent: NotifyMessageContent;
+  } {
+    const messagePayload =
+      notification.messagePayload as NotificationEmailMessage;
+    const { application_file: applicationFile, ...params } =
+      messagePayload.personalisation;
+    const messageContent: NotifyMessageContent = {
+      params: params as NotificationParams,
+      attachments: applicationFile
+        ? [
+            {
+              content: applicationFile["file"],
+              filename: applicationFile["filename"],
+              mimeType: applicationFile["mimeType"],
+            } as NotificationAttachment,
+          ]
+        : undefined,
+    };
+    if (messagePayload.personalisation.application_file) {
+      // Removed additional property that is unknown to GC Notify
+      // and used only for the new Notify API.
+      delete messagePayload.personalisation.application_file["mimeType"];
+    }
+    return {
+      messagePayload,
+      messageContent,
+    };
+  }
+
+  /**
    * Updates the date sent column of the inbox notification record.
    * @param notificationId notification id.
    * @param permanentFailureError Error details of a permanent failure if occurred while processing the notification.
@@ -99,7 +150,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
    */
   async updateNotification(
     notificationId: number,
-    permanentFailureError?: PermanentFailureError[],
+    permanentFailureError?: unknown,
   ): Promise<UpdateResult> {
     return this.repo.update(
       {
@@ -155,25 +206,22 @@ export class NotificationService extends RecordDataModelService<Notification> {
   private async sendEmailNotification(
     notification: Notification,
   ): Promise<boolean> {
-    // Call GC Notify send email method.
     try {
-      await this.gcNotifyService.sendEmailNotification(
-        notification.messagePayload as NotificationEmailMessage,
-      );
+      const notificationService = this.featureTogglesService.useNotifyTemplate(
+        notification.templateId,
+      )
+        ? this.notifyService
+        : this.gcNotifyService;
+      await notificationService.sendEmailNotification(notification);
       await this.updateNotification(notification.id);
       return true;
     } catch (error: unknown) {
       this.logger.error(`Error while processing notification: ${error}`);
       if (
         error instanceof CustomNamedError &&
-        error.name === GC_NOTIFY_PERMANENT_FAILURE_ERROR
+        error.name === NOTIFY_PERMANENT_FAILURE_ERROR
       ) {
-        const processNotificationError =
-          error.objectInfo as GCNotifyErrorResponse;
-        await this.updateNotification(
-          notification.id,
-          processNotificationError.errors,
-        );
+        await this.updateNotification(notification.id, error.objectInfo);
         return false;
       }
       throw error;
@@ -201,6 +249,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
       select: {
         id: true,
         messagePayload: true,
+        messageContent: true,
+        recipients: true,
+        templateId: true,
       },
       where: {
         dateSent: IsNull(),

@@ -18,6 +18,7 @@ import {
   T4AIntegrationConfig,
   ThrottleOptions,
   ThrottleSettings,
+  Notify,
 } from "./config.models";
 
 @Injectable()
@@ -56,12 +57,23 @@ export class ConfigService {
   }
 
   /**
-   * Notification API configuration.
+   * GC Notification API configuration to be replaced
+   * by the BC Notify.
    */
-  get notify(): GCNotify {
-    return this.getCachedConfig("notifyConfig", {
+  get gcNotify(): GCNotify {
+    return this.getCachedConfig("gcNotifyConfig", {
       url: process.env.GC_NOTIFY_URL,
       apiKey: process.env.GC_NOTIFY_API_KEY,
+    });
+  }
+
+  /**
+   * Notification API configuration.
+   */
+  get notify(): Notify {
+    return this.getCachedConfig("notifyConfig", {
+      url: process.env.NOTIFY_URL,
+      apiKey: process.env.NOTIFY_API_KEY,
     });
   }
 

@@ -46,6 +46,11 @@ export interface GCNotify {
   apiKey: string;
 }
 
+export interface Notify {
+  url: string;
+  apiKey: string;
+}
+
 export interface UserPasswordCredential {
   userName: string;
   password: string;

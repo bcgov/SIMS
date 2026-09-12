@@ -28,7 +28,10 @@ import {
 import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers";
 import MockDate from "mockdate";
 import { getPSTPDTDateTime } from "@sims/utilities";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => {
   let app: INestApplication;
@@ -139,7 +142,13 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
     });
     // Validate notification.
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.StudentChangeRequestReviewCompleted,
@@ -147,13 +156,25 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         dateSent: IsNull(),
       },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
-      email_address: application.student.user.email,
-      personalisation: {
-        givenNames: application.student.user.firstName ?? "",
-        lastName: application.student.user.lastName,
-        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+        email_address: application.student.user.email,
+        personalisation: {
+          givenNames: application.student.user.firstName ?? "",
+          lastName: application.student.user.lastName,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      recipients: [application.student.user.email],
+      messageContent: {
+        params: {
+          givenNames: application.student.user.firstName ?? "",
+          lastName: application.student.user.lastName,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
       },
     });
   });
@@ -328,7 +349,13 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         });
         // Validate notification.
         const createdNotification = await db.notification.findOne({
-          select: { id: true, messagePayload: true },
+          select: {
+            id: true,
+            messagePayload: true,
+            templateId: true,
+            recipients: true,
+            messageContent: true,
+          },
           where: {
             notificationMessage: {
               id: NotificationMessageType.MinistryAppealCompleted,
@@ -336,13 +363,25 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
             dateSent: IsNull(),
           },
         });
-        expect(createdNotification.messagePayload).toStrictEqual({
-          template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryAppealCompleted,
-          email_address: student.user.email,
-          personalisation: {
-            givenNames: student.user.firstName ?? "",
-            lastName: student.user.lastName,
-            date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        expect(createdNotification).toEqual({
+          id: expect.any(Number),
+          messagePayload: {
+            template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryAppealCompleted,
+            email_address: student.user.email,
+            personalisation: {
+              givenNames: student.user.firstName ?? "",
+              lastName: student.user.lastName,
+              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+            },
+          },
+          templateId: NOTIFY_TEMPLATE_IDS.MinistryAppealCompleted,
+          recipients: [student.user.email],
+          messageContent: {
+            params: {
+              givenNames: student.user.firstName ?? "",
+              lastName: student.user.lastName,
+              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+            },
           },
         });
       });

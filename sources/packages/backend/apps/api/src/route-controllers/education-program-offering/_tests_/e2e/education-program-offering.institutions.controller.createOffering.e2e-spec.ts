@@ -53,7 +53,10 @@ import {
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
 import { IsNull } from "typeorm";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", () => {
   let app: INestApplication;
@@ -326,7 +329,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     });
 
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.InstitutionAddsPendingOfferingNotification,
@@ -335,19 +344,37 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       },
     });
     expect(createdNotification).toBeDefined();
-    expect(createdNotification!.messagePayload).toStrictEqual({
-      email_address: MINISTRY_EMAIL_ADDRESS,
-      template_id:
-        GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification,
-      personalisation: {
-        dateTime: expect.any(String),
-        institutionName: collegeF.legalOperatingName,
-        institutionOperatingName: collegeF.operatingName,
-        institutionPrimaryEmail: collegeF.primaryEmail,
-        institutionLocationName: collegeFLocation.name,
-        offeringName: createdEducationProgramOffering!.name,
-        programName: savedFakeEducationProgram.name,
-        email: collegeFUser.email,
+    expect(createdNotification!).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        email_address: MINISTRY_EMAIL_ADDRESS,
+        template_id:
+          GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification,
+        personalisation: {
+          dateTime: expect.any(String),
+          institutionName: collegeF.legalOperatingName,
+          institutionOperatingName: collegeF.operatingName,
+          institutionPrimaryEmail: collegeF.primaryEmail,
+          institutionLocationName: collegeFLocation.name,
+          offeringName: createdEducationProgramOffering!.name,
+          programName: savedFakeEducationProgram.name,
+          email: collegeFUser.email,
+        },
+      },
+      templateId:
+        NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingOfferingNotification,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
+          dateTime: expect.any(String),
+          institutionName: collegeF.legalOperatingName,
+          institutionOperatingName: collegeF.operatingName,
+          institutionPrimaryEmail: collegeF.primaryEmail,
+          institutionLocationName: collegeFLocation.name,
+          offeringName: createdEducationProgramOffering!.name,
+          programName: savedFakeEducationProgram.name,
+          email: collegeFUser.email,
+        },
       },
     });
   });

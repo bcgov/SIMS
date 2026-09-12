@@ -227,6 +227,9 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
       },
       where: {
         dateSent: IsNull(),
@@ -243,6 +246,17 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         template_id: "69d5f064-1efa-4109-a45a-5857a6acb612",
         email_address: LEGACY_RESTRICTION_EMAIL,
         personalisation: {
+          birthDate: getDateOnlyFormat(sharedStudent.birthDate),
+          lastName: sharedStudent.user.lastName,
+          givenNames: sharedStudent.user.firstName,
+          studentEmail: sharedStudent.user.email,
+          dateTime: expect.any(String),
+        },
+      },
+      templateId: "3f2e8f9a-7627-433d-be17-c72041ef7c14",
+      recipients: [LEGACY_RESTRICTION_EMAIL],
+      messageContent: {
+        params: {
           birthDate: getDateOnlyFormat(sharedStudent.birthDate),
           lastName: sharedStudent.user.lastName,
           givenNames: sharedStudent.user.firstName,

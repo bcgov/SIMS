@@ -1918,6 +1918,9 @@ describe(
           select: {
             id: true,
             messagePayload: true,
+            templateId: true,
+            recipients: true,
+            messageContent: true,
           },
           where: {
             dateSent: IsNull(),
@@ -1933,8 +1936,22 @@ describe(
           id: expect.any(Number),
           messagePayload: {
             email_address: MINISTRY_NOTIFICATION_EMAIL,
-            template_id: expect.any(String),
+            template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
             personalisation: {
+              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              lastName: student.user.lastName,
+              givenNames: student.user.firstName,
+              birthDate: getDateOnlyFormat(student.birthDate),
+              studentEmail: student.user.email,
+              applicationNumber: application.applicationNumber,
+              programName: program.name,
+              institutionOperatingName: institution.operatingName,
+            },
+          },
+          templateId: "b9b0023d-68cb-4623-81d3-7064682d5d5e",
+          recipients: [MINISTRY_NOTIFICATION_EMAIL],
+          messageContent: {
+            params: {
               dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
               lastName: student.user.lastName,
               givenNames: student.user.firstName,

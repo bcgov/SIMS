@@ -195,6 +195,9 @@ describe(
             id: true,
             notificationMessage: { id: true },
             messagePayload: true,
+            templateId: true,
+            recipients: true,
+            messageContent: true,
           },
           relations: { notificationMessage: true },
           where: {
@@ -212,6 +215,15 @@ describe(
               template_id: "2b64245f-770c-4493-9d3c-4e0f86773987",
               email_address: student.user.email,
               personalisation: {
+                date: `${getPSTPDTDateTime(now)} PST/PDT`,
+                lastName: student.user.lastName,
+                givenNames: student.user.firstName,
+              },
+            },
+            templateId: "21af88bf-74ca-4805-bf2c-c6134d911ef3",
+            recipients: [student.user.email],
+            messageContent: {
+              params: {
                 date: `${getPSTPDTDateTime(now)} PST/PDT`,
                 lastName: student.user.lastName,
                 givenNames: student.user.firstName,

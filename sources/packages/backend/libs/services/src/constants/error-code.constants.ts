@@ -18,8 +18,7 @@ export const ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW =
   "ASSESSMENT_ALREADY_ASSOCIATED_WITH_DIFFERENT_WORKFLOW";
 export const DISBURSEMENT_SCHEDULES_ALREADY_CREATED =
   "DISBURSEMENT_SCHEDULES_ALREADY_CREATED";
-export const GC_NOTIFY_PERMANENT_FAILURE_ERROR =
-  "GC_NOTIFY_PERMANENT_FAILURE_ERROR";
+export const NOTIFY_PERMANENT_FAILURE_ERROR = "NOTIFY_PERMANENT_FAILURE_ERROR";
 export const APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR =
   "APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR";
 export const INVALID_TUITION_REMITTANCE_AMOUNT =
@@ -85,11 +84,10 @@ export const FILE_HASH_DUPLICATION_ERROR = "FILE_HASH_DUPLICATION_ERROR";
 export const NOTIFICATION_MISSING_EMAIL_CONTACTS =
   "NOTIFICATION_MISSING_EMAIL_CONTACTS";
 /**
- * Notification message not found for the provided template id, 
+ * Notification message not found for the provided template id,
  * which indicates a misconfiguration of the workflow.
  */
-export const NOTIFICATION_MESSAGE_NOT_FOUND =
-  "NOTIFICATION_MESSAGE_NOT_FOUND";
+export const NOTIFICATION_MESSAGE_NOT_FOUND = "NOTIFICATION_MESSAGE_NOT_FOUND";
 /**
  * The recipient type provided for a workflow email notification is not
  * supported, indicating a misconfiguration of the workflow.
