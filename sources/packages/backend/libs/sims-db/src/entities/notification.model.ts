@@ -10,6 +10,7 @@ import { NotificationMessage } from "./notification-message.model";
 import { NotificationMetadata } from "./notification-metadata.type";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
+import { NotifyMessageContent } from "@sims/services/notifications";
 
 @Entity({
   name: TableNames.Notifications,
@@ -109,7 +110,7 @@ export class Notification extends RecordDataModel {
     name: "message_content",
     type: "jsonb",
   })
-  messageContent: unknown;
+  messageContent: NotifyMessageContent;
 }
 
 /**
