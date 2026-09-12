@@ -20,11 +20,11 @@ const NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS = new Set([
 export class NotifyService {
   private readonly notifyConfig: Notify;
   constructor(
-    private readonly configService: ConfigService,
+    readonly configService: ConfigService,
     private readonly httpService: HttpService,
     private readonly logger: LoggerService,
   ) {
-    this.notifyConfig = this.configService.notify;
+    this.notifyConfig = configService.notify;
   }
 
   /**
