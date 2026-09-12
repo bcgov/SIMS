@@ -19,7 +19,8 @@
             :items="restrictionsToBypass"
             item-title="restrictionCode"
             item-value="restrictionId"
-            v-model="formModel.restrictionId"
+            v-model="selectedRestriction"
+            return-object
             variant="outlined"
             :rules="[(v) => checkNullOrEmptyRule(v, 'Restriction')]"
             :disabled="readOnly"
@@ -45,26 +46,37 @@
               </v-list-item>
             </template>
           </v-select>
-          <v-radio-group
-            label="Until"
-            inline
-            v-model="formModel.bypassBehavior"
-            color="primary"
-            class="mt-2"
-            :rules="[(v) => checkNullOrEmptyRule(v, 'Until')]"
-            :disabled="readOnly"
-          >
-            <v-radio
-              label="The next scheduled disbursement has been issued. Note: If the application is reassessed, the next disbursement will be ignored."
-              :value="RestrictionBypassBehaviors.NextDisbursementOnly"
+          <template v-if="selectedRestriction">
+            <v-radio-group
+              v-if="!isAcceptAssessmentTypeRestrictionSelected"
+              label="Until"
+              inline
+              v-model="formModel.bypassBehavior"
               color="primary"
-            ></v-radio>
-            <v-radio
-              label="All disbursements associated with this application have been issued."
-              :value="RestrictionBypassBehaviors.AllDisbursements"
-              color="primary"
-            ></v-radio>
-          </v-radio-group>
+              class="pt-2"
+              :rules="[(v) => checkNullOrEmptyRule(v, 'Until')]"
+              :disabled="readOnly"
+            >
+              <v-radio
+                label="The next scheduled disbursement has been issued. Note: If the application is reassessed, the next disbursement will be ignored."
+                :value="RestrictionBypassBehaviors.NextDisbursementOnly"
+                color="primary"
+              ></v-radio>
+              <v-radio
+                label="All disbursements associated with this application have been issued."
+                :value="RestrictionBypassBehaviors.AllDisbursements"
+                color="primary"
+              ></v-radio>
+            </v-radio-group>
+            <div v-else class="pt-2 pb-3 text-body-2">
+              <v-label class="d-block">Until</v-label>
+              <p>
+                The student creates a new version of the application or a
+                ministry user removes the bypass. Note: This bypass only allows
+                the student to accept their application.
+              </p>
+            </div>
+          </template>
           <v-textarea
             label="Notes"
             variant="outlined"
@@ -72,6 +84,7 @@
             v-model="formModel.note"
             :rules="[checkNotesLengthRule]"
             required
+            class="pt-2"
             v-if="!readOnly"
           />
           <title-value
@@ -143,10 +156,11 @@ import {
   ApiProcessError,
   BannerTypes,
   RestrictedParty,
+  RestrictionActionType,
   RestrictionBypassBehaviors,
   VForm,
 } from "@/types";
-import { ref, defineComponent } from "vue";
+import { computed, ref, defineComponent, watch } from "vue";
 import {
   useRules,
   useModalDialog,
@@ -155,7 +169,6 @@ import {
 } from "@/composables";
 import {
   ApplicationRestrictionBypassAPIOutDTO,
-  AvailableRestrictionAPIOutDTO,
   AvailableRestrictionsAPIOutDTO,
   BypassRestrictionAPIInDTO,
 } from "@/services/http/dto";
@@ -166,7 +179,13 @@ interface RestrictionBypassItem {
   restrictionCode: string;
   restrictionId: number;
   restrictedParty: RestrictedParty;
+  actionTypes?: RestrictionActionType[];
 }
+
+const ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS = new Set([
+  RestrictionActionType.StopFullTimeAcceptAssessment,
+  RestrictionActionType.StopPartTimeAcceptAssessment,
+]);
 
 export default defineComponent({
   components: {
@@ -181,7 +200,7 @@ export default defineComponent({
     const restrictionBypassDetails = ref(
       {} as ApplicationRestrictionBypassAPIOutDTO,
     );
-    const formModel = ref({} as BypassRestrictionAPIInDTO);
+    const formModel = ref({} as Partial<BypassRestrictionAPIInDTO>);
     const availableRestrictionsToBypass = ref(
       {} as AvailableRestrictionsAPIOutDTO,
     );
@@ -194,6 +213,18 @@ export default defineComponent({
     const bypassRestrictionForm = ref({} as VForm);
     const { checkNullOrEmptyRule, checkNotesLengthRule } = useRules();
     const note = ref("");
+    const selectedRestriction = ref<RestrictionBypassItem>();
+    const isAcceptAssessmentTypeRestrictionSelected = computed(
+      () =>
+        selectedRestriction.value?.actionTypes?.some((actionType) =>
+          ACCEPT_ASSESSMENT_RESTRICTION_ACTIONS.has(actionType),
+        ) ?? false,
+    );
+    watch(selectedRestriction, () => {
+      if (isAcceptAssessmentTypeRestrictionSelected.value) {
+        delete formModel.value.bypassBehavior;
+      }
+    });
     const cancel = () => {
       restrictionBypassDetails.value =
         {} as ApplicationRestrictionBypassAPIOutDTO;
@@ -205,19 +236,18 @@ export default defineComponent({
       if (!validationResult.valid) {
         return;
       }
+      if (!selectedRestriction.value) {
+        return;
+      }
       try {
         loading.value = true;
-        const foundRestriction =
-          availableRestrictionsToBypass.value.availableRestrictionsToBypass?.find(
-            (r) => r.restrictionId === formModel.value.restrictionId,
-          ) as AvailableRestrictionAPIOutDTO;
         await ApplicationRestrictionBypassService.shared.bypassRestriction({
           applicationId: applicationId.value,
-          restrictionId: formModel.value.restrictionId,
+          restrictionId: selectedRestriction.value.restrictionId,
           bypassBehavior: formModel.value.bypassBehavior,
           note: formModel.value.note,
-          restrictedParty: foundRestriction.restrictedParty,
-        });
+          restrictedParty: selectedRestriction.value.restrictedParty,
+        } as BypassRestrictionAPIInDTO);
         snackBar.success("Restriction bypassed.");
         resolvePromise(true);
       } catch (error: unknown) {
@@ -238,12 +268,14 @@ export default defineComponent({
       createdDate: Date,
       restrictionId: number,
       restrictedParty: RestrictedParty,
+      actionTypes?: RestrictionActionType[],
     ): RestrictionBypassItem => {
       const formattedDate = dateOnlyLongString(createdDate);
       return {
         restrictionCode: `${restrictionCode} added on ${formattedDate}`,
         restrictionId,
         restrictedParty,
+        actionTypes,
       };
     };
 
@@ -252,6 +284,7 @@ export default defineComponent({
       applicationRestrictionBypassId?: number;
     }) => {
       formModel.value = {} as BypassRestrictionAPIInDTO;
+      selectedRestriction.value = undefined;
       if (params.applicationId) {
         readOnly.value = false;
         applicationId.value = params.applicationId;
@@ -269,6 +302,7 @@ export default defineComponent({
                 restriction.restrictionCreatedAt,
                 restriction.restrictionId,
                 restriction.restrictedParty,
+                restriction.actionTypes,
               );
             },
           );
@@ -278,16 +312,15 @@ export default defineComponent({
           await ApplicationRestrictionBypassService.shared.getApplicationRestrictionBypass(
             params.applicationRestrictionBypassId,
           );
-        restrictionsToBypass.value = [
-          getRestrictionToBypassOption(
-            restrictionBypassDetails.value.restrictionCode,
-            restrictionBypassDetails.value.createdDate,
-            restrictionBypassDetails.value.restrictionId,
-            restrictionBypassDetails.value.restrictedParty,
-          ),
-        ];
-        formModel.value.restrictionId =
-          restrictionBypassDetails.value.restrictionId;
+        const restriction = getRestrictionToBypassOption(
+          restrictionBypassDetails.value.restrictionCode,
+          restrictionBypassDetails.value.createdDate,
+          restrictionBypassDetails.value.restrictionId,
+          restrictionBypassDetails.value.restrictedParty,
+          restrictionBypassDetails.value.actionTypes,
+        );
+        restrictionsToBypass.value = [restriction];
+        selectedRestriction.value = restriction;
         formModel.value.bypassBehavior = restrictionBypassDetails.value
           .bypassBehavior as RestrictionBypassBehaviors;
         formModel.value.note = restrictionBypassDetails.value.creationNote;
@@ -313,6 +346,8 @@ export default defineComponent({
       BannerTypes,
       readOnly,
       RestrictionBypassBehaviors,
+      isAcceptAssessmentTypeRestrictionSelected,
+      selectedRestriction,
     };
   },
 });

@@ -60,6 +60,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
         restrictedParty: RestrictedParty.Student,
+        actionTypes:
+          applicationRestrictionBypass.studentRestriction.restriction
+            .actionType,
         creationNote: applicationRestrictionBypass.creationNote.description,
         createdBy: getUserFullName(
           applicationRestrictionBypass.bypassCreatedBy,
@@ -107,6 +110,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
           applicationRestrictionBypass.institutionRestriction.restriction
             .restrictionCode,
         restrictedParty: RestrictedParty.Institution,
+        actionTypes:
+          applicationRestrictionBypass.institutionRestriction.restriction
+            .actionType,
         creationNote: applicationRestrictionBypass.creationNote.description,
         createdBy: getUserFullName(
           applicationRestrictionBypass.bypassCreatedBy,
@@ -148,6 +154,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
         restrictedParty: RestrictedParty.Student,
+        actionTypes:
+          applicationRestrictionBypass.studentRestriction.restriction
+            .actionType,
         creationNote: applicationRestrictionBypass.creationNote.description,
         removalNote: applicationRestrictionBypass.removalNote.description,
         createdBy: getUserFullName(
@@ -203,6 +212,9 @@ describe("ApplicationRestrictionBypassAESTController(e2e)-getApplicationRestrict
           applicationRestrictionBypass.studentRestriction.restriction
             .restrictionCode,
         restrictedParty: RestrictedParty.Student,
+        actionTypes:
+          applicationRestrictionBypass.studentRestriction.restriction
+            .actionType,
         creationNote: applicationRestrictionBypass.creationNote.description,
         removalNote: applicationRestrictionBypass.removalNote.description,
         createdBy: getUserFullName(

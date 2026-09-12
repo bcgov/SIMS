@@ -12,6 +12,9 @@ import { Institution, Note, User, ProgramStatus } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
 import { isSameOrAfterDate } from "@sims/utilities";
 
+export const CREDENTIAL_TYPE_MAX_LENGTH = 50;
+export const CIP_CODE_MAX_LENGTH = 50;
+
 /**
  * The main resource table to store education programs related information.
  * Tombstone information to education programs shared across institution locations.
@@ -42,6 +45,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "credential_type",
+    length: CREDENTIAL_TYPE_MAX_LENGTH,
   })
   credentialType: string;
   /**
@@ -49,6 +53,7 @@ export class EducationProgram extends RecordDataModel {
    */
   @Column({
     name: "cip_code",
+    length: CIP_CODE_MAX_LENGTH,
   })
   cipCode: string;
   /**

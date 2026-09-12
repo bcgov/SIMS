@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
+  ApplicationRestrictionBypass,
   InstitutionRestriction,
   OfferingIntensity,
   QueryAndParamsForExecution,
@@ -32,6 +33,8 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     private readonly institutionRestrictionRepo: Repository<InstitutionRestriction>,
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(ApplicationRestrictionBypass)
+    private readonly applicationRestrictionBypassRepo: Repository<ApplicationRestrictionBypass>,
   ) {
     super(dataSource.getRepository(Restriction));
   }
@@ -62,6 +65,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
    * @param institutionId institution id.
    * @param locationId location id.
    * @param options options to filter the restrictions.
+   * - `applicationId` application id used to filter out the restrictions that have been bypassed for the given application.
    * - `programId` program id. It may not be provided if the program is not available yet,
    * for instance, during a PIR process.
    * - `restrictionCode` restriction code.
@@ -74,6 +78,7 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     institutionId: number,
     locationId: number,
     options?: {
+      applicationId?: number;
       programId?: number;
       restrictionCode?: RestrictionCode;
       actionTypes?: RestrictionActionType[];
@@ -120,6 +125,24 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
     if (options?.actionTypes?.length) {
       query.andWhere("restriction.actionType @> :actionTypes", {
         actionTypes: options.actionTypes,
+      });
+    }
+    // Filter out restrictions that have already been bypassed for the given application.
+    if (options?.applicationId) {
+      const activeInstitutionRestrictionBypasses =
+        this.applicationRestrictionBypassRepo
+          .createQueryBuilder("applicationRestrictionBypass")
+          .select("1")
+          .where(
+            "applicationRestrictionBypass.institutionRestriction.id = institutionRestriction.id",
+          )
+          .andWhere(
+            "applicationRestrictionBypass.application.id = :applicationId",
+          )
+          .andWhere("applicationRestrictionBypass.isActive = true")
+          .getQuery();
+      query.andWhere(`NOT EXISTS (${activeInstitutionRestrictionBypasses})`, {
+        applicationId: options.applicationId,
       });
     }
     if (options?.limitOne) {
@@ -204,7 +227,11 @@ export class RestrictionSharedService extends RecordDataModelService<Restriction
       await this.getEffectiveInstitutionRestrictions(
         offering.institutionLocation.institution.id,
         offering.institutionLocation.id,
-        { programId: offering.educationProgram.id, actionTypes: [action] },
+        {
+          applicationId,
+          programId: offering.educationProgram.id,
+          actionTypes: [action],
+        },
       );
     if (effectiveInstitutionRestrictions.length) {
       return {
