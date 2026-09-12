@@ -1393,7 +1393,7 @@ describe(
         expect(notification).toEqual({
           messagePayload: {
             email_address: MINISTRY_EMAIL_ADDRESS,
-            template_id: "7faea39f-cf8e-41ee-af02-c4790cac5b26",
+            template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
             personalisation: {
               dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
               lastName: student.user.lastName,
@@ -1405,7 +1405,7 @@ describe(
               institutionOperatingName: institution.operatingName,
             },
           },
-          templateId: "360cdd14-3c97-4eac-ba74-cef35b057abc",
+          templateId: "b9b0023d-68cb-4623-81d3-7064682d5d5e",
           recipients: [MINISTRY_EMAIL_ADDRESS],
           messageContent: {
             params: {
