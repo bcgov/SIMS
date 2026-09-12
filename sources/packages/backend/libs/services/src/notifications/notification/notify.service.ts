@@ -56,7 +56,7 @@ export class NotifyService {
         );
       }
       this.logger.error(
-        `Error while sending email notification ID ${notification.id}.`,
+        `Error error while sending email notification ID ${notification.id}. This error will cause the notification to be retried.`,
         error,
       );
       throw error;
