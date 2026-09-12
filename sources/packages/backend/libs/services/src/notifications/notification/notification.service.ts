@@ -25,6 +25,11 @@ import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { FeatureTogglesService } from "../../feature-toggles/feature-toggles";
 import { NotifyService } from "./notify.service";
+import {
+  NotificationAttachment,
+  NotificationParams,
+  NotifyMessageContent,
+} from "@sims/services/notifications";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -108,21 +113,21 @@ export class NotificationService extends RecordDataModelService<Notification> {
    */
   private getNotificationMessage(notification: SaveNotificationModel): {
     messagePayload: NotificationEmailMessage;
-    messageContent: unknown;
+    messageContent: NotifyMessageContent;
   } {
     const messagePayload =
       notification.messagePayload as NotificationEmailMessage;
     const { application_file: applicationFile, ...params } =
       messagePayload.personalisation;
-    const messageContent = {
-      params,
+    const messageContent: NotifyMessageContent = {
+      params: params as NotificationParams,
       attachments: applicationFile
         ? [
             {
               content: applicationFile["file"],
               filename: applicationFile["filename"],
               mimeType: applicationFile["mimeType"],
-            },
+            } as NotificationAttachment,
           ]
         : undefined,
     };
