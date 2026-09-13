@@ -518,8 +518,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LocationProgramsEdit1,
-        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS_1,
+        path: AppRoutes.LocationProgramsEdit,
+        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
         component: EditProgram,
         props: (route) => ({
           programId: Number.parseInt(route.params.programId as string),
@@ -534,22 +534,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
               locationId: Number.parseInt(route.params.locationId as string),
             },
           },
-        }),
-        meta: {
-          clientType: ClientIdType.Institution,
-          institutionUserTypes: [
-            InstitutionUserTypes.admin,
-            InstitutionUserTypes.user,
-          ],
-        },
-      },
-      {
-        path: AppRoutes.LocationProgramsEdit,
-        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-        component: LocationProgramAddEdit,
-        props: (route) => ({
-          locationId: Number.parseInt(route.params.locationId as string),
-          programId: Number.parseInt(route.params.programId as string),
         }),
         meta: {
           clientType: ClientIdType.Institution,
