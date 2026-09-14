@@ -12,6 +12,7 @@ import {
   EntityManager,
   InsertResult,
   IsNull,
+  MoreThan,
   UpdateResult,
 } from "typeorm";
 import { GCNotifyService } from "./gc-notify.service";
@@ -21,8 +22,11 @@ import {
 } from "./notification.model";
 import { LoggerService } from "@sims/utilities/logger";
 import { NotificationEmailMessage } from "./gc-notify.model";
-import { CustomNamedError, processInParallel } from "@sims/utilities";
-import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { CustomNamedError } from "@sims/utilities";
+import {
+  NOTIFY_LIMIT_EXCEEDED_ERROR,
+  NOTIFY_PERMANENT_FAILURE_ERROR,
+} from "@sims/services/constants";
 import { FeatureTogglesService } from "../../feature-toggles/feature-toggles";
 import { NotifyService } from "./notify.service";
 import {
@@ -30,6 +34,7 @@ import {
   NotificationParams,
   NotifyMessageContent,
 } from "@sims/services/notifications";
+import dayjs from "dayjs";
 
 /**
  * While performing a possible huge amount of inserts,
@@ -164,14 +169,23 @@ export class NotificationService extends RecordDataModelService<Notification> {
    * Process all the unsent notifications with a polling limit.
    * Processing continues recursively until all the records are processed.
    * Call GCNotify to send email notification.
-   * @param pollingRecordsLimit Maximum number of notifications to be processed in one chunk of
-   * processing.
+   * @param pollingRecordsLimit Maximum number of notifications retrieved from DB to be processed
+   * in one chunk of processing.
+   * @param externalRateLimit Maximum number of notifications to be sent to the external service
+   * within the rate limit window.
+   * @param externalRateLimitSeconds Duration of the rate limit window in seconds.
    * @returns processing summary.
    */
   async processUnsentNotifications(
     pollingRecordsLimit: number,
+    externalRateLimit: number,
+    externalRateLimitSeconds: number,
   ): Promise<NotificationProcessingSummary> {
-    return await this.processUnsentNotificationsRecursive(pollingRecordsLimit);
+    return await this.processUnsentNotificationsRecursive(
+      pollingRecordsLimit,
+      externalRateLimit,
+      externalRateLimitSeconds,
+    );
   }
 
   /**
@@ -229,11 +243,17 @@ export class NotificationService extends RecordDataModelService<Notification> {
   }
 
   /**
-   * Process all the unsent notifications with a polling limit recursively.
-   * Processing continues recursively until all the records are processed.
-   * Call GCNotify to send email notification.
-   * @param pollingLimit Maximum number of notifications to be processed in one chunk of
-   * processing.
+   * Process all the unsent notifications with a polling limit recursively, up to the rate limit.
+   * Processing continues recursively until all the records are processed or the rate limit is reached.
+   * Possible retries are not marked with the date sent right now and will not be counted as an API call,
+   * which may cause a small discrepancy between the counted notifications and the actual number sent.
+   * If such scenario occurs, the service is also prepared to stop processing when the first
+   * error {@link NOTIFY_LIMIT_EXCEEDED_ERROR} is encountered.
+   * @param pollingRecordsLimit Maximum number of notifications retrieved from DB to be processed
+   * in one chunk of processing.
+   * @param externalRateLimit Maximum number of notifications to be sent to the external service
+   * within the rate limit window.
+   * @param externalRateLimitSeconds Duration of the rate limit window in seconds.
    * @param notificationsProcessed optional param used to
    * increment the total count on recursion.
    * @param notificationsSuccessfullyProcessed optional param used to
@@ -242,9 +262,25 @@ export class NotificationService extends RecordDataModelService<Notification> {
    */
   private async processUnsentNotificationsRecursive(
     pollingRecordsLimit: number,
+    externalRateLimit: number,
+    externalRateLimitSeconds: number,
     notificationsProcessed = 0,
     notificationsSuccessfullyProcessed = 0,
   ): Promise<NotificationProcessingSummary> {
+    const messagesSentWithinRateLimitWindow =
+      await this.getMessagesSentWithinRateLimitWindow(externalRateLimitSeconds);
+    const messagesAvailableToSend =
+      externalRateLimit - messagesSentWithinRateLimitWindow;
+    if (messagesAvailableToSend <= 0) {
+      this.logger.log(
+        `Rate limit reached. Messages already sent within the rate window: ${messagesSentWithinRateLimitWindow}.`,
+      );
+      return {
+        notificationsProcessed,
+        notificationsSuccessfullyProcessed,
+      };
+    }
+    const limit = Math.min(pollingRecordsLimit, messagesAvailableToSend);
     const notificationsToProcess = await this.repo.find({
       select: {
         id: true,
@@ -259,41 +295,78 @@ export class NotificationService extends RecordDataModelService<Notification> {
       order: {
         createdAt: "ASC",
       },
-      take: pollingRecordsLimit,
+      take: limit,
     });
-
-    if (notificationsToProcess.length) {
-      this.logger.log(
-        `Processing ${notificationsToProcess.length} notifications`,
-      );
-
-      const resolvedResponses = await processInParallel(
-        (notification: Notification) =>
-          this.sendEmailNotification(notification),
-        notificationsToProcess,
-      );
-
-      notificationsSuccessfullyProcessed += resolvedResponses.filter(
-        (result) => result,
-      ).length;
-
-      //Assign the value for total notifications processed.
-      notificationsProcessed += notificationsToProcess.length;
-
-      // Calling process notification in recursion until all the notifications
-      // are processed.
-      const response = await this.processUnsentNotificationsRecursive(
-        pollingRecordsLimit,
+    if (!notificationsToProcess.length) {
+      return {
         notificationsProcessed,
         notificationsSuccessfullyProcessed,
-      );
-      notificationsProcessed = response.notificationsProcessed;
-      notificationsSuccessfullyProcessed =
-        response.notificationsSuccessfullyProcessed;
+      };
     }
+    this.logger.log(
+      `Processing ${notificationsToProcess.length} out of a limit of ${limit}.`,
+    );
+    try {
+      for (const notification of notificationsToProcess) {
+        this.logger.log(`Processing notification ID ${notification.id}`);
+        // Call the sendEmailNotification method to send the email.
+        const result = await this.sendEmailNotification(notification);
+        if (result) {
+          notificationsSuccessfullyProcessed++;
+        }
+      }
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === NOTIFY_LIMIT_EXCEEDED_ERROR
+      ) {
+        // Limit exceeded error, will retry in the next polling cycle.
+        this.logger.warn(error.message);
+        // Prevent further processing in this cycle due to limit exceeded.
+        return {
+          notificationsProcessed,
+          notificationsSuccessfullyProcessed,
+        };
+      }
+      // Allow other errors to be thrown and handled by the caller.
+      throw error;
+    }
+    //Assign the value for total notifications processed.
+    notificationsProcessed += notificationsToProcess.length;
+    // Calling process notification in recursion until all the notifications
+    // are processed.
+    const response = await this.processUnsentNotificationsRecursive(
+      pollingRecordsLimit,
+      externalRateLimit,
+      externalRateLimitSeconds,
+      notificationsProcessed,
+      notificationsSuccessfullyProcessed,
+    );
+    notificationsProcessed = response.notificationsProcessed;
+    notificationsSuccessfullyProcessed =
+      response.notificationsSuccessfullyProcessed;
     return {
       notificationsProcessed,
       notificationsSuccessfullyProcessed,
     };
+  }
+
+  /**
+   * Number of notifications sent within the rate limit window.
+   * @param externalRateLimitSeconds Duration of the rate limit window in seconds.
+   * @returns Number of notifications sent within the rate limit window.
+   */
+  private async getMessagesSentWithinRateLimitWindow(
+    externalRateLimitSeconds: number,
+  ): Promise<number> {
+    const rateLimitWindow = dayjs().subtract(
+      externalRateLimitSeconds,
+      "seconds",
+    );
+    return await this.repo.count({
+      where: {
+        dateSent: MoreThan(rateLimitWindow.toDate()),
+      },
+    });
   }
 }

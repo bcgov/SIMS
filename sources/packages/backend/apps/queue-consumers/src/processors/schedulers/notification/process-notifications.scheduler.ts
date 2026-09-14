@@ -7,6 +7,10 @@ import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
+const DEFAULT_POLLING_RECORDS_LIMIT = 1000;
+const DEFAULT_EXTERNAL_RATE_LIMIT = 490;
+const DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS = 60;
+
 /**
  * Process notifications which are unsent.
  */
@@ -23,11 +27,19 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   }
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
-    const queuePollingRecordsLimit =
-      await this.queueService.getQueuePollingRecordLimit(
+    const queueConfigurationDetails =
+      await this.queueService.queueConfigurationDetails(
         this.schedulerQueue.name as QueueNames,
       );
-    return { pollingRecordsLimit: queuePollingRecordsLimit };
+    const config = queueConfigurationDetails.queueConfiguration;
+    return {
+      pollingRecordsLimit:
+        config.pollingRecordLimit ?? DEFAULT_POLLING_RECORDS_LIMIT,
+      externalRateLimit:
+        config.externalRateLimit ?? DEFAULT_EXTERNAL_RATE_LIMIT,
+      externalRateLimitSeconds:
+        config.externalRateLimitSeconds ?? DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS,
+    };
   }
 
   /**

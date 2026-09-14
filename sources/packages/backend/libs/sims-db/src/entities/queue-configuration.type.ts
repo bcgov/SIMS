@@ -23,6 +23,14 @@ export interface QueueConfigurationDetails {
    */
   pollingRecordLimit?: number;
   /**
+   * Maximum number consumers calls in the allowed window defined by externalRateLimitSeconds.
+   */
+  externalRateLimit?: number;
+  /**
+   * Time window in seconds for the external rate limit.
+   */
+  externalRateLimitSeconds?: number;
+  /**
    * Indicates if completed jobs should be removed automatically.
    * This takes precedence over cleanUpPeriod.
    */
