@@ -346,14 +346,26 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
           savedApplication,
           NotificationMessageType.SupportingUserInformationNotification,
         );
-        expect(notification.dateSent).toBeNull();
-        expect(notification.messagePayload).toStrictEqual({
-          email_address: savedApplication.student.user.email,
-          template_id: notification.notificationMessage.templateId,
-          personalisation: {
-            supportingUserType: "partner",
-            lastName: savedApplication.student.user.lastName,
-            givenNames: savedApplication.student.user.firstName,
+        expect(notification).toEqual({
+          id: expect.any(Number),
+          dateSent: null,
+          messagePayload: {
+            email_address: savedApplication.student.user.email,
+            template_id: "46f36b94-9c14-406d-a03c-bbec618726e4",
+            personalisation: {
+              supportingUserType: "partner",
+              lastName: savedApplication.student.user.lastName,
+              givenNames: savedApplication.student.user.firstName,
+            },
+          },
+          templateId: "fd3ddc39-c9f3-4900-a810-3c0263597bf7",
+          recipients: [savedApplication.student.user.email],
+          messageContent: {
+            params: {
+              supportingUserType: "partner",
+              lastName: savedApplication.student.user.lastName,
+              givenNames: savedApplication.student.user.firstName,
+            },
           },
         });
       });
@@ -427,20 +439,46 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
     parentFullName: string,
     notificationMessageType: NotificationMessageType,
   ): Promise<void> {
+    let expectedGCNotifyTemplateId: string;
+    let expectedNotifyTemplateId: string;
+    switch (notificationMessageType) {
+      case NotificationMessageType.ParentInformationRequiredFromParentNotification:
+        expectedGCNotifyTemplateId = "8832918f-c084-45c4-a360-55606fb24569";
+        expectedNotifyTemplateId = "1ef6ab46-8323-441d-81a2-da6cf8fc49db";
+        break;
+      case NotificationMessageType.ParentInformationRequiredFromStudentNotification:
+        expectedGCNotifyTemplateId = "357ace3c-7a8a-4d49-b1de-f20c0dd5e84f";
+        expectedNotifyTemplateId = "f1c9916a-b36f-4f40-8ce1-3610cf620f56";
+        break;
+    }
     const notification = await notificationLookup(
       savedApplication,
       notificationMessageType,
     );
-    expect(notification.dateSent).toBeNull();
-    expect(notification.messagePayload).toStrictEqual({
-      email_address: savedApplication.student.user.email,
-      template_id: notification.notificationMessage.templateId,
-      personalisation: {
-        applicationNumber: savedApplication.applicationNumber,
-        parentFullName,
-        supportingUserType: "parent",
-        lastName: savedApplication.student.user.lastName,
-        givenNames: savedApplication.student.user.firstName,
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      dateSent: null,
+      messagePayload: {
+        email_address: savedApplication.student.user.email,
+        template_id: expectedGCNotifyTemplateId,
+        personalisation: {
+          applicationNumber: savedApplication.applicationNumber,
+          parentFullName,
+          supportingUserType: "parent",
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName,
+        },
+      },
+      templateId: expectedNotifyTemplateId,
+      recipients: [savedApplication.student.user.email],
+      messageContent: {
+        params: {
+          applicationNumber: savedApplication.applicationNumber,
+          parentFullName,
+          supportingUserType: "parent",
+          lastName: savedApplication.student.user.lastName,
+          givenNames: savedApplication.student.user.firstName,
+        },
       },
     });
   }
@@ -459,10 +497,10 @@ describe("SupportingUserController(e2e)-createIdentifiableSupportingUsers", () =
         id: true,
         dateSent: true,
         messagePayload: true,
-        notificationMessage: { id: true, templateId: true },
-        user: { id: true, email: true, firstName: true, lastName: true },
+        templateId: true,
+        recipients: true,
+        messageContent: true,
       },
-      relations: { notificationMessage: true, user: true },
       where: {
         notificationMessage: {
           id: notificationMessageType,

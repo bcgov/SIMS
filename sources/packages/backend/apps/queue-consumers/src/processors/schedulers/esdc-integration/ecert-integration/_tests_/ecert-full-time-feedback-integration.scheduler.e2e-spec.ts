@@ -33,6 +33,7 @@ const FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS =
   "EDU.PBC.FTECERTSFB.MULTIPLERECORDS";
 const SHARED_DOCUMENT_NUMBER = 6666;
 const SHARED_ERROR_CODE = "EDU-00099";
+const EMAILS_CONTACTS = ["dummy@some.domain"];
 
 describe(
   describeQueueProcessorRootTest(QueueNames.FullTimeFeedbackIntegration),
@@ -60,7 +61,7 @@ describe(
         {
           id: NotificationMessageType.ECertFeedbackFileErrorNotification,
         },
-        { emailContacts: ["dummy@some.domain"] },
+        { emailContacts: EMAILS_CONTACTS },
       );
     });
 
@@ -427,13 +428,10 @@ describe(
         select: {
           id: true,
           messagePayload: true,
-          notificationMessage: {
-            id: true,
-            templateId: true,
-            emailContacts: true,
-          },
+          templateId: true,
+          recipients: true,
+          messageContent: true,
         },
-        relations: { notificationMessage: true },
         where: {
           notificationMessage: {
             id: NotificationMessageType.ECertFeedbackFileErrorNotification,
@@ -441,15 +439,29 @@ describe(
           dateSent: IsNull(),
         },
       });
-      expect(notification.messagePayload).toStrictEqual({
-        email_address: notification.notificationMessage.emailContacts[0],
-        template_id: notification.notificationMessage.templateId,
-        personalisation: {
-          lastName: application.student.user.lastName,
-          givenNames: application.student.user.firstName,
-          applicationNumber: application.applicationNumber,
-          documentNumber: SHARED_DOCUMENT_NUMBER,
-          errorCodes: ["EDU-00033", "EDU-00034"],
+      expect(notification).toEqual({
+        id: expect.any(Number),
+        messagePayload: {
+          email_address: EMAILS_CONTACTS[0],
+          template_id: "9ab7adce-354e-4645-9679-6ce531954a23",
+          personalisation: {
+            lastName: application.student.user.lastName,
+            givenNames: application.student.user.firstName,
+            applicationNumber: application.applicationNumber,
+            documentNumber: SHARED_DOCUMENT_NUMBER,
+            errorCodes: ["EDU-00033", "EDU-00034"],
+          },
+        },
+        templateId: "d12c9beb-6e06-4f82-abe5-36ceda7504a0",
+        recipients: EMAILS_CONTACTS,
+        messageContent: {
+          params: {
+            lastName: application.student.user.lastName,
+            givenNames: application.student.user.firstName,
+            applicationNumber: application.applicationNumber,
+            documentNumber: SHARED_DOCUMENT_NUMBER,
+            errorCodes: ["EDU-00033", "EDU-00034"],
+          },
         },
       });
     });

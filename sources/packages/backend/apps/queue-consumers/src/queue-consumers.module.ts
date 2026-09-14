@@ -49,6 +49,7 @@ import {
   AssessmentSequentialProcessingService,
   ClamAVService,
   CASSupplierSharedService,
+  FeatureTogglesModule,
 } from "@sims/services";
 import { DatabaseModule } from "@sims/sims-db";
 import { IER12IntegrationModule } from "@sims/integrations/institution-integration/ier12-integration";
@@ -103,6 +104,7 @@ import { LoggerModule } from "@sims/utilities/logger";
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({
   imports: [
+    FeatureTogglesModule,
     GlobalHttpModule,
     LoggerModule,
     DatabaseModule,

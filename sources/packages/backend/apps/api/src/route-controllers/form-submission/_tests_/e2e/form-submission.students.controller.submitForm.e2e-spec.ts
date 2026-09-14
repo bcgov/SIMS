@@ -43,6 +43,10 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
 import { SystemUsersService } from "@sims/services";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants/notification.constants";
 
 describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
   let app: INestApplication;
@@ -245,8 +249,25 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       creator: systemUser,
       messagePayload: {
         email_address: MINISTRY_EMAIL_ADDRESS,
-        template_id: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+        template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
         personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          formCategory: FormCategory.StudentAppeal,
+          formNames: [
+            formConfigs.studentAppealApplicationA.formType,
+            formConfigs.studentAppealApplicationB.formType,
+          ],
+          applicationNumber: application.applicationNumber,
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           birthDate: getDateOnlyFormat(student.birthDate),
@@ -409,8 +430,22 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       creator: systemUser,
       messagePayload: {
         email_address: MINISTRY_EMAIL_ADDRESS,
-        template_id: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+        template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
         personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          formCategory: FormCategory.StudentForm,
+          formNames: [formConfigs.studentFormA.formType],
+          applicationNumber: "N/A",
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           birthDate: getDateOnlyFormat(student.birthDate),

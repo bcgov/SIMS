@@ -4,6 +4,7 @@ import { NotificationMetadata } from "@sims/sims-db/entities/notification-metada
 
 export interface SaveNotificationModel {
   userId?: number;
+  notifyTemplateId: string;
   messageType: NotificationMessageType;
   messagePayload: NotificationEmailMessage;
   metadata?: NotificationMetadata;

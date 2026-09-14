@@ -53,16 +53,34 @@ describe("RestrictionAESTController(e2e)-addStudentProvincialRestriction.", () =
 
     // Assert
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: { user: { id: student.user.id } },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: "2b64245f-770c-4493-9d3c-4e0f86773987",
-      email_address: student.user.email,
-      personalisation: {
-        date: expect.any(String),
-        lastName: student.user.lastName,
-        givenNames: student.user.firstName,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: "2b64245f-770c-4493-9d3c-4e0f86773987",
+        email_address: student.user.email,
+        personalisation: {
+          date: expect.any(String),
+          lastName: student.user.lastName,
+          givenNames: student.user.firstName,
+        },
+      },
+      templateId: "21af88bf-74ca-4805-bf2c-c6134d911ef3",
+      recipients: [student.user.email],
+      messageContent: {
+        params: {
+          date: expect.any(String),
+          lastName: student.user.lastName,
+          givenNames: student.user.firstName,
+        },
       },
     });
   });

@@ -24,7 +24,10 @@ import {
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import MockDate from "mockdate";
 import { INVALID_APPLICATION_EDIT_STATUS } from "@sims/services/constants";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 import { getPSTPDTDateTime } from "@sims/utilities";
 
 describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeRequest", () => {
@@ -236,7 +239,13 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
     ]);
     // Validate notification.
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.StudentChangeRequestReviewCompleted,
@@ -244,14 +253,27 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         dateSent: IsNull(),
       },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
-      email_address: changeRequest.student.user.email,
-      personalisation: {
-        givenNames: changeRequest.student.user.firstName ?? "",
-        lastName: changeRequest.student.user.lastName,
-        application: changeRequest.applicationNumber,
-        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+        email_address: changeRequest.student.user.email,
+        personalisation: {
+          givenNames: changeRequest.student.user.firstName ?? "",
+          lastName: changeRequest.student.user.lastName,
+          application: changeRequest.applicationNumber,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      recipients: [changeRequest.student.user.email],
+      messageContent: {
+        params: {
+          givenNames: changeRequest.student.user.firstName ?? "",
+          lastName: changeRequest.student.user.lastName,
+          application: changeRequest.applicationNumber,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
       },
     });
   });
@@ -358,7 +380,13 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
     });
     // Validate notification.
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.StudentChangeRequestReviewCompleted,
@@ -366,14 +394,27 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         dateSent: IsNull(),
       },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
-      email_address: changeRequest.student.user.email,
-      personalisation: {
-        givenNames: changeRequest.student.user.firstName ?? "",
-        lastName: changeRequest.student.user.lastName,
-        application: changeRequest.applicationNumber,
-        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+        email_address: changeRequest.student.user.email,
+        personalisation: {
+          givenNames: changeRequest.student.user.firstName ?? "",
+          lastName: changeRequest.student.user.lastName,
+          application: changeRequest.applicationNumber,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      recipients: [changeRequest.student.user.email],
+      messageContent: {
+        params: {
+          givenNames: changeRequest.student.user.firstName ?? "",
+          lastName: changeRequest.student.user.lastName,
+          application: changeRequest.applicationNumber,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
       },
     });
   });
@@ -460,7 +501,13 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
     ]);
     // Validate notification.
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.StudentChangeRequestReviewCompleted,
@@ -468,14 +515,27 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         dateSent: IsNull(),
       },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
-      email_address: changeRequest.student.user.email,
-      personalisation: {
-        givenNames: changeRequest.student.user.firstName ?? "",
-        lastName: changeRequest.student.user.lastName,
-        application: changeRequest.applicationNumber,
-        date: `${getPSTPDTDateTime(now)} PST/PDT`,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+        email_address: changeRequest.student.user.email,
+        personalisation: {
+          givenNames: changeRequest.student.user.firstName ?? "",
+          lastName: changeRequest.student.user.lastName,
+          application: changeRequest.applicationNumber,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
+      recipients: [changeRequest.student.user.email],
+      messageContent: {
+        params: {
+          givenNames: changeRequest.student.user.firstName ?? "",
+          lastName: changeRequest.student.user.lastName,
+          application: changeRequest.applicationNumber,
+          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
       },
     });
   });
