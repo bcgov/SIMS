@@ -56,6 +56,8 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
         job.data.pollingRecordsLimit,
+        job.data.externalRateLimit,
+        job.data.externalRateLimitSeconds,
       );
     if (
       processNotificationResponse.notificationsProcessed !==
