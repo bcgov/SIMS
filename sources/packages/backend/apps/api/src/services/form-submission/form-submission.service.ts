@@ -355,7 +355,7 @@ export class FormSubmissionService {
    * Determines whether each requested form is blocked for a student.
    * @param formDefinitionNames Form definition names to check.
    * @param studentId The ID of the student submitting the forms.
-   * @returns Blocked reasons in the same order as the provided form names.
+   * @returns A map of form definition names to their blocked reasons. If a form is not blocked, it will not appear in the map.
    */
   async checkIfFormsBlocked(
     formDefinitionNames: string[],
