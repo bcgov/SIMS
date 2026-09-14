@@ -55,7 +55,10 @@ import {
   RestrictionCode,
   SystemUsersService,
 } from "@sims/services";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe(
   describeProcessorRootTest(QueueNames.StudentApplicationNotifications),
@@ -853,7 +856,7 @@ describe(
                 type: FileProcessingIssueType.CRA,
               },
             },
-            templateId: GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
+            templateId: NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
             recipients: [MINISTRY_EMAIL_ADDRESS],
             messageContent: {
               params: {
@@ -862,6 +865,7 @@ describe(
                 type: FileProcessingIssueType.CRA,
               },
             },
+            metadata: null,
           });
         });
       });
@@ -998,7 +1002,7 @@ describe(
                 type: FileProcessingIssueType.SIN,
               },
             },
-            templateId: GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
+            templateId: NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
             recipients: [MINISTRY_EMAIL_ADDRESS],
             messageContent: {
               params: {
@@ -1007,6 +1011,7 @@ describe(
                 type: FileProcessingIssueType.SIN,
               },
             },
+            metadata: null,
           });
         });
       });
@@ -1098,7 +1103,7 @@ describe(
           );
           expect(notification).toBeDefined();
           expect(notification).toEqual({
-            id: expect.any(String),
+            id: expect.any(Number),
             messagePayload: {
               email_address: application.student.user.email,
               template_id:
@@ -1109,7 +1114,7 @@ describe(
                 applicationNumber: application.applicationNumber,
               },
             },
-            templateId: GC_NOTIFY_TEMPLATE_IDS.StudentAcceptAssessmentOverdue,
+            templateId: NOTIFY_TEMPLATE_IDS.StudentAcceptAssessmentOverdue,
             recipients: [application.student.user.email],
             messageContent: {
               params: {
