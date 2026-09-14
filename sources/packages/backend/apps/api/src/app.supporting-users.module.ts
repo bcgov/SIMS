@@ -47,6 +47,11 @@ import {
   SupportingUserSupportingUsersController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
+import {
+  EducationProgramEvaluationService,
+  EducationProgramFieldOfStudyCodeEvaluator,
+  EducationProgramStatusEvaluator,
+} from "./services/education-program/education-program-evaluator";
 
 @Module({
   imports: [AuthModule],
@@ -90,6 +95,9 @@ import { AuthModule } from "./auth/auth.module";
     DesignationAgreementLocationService,
     SupportingUserControllerService,
     InstitutionRestrictionService,
+    EducationProgramFieldOfStudyCodeEvaluator,
+    EducationProgramStatusEvaluator,
+    EducationProgramEvaluationService,
   ],
 })
 export class AppSupportingUsersModule {}

@@ -47,7 +47,7 @@ export function createFakeEducationProgramOffering(
   offering.mandatoryFees = faker.number.int(1000);
   offering.exceptionalExpenses = faker.number.int(1000);
   offering.offeringDelivered = "offeringDelivered";
-  offering.lacksStudyBreaks = true;
+  offering.lacksStudyBreaks = options?.initialValues?.lacksStudyBreaks ?? true;
   offering.educationProgram =
     relations?.program ??
     createFakeEducationProgram(

@@ -217,7 +217,8 @@ export class EducationProgramOfferingControllerService {
       operatingName: institutionLocation.institution.operatingName,
       legalOperatingName: institutionLocation.institution.legalOperatingName,
       primaryEmail: institutionLocation.institution.primaryEmail,
-      studyBreaks: payload.studyBreaks,
+      // Ignore any study breaks submitted if no study breaks are indicated in the payload.
+      studyBreaks: payload.lacksStudyBreaks ? [] : payload.studyBreaks,
       programContext: program,
       institutionContext: {
         isBCPrivate:
