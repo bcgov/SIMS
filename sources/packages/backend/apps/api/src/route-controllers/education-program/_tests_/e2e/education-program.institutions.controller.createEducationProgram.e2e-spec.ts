@@ -25,6 +25,17 @@ import {
   GC_NOTIFY_TEMPLATE_IDS,
   NOTIFY_TEMPLATE_IDS,
 } from "@sims/test-utils/constants";
+import {
+  PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+  CIP_CODE_REGEX,
+  OTHER_REGULATORY_BODY,
+} from "../../../../services/education-program/constants";
+import {
+  ProgramESLPercentage,
+  ProgramDeliveryTypeValues,
+  ProgramCourseLoadCalculationTypes,
+} from "../../../../services/education-program/education-program.service.models";
+import { EducationProgramAPIInDTO } from "../../models/education-program.dto";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
