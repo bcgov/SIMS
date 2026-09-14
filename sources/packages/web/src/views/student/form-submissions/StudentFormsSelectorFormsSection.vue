@@ -35,7 +35,7 @@
                 :subtitle="form.formDescription"
                 :elevation="1"
                 :value="form.id"
-                prepend-icon="mdi-subtitles-outline"
+                :ripple="false"
               >
                 <template #prepend="{ isSelected, select }">
                   <v-list-item-action start>
@@ -46,6 +46,16 @@
                     ></v-checkbox-btn>
                   </v-list-item-action>
                 </template>
+                <banner
+                  v-if="
+                    selectedStandaloneForm?.includes(form.id) &&
+                    form.blockedReason
+                  "
+                  class="my-2"
+                  :type="BannerTypes.Error"
+                  :header="form.blockedReason"
+                  :summary="getBlockedReasonMessage(form.blockedReason)"
+                />
               </v-list-item>
             </v-list>
             <v-input
@@ -53,6 +63,12 @@
               hide-details="auto"
               :rules="[
                 (v) => checkNullOrEmptyRule(v, 'At least one selected form'),
+                (v) =>
+                  checkBlockedSubmissions(
+                    v,
+                    standaloneForms,
+                    'At least one valid form is required',
+                  ),
               ]"
             >
             </v-input>
@@ -69,10 +85,10 @@
   </body-header-container>
 </template>
 <script lang="ts">
-import { useRules } from "@/composables";
+import { useFormSubmission, useRules } from "@/composables";
 import { defineComponent, watchEffect, ref, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { FormCategory, VForm } from "@/types";
+import { BannerTypes, FormCategory, VForm } from "@/types";
 import { useRouter } from "vue-router";
 import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
 
@@ -86,8 +102,10 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
+    const { checkBlockedSubmissions, getBlockedReasonMessage } =
+      useFormSubmission();
     const standaloneForms = ref<FormSubmissionConfigurationAPIOutDTO[]>([]);
-    const selectedStandaloneForm = ref<string[]>();
+    const selectedStandaloneForm = ref<number[]>();
     const standaloneFormsSelectionForm = ref({} as VForm);
 
     watchEffect(async () => {
@@ -117,6 +135,9 @@ export default defineComponent({
       selectedStandaloneForm,
       standaloneFormsSelectionForm,
       fillStudentForm,
+      BannerTypes,
+      getBlockedReasonMessage,
+      checkBlockedSubmissions,
     };
   },
 });
