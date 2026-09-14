@@ -5,5 +5,6 @@ WHERE
         'Program length',
         'Institution regulatory body',
         'Program entrance requirement',
-        'Program aviation credential'
+        'Program aviation credential',
+        'Program credential type'
     );
