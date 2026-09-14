@@ -59,6 +59,7 @@ export class EducationProgramAPIOutDTO {
   cipCode: string;
   nocCode: string;
   sabcCode: string;
+  fieldOfStudyCode: number;
   programStatus: ProgramStatus;
   regulatoryBody: string;
   otherRegulatoryBody?: string;

@@ -36,19 +36,28 @@
       :program-id="programId"
       @loaded="loaded"
       @submitted="submit"
-      @cancel="cancel"
+      @cancel="goBack"
     />
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useInstitutionAuth, useSnackBar } from "@/composables";
+import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
 import { computed, ref } from "vue";
-import type { BackTarget, ProgramFormModel } from "@/types";
-import { BannerTypes, InstitutionRestrictionDisplayScope } from "@/types";
+import type { BackTarget } from "@/types";
+import {
+  ApiProcessError,
+  BannerTypes,
+  InstitutionRestrictionDisplayScope,
+} from "@/types";
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import {
+  EducationProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+} from "@/services/http/dto";
+import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
+import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface EditProgramProps {
   locationId: number;
@@ -62,17 +71,39 @@ const router = useRouter();
 const canEditOnlyBasicInfo = ref(false);
 const { isReadOnlyUser } = useInstitutionAuth();
 const readOnly = computed(() => isReadOnlyUser(props.locationId));
+const { excludeExtraneousValues } = useFormioUtils();
+const processing = ref(false);
 
-const submit = async (program: ProgramFormModel) => {
-  console.log("Program updated:", program);
-  snackBar.success("Program edited successfully");
-};
-const cancel = async () => {
-  router.push(props.backTarget.to);
+const submit = async (program: EducationProgramAPIInDTO) => {
+  processing.value = true;
+  try {
+    const typedData = excludeExtraneousValues(
+      EducationProgramAPIInDTO,
+      program,
+    );
+    await EducationProgramService.shared.updateEducationProgram(
+      props.programId,
+      typedData,
+    );
+    snackBar.success("Education Program updated successfully!");
+    await goBack();
+  } catch (error: unknown) {
+    if (error instanceof ApiProcessError) {
+      snackBar.error(error.message);
+    } else {
+      snackBar.error("An error happened during the saving process.");
+    }
+  } finally {
+    processing.value = false;
+  }
 };
 
 const loaded = (program: EducationProgramAPIOutDTO) => {
   canEditOnlyBasicInfo.value = program.hasOfferings;
+};
+
+const goBack = async (): Promise<void> => {
+  router.push(props.backTarget.to);
 };
 
 const createNewProgram = () => {

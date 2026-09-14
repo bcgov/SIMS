@@ -11,6 +11,8 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  ProgramEvaluationAPIInDTO,
+  ProgramEvaluationAPIOutDTO,
   StudentEducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 
@@ -211,5 +213,19 @@ export class EducationProgramApi extends HttpBaseClient {
     return this.getCall<
       PaginatedResultsAPIOutDTO<EducationProgramPendingAPIOutDTO>
     >(this.addClientRoot(url));
+  }
+
+  /**
+   * Evaluate program's calculated data based on the provided data and key.
+   * @param payload contains the data and key for evaluation.
+   * @returns the calculated data based on the evaluation.
+   */
+  async evaluate(
+    payload: ProgramEvaluationAPIInDTO,
+  ): Promise<ProgramEvaluationAPIOutDTO> {
+    return this.postCall(
+      this.addClientRoot("education-program/evaluate"),
+      payload,
+    );
   }
 }

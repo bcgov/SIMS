@@ -99,12 +99,12 @@ export interface EducationProgramsSummary extends EducationProgramsSummaryAPIOut
 
 export interface ProgramFormModel {
   name: string;
-  description: string;
+  description?: string;
   credentialType: string;
   cipCode: string;
   fieldOfStudyCode: number;
-  nocCode: string;
-  sabcCode: string;
+  nocCode?: string;
+  sabcCode?: string;
   institutionProgramCode?: string;
   programIntensity: ProgramIntensity;
   programDeliveryTypes: ProgramDeliveryTypeValues[];
@@ -131,4 +131,20 @@ export interface ProgramFormModel {
   credentialTypesAviation?: string[];
   minHoursWeekAvi?: FormYesNoOptions;
   programDeclaration: boolean;
+}
+
+/**
+ * Keys of calculated data for education programs.
+ */
+export enum ProgramCalculatedDataKey {
+  FieldOfStudyCode = "fieldOfStudyCode",
+  ProgramStatus = "programStatus",
+}
+
+/**
+ * Evaluation result for calculated data of education programs.
+ */
+export interface ProgramEvaluationResult {
+  [ProgramCalculatedDataKey.FieldOfStudyCode]?: number;
+  [ProgramCalculatedDataKey.ProgramStatus]?: ProgramStatus;
 }

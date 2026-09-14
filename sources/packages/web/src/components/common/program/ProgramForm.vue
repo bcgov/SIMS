@@ -32,6 +32,16 @@
                     ),
                 ]"
               ></v-textarea>
+              <v-select
+                label="Credential type"
+                density="compact"
+                :items="CREDENTIAL_TYPE_ITEMS"
+                v-model="formModel.credentialType"
+                variant="outlined"
+                :rules="[(v) => checkNullOrEmptyRule(v, 'Credential type')]"
+                :readonly="canEditOnlyBasicInfo"
+                @update:model-value="calculateFieldOfStudyCode"
+              />
               <v-text-field
                 v-model="formModel.cipCode"
                 density="compact"
@@ -43,11 +53,12 @@
                   (v) =>
                     checkRegexPattern(
                       v,
-                      /^[0-9]{2}\.[0-9]{4}$/,
+                      CIP_CODE_REGEX,
                       'Classification of Instructional Programs (CIP)',
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
+                @update:model-value="calculateFieldOfStudyCode"
               />
               <v-text-field
                 :model-value="formModel.fieldOfStudyCode"
@@ -67,7 +78,7 @@
                   (v) =>
                     checkRegexPattern(
                       v,
-                      /[0-9]{5}/,
+                      NOC_REGEX,
                       'National Occupational Classification (NOC)',
                       false,
                     ),
@@ -85,7 +96,7 @@
                   (v) =>
                     checkRegexPattern(
                       v,
-                      /[[A-Z]{3}[0-9]{1}/,
+                      SABC_PROGRAM_CODE_REGEX,
                       'SABC program code',
                       false,
                     ),
@@ -566,6 +577,9 @@ import {
   PROGRAM_DESCRIPTION_MAX_LENGTH,
   INSTITUTION_PROGRAM_CODE_MAX_LENGTH,
   OTHER_REGULATORY_BODY_MAX_LENGTH,
+  CIP_CODE_REGEX,
+  NOC_REGEX,
+  SABC_PROGRAM_CODE_REGEX,
 } from "@/constants/program-constants";
 import { computed, ref, watch, watchEffect } from "vue";
 import type { ComponentItemType, VForm, ProgramFormModel } from "@/types";
@@ -575,13 +589,17 @@ import {
   ProgramCourseLoadCalculationTypes,
   ProgramDeliveryTypeValues,
   ProgramESLPercentage,
+  ProgramCalculatedDataKey,
 } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import OptionItemsRadio from "@/components/generic/OptionItemsRadio.vue";
 import OptionItemsCheckbox from "@/components/generic/OptionItemsCheckbox.vue";
 import ProgramEligibilityBanner from "@/components/institutions/banners/ProgramEligibilityBanner.vue";
 import { YES_NO_VALUE_ITEMS } from "@/constants";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import {
+  EducationProgramAPIInDTO,
+  EducationProgramAPIOutDTO,
+} from "@/services/http/dto";
 
 interface ProgramFormProps {
   programId?: number;
@@ -614,6 +632,19 @@ const REGULATORY_BODY_OTHER = "other";
 const NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS =
   "noneOfTheAboveEntranceRequirements";
 const AVIATION_PRIVATE_PILOT_TRAINING = "privatePilotTraining";
+
+// TODO: Convert to lookup.
+const CREDENTIAL_TYPE_ITEMS: ComponentItemType[] = [
+  { title: "Undergraduate Certificate", value: "undergraduateCertificate" },
+  { title: "Undergraduate Citation", value: "undergraduateCitation" },
+  { title: "Undergraduate Diploma", value: "undergraduateDiploma" },
+  { title: "Undergraduate Degree", value: "undergraduateDegree" },
+  { title: "Graduate Certificate", value: "graduateCertificate" },
+  { title: "Graduate Diploma", value: "graduateDiploma" },
+  { title: "Graduate Degree / Master's", value: "graduateDegreeOrMasters" },
+  { title: "Post-Graduate / Doctorate", value: "postGraduateOrDoctorate" },
+  { title: "Qualifying Studies", value: "qualifyingStudies" },
+];
 
 // TODO: Convert to lookup.
 const PROGRAM_LENGTH_ITEMS: ComponentItemType[] = [
@@ -689,7 +720,7 @@ const props = withDefaults(defineProps<ProgramFormProps>(), {
 });
 const emit = defineEmits<{
   cancel: [];
-  submitted: [program: ProgramFormModel];
+  submitted: [program: EducationProgramAPIInDTO];
   loaded: [program: EducationProgramAPIOutDTO];
 }>();
 const formModel = ref<ProgramFormModel>({} as ProgramFormModel);
@@ -789,7 +820,12 @@ const submit = async () => {
   if (!valid) {
     return;
   }
-  emit("submitted", formModel.value);
+  const submitData: EducationProgramAPIInDTO = {
+    ...formModel.value,
+    isBCPrivate: formContext.value!.isBCPrivate,
+    isBCPublic: formContext.value!.isBCPublic,
+  };
+  emit("submitted", submitData);
 };
 const updateEntranceRequirements = () => {
   const currentEntranceRequirements = formModel.value.entranceRequirements;
@@ -881,6 +917,22 @@ const loadProgram = async (programId: number) => {
   } finally {
     loading.value = false;
   }
+};
+const calculateFieldOfStudyCode = async () => {
+  if (
+    isReadonly.value ||
+    !formModel.value.credentialType ||
+    !formModel.value.cipCode ||
+    !CIP_CODE_REGEX.test(formModel.value.cipCode)
+  ) {
+    return;
+  }
+  const evaluationResult = await EducationProgramService.shared.evaluate({
+    data: formModel.value,
+    calculatedDataKeys: [ProgramCalculatedDataKey.FieldOfStudyCode],
+  });
+  formModel.value.fieldOfStudyCode =
+    evaluationResult.calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode]!;
 };
 watchEffect(async () => {
   if (props.programId) {
