@@ -455,14 +455,7 @@
               "className": "mt-2"
             },
             {
-              "key": "panelContent",
-              "conditional": {
-                "show": true,
-                "when": "offeringIntensity",
-                "eq": "Full Time"
-              },
               "label": "Content",
-              "input": false,
               "tag": "p",
               "attrs": [
                 {
@@ -471,19 +464,20 @@
                 }
               ],
               "content": "Adjustments may occur due to overawards on your account, as a result of tuition remittance requested by your institution, or due to restrictions applied to your account following the initial assessment.",
+              "refreshOnChange": false,
+              "key": "adjustmentsOverawards",
+              "conditional": {
+                "show": true,
+                "when": "offeringIntensity",
+                "eq": "Full Time"
+              },
               "type": "htmlelement",
+              "input": false,
               "hideLabel": true,
               "tableView": false
             },
             {
-              "key": "panelContent",
-              "conditional": {
-                "show": true,
-                "when": "offeringIntensity",
-                "eq": "Part Time"
-              },
               "label": "Content",
-              "input": false,
               "tag": "p",
               "attrs": [
                 {
@@ -492,7 +486,15 @@
                 }
               ],
               "content": "Adjustments may occur once confirmation of your outstanding principal balance of Part-time Canada Student loans and grants is received, as a result of tuition remittance requested by your institution, or due to restrictions applied to your account following the initial assessment.",
+              "refreshOnChange": false,
+              "key": "adjustmentsConfirmation",
+              "conditional": {
+                "show": true,
+                "when": "offeringIntensity",
+                "eq": "Part Time"
+              },
               "type": "htmlelement",
+              "input": false,
               "hideLabel": true,
               "tableView": false
             }
@@ -5798,6 +5800,8 @@
         },
         {
           "label": "HTML",
+          "tag": "p",
+          "className": "font-bold",
           "attrs": [
             {
               "attr": "",
@@ -5806,15 +5810,14 @@
           ],
           "content": "Please note that separate agreements are required for part-time and full-time applications.",
           "refreshOnChange": false,
-          "key": "html53",
+          "key": "msfaaNote",
           "type": "htmlelement",
           "input": false,
-          "tableView": false,
-          "tag": "p",
-          "className": "font-bold"
+          "tableView": false
         },
         {
           "label": "HTML",
+          "tag": "p",
           "attrs": [
             {
               "attr": "",
@@ -5823,11 +5826,10 @@
           ],
           "content": "You will receive a \"Welcome Email\" from the National Student Loans Service Centre (NSLSC). This email will contain a secure URL to register for an online NSLSC account, where you will complete and submit your MSFAA using the 10‑digit MSFAA number provided in this Notice of Assessment.",
           "refreshOnChange": false,
-          "key": "html53",
+          "key": "msfaaWelcome",
           "type": "htmlelement",
           "input": false,
-          "tableView": false,
-          "tag": "p"
+          "tableView": false
         },
         {
           "label": "Columns",
