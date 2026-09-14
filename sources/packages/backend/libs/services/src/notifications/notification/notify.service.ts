@@ -13,11 +13,6 @@ import { Notification } from "@sims/sims-db";
 
 const AUTH_HEADER = "x-api-key";
 const NO_ERROR_DATA_AVAILABLE = "Error data is not available";
-const NOTIFY_PERMANENT_FAILURE_HTTP_ERRORS = new Set([
-  HttpStatus.BAD_REQUEST,
-  HttpStatus.UNPROCESSABLE_ENTITY,
-  HttpStatus.PAYLOAD_TOO_LARGE,
-]);
 
 @Injectable()
 export class NotifyService {
