@@ -41,7 +41,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   let collegeFUser: User;
   const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
   const TEST_SABC_CODE = "GGG9";
-  const ENDPOINT = "/institutions/education-program";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -92,7 +91,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -253,7 +252,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       // Act/Assert
       let educationProgramId: number;
       await request(app.getHttpServer())
-        .post(ENDPOINT)
+        .post(getEndpoint())
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
@@ -286,7 +285,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -327,7 +326,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(getPayload())
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
@@ -348,7 +347,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -373,7 +372,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -407,7 +406,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -500,7 +499,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
       // Act/Assert
       await request(app.getHttpServer())
-        .post(ENDPOINT)
+        .post(getEndpoint())
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.BAD_REQUEST)
@@ -523,7 +522,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(ENDPOINT)
+      .post(getEndpoint())
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -612,3 +611,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     await app?.close();
   });
 });
+
+/**
+ * Get API endpoint.
+ * @returns the API endpoint.
+ */
+function getEndpoint(): string {
+  return "/institutions/education-program";
+}
