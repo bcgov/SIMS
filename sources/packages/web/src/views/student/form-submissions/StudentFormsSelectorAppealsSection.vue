@@ -66,15 +66,12 @@
                       ></v-checkbox-btn>
                     </v-list-item-action>
                   </template>
-                  <banner
+                  <form-submission-blocked-banner
                     v-if="
                       selectedApplicationAppealsForms?.includes(form.id) &&
                       form.blockedReason
                     "
-                    class="my-2"
-                    :type="BannerTypes.Error"
-                    :header="form.blockedReason"
-                    :summary="getBlockedReasonMessage(form.blockedReason)"
+                    :blocked-reason="form.blockedReason"
                   />
                 </v-list-item>
               </v-list>
@@ -145,15 +142,12 @@
                     ></v-checkbox-btn>
                   </v-list-item-action>
                 </template>
-                <banner
+                <form-submission-blocked-banner
                   v-if="
                     selectedStandaloneAppealsForm?.includes(form.id) &&
                     form.blockedReason
                   "
-                  class="my-2"
-                  :type="BannerTypes.Error"
-                  :header="form.blockedReason"
-                  :summary="getBlockedReasonMessage(form.blockedReason)"
+                  :blocked-reason="form.blockedReason"
                 />
               </v-list-item>
             </v-list>
@@ -192,8 +186,9 @@ import {
   EligibleApplicationForAppealAPIOutDTO,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { FormCategory, BannerTypes, VForm } from "@/types";
+import { FormCategory, VForm } from "@/types";
 import { StudentAppealService } from "@/services/StudentAppealService";
+import FormSubmissionBlockedBanner from "@/components/form-submissions/FormSubmissionBlockedBanner.vue";
 
 enum AppealTypes {
   Application = "Application",
@@ -201,6 +196,9 @@ enum AppealTypes {
 }
 
 export default defineComponent({
+  components: {
+    FormSubmissionBlockedBanner,
+  },
   props: {
     formsConfigurations: {
       type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
@@ -216,8 +214,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const { checkBlockedSubmissions, getBlockedReasonMessage } =
-      useFormSubmission();
+    const { checkBlockedSubmissions } = useFormSubmission();
     const appealsSelectionForm = ref({} as VForm);
     const standaloneAppealsSelectionForm = ref({} as VForm);
     // Forms Categories
@@ -348,7 +345,6 @@ export default defineComponent({
     };
 
     return {
-      BannerTypes,
       appealsSelectionForm,
       standaloneAppealsSelectionForm,
       checkNullOrEmptyRule,
@@ -364,7 +360,6 @@ export default defineComponent({
       selectedStandaloneAppealsForm,
       fillApplicationAppeals,
       fillStudentAppeals,
-      getBlockedReasonMessage,
       checkBlockedSubmissions,
     };
   },

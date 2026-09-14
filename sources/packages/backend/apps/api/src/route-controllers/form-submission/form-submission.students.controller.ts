@@ -23,7 +23,6 @@ import {
   FormSubmissionCancellationService,
   FormSubmissionService,
   FormSubmissionSubmitService,
-  StudentService,
 } from "../../services";
 import { AuthorizedParties, StudentUserToken } from "../../auth";
 import {
@@ -67,7 +66,6 @@ export class FormSubmissionStudentsController extends BaseController {
     private readonly featureTogglesService: FeatureTogglesService,
     private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
     private readonly formSubmissionService: FormSubmissionService,
-    private readonly studentService: StudentService,
   ) {
     super();
   }
@@ -86,9 +84,11 @@ export class FormSubmissionStudentsController extends BaseController {
         (form) =>
           !this.featureTogglesService.isFormDisabled(form.formDefinitionName),
       );
-    const student = await this.studentService.getStudentById(
+    const blockedReasons = await this.formSubmissionService.checkIfFormsBlocked(
+      studentForms.map((form) => form.formDefinitionName),
       userToken.studentId,
     );
+
     return {
       configurations: studentForms.map((configuration) => ({
         id: configuration.id,
@@ -98,10 +98,7 @@ export class FormSubmissionStudentsController extends BaseController {
         formDescription: configuration.formDescription,
         allowBundledSubmission: configuration.allowBundledSubmission,
         hasApplicationScope: configuration.hasApplicationScope,
-        blockedReason: this.formSubmissionService.checkIfFormBlocked(
-          configuration.formDefinitionName,
-          student,
-        ),
+        blockedReason: blockedReasons.get(configuration.formDefinitionName),
       })),
     };
   }

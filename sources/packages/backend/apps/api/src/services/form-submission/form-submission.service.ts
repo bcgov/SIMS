@@ -13,7 +13,6 @@ import {
   FormSubmissionStatus,
   getUserFullNameLikeSearch,
   ModifiedIndependentStatus,
-  Student,
 } from "@sims/sims-db";
 import {
   FormSubmissionBlockedReason,
@@ -31,6 +30,7 @@ import {
   FormNames,
   FormSubmissionAuthorizationService,
   FormSubmissionAuthRoles,
+  StudentService,
 } from "../../services";
 
 /**
@@ -44,6 +44,7 @@ export class FormSubmissionService {
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
     private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
+    private readonly studentService: StudentService,
   ) {}
 
   /**
@@ -351,22 +352,35 @@ export class FormSubmissionService {
   }
 
   /**
-   * Checks whether the specified form is blocked from submission for the specified student.
-   * Logic is specific to the form definition.
-   * @param formDefinitionName The name of the form definition to check for a block.
-   * @param student The student for whom the form block is being checked.
-   * @returns The reason why the form is blocked from submission, or undefined if it is not blocked.
+   * Determines whether each requested form is blocked for a student.
+   * @param formDefinitionNames Form definition names to check.
+   * @param studentId The ID of the student submitting the forms.
+   * @returns Blocked reasons in the same order as the provided form names.
    */
-  checkIfFormBlocked(
-    formDefinitionName: string,
-    student: Student,
-  ): FormSubmissionBlockedReason | undefined {
-    if (formDefinitionName === FormNames.ModifiedIndependentAppeal) {
-      return student.modifiedIndependentStatus ===
-        ModifiedIndependentStatus.Approved
-        ? FormSubmissionBlockedReason.ModifiedIndependentStatusAlreadyApproved
-        : undefined;
+  async checkIfFormsBlocked(
+    formDefinitionNames: string[],
+    studentId: number,
+  ): Promise<Map<string, FormSubmissionBlockedReason>> {
+    const blockedReasons = new Map<string, FormSubmissionBlockedReason>();
+
+    if (!formDefinitionNames.length) {
+      return blockedReasons;
     }
-    return undefined;
+
+    const student = await this.studentService.getStudentById(studentId);
+
+    formDefinitionNames.forEach((formDefinitionName) => {
+      if (
+        formDefinitionName === FormNames.ModifiedIndependentAppeal &&
+        student.modifiedIndependentStatus === ModifiedIndependentStatus.Approved
+      ) {
+        blockedReasons.set(
+          formDefinitionName,
+          FormSubmissionBlockedReason.ModifiedIndependentStatusAlreadyApproved,
+        );
+      }
+    });
+
+    return blockedReasons;
   }
 }

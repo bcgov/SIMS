@@ -46,15 +46,12 @@
                     ></v-checkbox-btn>
                   </v-list-item-action>
                 </template>
-                <banner
+                <form-submission-blocked-banner
                   v-if="
                     selectedStandaloneForm?.includes(form.id) &&
                     form.blockedReason
                   "
-                  class="my-2"
-                  :type="BannerTypes.Error"
-                  :header="form.blockedReason"
-                  :summary="getBlockedReasonMessage(form.blockedReason)"
+                  :blocked-reason="form.blockedReason"
                 />
               </v-list-item>
             </v-list>
@@ -85,14 +82,18 @@
   </body-header-container>
 </template>
 <script lang="ts">
+import FormSubmissionBlockedBanner from "@/components/form-submissions/FormSubmissionBlockedBanner.vue";
 import { useFormSubmission, useRules } from "@/composables";
 import { defineComponent, watchEffect, ref, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
-import { BannerTypes, FormCategory, VForm } from "@/types";
+import { FormCategory, VForm } from "@/types";
 import { useRouter } from "vue-router";
 import { FormSubmissionConfigurationAPIOutDTO } from "@/services/http/dto";
 
 export default defineComponent({
+  components: {
+    FormSubmissionBlockedBanner,
+  },
   props: {
     formsConfigurations: {
       type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
@@ -102,8 +103,7 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
-    const { checkBlockedSubmissions, getBlockedReasonMessage } =
-      useFormSubmission();
+    const { checkBlockedSubmissions } = useFormSubmission();
     const standaloneForms = ref<FormSubmissionConfigurationAPIOutDTO[]>([]);
     const selectedStandaloneForm = ref<number[]>();
     const standaloneFormsSelectionForm = ref({} as VForm);
@@ -135,8 +135,6 @@ export default defineComponent({
       selectedStandaloneForm,
       standaloneFormsSelectionForm,
       fillStudentForm,
-      BannerTypes,
-      getBlockedReasonMessage,
       checkBlockedSubmissions,
     };
   },

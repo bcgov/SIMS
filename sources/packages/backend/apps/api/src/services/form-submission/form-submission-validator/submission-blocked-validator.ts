@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { FormSubmissionConfig } from "../form-submission.models";
 import { CustomNamedError } from "@sims/utilities";
 import { FormSubmissionValidatorBase } from ".";
-import { FormSubmissionService, StudentService } from "../..";
+import { FormSubmissionService } from "../..";
 import { FORM_SUBMISSION_BLOCKED } from "../constants";
 
 /**
@@ -10,10 +10,7 @@ import { FORM_SUBMISSION_BLOCKED } from "../constants";
  */
 @Injectable()
 export class SubmissionBlockedValidator implements FormSubmissionValidatorBase {
-  constructor(
-    private readonly formSubmissionService: FormSubmissionService,
-    private readonly studentService: StudentService,
-  ) {}
+  constructor(private readonly formSubmissionService: FormSubmissionService) {}
 
   /**
    * Executes the validation to prevent blocked form submissions.
@@ -24,14 +21,12 @@ export class SubmissionBlockedValidator implements FormSubmissionValidatorBase {
     formSubmissionConfigs: FormSubmissionConfig[],
     studentId: number,
   ): Promise<void> {
-    // All forms in the submission share the same context, so we can use the first one as reference for the validation.
-    const [referencedConfig] = formSubmissionConfigs;
-    const student = await this.studentService.getStudentById(studentId);
-    const blockedReason = this.formSubmissionService.checkIfFormBlocked(
-      referencedConfig.formDefinitionName,
-      student,
+    const blockedReasons = await this.formSubmissionService.checkIfFormsBlocked(
+      formSubmissionConfigs.map((config) => config.formDefinitionName),
+      studentId,
     );
-    if (blockedReason) {
+    // A single blocked form will fail the entire submission.
+    if (blockedReasons.size > 0) {
       throw new CustomNamedError(
         "The form is currently blocked from submission.",
         FORM_SUBMISSION_BLOCKED,

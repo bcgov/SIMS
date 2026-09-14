@@ -30,7 +30,7 @@ export function useFormSubmission() {
    */
   const getBlockedReasonMessage = (
     blockedReason: FormSubmissionBlockedReason,
-  ) => {
+  ): string => {
     return (
       BLOCKED_REASON_MESSAGES[blockedReason] ??
       "The form is currently blocked from submission."
@@ -48,7 +48,7 @@ export function useFormSubmission() {
     value: number[] | undefined,
     forms: FormSubmissionConfigurationAPIOutDTO[],
     message: string,
-  ) => {
+  ): true | string => {
     if (!value?.length) {
       return true;
     }
