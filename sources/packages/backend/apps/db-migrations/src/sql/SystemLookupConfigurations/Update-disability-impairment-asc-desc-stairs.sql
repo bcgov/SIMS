@@ -20,10 +20,20 @@ UPDATE
     sims.student_disability_profile_disabilities
 SET
     impairments_before_update = impairments,
-    impairments = array_replace(
-        impairments,
-        'USING_STAIRS',
-        'ASC_DESC_STAIRS'
+    impairments = ARRAY(
+        SELECT impairment
+        FROM (
+            SELECT DISTINCT ON (impairment) impairment, position
+            FROM unnest(
+                array_replace(
+                    impairments,
+                    'USING_STAIRS',
+                    'ASC_DESC_STAIRS'
+                )
+            ) WITH ORDINALITY AS items(impairment, position)
+            ORDER BY impairment, position
+        ) AS deduplicated
+        ORDER BY position
     )
 WHERE
     'USING_STAIRS' = ANY(impairments);
