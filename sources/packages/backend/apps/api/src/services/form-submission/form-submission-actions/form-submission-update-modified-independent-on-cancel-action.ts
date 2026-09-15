@@ -1,7 +1,7 @@
 import {
   FormCategory,
   FormSubmissionActionType,
-  FormSubmissionDecisionStatus,
+  FormSubmissionStatus,
   ModifiedIndependentStatus,
   Student,
 } from "@sims/sims-db";
@@ -11,16 +11,17 @@ import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 
 @Injectable()
-export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissionAction {
+export class FormSubmissionUpdateModifiedIndependentOnCancelAction extends FormSubmissionAction {
   /**
    * Type of action being performed.
    */
   get actionType(): FormSubmissionActionType {
-    return FormSubmissionActionType.UpdateModifiedIndependent;
+    return FormSubmissionActionType.UpdateModifiedIndependentOnCancel;
   }
 
   /**
-   * Updates the student's modified independent status based on the approval status.
+   * Updates the student's modified independent status to Not Requested if the form submission
+   * is cancelled and the student's modified independent status is currently Requested.
    * @param formSubmission form submission to process.
    * @param auditUserId ID of the user performing the action.
    * @param auditDate date the action is being performed.
@@ -38,17 +39,14 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
         `Unexpected number of submission items associated with the form submission action. Expected 1 but found ${submissionItems.length}.`,
       );
     }
-    const [submissionItem] = submissionItems;
-    const modifiedIndependentStatus =
-      submissionItem.decisionStatus === FormSubmissionDecisionStatus.Approved
-        ? ModifiedIndependentStatus.Approved
-        : ModifiedIndependentStatus.Declined;
     const auditUser = { id: auditUserId };
     await entityManager.getRepository(Student).update(
-      { id: formSubmission.studentId },
       {
-        modifiedIndependentStatus,
-        modifiedIndependentFormSubmissionItem: { id: submissionItem.id },
+        id: formSubmission.studentId,
+        modifiedIndependentStatus: ModifiedIndependentStatus.Requested,
+      },
+      {
+        modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
         modifiedIndependentStatusUpdatedBy: auditUser,
         modifiedIndependentStatusUpdatedOn: auditDate,
         modifier: auditUser,
@@ -64,7 +62,7 @@ export class FormSubmissionUpdateModifiedIndependentAction extends FormSubmissio
    */
   protected appliesTo(formSubmission: FormSubmissionActionModel): boolean {
     return (
-      this.hasFinalDecisionStatus(formSubmission) &&
+      formSubmission.submissionStatus === FormSubmissionStatus.Cancelled &&
       formSubmission.formCategory === FormCategory.StudentAppeal
     );
   }

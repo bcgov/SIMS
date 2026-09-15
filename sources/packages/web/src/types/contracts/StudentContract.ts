@@ -39,6 +39,10 @@ export enum ModifiedIndependentStatus {
    */
   NotRequested = "Not requested",
   /**
+   * Student requested for modified independent status.
+   */
+  Requested = "Requested",
+  /**
    * Student approved for modified independent status.
    */
   Approved = "Approved",
@@ -124,9 +128,10 @@ export enum DisabilityStatusViewType {
 }
 
 export enum ModifiedIndependentDisplayStatus {
-  Yes = "Yes",
-  No = "No",
   NotRequested = "Not requested",
+  Requested = "Requested",
+  Approved = "Approved",
+  Declined = "Declined",
 }
 
 /**
