@@ -28,8 +28,8 @@ import { AuthStatus, AppRoutes, InstitutionUserTypes } from "@/types";
 import ManageInstitutionSideBar from "@/components/layouts/Institution/sidebar/ManageInstitutionSideBar.vue";
 import InstitutionHomeSideBar from "@/components/layouts/Institution/sidebar/HomeSideBar.vue";
 import InstitutionApplicationSideBar from "@/components/layouts/Institution/sidebar/InstitutionApplicationSideBar.vue";
-import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
 import EditProgram from "@/views/institution/locations/programs/EditProgram.vue";
+import CreateProgram from "@/views/institution/locations/programs/CreateProgram.vue";
 import LocationCOERequest from "@/views/institution/locations/confirmation-of-enrollment/ApplicationDetailsForCOE.vue";
 import LocationProgramView from "@/views/institution/locations/programs/LocationProgramView.vue";
 import LocationProgramOfferingCreate from "@/views/institution/locations/offerings/OfferingCreate.vue";
@@ -505,9 +505,18 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
       {
         path: AppRoutes.LocationProgramsCreate,
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        component: LocationProgramAddEdit,
+        component: CreateProgram,
         props: (route) => ({
           locationId: Number.parseInt(route.params.locationId as string),
+          backTarget: {
+            name: "Programs",
+            to: {
+              name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+              params: {
+                locationId: Number.parseInt(route.params.locationId as string),
+              },
+            },
+          },
         }),
         meta: {
           clientType: ClientIdType.Institution,
@@ -525,13 +534,13 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           programId: Number.parseInt(route.params.programId as string),
           locationId: Number.parseInt(route.params.locationId as string),
           backTarget: {
-            name: "Programs",
+            name: "View Program",
             to: {
-              name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-            },
-            params: {
-              programId: Number.parseInt(route.params.programId as string),
-              locationId: Number.parseInt(route.params.locationId as string),
+              name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+              params: {
+                programId: Number.parseInt(route.params.programId as string),
+                locationId: Number.parseInt(route.params.locationId as string),
+              },
             },
           },
         }),
