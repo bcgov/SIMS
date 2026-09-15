@@ -7,7 +7,7 @@ import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
-const DEFAULT_POLLING_RECORDS_LIMIT = 1000;
+const DEFAULT_POLLING_RECORDS_LIMIT = 100;
 const DEFAULT_EXTERNAL_RATE_LIMIT = 490;
 const DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS = 60;
 
