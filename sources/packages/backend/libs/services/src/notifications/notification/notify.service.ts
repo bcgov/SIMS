@@ -40,19 +40,20 @@ export class NotifyService {
         },
       );
       this.logger.log(
-        `Email notification ID ${notification.id} sent successfully: ${JSON.stringify(
+        `Email notification ID ${notification.id}, template ${notification.templateId} sent successfully: ${JSON.stringify(
           response.data,
         )}`,
       );
     } catch (error: unknown) {
       const axiosError = error as AxiosError;
       if (axiosError.isAxiosError) {
+        const defaultErrorMessage = `HTTP error ${axiosError.response.status} while sending email notification ID ${notification.id}, template ${notification.templateId}: ${JSON.stringify(
+          axiosError.response?.data,
+        )}`;
         switch (axiosError.response?.status) {
           case HttpStatus.TOO_MANY_REQUESTS:
-            this.logger.error(
-              `Notify API call failed for email notification ID ${notification.id} due too may requests.`,
-              error,
-            );
+            // Not considered an error for a notification.
+            this.logger.log(defaultErrorMessage);
             throw new CustomNamedError(
               axiosError.message,
               NOTIFY_LIMIT_EXCEEDED_ERROR,
@@ -60,11 +61,7 @@ export class NotifyService {
           case HttpStatus.BAD_REQUEST:
           case HttpStatus.UNPROCESSABLE_ENTITY:
           case HttpStatus.PAYLOAD_TOO_LARGE:
-            this.logger.error(
-              `Error while sending email notification ID ${notification.id}: ${JSON.stringify(
-                axiosError.response,
-              )}`,
-            );
+            this.logger.log(defaultErrorMessage);
             throw new CustomNamedError(
               axiosError.message,
               NOTIFY_PERMANENT_FAILURE_ERROR,
@@ -73,7 +70,7 @@ export class NotifyService {
         }
       }
       this.logger.error(
-        `Error error while sending email notification ID ${notification.id}. This error will cause the notification to be retried.`,
+        `Error error while sending email notification ID ${notification.id}, template ${notification.templateId}. This error will cause the notification to be retried.`,
         error,
       );
       throw error;
