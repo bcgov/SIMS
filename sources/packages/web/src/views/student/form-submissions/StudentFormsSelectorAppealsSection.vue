@@ -55,7 +55,7 @@
                   :title="form.formType"
                   :value="form.id"
                   :subtitle="form.formDescription"
-                  prepend-icon="mdi-scale-balance"
+                  :ripple="false"
                 >
                   <template #prepend="{ isSelected, select }">
                     <v-list-item-action start>
@@ -66,12 +66,27 @@
                       ></v-checkbox-btn>
                     </v-list-item-action>
                   </template>
+                  <form-submission-blocked-banner
+                    v-if="
+                      selectedApplicationAppealsForms?.includes(form.id) &&
+                      form.blockedReason
+                    "
+                    :blocked-reason="form.blockedReason"
+                  />
                 </v-list-item>
               </v-list>
               <v-input
                 :model-value="selectedApplicationAppealsForms"
                 hide-details="auto"
-                :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
+                :rules="[
+                  (v) => checkNullOrEmptyRule(v, 'At least one appeal'),
+                  (v) =>
+                    checkBlockedSubmissions(
+                      v,
+                      applicationAppeals,
+                      'All appeals must be valid.',
+                    ),
+                ]"
               >
               </v-input>
             </template>
@@ -116,7 +131,7 @@
                 :title="form.formType"
                 :subtitle="form.formDescription"
                 :value="form.id"
-                prepend-icon="mdi-scale-balance"
+                :ripple="false"
               >
                 <template #prepend="{ isSelected, select }">
                   <v-list-item-action start>
@@ -127,12 +142,27 @@
                     ></v-checkbox-btn>
                   </v-list-item-action>
                 </template>
+                <form-submission-blocked-banner
+                  v-if="
+                    selectedStandaloneAppealsForm?.includes(form.id) &&
+                    form.blockedReason
+                  "
+                  :blocked-reason="form.blockedReason"
+                />
               </v-list-item>
             </v-list>
             <v-input
               :model-value="selectedStandaloneAppealsForm"
               hide-details="auto"
-              :rules="[(v) => checkNullOrEmptyRule(v, 'At least one appeal')]"
+              :rules="[
+                (v) => checkNullOrEmptyRule(v, 'At least one appeal'),
+                (v) =>
+                  checkBlockedSubmissions(
+                    v,
+                    standaloneAppealsForms,
+                    'At least one valid appeal is required',
+                  ),
+              ]"
             >
             </v-input>
           </v-form>
@@ -148,7 +178,7 @@
   </body-header-container>
 </template>
 <script lang="ts">
-import { useRules, useSnackBar } from "@/composables";
+import { useFormSubmission, useRules, useSnackBar } from "@/composables";
 import { computed, defineComponent, ref, watch, PropType } from "vue";
 import { StudentRoutesConst } from "@/constants/routes/RouteConstants";
 import {
@@ -156,8 +186,9 @@ import {
   EligibleApplicationForAppealAPIOutDTO,
 } from "@/services/http/dto";
 import { useRouter } from "vue-router";
-import { FormCategory, BannerTypes, VForm } from "@/types";
+import { FormCategory, VForm } from "@/types";
 import { StudentAppealService } from "@/services/StudentAppealService";
+import FormSubmissionBlockedBanner from "@/components/form-submissions/FormSubmissionBlockedBanner.vue";
 
 enum AppealTypes {
   Application = "Application",
@@ -165,6 +196,9 @@ enum AppealTypes {
 }
 
 export default defineComponent({
+  components: {
+    FormSubmissionBlockedBanner,
+  },
   props: {
     formsConfigurations: {
       type: Array as PropType<FormSubmissionConfigurationAPIOutDTO[]>,
@@ -180,6 +214,7 @@ export default defineComponent({
     const snackBar = useSnackBar();
     const router = useRouter();
     const { checkNullOrEmptyRule } = useRules();
+    const { checkBlockedSubmissions } = useFormSubmission();
     const appealsSelectionForm = ref({} as VForm);
     const standaloneAppealsSelectionForm = ref({} as VForm);
     // Forms Categories
@@ -279,8 +314,8 @@ export default defineComponent({
     );
 
     const fillApplicationAppeals = async (): Promise<void> => {
-      const formIsValid = appealsSelectionForm.value.validate();
-      if (!formIsValid) {
+      const validationResult = await appealsSelectionForm.value.validate();
+      if (!validationResult.valid) {
         return;
       }
       await router.push({
@@ -296,8 +331,9 @@ export default defineComponent({
     };
 
     const fillStudentAppeals = async (): Promise<void> => {
-      const formIsValid = standaloneAppealsSelectionForm.value.validate();
-      if (!formIsValid) {
+      const validationResult =
+        await standaloneAppealsSelectionForm.value.validate();
+      if (!validationResult.valid) {
         return;
       }
       await router.push({
@@ -309,7 +345,6 @@ export default defineComponent({
     };
 
     return {
-      BannerTypes,
       appealsSelectionForm,
       standaloneAppealsSelectionForm,
       checkNullOrEmptyRule,
@@ -325,6 +360,7 @@ export default defineComponent({
       selectedStandaloneAppealsForm,
       fillApplicationAppeals,
       fillStudentAppeals,
+      checkBlockedSubmissions,
     };
   },
 });

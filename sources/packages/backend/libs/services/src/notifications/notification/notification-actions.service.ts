@@ -8,6 +8,7 @@ import {
 } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
+import { NotificationEmailMessage } from "./gc-notify.model";
 import {
   StudentRestrictionAddedNotification,
   MinistryStudentFileUploadNotification,
@@ -15,7 +16,6 @@ import {
   StudentFileUploadNotification,
   StudentNotification,
   ECEResponseFileProcessingNotification,
-  NotificationEmailMessage,
   ApplicationOfferingChangeRequestInProgressWithStudentNotification,
   ApplicationOfferingChangeRequestCompleteNotification,
   LegacyRestrictionAddedNotification,
@@ -45,7 +45,7 @@ import {
   StudentAcceptAssessmentReminderNotification,
   ProgramSuspensionBlockingApplicationNotification,
   EmailNotification,
-} from "..";
+} from "./notification.model";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
 import { ECE_RESPONSE_ATTACHMENT_FILE_NAME } from "@sims/integrations/constants";
@@ -76,7 +76,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.StudentFileUpload,
       );
@@ -85,6 +85,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentFileUpload,
       messagePayload: {
         email_address: emailContact,
@@ -123,13 +124,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryFileUpload,
       );
 
     const notificationToSend = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.MinistryFileUpload,
       messagePayload: {
         email_address: notification.toAddress,
@@ -163,7 +165,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.PartialStudentMatchNotification,
       );
@@ -172,6 +174,7 @@ export class NotificationActionsService {
     }
 
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      notifyTemplateId,
       messageType: NotificationMessageType.PartialStudentMatchNotification,
       messagePayload: {
         template_id: templateId,
@@ -206,7 +209,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MSFAACancellation,
       );
@@ -222,6 +225,7 @@ export class NotificationActionsService {
 
     const notificationToSend = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.MSFAACancellation,
       messagePayload: messagePayload,
     };
@@ -245,7 +249,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
       );
@@ -259,6 +263,7 @@ export class NotificationActionsService {
     };
     const notificationToSend = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ApplicationOfferingChangeRequestInProgressWithStudent,
       messagePayload: messagePayload,
@@ -282,7 +287,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
       );
@@ -296,6 +301,7 @@ export class NotificationActionsService {
     };
     const notificationToSend = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ApplicationOfferingChangeRequestCompletedByMinistry,
       messagePayload: messagePayload,
@@ -319,12 +325,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentRestrictionAdded,
       );
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentRestrictionAdded,
       messagePayload: {
         email_address: notification.toAddress,
@@ -356,7 +363,7 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager?: EntityManager,
   ): Promise<void> {
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.LegacyRestrictionAdded,
       );
@@ -367,6 +374,7 @@ export class NotificationActionsService {
     emailContacts.forEach((emailContact) => {
       const notificationsToSend = notifications.map((notification) => ({
         userId: notification.userId,
+        notifyTemplateId,
         messageType: NotificationMessageType.LegacyRestrictionAdded,
         messagePayload: {
           email_address: emailContact,
@@ -402,13 +410,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryCompletesException,
       );
 
     const exceptionCompleteNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.MinistryCompletesException,
       messagePayload: {
         email_address: notification.toAddress,
@@ -472,6 +481,7 @@ export class NotificationActionsService {
     const notificationsToSend = notification.emailRecipients.map(
       (emailRecipient) => ({
         userId: notification.userId,
+        notifyTemplateId: notificationMessage.notifyTemplateId,
         messageType,
         messagePayload: {
           email_address: emailRecipient,
@@ -500,13 +510,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionReportsChange,
       );
 
     const institutionReportChangeNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.InstitutionReportsChange,
       messagePayload: {
         email_address: notification.toAddress,
@@ -538,13 +549,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionCompletesPIR,
       );
 
     const institutionCompletePIRNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.InstitutionCompletesPIR,
       messagePayload: {
         email_address: notification.toAddress,
@@ -576,13 +588,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.InstitutionCompletesCOE,
       );
 
     const institutionConfirmCOENotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.InstitutionCompletesCOE,
       messagePayload: {
         email_address: notification.toAddress,
@@ -624,13 +637,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.AssessmentReadyForConfirmation,
         { entityManager },
       );
     const assessmentReadyNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.AssessmentReadyForConfirmation,
       messagePayload: {
         email_address: notification.toAddress,
@@ -660,12 +674,14 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.SINValidationComplete,
+        { entityManager },
       );
     const sinCompleteNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.SINValidationComplete,
       messagePayload: {
         email_address: notification.toAddress,
@@ -695,7 +711,7 @@ export class NotificationActionsService {
     notification: ECEResponseFileProcessingNotification,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ECEResponseFileProcessing,
       );
@@ -722,10 +738,12 @@ export class NotificationActionsService {
             file: base64Encode(notification.attachmentFileContent),
             filename: ECE_RESPONSE_ATTACHMENT_FILE_NAME,
             sending_method: "attach",
+            mimeType: "text/plain",
           },
         },
       };
       const eceResponseFileProcessingNotification = {
+        notifyTemplateId,
         messageType: NotificationMessageType.ECEResponseFileProcessing,
         messagePayload: messagePayload,
       };
@@ -751,12 +769,13 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentNotificationDisbursementBlocked,
       );
     const notificationToSend = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.StudentNotificationDisbursementBlocked,
       messagePayload: {
@@ -789,7 +808,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryNotificationDisbursementBlocked,
         { throwOnMissingEmailContacts: true },
@@ -799,6 +818,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.MinistryNotificationDisbursementBlocked,
       messagePayload: {
@@ -833,7 +853,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ApplicationExceptionRequestNotification,
       );
@@ -842,6 +862,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ApplicationExceptionRequestNotification,
       messagePayload: {
@@ -877,7 +898,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ApplicationEditedTooManyTimesNotification,
       );
@@ -886,6 +907,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ApplicationEditedTooManyTimesNotification,
       messagePayload: {
@@ -920,7 +942,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification,
       );
@@ -929,6 +951,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.StudentRequestsBasicBCeIDAccountNotification,
       messagePayload: {
@@ -961,7 +984,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification,
       );
@@ -970,6 +993,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ApplicationOfferingChangeRequestApprovedByStudentNotification,
       messagePayload: {
@@ -1003,7 +1027,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.InstitutionRequestsDesignationNotification,
       );
@@ -1012,6 +1036,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.InstitutionRequestsDesignationNotification,
       messagePayload: {
@@ -1043,7 +1068,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.InstitutionAddsPendingProgramNotification,
       );
@@ -1052,6 +1077,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.InstitutionAddsPendingProgramNotification,
       messagePayload: {
@@ -1085,7 +1111,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.InstitutionAddsPendingOfferingNotification,
       );
@@ -1094,6 +1120,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.InstitutionAddsPendingOfferingNotification,
       messagePayload: {
@@ -1131,7 +1158,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ECertFeedbackFileErrorNotification,
       );
@@ -1139,6 +1166,7 @@ export class NotificationActionsService {
       return;
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
+      notifyTemplateId,
       messageType: NotificationMessageType.ECertFeedbackFileErrorNotification,
       messagePayload: {
         email_address: emailContact,
@@ -1171,7 +1199,7 @@ export class NotificationActionsService {
     notification: DailyDisbursementReportProcessingNotification,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
       );
@@ -1181,6 +1209,7 @@ export class NotificationActionsService {
 
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.MinistryNotificationProvincialDailyDisbursementReceipt,
       messagePayload: {
@@ -1191,6 +1220,7 @@ export class NotificationActionsService {
             file: base64Encode(notification.attachmentFileContent),
             filename: notification.fileName,
             sending_method: "attach",
+            mimeType: "text/csv",
           },
         },
       } as NotificationEmailMessage,
@@ -1212,12 +1242,13 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.SupportingUserInformationNotification,
       );
     const supportingUserInformationNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.SupportingUserInformationNotification,
       messagePayload: {
@@ -1247,12 +1278,13 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ScholasticStandingReversalNotification,
       );
     const scholasticStandingReversalNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ScholasticStandingReversalNotification,
       messagePayload: {
@@ -1283,12 +1315,13 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ParentInformationRequiredFromParentNotification,
       );
     const supportingUserInformationNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ParentInformationRequiredFromParentNotification,
       messagePayload: {
@@ -1321,12 +1354,13 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.ParentInformationRequiredFromStudentNotification,
       );
     const supportingUserInformationNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.ParentInformationRequiredFromStudentNotification,
       messagePayload: {
@@ -1358,8 +1392,13 @@ export class NotificationActionsService {
   private async assertNotificationMessageDetails(
     notificationMessageTypeId: NotificationMessageType,
     options?: { throwOnMissingEmailContacts?: boolean },
-  ): Promise<Pick<NotificationMessage, "templateId" | "emailContacts">> {
-    const { templateId, emailContacts } =
+  ): Promise<
+    Pick<
+      NotificationMessage,
+      "templateId" | "notifyTemplateId" | "emailContacts"
+    >
+  > {
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.notificationMessageService.getNotificationMessageDetails(
         notificationMessageTypeId,
       );
@@ -1375,7 +1414,7 @@ export class NotificationActionsService {
         );
       }
     }
-    return { templateId, emailContacts };
+    return { templateId, notifyTemplateId, emailContacts };
   }
 
   /**
@@ -1388,12 +1427,13 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentPDPPDApplicationNotification,
       );
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentPDPPDApplicationNotification,
       messagePayload: {
         email_address: notification.email,
@@ -1424,12 +1464,13 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentSecondDisbursementNotification,
       );
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.StudentSecondDisbursementNotification,
       messagePayload: {
@@ -1460,12 +1501,13 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentCOERequiredNearEndDateNotification,
       );
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
+      notifyTemplateId,
       messageType:
         NotificationMessageType.StudentCOERequiredNearEndDateNotification,
       messagePayload: {
@@ -1498,7 +1540,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.StudentAppealSubmitted,
       );
@@ -1507,6 +1549,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentAppealSubmitted,
       messagePayload: {
         email_address: emailContact,
@@ -1541,12 +1584,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.MinistryAppealCompleted,
       );
     const appealCompletedNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.MinistryAppealCompleted,
       messagePayload: {
         email_address: notification.toAddress,
@@ -1576,7 +1620,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryChangeRequestSubmitted,
       );
@@ -1585,6 +1629,7 @@ export class NotificationActionsService {
     }
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType: NotificationMessageType.MinistryChangeRequestSubmitted,
       messagePayload: {
         email_address: emailContact,
@@ -1619,12 +1664,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentChangeRequestReviewCompleted,
       );
     const changeRequestReviewCompletedNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentChangeRequestReviewCompleted,
       messagePayload: {
         email_address: notification.toAddress,
@@ -1655,7 +1701,7 @@ export class NotificationActionsService {
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryFormSubmitted,
       );
@@ -1665,6 +1711,7 @@ export class NotificationActionsService {
 
     const ministryNotificationsToSend = emailContacts.map((emailContact) => ({
       userId: auditUser.id,
+      notifyTemplateId,
       messageType: NotificationMessageType.MinistryFormSubmitted,
       messagePayload: {
         email_address: emailContact,
@@ -1700,12 +1747,13 @@ export class NotificationActionsService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<void> {
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentFormCompleted,
       );
     const formCompletedNotification = {
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentFormCompleted,
       messagePayload: {
         email_address: notification.toAddress,
@@ -1732,7 +1780,7 @@ export class NotificationActionsService {
     notifications: MinistryFileProcessingIssueNotification[],
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.MinistryFileProcessingIssue,
       );
@@ -1743,6 +1791,7 @@ export class NotificationActionsService {
     emailContacts.forEach((emailContact) => {
       const notificationsToSend = notifications.map((notification) => ({
         userId: auditUser.id,
+        notifyTemplateId,
         messageType: NotificationMessageType.MinistryFileProcessingIssue,
         messagePayload: {
           email_address: emailContact,
@@ -1772,13 +1821,14 @@ export class NotificationActionsService {
     notifications: StudentAcceptAssessmentReminderNotification[],
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId } =
+    const { templateId, notifyTemplateId } =
       await this.notificationMessageService.getNotificationMessageDetails(
         NotificationMessageType.StudentAssessmentReminder,
       );
 
     const notificationsToSend = notifications.map((notification) => ({
       userId: notification.userId,
+      notifyTemplateId,
       messageType: NotificationMessageType.StudentAssessmentReminder,
       messagePayload: {
         email_address: notification.toAddress,
@@ -1809,7 +1859,7 @@ export class NotificationActionsService {
     entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
-    const { templateId, emailContacts } =
+    const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
         NotificationMessageType.ProgramSuspensionBlockingApplication,
         { throwOnMissingEmailContacts: true },
@@ -1821,6 +1871,7 @@ export class NotificationActionsService {
       emailContacts.flatMap<SaveNotificationModel>((emailContact) =>
         notifications.map((notification) => ({
           userId: auditUser.id,
+          notifyTemplateId,
           messageType:
             NotificationMessageType.ProgramSuspensionBlockingApplication,
           messagePayload: {

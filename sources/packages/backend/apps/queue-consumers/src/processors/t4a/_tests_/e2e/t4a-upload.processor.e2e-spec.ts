@@ -140,6 +140,9 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           id: true,
           notificationMessage: { id: true },
           messagePayload: true,
+          templateId: true,
+          recipients: true,
+          messageContent: true,
           creator: { id: true },
         },
         relations: { notificationMessage: true, creator: true },
@@ -154,6 +157,15 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           email_address: student.user.email,
           template_id: "0b1abf34-d607-4f5c-8669-71fd4a2e57fe",
           personalisation: {
+            givenNames: student.user.firstName,
+            lastName: student.user.lastName ?? "",
+            date: expect.any(String),
+          },
+        },
+        templateId: "4bb7a661-162f-4d28-8777-bfc28979c119",
+        recipients: [student.user.email],
+        messageContent: {
+          params: {
             givenNames: student.user.firstName,
             lastName: student.user.lastName ?? "",
             date: expect.any(String),

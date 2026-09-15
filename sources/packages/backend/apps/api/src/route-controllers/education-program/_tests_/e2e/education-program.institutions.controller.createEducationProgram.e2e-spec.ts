@@ -21,17 +21,20 @@ import request from "supertest";
 import { faker } from "@faker-js/faker";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { IsNull } from "typeorm";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
 import {
-  ProgramCourseLoadCalculationTypes,
-  ProgramDeliveryTypeValues,
-  ProgramESLPercentage,
-} from "../../../../services/education-program/education-program.service.models";
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 import {
+  PROGRAM_ENTRANCE_REQUIREMENT_NONE,
   CIP_CODE_REGEX,
   OTHER_REGULATORY_BODY,
-  PROGRAM_ENTRANCE_REQUIREMENT_NONE,
 } from "../../../../services/education-program/constants";
+import {
+  ProgramESLPercentage,
+  ProgramDeliveryTypeValues,
+  ProgramCourseLoadCalculationTypes,
+} from "../../../../services/education-program/education-program.service.models";
 import { EducationProgramAPIInDTO } from "../../models/education-program.dto";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
@@ -294,7 +297,13 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       });
 
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.InstitutionAddsPendingProgramNotification,
@@ -303,17 +312,32 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       },
     });
     expect(createdNotification).toBeDefined();
-    expect(createdNotification.messagePayload).toStrictEqual({
-      email_address: MINISTRY_EMAIL_ADDRESS,
-      template_id:
-        GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingProgramNotification,
-      personalisation: {
-        dateTime: expect.any(String),
-        institutionName: collegeF.legalOperatingName,
-        institutionOperatingName: collegeF.operatingName,
-        institutionPrimaryEmail: collegeF.primaryEmail,
-        programName: payload.name,
-        email: collegeFUser.email,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        email_address: MINISTRY_EMAIL_ADDRESS,
+        template_id:
+          GC_NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingProgramNotification,
+        personalisation: {
+          dateTime: expect.any(String),
+          institutionName: collegeF.legalOperatingName,
+          institutionOperatingName: collegeF.operatingName,
+          institutionPrimaryEmail: collegeF.primaryEmail,
+          programName: payload.name,
+          email: collegeFUser.email,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.InstitutionAddsPendingProgramNotification,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
+          dateTime: expect.any(String),
+          institutionName: collegeF.legalOperatingName,
+          institutionOperatingName: collegeF.operatingName,
+          institutionPrimaryEmail: collegeF.primaryEmail,
+          programName: payload.name,
+          email: collegeFUser.email,
+        },
       },
     });
   });

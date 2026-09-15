@@ -5,3 +5,5 @@ export * from "./notification/notification.service";
 export * from "./notification/notification-actions.service";
 export * from "./notification-message/notification-message.service";
 export * from "./notifications.module";
+export * from "./notification/notify.model";
+export * from "./notification/notify.service";

@@ -415,11 +415,11 @@ describe(
       const createdNotification = await db.notification.findOne({
         select: {
           id: true,
-          dateSent: true,
           messagePayload: true,
-          notificationMessage: { id: true, templateId: true },
+          templateId: true,
+          recipients: true,
+          messageContent: true,
         },
-        relations: { notificationMessage: true },
         where: {
           dateSent: IsNull(),
           notificationMessage: {
@@ -427,18 +427,35 @@ describe(
           },
         },
       });
-      expect(createdNotification.messagePayload).toStrictEqual({
-        template_id: createdNotification.notificationMessage.templateId,
-        email_address: TEST_EMAIL,
-        personalisation: {
-          application_file: {
-            file: base64Encode(
-              `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
-                `0,0,0,0,0,0,0,${FILE_DATE},,${SEQUENCE_NUMBER}`,
-            ),
-            filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
-            sending_method: "attach",
+      const file = base64Encode(
+        `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
+          `0,0,0,0,0,0,0,${FILE_DATE},,${SEQUENCE_NUMBER}`,
+      );
+      const filename = `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`;
+      expect(createdNotification).toEqual({
+        id: expect.any(Number),
+        messagePayload: {
+          template_id: "730db0dc-967b-4adb-afa2-38235ad9f051",
+          email_address: TEST_EMAIL,
+          personalisation: {
+            application_file: {
+              file,
+              filename,
+              sending_method: "attach",
+            },
           },
+        },
+        templateId: "a9b1c6ae-f397-4e78-9bd4-493d2f89a513",
+        recipients: [TEST_EMAIL],
+        messageContent: {
+          params: {},
+          attachments: [
+            {
+              content: file,
+              filename,
+              mimeType: "text/csv",
+            },
+          ],
         },
       });
     });
@@ -535,11 +552,11 @@ describe(
       const createdNotification = await db.notification.findOne({
         select: {
           id: true,
-          dateSent: true,
           messagePayload: true,
-          notificationMessage: { id: true, templateId: true },
+          templateId: true,
+          recipients: true,
+          messageContent: true,
         },
-        relations: { notificationMessage: true },
         where: {
           dateSent: IsNull(),
           notificationMessage: {
@@ -547,24 +564,37 @@ describe(
           },
         },
       });
-      expect(createdNotification.messagePayload).toStrictEqual({
-        template_id: createdNotification.notificationMessage.templateId,
-        email_address: TEST_EMAIL,
-        personalisation: {
-          application_file: {
-            file:
-              "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdG" +
-              "NoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDc2MC4wMCw3NjAuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==",
-            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
-            sending_method: "attach",
+      const file =
+        "RnVsbCBUaW1lIEJDIFN0dWRlbnQgTG9hbixGdWxsIFRpbWUgQkMgU3R1ZGVudCBHcmFudCxGdWxsIFRpbWUgQkMgVG90YWwsUGFydCBUaW1lIEJDIFN0dWRlbnQgR3JhbnQsUGFydCBUaW1lIEJDIFRvdGFsLEJDIFRvdGFsLFRvdGFsIFJlY29yZHMsRmlsZSBEYXRlLEJhdG" +
+        "NoIFJ1biBEYXRlLFNlcXVlbmNlIE51bWJlcg0KMCwwLDAsNzYwLjAwLDc2MC4wMCw3NjAuMDAsMSwyMDI0LTAxLTMxLDIwMjQtMDEtMzAsMzIyOA==";
+      const filename = "Daily_Disbursement_File_2024-01-31_3228.csv";
+      expect(createdNotification).toEqual({
+        id: expect.any(Number),
+        messagePayload: {
+          template_id: "730db0dc-967b-4adb-afa2-38235ad9f051",
+          email_address: TEST_EMAIL,
+          personalisation: {
+            application_file: {
+              file,
+              filename: filename,
+              sending_method: "attach",
+            },
           },
+        },
+        templateId: "a9b1c6ae-f397-4e78-9bd4-493d2f89a513",
+        recipients: [TEST_EMAIL],
+        messageContent: {
+          params: {},
+          attachments: [
+            {
+              content: file,
+              filename: filename,
+              mimeType: "text/csv",
+            },
+          ],
         },
       });
       // Verify the file content as expected.
-      const file =
-        createdNotification.messagePayload["personalisation"][
-          "application_file"
-        ]["file"];
       const fileContent = Buffer.from(file, "base64").toString("ascii");
       expect(fileContent).toContain(
         "Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number",
@@ -692,11 +722,11 @@ describe(
       const createdNotification = await db.notification.findOne({
         select: {
           id: true,
-          dateSent: true,
           messagePayload: true,
-          notificationMessage: { id: true, templateId: true },
+          templateId: true,
+          recipients: true,
+          messageContent: true,
         },
-        relations: { notificationMessage: true },
         where: {
           dateSent: IsNull(),
           notificationMessage: {
@@ -704,18 +734,35 @@ describe(
           },
         },
       });
-      expect(createdNotification.messagePayload).toStrictEqual({
-        template_id: createdNotification.notificationMessage.templateId,
-        email_address: TEST_EMAIL,
-        personalisation: {
-          application_file: {
-            file: base64Encode(
-              `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
-                "123.00,760.00,883.00,760.00,760.00,1643.00,2,2024-01-31,2024-01-30,3228",
-            ),
-            filename: "Daily_Disbursement_File_2024-01-31_3228.csv",
-            sending_method: "attach",
+      const file = base64Encode(
+        `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
+          "123.00,760.00,883.00,760.00,760.00,1643.00,2,2024-01-31,2024-01-30,3228",
+      );
+      const filename = "Daily_Disbursement_File_2024-01-31_3228.csv";
+      expect(createdNotification).toEqual({
+        id: expect.any(Number),
+        messagePayload: {
+          template_id: "730db0dc-967b-4adb-afa2-38235ad9f051",
+          email_address: TEST_EMAIL,
+          personalisation: {
+            application_file: {
+              file: file,
+              filename: filename,
+              sending_method: "attach",
+            },
           },
+        },
+        templateId: "a9b1c6ae-f397-4e78-9bd4-493d2f89a513",
+        recipients: [TEST_EMAIL],
+        messageContent: {
+          params: {},
+          attachments: [
+            {
+              content: file,
+              filename: filename,
+              mimeType: "text/csv",
+            },
+          ],
         },
       });
     });
@@ -763,11 +810,11 @@ describe(
       const createdNotification = await db.notification.findOne({
         select: {
           id: true,
-          dateSent: true,
           messagePayload: true,
-          notificationMessage: { id: true, templateId: true },
+          templateId: true,
+          recipients: true,
+          messageContent: true,
         },
-        relations: { notificationMessage: true },
         where: {
           dateSent: IsNull(),
           notificationMessage: {
@@ -775,18 +822,35 @@ describe(
           },
         },
       });
-      expect(createdNotification.messagePayload).toStrictEqual({
-        template_id: createdNotification.notificationMessage.templateId,
-        email_address: TEST_EMAIL,
-        personalisation: {
-          application_file: {
-            file: base64Encode(
-              `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
-                `0,0,0,0,0,0,0,${FILE_DATE},,${SEQUENCE_NUMBER}`,
-            ),
-            filename: `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`,
-            sending_method: "attach",
+      const file = base64Encode(
+        `Full Time BC Student Loan,Full Time BC Student Grant,Full Time BC Total,Part Time BC Student Grant,Part Time BC Total,BC Total,Total Records,File Date,Batch Run Date,Sequence Number${END_OF_LINE}` +
+          `0,0,0,0,0,0,0,${FILE_DATE},,${SEQUENCE_NUMBER}`,
+      );
+      const filename = `Daily_Disbursement_File_${FILE_DATE}_${SEQUENCE_NUMBER}.csv`;
+      expect(createdNotification).toEqual({
+        id: expect.any(Number),
+        messagePayload: {
+          template_id: "730db0dc-967b-4adb-afa2-38235ad9f051",
+          email_address: TEST_EMAIL,
+          personalisation: {
+            application_file: {
+              file,
+              filename,
+              sending_method: "attach",
+            },
           },
+        },
+        templateId: "a9b1c6ae-f397-4e78-9bd4-493d2f89a513",
+        recipients: [TEST_EMAIL],
+        messageContent: {
+          params: {},
+          attachments: [
+            {
+              content: file,
+              filename,
+              mimeType: "text/csv",
+            },
+          ],
         },
       });
     });
