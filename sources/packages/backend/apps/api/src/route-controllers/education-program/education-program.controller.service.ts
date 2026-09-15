@@ -129,6 +129,7 @@ export class EducationProgramControllerService {
       cipCode: program.cipCode,
       nocCode: program.nocCode,
       sabcCode: program.sabcCode,
+      fieldOfStudyCode: program.fieldOfStudyCode,
       regulatoryBody: program.regulatoryBody,
       otherRegulatoryBody: program.otherRegulatoryBody,
       programDeliveryTypes: {

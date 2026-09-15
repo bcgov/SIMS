@@ -61,6 +61,32 @@ export function useRules() {
     return "Required field.";
   };
 
+  /**
+   * Check if the value matches a regex pattern.
+   * @param value value to be checked.
+   * @param regex regex pattern to be matched.
+   * @param fieldName friendly field name to be added to the validation message.
+   * @param isRequiredField whether the field is required.
+   * @returns true if the value matches the regex pattern, otherwise a validation message.
+   */
+  const checkRegexPattern = (
+    value: string,
+    regex: RegExp,
+    fieldName: string,
+    isRequiredField = true,
+  ) => {
+    if (value) {
+      return regex.test(value) || `${fieldName} format is invalid.`;
+    }
+    if (!isRequiredField) {
+      return true;
+    }
+    if (fieldName) {
+      return `${fieldName} is required.`;
+    }
+    return "Required field.";
+  };
+
   const checkStringDateFormatRule = (dateString: string) => {
     if (dateString) {
       return (
@@ -142,6 +168,17 @@ export function useRules() {
     return true;
   };
 
+  /**
+   * Check if a declaration checkbox is checked.
+   * @param value value to be checked.
+   * @param message optional message to be displayed if not checked.
+   * @returns true if the checkbox is checked, otherwise a validation message.
+   */
+  const requiredDeclarationRule = (
+    value: boolean,
+    message = "You must confirm to proceed.",
+  ) => value || message;
+
   return {
     sinValidationRule,
     checkNotesLengthRule,
@@ -155,5 +192,7 @@ export function useRules() {
     checkLastNameLengthRule,
     checkEmailLengthRule,
     checkEmailValidationRule,
+    checkRegexPattern,
+    requiredDeclarationRule,
   };
 }

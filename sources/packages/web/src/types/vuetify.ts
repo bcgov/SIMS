@@ -54,3 +54,8 @@ export interface SelectItemType {
 export interface Event {
   target: { value: string };
 }
+
+export interface ComponentItemType {
+  title: string;
+  value: string | number;
+}

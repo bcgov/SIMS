@@ -1,5 +1,5 @@
 import { EducationProgramsSummaryAPIOutDTO } from "@/services/http/dto";
-import { OfferingStatus } from "@/types";
+import { FormYesNoOptions, OfferingStatus } from "@/types";
 import { Expose } from "class-transformer";
 
 /**
@@ -39,6 +39,16 @@ export interface ProgramDeliveryTypes {
 export enum ProgramDeliveryTypeValues {
   Onsite = "deliveredOnSite",
   Online = "deliveredOnline",
+}
+
+export enum ProgramCourseLoadCalculationTypes {
+  Credit = "credit",
+  Hours = "hours",
+}
+
+export enum ProgramESLPercentage {
+  LessThan20 = "lessThan20",
+  GreaterThanEqual20 = "20OrMore",
 }
 
 export class EntranceRequirements {
@@ -85,4 +95,56 @@ export interface ProgramOfferingApprovalLabels {
  */
 export interface EducationProgramsSummary extends EducationProgramsSummaryAPIOutDTO {
   submittedDateFormatted: string;
+}
+
+export interface ProgramFormModel {
+  name: string;
+  description?: string;
+  credentialType: string;
+  cipCode: string;
+  fieldOfStudyCode: number;
+  nocCode?: string;
+  sabcCode?: string;
+  institutionProgramCode?: string;
+  programIntensity: ProgramIntensity;
+  programDeliveryTypes: ProgramDeliveryTypeValues[];
+  deliveredOnlineAlsoOnsite?: FormYesNoOptions;
+  sameOnlineCreditsEarned?: FormYesNoOptions;
+  earnAcademicCreditsOtherInstitution?: FormYesNoOptions;
+  completionYears: string;
+  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
+  minHoursWeek?: FormYesNoOptions;
+  regulatoryBody: string;
+  otherRegulatoryBody?: string;
+  entranceRequirements: string[];
+  eslEligibility: ProgramESLPercentage;
+  hasJointInstitution: FormYesNoOptions;
+  hasJointDesignatedInstitution?: FormYesNoOptions;
+  hasWILComponent: FormYesNoOptions;
+  isWILApproved?: FormYesNoOptions;
+  wilProgramEligibility?: FormYesNoOptions;
+  hasTravel: FormYesNoOptions;
+  travelProgramEligibility?: FormYesNoOptions;
+  hasIntlExchange: FormYesNoOptions;
+  intlExchangeProgramEligibility?: FormYesNoOptions;
+  isAviationProgram: FormYesNoOptions;
+  credentialTypesAviation?: string[];
+  minHoursWeekAvi?: FormYesNoOptions;
+  programDeclaration: boolean;
+}
+
+/**
+ * Keys of calculated data for education programs.
+ */
+export enum ProgramCalculatedDataKey {
+  FieldOfStudyCode = "fieldOfStudyCode",
+  ProgramStatus = "programStatus",
+}
+
+/**
+ * Evaluation result for calculated data of education programs.
+ */
+export interface ProgramEvaluationResult {
+  [ProgramCalculatedDataKey.FieldOfStudyCode]?: number;
+  [ProgramCalculatedDataKey.ProgramStatus]?: ProgramStatus;
 }

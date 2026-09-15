@@ -14,6 +14,8 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  ProgramEvaluationAPIInDTO,
+  ProgramEvaluationAPIOutDTO,
   StudentEducationProgramAPIOutDTO,
 } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
@@ -219,5 +221,16 @@ export class EducationProgramService {
     paginationOptions: PaginationOptions,
   ): Promise<PaginatedResultsAPIOutDTO<EducationProgramPendingAPIOutDTO>> {
     return ApiClient.EducationProgram.getPendingPrograms(paginationOptions);
+  }
+
+  /**
+   * Evaluate program's calculated data based on the provided data and key.
+   * @param payload contains the data and key for evaluation.
+   * @returns the calculated data based on the evaluation.
+   */
+  async evaluate(
+    payload: ProgramEvaluationAPIInDTO,
+  ): Promise<ProgramEvaluationAPIOutDTO> {
+    return ApiClient.EducationProgram.evaluate(payload);
   }
 }

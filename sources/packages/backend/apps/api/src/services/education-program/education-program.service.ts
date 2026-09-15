@@ -521,6 +521,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.cipCode",
         "programs.nocCode",
         "programs.sabcCode",
+        "programs.fieldOfStudyCode",
         "programs.programStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",
