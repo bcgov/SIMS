@@ -126,7 +126,7 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-radio
+              <radio-options-group
                 v-model="formModel.programIntensity"
                 color="primary"
                 label="Are students able to take this on a part time basis?"
@@ -139,8 +139,8 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-checkbox
+              ></radio-options-group>
+              <checkbox-options-group
                 v-model="formModel.programDeliveryTypes"
                 color="primary"
                 label="How will this program be delivered? (Select all that apply)"
@@ -151,37 +151,34 @@
                     'At least one program delivery type must be selected.',
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-checkbox>
+              ></checkbox-options-group>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showBCPrivateOnlyOnlineBanner"
                 header="This program requires review by StudentAid BC to determine eligibility."
               />
-              <option-items-radio
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.deliveredOnlineAlsoOnsite"
                 v-model="formModel.deliveredOnlineAlsoOnsite"
                 color="primary"
                 label="Will the program also be offered and delivered at 100% course load on site?"
-                :items="YES_NO_VALUE_ITEMS"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-yes-no>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.sameOnlineCreditsEarned"
                 v-model="formModel.sameOnlineCreditsEarned"
                 color="primary"
                 label="Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?"
-                :items="YES_NO_VALUE_ITEMS"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-yes-no>
+              <radio-options-yes-no
                 v-if="
                   componentDisplayConditions.earnAcademicCreditsOtherInstitution
                 "
                 v-model="formModel.earnAcademicCreditsOtherInstitution"
                 color="primary"
                 label="Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?"
-                :items="YES_NO_VALUE_ITEMS"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="
                   bannerDisplayConditions.showNonBCInstitutionAcademicCreditsBanner
@@ -197,7 +194,7 @@
                 :rules="[(v) => checkNullOrEmptyRule(v, 'Program length')]"
                 :readonly="canEditOnlyBasicInfo"
               />
-              <option-items-radio
+              <radio-options-group
                 v-model="formModel.courseLoadCalculation"
                 color="primary"
                 label="Program course load calculation is:"
@@ -207,13 +204,12 @@
                     checkNullOrEmptyRule(v, 'Program course load calculation:'),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-group>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.minHoursWeek"
                 v-model="formModel.minHoursWeek"
                 color="primary"
                 label="Does this program include a minimum of 20 instructional hours per week?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -222,7 +218,7 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showLessThanMinHoursWeekBanner"
                 summary="The program needs to be a minimum of 20 instructional hours."
@@ -266,7 +262,7 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-checkbox
+              <checkbox-options-group
                 v-model="formModel.entranceRequirements"
                 @update:model-value="updateEntranceRequirements"
                 color="primary"
@@ -278,7 +274,7 @@
                     'At least one entrance requirement must be selected.',
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-checkbox>
+              ></checkbox-options-group>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showNoEntranceRequirementsBanner"
                 summary="An entrance requirement is required."
@@ -290,7 +286,7 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-radio
+              <radio-options-group
                 v-model="formModel.eslEligibility"
                 color="primary"
                 label="What percentage of the program has ESL Content?"
@@ -303,7 +299,7 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-group>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showExceedingESLBanner"
                 summary="ESL can't exceed 20% of course content."
@@ -315,11 +311,10 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-radio
+              <radio-options-yes-no
                 v-model="formModel.hasJointInstitution"
                 color="primary"
                 label="Is the program offered jointly or in partnership with other institutions?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -328,13 +323,12 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-yes-no>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.hasJointDesignatedInstitution"
                 v-model="formModel.hasJointDesignatedInstitution"
                 color="primary"
                 label="Are all institutions you partner with for this program designated by StudentAid BC?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -343,7 +337,7 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="
                   bannerDisplayConditions.showJointDesignatedInstitutionBanner
@@ -374,11 +368,10 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-radio
+              <radio-options-yes-no
                 v-model="formModel.hasWILComponent"
                 color="primary"
                 label="Does this program have a WIL component?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -387,13 +380,12 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-yes-no>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.isWILApproved"
                 v-model="formModel.isWILApproved"
                 color="primary"
                 label="Is the WIL approved by your regulator or oversight body?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -402,19 +394,18 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showWILNotApprovalBanner"
                 summary="The work-integrated learning component must be approved by your regulator or oversight body first."
               />
-              <option-items-radio
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.wilProgramEligibility"
                 v-model="formModel.wilProgramEligibility"
                 color="primary"
                 label="Does the WIL meet the program eligibility requirements according to StudentAid BC policy?"
-                :items="YES_NO_VALUE_ITEMS"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showWILEligibilityBanner"
                 summary="This must meet the StudentAid BC policy."
@@ -426,11 +417,10 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-radio
+              <radio-options-yes-no
                 v-model="formModel.hasTravel"
                 color="primary"
                 label="Is a field trip, field placement or travel part of this program?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -439,13 +429,12 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-yes-no>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.travelProgramEligibility"
                 v-model="formModel.travelProgramEligibility"
                 color="primary"
                 label="Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -454,7 +443,7 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showTravelEligibilityBanner"
                 summary="This must meet the StudentAid BC policy."
@@ -466,11 +455,10 @@
             header-size="medium"
           >
             <content-group>
-              <option-items-radio
+              <radio-options-yes-no
                 v-model="formModel.hasIntlExchange"
                 color="primary"
                 label="Does the program have an international exchange?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -479,13 +467,12 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-radio
+              ></radio-options-yes-no>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.intlExchangeProgramEligibility"
                 v-model="formModel.intlExchangeProgramEligibility"
                 color="primary"
                 label="Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -494,16 +481,15 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
             </content-group>
           </body-header-container>
           <body-header-container title="Aviation" header-size="medium">
             <content-group>
-              <option-items-radio
+              <radio-options-yes-no
                 v-model="formModel.isAviationProgram"
                 color="primary"
                 label="Does this program contain aviation?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -512,8 +498,8 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
-              <option-items-checkbox
+              ></radio-options-yes-no>
+              <checkbox-options-group
                 v-if="componentDisplayConditions.credentialTypesAviation"
                 v-model="formModel.credentialTypesAviation"
                 color="primary"
@@ -521,17 +507,16 @@
                 :items="AVIATION_CREDENTIAL_ITEMS"
                 :rules="[
                   (v) =>
-                    v.length > 0 ||
+                    v?.length > 0 ||
                     'At least one credential type must be selected.',
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-checkbox>
-              <option-items-radio
+              ></checkbox-options-group>
+              <radio-options-yes-no
                 v-if="componentDisplayConditions.minHoursWeekAvi"
                 v-model="formModel.minHoursWeekAvi"
                 color="primary"
                 label="Does this program include a minimum of 15 instructional hours per week?"
-                :items="YES_NO_VALUE_ITEMS"
                 :rules="[
                   (v: string) =>
                     checkNullOrEmptyRule(
@@ -540,7 +525,7 @@
                     ),
                 ]"
                 :readonly="canEditOnlyBasicInfo"
-              ></option-items-radio>
+              ></radio-options-yes-no>
             </content-group>
           </body-header-container>
           <body-header-container title="Declaration" header-size="medium">
@@ -592,10 +577,10 @@ import {
   ProgramCalculatedDataKey,
 } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import OptionItemsRadio from "@/components/generic/OptionItemsRadio.vue";
-import OptionItemsCheckbox from "@/components/generic/OptionItemsCheckbox.vue";
+import RadioOptionsGroup from "@/components/generic/RadioOptionsGroup.vue";
+import RadioOptionsYesNo from "@/components/generic/RadioOptionsYesNo.vue";
+import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue";
 import ProgramEligibilityBanner from "@/components/institutions/banners/ProgramEligibilityBanner.vue";
-import { YES_NO_VALUE_ITEMS } from "@/constants";
 import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,

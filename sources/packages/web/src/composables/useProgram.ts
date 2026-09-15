@@ -1,9 +1,4 @@
-import {
-  ProgramDeliveryTypes,
-  ProgramDeliveryTypeValues,
-  ProgramStatus,
-  StatusChipTypes,
-} from "@/types";
+import { ProgramStatus, StatusChipTypes } from "@/types";
 
 export function useProgram() {
   const mapProgramChipStatus = (
@@ -25,16 +20,6 @@ export function useProgram() {
     }
   };
 
-  const mapToProgramDeliveryTypeValues = (
-    programDeliveryTypes: ProgramDeliveryTypes,
-  ): ProgramDeliveryTypeValues[] =>
-    [
-      programDeliveryTypes.deliveredOnSite && ProgramDeliveryTypeValues.Onsite,
-      programDeliveryTypes.deliveredOnline && ProgramDeliveryTypeValues.Online,
-    ].filter((deliveryType): deliveryType is ProgramDeliveryTypeValues =>
-      Boolean(deliveryType),
-    );
-
   /**
    * Converts an object model with boolean values into an array of keys where the value is true.
    * @param objectModel object model with boolean values.
@@ -51,7 +36,6 @@ export function useProgram() {
 
   return {
     mapProgramChipStatus,
-    mapToProgramDeliveryTypeValues,
     convertCheckboxObjectModelToArray,
   };
 }

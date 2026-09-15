@@ -21,7 +21,7 @@ import type { ComponentItemType } from "@/types";
 type ModelType = string[] | number[];
 
 // Automatically handles the v-model binding.
-const model = defineModel<ModelType>();
+const model = defineModel<ModelType>({ default: () => [] });
 
 defineProps<{
   items: ComponentItemType[];
