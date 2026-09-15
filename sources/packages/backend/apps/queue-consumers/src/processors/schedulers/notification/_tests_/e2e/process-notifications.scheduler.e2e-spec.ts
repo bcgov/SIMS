@@ -15,7 +15,7 @@ import { IsNull, MoreThanOrEqual, Or } from "typeorm";
 import { ProcessNotificationScheduler } from "../../../../";
 import { ProcessNotificationsQueueInDTO } from "../../models/notification.dto";
 import { NOTIFY_LIMIT_EXCEEDED_ERROR } from "@sims/services/constants";
-import { ConfigServiceMockHelper } from "@sims/test-utils/mocks/config-service-mock";
+import { FeatureTogglesService } from "@sims/services";
 import dayjs from "dayjs";
 
 const EXTERNAL_RATE_LIMIT_SECONDS = 60;
@@ -33,9 +33,10 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
     // Processor under test.
     processor = app.get(ProcessNotificationScheduler);
     notifyService = app.get(NotifyService);
-    const configServiceMockHelper = new ConfigServiceMockHelper(app);
-    // Allow mocking only BC Notify to perform tests.
-    configServiceMockHelper.useBCNotify();
+    // Force every notification to be routed to BC Notify regardless of the configured feature toggles.
+    jest
+      .spyOn(app.get(FeatureTogglesService), "useNotifyTemplate")
+      .mockReturnValue(true);
   });
 
   beforeEach(async () => {
@@ -106,13 +107,10 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
     );
     // Allow 2 notifications to be successfully sent before hitting the rate limit error.
     const sendEmailNotificationMock = jest
-      .fn()
+      .spyOn(notifyService, "sendEmailNotification")
       .mockResolvedValueOnce(undefined)
       .mockResolvedValueOnce(undefined)
       .mockRejectedValue(rateLimitExceededError);
-    (notifyService.sendEmailNotification as jest.Mock).mockImplementation(
-      sendEmailNotificationMock,
-    );
 
     // Queued job with a rate limit high enough to not interfere with this scenario.
     const mockedJob = mockBullJob<ProcessNotificationsQueueInDTO>({

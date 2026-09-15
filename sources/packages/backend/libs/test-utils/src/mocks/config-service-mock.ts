@@ -22,16 +22,6 @@ export class ConfigServiceMockHelper {
   }
 
   /**
-   * Mocks the feature toggle for using BC Notify in tests.
-   */
-  useBCNotify(): void {
-    const currentFeatureToggles = this.configService.featureToggles ?? [];
-    jest
-      .spyOn(this.configService, "featureToggles", "get")
-      .mockReturnValue([...currentFeatureToggles, "notify-template-all"]);
-  }
-
-  /**
    * Mock the bypassMSFAASigning config value to allow changing the behavior
    * of the MSFAA signing process between tests.
    * @param bypass true to bypass MSFAA signing.
