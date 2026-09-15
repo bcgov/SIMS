@@ -13,7 +13,7 @@ describe("FormSubmissionAction-process", () => {
   it("Should call applyAction when appliesTo result is true.", async () => {
     // Arrange
     const action = new TestFormSubmissionAction({
-      actionType: FormSubmissionActionType.UpdateModifiedIndependent,
+      actionType: FormSubmissionActionType.UpdateModifiedIndependentOnDecision,
       appliesToResult: true,
     });
     const auditUserId = 123;
@@ -57,7 +57,7 @@ describe("FormSubmissionAction-process", () => {
   it("Should not call applyAction when appliesTo result is false.", async () => {
     // Arrange
     const action = new TestFormSubmissionAction({
-      actionType: FormSubmissionActionType.UpdateModifiedIndependent,
+      actionType: FormSubmissionActionType.UpdateModifiedIndependentOnDecision,
       appliesToResult: false,
     });
     const auditUserId = 123;

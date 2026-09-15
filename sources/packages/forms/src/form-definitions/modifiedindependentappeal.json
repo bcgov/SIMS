@@ -10,7 +10,7 @@
   "components": [
     {
       "label": "Actions: UpdateModifiedIndependent",
-      "calculateValue": "value = [\"UpdateModifiedIndependent\"];",
+      "calculateValue": "value = [\"UpdateModifiedIndependentOnSubmission\", \"UpdateModifiedIndependentOnDecision\", \"UpdateModifiedIndependentOnCancel\"];",
       "calculateServer": true,
       "key": "actions",
       "type": "hidden",

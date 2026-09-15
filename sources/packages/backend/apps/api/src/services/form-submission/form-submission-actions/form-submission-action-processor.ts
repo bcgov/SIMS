@@ -3,12 +3,14 @@ import { Injectable } from "@nestjs/common";
 import { FormSubmission, FormSubmissionActionType } from "@sims/sims-db";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionCreateAppealAssessmentAction } from "./form-submission-create-appeal-assessment-action";
-import { FormSubmissionUpdateModifiedIndependentAction } from "./form-submission-update-modified-independent-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 import { FormSubmissionUpdateNonPunitiveWithdrawalAction } from "./form-submission-update-non-punitive-withdrawal-action";
 import { FormSubmissionUpdateDisabilityOnSubmissionAction } from "./form-submission-update-disability-on-submission-action";
 import { FormSubmissionUpdateDisabilityOnDecisionAction } from "./form-submission-update-disability-on-decision-action";
 import { FormSubmissionUpdateDisabilityOnCancelAction } from "./form-submission-update-disability-on-cancel-action";
+import { FormSubmissionUpdateModifiedIndependentOnSubmissionAction } from "./form-submission-update-modified-independent-on-submission-action";
+import { FormSubmissionUpdateModifiedIndependentOnDecisionAction } from "./form-submission-update-modified-independent-on-decision-action";
+import { FormSubmissionUpdateModifiedIndependentOnCancelAction } from "./form-submission-update-modified-independent-on-cancel-action";
 
 /**
  * Keeps a list of all available form submission actions that can potentially
@@ -20,7 +22,9 @@ export class FormSubmissionActionProcessor {
 
   constructor(
     createAppealAssessmentAction: FormSubmissionCreateAppealAssessmentAction,
-    updateModifiedIndependentAction: FormSubmissionUpdateModifiedIndependentAction,
+    updateModifiedIndependentOnSubmissionAction: FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+    updateModifiedIndependentOnDecisionAction: FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+    updateModifiedIndependentOnCancelAction: FormSubmissionUpdateModifiedIndependentOnCancelAction,
     updateNonPunitiveScholasticStandingWithdrawalAction: FormSubmissionUpdateNonPunitiveWithdrawalAction,
     updateDisabilityOnSubmissionAction: FormSubmissionUpdateDisabilityOnSubmissionAction,
     updateDisabilityOnDecisionAction: FormSubmissionUpdateDisabilityOnDecisionAction,
@@ -28,7 +32,9 @@ export class FormSubmissionActionProcessor {
   ) {
     this.actions = [
       createAppealAssessmentAction,
-      updateModifiedIndependentAction,
+      updateModifiedIndependentOnSubmissionAction,
+      updateModifiedIndependentOnDecisionAction,
+      updateModifiedIndependentOnCancelAction,
       updateNonPunitiveScholasticStandingWithdrawalAction,
       updateDisabilityOnSubmissionAction,
       updateDisabilityOnDecisionAction,

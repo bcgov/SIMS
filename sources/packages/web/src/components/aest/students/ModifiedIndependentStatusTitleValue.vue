@@ -1,7 +1,7 @@
 <template>
   <title-value property-title="Modified independent status">
     <template #value
-      >{{ modifiedIndependentDisplayStatus }}
+      >{{ modifiedIndependentStatus }}
       <check-permission-role
         :role="Role.StudentUpdateModifiedIndependentStatus"
       >
@@ -27,8 +27,8 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from "vue";
-import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
+import { defineComponent, PropType, ref } from "vue";
+import { ModalDialog, useSnackBar } from "@/composables";
 import { Role, ApiProcessError, ModifiedIndependentStatus } from "@/types";
 import UpdateModifiedIndependentStatusModal from "@/components/aest/students/modals/UpdateModifiedIndependentStatusModal.vue";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -58,10 +58,6 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const snackBar = useSnackBar();
-    const { modifiedIndependentStatusToDisplay } = useFormatters();
-    const modifiedIndependentDisplayStatus = computed(() =>
-      modifiedIndependentStatusToDisplay(props.modifiedIndependentStatus),
-    );
     const updateModifiedIndependentStatusModal = ref(
       {} as ModalDialog<UpdateModifiedIndependentStatusAPIInDTO>,
     );
@@ -100,7 +96,6 @@ export default defineComponent({
     };
 
     return {
-      modifiedIndependentDisplayStatus,
       updateModifiedIndependentStatusModal,
       showModifiedIndependentStatusModal,
       Role,
