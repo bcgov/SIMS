@@ -3,7 +3,7 @@ UPDATE
 SET
     queue_configuration = '{
         "dashboardReadonly": false,
-        "cron": "*/30 * * * *",
+        "cron": "*/30 * * * * *",
         "cleanUpPeriod": 1800000,
         "pollingRecordLimit": 100,
         "externalRateLimit": 490,
