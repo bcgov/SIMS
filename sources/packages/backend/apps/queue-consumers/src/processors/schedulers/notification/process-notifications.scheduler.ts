@@ -7,6 +7,10 @@ import { QueueNames } from "@sims/utilities";
 import { QueueService } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
+const DEFAULT_POLLING_RECORDS_LIMIT = 1000;
+const DEFAULT_EXTERNAL_RATE_LIMIT = 490;
+const DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS = 60;
+
 /**
  * Process notifications which are unsent.
  */
@@ -23,11 +27,16 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   }
 
   protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
-    const queuePollingRecordsLimit =
-      await this.queueService.getQueuePollingRecordLimit(
+    const queueConfigurationDetails =
+      await this.queueService.queueConfigurationDetails(
         this.schedulerQueue.name as QueueNames,
       );
-    return { pollingRecordsLimit: queuePollingRecordsLimit };
+    const config = queueConfigurationDetails.queueConfiguration;
+    return {
+      pollingRecordsLimit: config.pollingRecordLimit,
+      externalRateLimit: config.externalRateLimit,
+      externalRateLimitSeconds: config.externalRateLimitSeconds,
+    };
   }
 
   /**
@@ -43,7 +52,10 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   ): Promise<string[]> {
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
-        job.data.pollingRecordsLimit,
+        job.data.pollingRecordsLimit ?? DEFAULT_POLLING_RECORDS_LIMIT,
+        job.data.externalRateLimit ?? DEFAULT_EXTERNAL_RATE_LIMIT,
+        job.data.externalRateLimitSeconds ??
+          DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS,
       );
     if (
       processNotificationResponse.notificationsProcessed !==
