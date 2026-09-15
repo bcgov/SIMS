@@ -1,15 +1,16 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class QueueConfigurationsUpdateProcessNotificationsConfiguration1789425630781
-  implements MigrationInterface
-{
+export class NotificationsChangesForRateLimiting1789425630781 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
         "Update-process-notifications-queue-configuration.sql",
         "Queue",
       ),
+    );
+    await queryRunner.query(
+      getSQLFileData("Add-notification-date-sent-indexes.sql", "Notifications"),
     );
   }
 
@@ -18,6 +19,12 @@ export class QueueConfigurationsUpdateProcessNotificationsConfiguration178942563
       getSQLFileData(
         "Rollback-update-process-notifications-queue-configuration.sql",
         "Queue",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-add-notification-date-sent-indexes.sql",
+        "Notifications",
       ),
     );
   }
