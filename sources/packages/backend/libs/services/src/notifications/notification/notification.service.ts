@@ -22,7 +22,7 @@ import {
 } from "./notification.model";
 import { LoggerService } from "@sims/utilities/logger";
 import { NotificationEmailMessage } from "./gc-notify.model";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, processInParallel } from "@sims/utilities";
 import {
   NOTIFY_LIMIT_EXCEEDED_ERROR,
   NOTIFY_PERMANENT_FAILURE_ERROR,
@@ -306,7 +306,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
       `Processing ${notificationsToProcess.length} out of a limit of ${limit}.`,
     );
     try {
-      for (const notification of notificationsToProcess) {
+      await processInParallel(async (notification: Notification) => {
         this.logger.log(`Processing notification ID ${notification.id}`);
         // Call the sendEmailNotification method to send the email.
         const result = await this.sendEmailNotification(notification);
@@ -318,7 +318,7 @@ export class NotificationService extends RecordDataModelService<Notification> {
         if (result) {
           notificationsSuccessfullyProcessed++;
         }
-      }
+      }, notificationsToProcess);
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&

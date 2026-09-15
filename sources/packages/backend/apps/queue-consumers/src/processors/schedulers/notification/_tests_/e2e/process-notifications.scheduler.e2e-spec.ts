@@ -1,5 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import { addDays, QueueNames } from "@sims/utilities";
+import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -10,22 +10,21 @@ import {
   createFakeNotification,
   E2EDataSources,
 } from "@sims/test-utils";
-import {
-  GCNotifyResult,
-  GCNotifyService,
-  NotifyService,
-} from "@sims/services/notifications";
+import { NotifyService } from "@sims/services/notifications";
 import { IsNull, MoreThanOrEqual, Or } from "typeorm";
 import { ProcessNotificationScheduler } from "../../../../";
 import { ProcessNotificationsQueueInDTO } from "../../models/notification.dto";
 import { CustomNamedError } from "@sims/utilities";
 import { NOTIFY_LIMIT_EXCEEDED_ERROR } from "@sims/services/constants";
+import { ConfigServiceMockHelper } from "@sims/test-utils/mocks/config-service-mock";
+import dayjs from "dayjs";
+
+const EXTERNAL_RATE_LIMIT_SECONDS = 60;
 
 describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let processor: ProcessNotificationScheduler;
-  let gcNotifyService: GCNotifyService;
   let notifyService: NotifyService;
 
   beforeAll(async () => {
@@ -34,23 +33,20 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
     db = createE2EDataSources(dataSource);
     // Processor under test.
     processor = app.get(ProcessNotificationScheduler);
-    gcNotifyService = app.get(GCNotifyService);
     notifyService = app.get(NotifyService);
+    const configServiceMockHelper = new ConfigServiceMockHelper(app);
+    // Allow mocking only BC Notify to perform tests.
+    configServiceMockHelper.useBCNotify();
   });
 
   beforeEach(async () => {
     jest.clearAllMocks();
-    // Mock both possible notification API calls (legacy GC Notify and the new BC
-    // Notify service) to avoid any real external HTTP call, regardless of the
-    // feature toggle configuration.
-    jest
-      .spyOn(gcNotifyService, "sendEmailNotification")
-      .mockResolvedValue({} as GCNotifyResult);
-    jest.spyOn(notifyService, "sendEmailNotification").mockResolvedValue();
     // Push every existing sent/unsent notification outside of any rate limit
     // window and out of the unsent pool so previously executed tests do not
     // affect the rate limit calculation and the notifications polling.
-    const outOfWindowDateSent = addDays(-1);
+    const outOfWindowDateSent = dayjs()
+      .subtract(EXTERNAL_RATE_LIMIT_SECONDS + 1, "second")
+      .toDate();
     await db.notification.update(
       { dateSent: Or(MoreThanOrEqual(outOfWindowDateSent), IsNull()) },
       { dateSent: outOfWindowDateSent },
@@ -67,14 +63,14 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
         createFakeNotification(),
       );
       await db.notification.save(notifications);
-
       // Queued job with an external rate limit lower than the total pending notifications.
       const externalRateLimit = 2;
       const mockedJob = mockBullJob<ProcessNotificationsQueueInDTO>({
         pollingRecordsLimit: 10,
         externalRateLimit,
-        externalRateLimitSeconds: 60,
+        externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
       });
+      jest.spyOn(notifyService, "sendEmailNotification").mockResolvedValue();
 
       // Act
       const result = await processor.processQueue(mockedJob.job);
@@ -89,14 +85,13 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
 
   it("Should stop processing further notifications when the external notification API returns a 429 (too many requests) rate limit exceeded error.", async () => {
     // Arrange
-    // Create 3 unsent notifications.
     const totalNotifications = 3;
     const pollingRecordsLimit = 10;
+    // Create unsent notifications.
     const notifications = Array.from({ length: totalNotifications }, () =>
       createFakeNotification(),
     );
     await db.notification.save(notifications);
-
     // Simulate the external API succeeding for the first call and then
     // returning a 429 (too many requests) rate limit exceeded error, regardless
     // of which notification API implementation (GC Notify or BC Notify) is used.
@@ -104,13 +99,12 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
       "Too many requests.",
       NOTIFY_LIMIT_EXCEEDED_ERROR,
     );
+    // Allow 2 notifications to be successfully sent before hitting the rate limit error.
     const sendEmailNotificationMock = jest
       .fn()
       .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(undefined)
       .mockRejectedValue(rateLimitExceededError);
-    (gcNotifyService.sendEmailNotification as jest.Mock).mockImplementation(
-      sendEmailNotificationMock,
-    );
     (notifyService.sendEmailNotification as jest.Mock).mockImplementation(
       sendEmailNotificationMock,
     );
@@ -119,7 +113,7 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
     const mockedJob = mockBullJob<ProcessNotificationsQueueInDTO>({
       pollingRecordsLimit,
       externalRateLimit: 10,
-      externalRateLimitSeconds: 60,
+      externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
     });
 
     // Act
@@ -133,19 +127,19 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
     expect(
       mockedJob.containLogMessages([
         `Not all pending notifications were successfully processed.`,
-        "Total notifications processed 2.",
-        "Total notifications successfully processed 1.",
+        "Total notifications processed 3.",
+        "Total notifications successfully processed 2.",
       ]),
     ).toBe(true);
     // The process must stop as soon as the rate limit error is detected, i.e.
     // the third notification must never be attempted.
-    expect(sendEmailNotificationMock).toHaveBeenCalledTimes(2);
+    expect(sendEmailNotificationMock).toHaveBeenCalledTimes(3);
     // Only the first notification should have been sent, the remaining two,
     // including the one that was never attempted, must still be unsent.
     const unsentNotificationsCount = await db.notification.count({
       where: { dateSent: IsNull() },
     });
-    expect(unsentNotificationsCount).toBe(2);
+    expect(unsentNotificationsCount).toBe(1);
   });
 
   afterAll(async () => {
