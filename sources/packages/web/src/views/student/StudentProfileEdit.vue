@@ -45,8 +45,7 @@ export default defineComponent({
     const router = useRouter();
     const snackBar = useSnackBar();
     const { excludeExtraneousValues } = useFormioUtils();
-    const { disabilityStatusToDisplay, modifiedIndependentStatusToDisplay } =
-      useFormatters();
+    const { disabilityStatusToDisplay } = useFormatters();
     const initialData = ref({} as StudentProfileFormModel);
     const pdStatusApplicationModal = ref({} as ModalDialog<boolean>);
     const processing = ref(false);
@@ -65,9 +64,7 @@ export default defineComponent({
         disabilityStatus: disabilityStatusToDisplay(
           studentInfo.disabilityStatus,
         ),
-        modifiedIndependentStatus: modifiedIndependentStatusToDisplay(
-          studentInfo.modifiedIndependentStatus,
-        ),
+        modifiedIndependentStatus: studentInfo.modifiedIndependentStatus,
       };
       initialData.value = data;
       isDataReady.value = true;

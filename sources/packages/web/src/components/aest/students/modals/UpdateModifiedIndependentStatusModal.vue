@@ -45,7 +45,7 @@
 <script lang="ts">
 import { ModifiedIndependentStatus, SelectItemType, VForm } from "@/types";
 import { ref, defineComponent, reactive } from "vue";
-import { useRules, useModalDialog, useFormatters } from "@/composables";
+import { useRules, useModalDialog } from "@/composables";
 import { UpdateModifiedIndependentStatusAPIInDTO } from "@/services/http/dto";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
@@ -61,12 +61,11 @@ export default defineComponent({
     >();
     const updateModifiedIndependentStatusForm = ref({} as VForm);
     const { checkNotesLengthRule, checkNullOrEmptyRule } = useRules();
-    const { modifiedIndependentStatusToDisplay } = useFormatters();
     const formModel = reactive({} as UpdateModifiedIndependentStatusAPIInDTO);
     const modifiedIndependentStatusSelectItems = Object.values(
       ModifiedIndependentStatus,
     ).map<SelectItemType>((value) => ({
-      title: modifiedIndependentStatusToDisplay(value),
+      title: value,
       value: value,
     }));
     const cancel = () => {

@@ -111,7 +111,7 @@ export type StudentProfileFormModel = Pick<
     identityProvider?: IdentityProviders;
     sinConsent: boolean;
     disabilityStatus: string;
-    modifiedIndependentStatus: ModifiedIndependentDisplayStatus;
+    modifiedIndependentStatus: ModifiedIndependentStatus;
   };
 
 /**
