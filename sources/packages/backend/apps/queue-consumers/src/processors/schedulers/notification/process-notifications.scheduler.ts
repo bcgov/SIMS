@@ -33,12 +33,9 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
       );
     const config = queueConfigurationDetails.queueConfiguration;
     return {
-      pollingRecordsLimit:
-        config.pollingRecordLimit ?? DEFAULT_POLLING_RECORDS_LIMIT,
-      externalRateLimit:
-        config.externalRateLimit ?? DEFAULT_EXTERNAL_RATE_LIMIT,
-      externalRateLimitSeconds:
-        config.externalRateLimitSeconds ?? DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS,
+      pollingRecordsLimit: config.pollingRecordLimit,
+      externalRateLimit: config.externalRateLimit,
+      externalRateLimitSeconds: config.externalRateLimitSeconds,
     };
   }
 
@@ -55,9 +52,10 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
   ): Promise<string[]> {
     const processNotificationResponse =
       await this.notificationService.processUnsentNotifications(
-        job.data.pollingRecordsLimit,
-        job.data.externalRateLimit,
-        job.data.externalRateLimitSeconds,
+        job.data.pollingRecordsLimit ?? DEFAULT_POLLING_RECORDS_LIMIT,
+        job.data.externalRateLimit ?? DEFAULT_EXTERNAL_RATE_LIMIT,
+        job.data.externalRateLimitSeconds ??
+          DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS,
       );
     if (
       processNotificationResponse.notificationsProcessed !==

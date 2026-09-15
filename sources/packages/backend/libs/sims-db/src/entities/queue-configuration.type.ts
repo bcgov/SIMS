@@ -23,7 +23,7 @@ export interface QueueConfigurationDetails {
    */
   pollingRecordLimit?: number;
   /**
-   * Maximum number consumers calls in the allowed window defined by externalRateLimitSeconds.
+   * Maximum number of calls to the external service in the window defined by externalRateLimitSeconds.
    */
   externalRateLimit?: number;
   /**

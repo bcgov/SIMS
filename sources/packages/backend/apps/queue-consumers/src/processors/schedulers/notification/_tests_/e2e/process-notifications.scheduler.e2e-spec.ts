@@ -1,5 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import { QueueNames } from "@sims/utilities";
+import { QueueNames, CustomNamedError } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -14,7 +14,6 @@ import { NotifyService } from "@sims/services/notifications";
 import { IsNull, MoreThanOrEqual, Or } from "typeorm";
 import { ProcessNotificationScheduler } from "../../../../";
 import { ProcessNotificationsQueueInDTO } from "../../models/notification.dto";
-import { CustomNamedError } from "@sims/utilities";
 import { NOTIFY_LIMIT_EXCEEDED_ERROR } from "@sims/services/constants";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks/config-service-mock";
 import dayjs from "dayjs";
@@ -80,6 +79,12 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
         `Total notifications processed ${externalRateLimit}.`,
         `Total notifications successfully processed ${externalRateLimit}.`,
       ]);
+      const unsentNotificationsCount = await db.notification.count({
+        where: { dateSent: IsNull() },
+      });
+      expect(unsentNotificationsCount).toBe(
+        notifications.length - externalRateLimit,
+      );
     },
   );
 
@@ -121,9 +126,7 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
 
     // Assert
     // The notification already sent before the rate limit error is still
-    // accounted for as processed and successfully processed. No warning is
-    // expected since the remaining notifications are simply left pending to
-    // be retried in the next polling cycle, not a processing failure.
+    // accounted for as processed and successfully processed.
     expect(
       mockedJob.containLogMessages([
         `Not all pending notifications were successfully processed.`,
