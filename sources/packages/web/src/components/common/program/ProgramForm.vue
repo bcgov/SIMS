@@ -8,6 +8,7 @@
             <content-group>
               <v-text-field
                 v-model="formModel.name"
+                color="primary"
                 density="compact"
                 label="Program name"
                 variant="outlined"
@@ -18,10 +19,10 @@
                 ]"
               />
               <v-textarea
+                color="primary"
                 v-model="formModel.description"
                 variant="outlined"
                 label="Program description"
-                required
                 class="mt-4"
                 :rules="[
                   (v) =>
@@ -34,6 +35,7 @@
                 ]"
               ></v-textarea>
               <v-select
+                color="primary"
                 label="Credential type"
                 density="compact"
                 :items="programCredentialLookupItems"
@@ -46,6 +48,7 @@
                 @update:model-value="calculateFieldOfStudyCode"
               />
               <v-text-field
+                color="primary"
                 class="mb-3"
                 v-model="formModel.cipCode"
                 density="compact"
@@ -65,6 +68,7 @@
                 @update:model-value="calculateFieldOfStudyCode"
               />
               <v-text-field
+                color="primary"
                 :model-value="formModel.fieldOfStudyCode"
                 density="compact"
                 label="Field of study code"
@@ -72,6 +76,7 @@
                 readonly
               />
               <v-text-field
+                color="primary"
                 class="mb-3"
                 v-model="formModel.nocCode"
                 density="compact"
@@ -91,6 +96,7 @@
                 :readonly="isProgramDetailReadonly"
               />
               <v-text-field
+                color="primary"
                 class="mb-3"
                 v-model="formModel.sabcCode"
                 density="compact"
@@ -110,6 +116,7 @@
                 :readonly="isProgramDetailReadonly"
               />
               <v-text-field
+                color="primary"
                 v-model="formModel.institutionProgramCode"
                 density="compact"
                 label="Institution Program Code"
@@ -193,6 +200,7 @@
                 "
               />
               <v-select
+                color="primary"
                 label="Program length"
                 density="compact"
                 :items="programLengthLookupItems"
@@ -234,6 +242,7 @@
                 summary="The program needs to be a minimum of 20 instructional hours."
               />
               <v-select
+                color="primary"
                 class="mb-3"
                 label="Which regulatory body does this program belong to?"
                 density="compact"
@@ -254,6 +263,7 @@
                 persistent-hint
               />
               <v-text-field
+                color="primary"
                 v-if="componentDisplayConditions.otherRegulatoryBody"
                 v-model="formModel.otherRegulatoryBody"
                 density="compact"
@@ -280,7 +290,6 @@
               <checkbox-options-group
                 v-model="formModel.entranceRequirements"
                 @update:model-value="updateEntranceRequirements"
-                color="primary"
                 label="What are the entrance requirements for this program? (Select all that apply)"
                 :items="programEntranceRequirementLookupItems"
                 item-value="lookupKey"
@@ -582,10 +591,11 @@
       </v-skeleton-loader>
     </content-group>
     <footer-buttons
-      primary-label="Update"
+      primary-label="Submit"
       @secondary-click="$emit('cancel')"
       @primary-click="submit"
-      :disable-primary-button="loading"
+      :disable-primary-button="isProcessing"
+      :processing="isProcessing"
       v-if="!isReadonly"
     />
   </body-header-container>
@@ -651,6 +661,7 @@ interface ProgramFormProps {
   isBCPublic?: boolean;
   isBCPrivate?: boolean;
   readOnly?: boolean;
+  isProcessing?: boolean;
 }
 
 interface ProgramFormContext {
@@ -669,6 +680,7 @@ const props = withDefaults(defineProps<ProgramFormProps>(), {
   isBCPublic: undefined,
   isBCPrivate: undefined,
   readOnly: true,
+  isProcessing: false,
 });
 const emit = defineEmits<{
   cancel: [];
@@ -814,6 +826,7 @@ const updateEntranceRequirements = () => {
 
 const loadLookups = async (): Promise<void> => {
   try {
+    loading.value = true;
     const [
       programCredentialType,
       programLength,
@@ -848,6 +861,8 @@ const loadLookups = async (): Promise<void> => {
     isLookupLoaded.value = true;
   } catch {
     snackBar.error("Unexpected error while loading data.");
+  } finally {
+    loading.value = false;
   }
 };
 const loadProgram = async (programId: number) => {

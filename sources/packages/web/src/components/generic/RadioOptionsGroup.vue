@@ -1,5 +1,6 @@
 <template>
   <v-radio-group
+    color="primary"
     v-model="model"
     v-bind="$attrs"
     hide-details="auto"
