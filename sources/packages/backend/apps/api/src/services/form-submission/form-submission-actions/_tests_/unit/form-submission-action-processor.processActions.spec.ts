@@ -2,7 +2,7 @@ import { Mocked, TestBed } from "@suites/unit";
 import { EntityManager } from "typeorm";
 import { FormSubmissionActionProcessor } from "../../../form-submission-actions/form-submission-action-processor";
 import { FormSubmissionCreateAppealAssessmentAction } from "../../../form-submission-actions/form-submission-create-appeal-assessment-action";
-import { FormSubmissionUpdateModifiedIndependentAction } from "../../../form-submission-actions/form-submission-update-modified-independent-action";
+import { FormSubmissionUpdateModifiedIndependentOnDecisionAction } from "../../form-submission-update-modified-independent-on-decision-action";
 import {
   FormCategory,
   FormSubmission,
@@ -14,7 +14,7 @@ import {
 describe("FormSubmissionActionProcessor-processActions", () => {
   let formSubmissionActionProcessor: FormSubmissionActionProcessor;
   let formSubmissionCreateAppealAssessmentAction: Mocked<FormSubmissionCreateAppealAssessmentAction>;
-  let formSubmissionUpdateModifiedIndependentAction: Mocked<FormSubmissionUpdateModifiedIndependentAction>;
+  let formSubmissionUpdateModifiedIndependentOnDecisionAction: Mocked<FormSubmissionUpdateModifiedIndependentOnDecisionAction>;
 
   beforeAll(async () => {
     const { unit, unitRef } = await TestBed.solitary(
@@ -24,17 +24,21 @@ describe("FormSubmissionActionProcessor-processActions", () => {
     formSubmissionCreateAppealAssessmentAction = unitRef.get(
       FormSubmissionCreateAppealAssessmentAction,
     );
-    formSubmissionUpdateModifiedIndependentAction = unitRef.get(
-      FormSubmissionUpdateModifiedIndependentAction,
+    formSubmissionUpdateModifiedIndependentOnDecisionAction = unitRef.get(
+      FormSubmissionUpdateModifiedIndependentOnDecisionAction,
     );
     // Allow setting the action types directly to avoid spying on getters
     // that would not work as expected for protected properties.
     (formSubmissionCreateAppealAssessmentAction as Record<string, unknown>)[
       "actionType"
     ] = FormSubmissionActionType.CreateStudentAppealAssessment;
-    (formSubmissionUpdateModifiedIndependentAction as Record<string, unknown>)[
-      "actionType"
-    ] = FormSubmissionActionType.UpdateModifiedIndependent;
+    (
+      formSubmissionUpdateModifiedIndependentOnDecisionAction as Record<
+        string,
+        unknown
+      >
+    )["actionType"] =
+      FormSubmissionActionType.UpdateModifiedIndependentOnDecision;
   });
 
   beforeEach(() => {
@@ -58,7 +62,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
           offering: { id: 5 },
         },
       },
-      // Used 'CreateStudentAppealAssessment' and 'UpdateModifiedIndependent' action types to ensure both actions are executed
+      // Used 'CreateStudentAppealAssessment' and 'UpdateModifiedIndependentOnDecision' action types to ensure both actions are executed
       // even though these decisions will not be present at the same time for the same request in a real scenario.
       // The goal is to ensure that the action processor is able to identify and execute both actions when present.
       formSubmissionItems: [
@@ -74,7 +78,9 @@ describe("FormSubmissionActionProcessor-processActions", () => {
         {
           id: 7,
           submittedData: {
-            actions: [FormSubmissionActionType.UpdateModifiedIndependent],
+            actions: [
+              FormSubmissionActionType.UpdateModifiedIndependentOnDecision,
+            ],
           },
           currentDecision: {
             decisionStatus: FormSubmissionDecisionStatus.Declined,
@@ -94,7 +100,7 @@ describe("FormSubmissionActionProcessor-processActions", () => {
       submissionItems: mockedFormSubmission.formSubmissionItems.map((item) => ({
         id: item.id,
         actions: item.submittedData.actions ?? [],
-        decisionStatus: item.currentDecision!.decisionStatus,
+        decisionStatus: item.currentDecision?.decisionStatus,
         submittedData: item.submittedData,
       })),
     };
@@ -121,10 +127,10 @@ describe("FormSubmissionActionProcessor-processActions", () => {
       entityManager,
     );
     expect(
-      formSubmissionUpdateModifiedIndependentAction.process,
+      formSubmissionUpdateModifiedIndependentOnDecisionAction.process,
     ).toHaveBeenCalledTimes(1);
     expect(
-      formSubmissionUpdateModifiedIndependentAction.process,
+      formSubmissionUpdateModifiedIndependentOnDecisionAction.process,
     ).toHaveBeenCalledWith(
       expectedFormSubmissionModel,
       auditUserId,

@@ -8,8 +8,6 @@ import {
   DisabilityStatus,
   DisabilityStatusViewType,
   InstitutionUserRoles,
-  ModifiedIndependentDisplayStatus,
-  ModifiedIndependentStatus,
   SINStatusEnum,
 } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";

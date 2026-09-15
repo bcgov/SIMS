@@ -15,15 +15,18 @@ import {
   E2EDataSources,
   saveFakeApplication,
   saveFakeFormSubmissionFromInputTestData,
+  saveFakeStudent,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import MockDate from "mockdate";
 import {
   FormCategory,
+  FormSubmissionActionType,
   FormSubmission,
   FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
+  ModifiedIndependentStatus,
   User,
 } from "@sims/sims-db";
 import {
@@ -33,6 +36,7 @@ import {
 import {
   FORM_SUBMISSION_NOT_PENDING,
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,
+  FormNames,
 } from "../../../../services";
 
 describe("FormSubmissionStudentsController(e2e)-cancelFormSubmission", () => {
@@ -130,6 +134,65 @@ describe("FormSubmissionStudentsController(e2e)-cancelFormSubmission", () => {
 
     // Verify the DB updates.
     await assertDBUpdatesOnCancellation(db, formSubmission, now);
+  });
+
+  it("Should revert the modified independent status to Not requested when a pending modified independent appeal is cancelled.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        modifiedIndependentStatus: ModifiedIndependentStatus.Requested,
+      },
+    });
+    const formConfiguration = await db.dynamicFormConfiguration.findOneOrFail({
+      select: { id: true },
+      where: { formDefinitionName: FormNames.ModifiedIndependentAppeal },
+    });
+    const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
+      student,
+      formCategory: FormCategory.StudentAppeal,
+      submissionStatus: FormSubmissionStatus.Pending,
+      formSubmissionItems: [
+        {
+          dynamicFormConfiguration: formConfiguration,
+          decisions: [],
+          submittedData: {
+            actions: [
+              FormSubmissionActionType.UpdateModifiedIndependentOnCancel,
+            ],
+          },
+        },
+      ],
+    });
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    await mockJWTUserInfo(appModule, student.user);
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(getEndpoint(formSubmission.id))
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    const updatedStudent = await db.student.findOneOrFail({
+      select: {
+        id: true,
+        modifiedIndependentStatus: true,
+        modifiedIndependentStatusUpdatedBy: { id: true },
+        modifiedIndependentStatusUpdatedOn: true,
+      },
+      relations: { modifiedIndependentStatusUpdatedBy: true },
+      where: { id: student.id },
+      loadEagerRelations: false,
+    });
+    expect(updatedStudent).toEqual({
+      id: student.id,
+      modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
+      modifiedIndependentStatusUpdatedBy: { id: student.user.id },
+      modifiedIndependentStatusUpdatedOn: now,
+    });
   });
 
   it(`Should cancel a student form when the form submission status is ${FormSubmissionStatus.Pending} with no ministry decisions on the form submission items.`, async () => {
