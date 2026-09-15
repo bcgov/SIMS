@@ -245,10 +245,9 @@ export class NotificationService extends RecordDataModelService<Notification> {
   /**
    * Process all the unsent notifications with a polling limit recursively, up to the rate limit.
    * Processing continues recursively until all the records are processed or the rate limit is reached.
-   * Possible retries are not marked with the date sent right now and will not be counted as an API call,
-   * which may cause a small discrepancy between the counted notifications and the actual number sent.
-   * If such scenario occurs, the service is also prepared to stop processing when the first
-   * error {@link NOTIFY_LIMIT_EXCEEDED_ERROR} is encountered.
+   * If the external service reports the rate limit was exceeded, the service stops processing as
+   * soon as the first {@link NOTIFY_LIMIT_EXCEEDED_ERROR} is encountered and the remaining
+   * notifications in the current batch are left unsent to be retried in the next polling cycle.
    * @param pollingRecordsLimit Maximum number of notifications retrieved from DB to be processed
    * in one chunk of processing.
    * @param externalRateLimit Maximum number of notifications to be sent to the external service
@@ -311,6 +310,11 @@ export class NotificationService extends RecordDataModelService<Notification> {
         this.logger.log(`Processing notification ID ${notification.id}`);
         // Call the sendEmailNotification method to send the email.
         const result = await this.sendEmailNotification(notification);
+        // Assign the value for total notifications processed. Incremented as soon
+        // as the notification is attempted so that, if a later notification in this
+        // same batch causes the rate limit error below, the ones already attempted
+        // are still accounted for.
+        notificationsProcessed++;
         if (result) {
           notificationsSuccessfullyProcessed++;
         }
@@ -320,6 +324,8 @@ export class NotificationService extends RecordDataModelService<Notification> {
         error instanceof CustomNamedError &&
         error.name === NOTIFY_LIMIT_EXCEEDED_ERROR
       ) {
+        // An API call that triggers a rate limit error has occurred should be counted as processed.
+        notificationsProcessed++;
         // Limit exceeded error, will retry in the next polling cycle.
         this.logger.warn(error.message);
         // Prevent further processing in this cycle due to limit exceeded.
@@ -331,8 +337,6 @@ export class NotificationService extends RecordDataModelService<Notification> {
       // Allow other errors to be thrown and handled by the caller.
       throw error;
     }
-    //Assign the value for total notifications processed.
-    notificationsProcessed += notificationsToProcess.length;
     // Calling process notification in recursion until all the notifications
     // are processed.
     const response = await this.processUnsentNotificationsRecursive(
