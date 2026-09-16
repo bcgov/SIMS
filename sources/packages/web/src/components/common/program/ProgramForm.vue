@@ -360,7 +360,7 @@
           </body-header-container>
           <body-header-container header-size="medium">
             <template #header
-              ><body-header title="Program partnerships">
+              ><body-header title="Program partnerships" header-size="medium">
                 <template #subtitle>
                   <span>
                     If this program is offered at a partner institution, that
