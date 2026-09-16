@@ -73,6 +73,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
           cipCode: savedProgram.cipCode,
           nocCode: savedProgram.nocCode,
           sabcCode: savedProgram.sabcCode,
+          fieldOfStudyCode: 99,
           regulatoryBody: savedProgram.regulatoryBody,
           otherRegulatoryBody: savedProgram.otherRegulatoryBody,
           programDeliveryTypes: {
