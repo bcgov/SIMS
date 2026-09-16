@@ -13,12 +13,12 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
   it("Should return only the requests that include the matching action type.", () => {
     // Arrange
     const action = new TestFormSubmissionAction({
-      actionType: FormSubmissionActionType.UpdateModifiedIndependent,
+      actionType: FormSubmissionActionType.UpdateModifiedIndependentOnDecision,
       appliesToResult: true,
     });
     const requestWithMatch: FormSubmissionItemActionModel = {
       id: 1,
-      actions: [FormSubmissionActionType.UpdateModifiedIndependent],
+      actions: [FormSubmissionActionType.UpdateModifiedIndependentOnDecision],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
       submittedData: {} as FormSubmissionSubmittedData,
     };
@@ -76,7 +76,7 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
   it("Should not return any requests when no matching action type and decision status are found.", () => {
     // Arrange
     const action = new TestFormSubmissionAction({
-      actionType: FormSubmissionActionType.UpdateModifiedIndependent,
+      actionType: FormSubmissionActionType.UpdateModifiedIndependentOnDecision,
       appliesToResult: true,
     });
     const declinedDifferentRequest: FormSubmissionItemActionModel = {
@@ -87,7 +87,7 @@ describe("FormSubmissionAction-getSubmissionItemsByActionType", () => {
     };
     const declinedSameRequest: FormSubmissionItemActionModel = {
       id: 2,
-      actions: [FormSubmissionActionType.UpdateModifiedIndependent],
+      actions: [FormSubmissionActionType.UpdateModifiedIndependentOnDecision],
       decisionStatus: FormSubmissionDecisionStatus.Declined,
       submittedData: {} as FormSubmissionSubmittedData,
     };

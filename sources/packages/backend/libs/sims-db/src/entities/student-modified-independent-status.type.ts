@@ -3,6 +3,10 @@
  */
 export enum ModifiedIndependentStatus {
   /**
+   * Student requested for modified independent status.
+   */
+  Requested = "Requested",
+  /**
    * Student not requested for modified independent status.
    */
   NotRequested = "Not requested",

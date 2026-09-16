@@ -239,7 +239,9 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
               {
                 dynamicFormConfiguration: formConfigs.studentAppealA,
                 submittedData: {
-                  actions: [FormSubmissionActionType.UpdateModifiedIndependent],
+                  actions: [
+                    FormSubmissionActionType.UpdateModifiedIndependentOnDecision,
+                  ],
                 },
                 decisions: [{ decisionStatus }],
               },

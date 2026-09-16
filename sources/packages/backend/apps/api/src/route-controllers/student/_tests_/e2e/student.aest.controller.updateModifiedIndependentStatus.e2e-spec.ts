@@ -245,7 +245,7 @@ describe("StudentAESTController(e2e)-updateModifiedIndependentStatus", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message: [
-          "modifiedIndependentStatus must be one of the following values: Not requested, Approved, Declined",
+          "modifiedIndependentStatus must be one of the following values: Requested, Not requested, Approved, Declined",
         ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,

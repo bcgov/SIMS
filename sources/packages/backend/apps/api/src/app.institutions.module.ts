@@ -43,7 +43,9 @@ import {
   FormSubmissionUpdateDisabilityOnCancelAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
   FormSubmissionUpdateDisabilityOnSubmissionAction,
-  FormSubmissionUpdateModifiedIndependentAction,
+  FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+  FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+  FormSubmissionUpdateModifiedIndependentOnCancelAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
 } from "./services";
 import {
@@ -214,7 +216,9 @@ import {
     InstitutionRestrictionService,
     FormSubmissionAuthorizationService,
     FormSubmissionUpdateNonPunitiveWithdrawalAction,
-    FormSubmissionUpdateModifiedIndependentAction,
+    FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+    FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+    FormSubmissionUpdateModifiedIndependentOnCancelAction,
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionUpdateDisabilityOnDecisionAction,

@@ -28,6 +28,7 @@ import {
   ApplicationStatus,
   FileOriginType,
   FormCategory,
+  FormSubmissionActionType,
   FormSubmissionStatus,
   ModifiedIndependentStatus,
   NotificationMessageType,
@@ -97,6 +98,78 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       },
       { dateSent: new Date() },
     );
+  });
+
+  [
+    ModifiedIndependentStatus.NotRequested,
+    ModifiedIndependentStatus.Declined,
+  ].forEach((initialModifiedIndependentStatus) => {
+    it(`Should set the modified independent status to ${ModifiedIndependentStatus.Requested} when submitting a modified independent appeal and the student's modified independent status is currently ${initialModifiedIndependentStatus}.`, async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: {
+          modifiedIndependentStatus: initialModifiedIndependentStatus,
+        },
+      });
+      const formConfiguration = await db.dynamicFormConfiguration.findOneOrFail(
+        {
+          select: { id: true },
+          where: { formDefinitionName: FormNames.ModifiedIndependentAppeal },
+        },
+      );
+      formService.dryRunSubmission = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ModifiedIndependentAppeal,
+        data: {
+          data: {
+            actions: [
+              FormSubmissionActionType.UpdateModifiedIndependentOnSubmission,
+            ],
+          },
+        },
+      });
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      await mockJWTUserInfo(appModule, student.user);
+      const now = new Date();
+      MockDate.set(now);
+      const endpoint = "/students/form-submission";
+      const payload = {
+        items: [
+          {
+            dynamicConfigurationId: formConfiguration.id,
+            formData: {},
+            files: [],
+          },
+        ],
+      };
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+
+      const updatedStudent = await db.student.findOneOrFail({
+        select: {
+          id: true,
+          modifiedIndependentStatus: true,
+          modifiedIndependentStatusUpdatedBy: { id: true },
+          modifiedIndependentStatusUpdatedOn: true,
+        },
+        relations: { modifiedIndependentStatusUpdatedBy: true },
+        where: { id: student.id },
+        loadEagerRelations: false,
+      });
+      expect(updatedStudent).toEqual({
+        id: student.id,
+        modifiedIndependentStatus: ModifiedIndependentStatus.Requested,
+        modifiedIndependentStatusUpdatedBy: { id: student.user.id },
+        modifiedIndependentStatusUpdatedOn: now,
+      });
+    });
   });
 
   it("Should submit a student appeal with multiple items, an associated application, with supplementary data, an updated file, and send a Ministry notification when the student has no pending submissions.", async () => {
