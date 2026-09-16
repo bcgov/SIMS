@@ -15,25 +15,34 @@ ADD
 
 COMMENT ON COLUMN sims.student_disability_profile_disabilities.impairments_before_update IS 'Column created to store the impairments information before update for rollback.';
 
--- 3. Backup the existing value and update student_disability_profile_disabilities to replace 'USING_STAIRS' with 'ASC_DESC_STAIRS'
+-- 3. Backup the existing value and update student_disability_profile_disabilities to replace 'USING_STAIRS' with 'ASC_DESC_STAIRS'.
+-- This prevents duplicates 'ASC_DESC_STAIRS' entries and preserves ordering.
 UPDATE
     sims.student_disability_profile_disabilities
 SET
     impairments_before_update = impairments,
     impairments = ARRAY(
-        SELECT impairment
-        FROM (
-            SELECT DISTINCT ON (impairment) impairment, position
-            FROM unnest(
-                array_replace(
-                    impairments,
-                    'USING_STAIRS',
-                    'ASC_DESC_STAIRS'
-                )
-            ) WITH ORDINALITY AS items(impairment, position)
-            ORDER BY impairment, position
-        ) AS deduplicated
-        ORDER BY position
+        SELECT
+            impairment
+        FROM
+            (
+                SELECT
+                    DISTINCT ON (impairment) impairment,
+                    position
+                FROM
+                    unnest(
+                        array_replace(
+                            impairments,
+                            'USING_STAIRS',
+                            'ASC_DESC_STAIRS'
+                        )
+                    ) WITH ORDINALITY AS items(impairment, position)
+                ORDER BY
+                    impairment,
+                    position
+            ) AS deduplicated
+        ORDER BY
+            position
     )
 WHERE
     'USING_STAIRS' = ANY(impairments);

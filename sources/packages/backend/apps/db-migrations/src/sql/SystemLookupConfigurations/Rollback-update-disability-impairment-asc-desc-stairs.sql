@@ -11,7 +11,7 @@ VALUES
     (
         'Disability impairment',
         'USING_STAIRS',
-        'Using stairs',
+        'Using Stairs',
         1,
         (
             SELECT
