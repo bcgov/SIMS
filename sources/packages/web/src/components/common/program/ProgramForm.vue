@@ -177,6 +177,13 @@
                 color="primary"
                 label="Will the program also be offered and delivered at 100% course load on site?"
                 :readonly="isProgramDetailReadonly"
+                :rules="[
+                  (v: string) =>
+                    checkNullOrEmptyRule(
+                      v,
+                      'Will the program also be offered and delivered at 100% course load on site?',
+                    ),
+                ]"
               ></radio-options-yes-no>
               <radio-options-yes-no
                 v-if="componentDisplayConditions.sameOnlineCreditsEarned"
@@ -184,6 +191,13 @@
                 color="primary"
                 label="Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?"
                 :readonly="isProgramDetailReadonly"
+                :rules="[
+                  (v: string) =>
+                    checkNullOrEmptyRule(
+                      v,
+                      'Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?',
+                    ),
+                ]"
               ></radio-options-yes-no>
               <radio-options-yes-no
                 v-if="
@@ -193,6 +207,13 @@
                 color="primary"
                 label="Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?"
                 :readonly="isProgramDetailReadonly"
+                :rules="[
+                  (v: string) =>
+                    checkNullOrEmptyRule(
+                      v,
+                      'Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?',
+                    ),
+                ]"
               ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="
@@ -289,6 +310,7 @@
             <content-group>
               <checkbox-options-group
                 v-model="formModel.entranceRequirements"
+                color="primary"
                 @update:model-value="updateEntranceRequirements"
                 label="What are the entrance requirements for this program? (Select all that apply)"
                 :items="programEntranceRequirementLookupItems"
@@ -447,6 +469,13 @@
                 color="primary"
                 label="Does the WIL meet the program eligibility requirements according to StudentAid BC policy?"
                 :readonly="isProgramDetailReadonly"
+                :rules="[
+                  (v: string) =>
+                    checkNullOrEmptyRule(
+                      v,
+                      'Does the WIL meet the program eligibility requirements according to StudentAid BC policy?',
+                    ),
+                ]"
               ></radio-options-yes-no>
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showWILEligibilityBanner"
@@ -596,7 +625,7 @@
       @primary-click="submit"
       :disable-primary-button="isProcessing"
       :processing="isProcessing"
-      v-if="!isReadonly"
+      v-if="!isReadonly && !loading"
     />
   </body-header-container>
 </template>
@@ -672,7 +701,7 @@ interface ProgramFormContext {
 }
 
 const loading = ref(false);
-const isLookupLoaded = ref(false);
+let isLookupLoaded = false;
 const snackBar = useSnackBar();
 const props = withDefaults(defineProps<ProgramFormProps>(), {
   programId: undefined,
@@ -727,8 +756,11 @@ const componentDisplayConditions = computed(() => {
         ProgramDeliveryTypeValues.Online,
       ),
     sameOnlineCreditsEarned:
+      !formContext.value?.isBCInstitution &&
       formModel.value.deliveredOnlineAlsoOnsite === FormYesNoOptions.No,
     earnAcademicCreditsOtherInstitution:
+      !formContext.value?.isBCInstitution &&
+      formModel.value.deliveredOnlineAlsoOnsite === FormYesNoOptions.No &&
       formModel.value.sameOnlineCreditsEarned === FormYesNoOptions.No,
     minHoursWeek:
       formModel.value.courseLoadCalculation ===
@@ -739,6 +771,7 @@ const componentDisplayConditions = computed(() => {
       formModel.value.hasJointInstitution === FormYesNoOptions.Yes,
     isWILApproved: formModel.value.hasWILComponent === FormYesNoOptions.Yes,
     wilProgramEligibility:
+      formModel.value.hasWILComponent === FormYesNoOptions.Yes &&
       formModel.value.isWILApproved === FormYesNoOptions.Yes,
     travelProgramEligibility:
       formModel.value.hasTravel === FormYesNoOptions.Yes,
@@ -751,9 +784,12 @@ const componentDisplayConditions = computed(() => {
 const bannerDisplayConditions = computed(() => ({
   showBCPrivateOnlyOnlineBanner:
     formContext.value?.isBCPrivate &&
-    formModel.value.programDeliveryTypes?.length === 1 &&
-    formModel.value.programDeliveryTypes[0] ===
+    formModel.value.programDeliveryTypes?.includes(
       ProgramDeliveryTypeValues.Online,
+    ) &&
+    !formModel.value.programDeliveryTypes?.includes(
+      ProgramDeliveryTypeValues.Onsite,
+    ),
   showNonBCInstitutionAcademicCreditsBanner:
     !formContext.value?.isBCInstitution &&
     formModel.value.deliveredOnlineAlsoOnsite === FormYesNoOptions.No &&
@@ -765,9 +801,9 @@ const bannerDisplayConditions = computed(() => ({
     formModel.value.minHoursWeek === FormYesNoOptions.No &&
     formModel.value.isAviationProgram === FormYesNoOptions.No,
   showNoEntranceRequirementsBanner:
-    formModel.value.entranceRequirements?.length === 1 &&
-    formModel.value.entranceRequirements[0] ===
+    formModel.value.entranceRequirements?.includes(
       PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+    ),
   showExceedingESLBanner:
     formModel.value.eslEligibility === ProgramESLPercentage.GreaterThanEqual20,
   showJointDesignatedInstitutionBanner:
@@ -775,12 +811,17 @@ const bannerDisplayConditions = computed(() => ({
   showJointNonDesignatedInstitutionBanner:
     formModel.value.hasJointDesignatedInstitution === FormYesNoOptions.No,
   showWILNotApprovalBanner:
+    formModel.value.hasWILComponent === FormYesNoOptions.Yes &&
     formModel.value.isWILApproved === FormYesNoOptions.No,
   showWILEligibilityBanner:
+    formModel.value.hasWILComponent === FormYesNoOptions.Yes &&
+    formModel.value.isWILApproved === FormYesNoOptions.Yes &&
     formModel.value.wilProgramEligibility === FormYesNoOptions.No,
   showTravelEligibilityBanner:
+    formModel.value.hasTravel === FormYesNoOptions.Yes &&
     formModel.value.travelProgramEligibility === FormYesNoOptions.No,
   showIntlExchangeEligibilityBanner:
+    formModel.value.hasIntlExchange === FormYesNoOptions.Yes &&
     formModel.value.intlExchangeProgramEligibility === FormYesNoOptions.No,
   showPrivatePilotTrainingBanner:
     formModel.value.credentialTypesAviation?.includes(
@@ -857,13 +898,14 @@ const loadLookups = async (): Promise<void> => {
       institutionRegulatoryBody.items;
     programAviationCredentialLookupItems.value =
       programAviationCredential.items;
-    isLookupLoaded.value = true;
+    isLookupLoaded = true;
   } catch {
     snackBar.error("Unexpected error while loading data.");
   } finally {
     loading.value = false;
   }
 };
+
 const loadProgram = async (programId: number) => {
   try {
     loading.value = true;
@@ -951,7 +993,7 @@ const calculateFieldOfStudyCode = async () => {
     evaluationResult.calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode]!;
 };
 watchEffect(async () => {
-  if (!isLookupLoaded.value) {
+  if (!isLookupLoaded) {
     await loadLookups();
   }
   if (props.programId) {

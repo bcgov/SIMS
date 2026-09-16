@@ -4,7 +4,7 @@
       <header-navigator
         :title="backTarget.name"
         :route-location="backTarget.to"
-        sub-title="Edit Program"
+        sub-title="View Program"
       />
     </template>
     <template #alerts>

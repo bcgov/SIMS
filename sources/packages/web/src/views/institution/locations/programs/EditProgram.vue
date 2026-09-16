@@ -34,6 +34,7 @@
     <program-form
       :read-only="readOnly"
       :program-id="programId"
+      :is-processing="processing"
       @loaded="loaded"
       @submitted="submit"
       @cancel="goBack"

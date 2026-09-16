@@ -11,6 +11,7 @@
       :read-only="false"
       :is-b-c-public="institutionState.isBCPublic"
       :is-b-c-private="institutionState.isBCPrivate"
+      :is-processing="processing"
       @submitted="submit"
       @cancel="goBack"
     />
