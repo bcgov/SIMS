@@ -5,13 +5,17 @@ import {
   ModifiedIndependentStatus,
   Student,
 } from "@sims/sims-db";
-import { EntityManager } from "typeorm";
+import { EntityManager, In } from "typeorm";
+import { LoggerService } from "@sims/utilities/logger";
 import { Injectable } from "@nestjs/common";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
 
 @Injectable()
 export class FormSubmissionUpdateModifiedIndependentOnSubmissionAction extends FormSubmissionAction {
+  constructor(private readonly logger: LoggerService) {
+    super();
+  }
   /**
    * Type of action being performed.
    */
@@ -20,8 +24,8 @@ export class FormSubmissionUpdateModifiedIndependentOnSubmissionAction extends F
   }
 
   /**
-   * Updates the student's modified independent status to Requested if the form submission
-   * is submitted and the student's modified independent status is currently Not Requested.
+  * Updates the student's modified independent status to Requested if the form submission
+  * is submitted and the student's modified independent status is currently Not Requested or Declined.
    * @param formSubmission form submission to process.
    * @param auditUserId ID of the user performing the action.
    * @param auditDate date the action is being performed.
@@ -40,10 +44,13 @@ export class FormSubmissionUpdateModifiedIndependentOnSubmissionAction extends F
       );
     }
     const auditUser = { id: auditUserId };
-    await entityManager.getRepository(Student).update(
+    const updateResult = await entityManager.getRepository(Student).update(
       {
         id: formSubmission.studentId,
-        modifiedIndependentStatus: ModifiedIndependentStatus.NotRequested,
+        modifiedIndependentStatus: In([
+          ModifiedIndependentStatus.NotRequested,
+          ModifiedIndependentStatus.Declined,
+        ]),
       },
       {
         modifiedIndependentStatus: ModifiedIndependentStatus.Requested,
@@ -52,6 +59,15 @@ export class FormSubmissionUpdateModifiedIndependentOnSubmissionAction extends F
         modifier: auditUser,
         updatedAt: auditDate,
       },
+    );
+    if (updateResult.affected === 1) {
+      this.logger.log(
+        `Modified independent status updated to ${ModifiedIndependentStatus.Requested} for the student ID ${formSubmission.studentId} on submission.`,
+      );
+      return;
+    }
+    this.logger.log(
+      `Modified independent status not updated for the student ID ${formSubmission.studentId} on submission.`,
     );
   }
 

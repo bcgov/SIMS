@@ -136,7 +136,7 @@ describe("FormSubmissionStudentsController(e2e)-cancelFormSubmission", () => {
     await assertDBUpdatesOnCancellation(db, formSubmission, now);
   });
 
-  it("Should revert the modified independent status to Not requested when a pending modified independent appeal is cancelled.", async () => {
+  it(`Should revert the modified independent status to ${ModifiedIndependentStatus.NotRequested} when a pending modified independent appeal is cancelled.`, async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: {

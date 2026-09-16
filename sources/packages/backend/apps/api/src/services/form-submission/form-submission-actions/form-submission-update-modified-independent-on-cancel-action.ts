@@ -9,9 +9,13 @@ import { EntityManager } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { FormSubmissionAction } from "./form-submission-action";
 import { FormSubmissionActionModel } from "./form-submission-action-models";
+import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class FormSubmissionUpdateModifiedIndependentOnCancelAction extends FormSubmissionAction {
+  constructor(private readonly logger: LoggerService) {
+    super();
+  }
   /**
    * Type of action being performed.
    */
@@ -40,7 +44,7 @@ export class FormSubmissionUpdateModifiedIndependentOnCancelAction extends FormS
       );
     }
     const auditUser = { id: auditUserId };
-    await entityManager.getRepository(Student).update(
+    const updateResult = await entityManager.getRepository(Student).update(
       {
         id: formSubmission.studentId,
         modifiedIndependentStatus: ModifiedIndependentStatus.Requested,
@@ -52,6 +56,15 @@ export class FormSubmissionUpdateModifiedIndependentOnCancelAction extends FormS
         modifier: auditUser,
         updatedAt: auditDate,
       },
+    );
+    if (updateResult.affected === 1) {
+      this.logger.log(
+        `Modified independent status updated to ${ModifiedIndependentStatus.NotRequested} for the student ID ${formSubmission.studentId} on cancellation.`,
+      );
+      return;
+    }
+    this.logger.log(
+      `Modified independent status not updated for the student ID ${formSubmission.studentId} on cancellation.`,
     );
   }
 
