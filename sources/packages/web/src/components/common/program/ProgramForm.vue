@@ -232,6 +232,8 @@
                 hide-details="auto"
                 :rules="[(v) => checkNullOrEmptyRule(v, 'Program length')]"
                 :readonly="isProgramDetailReadonly"
+                hint="This qualifies students for specific funds or grants."
+                persistent-hint
               />
               <radio-options-group
                 v-model="formModel.courseLoadCalculation"
