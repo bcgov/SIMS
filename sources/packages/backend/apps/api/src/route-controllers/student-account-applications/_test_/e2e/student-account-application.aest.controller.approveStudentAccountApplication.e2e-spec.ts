@@ -104,16 +104,33 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     // Check that the notification is in the database.
     const notification = await getPartialMatchNotification();
 
-    expect(notification.messagePayload).toEqual({
-      email_address: TEST_EMAIL,
-      template_id: expect.any(String),
-      personalisation: {
-        lastName: user.lastName,
-        givenNames: user.firstName,
-        studentEmail: user.email,
-        birthDate: "Jan 31 2001",
-        matches: "Last name and birth date match.",
-        matchTime: expect.any(String),
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      dateSent: null,
+      notificationMessage: notification.notificationMessage,
+      messagePayload: {
+        email_address: TEST_EMAIL,
+        template_id: "2108329e-7939-46a0-a8f1-bae05f7ce2a2",
+        personalisation: {
+          lastName: user.lastName,
+          givenNames: user.firstName,
+          studentEmail: user.email,
+          birthDate: "Jan 31 2001",
+          matches: "Last name and birth date match.",
+          matchTime: expect.any(String),
+        },
+      },
+      templateId: "c1518247-a040-4c8d-9efc-72ee64d2dcf7",
+      recipients: [TEST_EMAIL],
+      messageContent: {
+        params: {
+          lastName: user.lastName,
+          givenNames: user.firstName,
+          studentEmail: user.email,
+          birthDate: "Jan 31 2001",
+          matches: "Last name and birth date match.",
+          matchTime: expect.any(String),
+        },
       },
     });
   });
@@ -159,16 +176,33 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     // Check that the notification is in the database.
     const notification = await getPartialMatchNotification();
 
-    expect(notification.messagePayload).toEqual({
-      email_address: TEST_EMAIL,
-      template_id: expect.any(String),
-      personalisation: {
-        lastName: user.lastName,
-        givenNames: user.firstName,
-        studentEmail: user.email,
-        birthDate: "Jan 31 2001",
-        matches: "Last name and SIN match.",
-        matchTime: expect.any(String),
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      dateSent: null,
+      notificationMessage: notification.notificationMessage,
+      messagePayload: {
+        email_address: TEST_EMAIL,
+        template_id: "2108329e-7939-46a0-a8f1-bae05f7ce2a2",
+        personalisation: {
+          lastName: user.lastName,
+          givenNames: user.firstName,
+          studentEmail: user.email,
+          birthDate: "Jan 31 2001",
+          matches: "Last name and SIN match.",
+          matchTime: expect.any(String),
+        },
+      },
+      templateId: "c1518247-a040-4c8d-9efc-72ee64d2dcf7",
+      recipients: [TEST_EMAIL],
+      messageContent: {
+        params: {
+          lastName: user.lastName,
+          givenNames: user.firstName,
+          studentEmail: user.email,
+          birthDate: "Jan 31 2001",
+          matches: "Last name and SIN match.",
+          matchTime: expect.any(String),
+        },
       },
     });
   });
@@ -215,16 +249,33 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     // Check that the notification is in the database.
     const notification = await getPartialMatchNotification();
 
-    expect(notification.messagePayload).toEqual({
-      email_address: TEST_EMAIL,
-      template_id: expect.any(String),
-      personalisation: {
-        lastName: user.lastName,
-        givenNames: user.firstName,
-        studentEmail: user.email,
-        birthDate: "Jan 31 2001",
-        matches: "Birth date and SIN match.",
-        matchTime: expect.any(String),
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      dateSent: null,
+      notificationMessage: notification.notificationMessage,
+      messagePayload: {
+        email_address: TEST_EMAIL,
+        template_id: "2108329e-7939-46a0-a8f1-bae05f7ce2a2",
+        personalisation: {
+          lastName: user.lastName,
+          givenNames: user.firstName,
+          studentEmail: user.email,
+          birthDate: "Jan 31 2001",
+          matches: "Birth date and SIN match.",
+          matchTime: expect.any(String),
+        },
+      },
+      templateId: "c1518247-a040-4c8d-9efc-72ee64d2dcf7",
+      recipients: [TEST_EMAIL],
+      messageContent: {
+        params: {
+          lastName: user.lastName,
+          givenNames: user.firstName,
+          studentEmail: user.email,
+          birthDate: "Jan 31 2001",
+          matches: "Birth date and SIN match.",
+          matchTime: expect.any(String),
+        },
       },
     });
   });
@@ -269,9 +320,12 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         id: true,
         dateSent: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         notificationMessage: { templateId: true },
       },
-      relations: { notificationMessage: true, user: true },
+      relations: { notificationMessage: true },
       where: {
         dateSent: IsNull(),
         notificationMessage: {

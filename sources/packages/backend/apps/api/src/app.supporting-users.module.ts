@@ -26,7 +26,9 @@ import {
   FormSubmissionUpdateDisabilityOnCancelAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
   FormSubmissionUpdateDisabilityOnSubmissionAction,
-  FormSubmissionUpdateModifiedIndependentAction,
+  FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+  FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+  FormSubmissionUpdateModifiedIndependentOnCancelAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
 } from "./services";
 import {
@@ -80,7 +82,9 @@ import {
     StudentRestrictionSharedService,
     RestrictionSharedService,
     FormSubmissionUpdateNonPunitiveWithdrawalAction,
-    FormSubmissionUpdateModifiedIndependentAction,
+    FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+    FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+    FormSubmissionUpdateModifiedIndependentOnCancelAction,
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionUpdateDisabilityOnDecisionAction,

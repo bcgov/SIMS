@@ -1,5 +1,6 @@
 import {
   FormCategory,
+  FormSubmissionBlockedReason,
   FormSubmissionCancellationReason,
   FormSubmissionDecisionStatus,
   FormSubmissionStatus,
@@ -19,6 +20,7 @@ export interface FormSubmissionConfigurationAPIOutDTO {
   formDescription: string;
   allowBundledSubmission: boolean;
   hasApplicationScope: boolean;
+  blockedReason?: FormSubmissionBlockedReason;
 }
 
 /**

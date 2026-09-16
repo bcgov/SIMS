@@ -31,6 +31,14 @@ export class NotificationMessage extends RecordDataModel {
   })
   templateId: string;
   /**
+   * Notify template ID.
+   */
+  @Column({
+    name: "notify_template_id",
+    nullable: false,
+  })
+  notifyTemplateId: string;
+  /**
    * Email addresses to receive a notification when these emails are targeted to someone, not the user, for instance, the Ministry or an external party.
    */
   @Column({

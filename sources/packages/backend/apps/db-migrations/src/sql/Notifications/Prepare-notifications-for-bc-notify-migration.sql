@@ -1,0 +1,77 @@
+ALTER TABLE
+    sims.notifications
+ADD
+    COLUMN template_id UUID,
+ADD
+    COLUMN recipients varchar(254) ARRAY,
+ADD
+    COLUMN message_content jsonb;
+
+COMMENT ON COLUMN sims.notifications.template_id IS 'Template ID used to send the notification.';
+
+COMMENT ON COLUMN sims.notifications.recipients IS 'Notification recipient email addresses.';
+
+COMMENT ON COLUMN sims.notifications.message_content IS 'JSON data containing the notification message content.';
+
+-- Populate all new columns with data from the existing message_payload column and mapped notification message.
+UPDATE
+    sims.notifications AS notification
+SET
+    template_id = notification_message.notify_template_id,
+    recipients = ARRAY [notification.message_payload ->> 'email_address'],
+    message_content = jsonb_build_object(
+        'params',
+        (
+            notification.message_payload -> 'personalisation'
+        ) - 'application_file'
+    ) || CASE
+        WHEN (
+            notification.message_payload -> 'personalisation'
+        ) ? 'application_file' THEN jsonb_build_object(
+            'attachments',
+            jsonb_build_array(
+                jsonb_build_object(
+                    'content',
+                    notification.message_payload -> 'personalisation' -> 'application_file' ->> 'file',
+                    'filename',
+                    notification.message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
+                    'mimeType',
+                    CASE
+                        WHEN lower(
+                            right(
+                                notification.message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
+                                4
+                            )
+                        ) = '.txt' THEN 'text/plain'
+                        WHEN lower(
+                            right(
+                                notification.message_payload -> 'personalisation' -> 'application_file' ->> 'filename',
+                                4
+                            )
+                        ) = '.csv' THEN 'text/csv'
+                    END
+                )
+            )
+        )
+        ELSE '{}' :: jsonb
+    END
+FROM
+    sims.notification_messages AS notification_message
+WHERE
+    notification.notification_message_id = notification_message.id;
+
+-- Add NOT NULL constraints to the new columns after populating them with data from message_payload.
+ALTER TABLE
+    sims.notifications
+ALTER COLUMN
+    template_id
+SET
+    NOT NULL,
+ALTER COLUMN
+    recipients
+SET
+    NOT NULL,
+ALTER COLUMN
+    message_content
+SET
+    NOT NULL;

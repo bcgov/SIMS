@@ -93,3 +93,7 @@ export const FORM_SUBMISSION_CANCELLED = "FORM_SUBMISSION_CANCELLED";
  */
 export const FORM_SUBMISSION_WITH_MINISTRY_DECISION =
   "FORM_SUBMISSION_WITH_MINISTRY_DECISION";
+/**
+ * The form submission is currently blocked and cannot be submitted.
+ */
+export const FORM_SUBMISSION_BLOCKED = "FORM_SUBMISSION_BLOCKED";

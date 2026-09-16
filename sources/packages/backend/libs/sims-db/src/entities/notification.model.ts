@@ -7,10 +7,10 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { NotificationMessage } from "./notification-message.model";
-import { PermanentFailureError } from "./notification-permanent-failure-error.type";
 import { NotificationMetadata } from "./notification-metadata.type";
 import { RecordDataModel } from "./record.model";
 import { User } from "./user.model";
+import { NotifyMessageContent } from "@sims/services/notifications";
 
 @Entity({
   name: TableNames.Notifications,
@@ -76,7 +76,7 @@ export class Notification extends RecordDataModel {
     type: "jsonb",
     nullable: true,
   })
-  permanentFailureError: PermanentFailureError[];
+  permanentFailureError: unknown;
   /**
    * Metadata information related to the saved notification.
    */
@@ -86,6 +86,31 @@ export class Notification extends RecordDataModel {
     nullable: true,
   })
   metadata?: NotificationMetadata;
+  /**
+   * Template ID used to send the notification.
+   */
+  @Column({
+    name: "template_id",
+    type: "uuid",
+  })
+  templateId: string;
+  /**
+   * Notification recipient email addresses.
+   */
+  @Column({
+    name: "recipients",
+    array: true,
+    type: "varchar",
+  })
+  recipients: string[];
+  /**
+   * Message associated with this notification.
+   */
+  @Column({
+    name: "message_content",
+    type: "jsonb",
+  })
+  messageContent: NotifyMessageContent;
 }
 
 /**

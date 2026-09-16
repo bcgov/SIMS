@@ -80,7 +80,21 @@ export class FormSubmissionItem extends RecordDataModel {
 
 export enum FormSubmissionActionType {
   CreateStudentAppealAssessment = "CreateStudentAppealAssessment",
-  UpdateModifiedIndependent = "UpdateModifiedIndependent",
+  /**
+   * Action to update the student's modified independent status when the modified
+   * independent appeal form is submitted by the student.
+   */
+  UpdateModifiedIndependentOnSubmission = "UpdateModifiedIndependentOnSubmission",
+  /**
+   * Action to update the student's modified independent status when the final decision is made
+   * on the modified independent appeal form.
+   */
+  UpdateModifiedIndependentOnDecision = "UpdateModifiedIndependentOnDecision",
+  /**
+   * Action to update the student's modified independent status when the modified
+   * independent appeal form is cancelled by the student.
+   */
+  UpdateModifiedIndependentOnCancel = "UpdateModifiedIndependentOnCancel",
   UpdateNonPunitiveScholasticStandingWithdrawal = "UpdateNonPunitiveScholasticStandingWithdrawal",
   /**
    * Action to update the student's disability status when the disability

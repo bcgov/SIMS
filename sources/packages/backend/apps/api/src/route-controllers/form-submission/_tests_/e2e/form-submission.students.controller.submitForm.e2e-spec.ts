@@ -28,13 +28,17 @@ import {
   ApplicationStatus,
   FileOriginType,
   FormCategory,
+  FormSubmissionActionType,
   FormSubmissionStatus,
+  ModifiedIndependentStatus,
   NotificationMessageType,
   User,
 } from "@sims/sims-db";
 import { AppStudentsModule } from "../../../../app.students.module";
 import {
+  FORM_SUBMISSION_BLOCKED,
   FORM_SUBMISSION_PENDING_DECISION,
+  FormNames,
   FormService,
 } from "../../../../services";
 import MockDate from "mockdate";
@@ -43,6 +47,10 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
 import { SystemUsersService } from "@sims/services";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants/notification.constants";
 
 describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
   let app: INestApplication;
@@ -90,6 +98,78 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       },
       { dateSent: new Date() },
     );
+  });
+
+  [
+    ModifiedIndependentStatus.NotRequested,
+    ModifiedIndependentStatus.Declined,
+  ].forEach((initialModifiedIndependentStatus) => {
+    it(`Should set the modified independent status to ${ModifiedIndependentStatus.Requested} when submitting a modified independent appeal and the student's modified independent status is currently ${initialModifiedIndependentStatus}.`, async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: {
+          modifiedIndependentStatus: initialModifiedIndependentStatus,
+        },
+      });
+      const formConfiguration = await db.dynamicFormConfiguration.findOneOrFail(
+        {
+          select: { id: true },
+          where: { formDefinitionName: FormNames.ModifiedIndependentAppeal },
+        },
+      );
+      formService.dryRunSubmission = jest.fn().mockResolvedValue({
+        valid: true,
+        formName: FormNames.ModifiedIndependentAppeal,
+        data: {
+          data: {
+            actions: [
+              FormSubmissionActionType.UpdateModifiedIndependentOnSubmission,
+            ],
+          },
+        },
+      });
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      await mockJWTUserInfo(appModule, student.user);
+      const now = new Date();
+      MockDate.set(now);
+      const endpoint = "/students/form-submission";
+      const payload = {
+        items: [
+          {
+            dynamicConfigurationId: formConfiguration.id,
+            formData: {},
+            files: [],
+          },
+        ],
+      };
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.CREATED);
+
+      const updatedStudent = await db.student.findOneOrFail({
+        select: {
+          id: true,
+          modifiedIndependentStatus: true,
+          modifiedIndependentStatusUpdatedBy: { id: true },
+          modifiedIndependentStatusUpdatedOn: true,
+        },
+        relations: { modifiedIndependentStatusUpdatedBy: true },
+        where: { id: student.id },
+        loadEagerRelations: false,
+      });
+      expect(updatedStudent).toEqual({
+        id: student.id,
+        modifiedIndependentStatus: ModifiedIndependentStatus.Requested,
+        modifiedIndependentStatusUpdatedBy: { id: student.user.id },
+        modifiedIndependentStatusUpdatedOn: now,
+      });
+    });
   });
 
   it("Should submit a student appeal with multiple items, an associated application, with supplementary data, an updated file, and send a Ministry notification when the student has no pending submissions.", async () => {
@@ -245,8 +325,25 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       creator: systemUser,
       messagePayload: {
         email_address: MINISTRY_EMAIL_ADDRESS,
-        template_id: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+        template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
         personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          formCategory: FormCategory.StudentAppeal,
+          formNames: [
+            formConfigs.studentAppealApplicationA.formType,
+            formConfigs.studentAppealApplicationB.formType,
+          ],
+          applicationNumber: application.applicationNumber,
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           birthDate: getDateOnlyFormat(student.birthDate),
@@ -409,8 +506,22 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
       creator: systemUser,
       messagePayload: {
         email_address: MINISTRY_EMAIL_ADDRESS,
-        template_id: "296aa2ea-dfa7-4285-9d5b-315b2a4911d6",
+        template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
         personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          formCategory: FormCategory.StudentForm,
+          formNames: [formConfigs.studentFormA.formType],
+          applicationNumber: "N/A",
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
           birthDate: getDateOnlyFormat(student.birthDate),
@@ -549,6 +660,46 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
         message:
           "There is already a pending form submission for the same context.",
         errorType: FORM_SUBMISSION_PENDING_DECISION,
+      });
+  });
+
+  it(`Should throw an unprocessable entity error when submitting a ${FormNames.ModifiedIndependentAppeal} appeal when the student has an approved modified independent status.`, async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource, undefined, {
+      initialValue: {
+        modifiedIndependentStatus: ModifiedIndependentStatus.Approved,
+      },
+    });
+    const formConfig = await db.dynamicFormConfiguration.findOneOrFail({
+      select: { id: true },
+      where: { formDefinitionName: FormNames.ModifiedIndependentAppeal },
+    });
+    // Minimum payload to validate the submission.
+    const payload = {
+      items: [
+        {
+          dynamicConfigurationId: formConfig.id,
+          formData: { property: "value" },
+          files: [],
+        },
+      ],
+    };
+    const endpoint = "/students/form-submission";
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "The form is currently blocked from submission.",
+        errorType: FORM_SUBMISSION_BLOCKED,
       });
   });
 

@@ -35,7 +35,9 @@ import {
   FormSubmissionActionProcessor,
   FormSubmissionUpdateDisabilityOnSubmissionAction,
   FormSubmissionCreateAppealAssessmentAction,
-  FormSubmissionUpdateModifiedIndependentAction,
+  FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+  FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+  FormSubmissionUpdateModifiedIndependentOnCancelAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
   FormSubmissionUpdateDisabilityOnDecisionAction,
   FormSubmissionUpdateDisabilityOnCancelAction,
@@ -96,6 +98,7 @@ import {
   ConfigurationContextValidator,
   PendingConcurrencyValidator,
   ApplicationEligibleAppealsValidator,
+  SubmissionBlockedValidator,
   FormSubmissionValidator,
 } from "./services/form-submission/form-submission-validator";
 import {
@@ -195,6 +198,7 @@ import {
     ConfigurationContextValidator,
     PendingConcurrencyValidator,
     ApplicationEligibleAppealsValidator,
+    SubmissionBlockedValidator,
     FormSubmissionValidator,
     // Form Supplementary Data Loaders
     SupplementaryDataProgramYear,
@@ -206,7 +210,9 @@ import {
     FormSubmissionCancellationService,
     FormSubmissionControllerService,
     FormSubmissionUpdateNonPunitiveWithdrawalAction,
-    FormSubmissionUpdateModifiedIndependentAction,
+    FormSubmissionUpdateModifiedIndependentOnSubmissionAction,
+    FormSubmissionUpdateModifiedIndependentOnDecisionAction,
+    FormSubmissionUpdateModifiedIndependentOnCancelAction,
     FormSubmissionCreateAppealAssessmentAction,
     FormSubmissionUpdateDisabilityOnSubmissionAction,
     FormSubmissionUpdateDisabilityOnDecisionAction,

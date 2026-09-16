@@ -31,7 +31,10 @@ import {
   getPSTPDTDateTime,
 } from "@sims/utilities/date-utils";
 import { STUDENT_HAS_PENDING_APPEAL } from "../../../../constants";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 
 describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
   let app: INestApplication;
@@ -169,7 +172,13 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
     });
     // Validate notification.
     const createdNotification = await db.notification.findOne({
-      select: { id: true, messagePayload: true },
+      select: {
+        id: true,
+        messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
+      },
       where: {
         notificationMessage: {
           id: NotificationMessageType.StudentAppealSubmitted,
@@ -177,16 +186,31 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
         dateSent: IsNull(),
       },
     });
-    expect(createdNotification.messagePayload).toStrictEqual({
-      template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
-      email_address: MINISTRY_EMAIL_ADDRESS,
-      personalisation: {
-        givenNames: student.user.firstName,
-        lastName: student.user.lastName,
-        birthDate: getDateOnlyFormat(student.birthDate),
-        studentEmail: student.user.email,
-        applicationNumber: "N/A",
-        dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+    expect(createdNotification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: GC_NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
+        email_address: MINISTRY_EMAIL_ADDRESS,
+        personalisation: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          applicationNumber: "N/A",
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
+      recipients: [MINISTRY_EMAIL_ADDRESS],
+      messageContent: {
+        params: {
+          givenNames: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          studentEmail: student.user.email,
+          applicationNumber: "N/A",
+          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+        },
       },
     });
   });

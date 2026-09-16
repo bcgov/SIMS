@@ -8,8 +8,6 @@ import {
   DisabilityStatus,
   DisabilityStatusViewType,
   InstitutionUserRoles,
-  ModifiedIndependentDisplayStatus,
-  ModifiedIndependentStatus,
   SINStatusEnum,
 } from "@/types";
 import dayjs, { QUnitType, OpUnitType } from "dayjs";
@@ -400,27 +398,6 @@ export function useFormatters() {
   };
 
   /**
-   * Convert the modified independent status to an equivalent
-   * status which is expected to be displayed to the user.
-   * @param modifiedIndependentStatus modified independent status.
-   * @returns modified independent equivalent status displayed to the user.
-   */
-  const modifiedIndependentStatusToDisplay = (
-    modifiedIndependentStatus: ModifiedIndependentStatus,
-  ): ModifiedIndependentDisplayStatus => {
-    switch (modifiedIndependentStatus) {
-      case ModifiedIndependentStatus.NotRequested:
-        return ModifiedIndependentDisplayStatus.NotRequested;
-      case ModifiedIndependentStatus.Approved:
-        return ModifiedIndependentDisplayStatus.Yes;
-      case ModifiedIndependentStatus.Declined:
-        return ModifiedIndependentDisplayStatus.No;
-      default:
-        return modifiedIndependentStatus;
-    }
-  };
-
-  /**
    * Convert the application disability status to be displayed
    * in an equivalent user friendly description.
    * @param applicationDisabilityStatus application disability status.
@@ -495,7 +472,6 @@ export function useFormatters() {
     formatCurrency,
     isBeforeDateOnly,
     disabilityStatusToDisplay,
-    modifiedIndependentStatusToDisplay,
     applicationDisabilityStatusToDisplay,
     currencyFormatter,
     isLessThanGivenWeeks,

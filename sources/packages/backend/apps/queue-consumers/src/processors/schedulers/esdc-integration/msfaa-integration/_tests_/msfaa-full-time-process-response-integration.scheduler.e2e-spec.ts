@@ -297,10 +297,10 @@ describe(
           id: true,
           dateSent: true,
           messagePayload: true,
-          notificationMessage: { templateId: true },
-          user: { email: true, firstName: true, lastName: true },
+          templateId: true,
+          recipients: true,
+          messageContent: true,
         },
-        relations: { notificationMessage: true, user: true },
         where: {
           notificationMessage: {
             id: notificationMessageType,
@@ -313,12 +313,24 @@ describe(
       expect(cancelledMSFAARecord.cancelledDate).toBe("2021-11-24");
       expect(cancelledMSFAARecord.newIssuingProvince).toBe("ON");
       expect(notification.dateSent).toBe(null);
-      expect(notification.messagePayload).toStrictEqual({
-        email_address: notification.user.email,
-        template_id: notification.notificationMessage.templateId,
-        personalisation: {
-          lastName: notification.user.lastName,
-          givenNames: notification.user.firstName,
+      expect(notification).toEqual({
+        id: expect.any(Number),
+        dateSent: null,
+        messagePayload: {
+          email_address: student.user.email,
+          template_id: "b3093a44-da3d-4ea5-af3a-1542535ae7e9",
+          personalisation: {
+            lastName: student.user.lastName,
+            givenNames: student.user.firstName,
+          },
+        },
+        templateId: "9d08fc5d-65c8-4be7-960b-a72b21298b71",
+        recipients: [student.user.email],
+        messageContent: {
+          params: {
+            lastName: student.user.lastName,
+            givenNames: student.user.firstName,
+          },
         },
       });
     });

@@ -77,10 +77,6 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
       ],
     };
 
-    const notificationMessage = await db.notificationMessage.findOne({
-      where: { id: NotificationMessageType.StudentFileUpload },
-    });
-
     const endpoint = "/students/student/save-uploaded-files";
 
     // Mock user service to return the saved student.
@@ -117,23 +113,43 @@ describe("StudentStudentsController(e2e)-saveStudentUploadedFiles", () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
       },
       where: {
         user: { id: student.user.id },
       },
     });
-    expect(notification.messagePayload).toEqual({
-      template_id: notificationMessage.templateId,
-      email_address: "test@test.com",
-      personalisation: {
-        dateTime: expect.any(String),
-        lastName: student.user.lastName,
-        birthDate: getDateOnlyFormat(student.birthDate),
-        fileNames: [studentFile1.fileName, studentFile2.fileName],
-        givenNames: student.user.firstName,
-        studentEmail: student.user.email,
-        documentPurpose: payload.submittedForm.documentPurpose,
-        applicationNumber: payload.submittedForm.applicationNumber,
+    expect(notification).toEqual({
+      id: expect.any(Number),
+      messagePayload: {
+        template_id: "15646bc8-035c-46a5-8ca1-a46ef4e808b5",
+        email_address: "test@test.com",
+        personalisation: {
+          dateTime: expect.any(String),
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          fileNames: [studentFile1.fileName, studentFile2.fileName],
+          givenNames: student.user.firstName,
+          studentEmail: student.user.email,
+          documentPurpose: payload.submittedForm.documentPurpose,
+          applicationNumber: payload.submittedForm.applicationNumber,
+        },
+      },
+      templateId: "52a34645-8bee-4482-b145-7c3067289887",
+      recipients: ["test@test.com"],
+      messageContent: {
+        params: {
+          dateTime: expect.any(String),
+          lastName: student.user.lastName,
+          birthDate: getDateOnlyFormat(student.birthDate),
+          fileNames: [studentFile1.fileName, studentFile2.fileName],
+          givenNames: student.user.firstName,
+          studentEmail: student.user.email,
+          documentPurpose: payload.submittedForm.documentPurpose,
+          applicationNumber: payload.submittedForm.applicationNumber,
+        },
       },
     });
   });

@@ -15,7 +15,10 @@ import { createTestingAppModule } from "../../../../../test/helpers";
 import { NotificationController } from "../../notification.controller";
 import { createFakeSendEmailNotificationPayload } from "./send-email-notification-factory";
 import { EmailNotificationRecipient } from "@sims/services/notifications";
-import { GC_NOTIFY_TEMPLATE_IDS } from "@sims/test-utils/constants";
+import {
+  GC_NOTIFY_TEMPLATE_IDS,
+  NOTIFY_TEMPLATE_IDS,
+} from "@sims/test-utils/constants";
 import { NotificationMessage, NotificationMessageType } from "@sims/sims-db";
 import { randomUUID } from "node:crypto";
 import { IsNull } from "typeorm";
@@ -61,6 +64,9 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         metadata: true,
         notificationMessage: { id: true },
       },
@@ -76,6 +82,14 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         template_id: GC_NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
         email_address: student.user.email,
         personalisation: {
+          givenNames: student.user.firstName ?? "",
+          lastName: student.user.lastName,
+        },
+      },
+      templateId: NOTIFY_TEMPLATE_IDS.FormerYouthInCareNotification,
+      recipients: [student.user.email],
+      messageContent: {
+        params: {
           givenNames: student.user.firstName ?? "",
           lastName: student.user.lastName,
         },
@@ -199,6 +213,9 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
       select: {
         id: true,
         messagePayload: true,
+        templateId: true,
+        recipients: true,
+        messageContent: true,
         metadata: true,
         user: { id: true },
         notificationMessage: { id: true },
@@ -220,6 +237,13 @@ describe("NotificationController(e2e)-sendEmailNotification", () => {
         template_id: ministryNotificationMessage.templateId,
         email_address: ministryEmailContact,
         personalisation: {
+          applicationNumber: savedApplication.applicationNumber,
+        },
+      },
+      templateId: ministryNotificationMessage.notifyTemplateId,
+      recipients: [ministryEmailContact],
+      messageContent: {
+        params: {
           applicationNumber: savedApplication.applicationNumber,
         },
       },

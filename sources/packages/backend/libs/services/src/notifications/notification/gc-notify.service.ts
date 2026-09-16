@@ -1,15 +1,12 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { AxiosError } from "axios";
-import {
-  NotificationEmailMessage,
-  GCNotifyErrorResponse,
-  GCNotifyResult,
-} from "./gc-notify.model";
+import { GCNotifyErrorResponse, GCNotifyResult } from "./gc-notify.model";
 import { LoggerService } from "@sims/utilities/logger";
 import { ConfigService, GCNotify } from "@sims/utilities/config";
 import { CustomNamedError } from "@sims/utilities";
-import { GC_NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
+import { NOTIFY_PERMANENT_FAILURE_ERROR } from "@sims/services/constants";
 import { HttpService } from "@nestjs/axios";
+import { Notification } from "@sims/sims-db";
 
 @Injectable()
 export class GCNotifyService {
@@ -19,21 +16,21 @@ export class GCNotifyService {
     private readonly httpService: HttpService,
     private readonly logger: LoggerService,
   ) {
-    this.gcNotifyConfig = this.configService.notify;
+    this.gcNotifyConfig = this.configService.gcNotify;
   }
 
   /**
    * Send email notification by passing the requestPayload.
-   * @param payload email message payload.
+   * @param notification notification with the data to create the email message payload.
    * @returns GC Notify API call response.
    */
   async sendEmailNotification(
-    payload: NotificationEmailMessage,
+    notification: Notification,
   ): Promise<GCNotifyResult> {
     try {
       const response = await this.httpService.axiosRef.post(
         this.gcNotifyConfig.url,
-        payload,
+        notification.messagePayload,
         {
           headers: {
             Authorization: this.gcNotifyConfig.apiKey,
@@ -56,8 +53,8 @@ export class GCNotifyService {
         // throw a custom error with all GC Notify error details.
         throw new CustomNamedError(
           axiosError.message,
-          GC_NOTIFY_PERMANENT_FAILURE_ERROR,
-          axiosError.response.data,
+          NOTIFY_PERMANENT_FAILURE_ERROR,
+          axiosError.response.data.errors,
         );
       }
       this.logger.error(

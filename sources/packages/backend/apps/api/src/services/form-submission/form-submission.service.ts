@@ -12,8 +12,12 @@ import {
   FormSubmission,
   FormSubmissionStatus,
   getUserFullNameLikeSearch,
+  ModifiedIndependentStatus,
 } from "@sims/sims-db";
-import { FormSubmissionPendingSummary } from "./form-submission.models";
+import {
+  FormSubmissionBlockedReason,
+  FormSubmissionPendingSummary,
+} from "./form-submission.models";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
@@ -23,8 +27,10 @@ import {
 import { Role } from "../../auth";
 import {
   FORM_SUBMISSION_NOT_FOUND,
+  FormNames,
   FormSubmissionAuthorizationService,
   FormSubmissionAuthRoles,
+  StudentService,
 } from "../../services";
 
 /**
@@ -38,6 +44,7 @@ export class FormSubmissionService {
     @InjectRepository(FormSubmission)
     private readonly formSubmissionRepo: Repository<FormSubmission>,
     private readonly formSubmissionAuthorizationService: FormSubmissionAuthorizationService,
+    private readonly studentService: StudentService,
   ) {}
 
   /**
@@ -342,5 +349,38 @@ export class FormSubmissionService {
         : `Form submission with submission item ID ${findOptions.submissionItemId} not found.`;
       throw new CustomNamedError(errorMessage, FORM_SUBMISSION_NOT_FOUND);
     }
+  }
+
+  /**
+   * Determines whether each requested form is blocked for a student.
+   * @param formDefinitionNames Form definition names to check.
+   * @param studentId The ID of the student submitting the forms.
+   * @returns A map of form definition names to their blocked reasons. If a form is not blocked, it will not appear in the map.
+   */
+  async checkIfFormsBlocked(
+    formDefinitionNames: string[],
+    studentId: number,
+  ): Promise<Map<string, FormSubmissionBlockedReason>> {
+    const blockedReasons = new Map<string, FormSubmissionBlockedReason>();
+
+    if (!formDefinitionNames.length) {
+      return blockedReasons;
+    }
+
+    const student = await this.studentService.getStudentById(studentId);
+
+    formDefinitionNames.forEach((formDefinitionName) => {
+      if (
+        formDefinitionName === FormNames.ModifiedIndependentAppeal &&
+        student.modifiedIndependentStatus === ModifiedIndependentStatus.Approved
+      ) {
+        blockedReasons.set(
+          formDefinitionName,
+          FormSubmissionBlockedReason.ModifiedIndependentStatusAlreadyApproved,
+        );
+      }
+    });
+
+    return blockedReasons;
   }
 }
