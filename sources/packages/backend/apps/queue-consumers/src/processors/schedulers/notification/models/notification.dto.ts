@@ -4,7 +4,7 @@ export interface ProcessNotificationsQueueInDTO {
    */
   pollingRecordsLimit: number;
   /**
-   * Maximum number of API  calls in the allowed window defined by externalRateLimitSeconds.
+   * Maximum number of API calls in the allowed window defined by externalRateLimitSeconds.
    */
   externalRateLimit?: number;
   /**

@@ -98,9 +98,8 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
       createFakeNotification(),
     );
     await db.notification.save(notifications);
-    // Simulate the external API succeeding for the first call and then
-    // returning a 429 (too many requests) rate limit exceeded error, regardless
-    // of which notification API implementation (GC Notify or BC Notify) is used.
+    // Simulate the external API succeeding for the first two calls and then
+    // returning a 429 (too many requests) rate limit exceeded error.
     const rateLimitExceededError = new CustomNamedError(
       "Too many requests.",
       NOTIFY_LIMIT_EXCEEDED_ERROR,
@@ -135,8 +134,6 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
     // The process must stop as soon as the rate limit error is detected, i.e.
     // the third notification must never be attempted.
     expect(sendEmailNotificationMock).toHaveBeenCalledTimes(3);
-    // Only the first notification should have been sent, the remaining two,
-    // including the one that was never attempted, must still be unsent.
     const unsentNotificationsCount = await db.notification.count({
       where: { dateSent: IsNull() },
     });
