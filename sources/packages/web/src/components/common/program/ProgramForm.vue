@@ -610,6 +610,9 @@ import {
   CIP_CODE_REGEX,
   NOC_REGEX,
   SABC_PROGRAM_CODE_REGEX,
+  PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+  REGULATORY_BODY_OTHER,
+  AVIATION_PRIVATE_PILOT_TRAINING,
 } from "@/constants/program-constants";
 import { computed, ref, watch, watchEffect } from "vue";
 import type { ComponentItemType, VForm, ProgramFormModel } from "@/types";
@@ -646,10 +649,6 @@ const PROGRAM_COURSE_LOAD_ITEMS: ComponentItemType[] = [
   { title: "Credit based", value: ProgramCourseLoadCalculationTypes.Credit },
   { title: "Hours based", value: ProgramCourseLoadCalculationTypes.Hours },
 ];
-const REGULATORY_BODY_OTHER = "other";
-const NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS =
-  "noneOfTheAboveEntranceRequirements";
-const AVIATION_PRIVATE_PILOT_TRAINING = "privatePilotTraining";
 
 const PROGRAM_ESL_ITEMS: ComponentItemType[] = [
   { title: "Less than 20%", value: ProgramESLPercentage.LessThan20 },
@@ -768,7 +767,7 @@ const bannerDisplayConditions = computed(() => ({
   showNoEntranceRequirementsBanner:
     formModel.value.entranceRequirements?.length === 1 &&
     formModel.value.entranceRequirements[0] ===
-      NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+      PROGRAM_ENTRANCE_REQUIREMENT_NONE,
   showExceedingESLBanner:
     formModel.value.eslEligibility === ProgramESLPercentage.GreaterThanEqual20,
   showJointDesignatedInstitutionBanner:
@@ -809,16 +808,16 @@ const updateEntranceRequirements = () => {
     return;
   }
   const isNonePreviouslySelected =
-    previousEntranceRequirements[0] === NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS;
+    previousEntranceRequirements[0] === PROGRAM_ENTRANCE_REQUIREMENT_NONE;
   if (isNonePreviouslySelected) {
     formModel.value.entranceRequirements = currentEntranceRequirements.filter(
-      (requirement) => requirement !== NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+      (requirement) => requirement !== PROGRAM_ENTRANCE_REQUIREMENT_NONE,
     );
   } else {
     formModel.value.entranceRequirements = currentEntranceRequirements.includes(
-      NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS,
+      PROGRAM_ENTRANCE_REQUIREMENT_NONE,
     )
-      ? [NONE_OF_THE_ABOVE_ENTRANCE_REQUIREMENTS]
+      ? [PROGRAM_ENTRANCE_REQUIREMENT_NONE]
       : currentEntranceRequirements;
   }
   previousEntranceRequirements = formModel.value.entranceRequirements;

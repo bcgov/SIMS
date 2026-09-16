@@ -8,3 +8,5 @@ export const NOC_REGEX = /^\d{5}$/;
 export const SABC_PROGRAM_CODE_REGEX = /^[A-Z]{3}\d$/;
 export const PROGRAM_ENTRANCE_REQUIREMENT_NONE =
   "noneOfTheAboveEntranceRequirements";
+export const REGULATORY_BODY_OTHER = "other";
+export const AVIATION_PRIVATE_PILOT_TRAINING = "privatePilotTraining";
