@@ -78,12 +78,13 @@
       "request": "launch",
       "name": "API - Current test file",
       "program": "${workspaceFolder}/sources/packages/backend/node_modules/.bin/jest",
+      "cwd": "${workspaceFolder}/sources/packages/backend",
       "args": [
         "--runInBand",
         "--config",
-        "./sources/packages/backend/apps/api/test/jest-e2e.json",
+        "./apps/api/test/jest-api-e2e.json",
         "--runTestsByPath",
-        "${relativeFile}",
+        "${file}",
         "--forceExit"
       ],
       "console": "integratedTerminal",
