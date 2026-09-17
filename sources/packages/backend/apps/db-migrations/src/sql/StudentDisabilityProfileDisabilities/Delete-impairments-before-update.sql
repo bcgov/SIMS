@@ -1,0 +1,3 @@
+-- Drop impairments_before_update from sims.student_disability_profile_disabilities.
+ALTER TABLE
+  sims.student_disability_profile_disabilities DROP COLUMN impairments_before_update;
