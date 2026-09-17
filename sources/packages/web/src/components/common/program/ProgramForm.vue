@@ -555,6 +555,10 @@
                 ]"
                 :readonly="isProgramDetailReadonly"
               ></radio-options-yes-no>
+              <program-eligibility-banner
+                v-if="bannerDisplayConditions.showIntlExchangeEligibilityBanner"
+                summary="This must meet the StudentAid BC policy."
+              />
             </content-group>
           </body-header-container>
           <body-header-container title="Aviation" header-size="medium">
@@ -587,6 +591,10 @@
                 ]"
                 :readonly="isProgramDetailReadonly"
               ></checkbox-options-group>
+              <program-eligibility-banner
+                v-if="bannerDisplayConditions.showPrivatePilotTrainingBanner"
+                summary="StudentAid BC does not provide any assistance to students for Private Pilot Training."
+              />
               <radio-options-yes-no
                 v-if="componentDisplayConditions.minHoursWeekAvi"
                 v-model="formModel.minHoursWeekAvi"
@@ -601,6 +609,10 @@
                 ]"
                 :readonly="isProgramDetailReadonly"
               ></radio-options-yes-no>
+              <program-eligibility-banner
+                v-if="bannerDisplayConditions.showAviationMinHoursWeekBanner"
+                summary="The aviation program needs to be a minimum of 15 instructional hours."
+              />
             </content-group>
           </body-header-container>
           <body-header-container title="Declaration" header-size="medium">
