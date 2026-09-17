@@ -11,12 +11,7 @@ export class DeleteImpairmentsBeforeUpdateCol1789675751784 implements MigrationI
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      getSQLFileData(
-        "Rollback-delete-impairments-before-update.sql",
-        "StudentDisabilityProfileDisabilities",
-      ),
-    );
+  public async down(): Promise<void> {
+    // No down migration needed here.
   }
 }
