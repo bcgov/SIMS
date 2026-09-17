@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { getSQLFileData } from "../utilities/sqlLoader";
 
-export class DeleteStudyBreaksBeforeUpdateCol1789673215635 implements MigrationInterface {
+export class DeleteStudyBreaksBeforeUpdateCol1789674200359 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       getSQLFileData(
