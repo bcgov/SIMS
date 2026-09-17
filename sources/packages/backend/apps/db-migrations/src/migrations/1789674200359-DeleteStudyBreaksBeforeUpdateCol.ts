@@ -11,12 +11,7 @@ export class DeleteStudyBreaksBeforeUpdateCol1789674200359 implements MigrationI
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      getSQLFileData(
-        "Rollback-delete-study-breaks-before-update.sql",
-        "EducationProgramsOfferings",
-      ),
-    );
+  public async down(): Promise<void> {
+    // No down migration needed here.
   }
 }
