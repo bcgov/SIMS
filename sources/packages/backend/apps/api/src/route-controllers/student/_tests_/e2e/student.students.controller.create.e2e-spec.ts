@@ -19,6 +19,7 @@ import {
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
+import { UserService } from "../../../../services";
 import { In } from "typeorm";
 import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "../../models/student.dto";
@@ -79,10 +80,6 @@ describe("StudentStudentsController(e2e)-create", () => {
         studentId = response.body.id;
         expect(studentId).toBeGreaterThan(0);
       });
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
     // Basic student creation validation.
     const createdStudent = await db.student.findOne({
       select: {
@@ -117,6 +114,48 @@ describe("StudentStudentsController(e2e)-create", () => {
         id: expect.any(Number),
         sin: SIN_NUMBER_A,
       },
+    });
+  });
+
+  it("Should refresh the cached login information after creating a student account.", async () => {
+    // Arrange
+    const birthDate = "2000-01-01";
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+    const user = createFakeUser();
+    const userService = appModule.get(UserService);
+    await mockJWTUserInfo(appModule, { ...user, birthDate });
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    expect(db.dataSource.queryResultCache).toBeDefined();
+    expect(await userService.getUserLoginInfo(user.userName)).toBeNull();
+
+    // Act
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED);
+
+    // Assert
+    await mockJWTUserInfo(appModule, { ...user, birthDate });
+    const profileResponse = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(profileResponse.body).toMatchObject({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      dateOfBirth: birthDate,
+    });
+    const refreshedLoginInfo = await userService.getUserLoginInfo(
+      user.userName,
+    );
+    expect(refreshedLoginInfo).toMatchObject({
+      id: expect.any(Number),
+      studentId: expect.any(Number),
     });
   });
 
