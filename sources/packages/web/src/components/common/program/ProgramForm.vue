@@ -12,6 +12,7 @@
                 density="compact"
                 label="Program name"
                 variant="outlined"
+                :counter="PROGRAM_NAME_MAX_LENGTH"
                 hide-details="auto"
                 :rules="[
                   (v) =>
@@ -24,6 +25,7 @@
                 variant="outlined"
                 label="Program description"
                 class="mt-4"
+                :counter="PROGRAM_DESCRIPTION_MAX_LENGTH"
                 :rules="[
                   (v) =>
                     checkLengthRule(

@@ -150,11 +150,15 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
   });
 
   afterAll(async () => {
-    MockDate.reset();
     await app?.close();
   });
 });
 
+/**
+ * Gets the endpoint URL for updating an education program by its ID.
+ * @param programId The ID of the education program.
+ * @returns The endpoint URL for the specified education program.
+ */
 function getEndpoint(programId: number): string {
   return `/institutions/education-program/${programId}`;
 }

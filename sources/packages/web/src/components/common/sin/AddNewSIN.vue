@@ -55,7 +55,7 @@
           label="I confirm this SIN is correct for the current student."
           v-model="formModel.confirmDuplicateSIN"
           hide-details="auto"
-          :rules="[requiredCheckboxRule]"
+          :rules="[requiredDeclarationRule]"
       /></template>
       <template #footer>
         <check-permission-role :role="allowedRole">
@@ -98,7 +98,8 @@ export default defineComponent({
   },
   setup(props) {
     const snackBar = useSnackBar();
-    const { sinValidationRule, checkNotesLengthRule } = useRules();
+    const { sinValidationRule, checkNotesLengthRule, requiredDeclarationRule } =
+      useRules();
     const { showDialog, showModal, resolvePromise } = useModalDialog<boolean>();
     const addNewSINForm = ref({} as VForm);
     const formModel = reactive({
@@ -106,9 +107,6 @@ export default defineComponent({
       confirmDuplicateSIN: false,
     } as CreateSINValidationAPIInDTO);
     const showDuplicateWarning = ref(false);
-
-    const requiredCheckboxRule = (value: boolean) =>
-      value || "You must confirm to proceed.";
 
     const submit = async () => {
       const validationResult = await addNewSINForm.value.validate();
@@ -166,7 +164,7 @@ export default defineComponent({
       BannerTypes,
       sinValidationRule,
       checkNotesLengthRule,
-      requiredCheckboxRule,
+      requiredDeclarationRule,
     };
   },
 });
