@@ -151,6 +151,8 @@ export class StudentStudentsController extends BaseController {
         studentUserToken,
         submissionResult.data.data,
       );
+      // Clear the user login cache after successfully creating the student.
+      await this.userService.clearUserLoginCache(studentUserToken.userName);
       return { id: createdStudent.id };
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {

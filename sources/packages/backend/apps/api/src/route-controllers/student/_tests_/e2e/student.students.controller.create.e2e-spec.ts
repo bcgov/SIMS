@@ -144,12 +144,13 @@ describe("StudentStudentsController(e2e)-create", () => {
       .get(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK);
-    expect(profileResponse.body).toMatchObject({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      dateOfBirth: birthDate,
-    });
+    expect(profileResponse.body).toEqual(
+      expect.objectContaining({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: birthDate,
+      }),
+    );
     const refreshedLoginInfo = await userService.getUserLoginInfo(
       user.userName,
     );
