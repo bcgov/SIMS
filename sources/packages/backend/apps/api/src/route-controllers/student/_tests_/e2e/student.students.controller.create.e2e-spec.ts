@@ -79,6 +79,10 @@ describe("StudentStudentsController(e2e)-create", () => {
         studentId = response.body.id;
         expect(studentId).toBeGreaterThan(0);
       });
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
     // Basic student creation validation.
     const createdStudent = await db.student.findOne({
       select: {
