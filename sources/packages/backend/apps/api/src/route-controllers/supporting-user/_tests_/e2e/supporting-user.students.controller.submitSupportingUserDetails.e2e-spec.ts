@@ -26,6 +26,7 @@ import {
 } from "@sims/sims-db";
 import { ReportedSupportingUserAPIInDTO } from "../../../../route-controllers";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { UserService } from "../../../../services";
 
 describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", () => {
   let app: INestApplication;
@@ -33,6 +34,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
   let db: E2EDataSources;
   let recentPYParentForm: DynamicFormConfiguration;
   let zeebeClient: ZeebeGrpcClient;
+  let userService: UserService;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -41,6 +43,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     appModule = module;
     db = createE2EDataSources(dataSource);
     zeebeClient = app.get(ZeebeGrpcClient);
+    userService = appModule.get(UserService);
     recentPYParentForm = await db.dynamicFormConfiguration.findOne({
       select: {
         id: true,
@@ -58,6 +61,27 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
 
   beforeEach(() => {
     resetMockJWTUserInfo(appModule);
+  });
+
+  it("Should clear cached login information after synchronizing a supporting user.", async () => {
+    // Arrange
+    const userName = faker.string.uuid();
+    expect(db.dataSource.queryResultCache).toBeDefined();
+    expect(await userService.getUserLoginInfo(userName)).toBeNull();
+
+    // Act
+    const savedUser = await userService.syncUser(
+      userName,
+      faker.internet.email(),
+      faker.person.firstName(),
+      faker.person.lastName(),
+    );
+
+    // Assert
+    expect(savedUser).toMatchObject({ userName });
+    expect(await userService.getUserLoginInfo(userName)).toMatchObject({
+      id: savedUser.id,
+    });
   });
 
   it("Should throw not found when the supporting user is a parent associated to the submitted application but the supporting user is able to report.", async () => {

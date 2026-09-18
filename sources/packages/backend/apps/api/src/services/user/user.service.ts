@@ -201,7 +201,9 @@ export class UserService extends DataModelService<User> {
     user.email = email;
     user.firstName = givenNames;
     user.lastName = lastName;
-    return this.repo.save(user);
+    const savedUser = await this.repo.save(user);
+    await this.clearUserLoginCache(userName);
+    return savedUser;
   }
 
   /**
