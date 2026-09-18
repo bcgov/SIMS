@@ -8,23 +8,19 @@
             <content-group>
               <v-text-field
                 v-model="formModel.name"
-                color="primary"
                 density="compact"
                 label="Program name"
                 variant="outlined"
                 :counter="PROGRAM_NAME_MAX_LENGTH"
-                hide-details="auto"
                 :rules="[
                   (v) =>
                     checkLengthRule(v, PROGRAM_NAME_MAX_LENGTH, 'Program name'),
                 ]"
               />
               <v-textarea
-                color="primary"
                 v-model="formModel.description"
                 variant="outlined"
                 label="Program description"
-                class="mt-4"
                 :counter="PROGRAM_DESCRIPTION_MAX_LENGTH"
                 :rules="[
                   (v) =>
@@ -37,7 +33,6 @@
                 ]"
               ></v-textarea>
               <v-select
-                color="primary"
                 label="Credential type"
                 density="compact"
                 :items="programCredentialLookupItems"
@@ -50,7 +45,6 @@
                 @update:model-value="calculateFieldOfStudyCode"
               />
               <v-text-field
-                color="primary"
                 class="mb-3"
                 v-model="formModel.cipCode"
                 density="compact"
@@ -70,7 +64,6 @@
                 @update:model-value="calculateFieldOfStudyCode"
               />
               <v-text-field
-                color="primary"
                 :model-value="formModel.fieldOfStudyCode"
                 density="compact"
                 label="Field of study code"
@@ -78,7 +71,6 @@
                 readonly
               />
               <v-text-field
-                color="primary"
                 class="mb-3"
                 v-model="formModel.nocCode"
                 density="compact"
@@ -98,7 +90,6 @@
                 :readonly="isProgramDetailReadonly"
               />
               <v-text-field
-                color="primary"
                 class="mb-3"
                 v-model="formModel.sabcCode"
                 density="compact"
@@ -118,9 +109,9 @@
                 :readonly="isProgramDetailReadonly"
               />
               <v-text-field
-                color="primary"
                 v-model="formModel.institutionProgramCode"
                 density="compact"
+                :counter="INSTITUTION_PROGRAM_CODE_MAX_LENGTH"
                 label="Institution Program Code"
                 hide-details="auto"
                 variant="outlined"
@@ -143,7 +134,6 @@
             <content-group>
               <radio-options-group
                 v-model="formModel.programIntensity"
-                color="primary"
                 :items="PROGRAM_INTENSITY_ITEMS"
                 :rules="[
                   (v: string) =>
@@ -165,8 +155,8 @@
                 ></radio-options-group
               >
               <checkbox-options-group
-                v-model="formModel.programDeliveryTypes"
                 color="primary"
+                v-model="formModel.programDeliveryTypes"
                 label="How will this program be delivered? (Select all that apply)"
                 :items="PROGRAM_DELIVERY_ITEMS"
                 item-value="value"
@@ -185,7 +175,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.deliveredOnlineAlsoOnsite"
                 v-model="formModel.deliveredOnlineAlsoOnsite"
-                color="primary"
                 label="Will the program also be offered and delivered at 100% course load on site?"
                 :readonly="isProgramDetailReadonly"
                 :rules="[
@@ -199,7 +188,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.sameOnlineCreditsEarned"
                 v-model="formModel.sameOnlineCreditsEarned"
-                color="primary"
                 label="Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?"
                 :readonly="isProgramDetailReadonly"
                 :rules="[
@@ -215,7 +203,6 @@
                   componentDisplayConditions.earnAcademicCreditsOtherInstitution
                 "
                 v-model="formModel.earnAcademicCreditsOtherInstitution"
-                color="primary"
                 label="Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?"
                 :readonly="isProgramDetailReadonly"
                 :rules="[
@@ -232,7 +219,7 @@
                 "
               />
               <v-select
-                color="primary"
+                class="mb-2"
                 label="Program length"
                 density="compact"
                 :items="programLengthLookupItems"
@@ -248,7 +235,6 @@
               />
               <radio-options-group
                 v-model="formModel.courseLoadCalculation"
-                color="primary"
                 label="Program course load calculation is:"
                 :items="PROGRAM_COURSE_LOAD_ITEMS"
                 :rules="[
@@ -260,7 +246,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.minHoursWeek"
                 v-model="formModel.minHoursWeek"
-                color="primary"
                 label="Does this program include a minimum of 20 instructional hours per week?"
                 :rules="[
                   (v: string) =>
@@ -276,8 +261,6 @@
                 summary="The program needs to be a minimum of 20 instructional hours."
               />
               <v-select
-                color="primary"
-                class="mb-3"
                 label="Which regulatory body does this program belong to?"
                 density="compact"
                 :items="institutionRegulatoryBodyLookupItems"
@@ -297,7 +280,6 @@
                 persistent-hint
               />
               <v-text-field
-                color="primary"
                 v-if="componentDisplayConditions.otherRegulatoryBody"
                 v-model="formModel.otherRegulatoryBody"
                 density="compact"
@@ -322,8 +304,8 @@
           >
             <content-group>
               <checkbox-options-group
-                v-model="formModel.entranceRequirements"
                 color="primary"
+                v-model="formModel.entranceRequirements"
                 @update:model-value="updateEntranceRequirements"
                 label="What are the entrance requirements for this program? (Select all that apply)"
                 :items="programEntranceRequirementLookupItems"
@@ -350,7 +332,6 @@
             <content-group>
               <radio-options-group
                 v-model="formModel.eslEligibility"
-                color="primary"
                 label="What percentage of the program has ESL Content?"
                 :items="PROGRAM_ESL_ITEMS"
                 :rules="[
@@ -390,7 +371,6 @@
             <content-group>
               <radio-options-yes-no
                 v-model="formModel.hasJointInstitution"
-                color="primary"
                 label="Is the program offered jointly or in partnership with other institutions?"
                 :rules="[
                   (v: string) =>
@@ -404,7 +384,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.hasJointDesignatedInstitution"
                 v-model="formModel.hasJointDesignatedInstitution"
-                color="primary"
                 label="Are all institutions you partner with for this program designated by StudentAid BC?"
                 :rules="[
                   (v: string) =>
@@ -447,7 +426,6 @@
             <content-group>
               <radio-options-yes-no
                 v-model="formModel.hasWILComponent"
-                color="primary"
                 label="Does this program have a WIL component?"
                 :rules="[
                   (v: string) =>
@@ -461,7 +439,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.isWILApproved"
                 v-model="formModel.isWILApproved"
-                color="primary"
                 label="Is the WIL approved by your regulator or oversight body?"
                 :rules="[
                   (v: string) =>
@@ -479,7 +456,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.wilProgramEligibility"
                 v-model="formModel.wilProgramEligibility"
-                color="primary"
                 label="Does the WIL meet the program eligibility requirements according to StudentAid BC policy?"
                 :readonly="isProgramDetailReadonly"
                 :rules="[
@@ -529,7 +505,6 @@
             <content-group>
               <radio-options-yes-no
                 v-model="formModel.hasTravel"
-                color="primary"
                 label="Is a field trip, field placement or travel part of this program?"
                 :rules="[
                   (v: string) =>
@@ -543,7 +518,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.travelProgramEligibility"
                 v-model="formModel.travelProgramEligibility"
-                color="primary"
                 label="Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?"
                 :rules="[
                   (v: string) =>
@@ -567,7 +541,6 @@
             <content-group>
               <radio-options-yes-no
                 v-model="formModel.hasIntlExchange"
-                color="primary"
                 label="Does the program have an international exchange?"
                 :rules="[
                   (v: string) =>
@@ -581,7 +554,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.intlExchangeProgramEligibility"
                 v-model="formModel.intlExchangeProgramEligibility"
-                color="primary"
                 label="Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?"
                 :rules="[
                   (v: string) =>
@@ -602,7 +574,6 @@
             <content-group>
               <radio-options-yes-no
                 v-model="formModel.isAviationProgram"
-                color="primary"
                 label="Does this program contain aviation?"
                 :rules="[
                   (v: string) =>
@@ -614,9 +585,9 @@
                 :readonly="isProgramDetailReadonly"
               ></radio-options-yes-no>
               <checkbox-options-group
+                color="primary"
                 v-if="componentDisplayConditions.credentialTypesAviation"
                 v-model="formModel.credentialTypesAviation"
-                color="primary"
                 label="Which credential type(s) are included? (Select all that apply)"
                 :items="programAviationCredentialLookupItems"
                 item-title="lookupValue"
@@ -635,7 +606,6 @@
               <radio-options-yes-no
                 v-if="componentDisplayConditions.minHoursWeekAvi"
                 v-model="formModel.minHoursWeekAvi"
-                color="primary"
                 label="Does this program include a minimum of 15 instructional hours per week?"
                 :rules="[
                   (v: string) =>
@@ -658,8 +628,9 @@
                 All information is subject to verification and auditing.
               </p>
               <v-checkbox
-                label="I confirm this program meets the policies outlined in the StudentAid BC policy manual."
                 color="primary"
+                density="compact"
+                label="I confirm this program meets the policies outlined in the StudentAid BC policy manual."
                 v-model="formModel.programDeclaration"
                 hide-details="auto"
                 :rules="[requiredDeclarationRule]"
@@ -750,6 +721,7 @@ interface ProgramFormContext {
   isBCPrivate: boolean;
   isBCInstitution: boolean;
 }
+
 const tooltipMaxWidth = 670;
 const loading = ref(false);
 let isLookupLoaded = false;
@@ -884,6 +856,10 @@ const bannerDisplayConditions = computed(() => ({
 const submit = async () => {
   const { valid } = await programForm.value.validate();
   if (!valid) {
+    const [errorSummary] = document.getElementsByClassName("error-summary");
+    if (errorSummary) {
+      errorSummary.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
     return;
   }
   const submitData: EducationProgramAPIInDTO = {

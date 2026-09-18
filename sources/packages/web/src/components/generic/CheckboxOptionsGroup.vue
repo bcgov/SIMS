@@ -1,9 +1,9 @@
 <template>
-  <div class="my-3">
+  <div class="mb-3">
     <v-label class="text-wrap">{{ label }}</v-label>
     <template v-for="item in items" :key="item[itemValue]">
       <v-checkbox
-        class="ml-3"
+        class="ml-1"
         density="compact"
         :label="item[itemTitle]"
         :value="item[itemValue]"

@@ -1,10 +1,11 @@
 <template>
   <v-radio-group
     color="primary"
+    density="comfortable"
     v-model="model"
     v-bind="$attrs"
     hide-details="auto"
-    class="my-3"
+    class="mb-3"
   >
     <v-label class="text-wrap"
       ><slot name="label">{{ label }}</slot></v-label
