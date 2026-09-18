@@ -1,14 +1,7 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { ColumnNames, TableNames } from "../constant";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { BatchReassessmentApplication, BatchReassessmentStatus, User } from ".";
+import { BatchReassessmentApplication, BatchReassessmentStatus } from ".";
 
 /**
  * Batch manual reassessment submitted by a ministry user.
@@ -21,25 +14,7 @@ export class BatchReassessment extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Date that the batch manual reassessment was submitted.
-   */
-  @Column({
-    name: "submitted_date",
-    type: "timestamptz",
-    nullable: false,
-  })
-  submittedDate: Date;
-  /**
-   * Ministry user that submitted the batch manual reassessment.
-   */
-  @ManyToOne(() => User, { eager: false, cascade: false, nullable: false })
-  @JoinColumn({
-    name: "submitted_by",
-    referencedColumnName: ColumnNames.ID,
-  })
-  submittedBy: User;
-  /**
-   * Final processing status of the batch manual reassessment.
+   *Processing status of the batch manual reassessment.
    */
   @Column({
     name: "status",

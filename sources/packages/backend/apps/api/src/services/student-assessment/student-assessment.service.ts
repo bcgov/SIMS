@@ -433,23 +433,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Gets persisted batch manual reassessment submissions and their application results.
-   * @returns batch manual reassessment submissions.
-   */
-  async getBatchReassessment(): Promise<BatchReassessment[]> {
-    return this.dataSource
-      .getRepository(BatchReassessment)
-      .createQueryBuilder("batchReassessment")
-      .leftJoinAndSelect("batchReassessment.submittedBy", "submittedBy")
-      .leftJoinAndSelect(
-        "batchReassessment.batchReassessmentApplications",
-        "batchApplication",
-      )
-      .orderBy("batchReassessment.submittedDate", "DESC")
-      .getMany();
-  }
-
-  /**
    * Triggers a batch manual reassessment for a list of application numbers.
    * Each application number is processed independently so failures do not stop
    * the remaining batch items from being attempted.
@@ -482,8 +465,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     // Create a new batch reassessment to indicate that the batch is in progress.
     const batchReassessment: BatchReassessment = {
       status: BatchReassessmentStatus.InProgress,
-      submittedBy: { id: userId },
-      submittedDate: now,
+      creator: { id: userId },
+      createdAt: now,
     } as BatchReassessment;
     await this.dataSource
       .getRepository(BatchReassessment)
@@ -499,12 +482,10 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       try {
         const applicationId = applicationIdsByNumber.get(applicationNumber);
         if (!applicationId) {
-          // TODO How to handle a record without a valid application id
           console.log(
             "Application not found for application number:",
             applicationNumber,
           );
-          //throw new Error("Application not found");
           continue;
         }
         await this.createManualReassessment(applicationId, note, userId);

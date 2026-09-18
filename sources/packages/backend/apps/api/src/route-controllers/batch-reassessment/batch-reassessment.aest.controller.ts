@@ -8,7 +8,8 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import { BatchReassessmentApplicationResult } from "@sims/sims-db";
 import { BatchSubmissionResultAPIOutDTO } from "./models/batch-reassessment.dto";
-import { StudentAssessmentService } from "../../services";
+import { BatchReassessmentService } from "../../services";
+import { getUserFullName } from "../../utilities";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.
@@ -19,7 +20,7 @@ import { StudentAssessmentService } from "../../services";
 @ApiTags(`${ClientTypeBaseRoute.AEST}-batch-reassessment`)
 export class BatchReassessmentAESTController extends BaseController {
   constructor(
-    private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly batchReassessmentService: BatchReassessmentService,
   ) {
     super();
   }
@@ -31,8 +32,8 @@ export class BatchReassessmentAESTController extends BaseController {
   @Roles(Role.AESTBatchReassessment)
   @Get()
   async getBatchReassessment(): Promise<BatchSubmissionResultAPIOutDTO[]> {
-    const batches = await this.studentAssessmentService.getBatchReassessment();
-    // TODO Just get the counts in the query??
+    const batches = await this.batchReassessmentService.getBatchReassessment();
+    // TODO It's not efficient return all applications. Create a custom dto with counts.
     return batches.map((batch) => {
       const successfulApplications =
         batch.batchReassessmentApplications?.filter(
@@ -47,10 +48,8 @@ export class BatchReassessmentAESTController extends BaseController {
 
       return {
         batchId: batch.id,
-        submittedDate: batch.submittedDate,
-        submittedBy: [batch.submittedBy.firstName, batch.submittedBy.lastName]
-          .filter(Boolean)
-          .join(" "),
+        submittedDate: batch.createdAt,
+        submittedBy: getUserFullName(batch.creator),
         totalApplications: successfulApplications + failedApplications,
         successfulApplications,
         failedApplications,

@@ -51,6 +51,7 @@ export * from "./sin-validation/sin-validation.service";
 export * from "./designation-agreement/designation-agreement-locations.service";
 export * from "./student-assessment/student-assessment.service";
 export * from "./student-assessment/student-assessment.constants";
+export * from "./batch-reassessment/batch-reassessment.service";
 export * from "./student-scholastic-standings/student-scholastic-standings.service";
 export * from "./student-scholastic-standings/scholastic-standing-reversal.service";
 export * from "./application-exception/application-exception.service.models";
