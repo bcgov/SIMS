@@ -1,0 +1,3 @@
+DROP TABLE sims.batch_reassessment_applications;
+
+DROP TYPE sims.batch_reassessment_application_result;

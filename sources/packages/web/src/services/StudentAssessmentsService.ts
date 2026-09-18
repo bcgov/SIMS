@@ -142,12 +142,12 @@ export class StudentAssessmentsService {
   }
 
   /**
-   * Gets the history of batch manual reassessment submissions.
-   * @returns batch manual reassessment history.
+   * Gets batch manual reassessment submissions.
+   * @returns batch manual reassessment submissions.
    */
-  async getBatchReassessmentHistory(): Promise<
+  async getBatchReassessment(): Promise<
     BatchSubmissionResultAPIOutDTO[]
   > {
-    return ApiClient.StudentAssessmentApi.getBatchReassessmentHistory();
+    return ApiClient.StudentAssessmentApi.getBatchReassessment();
   }
 }

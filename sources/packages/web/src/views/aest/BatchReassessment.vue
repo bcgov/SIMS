@@ -30,7 +30,7 @@
               <template #="{ notAllowed }">
                 <v-btn
                   color="primary"
-                  :disabled="notAllowed || !applicationNumbers.trim()"
+                  :disabled="notAllowed || !applicationNumbers?.trim()"
                   @click="openConfirmSubmitModal"
                 >
                   Submit
@@ -186,7 +186,7 @@ const loadBatchReassessmentHistory = async () => {
   batchReassessmentHistoryLoading.value = true;
   try {
     batchReassessmentHistory.value =
-      await StudentAssessmentsService.shared.getBatchReassessmentHistory();
+      await StudentAssessmentsService.shared.getBatchReassessment();
   } catch {
     snackBar.error("Unexpected error while loading the reassessment history.");
   } finally {

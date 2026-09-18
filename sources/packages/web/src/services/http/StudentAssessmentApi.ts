@@ -148,14 +148,14 @@ export class StudentAssessmentApi extends HttpBaseClient {
   }
 
   /**
-   * Gets the history of batch manual reassessment submissions.
-   * @returns batch manual reassessment history.
+   * Gets batch manual reassessment submissions.
+   * @returns batch manual reassessment submissions.
    */
-  async getBatchReassessmentHistory(): Promise<
+  async getBatchReassessment(): Promise<
     BatchSubmissionResultAPIOutDTO[]
   > {
     return this.getCall<BatchSubmissionResultAPIOutDTO[]>(
-      this.addClientRoot("assessment/application/batch-reassessment/history"),
+      this.addClientRoot("assessment/application/batch-reassessment"),
     );
   }
 }
