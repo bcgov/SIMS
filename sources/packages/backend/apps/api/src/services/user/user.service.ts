@@ -102,6 +102,14 @@ export class UserService extends DataModelService<User> {
   }
 
   /**
+   * Clears cached login information after a user's account or student association changes.
+   * @param userName User name used for authentication.
+   */
+  async clearUserLoginCache(userName: string): Promise<void> {
+    await this.ormCacheManager.clearUserLoginCache(userName);
+  }
+
+  /**
    * Updates the user identity provider used for authentication.
    * @param userId user to be updated.
    * @param identityProviderType identity provider.
@@ -193,7 +201,9 @@ export class UserService extends DataModelService<User> {
     user.email = email;
     user.firstName = givenNames;
     user.lastName = lastName;
-    return this.repo.save(user);
+    const savedUser = await this.repo.save(user);
+    await this.clearUserLoginCache(userName);
+    return savedUser;
   }
 
   /**

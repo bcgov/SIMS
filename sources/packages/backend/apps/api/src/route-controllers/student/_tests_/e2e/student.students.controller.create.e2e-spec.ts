@@ -19,6 +19,7 @@ import {
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
 import { RestrictionCode, SystemUsersService } from "@sims/services";
+import { UserService } from "../../../../services";
 import { In } from "typeorm";
 import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "../../models/student.dto";
@@ -32,6 +33,7 @@ describe("StudentStudentsController(e2e)-create", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
+  let userService: UserService;
   let systemUserId: number;
   const endpoint = "/students/student";
 
@@ -41,6 +43,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     appModule = module;
+    userService = appModule.get(UserService);
     systemUserId = app.get(SystemUsersService).systemUser.id;
   });
 
@@ -113,6 +116,50 @@ describe("StudentStudentsController(e2e)-create", () => {
         id: expect.any(Number),
         sin: SIN_NUMBER_A,
       },
+    });
+  });
+
+  it("Should refresh the cached login information after creating a student account.", async () => {
+    // Arrange
+    const birthDate = "2000-01-01";
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+    const user = createFakeUser();
+    await mockJWTUserInfo(appModule, { ...user, birthDate });
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Ensure the query result cache is defined before proceeding.
+    expect(db.dataSource.queryResultCache).toBeDefined();
+    // Ensure the cache is empty before creating the student.
+    expect(await userService.getUserLoginInfo(user.userName)).toBeNull();
+
+    // Act
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED);
+
+    // Assert
+    await mockJWTUserInfo(appModule, { ...user, birthDate });
+    const profileResponse = await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+    expect(profileResponse.body).toEqual(
+      expect.objectContaining({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        dateOfBirth: birthDate,
+      }),
+    );
+    const refreshedLoginInfo = await userService.getUserLoginInfo(
+      user.userName,
+    );
+    expect(refreshedLoginInfo).toMatchObject({
+      id: expect.any(Number),
+      studentId: expect.any(Number),
     });
   });
 
