@@ -284,6 +284,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.createdAt = now;
     } else {
       program.modifier = auditUser;
+      program.updatedAt = now;
     }
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       await this.saveInstitutionAddsPendingProgramNotification(
@@ -521,6 +522,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.cipCode",
         "programs.nocCode",
         "programs.sabcCode",
+        "programs.fieldOfStudyCode",
         "programs.programStatus",
         "programs.programIntensity",
         "programs.institutionProgramCode",

@@ -1,5 +1,5 @@
 <template>
-  <v-tooltip>
+  <v-tooltip :max-width="maxWidth">
     <template #activator="{ props }">
       <v-icon
         icon="fa:fas fa-circle-question"
@@ -12,3 +12,6 @@
     <slot></slot>
   </v-tooltip>
 </template>
+<script setup lang="ts">
+defineProps<{ maxWidth?: number }>();
+</script>

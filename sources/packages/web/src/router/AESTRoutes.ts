@@ -40,7 +40,7 @@ import { AppRoutes, AuthStatus } from "@/types";
 import { ClientIdType } from "@/types/contracts/ConfigContract";
 import { RouteHelper } from "@/helpers";
 import { AuthService } from "@/services/AuthService";
-import LocationProgramAddEdit from "@/views/institution/locations/programs/LocationProgramAddEdit.vue";
+import ViewProgram from "@/views/aest/institution/ViewProgram.vue";
 import AESTApplicationSideBar from "@/components/layouts/aest/AESTApplicationSideBar.vue";
 import SupportingUser from "@/views/aest/SupportingUser.vue";
 import PendingDesignations from "@/views/aest/institution/PendingDesignation.vue";
@@ -591,10 +591,25 @@ export const aestRoutes: Array<RouteRecordRaw> = [
             institutionId: Number.parseInt(
               route.params.institutionId as string,
             ),
+            backTarget: {
+              name: "Programs",
+              to: {
+                name: AESTRoutesConst.PROGRAM_DETAILS,
+                params: {
+                  programId: Number.parseInt(route.params.programId as string),
+                  locationId: Number.parseInt(
+                    route.params.locationId as string,
+                  ),
+                  institutionId: Number.parseInt(
+                    route.params.institutionId as string,
+                  ),
+                },
+              },
+            },
           }),
         },
         components: {
-          default: LocationProgramAddEdit,
+          default: ViewProgram,
           sidebar: AESTHomeSideBar,
         },
         meta: {

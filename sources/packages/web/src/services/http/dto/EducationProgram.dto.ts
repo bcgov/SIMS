@@ -1,8 +1,13 @@
 import {
   AviationProgramCredentialTypes,
   EntranceRequirements,
+  FormYesNoOptions,
+  ProgramCalculatedDataKey,
+  ProgramCourseLoadCalculationTypes,
   ProgramDeliveryTypes,
   ProgramDeliveryTypeValues,
+  ProgramESLPercentage,
+  ProgramEvaluationResult,
   ProgramIntensity,
   ProgramStatus,
 } from "@/types";
@@ -82,49 +87,6 @@ export interface EducationProgramsSummaryAPIOutDTO {
   isExpired: boolean;
 }
 
-export interface ProgramFormModel {
-  name: string;
-  description?: string;
-  credentialType: string;
-  cipCode: string;
-  nocCode?: string;
-  sabcCode?: string;
-  regulatoryBody: string;
-  otherRegulatoryBody?: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite?: string;
-  sameOnlineCreditsEarned?: string;
-  earnAcademicCreditsOtherInstitution?: string;
-  courseLoadCalculation: string;
-  completionYears: string;
-  eslEligibility: string;
-  hasJointInstitution: string;
-  hasJointDesignatedInstitution?: string;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode?: string;
-  minHoursWeek?: string;
-  isAviationProgram?: string;
-  minHoursWeekAvi?: string;
-  entranceRequirements: EntranceRequirements;
-  hasWILComponent: string;
-  isWILApproved?: string;
-  wilProgramEligibility?: string;
-  hasTravel: string;
-  travelProgramEligibility?: string;
-  hasIntlExchange: string;
-  intlExchangeProgramEligibility?: string;
-  programDeclaration: boolean;
-  fieldOfStudyCode: number;
-  credentialTypesAviation?: AviationProgramCredentialTypes;
-  isBCPrivate: boolean;
-  isBCPublic: boolean;
-  convertedValues: {
-    programDeliveryTypes: ProgramDeliveryTypeValues[];
-    entranceRequirements: string[];
-    credentialTypesAviation: string[];
-  };
-}
-
 /**
  * Complete program information used to create or
  * update an education program.
@@ -139,9 +101,9 @@ export class EducationProgramAPIInDTO {
   @Expose()
   cipCode: string;
   @Expose()
-  nocCode: string;
+  nocCode?: string;
   @Expose()
-  sabcCode: string;
+  sabcCode?: string;
   @Expose()
   regulatoryBody: string;
   @Expose()
@@ -149,47 +111,47 @@ export class EducationProgramAPIInDTO {
   @Expose()
   programDeliveryTypes: ProgramDeliveryTypeValues[];
   @Expose()
-  deliveredOnlineAlsoOnsite?: string;
+  deliveredOnlineAlsoOnsite?: FormYesNoOptions;
   @Expose()
-  sameOnlineCreditsEarned?: string;
+  sameOnlineCreditsEarned?: FormYesNoOptions;
   @Expose()
-  earnAcademicCreditsOtherInstitution?: string;
+  earnAcademicCreditsOtherInstitution?: FormYesNoOptions;
   @Expose()
-  courseLoadCalculation: string;
+  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
   @Expose()
   completionYears: string;
   @Expose()
-  eslEligibility: string;
+  eslEligibility: ProgramESLPercentage;
   @Expose()
-  hasJointInstitution: string;
+  hasJointInstitution: FormYesNoOptions;
   @Expose()
-  hasJointDesignatedInstitution: string;
+  hasJointDesignatedInstitution?: FormYesNoOptions;
   @Expose()
   programIntensity: ProgramIntensity;
   @Expose()
   institutionProgramCode?: string;
   @Expose()
-  minHoursWeek?: string;
+  minHoursWeek?: FormYesNoOptions;
   @Expose()
-  isAviationProgram?: string;
+  isAviationProgram: FormYesNoOptions;
   @Expose()
-  minHoursWeekAvi?: string;
+  minHoursWeekAvi?: FormYesNoOptions;
   @Expose()
   entranceRequirements: string[];
   @Expose()
-  hasWILComponent: string;
+  hasWILComponent: FormYesNoOptions;
   @Expose()
-  isWILApproved?: string;
+  isWILApproved?: FormYesNoOptions;
   @Expose()
-  wilProgramEligibility?: string;
+  wilProgramEligibility?: FormYesNoOptions;
   @Expose()
-  hasTravel: string;
+  hasTravel: FormYesNoOptions;
   @Expose()
-  travelProgramEligibility?: string;
+  travelProgramEligibility?: FormYesNoOptions;
   @Expose()
-  hasIntlExchange?: string;
+  hasIntlExchange: FormYesNoOptions;
   @Expose()
-  intlExchangeProgramEligibility?: string;
+  intlExchangeProgramEligibility?: FormYesNoOptions;
   @Expose()
   programDeclaration: boolean;
   @Expose()
@@ -229,4 +191,24 @@ export interface EducationProgramPendingAPIOutDTO {
   submittedDate: Date;
   institutionId: number;
   selectedLocationId: number;
+}
+
+export interface ProgramEvaluationDataAPIInDTO {
+  credentialType?: string;
+  cipCode?: string;
+}
+
+export interface ProgramEvaluationAPIInDTO {
+  /**
+   * Program evaluation data.
+   */
+  data: ProgramEvaluationDataAPIInDTO;
+  /**
+   * Keys of the calculated data to be evaluated.
+   */
+  calculatedDataKeys: ProgramCalculatedDataKey[];
+}
+
+export interface ProgramEvaluationAPIOutDTO {
+  calculatedData: ProgramEvaluationResult;
 }

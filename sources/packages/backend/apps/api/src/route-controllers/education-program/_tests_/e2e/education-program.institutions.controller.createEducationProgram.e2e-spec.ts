@@ -4,7 +4,6 @@ import {
   FormYesNoOptions,
   Institution,
   NotificationMessageType,
-  ProgramIntensity,
   ProgramStatus,
   User,
 } from "@sims/sims-db";
@@ -28,14 +27,13 @@ import {
 import {
   PROGRAM_ENTRANCE_REQUIREMENT_NONE,
   CIP_CODE_REGEX,
-  OTHER_REGULATORY_BODY,
 } from "../../../../services/education-program/constants";
 import {
   ProgramESLPercentage,
   ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
 } from "../../../../services/education-program/education-program.service.models";
-import { EducationProgramAPIInDTO } from "../../models/education-program.dto";
+import { getPayload } from "./education-program.utils";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -584,51 +582,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       },
     );
     return db.educationProgram.save(educationProgram);
-  }
-
-  /**
-   * Returns a payload with the passed sabcCode.
-   * @param options options to customize the payload
-   * - `sabcCode` SABC code.
-   */
-  function getPayload(options?: {
-    sabcCode?: string;
-  }): EducationProgramAPIInDTO {
-    return {
-      name: faker.lorem.words(5),
-      description: faker.lorem.words(5),
-      credentialType: "undergraduateCertificate",
-      cipCode: "11.1111",
-      nocCode: "21740",
-      sabcCode:
-        options?.sabcCode ??
-        `${faker.string.alpha({ length: 3, casing: "upper" })}1`,
-      institutionProgramCode: faker.string.alpha({
-        length: 3,
-        casing: "upper",
-      }),
-      programIntensity: ProgramIntensity.fullTimePartTime,
-      programDeliveryTypes: [ProgramDeliveryTypeValues.Onsite],
-      completionYears: "12WeeksTo52Weeks",
-      courseLoadCalculation: ProgramCourseLoadCalculationTypes.Credit,
-      regulatoryBody: OTHER_REGULATORY_BODY,
-      otherRegulatoryBody: "Other RB test",
-      entranceRequirements: [
-        "minHighSchool",
-        "hasMinimumAge",
-        "requirementsByInstitution",
-        "requirementsByBCITA",
-      ],
-      isAviationProgram: FormYesNoOptions.No,
-      eslEligibility: ProgramESLPercentage.LessThan20,
-      hasJointInstitution: FormYesNoOptions.No,
-      hasWILComponent: FormYesNoOptions.No,
-      hasTravel: FormYesNoOptions.No,
-      hasIntlExchange: FormYesNoOptions.No,
-      programDeclaration: true,
-      isBCPublic: true,
-      isBCPrivate: false,
-    };
   }
 
   afterAll(async () => {
