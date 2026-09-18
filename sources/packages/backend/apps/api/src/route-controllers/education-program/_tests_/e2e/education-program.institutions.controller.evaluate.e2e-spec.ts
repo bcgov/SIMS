@@ -122,6 +122,10 @@ describe("EducationProgramInstitutionsController(e2e)-evaluate", () => {
   });
 });
 
+/**
+ * Get the endpoint URL for evaluating an education program.
+ * @returns The endpoint URL for evaluating an education program.
+ */
 function getEndpoint(): string {
   return "/institutions/education-program/evaluate";
 }
