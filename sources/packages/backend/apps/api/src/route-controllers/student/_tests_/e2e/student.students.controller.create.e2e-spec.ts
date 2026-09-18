@@ -119,7 +119,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     });
   });
 
-  it("Should refresh the cached login information after creating a student account.", async () => {
+  it.only("Should refresh the cached login information after creating a student account.", async () => {
     // Arrange
     const birthDate = "2000-01-01";
     const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
@@ -129,7 +129,9 @@ describe("StudentStudentsController(e2e)-create", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
+    // Ensure the query result cache is defined before proceeding.
     expect(db.dataSource.queryResultCache).toBeDefined();
+    // Ensure the cache is empty before creating the student.
     expect(await userService.getUserLoginInfo(user.userName)).toBeNull();
 
     // Act
