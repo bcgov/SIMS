@@ -119,7 +119,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     });
   });
 
-  it.only("Should refresh the cached login information after creating a student account.", async () => {
+  it("Should refresh the cached login information after creating a student account.", async () => {
     // Arrange
     const birthDate = "2000-01-01";
     const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
