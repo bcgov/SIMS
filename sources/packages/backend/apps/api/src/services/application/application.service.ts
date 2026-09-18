@@ -1100,6 +1100,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
           id: true,
         },
         supportingUsers: {
+          id: true,
           supportingUserType: true,
         },
         ...(options?.loadDynamicData
