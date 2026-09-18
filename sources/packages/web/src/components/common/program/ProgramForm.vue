@@ -280,6 +280,7 @@
                 persistent-hint
               />
               <v-text-field
+                class="mt-3"
                 v-if="componentDisplayConditions.otherRegulatoryBody"
                 v-model="formModel.otherRegulatoryBody"
                 density="compact"
