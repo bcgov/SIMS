@@ -10,6 +10,10 @@ import {
   Application,
   StudentAssessmentStatus,
   NoteType,
+  BatchReassessment,
+  BatchReassessmentStatus,
+  BatchReassessmentApplication,
+  BatchReassessmentApplicationResult,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
@@ -426,5 +430,77 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       const savedApplication = await applicationRepo.save(applicationToBeSaved);
       return savedApplication.currentAssessment;
     });
+  }
+
+  /**
+   * Triggers a batch manual reassessment for a list of application numbers.
+   * Each application number is processed independently so failures do not stop
+   * the remaining batch items from being attempted.
+   * @param applicationNumbers application numbers to be reassessed.
+   * @param note note describing the reason for the batch reassessment.
+   * @param userId user id who triggered the batch reassessment.
+   */
+  async performBatchManualReassessment(
+    applicationNumbers: string[],
+    note: string,
+    userId: number,
+  ): Promise<void> {
+    const uniqueApplicationNumbers = [...new Set(applicationNumbers)];
+    const applications = await this.dataSource
+      .getRepository(Application)
+      .createQueryBuilder("application")
+      .select(["application.id", "application.applicationNumber"])
+      .where("application.applicationNumber IN (:...applicationNumbers)", {
+        applicationNumbers: uniqueApplicationNumbers,
+      })
+      .getMany();
+    const applicationIdsByNumber = new Map(
+      applications.map((application) => [
+        application.applicationNumber,
+        application.id,
+      ]),
+    );
+
+    // Create a new batch reassessment record to indicate the start of a batch manual reassessment.
+    const batchReassessment: BatchReassessment = {
+      submittedDate: new Date(),
+      submittedBy: { id: userId },
+      status: BatchReassessmentStatus.InProgress,
+    } as BatchReassessment;
+    await this.dataSource
+      .getRepository(BatchReassessment)
+      .save(batchReassessment);
+
+    for (const applicationNumber of uniqueApplicationNumbers) {
+      const reassessmentApplication = {
+        application: { id: applicationIdsByNumber.get(applicationNumber) },
+        batchReassessment: batchReassessment,
+      } as BatchReassessmentApplication;
+      try {
+        const applicationId = applicationIdsByNumber.get(applicationNumber);
+        if (!applicationId) {
+          reassessmentApplication.failureReason = "Application not found";
+          reassessmentApplication.result =
+            BatchReassessmentApplicationResult.Failed;
+          continue;
+        }
+        await this.createManualReassessment(applicationId, note, userId);
+        reassessmentApplication.result =
+          BatchReassessmentApplicationResult.Success;
+      } catch (error) {
+        reassessmentApplication.failureReason =
+          error?.message ?? "Unknown error";
+        reassessmentApplication.result =
+          BatchReassessmentApplicationResult.Failed;
+      }
+      await this.dataSource
+        .getRepository(BatchReassessment)
+        .save(batchReassessment);
+    }
+    // Update the batch reassessment record with the results of the batch processing.
+    batchReassessment.status = BatchReassessmentStatus.Completed;
+    await this.dataSource
+      .getRepository(BatchReassessment)
+      .save(batchReassessment);
   }
 }

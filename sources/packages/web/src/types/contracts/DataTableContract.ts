@@ -430,6 +430,20 @@ export const CASInvoicesBatchesHeaders = [
 ];
 
 /**
+ * Batch manual reassessment history headers.
+ */
+export const BatchReassessmentHistoryHeaders = [
+  { title: "Batch ID", sortable: false, key: "batchId" },
+  { title: "Submitted Date", sortable: false, key: "submittedDate" },
+  { title: "Submitted By", sortable: false, key: "submittedBy" },
+  { title: "Applications", sortable: false, key: "totalApplications" },
+  { title: "Successful", sortable: false, key: "successfulApplications" },
+  { title: "Failed", sortable: false, key: "failedApplications" },
+  { title: "Status", sortable: false, key: "status" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
  * CAS invoice headers.
  */
 export const CASInvoiceHeaders = [

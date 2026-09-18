@@ -23,6 +23,8 @@ import {
   AssessmentNOAAPIOutDTO,
   RequestAssessmentSummaryAPIOutDTO,
   AwardDetailsAPIOutDTO,
+  BatchSubmissionResultAPIOutDTO,
+  BatchSubmissionResultStatus,
 } from "./models/assessment.dto";
 import {
   ApiNotFoundResponse,
@@ -37,7 +39,10 @@ import {
 import { ApplicationStatus, StudentAssessmentStatus } from "@sims/sims-db";
 import { CustomNamedError } from "@sims/utilities";
 import { Role, IUserToken } from "../../auth";
-import { ManualReassessmentAPIInDTO } from "../assessment/models/assessment.dto";
+import {
+  ManualReassessmentAPIInDTO,
+  BatchReassessmentAPIInDTO,
+} from "../assessment/models/assessment.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { StudentAssessmentService } from "../../services";
 
@@ -69,6 +74,18 @@ export class AssessmentAESTController extends BaseController {
         includeOfferingChanges: true,
       },
     );
+  }
+
+  /**
+   * Gets the history of batch manual reassessment submissions.
+   * @returns batch manual reassessment history.
+   */
+  @Roles(Role.AESTBatchReassessment)
+  @Get("application/batch-reassessment/history")
+  async getBatchReassessmentHistory(): Promise<
+    BatchSubmissionResultAPIOutDTO[]
+  > {
+    return this.getDummyBatchReassessmentHistory();
   }
 
   /**
@@ -168,5 +185,66 @@ export class AssessmentAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Triggers a batch manual reassessment for a list of application numbers.
+   * This is a stub implementation and does not yet perform any processing.
+   * @param payload request payload.
+   * @returns void.
+   */
+  @Roles(Role.AESTBatchReassessment)
+  @Post("application/batch-reassessment")
+  async batchReassessment(
+    @Body() payload: BatchReassessmentAPIInDTO,
+    @UserToken() userToken: IUserToken,
+  ): Promise<void> {
+    await this.studentAssessmentService.performBatchManualReassessment(
+      payload.applicationNumbers,
+      payload.note,
+      userToken.userId,
+    );
+  }
+
+  /**
+   * Gets the history of batch manual reassessment submissions.
+   * This is a stub implementation returning dummy data until the batch
+   * processing and its persistence are implemented.
+   * @returns batch manual reassessment history.
+   *
+   */
+  // TODO Remove this code
+  async getDummyBatchReassessmentHistory(): Promise<
+    BatchSubmissionResultAPIOutDTO[]
+  > {
+    return [
+      {
+        batchId: 1003,
+        submittedDate: new Date("2026-09-17T14:32:00"),
+        submittedBy: "John Smith",
+        totalApplications: 25,
+        successfulApplications: 25,
+        failedApplications: 0,
+        status: BatchSubmissionResultStatus.Completed,
+      },
+      {
+        batchId: 1002,
+        submittedDate: new Date("2026-09-16T09:10:00"),
+        submittedBy: "Jane Doe",
+        totalApplications: 40,
+        successfulApplications: 36,
+        failedApplications: 4,
+        status: BatchSubmissionResultStatus.Completed,
+      },
+      {
+        batchId: 1001,
+        submittedDate: new Date("2026-09-15T16:45:00"),
+        submittedBy: "John Smith",
+        totalApplications: 12,
+        successfulApplications: 0,
+        failedApplications: 0,
+        status: BatchSubmissionResultStatus.InProgress,
+      },
+    ];
   }
 }
