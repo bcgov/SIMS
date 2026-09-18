@@ -33,6 +33,7 @@ describe("StudentStudentsController(e2e)-create", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let appModule: TestingModule;
+  let userService: UserService;
   let systemUserId: number;
   const endpoint = "/students/student";
 
@@ -42,6 +43,7 @@ describe("StudentStudentsController(e2e)-create", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     appModule = module;
+    userService = appModule.get(UserService);
     systemUserId = app.get(SystemUsersService).systemUser.id;
   });
 
@@ -122,7 +124,6 @@ describe("StudentStudentsController(e2e)-create", () => {
     const birthDate = "2000-01-01";
     const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
     const user = createFakeUser();
-    const userService = appModule.get(UserService);
     await mockJWTUserInfo(appModule, { ...user, birthDate });
     const studentToken = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
