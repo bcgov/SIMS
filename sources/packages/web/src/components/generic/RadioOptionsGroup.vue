@@ -6,7 +6,9 @@
     hide-details="auto"
     class="my-3"
   >
-    <v-label class="text-wrap">{{ label }}</v-label>
+    <v-label class="text-wrap"
+      ><slot name="label">{{ label }}</slot></v-label
+    >
     <template v-for="item in items" :key="item[itemValue]">
       <v-radio :label="item[itemTitle]" :value="item[itemValue]"></v-radio>
     </template>
@@ -24,11 +26,12 @@ const model = defineModel<string | boolean | number>();
 withDefaults(
   defineProps<{
     items: ItemType[];
-    label: string;
+    label?: string;
     itemValue?: "value" | "lookupKey";
     itemTitle?: "title" | "lookupValue";
   }>(),
   {
+    label: undefined,
     itemValue: "value",
     itemTitle: "title",
   },

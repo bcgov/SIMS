@@ -35,7 +35,7 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
     MockDate.reset();
   });
 
-  it("Update education program when a valid program and payload are provided.", async () => {
+  it("Should update education program when a valid program and payload are provided.", async () => {
     // Arrange
     const program = createFakeEducationProgram({
       institution: collegeF,

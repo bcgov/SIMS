@@ -142,7 +142,6 @@
               <radio-options-group
                 v-model="formModel.programIntensity"
                 color="primary"
-                label="Are students able to take this on a part time basis?"
                 :items="PROGRAM_INTENSITY_ITEMS"
                 :rules="[
                   (v: string) =>
@@ -152,7 +151,17 @@
                     ),
                 ]"
                 :readonly="isProgramDetailReadonly"
-              ></radio-options-group>
+                ><template #label>
+                  <span
+                    >Are students able to take this on a part time basis?</span
+                  ><tooltip-icon :max-width="tooltipMaxWidth"
+                    >A part-time program has a course load between 20 and 59%. A
+                    full-time program must have a course load of: 60% or greater
+                    or Between 40 and 60% for students with a permanent
+                    disability.</tooltip-icon
+                  ></template
+                ></radio-options-group
+              >
               <checkbox-options-group
                 v-model="formModel.programDeliveryTypes"
                 color="primary"
@@ -478,7 +487,33 @@
                       'Does the WIL meet the program eligibility requirements according to StudentAid BC policy?',
                     ),
                 ]"
-              ></radio-options-yes-no>
+                ><template #label
+                  ><span
+                    >Does the WIL meet the program eligibility requirements
+                    according to StudentAid BC policy?</span
+                  ><tooltip-icon :max-width="tooltipMaxWidth"
+                    ><span
+                      >For the work-integrated learning experience to qualify
+                      for student financial assistance it must be:</span
+                    >
+                    <ul class="ps-3">
+                      <li>
+                        Required for graduation (in the case of a co-op
+                        education placement it must either be required for
+                        graduation and/or result in a credential with a co-op
+                        designation);
+                      </li>
+                      <li>Linked to the curriculum; and</li>
+                      <li>
+                        Not exceed 50% of the program (or no more than 20% for
+                        practicums and 10% for preceptorships) unless otherwise
+                        regulated as a requirement by an oversight body (e.g.,
+                        Early Childhood Educators (ECE) Registry).
+                      </li>
+                    </ul></tooltip-icon
+                  ></template
+                >></radio-options-yes-no
+              >
               <program-eligibility-banner
                 v-if="bannerDisplayConditions.showWILEligibilityBanner"
                 summary="This must meet the StudentAid BC policy."
@@ -713,7 +748,7 @@ interface ProgramFormContext {
   isBCPrivate: boolean;
   isBCInstitution: boolean;
 }
-
+const tooltipMaxWidth = 670;
 const loading = ref(false);
 let isLookupLoaded = false;
 const snackBar = useSnackBar();

@@ -4,7 +4,11 @@
     v-bind="$attrs"
     :items="items"
     :label="label"
-  />
+  >
+    <template v-if="$slots.label" #label>
+      <slot name="label"></slot>
+    </template>
+  </radio-options-group>
 </template>
 
 <script setup lang="ts">
