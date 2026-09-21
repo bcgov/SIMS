@@ -48,6 +48,7 @@ import {
 } from "@sims/services";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { Role } from "../../auth";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
@@ -59,6 +60,7 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly systemUsersService: SystemUsersService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly studentRestrictionService: StudentRestrictionService,
+    private readonly userService: UserService,
     private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(Student));
@@ -280,6 +282,8 @@ export class StudentService extends RecordDataModelService<Student> {
         id: studentAccountApplicationId,
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
+      // Clear the user login cache after successfully creating the student.
+      await this.userService.clearUserLoginCache(userInfo.userName);
       // Returns the newly created student.
       return savedStudent;
     });
