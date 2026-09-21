@@ -49,7 +49,6 @@ import {
 } from "@sims/services";
 import { StudentRestrictionService } from "../restriction/student-restriction.service";
 import { Role } from "../../auth";
-import { UserService } from "../user/user.service";
 
 @Injectable()
 export class StudentService extends RecordDataModelService<Student> {
