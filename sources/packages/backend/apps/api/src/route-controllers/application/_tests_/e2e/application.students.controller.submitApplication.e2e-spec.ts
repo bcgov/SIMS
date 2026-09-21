@@ -1,7 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
-import { DataSource } from "typeorm";
+import { DataSource, Not } from "typeorm";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
@@ -25,6 +25,7 @@ import {
   ensureProgramYearExistsForPartTimeOnly,
   saveFakeInstitutionRestriction,
   saveFakeFormSubmissionFromInputTestData,
+  createFakeSupportingUser,
 } from "@sims/test-utils";
 import {
   Application,
@@ -40,6 +41,7 @@ import {
   RelationshipStatus,
   RestrictionType,
   Student,
+  SupportingUserType,
   User,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
@@ -975,6 +977,83 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       ).toBe(true);
     },
   );
+
+  it("Should create a new version of an application when the application is already submitted and the offering intensity is part-time.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+
+    // Create a submitted application to be edited.
+    const application = await saveFakeApplication(
+      db.dataSource,
+      { student, programYear: recentActiveProgramYear },
+      {
+        applicationData: {} as ApplicationData,
+        offeringIntensity: OfferingIntensity.partTime,
+        applicationStatus: ApplicationStatus.InProgress,
+      },
+    );
+    const supportingUser = createFakeSupportingUser(
+      { application },
+      {
+        initialValues: {
+          isAbleToReport: false,
+          supportingUserType: SupportingUserType.Partner,
+          fullName: "Partner",
+        },
+      },
+    );
+    await db.supportingUser.save(supportingUser);
+    const offering = application.currentAssessment.offering;
+    const applicationData = {
+      selectedOfferingDate: offering.studyStartDate,
+      selectedOfferingEndDate: offering.studyEndDate,
+      selectedProgram: offering.educationProgram.id,
+      selectedOffering: offering.id,
+      selectedLocation: offering.institutionLocation.id,
+      restrictions: [],
+    };
+    const payload = {
+      associatedFiles: [],
+      data: applicationData,
+      programYearId: recentActiveProgramYear.id,
+    } as SaveApplicationAPIInDTO;
+    const endpoint = `/students/application/${application.id}/submit`;
+    const token = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const dryRunSubmissionMock = jest.fn().mockResolvedValue({
+      valid: true,
+      formName: FormNames.Application,
+      data: { data: applicationData },
+    });
+    formService.dryRunSubmission = dryRunSubmissionMock;
+    // Mock the user received in the token.
+    await mockJWTUserInfo(appModule, student.user);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({});
+
+    // Verify that a new version of the application was created.
+    const newApplicationVersion = await db.application.findOne({
+      select: {
+        id: true,
+        applicationStatus: true,
+      },
+      where: {
+        id: Not(application.id),
+        precedingApplication: { id: application.id },
+      },
+    });
+    expect(newApplicationVersion).toEqual({
+      id: expect.any(Number),
+      applicationStatus: ApplicationStatus.Submitted,
+    });
+  });
 
   [
     FormSubmissionStatus.Pending,
