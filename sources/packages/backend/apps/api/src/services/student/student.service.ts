@@ -18,6 +18,7 @@ import {
   SupplierStatus,
   ModifiedIndependentStatus,
   SFASApplication,
+  ORMCacheManager,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
@@ -61,6 +62,7 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly studentRestrictionService: StudentRestrictionService,
     private readonly userService: UserService,
+    private readonly ormCacheManager: ORMCacheManager,
     private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(Student));
@@ -283,7 +285,7 @@ export class StudentService extends RecordDataModelService<Student> {
       } as StudentAccountApplication;
       await entityManager.getRepository(StudentUser).save(studentUser);
       // Clear the user login cache after successfully creating the student.
-      await this.userService.clearUserLoginCache(userInfo.userName);
+      await this.ormCacheManager.clearUserLoginCache(userInfo.userName);
       // Returns the newly created student.
       return savedStudent;
     });
