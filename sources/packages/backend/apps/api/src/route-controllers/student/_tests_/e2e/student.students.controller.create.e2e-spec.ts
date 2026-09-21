@@ -157,9 +157,18 @@ describe("StudentStudentsController(e2e)-create", () => {
     const refreshedLoginInfo = await userService.getUserLoginInfo(
       user.userName,
     );
+    const createdStudent = await db.student.findOne({
+      select: { id: true, user: { id: true } },
+      relations: { user: true },
+      where: { user: { userName: user.userName } },
+      loadEagerRelations: false,
+    });
+    if (!createdStudent) {
+      throw new Error("Expected the student to be created.");
+    }
     expect(refreshedLoginInfo).toMatchObject({
-      id: expect.any(Number),
-      studentId: expect.any(Number),
+      id: createdStudent.user.id,
+      studentId: createdStudent.id,
     });
   });
 
