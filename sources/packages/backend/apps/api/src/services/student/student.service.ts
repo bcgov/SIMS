@@ -61,7 +61,6 @@ export class StudentService extends RecordDataModelService<Student> {
     private readonly systemUsersService: SystemUsersService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
     private readonly studentRestrictionService: StudentRestrictionService,
-    private readonly userService: UserService,
     private readonly ormCacheManager: ORMCacheManager,
     private readonly logger: LoggerService,
   ) {
