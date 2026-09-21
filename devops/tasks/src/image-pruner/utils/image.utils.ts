@@ -1,6 +1,11 @@
 import type { ImageStreamTag } from "../../models/openshift.model";
 
 /**
+ * Matches release/hotfix image tags produced by the release pipeline (e.g. "v1.2.3-45").
+ */
+const RELEASE_TAG_PATTERN = /^v(\d+)\.(\d+)\.\d+-\d+$/;
+
+/**
  * Extracts the ImageStream name from a full image reference string.
  * For example, "registry.apps.gold/ns/db-migrations-sims:main-12345"
  * returns "db-migrations-sims".
@@ -57,4 +62,24 @@ export function getTagCreatedAtTimestamp(tag: ImageStreamTag): number {
   }
 
   return createdAtTimestamp;
+}
+
+/**
+ * Determines whether a tag name follows the release/hotfix naming convention (e.g. "v1.2.3-45").
+ * @param tagName The tag name to test.
+ * @returns True if the tag name is a release tag, false otherwise.
+ */
+export function isReleaseTag(tagName: string): boolean {
+  return RELEASE_TAG_PATTERN.test(tagName);
+}
+
+/**
+ * Extracts the major.minor release version key from a release tag name, so all patches and
+ * builds of the same release (e.g. "v1.2.3-45" and "v1.2.4-46") can be grouped together.
+ * @param tagName The tag name to extract the version key from.
+ * @returns The major.minor version key (e.g. "1.2"), or undefined if the tag is not a release tag.
+ */
+export function getReleaseVersionKey(tagName: string): string | undefined {
+  const match = RELEASE_TAG_PATTERN.exec(tagName);
+  return match ? `${match[1]}.${match[2]}` : undefined;
 }

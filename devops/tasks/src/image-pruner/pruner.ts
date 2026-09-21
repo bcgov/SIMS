@@ -7,8 +7,10 @@ import type {
 import {
   extractImageStreamName,
   extractImageTagName,
+  getReleaseVersionKey,
   getTagCreatedAt,
   getTagCreatedAtTimestamp,
+  isReleaseTag,
 } from "./utils/image.utils";
 
 /**
@@ -27,7 +29,15 @@ export class ImagePruner {
   async pruneImages(): Promise<void> {
     console.log("Starting image tag pruning...");
     console.table([
-      { setting: "Environment", value: this.config.environment },
+      {
+        setting: "Environments",
+        value:
+          this.config.environments
+            .map(
+              (environment) => `${environment.name} (${environment.namespace})`,
+            )
+            .join(", ") || "(none)",
+      },
       { setting: "License plate", value: this.config.licensePlate },
       {
         setting: "Apps",
@@ -36,6 +46,10 @@ export class ImagePruner {
       { setting: "Jobs", value: this.config.ocJobs.join(", ") || "(none)" },
       { setting: "Tag prefix", value: this.config.prefix },
       { setting: "Min prefix tags", value: String(this.config.minTags) },
+      {
+        setting: "Min release versions",
+        value: String(this.config.minReleaseVersions),
+      },
       { setting: "Dry run", value: String(this.config.dryRun) },
     ]);
 
@@ -58,28 +72,31 @@ export class ImagePruner {
    * @returns A promise that resolves when the pruning process is complete.
    */
   private async pruneDeploymentApp(appName: string): Promise<void> {
-    let deployedTag: ImageStreamTag | undefined;
-    let imageStream: ImageStreamResource | undefined;
+    const deployedTags = await this.getDeploymentTags(appName);
 
+    if (deployedTags.size === 0) {
+      console.warn(
+        `Skipping ${appName} (no deployed tag was found in any environment).`,
+      );
+      return;
+    }
+
+    let imageStream: ImageStreamResource;
     try {
-      ({ deployedTag, imageStream } = await this.getDeploymentTag(appName));
+      imageStream = await this.openshiftClient.getImageStream(
+        this.config.toolsNamespace,
+        appName,
+      );
     } catch (error) {
       console.warn(
-        `Skipping ${appName} (deployment not found or inaccessible):`,
+        `Skipping ${appName} (image stream not found or inaccessible):`,
         error,
       );
       return;
     }
 
-    if (!deployedTag || !imageStream) {
-      console.warn(
-        `Skipping ${appName} (deployed tag was not found on ImageStream).`,
-      );
-      return;
-    }
-
     try {
-      await this.pruneTags(imageStream, deployedTag, appName);
+      await this.pruneTags(imageStream, deployedTags, appName);
     } catch (error) {
       console.warn(`Skipping remaining tags for ${appName}:`, error);
     }
@@ -91,22 +108,25 @@ export class ImagePruner {
    * @returns A promise that resolves when the pruning process is complete.
    */
   private async pruneJobApp(appName: string): Promise<void> {
-    let deployedTag: ImageStreamTag | undefined;
-    let imageStream: ImageStreamResource | undefined;
+    const { deployedTags, imageStreamName } = await this.getJobTags(appName);
 
-    try {
-      ({ deployedTag, imageStream } = await this.getJobTag(appName));
-    } catch (error) {
+    if (deployedTags.size === 0 || !imageStreamName) {
       console.warn(
-        `Skipping ${appName} (job not found or inaccessible):`,
-        error,
+        `Skipping ${appName} (no deployed tag was found in any environment).`,
       );
       return;
     }
 
-    if (!deployedTag || !imageStream) {
+    let imageStream: ImageStreamResource;
+    try {
+      imageStream = await this.openshiftClient.getImageStream(
+        this.config.toolsNamespace,
+        imageStreamName,
+      );
+    } catch (error) {
       console.warn(
-        `Skipping ${appName} (deployed tag was not found on ImageStream).`,
+        `Skipping ${appName} (image stream not found or inaccessible):`,
+        error,
       );
       return;
     }
@@ -114,8 +134,8 @@ export class ImagePruner {
     try {
       await this.pruneTags(
         imageStream,
-        deployedTag,
-        imageStream.metadata.name || "",
+        deployedTags,
+        imageStream.metadata.name || appName,
       );
     } catch (error) {
       console.warn(`Skipping remaining tags for ${appName}:`, error);
@@ -123,84 +143,80 @@ export class ImagePruner {
   }
 
   /**
-   * Retrieves the deployed ImageStream tag for a deployment application.
+   * Gets the deployed image tag for a deployment application across the configured
+   * environments (e.g. dev, test, prod), so none of them are ever pruned regardless of age.
    * @param appName The name of the deployment application.
-   * @returns A promise that resolves with the deployed tag and image stream.
+   * @returns The set of deployed tag names found across all checked environments.
    */
-  private async getDeploymentTag(appName: string): Promise<{
-    deployedTag: ImageStreamTag | undefined;
-    imageStream: ImageStreamResource;
-  }> {
-    const deploymentName = `${this.config.environment}-${appName}`;
+  private async getDeploymentTags(appName: string): Promise<Set<string>> {
+    const deployedTags = new Set<string>();
 
-    console.log(`\nProcessing deployment: ${deploymentName}`);
+    console.log(`*** ${appName} ***`);
 
-    const deployment = await this.openshiftClient.getDeployment(
-      this.config.appNamespace,
-      deploymentName,
-    );
-    const image = deployment.spec?.template?.spec?.containers[0]?.image;
-    if (!image) {
-      throw new Error("No container image found on deployment.");
+    for (const { name, namespace } of this.config.environments) {
+      const deploymentName = `${name}-${appName}`;
+      try {
+        const deployment = await this.openshiftClient.getDeployment(
+          namespace,
+          deploymentName,
+        );
+        const image = deployment.spec?.template?.spec?.containers[0]?.image;
+        if (image) {
+          const tagName = extractImageTagName(image);
+          deployedTags.add(tagName);
+          console.log(
+            `Deployed tag for ${deploymentName} in ${namespace}:`,
+            tagName,
+          );
+        }
+      } catch (error) {
+        console.warn(
+          `No deployment found for ${deploymentName} in ${namespace}:`,
+          error,
+        );
+      }
     }
 
-    const deployedTagName = extractImageTagName(image);
-
-    console.log(`Deployed image tag: ${deployedTagName}`);
-
-    const imageStream = await this.openshiftClient.getImageStream(
-      this.config.toolsNamespace,
-      appName,
-    );
-    const deployedTag = imageStream.status?.tags?.find(
-      (tag) => tag.tag === deployedTagName,
-    );
-
-    return { deployedTag, imageStream };
+    return deployedTags;
   }
 
   /**
-   * Retrieves the deployed ImageStream tag for a job application.
+   * Gets the deployed image tag for a job application across the configured environments
+   * (e.g. dev, test, prod), so none of them are ever pruned regardless of age.
    * @param appName The name of the job application.
-   * @returns A promise that resolves with the deployed tag and image stream.
+   * @returns The set of deployed tag names and the resolved ImageStream name.
    */
-  private async getJobTag(appName: string): Promise<{
-    deployedTag: ImageStreamTag | undefined;
-    imageStream: ImageStreamResource;
+  private async getJobTags(appName: string): Promise<{
+    deployedTags: Set<string>;
+    imageStreamName?: string;
   }> {
-    const jobName = `${this.config.environment}-${appName}`;
+    console.log(`*** ${appName} ***`);
 
-    console.log(`\nProcessing job: ${jobName}`);
+    const deployedTags = new Set<string>();
+    let imageStreamName: string | undefined;
 
-    const job = await this.openshiftClient.getJob(
-      this.config.appNamespace,
-      jobName,
-    );
-    const image = job.spec?.template.spec?.containers[0]?.image;
-    if (!image) {
-      throw new Error("No container image found on job.");
+    for (const { name, namespace } of this.config.environments) {
+      const jobName = `${name}-${appName}`;
+      try {
+        const job = await this.openshiftClient.getJob(namespace, jobName);
+        const image = job.spec?.template.spec?.containers[0]?.image;
+        if (image) {
+          imageStreamName ??= extractImageStreamName(image);
+          const tagName = extractImageTagName(image);
+          deployedTags.add(tagName);
+          console.log(`Deployed tag for ${jobName} in ${namespace}:`, tagName);
+        }
+      } catch (error) {
+        console.warn(`No job found for ${jobName} in ${namespace}:`, error);
+      }
     }
 
-    const imageStreamName = extractImageStreamName(image);
-    const deployedTagName = extractImageTagName(image);
-
-    console.log(
-      `ImageStream: ${imageStreamName}, deployed image tag: ${deployedTagName}`,
-    );
-
-    const imageStream = await this.openshiftClient.getImageStream(
-      this.config.toolsNamespace,
-      imageStreamName,
-    );
-    const tags = imageStream.status?.tags ?? [];
-    const deployedTag = tags.find((tag) => tag.tag === deployedTagName);
-
-    return { deployedTag, imageStream };
+    return { deployedTags, imageStreamName };
   }
 
   private async pruneTags(
     imageStream: ImageStreamResource,
-    deployedTag: ImageStreamTag,
+    protectedTags: Set<string>,
     appIdentifier: string,
   ): Promise<void> {
     const oldPrefixTags = imageStream.status?.tags
@@ -208,7 +224,7 @@ export class ImagePruner {
         (tag) =>
           tag.tag.startsWith(this.config.prefix) && /.*-\d+$/.test(tag.tag),
       )
-      .filter((tag) => tag.tag !== deployedTag.tag)
+      .filter((tag) => !protectedTags.has(tag.tag))
       .sort(
         (left, right) =>
           getTagCreatedAtTimestamp(left) - getTagCreatedAtTimestamp(right),
@@ -220,15 +236,24 @@ export class ImagePruner {
         Math.max(0, oldPrefixTags.length - this.config.minTags),
       ) ?? [];
 
+    const releaseTagsToDelete = this.getReleaseTagsToDelete(
+      imageStream,
+      protectedTags,
+    );
+
     const featureTagsToDelete: ImageStreamTag[] =
       imageStream.status?.tags
-        ?.filter((tag) => tag.tag !== deployedTag.tag)
+        ?.filter((tag) => !protectedTags.has(tag.tag))
         .filter(
           (tag) =>
-            !tag.tag.startsWith(this.config.prefix) && !tag.tag.startsWith("v"),
+            !tag.tag.startsWith(this.config.prefix) && !isReleaseTag(tag.tag),
         ) ?? [];
 
-    if (featureTagsToDelete.length === 0 && prefixTagsToDelete.length === 0) {
+    if (
+      featureTagsToDelete.length === 0 &&
+      prefixTagsToDelete.length === 0 &&
+      releaseTagsToDelete.length === 0
+    ) {
       console.log("No tags to delete.");
       return;
     }
@@ -238,6 +263,18 @@ export class ImagePruner {
     for (const tag of prefixTagsToDelete) {
       console.log(
         `\t${appIdentifier}:${tag.tag} (Older than deployed tag, created ${getTagCreatedAt(tag)})`,
+      );
+      try {
+        await this.deleteTag(tag, imageStream);
+      } catch (error) {
+        failedTagDeletions += 1;
+        console.warn(`\tFailed to delete tag ${tag.tag}:`, error);
+      }
+    }
+
+    for (const tag of releaseTagsToDelete) {
+      console.log(
+        `\t${appIdentifier}:${tag.tag} (Release version outside the last ${this.config.minReleaseVersions} kept versions, created ${getTagCreatedAt(tag)})`,
       );
       try {
         await this.deleteTag(tag, imageStream);
@@ -260,11 +297,48 @@ export class ImagePruner {
     }
 
     console.log(
-      `\tTotal of ${featureTagsToDelete.length + prefixTagsToDelete.length} tag(s) ${this.config.dryRun ? "to be deleted" : "deleted"}.`,
+      `\tTotal of ${featureTagsToDelete.length + prefixTagsToDelete.length + releaseTagsToDelete.length} tag(s) ${this.config.dryRun ? "to be deleted" : "deleted"}.`,
     );
     if (failedTagDeletions > 0) {
       console.log(`\tTotal of ${failedTagDeletions} tag deletion(s) failed.`);
     }
+  }
+
+  /**
+   * Determines which release tags should be deleted, keeping only the most recent
+   * `minReleaseVersions` release versions (grouped by major.minor, builds and patches
+   * included) and never deleting a currently deployed release.
+   * @param imageStream The ImageStream containing the candidate tags.
+   * @param protectedTags Tag names that must never be deleted.
+   * @returns The release tags to be deleted.
+   */
+  private getReleaseTagsToDelete(
+    imageStream: ImageStreamResource,
+    protectedTags: Set<string>,
+  ): ImageStreamTag[] {
+    const versionGroups = new Map<string, ImageStreamTag[]>();
+
+    for (const tag of imageStream.status?.tags ?? []) {
+      const versionKey = getReleaseVersionKey(tag.tag);
+      if (!versionKey) {
+        continue;
+      }
+      const group = versionGroups.get(versionKey) ?? [];
+      group.push(tag);
+      versionGroups.set(versionKey, group);
+    }
+
+    const versionKeysNewestFirst = [...versionGroups.keys()].sort(
+      (left, right) => right.localeCompare(left, undefined, { numeric: true }),
+    );
+    const versionKeysToKeep = new Set(
+      versionKeysNewestFirst.slice(0, this.config.minReleaseVersions),
+    );
+
+    return [...versionGroups.entries()]
+      .filter(([versionKey]) => !versionKeysToKeep.has(versionKey))
+      .flatMap(([, tags]) => tags)
+      .filter((tag) => !protectedTags.has(tag.tag));
   }
 
   /**
