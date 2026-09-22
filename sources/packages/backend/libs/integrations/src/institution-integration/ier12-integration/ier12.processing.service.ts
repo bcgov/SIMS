@@ -129,6 +129,7 @@ export class IER12ProcessingService {
       } catch (error: unknown) {
         const errorMessage = `Error while creating IER 12 record for institution code: ${locationInstitutionCode}, assessment ID: ${application.currentAssessment!.id}`;
         this.logger.error(errorMessage, error);
+        processSummary.error(errorMessage, error);
         throw new Error(errorMessage, { cause: error });
       }
     }

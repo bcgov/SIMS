@@ -48,6 +48,23 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
     expect(applicationEventCode).toBe(ApplicationEventCode.DISC);
   });
 
+  it(`Should return ${ApplicationEventCode.DISC} when the disbursement schedule status is ${DisbursementScheduleStatus.Rejected}.`, () => {
+    // Arrange
+    const currentDisbursementSchedule = {
+      ...payload,
+      disbursementScheduleStatus: DisbursementScheduleStatus.Rejected,
+    };
+
+    // Act.
+    const applicationEventCode =
+      applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
+        currentDisbursementSchedule,
+      );
+
+    // Assert.
+    expect(applicationEventCode).toBe(ApplicationEventCode.DISC);
+  });
+
   it(
     `Should return ${ApplicationEventCode.COEA} when the disbursement schedule status is ${DisbursementScheduleStatus.Pending}, ` +
       `COE status is ${COEStatus.completed} and today is before the cutoff date(i.e. disbursement date + ${DISBURSEMENT_FILE_GENERATION_ANTICIPATION_DAYS}).`,
