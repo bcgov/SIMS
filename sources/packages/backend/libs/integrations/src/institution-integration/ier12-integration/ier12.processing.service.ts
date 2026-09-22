@@ -112,6 +112,7 @@ export class IER12ProcessingService {
         pendingApplicationIds,
       );
     const fileRecords: Record<string, IER12Record[]> = {};
+    processSummary.info("Creating grouped IER 12 records by institution code.");
     for (const application of pendingApplications) {
       const locationInstitutionCode =
         application.currentAssessment!.offering!.institutionLocation
@@ -119,18 +120,31 @@ export class IER12ProcessingService {
       if (!fileRecords[locationInstitutionCode]) {
         fileRecords[locationInstitutionCode] = [];
       }
-      const ier12Records = await this.createIER12Record(
-        application,
-        applicationAwardTotals.get(application.id) ?? [],
-      );
-      fileRecords[locationInstitutionCode].push(...ier12Records);
+      try {
+        const ier12Records = await this.createIER12Record(
+          application,
+          applicationAwardTotals.get(application.id) ?? [],
+        );
+        fileRecords[locationInstitutionCode].push(...ier12Records);
+      } catch (error: unknown) {
+        const errorMessage = `Error while creating IER 12 record for institution code: ${locationInstitutionCode}, assessment ID: ${application.currentAssessment!.id}`;
+        this.logger.error(errorMessage, error);
+        processSummary.error(errorMessage, error);
+        throw new Error(errorMessage, { cause: error });
+      }
     }
+    processSummary.info(
+      `IER 12 records created for institution codes: ${Object.keys(fileRecords).join(", ")}.`,
+    );
     const uploadResult: IER12UploadResult[] = [];
     try {
       processSummary.info("Creating IER 12 content.");
       for (const [institutionCode, ierRecords] of Object.entries(fileRecords)) {
         const uploadProcessSummary = new ProcessSummary();
         processSummary.children(uploadProcessSummary);
+        uploadProcessSummary.info(
+          `Creating IER 12 file content and uploading file for institution code: ${institutionCode}`,
+        );
         const ierUploadResult = await this.uploadIER12Content(
           institutionCode,
           ierRecords,
@@ -159,23 +173,27 @@ export class IER12ProcessingService {
     processSummary: ProcessSummary,
   ): Promise<IER12UploadResult> {
     try {
+      processSummary.info("Creating IER 12 file content.");
       // Create the Request content for the IER 12 file by populating the content.
       const fileContent =
         this.ier12IntegrationService.createIER12FileContent(ier12Records);
       // Create the request filename with the file path for the each and every institutionCode.
       const fileInfo = this.createRequestFileName(institutionCode);
-      processSummary.info("Uploading content.");
+      processSummary.info("Starting IER 12 file upload.");
       await this.ier12IntegrationService.uploadContent(
         fileContent,
         fileInfo.filePath,
       );
-      processSummary.info("Content uploaded.");
+      processSummary.info("File uploaded.");
       return {
         generatedFile: fileInfo.filePath,
         uploadedRecords: fileContent.length,
       };
     } catch (error: unknown) {
-      const errorMessage = "Error while uploading content for IER 12 file.";
+      const disbursementIds = ier12Records
+        .map((record) => record.disbursementId)
+        .join(", ");
+      const errorMessage = `Error while creating file content and uploading the file for institution code: ${institutionCode} and disbursements: ${disbursementIds}.`;
       this.logger.error(errorMessage, error);
       processSummary.error(errorMessage, error);
       throw error;

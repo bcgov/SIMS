@@ -20,6 +20,7 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
     applicationEventCodeDuringEnrolmentAndCompletedUtilsService =
       new ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService();
     payload = {
+      id: 1,
       coeStatus: COEStatus.completed,
       disbursementDate: formatDate(new Date(), DATE_ONLY_ISO_FORMAT),
       disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
@@ -35,6 +36,23 @@ describe("applicationEventCodeDuringEnrolmentAndCompletedUtilsService-applicatio
     const currentDisbursementSchedule = {
       ...payload,
       disbursementScheduleStatus: DisbursementScheduleStatus.Cancelled,
+    };
+
+    // Act.
+    const applicationEventCode =
+      applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
+        currentDisbursementSchedule,
+      );
+
+    // Assert.
+    expect(applicationEventCode).toBe(ApplicationEventCode.DISC);
+  });
+
+  it(`Should return ${ApplicationEventCode.DISC} when the disbursement schedule status is ${DisbursementScheduleStatus.Rejected}.`, () => {
+    // Arrange
+    const currentDisbursementSchedule = {
+      ...payload,
+      disbursementScheduleStatus: DisbursementScheduleStatus.Rejected,
     };
 
     // Act.

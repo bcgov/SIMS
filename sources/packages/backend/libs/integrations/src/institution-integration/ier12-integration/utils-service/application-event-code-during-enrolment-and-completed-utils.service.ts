@@ -50,6 +50,7 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
   ): CompletedApplicationEventCode {
     switch (currentDisbursementSchedule.disbursementScheduleStatus) {
       case DisbursementScheduleStatus.Cancelled:
+      case DisbursementScheduleStatus.Rejected:
         return ApplicationEventCode.DISC;
       case DisbursementScheduleStatus.Pending:
         return this.eventCodeForCompletedApplicationWithPendingDisbursement(
@@ -63,6 +64,10 @@ export class ApplicationEventCodeDuringEnrolmentAndCompletedUtilsService {
           currentDisbursementSchedule.disbursementFeedbackErrors.map(
             (feedbackError) => feedbackError.eCertFeedbackError,
           ),
+        );
+      default:
+        throw new Error(
+          `Unexpected disbursement schedule status: ${currentDisbursementSchedule.disbursementScheduleStatus}.`,
         );
     }
   }
