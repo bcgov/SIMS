@@ -214,40 +214,30 @@ export class ImagePruner {
     return { deployedTags, imageStreamName };
   }
 
+  /**
+   * Prunes old image tags from an ImageStream based on the configured retention policy.
+   * @param imageStream The ImageStream resource to prune tags from.
+   * @param protectedTags The set of tags that should never be deleted.
+   * @param appIdentifier The identifier of the application for logging purposes.
+   */
   private async pruneTags(
     imageStream: ImageStreamResource,
     protectedTags: Set<string>,
     appIdentifier: string,
   ): Promise<void> {
-    const oldPrefixTags = imageStream.status?.tags
-      ?.filter(
-        (tag) =>
-          tag.tag.startsWith(this.config.prefix) && /.*-\d+$/.test(tag.tag),
-      )
-      .filter((tag) => !protectedTags.has(tag.tag))
-      .sort(
-        (left, right) =>
-          getTagCreatedAtTimestamp(left) - getTagCreatedAtTimestamp(right),
-      );
-
-    const prefixTagsToDelete =
-      oldPrefixTags?.slice(
-        0,
-        Math.max(0, oldPrefixTags.length - this.config.minTags),
-      ) ?? [];
-
     const releaseTagsToDelete = this.getReleaseTagsToDelete(
       imageStream,
       protectedTags,
     );
+    const prefixTagsToDelete = await this.getPrefixTagsToDelete(
+      imageStream,
+      protectedTags,
+    );
 
-    const featureTagsToDelete: ImageStreamTag[] =
-      imageStream.status?.tags
-        ?.filter((tag) => !protectedTags.has(tag.tag))
-        .filter(
-          (tag) =>
-            !tag.tag.startsWith(this.config.prefix) && !isReleaseTag(tag.tag),
-        ) ?? [];
+    const featureTagsToDelete = await this.getFeatureTagsToDelete(
+      imageStream,
+      protectedTags,
+    );
 
     if (
       featureTagsToDelete.length === 0 &&
@@ -302,6 +292,45 @@ export class ImagePruner {
     if (failedTagDeletions > 0) {
       console.log(`\tTotal of ${failedTagDeletions} tag deletion(s) failed.`);
     }
+  }
+
+  private async getFeatureTagsToDelete(
+    imageStream: ImageStreamResource,
+    protectedTags: Set<string>,
+  ): Promise<ImageStreamTag[]> {
+    const featureTagsToDelete: ImageStreamTag[] =
+      imageStream.status?.tags
+        ?.filter((tag) => !protectedTags.has(tag.tag))
+        .filter(
+          (tag) =>
+            !tag.tag.startsWith(this.config.prefix) && !isReleaseTag(tag.tag),
+        ) ?? [];
+
+    return featureTagsToDelete;
+  }
+
+  private async getPrefixTagsToDelete(
+    imageStream: ImageStreamResource,
+    protectedTags: Set<string>,
+  ): Promise<ImageStreamTag[]> {
+    const oldPrefixTags = imageStream.status?.tags
+      ?.filter(
+        (tag) =>
+          tag.tag.startsWith(this.config.prefix) && /.*-\d+$/.test(tag.tag),
+      )
+      .filter((tag) => !protectedTags.has(tag.tag))
+      .sort(
+        (left, right) =>
+          getTagCreatedAtTimestamp(left) - getTagCreatedAtTimestamp(right),
+      );
+
+    const prefixTagsToDelete =
+      oldPrefixTags?.slice(
+        0,
+        Math.max(0, oldPrefixTags.length - this.config.minTags),
+      ) ?? [];
+
+    return prefixTagsToDelete;
   }
 
   /**
