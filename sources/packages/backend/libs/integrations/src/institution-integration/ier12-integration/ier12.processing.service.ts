@@ -133,15 +133,18 @@ export class IER12ProcessingService {
         throw new Error(errorMessage, { cause: error });
       }
     }
+    processSummary.info(
+      `IER 12 records created for institution codes: ${Object.keys(fileRecords).join(", ")}.`,
+    );
     const uploadResult: IER12UploadResult[] = [];
     try {
       processSummary.info("Creating IER 12 content.");
       for (const [institutionCode, ierRecords] of Object.entries(fileRecords)) {
-        processSummary.info(
-          `Creating IER 12 file content and uploading file for institution code: ${institutionCode}`,
-        );
         const uploadProcessSummary = new ProcessSummary();
         processSummary.children(uploadProcessSummary);
+        uploadProcessSummary.info(
+          `Creating IER 12 file content and uploading file for institution code: ${institutionCode}`,
+        );
         const ierUploadResult = await this.uploadIER12Content(
           institutionCode,
           ierRecords,

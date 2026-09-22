@@ -54,7 +54,7 @@ export class ApplicationEventCodeUtilsService {
       }
     } catch (error: unknown) {
       throw new Error(
-        `Unexpected error while getting application event code for disbursement schedule: ${currentDisbursementSchedule.id} .`,
+        `Unexpected error while getting application event code for disbursement schedule: ${currentDisbursementSchedule.id}.`,
         { cause: error },
       );
     }
