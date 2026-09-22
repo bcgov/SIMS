@@ -639,6 +639,14 @@
               />
             </content-group>
           </body-header-container>
+          <json-forms
+            :data="dynamicFormData"
+            :schema="programDynamicSchema"
+            :uischema="programDynamicUiSchema"
+            :renderers="programDynamicFormRenderers"
+            :readonly="isProgramDetailReadonly"
+            @change="onDynamicFormChange"
+          />
         </v-form>
       </v-skeleton-loader>
     </content-group>
@@ -688,6 +696,13 @@ import {
   SystemLookupEntryAPIOutDTO,
 } from "@/services/http/dto";
 import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
+import { JsonForms } from "@jsonforms/vue";
+import type { JsonFormsChangeEvent } from "@jsonforms/vue";
+import { programDynamicFormRenderers } from "@/renderers/jsonforms";
+import {
+  programDynamicSchema,
+  programDynamicUiSchema,
+} from "./ProgramFormDynamicSchema.poc";
 
 const PROGRAM_INTENSITY_ITEMS: ComponentItemType[] = [
   { title: "Yes", value: ProgramIntensity.fullTimePartTime },
@@ -741,6 +756,15 @@ const emit = defineEmits<{
 }>();
 const formModel = ref<ProgramFormModel>({} as ProgramFormModel);
 const formContext = ref<ProgramFormContext>();
+// POC: dynamic program form data/errors, kept isolated from formModel.
+// In a full implementation this would be loaded from/saved to the
+// program's JSONB column alongside the schema version used to produce it.
+const dynamicFormData = ref<Record<string, unknown>>({});
+const dynamicFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
+const onDynamicFormChange = (event: JsonFormsChangeEvent) => {
+  dynamicFormData.value = event.data;
+  dynamicFormErrors.value = event.errors;
+};
 const isReadonly = computed(
   () => props.readOnly || (!!props.programId && !formContext.value?.isActive),
 );
