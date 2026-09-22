@@ -9,18 +9,8 @@ on:
     - cron: "0 14 * * *" # Runs at 6 AM Pacific every day
 
 jobs:
-  get-staging-license-plate:
-    runs-on: ubuntu-latest
-    environment: staging
-    outputs:
-      license-plate: ${{ vars.OPENSHIFT_LICENSE_PLATE }}
-    steps:
-      - name: Fetch staging license plate
-        run: echo "Fetching staging environment variables."
-
   prune-images:
     runs-on: ubuntu-latest
-    needs: get-staging-license-plate
     steps:
       - name: Checkout source code
         uses: actions/checkout@v7
@@ -36,4 +26,4 @@ jobs:
           SA_TOKEN: ${{ secrets.SA_TOKEN }}
           OPENSHIFT_URL: ${{ vars.OPENSHIFT_CLUSTER_URL }}
           LICENSE_PLATE: ${{ vars.OPENSHIFT_LICENSE_PLATE }}
-          STAGING_LICENSE_PLATE: ${{ needs.get-staging-license-plate.outputs.license-plate }}
+          STAGING_LICENSE_PLATE: ${{ vars.OPENSHIFT_STAGING_LICENSE_PLATE }}
