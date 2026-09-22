@@ -30,22 +30,33 @@ export class ApplicationEventCodeUtilsService {
     currentDisbursementSchedule: DisbursementScheduleForApplicationEventCode,
     activeRestrictionsActionTypes?: RestrictionActionType[][],
   ): Promise<ApplicationEventCode> {
-    switch (applicationStatus) {
-      case ApplicationStatus.Assessment:
-        return this.applicationEventCodeDuringAssessmentUtilsService.applicationEventCodeDuringAssessment(
-          applicationNumber,
-        );
-      case ApplicationStatus.Enrolment:
-        return this.applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringEnrolmentAndCompleted(
-          currentDisbursementSchedule.coeStatus,
-        );
-      case ApplicationStatus.Completed:
-        return this.applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
-          currentDisbursementSchedule,
-          activeRestrictionsActionTypes,
-        );
-      case ApplicationStatus.Cancelled:
-        return ApplicationEventCode.DISC;
+    try {
+      switch (applicationStatus) {
+        case ApplicationStatus.Assessment:
+          return this.applicationEventCodeDuringAssessmentUtilsService.applicationEventCodeDuringAssessment(
+            applicationNumber,
+          );
+        case ApplicationStatus.Enrolment:
+          return this.applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringEnrolmentAndCompleted(
+            currentDisbursementSchedule.coeStatus,
+          );
+        case ApplicationStatus.Completed:
+          return this.applicationEventCodeDuringEnrolmentAndCompletedUtilsService.applicationEventCodeDuringCompleted(
+            currentDisbursementSchedule,
+            activeRestrictionsActionTypes,
+          );
+        case ApplicationStatus.Cancelled:
+          return ApplicationEventCode.DISC;
+        default:
+          throw new Error(
+            `Unexpected application status : ${applicationStatus}.`,
+          );
+      }
+    } catch (error: unknown) {
+      throw new Error(
+        `Unexpected error while getting application event code for disbursement schedule: ${currentDisbursementSchedule.id} .`,
+        { cause: error },
+      );
     }
   }
 }

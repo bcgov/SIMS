@@ -1030,6 +1030,91 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     );
   });
 
+  it(`Should generate an IER12 file with one record for a student when there is one disbursement with disbursement schedule status ${DisbursementScheduleStatus.Rejected}`, async () => {
+    // Arrange
+    const disbursementDateSent = new Date();
+    const testInputData = {
+      student: JOHN_DOE_FROM_CANADA,
+      application: {
+        applicationNumber: defaultApplicationNumber,
+        studentNumber: "1",
+        relationshipStatus: RelationshipStatus.Single,
+        applicationStatus: ApplicationStatus.Completed,
+        applicationStatusUpdatedOn: undefined,
+      },
+      assessment: {
+        triggerType: AssessmentTriggerType.OriginalAssessment,
+        assessmentDate: undefined,
+        workflowData: WORKFLOW_DATA_SINGLE_INDEPENDENT_WITH_NO_DEPENDENTS,
+        assessmentData: ASSESSMENT_DATA_SINGLE_INDEPENDENT,
+        disbursementSchedules: [
+          {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Rejected,
+            disbursementDate: undefined,
+            updatedAt: undefined,
+            dateSent: disbursementDateSent,
+            disbursementValues: AWARDS_SINGLE_DISBURSEMENT,
+          },
+        ],
+      },
+      educationProgram: PROGRAM_GRADUATE_DIPLOMA_WITH_INSTITUTION_PROGRAM_CODE,
+      offering: OFFERING_FULL_TIME,
+    };
+    const application = await saveIER12TestInputData(
+      db,
+      testInputData,
+      { institutionLocation: locationB },
+      {
+        programYearPrefix: sharedProgramYearPrefix,
+        submittedDate: referenceSubmissionDate,
+      },
+    );
+
+    // Queued job.
+    const mockedJob = createIER12SchedulerJobMock({
+      modifiedSince: application.currentAssessment.assessmentDate,
+    });
+
+    // Act
+    const ier12Results = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    // Assert process result.
+    expect(ier12Results).toBeDefined();
+    // File timestamp.
+    const [timestampResult] = getFileNameAsCurrentTimestampMock.mock.results;
+    expect(isValidFileTimestamp(timestampResult.value)).toBe(true);
+    expect(ier12Results).toStrictEqual([
+      getSuccessSummaryMessages(timestampResult.value, {
+        institutionCode: locationB.institutionCode,
+      }),
+    ]);
+    // Assert file output.
+    const uploadedFile = getUploadedFile(sftpClientMock);
+    expect(uploadedFile.fileLines?.length).toBe(1);
+    const [line1] = uploadedFile.fileLines;
+    const [firstDisbursement] =
+      application.currentAssessment.disbursementSchedules || [];
+    const assessmentId = numberToText(application.currentAssessment.id);
+    const currentOfferingId = numberToText(
+      application.currentAssessment.offering.id,
+    );
+    const parentOfferingId = numberToText(
+      application.currentAssessment.offering.parentOffering.id,
+    );
+    // Line 1 validations.
+    const expectedAssessmentDate = dateUtils.addDays(
+      1,
+      referenceSubmissionDate,
+    );
+    expect(line1.length).toBe(IER_RECORD_EXPECTED_LENGTH);
+    const firstDisbursementId = numberToText(firstDisbursement.id);
+    expect(line1).toBe(
+      `${assessmentId}${firstDisbursementId}${defaultApplicationNumber}1           242963189Doe                      John           19980113B   SI  NONENAddress Line 1           Address Line 2           Victoria                 BC  Z1Z1Z1          Program with long name to ensure the program name space of 75 characters isgraduateDiploma          0001    5   0512123401234ADR2XYZ                      6${currentOfferingId}${parentOfferingId}                              2025081620251010000033330000004444000000555500000066660050100F${formatIER12Date(referenceSubmissionDate)}20252026COMP${formatIER12Date(referenceSubmissionDate)}000010000000006000000004800000NNNNN            ${formatIER12Date(expectedAssessmentDate)}        000002100000000000000000200000000000000000000000001NNN000000000000000000000000000000000000000000000000000000000000NN0000000000000144430000000115000000000000000000000000007777000000336667000009874600000000000000017500000000000000000000000000002200000120000100001500000005500000N0000000000000000000000000000000000000000000000000000000000000000000000DISC${formatIER12Date(referenceSubmissionDate)}${formatIER12Date(disbursementDateSent)}Completed Rejected  20250816                        CSLF0000100000BCSL0000600000CSGP0000200000CSGD0000300000CSGF0000400000CSGT0000500000BCAG0000700000SBSD0000900000BGPD0000800000    0000000000`,
+    );
+  });
+
   it("Should generate 2 IER12 files for locations when the locations are from different institutions using distinct institution codes.", async () => {
     // Arrange
     const testInputDataLocationA = {
