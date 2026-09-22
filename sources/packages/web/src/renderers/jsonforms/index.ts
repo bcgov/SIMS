@@ -4,12 +4,16 @@ import YesNoControlRenderer from "./YesNoControlRenderer.vue";
 import VerticalLayoutRenderer from "./VerticalLayoutRenderer.vue";
 import GroupLayoutRenderer from "./GroupLayoutRenderer.vue";
 import FieldOfStudyCodeRenderer from "./FieldOfStudyCodeRenderer.vue";
+import CheckboxOptionsGroupRenderer from "./CheckboxOptionsGroupRenderer.vue";
+import AviationCredentialsOptionsRenderer from "./AviationCredentialsOptionsRenderer.vue";
 import {
   textControlTester,
   yesNoControlTester,
   verticalLayoutTester,
   groupLayoutTester,
   fieldOfStudyCodeTester,
+  checkboxOptionsGroupTester,
+  aviationCredentialsOptionsTester,
 } from "./testers";
 
 /**
@@ -23,4 +27,12 @@ export const programDynamicFormRenderers: JsonFormsRendererRegistryEntry[] = [
   { renderer: VerticalLayoutRenderer, tester: verticalLayoutTester },
   { renderer: GroupLayoutRenderer, tester: groupLayoutTester },
   { renderer: FieldOfStudyCodeRenderer, tester: fieldOfStudyCodeTester },
+  {
+    renderer: CheckboxOptionsGroupRenderer,
+    tester: checkboxOptionsGroupTester,
+  },
+  {
+    renderer: AviationCredentialsOptionsRenderer,
+    tester: aviationCredentialsOptionsTester,
+  },
 ];

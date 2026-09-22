@@ -644,6 +644,7 @@
             :schema="programDynamicSchema"
             :uischema="programDynamicUiSchema"
             :renderers="programDynamicFormRenderers"
+            :ajv="programDynamicFormAjv"
             :readonly="isProgramDetailReadonly"
             @change="onDynamicFormChange"
           />
@@ -699,6 +700,7 @@ import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigu
 import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
 import { programDynamicFormRenderers } from "@/renderers/jsonforms";
+import { programDynamicFormAjv } from "@/renderers/jsonforms/ajv";
 import {
   programDynamicSchema,
   programDynamicUiSchema,

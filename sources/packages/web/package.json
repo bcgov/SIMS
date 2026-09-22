@@ -19,6 +19,7 @@
     "@jsonforms/vue": "^3.8.0",
     "@mdi/font": "^7.4.47",
     "@mdi/js": "^7.4.47",
+    "ajv-errors": "^3.0.0",
     "axios": "^1.20.0",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",

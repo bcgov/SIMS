@@ -49,3 +49,29 @@ export const fieldOfStudyCodeTester = rankWith(
   20,
   and(uiTypeIs("Control"), scopeEndsWith("fieldOfStudyCode")),
 );
+
+/**
+ * Matches array controls backed by an enum/oneOf list of options, routing
+ * them to the project's existing CheckboxOptionsGroup component.
+ */
+export const checkboxOptionsGroupTester = rankWith(
+  10,
+  and(
+    uiTypeIs("Control"),
+    schemaMatches((schema) => {
+      if (schema.type !== "array" || !schema.items) {
+        return false;
+      }
+      const itemsSchema = schema.items as { enum?: unknown; oneOf?: unknown };
+      return !!itemsSchema.enum || !!itemsSchema.oneOf;
+    }),
+  ),
+);
+
+export const aviationCredentialsOptionsTester = rankWith(
+  10,
+  and(
+    uiTypeIs("Control"),
+    schemaMatches((schema) => schema.format === "aviationCredentials"),
+  ),
+);
