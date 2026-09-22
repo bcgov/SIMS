@@ -245,6 +245,7 @@ export type CompletedApplicationWithPendingDisbursement =
  */
 export type DisbursementScheduleForApplicationEventCode = Pick<
   DisbursementSchedule,
+  | "id"
   | "coeStatus"
   | "disbursementDate"
   | "disbursementScheduleStatus"

@@ -36,6 +36,7 @@ describe("ApplicationEventCodeUtilsService-getApplicationEventCode", () => {
 
     // Arrange.
     payload = {
+      id: 1,
       coeStatus: COEStatus.completed,
       disbursementDate: formatDate(new Date(), DATE_ONLY_ISO_FORMAT),
       disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
