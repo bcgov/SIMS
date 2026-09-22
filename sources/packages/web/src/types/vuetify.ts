@@ -46,6 +46,9 @@ export interface InputFile extends Blob {
   type: string;
 }
 
+/**
+ * @deprecated Use ComponentItemType instead.
+ */
 export interface SelectItemType {
   title: string;
   value: string | number;
@@ -53,4 +56,9 @@ export interface SelectItemType {
 
 export interface Event {
   target: { value: string };
+}
+
+export interface ComponentItemType {
+  title: string;
+  value: string | number;
 }

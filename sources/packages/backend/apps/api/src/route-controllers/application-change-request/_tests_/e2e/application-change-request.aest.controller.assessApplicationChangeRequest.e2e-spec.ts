@@ -12,12 +12,14 @@ import {
   ApplicationEditStatus,
   ApplicationStatus,
   NotificationMessageType,
+  SupportingUserType,
   User,
 } from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
 import {
   createE2EDataSources,
   createFakeStudentAppeal,
+  createFakeSupportingUser,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
@@ -93,6 +95,18 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
         },
       },
     );
+    // Change request with a supporting user.
+    const supportingUser = createFakeSupportingUser(
+      { application: changeRequest },
+      {
+        initialValues: {
+          isAbleToReport: false,
+          supportingUserType: SupportingUserType.Partner,
+          fullName: "Partner",
+        },
+      },
+    );
+    await db.supportingUser.save(supportingUser);
     // Offering to perform the asserts. Expected to be copied.
     const expectedOffering = {
       id: applicationToBeReplaced.currentAssessment.offering.id,

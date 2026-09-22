@@ -57,7 +57,7 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     () => store.state.institution.institutionState?.isBCPublic,
   );
 
-  const isReadOnlyUser = (locationId: number) => {
+  const isReadOnlyUser = (locationId: number): boolean => {
     if (store.state.institution.userState.isAdmin) {
       return false;
     }
