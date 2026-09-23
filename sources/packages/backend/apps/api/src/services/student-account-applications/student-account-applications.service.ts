@@ -132,7 +132,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
     const accountApplication = await this.repo.findOne({
       select: {
         id: true,
-        user: { id: true },
+        user: { id: true, userName: true },
         submittedData: true,
       },
       relations: { user: true },
@@ -155,6 +155,7 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       givenNames: studentProfile.firstName,
       email: studentProfile.email,
       birthdate: studentProfile.dateOfBirth,
+      userName: accountApplication.user.userName,
     };
 
     const studentInfo = {
