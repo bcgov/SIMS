@@ -436,9 +436,9 @@ export const BatchReassessmentHistoryHeaders = [
   { title: "Batch ID", sortable: false, key: "batchId" },
   { title: "Submitted Date", sortable: false, key: "submittedDate" },
   { title: "Submitted By", sortable: false, key: "submittedBy" },
-  { title: "Applications", sortable: false, key: "totalApplications" },
-  { title: "Successful", sortable: false, key: "successfulApplications" },
-  { title: "Failed", sortable: false, key: "failedApplications" },
+  { title: "Applications", sortable: false, key: "totalCount" },
+  { title: "Successful", sortable: false, key: "successCount" },
+  { title: "Failed", sortable: false, key: "failedCount" },
   { title: "Status", sortable: false, key: "status" },
   { title: "Action", sortable: false, key: "action" },
 ];

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   ApplicationExceptionStatus,
@@ -10,7 +10,6 @@ import {
   Application,
   StudentAssessmentStatus,
   NoteType,
-  BatchReassessment,
   BatchReassessmentStatus,
   BatchReassessmentApplication,
   BatchReassessmentApplicationResult,
@@ -27,7 +26,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NoteSharedService, RestrictionSharedService } from "@sims/services";
-import { ApplicationService } from "../../services";
+import { ApplicationService, BatchReassessmentService } from "../../services";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { AcceptAssessmentEvaluationResult } from "./student-assessment.models";
 
@@ -42,6 +41,8 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     private readonly applicationService: ApplicationService,
     private readonly eCertPreValidationService: ECertPreValidationService,
     private readonly restrictionSharedService: RestrictionSharedService,
+    @Inject(BatchReassessmentService)
+    private readonly batchReassessmentService: BatchReassessmentService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -353,7 +354,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           applicationId,
           { entityManager: transactionalEntityManager },
         );
-
       if (!application) {
         throw new CustomNamedError(
           "Application not found.",
@@ -433,18 +433,19 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   }
 
   /**
-   * Triggers a batch manual reassessment for a list of application numbers.
+   * Runs a batch reassessment for a list of application numbers.
    * Each application number is processed independently so failures do not stop
    * the remaining batch items from being attempted.
    * @param applicationNumbers application numbers to be reassessed.
    * @param note note describing the reason for the batch reassessment.
    * @param userId user id who triggered the batch reassessment.
    */
-  async performBatchManualReassessment(
+  async runBatchReassessment(
     applicationNumbers: string[],
     note: string,
     userId: number,
   ): Promise<void> {
+    // Only process unique application numbers.
     const uniqueApplicationNumbers = [...new Set(applicationNumbers)];
     const applications = await this.dataSource
       .getRepository(Application)
@@ -453,6 +454,9 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       .where("application.applicationNumber IN (:...applicationNumbers)", {
         applicationNumbers: uniqueApplicationNumbers,
       })
+      .andWhere("application.applicationStatus != :editedStatus", {
+        editedStatus: ApplicationStatus.Edited,
+      })
       .getMany();
     const applicationIdsByNumber = new Map(
       applications.map((application) => [
@@ -460,34 +464,27 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         application.id,
       ]),
     );
-
-    const now = new Date();
     // Create a new batch reassessment to indicate that the batch is in progress.
-    const batchReassessment: BatchReassessment = {
-      status: BatchReassessmentStatus.InProgress,
-      creator: { id: userId },
-      createdAt: now,
-    } as BatchReassessment;
-    await this.dataSource
-      .getRepository(BatchReassessment)
-      .save(batchReassessment);
+    const batchReassessment =
+      await this.batchReassessmentService.createBatchReassessment(userId);
 
     for (const applicationNumber of uniqueApplicationNumbers) {
+      const applicationId = applicationIdsByNumber.get(applicationNumber);
+
       const reassessmentApplication = {
-        application: { id: applicationIdsByNumber.get(applicationNumber) },
-        batchReassessment: batchReassessment,
+        application: { id: applicationId },
+        batchReassessment,
         creator: { id: userId },
-        createdAt: now,
       } as BatchReassessmentApplication;
       try {
-        const applicationId = applicationIdsByNumber.get(applicationNumber);
+        // Fail early if the application id doesn't exist.
         if (!applicationId) {
-          console.log(
-            "Application not found for application number:",
-            applicationNumber,
+          throw new CustomNamedError(
+            "Application not found",
+            APPLICATION_NOT_FOUND,
           );
-          continue;
         }
+
         await this.createManualReassessment(applicationId, note, userId);
         reassessmentApplication.result =
           BatchReassessmentApplicationResult.Success;
@@ -497,14 +494,15 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         reassessmentApplication.result =
           BatchReassessmentApplicationResult.Failed;
       }
-      await this.dataSource
-        .getRepository(BatchReassessmentApplication)
-        .save(reassessmentApplication);
+      await this.batchReassessmentService.createBatchReassessmentApplication(
+        reassessmentApplication,
+      );
     }
     // Update the batch reassessment status when complete.
-    batchReassessment.status = BatchReassessmentStatus.Completed;
-    await this.dataSource
-      .getRepository(BatchReassessment)
-      .save(batchReassessment);
+    await this.batchReassessmentService.updateBatchReassessment(
+      batchReassessment.id,
+      BatchReassessmentStatus.Completed,
+      userId,
+    );
   }
 }

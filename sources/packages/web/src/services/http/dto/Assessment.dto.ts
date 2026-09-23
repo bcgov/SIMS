@@ -171,10 +171,10 @@ export enum BatchSubmissionResultStatus {
  */
 export interface BatchSubmissionResultAPIOutDTO {
   batchId: number;
-  submittedDate: Date;
-  submittedBy: string;
-  totalApplications: number;
-  successfulApplications: number;
-  failedApplications: number;
+  createdAt: Date;
+  creatorFirstName: string;
+  creatorLastName: string;
+  successCount: number;
+  failedCount: number;
   status: BatchSubmissionResultStatus;
 }

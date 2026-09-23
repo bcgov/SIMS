@@ -39,12 +39,16 @@ export class BatchReassessmentApplication extends RecordDataModel {
   /**
    * Application processed for this batch manual reassessment.
    */
-  @ManyToOne(() => Application, { eager: false, cascade: false })
+  @ManyToOne(() => Application, {
+    nullable: true,
+    eager: false,
+    cascade: false,
+  })
   @JoinColumn({
     name: "application_id",
     referencedColumnName: ColumnNames.ID,
   })
-  application: Application;
+  application?: Application;
   /**
    * Processing result for the application.
    */

@@ -3,7 +3,7 @@ CREATE TYPE sims.batch_reassessment_application_result AS ENUM ('Success', 'Fail
 CREATE TABLE sims.batch_reassessment_applications (
     id SERIAL PRIMARY KEY,
     batch_reassessment_id INT NOT NULL REFERENCES sims.batch_reassessments(id),
-    application_id INT NOT NULL REFERENCES sims.applications(id),
+    application_id INT REFERENCES sims.applications(id),
     result sims.batch_reassessment_application_result NOT NULL,
     failure_reason TEXT,
     -- Audit columns

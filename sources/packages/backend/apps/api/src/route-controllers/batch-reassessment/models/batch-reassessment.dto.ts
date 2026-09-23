@@ -37,10 +37,10 @@ export class BatchReassessmentAPIInDTO {
  */
 export class BatchSubmissionResultAPIOutDTO {
   batchId: number;
-  submittedDate: Date;
-  submittedBy: string;
-  totalApplications: number;
-  successfulApplications: number;
-  failedApplications: number;
+  createdAt: Date;
+  creatorFirstName: string;
+  creatorLastName: string;
+  successCount: number;
+  failedCount: number;
   status: BatchReassessmentStatus;
 }

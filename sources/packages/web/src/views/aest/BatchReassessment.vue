@@ -1,7 +1,7 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator title="Ministry" sub-title="Manual Reassessment" />
+      <header-navigator title="Ministry" sub-title="Batch Reassessment" />
     </template>
 
     <body-header-container>
@@ -17,8 +17,7 @@
           <v-textarea
             v-model="applicationNumbers"
             :rules="[checkApplicationNumbers]"
-            label="Applications"
-            placeholder="Paste your applications here"
+            label="Paste your applications here"
             variant="outlined"
             rows="8"
             auto-grow
@@ -75,8 +74,23 @@
           :items="batchReassessmentHistory"
           :loading="batchReassessmentHistoryLoading"
         >
+          <template #[`item.batchId`]="{ item }">
+            {{ item.batchId }}
+          </template>
           <template #[`item.submittedDate`]="{ item }">
-            {{ getISODateHourMinuteString(item.submittedDate) }}
+            {{ getISODateHourMinuteString(item.createdAt) }}
+          </template>
+          <template #[`item.submittedBy`]="{ item }">
+            {{ item.creatorFirstName }} {{ item.creatorLastName }}
+          </template>
+          <template #[`item.totalCount`]="{ item }">
+            {{ item.successCount + item.failedCount }}
+          </template>
+          <template #[`item.successCount`]="{ item }">
+            {{ item.successCount }}
+          </template>
+          <template #[`item.failedCount`]="{ item }">
+            {{ item.failedCount }}
           </template>
           <template #[`item.status`]="{ item }">
             <status-chip-batch-reassessment :status="item.status" />
@@ -89,7 +103,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { Role } from "@/types";
+import { ApiProcessError, Role } from "@/types";
 import type { VForm } from "@/types";
 import { BatchReassessmentHistoryHeaders } from "@/types/contracts/DataTableContract";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
@@ -176,7 +190,11 @@ const submitReassessment = async (
     batchReassessmentForm.value.reset();
     await loadBatchReassessmentHistory();
     return true;
-  } catch {
+  } catch (error) {
+    if (error instanceof ApiProcessError) {
+      snackBar.error(error.message);
+      return false;
+    }
     snackBar.error("Unexpected error while triggering batch reassessment.");
     return false;
   }

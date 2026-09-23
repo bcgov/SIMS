@@ -16,7 +16,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { UserGroups } from "../../auth/user-groups.enum";
 import {
   AssessmentHistorySummaryAPIOutDTO,
@@ -40,7 +40,16 @@ import { Role, IUserToken } from "../../auth";
 import { ManualReassessmentAPIInDTO } from "../assessment/models/assessment.dto";
 import { BatchReassessmentAPIInDTO } from "../batch-reassessment/models/batch-reassessment.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
-import { StudentAssessmentService } from "../../services";
+import {
+  BatchReassessmentService,
+  StudentAssessmentService,
+} from "../../services";
+
+const BATCH_REASSESSMENT_ALREADY_IN_PROGRESS =
+  "BATCH_REASSESSMENT_ALREADY_IN_PROGRESS;";
+
+const BATCH_REASSESSMENT_ALREADY_IN_PROGRESS_MESSAGE =
+  "A batch manual reassessment is already in progress.";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -50,6 +59,7 @@ export class AssessmentAESTController extends BaseController {
   constructor(
     private readonly assessmentControllerService: AssessmentControllerService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly batchReassessmentService: BatchReassessmentService,
   ) {
     super();
   }
@@ -179,12 +189,22 @@ export class AssessmentAESTController extends BaseController {
    */
   @Roles(Role.AESTBatchReassessment)
   @Post("application/batch-reassessment")
+  @ApiUnprocessableEntityResponse({
+    description: BATCH_REASSESSMENT_ALREADY_IN_PROGRESS_MESSAGE,
+  })
   async batchReassessment(
     @Body() payload: BatchReassessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // TODO Validate that there isn't another batch in progress before triggering a new one.
-    await this.studentAssessmentService.performBatchManualReassessment(
+    if (await this.batchReassessmentService.isBatchInProgress()) {
+      throw new UnprocessableEntityException(
+        new ApiProcessError(
+          BATCH_REASSESSMENT_ALREADY_IN_PROGRESS_MESSAGE,
+          BATCH_REASSESSMENT_ALREADY_IN_PROGRESS,
+        ),
+      );
+    }
+    await this.studentAssessmentService.runBatchReassessment(
       payload.applicationNumbers,
       payload.note,
       userToken.userId,

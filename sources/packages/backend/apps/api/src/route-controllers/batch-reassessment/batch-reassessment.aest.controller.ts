@@ -6,10 +6,8 @@ import { Role } from "../../auth";
 import { UserGroups } from "../../auth/user-groups.enum";
 import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
-import { BatchReassessmentApplicationResult } from "@sims/sims-db";
 import { BatchSubmissionResultAPIOutDTO } from "./models/batch-reassessment.dto";
 import { BatchReassessmentService } from "../../services";
-import { getUserFullName } from "../../utilities";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.
@@ -32,27 +30,16 @@ export class BatchReassessmentAESTController extends BaseController {
   @Roles(Role.AESTBatchReassessment)
   @Get()
   async getBatchReassessment(): Promise<BatchSubmissionResultAPIOutDTO[]> {
-    const batches = await this.batchReassessmentService.getBatchReassessment();
-    // TODO It's not efficient return all applications. Create a custom dto with counts.
+    const batches =
+      await this.batchReassessmentService.getBatchReassessmentSummary();
     return batches.map((batch) => {
-      const successfulApplications =
-        batch.batchReassessmentApplications?.filter(
-          (application) =>
-            application.result === BatchReassessmentApplicationResult.Success,
-        ).length ?? 0;
-      const failedApplications =
-        batch.batchReassessmentApplications?.filter(
-          (application) =>
-            application.result === BatchReassessmentApplicationResult.Failed,
-        ).length ?? 0;
-
       return {
         batchId: batch.id,
-        submittedDate: batch.createdAt,
-        submittedBy: getUserFullName(batch.creator),
-        totalApplications: successfulApplications + failedApplications,
-        successfulApplications,
-        failedApplications,
+        createdAt: batch.createdAt,
+        creatorFirstName: batch.creatorFirstName,
+        creatorLastName: batch.creatorLastName,
+        successCount: Number(batch.successCount),
+        failedCount: Number(batch.failedCount),
         status: batch.status,
       };
     });
