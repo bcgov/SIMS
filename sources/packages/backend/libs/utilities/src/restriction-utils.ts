@@ -19,8 +19,10 @@ export function getEffectiveInstitutionRestrictions(
 ): InstitutionRestriction[] {
   return institutionRestrictions.filter(
     (institutionRestriction) =>
-      institutionRestriction.location.id === locationId &&
-      institutionRestriction.program.id === programId &&
+      (!institutionRestriction.location ||
+        institutionRestriction.location.id === locationId) &&
+      (!institutionRestriction.program ||
+        institutionRestriction.program.id === programId) &&
       (!options?.checkIsActive || institutionRestriction.isActive),
   );
 }
