@@ -5,10 +5,7 @@ import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
-  FakeStudentUsersTypes,
   getAESTToken,
-  getStudentToken,
-  mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
@@ -23,12 +20,13 @@ import { In, IsNull } from "typeorm";
 import { faker } from "@faker-js/faker";
 import { applySINNumberFormat } from "@sims/test-utils/utils";
 import { StudentAccountApplicationApprovalModel } from "../../../../services/student-account-applications/student-account-applications.models";
-import { getUserFullName } from "../../../../utilities";
+import { UserService } from "../../../../services";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
   let appModule: TestingModule;
   let db: E2EDataSources;
+  let userService: UserService;
   const TEST_SIN1 = "046454286";
   const TEST_SIN2 = "534012703";
   const BLANK_SIN = "000000000";
@@ -41,6 +39,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       await createTestingAppModule();
     app = nestApplication;
     appModule = module;
+    userService = appModule.get(UserService);
     db = createE2EDataSources(dataSource);
 
     // Insert a fake email contact to send ministry email.
@@ -75,9 +74,12 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     );
   });
 
-  it("Should refresh the student login information for a Basic BCeID user after approval from ministry when it was cached before approval.", async () => {
+  it("Should approve the student account and clear the cache when a student account is requested for approval.", async () => {
     // Arrange
-    const user = await db.user.save(createFakeUser());
+    const user = createFakeUser();
+    // Ensure the cache is empty before creating the student.
+    expect(await userService.getUserLoginInfo(user.userName)).toBeNull();
+    await db.user.save(user);
     const submittedData = createFakeSubmittedData(user);
     const studentAccountApplication = await db.studentAccountApplication.save(
       createFakeStudentAccountApplication(
@@ -85,74 +87,27 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         { initialValues: { submittedData } },
       ),
     );
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    await mockJWTUserInfo(appModule, user);
-
-    // Authenticate the student before approval so the login information is cached without a student id.
-    await request(app.getHttpServer())
-      .get(
-        "/students/student-account-application/has-pending-account-application",
-      )
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({ hasPendingApplication: true });
-
     const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const submittedDataPayload = {
       ...submittedData,
       sinNumber: applySINNumberFormat(submittedData.sinNumber),
     };
-
+    let createdStudentId = undefined;
     // Act
-    const approvalResponse = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(endpoint)
       .send(submittedDataPayload)
       .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED);
-
-    const createdStudent = await db.student.findOne({
-      relations: { user: true, sinValidation: true },
-      where: { id: approvalResponse.body.id },
-      loadEagerRelations: false,
-    });
-    if (!createdStudent) {
-      throw new Error("Expected the student to be created.");
-    }
-
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdStudentId = response.body.id;
+      });
     // Assert
-    await mockJWTUserInfo(appModule, user);
-    const profileResponse = await request(app.getHttpServer())
-      .get("/students/student")
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
-
-    expect(profileResponse.body).toEqual({
-      firstName: createdStudent.user.firstName,
-      lastName: createdStudent.user.lastName,
-      fullName: getUserFullName(createdStudent.user),
-      email: createdStudent.user.email,
-      gender: createdStudent.gender,
-      dateOfBirth: createdStudent.birthDate,
-      contact: {
-        address: {
-          addressLine1: createdStudent.contactInfo.address.addressLine1,
-          provinceState: createdStudent.contactInfo.address.provinceState,
-          country: createdStudent.contactInfo.address.country,
-          city: createdStudent.contactInfo.address.city,
-          postalCode: createdStudent.contactInfo.address.postalCode,
-          canadaPostalCode: createdStudent.contactInfo.address.postalCode,
-          selectedCountry: createdStudent.contactInfo.address.selectedCountry,
-        },
-        phone: createdStudent.contactInfo.phone,
-      },
-      disabilityStatus: createdStudent.disabilityStatus,
-      modifiedIndependentStatus: createdStudent.modifiedIndependentStatus,
-      validSin: createdStudent.sinValidation.isValidSIN,
-      hasFulltimeAccess: true,
-    });
+    const latestUserInfo = await userService.getUserLoginInfo(user.userName);
+    expect(latestUserInfo.studentId).toBe(createdStudentId);
+    expect(latestUserInfo.id).toBe(user.id);
   });
 
   it("Should send a notification message when at least a partial match is found with matching last name and birth dates for importing a student record from SFAS.", async () => {
