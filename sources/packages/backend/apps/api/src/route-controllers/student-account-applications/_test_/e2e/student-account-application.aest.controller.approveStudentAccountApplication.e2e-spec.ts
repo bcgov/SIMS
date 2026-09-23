@@ -74,7 +74,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     );
   });
 
-  it.only("Should approve the student account and clear the cache when a student account is requested for approval.", async () => {
+  it("Should approve the student account and clear the cache when a student account is requested for approval.", async () => {
     // Arrange
     const user = createFakeUser();
     // Ensure the cache is empty before creating the student.
