@@ -129,37 +129,33 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       throw new Error("Expected the student to be created.");
     }
     const latestUserInfo = await userService.getUserLoginInfo(user.userName);
-    // Assert that the latest user info has the created studentId
-    // and the created student matches the expected values.
-    expect({ latestUserInfo, createdStudent }).toMatchObject({
-      latestUserInfo: {
+    // Assert that the latest user info has the created studentId.
+    expect(latestUserInfo.studentId).toBe(createdStudentId);
+    expect(latestUserInfo.id).toBe(user.id);
+    // Assert that the created student matches the expected values.
+    expect(createdStudent).toMatchObject({
+      user: {
         id: user.id,
-        studentId: createdStudentId,
+        firstName: submittedData.firstName,
+        lastName: submittedData.lastName,
+        email: submittedData.email,
+        userName: user.userName,
       },
-      createdStudent: {
-        user: {
-          id: user.id,
-          firstName: submittedData.firstName,
-          lastName: submittedData.lastName,
-          email: submittedData.email,
-          userName: user.userName,
+      birthDate: submittedData.dateOfBirth,
+      gender: submittedData.gender,
+      contactInfo: {
+        phone: submittedData.phone,
+        address: {
+          addressLine1: submittedData.addressLine1,
+          provinceState: submittedData.provinceState,
+          country: submittedData.country,
+          city: submittedData.city,
+          postalCode: submittedData.postalCode,
+          selectedCountry: submittedData.selectedCountry,
         },
-        birthDate: submittedData.dateOfBirth,
-        gender: submittedData.gender,
-        contactInfo: {
-          phone: submittedData.phone,
-          address: {
-            addressLine1: submittedData.addressLine1,
-            provinceState: submittedData.provinceState,
-            country: submittedData.country,
-            city: submittedData.city,
-            postalCode: submittedData.postalCode,
-            selectedCountry: submittedData.selectedCountry,
-          },
-        },
-        sinConsent: submittedData.sinConsent,
-        sinValidation: { sin: submittedData.sinNumber },
       },
+      sinConsent: submittedData.sinConsent,
+      sinValidation: { sin: submittedData.sinNumber },
     });
   });
 
