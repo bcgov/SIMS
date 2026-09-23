@@ -1,10 +1,12 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
+import { TestingModule } from "@nestjs/testing";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
   createTestingAppModule,
   getAESTToken,
+  resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   E2EDataSources,
@@ -17,10 +19,14 @@ import { Notification, NotificationMessageType, User } from "@sims/sims-db";
 import { In, IsNull } from "typeorm";
 import { faker } from "@faker-js/faker";
 import { applySINNumberFormat } from "@sims/test-utils/utils";
+import { StudentAccountApplicationApprovalModel } from "../../../../services/student-account-applications/student-account-applications.models";
+import { UserService } from "../../../../services";
 
 describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountApplication", () => {
   let app: INestApplication;
+  let appModule: TestingModule;
   let db: E2EDataSources;
+  let userService: UserService;
   const TEST_SIN1 = "046454286";
   const TEST_SIN2 = "534012703";
   const BLANK_SIN = "000000000";
@@ -29,8 +35,11 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
   const TEST_EMAIL = "dummy@some.domain";
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, dataSource, module } =
+      await createTestingAppModule();
     app = nestApplication;
+    appModule = module;
+    userService = appModule.get(UserService);
     db = createE2EDataSources(dataSource);
 
     // Insert a fake email contact to send ministry email.
@@ -42,6 +51,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
   beforeEach(async () => {
     jest.resetAllMocks();
+    await resetMockJWTUserInfo(appModule);
     // Ensure the SIN used for this method will not conflict.
     await db.sfasIndividual.update(
       { sin: In([TEST_SIN1, TEST_SIN2]) },
@@ -62,6 +72,91 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         dateSent: new Date(),
       },
     );
+  });
+
+  it.only("Should approve the student account and clear the cache when a student account is requested for approval.", async () => {
+    // Arrange
+    const user = createFakeUser();
+    // Ensure the cache is empty before creating the student.
+    expect(await userService.getUserLoginInfo(user.userName)).toBeNull();
+    await db.user.save(user);
+    const submittedData = createFakeSubmittedData(user);
+    const studentAccountApplication = await db.studentAccountApplication.save(
+      createFakeStudentAccountApplication(
+        { user },
+        { initialValues: { submittedData } },
+      ),
+    );
+    const endpoint = `/aest/student-account-application/${studentAccountApplication.id}/approve`;
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const submittedDataPayload = {
+      ...submittedData,
+      sinNumber: applySINNumberFormat(submittedData.sinNumber),
+    };
+    let createdStudentId = undefined;
+    // Act
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(submittedDataPayload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED)
+      .expect((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        createdStudentId = response.body.id;
+      });
+    // Assert
+    const createdStudent = await db.student.findOne({
+      select: {
+        id: true,
+        birthDate: true,
+        gender: true,
+        contactInfo: true,
+        sinConsent: true,
+        user: {
+          id: true,
+          userName: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+        sinValidation: { sin: true },
+      },
+      relations: { user: true, sinValidation: true },
+      where: { id: createdStudentId },
+      loadEagerRelations: false,
+    });
+    if (!createdStudent) {
+      throw new Error("Expected the student to be created.");
+    }
+    const latestUserInfo = await userService.getUserLoginInfo(user.userName);
+    // Assert that the latest user info has the created studentId.
+    expect(latestUserInfo.studentId).toBe(createdStudentId);
+    expect(latestUserInfo.id).toBe(user.id);
+    // Assert that the created student matches the expected values.
+    expect(createdStudent).toMatchObject({
+      user: {
+        id: user.id,
+        firstName: submittedData.firstName,
+        lastName: submittedData.lastName,
+        email: submittedData.email,
+        userName: user.userName,
+      },
+      birthDate: submittedData.dateOfBirth,
+      gender: submittedData.gender,
+      contactInfo: {
+        phone: submittedData.phone,
+        address: {
+          addressLine1: submittedData.addressLine1,
+          provinceState: submittedData.provinceState,
+          country: submittedData.country,
+          city: submittedData.city,
+          postalCode: submittedData.postalCode,
+          selectedCountry: submittedData.selectedCountry,
+        },
+      },
+      sinConsent: submittedData.sinConsent,
+      sinValidation: { sin: submittedData.sinNumber },
+    });
   });
 
   it("Should send a notification message when at least a partial match is found with matching last name and birth dates for importing a student record from SFAS.", async () => {
@@ -289,7 +384,13 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
    * @param user user to use for populating the name and email.
    * @returns dictionary with details for creating a new student account for testing purposes.
    */
-  function createFakeSubmittedData(user: User) {
+  function createFakeSubmittedData(
+    user: User,
+  ): StudentAccountApplicationApprovalModel & {
+    mode: string;
+    identityProvider: string;
+    canadaPostalCode: string;
+  } {
     return {
       firstName: user.firstName,
       lastName: user.lastName,
