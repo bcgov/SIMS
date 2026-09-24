@@ -43,7 +43,7 @@ export function formSubmission(
  * @returns get response.
  */
 export function getFormByAlias(
-  alias: string,  db.getCollectionNames().filter((name) => name.startsWith("form_"))  db.getCollectionNames().filter((name) => name.startsWith("form_"))
+  alias: string,
   headers: Record<string, string>,
 ): RefinedResponse<ResponseType> {
   return http.get(`${FORMS_URL}/${alias}`, { headers });
