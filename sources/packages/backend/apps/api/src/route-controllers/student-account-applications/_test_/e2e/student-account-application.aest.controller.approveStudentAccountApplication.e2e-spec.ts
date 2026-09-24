@@ -16,7 +16,7 @@ import {
   saveFakeSFASIndividual,
 } from "@sims/test-utils";
 import { Notification, NotificationMessageType, User } from "@sims/sims-db";
-import { In, IsNull } from "typeorm";
+import { In, IsNull, Raw } from "typeorm";
 import { faker } from "@faker-js/faker";
 import { applySINNumberFormat } from "@sims/test-utils/utils";
 import { StudentAccountApplicationApprovalModel } from "../../../../services/student-account-applications/student-account-applications.models";
@@ -74,7 +74,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
     );
   });
 
-  it.only("Should approve the student account and clear the cache when a student account is requested for approval.", async () => {
+  it("Should approve the student account and clear the cache when a student account is requested for approval.", async () => {
     // Arrange
     const user = createFakeUser();
     // Ensure the cache is empty before creating the student.
@@ -197,7 +197,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         expect(response.body.id).toBeGreaterThan(0);
       });
     // Check that the notification is in the database.
-    const notification = await getPartialMatchNotification();
+    const notification = await getPartialMatchNotification(user.email);
 
     expect(notification).toEqual({
       id: expect.any(Number),
@@ -269,7 +269,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         expect(response.body.id).toBeGreaterThan(0);
       });
     // Check that the notification is in the database.
-    const notification = await getPartialMatchNotification();
+    const notification = await getPartialMatchNotification(user.email);
 
     expect(notification).toEqual({
       id: expect.any(Number),
@@ -342,7 +342,7 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
       });
 
     // Check that the notification is in the database.
-    const notification = await getPartialMatchNotification();
+    const notification = await getPartialMatchNotification(user.email);
 
     expect(notification).toEqual({
       id: expect.any(Number),
@@ -414,8 +414,14 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
 
   /**
    * Fetch the notification of a partial match from the database.
+   * The student email is used to filter the notification to avoid picking up
+   * notifications created by other tests running concurrently.
+   * @param studentEmail email of the student associated with the expected notification.
+   * @returns the notification found, if any.
    */
-  async function getPartialMatchNotification(): Promise<Notification> {
+  async function getPartialMatchNotification(
+    studentEmail: string,
+  ): Promise<Notification> {
     return db.notification.findOne({
       select: {
         id: true,
@@ -432,6 +438,10 @@ describe("StudentAccountApplicationAESTController(e2e)-approveStudentAccountAppl
         notificationMessage: {
           id: NotificationMessageType.PartialStudentMatchNotification,
         },
+        messageContent: Raw(
+          (alias) => `${alias} -> 'params' ->> 'studentEmail' = :studentEmail`,
+          { studentEmail },
+        ),
       },
     });
   }
