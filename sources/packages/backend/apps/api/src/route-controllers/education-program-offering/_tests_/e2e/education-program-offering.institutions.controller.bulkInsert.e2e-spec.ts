@@ -786,11 +786,16 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     });
 
     // Act/Assert
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post(endpoint)
       .attach("file", singleOfferingFilePath)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
+    expect(response.body).toHaveLength(1);
+    const createdOffering = await db.educationProgramOffering.findOne({
+      where: { id: response.body[0].id },
+    });
+    expect(createdOffering).toBeDefined();
   });
 
   it("Should return a validation error when there is a study break outside of the offering period.", async () => {
