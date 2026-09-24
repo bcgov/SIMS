@@ -18,6 +18,15 @@ useClearDataWhenHidden(
   computed(() => control.value.path),
   handleChange,
 );
+
+// Optional tooltip next to the label - options.tooltipHtml renders rich
+// content (e.g. a bullet list), options.tooltip renders plain text.
+const tooltip = computed(
+  () => control.value.uischema.options?.tooltip as string | undefined,
+);
+const tooltipHtml = computed(
+  () => control.value.uischema.options?.tooltipHtml as string | undefined,
+);
 </script>
 
 <template>
@@ -28,5 +37,13 @@ useClearDataWhenHidden(
     :label="control.label"
     :readonly="control.readonly || !control.enabled"
     :error-messages="control.errors ? [control.errors] : []"
-  ></radio-options-yes-no>
+  >
+    <template v-if="tooltip || tooltipHtml" #label>
+      <span>{{ control.label }}</span
+      ><tooltip-icon :max-width="670"
+        ><span v-if="tooltipHtml" v-html="tooltipHtml"></span
+        ><template v-else>{{ tooltip }}</template></tooltip-icon
+      >
+    </template>
+  </radio-options-yes-no>
 </template>

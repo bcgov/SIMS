@@ -1,3 +1,4 @@
+import { markRaw } from "vue";
 import type { JsonFormsRendererRegistryEntry } from "@jsonforms/core";
 import TextControlRenderer from "./TextControlRenderer.vue";
 import YesNoControlRenderer from "./YesNoControlRenderer.vue";
@@ -6,6 +7,11 @@ import GroupLayoutRenderer from "./GroupLayoutRenderer.vue";
 import FieldOfStudyCodeRenderer from "./FieldOfStudyCodeRenderer.vue";
 import CheckboxOptionsGroupRenderer from "./CheckboxOptionsGroupRenderer.vue";
 import AviationCredentialsOptionsRenderer from "./AviationCredentialsOptionsRenderer.vue";
+import OneOfRadioOptionsRenderer from "./OneOfRadioOptionsRenderer.vue";
+import OneOfSelectRenderer from "./OneOfSelectRenderer.vue";
+import BannerRenderer from "./BannerRenderer.vue";
+import BooleanCheckboxRenderer from "./BooleanCheckboxRenderer.vue";
+import EntranceRequirementsRenderer from "./EntranceRequirementsRenderer.vue";
 import {
   textControlTester,
   yesNoControlTester,
@@ -14,25 +20,55 @@ import {
   fieldOfStudyCodeTester,
   checkboxOptionsGroupTester,
   aviationCredentialsOptionsTester,
+  oneOfRadioTester,
+  oneOfSelectTester,
+  bannerTester,
+  booleanCheckboxTester,
+  entranceRequirementsTester,
 } from "./testers";
 
 /**
- * POC renderer set for the dynamic Program form section.
- * Intentionally does NOT depend on @jsonforms/vue-vuetify - every renderer
- * below wraps this project's own components directly.
+ * Renderer set for the Program form, built on @jsonforms/core + @jsonforms/vue
+ * directly - intentionally does NOT depend on @jsonforms/vue-vuetify, so
+ * every renderer below wraps this project's own components directly and
+ * targets its Vuetify version without a third-party renderer's version lag.
+ *
+ * Each component is wrapped in markRaw(): @jsonforms/vue stores this array
+ * inside its internal reactive JsonForms state, and without markRaw, Vue's
+ * reactivity system would deep-proxy the component definition objects
+ * themselves - triggering "Vue received a Component that was made a
+ * reactive object" and adding needless reactivity overhead, since a
+ * component definition is static and never needs to be observed.
  */
-export const programDynamicFormRenderers: JsonFormsRendererRegistryEntry[] = [
-  { renderer: TextControlRenderer, tester: textControlTester },
-  { renderer: YesNoControlRenderer, tester: yesNoControlTester },
-  { renderer: VerticalLayoutRenderer, tester: verticalLayoutTester },
-  { renderer: GroupLayoutRenderer, tester: groupLayoutTester },
-  { renderer: FieldOfStudyCodeRenderer, tester: fieldOfStudyCodeTester },
+export const programFormRenderers: JsonFormsRendererRegistryEntry[] = [
+  { renderer: markRaw(TextControlRenderer), tester: textControlTester },
+  { renderer: markRaw(YesNoControlRenderer), tester: yesNoControlTester },
   {
-    renderer: CheckboxOptionsGroupRenderer,
+    renderer: markRaw(VerticalLayoutRenderer),
+    tester: verticalLayoutTester,
+  },
+  { renderer: markRaw(GroupLayoutRenderer), tester: groupLayoutTester },
+  {
+    renderer: markRaw(FieldOfStudyCodeRenderer),
+    tester: fieldOfStudyCodeTester,
+  },
+  {
+    renderer: markRaw(CheckboxOptionsGroupRenderer),
     tester: checkboxOptionsGroupTester,
   },
   {
-    renderer: AviationCredentialsOptionsRenderer,
+    renderer: markRaw(AviationCredentialsOptionsRenderer),
     tester: aviationCredentialsOptionsTester,
+  },
+  { renderer: markRaw(OneOfRadioOptionsRenderer), tester: oneOfRadioTester },
+  { renderer: markRaw(OneOfSelectRenderer), tester: oneOfSelectTester },
+  { renderer: markRaw(BannerRenderer), tester: bannerTester },
+  {
+    renderer: markRaw(BooleanCheckboxRenderer),
+    tester: booleanCheckboxTester,
+  },
+  {
+    renderer: markRaw(EntranceRequirementsRenderer),
+    tester: entranceRequirementsTester,
   },
 ];

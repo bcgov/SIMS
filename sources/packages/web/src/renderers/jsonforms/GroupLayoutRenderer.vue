@@ -14,6 +14,12 @@ const groupTitle = computed(() => {
   const label = (layout.value.uischema as GroupLayout).label;
   return typeof label === "string" ? label : undefined;
 });
+// Static, developer-authored rich subtitle (e.g. a link) - never user
+// input, so v-html is safe here. Needs its own #header override since
+// body-header-container's default header doesn't expose a subtitle slot.
+const subtitleHtml = computed(
+  () => layout.value.uischema.options?.subtitleHtml as string | undefined,
+);
 </script>
 
 <template>
@@ -22,6 +28,13 @@ const groupTitle = computed(() => {
     :title="groupTitle"
     header-size="medium"
   >
+    <template v-if="subtitleHtml" #header>
+      <body-header :title="groupTitle" header-size="medium">
+        <template #subtitle>
+          <span v-html="subtitleHtml"></span>
+        </template>
+      </body-header>
+    </template>
     <content-group>
       <dispatch-renderer
         v-for="(element, index) in layout.uischema.elements"

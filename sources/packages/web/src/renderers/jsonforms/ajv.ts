@@ -12,11 +12,11 @@ import addErrors from "ajv-errors";
  * message, which JSONForms' own default instance already sets - kept here
  * for parity.
  */
-export const programDynamicFormAjv = new Ajv({
+export const programFormAjv = new Ajv({
   allErrors: true,
   verbose: true,
   strict: false,
   addUsedSchema: false,
 });
-addFormats(programDynamicFormAjv);
-addErrors(programDynamicFormAjv);
+addFormats(programFormAjv);
+addErrors(programFormAjv);

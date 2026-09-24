@@ -80,12 +80,6 @@ export const programDynamicSchema = {
       },
     },
   },
-  else: {
-    properties: {
-      credentialTypesAviation: { not: {} },
-      minHoursWeekAvi: { not: {} },
-    },
-  },
 } as JsonSchema;
 
 export const programDynamicUiSchema: UISchemaElement = {

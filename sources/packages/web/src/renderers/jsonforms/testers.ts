@@ -1,5 +1,6 @@
 import {
   and,
+  optionIs,
   rankWith,
   schemaMatches,
   scopeEndsWith,
@@ -74,4 +75,51 @@ export const aviationCredentialsOptionsTester = rankWith(
     uiTypeIs("Control"),
     schemaMatches((schema) => schema.format === "aviationCredentials"),
   ),
+);
+
+/**
+ * Matches a Control explicitly flagged, via UI Schema options, to render as
+ * a single-select radio group (rather than the default text/select
+ * renderer a "oneOf" schema would otherwise fall to).
+ */
+export const oneOfRadioTester = rankWith(
+  10,
+  and(uiTypeIs("Control"), optionIs("component", "radio")),
+);
+
+/**
+ * Matches a Control explicitly flagged, via UI Schema options, to render as
+ * a dropdown select - typically a lookup-backed "enum" field.
+ */
+export const oneOfSelectTester = rankWith(
+  10,
+  and(uiTypeIs("Control"), optionIs("component", "select")),
+);
+
+/**
+ * Matches Label elements, used here to render a conditional info banner
+ * (header/summary supplied via UI Schema options) rather than plain text.
+ */
+export const bannerTester = rankWith(10, uiTypeIs("Label"));
+
+/**
+ * Matches plain boolean controls (e.g. the declaration checkbox), routing
+ * them to a simple required-checkbox renderer rather than a yes/no radio.
+ */
+export const booleanCheckboxTester = rankWith(
+  10,
+  and(
+    uiTypeIs("Control"),
+    schemaMatches((schema) => schema.type === "boolean"),
+  ),
+);
+
+/**
+ * Matches the specific "entranceRequirements" field, which has its own
+ * mutual-exclusivity behaviour ("none of the above" clears every other
+ * selection, and vice versa) beyond what a plain checkbox group supports.
+ */
+export const entranceRequirementsTester = rankWith(
+  20,
+  and(uiTypeIs("Control"), scopeEndsWith("entranceRequirements")),
 );

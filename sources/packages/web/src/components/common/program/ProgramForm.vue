@@ -1,654 +1,16 @@
 <template>
   <body-header-container title="Program"
     ><content-group>
-      <error-summary :errors="programForm?.errors" />
       <v-skeleton-loader :loading="loading" type="article, text@5">
-        <v-form ref="programForm" :readonly="isReadonly">
-          <body-header-container title="Program details" header-size="medium">
-            <content-group>
-              <v-text-field
-                v-model="formModel.name"
-                density="compact"
-                label="Program name"
-                variant="outlined"
-                :counter="PROGRAM_NAME_MAX_LENGTH"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(v, PROGRAM_NAME_MAX_LENGTH, 'Program name'),
-                ]"
-              />
-              <v-textarea
-                v-model="formModel.description"
-                variant="outlined"
-                label="Program description"
-                :counter="PROGRAM_DESCRIPTION_MAX_LENGTH"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      PROGRAM_DESCRIPTION_MAX_LENGTH,
-                      'Program description',
-                      false,
-                    ),
-                ]"
-              ></v-textarea>
-              <v-select
-                label="Credential type"
-                density="compact"
-                :items="programCredentialLookupItems"
-                item-title="lookupValue"
-                item-value="lookupKey"
-                v-model="formModel.credentialType"
-                variant="outlined"
-                :rules="[(v) => checkNullOrEmptyRule(v, 'Credential type')]"
-                :readonly="isProgramDetailReadonly"
-                @update:model-value="calculateFieldOfStudyCode"
-              />
-              <v-text-field
-                class="mb-3"
-                v-model="formModel.cipCode"
-                density="compact"
-                label="Classification of Instructional Programs (CIP)"
-                variant="outlined"
-                hint="Format (##.####)"
-                persistent-hint
-                :rules="[
-                  (v) =>
-                    checkRegexPattern(
-                      v,
-                      CIP_CODE_REGEX,
-                      'Classification of Instructional Programs (CIP)',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-                @update:model-value="calculateFieldOfStudyCode"
-              />
-              <v-text-field
-                :model-value="formModel.fieldOfStudyCode"
-                density="compact"
-                label="Field of study code"
-                variant="outlined"
-                readonly
-              />
-              <v-text-field
-                class="mb-3"
-                v-model="formModel.nocCode"
-                density="compact"
-                label="National Occupational Classification (NOC)"
-                variant="outlined"
-                hint="Format (#####) Optional**"
-                persistent-hint
-                :rules="[
-                  (v) =>
-                    checkRegexPattern(
-                      v,
-                      NOC_REGEX,
-                      'National Occupational Classification (NOC)',
-                      false,
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              />
-              <v-text-field
-                class="mb-3"
-                v-model="formModel.sabcCode"
-                density="compact"
-                label="SABC program code"
-                variant="outlined"
-                hint="Format (XXX#) Mandatory field if using the 'Offerings Upload' feature. Otherwise optional."
-                persistent-hint
-                :rules="[
-                  (v) =>
-                    checkRegexPattern(
-                      v,
-                      SABC_PROGRAM_CODE_REGEX,
-                      'SABC program code',
-                      false,
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              />
-              <v-text-field
-                v-model="formModel.institutionProgramCode"
-                density="compact"
-                :counter="INSTITUTION_PROGRAM_CODE_MAX_LENGTH"
-                label="Institution Program Code"
-                hide-details="auto"
-                variant="outlined"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      INSTITUTION_PROGRAM_CODE_MAX_LENGTH,
-                      'Institution Program Code',
-                      false,
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              /> </content-group
-          ></body-header-container>
-          <body-header-container
-            title="Program eligibility"
-            header-size="medium"
-          >
-            <content-group>
-              <radio-options-group
-                v-model="formModel.programIntensity"
-                :items="PROGRAM_INTENSITY_ITEMS"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Are students able to take this on a part time basis?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-                ><template #label>
-                  <span
-                    >Are students able to take this on a part time basis?</span
-                  ><tooltip-icon :max-width="tooltipMaxWidth"
-                    >A part-time program has a course load between 20 and 59%. A
-                    full-time program must have a course load of: 60% or greater
-                    or Between 40 and 60% for students with a permanent
-                    disability.</tooltip-icon
-                  ></template
-                ></radio-options-group
-              >
-              <checkbox-options-group
-                color="primary"
-                v-model="formModel.programDeliveryTypes"
-                label="How will this program be delivered? (Select all that apply)"
-                :items="PROGRAM_DELIVERY_ITEMS"
-                item-value="value"
-                item-title="title"
-                :rules="[
-                  (v) =>
-                    v.length > 0 ||
-                    'At least one program delivery type must be selected.',
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></checkbox-options-group>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showBCPrivateOnlyOnlineBanner"
-                header="This program requires review by StudentAid BC to determine eligibility."
-              />
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.deliveredOnlineAlsoOnsite"
-                v-model="formModel.deliveredOnlineAlsoOnsite"
-                label="Will the program also be offered and delivered at 100% course load on site?"
-                :readonly="isProgramDetailReadonly"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Will the program also be offered and delivered at 100% course load on site?',
-                    ),
-                ]"
-              ></radio-options-yes-no>
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.sameOnlineCreditsEarned"
-                v-model="formModel.sameOnlineCreditsEarned"
-                label="Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?"
-                :readonly="isProgramDetailReadonly"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?',
-                    ),
-                ]"
-              ></radio-options-yes-no>
-              <radio-options-yes-no
-                v-if="
-                  componentDisplayConditions.earnAcademicCreditsOtherInstitution
-                "
-                v-model="formModel.earnAcademicCreditsOtherInstitution"
-                label="Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?"
-                :readonly="isProgramDetailReadonly"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?',
-                    ),
-                ]"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="
-                  bannerDisplayConditions.showNonBCInstitutionAcademicCreditsBanner
-                "
-              />
-              <v-select
-                class="mb-2"
-                label="Program length"
-                density="compact"
-                :items="programLengthLookupItems"
-                item-title="lookupValue"
-                item-value="lookupKey"
-                v-model="formModel.completionYears"
-                variant="outlined"
-                hide-details="auto"
-                :rules="[(v) => checkNullOrEmptyRule(v, 'Program length')]"
-                :readonly="isProgramDetailReadonly"
-                hint="This qualifies students for specific funds or grants."
-                persistent-hint
-              />
-              <radio-options-group
-                v-model="formModel.courseLoadCalculation"
-                label="Program course load calculation is:"
-                :items="PROGRAM_COURSE_LOAD_ITEMS"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(v, 'Program course load calculation:'),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-group>
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.minHoursWeek"
-                v-model="formModel.minHoursWeek"
-                label="Does this program include a minimum of 20 instructional hours per week?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does this program include a minimum of 20 instructional hours per week?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showLessThanMinHoursWeekBanner"
-                summary="The program needs to be a minimum of 20 instructional hours."
-              />
-              <v-select
-                label="Which regulatory body does this program belong to?"
-                density="compact"
-                :items="institutionRegulatoryBodyLookupItems"
-                item-title="lookupValue"
-                item-value="lookupKey"
-                v-model="formModel.regulatoryBody"
-                variant="outlined"
-                :rules="[
-                  (v) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Which regulatory body does this program belong to?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-                hint="All programs must be approved by your regulatory body to meet the criteria. If your program has not been approved yet, please contact your regulatory body first."
-                persistent-hint
-              />
-              <v-text-field
-                class="mt-3"
-                v-if="componentDisplayConditions.otherRegulatoryBody"
-                v-model="formModel.otherRegulatoryBody"
-                density="compact"
-                label="Other institution regulatory body"
-                variant="outlined"
-                hide-details="auto"
-                :rules="[
-                  (v) =>
-                    checkLengthRule(
-                      v,
-                      OTHER_REGULATORY_BODY_MAX_LENGTH,
-                      'Other institution regulatory body',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container
-            title="Entrance requirements"
-            header-size="medium"
-          >
-            <content-group>
-              <checkbox-options-group
-                color="primary"
-                v-model="formModel.entranceRequirements"
-                @update:model-value="updateEntranceRequirements"
-                label="What are the entrance requirements for this program? (Select all that apply)"
-                :items="programEntranceRequirementLookupItems"
-                item-value="lookupKey"
-                item-title="lookupValue"
-                :rules="[
-                  (v) =>
-                    v.length > 0 ||
-                    'At least one entrance requirement must be selected.',
-                ]"
-                :readonly="isProgramDetailReadonly"
-                hide-details="auto"
-              ></checkbox-options-group>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showNoEntranceRequirementsBanner"
-                summary="An entrance requirement is required."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container
-            title="English as a Second Language (ESL) content"
-            header-size="medium"
-          >
-            <content-group>
-              <radio-options-group
-                v-model="formModel.eslEligibility"
-                label="What percentage of the program has ESL Content?"
-                :items="PROGRAM_ESL_ITEMS"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'What percentage of the program has ESL Content?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-                hide-details="auto"
-              ></radio-options-group>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showExceedingESLBanner"
-                summary="ESL can't exceed 20% of course content."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container header-size="medium">
-            <template #header
-              ><body-header title="Program partnerships" header-size="medium">
-                <template #subtitle>
-                  <span>
-                    If this program is offered at a partner institution, that
-                    institution must also be designated by SABC. Find out which
-                    institutions are designated on
-                    <a
-                      href="https://studentaidbc.ca/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      >StudentAidBC.ca</a
-                    >.
-                  </span>
-                </template></body-header
-              ></template
-            >
-            <content-group>
-              <radio-options-yes-no
-                v-model="formModel.hasJointInstitution"
-                label="Is the program offered jointly or in partnership with other institutions?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Is the program offered jointly or in partnership with other institutions?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.hasJointDesignatedInstitution"
-                v-model="formModel.hasJointDesignatedInstitution"
-                label="Are all institutions you partner with for this program designated by StudentAid BC?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Are all institutions you partner with for this program designated by StudentAid BC?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="
-                  bannerDisplayConditions.showJointDesignatedInstitutionBanner
-                "
-                header="Partner program review"
-              >
-                <template #content>
-                  <span
-                    >This program requires additional review by StudentAid BC.
-                    Please email
-                    <a href="mailto:designat@gov.bc.ca">designat@gov.bc.ca</a>
-                    the name of the institution that you have partnered with,
-                    the name of this program, and any other details you want
-                    included as part of the review for this program.</span
-                  >
-                </template>
-              </program-eligibility-banner>
-              <program-eligibility-banner
-                v-if="
-                  bannerDisplayConditions.showJointNonDesignatedInstitutionBanner
-                "
-                summary="All partner institutions must be designated by StudentAid BC."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container
-            title="Work-integrated learning (WIL)"
-            header-size="medium"
-          >
-            <content-group>
-              <radio-options-yes-no
-                v-model="formModel.hasWILComponent"
-                label="Does this program have a WIL component?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does this program have a WIL component?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.isWILApproved"
-                v-model="formModel.isWILApproved"
-                label="Is the WIL approved by your regulator or oversight body?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Is the WIL approved by your regulator or oversight body?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showWILNotApprovalBanner"
-                summary="The work-integrated learning component must be approved by your regulator or oversight body first."
-              />
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.wilProgramEligibility"
-                v-model="formModel.wilProgramEligibility"
-                label="Does the WIL meet the program eligibility requirements according to StudentAid BC policy?"
-                :readonly="isProgramDetailReadonly"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does the WIL meet the program eligibility requirements according to StudentAid BC policy?',
-                    ),
-                ]"
-                ><template #label
-                  ><span
-                    >Does the WIL meet the program eligibility requirements
-                    according to StudentAid BC policy?</span
-                  ><tooltip-icon :max-width="tooltipMaxWidth"
-                    ><span
-                      >For the work-integrated learning experience to qualify
-                      for student financial assistance it must be:</span
-                    >
-                    <ul class="ps-3">
-                      <li>
-                        Required for graduation (in the case of a co-op
-                        education placement it must either be required for
-                        graduation and/or result in a credential with a co-op
-                        designation);
-                      </li>
-                      <li>Linked to the curriculum; and</li>
-                      <li>
-                        Not exceed 50% of the program (or no more than 20% for
-                        practicums and 10% for preceptorships) unless otherwise
-                        regulated as a requirement by an oversight body (e.g.,
-                        Early Childhood Educators (ECE) Registry).
-                      </li>
-                    </ul></tooltip-icon
-                  ></template
-                >></radio-options-yes-no
-              >
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showWILEligibilityBanner"
-                summary="This must meet the StudentAid BC policy."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container
-            title="Field trip, field placement, or travel"
-            header-size="medium"
-          >
-            <content-group>
-              <radio-options-yes-no
-                v-model="formModel.hasTravel"
-                label="Is a field trip, field placement or travel part of this program?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Is a field trip, field placement or travel part of this program?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.travelProgramEligibility"
-                v-model="formModel.travelProgramEligibility"
-                label="Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showTravelEligibilityBanner"
-                summary="This must meet the StudentAid BC policy."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container
-            title="International exchange"
-            header-size="medium"
-          >
-            <content-group>
-              <radio-options-yes-no
-                v-model="formModel.hasIntlExchange"
-                label="Does the program have an international exchange?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does the program have an international exchange?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.intlExchangeProgramEligibility"
-                v-model="formModel.intlExchangeProgramEligibility"
-                label="Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showIntlExchangeEligibilityBanner"
-                summary="This must meet the StudentAid BC policy."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container title="Aviation" header-size="medium">
-            <content-group>
-              <radio-options-yes-no
-                v-model="formModel.isAviationProgram"
-                label="Does this program contain aviation?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does this program contain aviation?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <checkbox-options-group
-                color="primary"
-                v-if="componentDisplayConditions.credentialTypesAviation"
-                v-model="formModel.credentialTypesAviation"
-                label="Which credential type(s) are included? (Select all that apply)"
-                :items="programAviationCredentialLookupItems"
-                item-title="lookupValue"
-                item-value="lookupKey"
-                :rules="[
-                  (v) =>
-                    v?.length > 0 ||
-                    'At least one credential type must be selected.',
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></checkbox-options-group>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showPrivatePilotTrainingBanner"
-                summary="StudentAid BC does not provide any assistance to students for Private Pilot Training."
-              />
-              <radio-options-yes-no
-                v-if="componentDisplayConditions.minHoursWeekAvi"
-                v-model="formModel.minHoursWeekAvi"
-                label="Does this program include a minimum of 15 instructional hours per week?"
-                :rules="[
-                  (v: string) =>
-                    checkNullOrEmptyRule(
-                      v,
-                      'Does this program include a minimum of 15 instructional hours per week?',
-                    ),
-                ]"
-                :readonly="isProgramDetailReadonly"
-              ></radio-options-yes-no>
-              <program-eligibility-banner
-                v-if="bannerDisplayConditions.showAviationMinHoursWeekBanner"
-                summary="The aviation program needs to be a minimum of 15 instructional hours."
-              />
-            </content-group>
-          </body-header-container>
-          <body-header-container title="Declaration" header-size="medium">
-            <content-group>
-              <p class="category-header-medium-small primary-color">
-                All information is subject to verification and auditing.
-              </p>
-              <v-checkbox
-                color="primary"
-                density="compact"
-                label="I confirm this program meets the policies outlined in the StudentAid BC policy manual."
-                v-model="formModel.programDeclaration"
-                hide-details="auto"
-                :rules="[requiredDeclarationRule]"
-                :readonly="isProgramDetailReadonly"
-              />
-            </content-group>
-          </body-header-container>
-          <json-forms
-            :data="dynamicFormData"
-            :schema="programDynamicSchema"
-            :uischema="programDynamicUiSchema"
-            :renderers="programDynamicFormRenderers"
-            :ajv="programDynamicFormAjv"
-            :readonly="isProgramDetailReadonly"
-            @change="onDynamicFormChange"
-          />
-        </v-form>
+        <json-forms
+          :data="formModelWithContext"
+          :schema="programFormSchema"
+          :uischema="programFormUiSchema"
+          :renderers="programFormRenderers"
+          :ajv="programFormAjv"
+          :readonly="isProgramDetailReadonly"
+          @change="onProgramFormChange"
+        />
       </v-skeleton-loader>
     </content-group>
     <footer-buttons
@@ -662,67 +24,31 @@
   </body-header-container>
 </template>
 <script setup lang="ts">
-import { useProgram, useRules, useSnackBar } from "@/composables";
+import { useProgram, useSnackBar } from "@/composables";
 import {
-  PROGRAM_NAME_MAX_LENGTH,
-  PROGRAM_DESCRIPTION_MAX_LENGTH,
-  INSTITUTION_PROGRAM_CODE_MAX_LENGTH,
-  OTHER_REGULATORY_BODY_MAX_LENGTH,
-  CIP_CODE_REGEX,
-  NOC_REGEX,
-  SABC_PROGRAM_CODE_REGEX,
   PROGRAM_ENTRANCE_REQUIREMENT_NONE,
   REGULATORY_BODY_OTHER,
   AVIATION_PRIVATE_PILOT_TRAINING,
 } from "@/constants/program-constants";
-import { computed, ref, watch, watchEffect } from "vue";
-import type { ComponentItemType, VForm, ProgramFormModel } from "@/types";
+import { computed, ref, watchEffect } from "vue";
+import type { ProgramFormModel } from "@/types";
 import {
   FormYesNoOptions,
-  ProgramIntensity,
   ProgramCourseLoadCalculationTypes,
   ProgramDeliveryTypeValues,
   ProgramESLPercentage,
-  ProgramCalculatedDataKey,
-  SystemLookupCategory,
 } from "@/types";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import RadioOptionsGroup from "@/components/generic/RadioOptionsGroup.vue";
-import RadioOptionsYesNo from "@/components/generic/RadioOptionsYesNo.vue";
-import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue";
-import ProgramEligibilityBanner from "@/components/institutions/banners/ProgramEligibilityBanner.vue";
 import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
-  SystemLookupEntryAPIOutDTO,
 } from "@/services/http/dto";
-import { SystemLookupConfigurationService } from "@/services/SystemLookupConfigurationService";
 import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
-import { programDynamicFormRenderers } from "@/renderers/jsonforms";
-import { programDynamicFormAjv } from "@/renderers/jsonforms/ajv";
-import {
-  programDynamicSchema,
-  programDynamicUiSchema,
-} from "./ProgramFormDynamicSchema.poc";
-
-const PROGRAM_INTENSITY_ITEMS: ComponentItemType[] = [
-  { title: "Yes", value: ProgramIntensity.fullTimePartTime },
-  { title: "No", value: ProgramIntensity.fullTime },
-];
-const PROGRAM_DELIVERY_ITEMS: ComponentItemType[] = [
-  { title: "On site", value: ProgramDeliveryTypeValues.Onsite },
-  { title: "Online", value: ProgramDeliveryTypeValues.Online },
-];
-const PROGRAM_COURSE_LOAD_ITEMS: ComponentItemType[] = [
-  { title: "Credit based", value: ProgramCourseLoadCalculationTypes.Credit },
-  { title: "Hours based", value: ProgramCourseLoadCalculationTypes.Hours },
-];
-
-const PROGRAM_ESL_ITEMS: ComponentItemType[] = [
-  { title: "Less than 20%", value: ProgramESLPercentage.LessThan20 },
-  { title: "20% or more", value: ProgramESLPercentage.GreaterThanEqual20 },
-];
+import { RuleEffect } from "@jsonforms/core";
+import type { JsonSchema, UISchemaElement } from "@jsonforms/core";
+import { programFormRenderers } from "@/renderers/jsonforms";
+import { programFormAjv } from "@/renderers/jsonforms/ajv";
 
 interface ProgramFormProps {
   programId?: number;
@@ -740,9 +66,7 @@ interface ProgramFormContext {
   isBCInstitution: boolean;
 }
 
-const tooltipMaxWidth = 670;
 const loading = ref(false);
-let isLookupLoaded = false;
 const snackBar = useSnackBar();
 const props = withDefaults(defineProps<ProgramFormProps>(), {
   programId: undefined,
@@ -758,131 +82,1238 @@ const emit = defineEmits<{
 }>();
 const formModel = ref<ProgramFormModel>({} as ProgramFormModel);
 const formContext = ref<ProgramFormContext>();
-// POC: dynamic program form data/errors, kept isolated from formModel.
-// In a full implementation this would be loaded from/saved to the
-// program's JSONB column alongside the schema version used to produce it.
-const dynamicFormData = ref<Record<string, unknown>>({});
-const dynamicFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
-const onDynamicFormChange = (event: JsonFormsChangeEvent) => {
-  dynamicFormData.value = event.data;
-  dynamicFormErrors.value = event.errors;
-};
 const isReadonly = computed(
   () => props.readOnly || (!!props.programId && !formContext.value?.isActive),
 );
 const isProgramDetailReadonly = computed(
-  () => isReadonly.value || formContext.value?.hasOfferings,
+  () => isReadonly.value || !!formContext.value?.hasOfferings,
 );
-const {
-  checkLengthRule,
-  checkRegexPattern,
-  checkNullOrEmptyRule,
-  requiredDeclarationRule,
-} = useRules();
 const { convertCheckboxObjectModelToArray } = useProgram();
-const programForm = ref({} as VForm);
-const programCredentialLookupItems = ref<SystemLookupEntryAPIOutDTO[]>([]);
-const programLengthLookupItems = ref<SystemLookupEntryAPIOutDTO[]>([]);
-const programEntranceRequirementLookupItems = ref<SystemLookupEntryAPIOutDTO[]>(
-  [],
-);
-const institutionRegulatoryBodyLookupItems = ref<SystemLookupEntryAPIOutDTO[]>(
-  [],
-);
-const programAviationCredentialLookupItems = ref<SystemLookupEntryAPIOutDTO[]>(
-  [],
-);
-let previousEntranceRequirements: string[] = [];
 
-// Ensure that the form model key is same as display condition key.
-// This will ensure that the form model value is reset when the component is hidden.
-const componentDisplayConditions = computed(() => {
-  const canShowAviationDetails =
-    formModel.value.isAviationProgram === FormYesNoOptions.Yes;
-  return {
-    deliveredOnlineAlsoOnsite:
-      !formContext.value?.isBCInstitution &&
-      formModel.value.programDeliveryTypes?.includes(
-        ProgramDeliveryTypeValues.Online,
-      ),
-    sameOnlineCreditsEarned:
-      !formContext.value?.isBCInstitution &&
-      formModel.value.deliveredOnlineAlsoOnsite === FormYesNoOptions.No,
-    earnAcademicCreditsOtherInstitution:
-      !formContext.value?.isBCInstitution &&
-      formModel.value.deliveredOnlineAlsoOnsite === FormYesNoOptions.No &&
-      formModel.value.sameOnlineCreditsEarned === FormYesNoOptions.No,
-    minHoursWeek:
-      formModel.value.courseLoadCalculation ===
-      ProgramCourseLoadCalculationTypes.Hours,
-    otherRegulatoryBody:
-      formModel.value.regulatoryBody === REGULATORY_BODY_OTHER,
-    hasJointDesignatedInstitution:
-      formModel.value.hasJointInstitution === FormYesNoOptions.Yes,
-    isWILApproved: formModel.value.hasWILComponent === FormYesNoOptions.Yes,
-    wilProgramEligibility:
-      formModel.value.hasWILComponent === FormYesNoOptions.Yes &&
-      formModel.value.isWILApproved === FormYesNoOptions.Yes,
-    travelProgramEligibility:
-      formModel.value.hasTravel === FormYesNoOptions.Yes,
-    intlExchangeProgramEligibility:
-      formModel.value.hasIntlExchange === FormYesNoOptions.Yes,
-    minHoursWeekAvi: canShowAviationDetails,
-    credentialTypesAviation: canShowAviationDetails,
-  };
-});
-const bannerDisplayConditions = computed(() => ({
-  showBCPrivateOnlyOnlineBanner:
-    formContext.value?.isBCPrivate &&
-    formModel.value.programDeliveryTypes?.includes(
-      ProgramDeliveryTypeValues.Online,
-    ) &&
-    !formModel.value.programDeliveryTypes?.includes(
-      ProgramDeliveryTypeValues.Onsite,
-    ),
-  showNonBCInstitutionAcademicCreditsBanner:
-    !formContext.value?.isBCInstitution &&
-    formModel.value.deliveredOnlineAlsoOnsite === FormYesNoOptions.No &&
-    formModel.value.sameOnlineCreditsEarned === FormYesNoOptions.No &&
-    formModel.value.earnAcademicCreditsOtherInstitution === FormYesNoOptions.No,
-  showLessThanMinHoursWeekBanner:
-    formModel.value.courseLoadCalculation ===
-      ProgramCourseLoadCalculationTypes.Hours &&
-    formModel.value.minHoursWeek === FormYesNoOptions.No &&
-    formModel.value.isAviationProgram === FormYesNoOptions.No,
-  showNoEntranceRequirementsBanner:
-    formModel.value.entranceRequirements?.includes(
-      PROGRAM_ENTRANCE_REQUIREMENT_NONE,
-    ),
-  showExceedingESLBanner:
-    formModel.value.eslEligibility === ProgramESLPercentage.GreaterThanEqual20,
-  showJointDesignatedInstitutionBanner:
-    formModel.value.hasJointDesignatedInstitution === FormYesNoOptions.Yes,
-  showJointNonDesignatedInstitutionBanner:
-    formModel.value.hasJointDesignatedInstitution === FormYesNoOptions.No,
-  showWILNotApprovalBanner:
-    formModel.value.hasWILComponent === FormYesNoOptions.Yes &&
-    formModel.value.isWILApproved === FormYesNoOptions.No,
-  showWILEligibilityBanner:
-    formModel.value.hasWILComponent === FormYesNoOptions.Yes &&
-    formModel.value.isWILApproved === FormYesNoOptions.Yes &&
-    formModel.value.wilProgramEligibility === FormYesNoOptions.No,
-  showTravelEligibilityBanner:
-    formModel.value.hasTravel === FormYesNoOptions.Yes &&
-    formModel.value.travelProgramEligibility === FormYesNoOptions.No,
-  showIntlExchangeEligibilityBanner:
-    formModel.value.hasIntlExchange === FormYesNoOptions.Yes &&
-    formModel.value.intlExchangeProgramEligibility === FormYesNoOptions.No,
-  showPrivatePilotTrainingBanner:
-    formModel.value.credentialTypesAviation?.includes(
-      AVIATION_PRIVATE_PILOT_TRAINING,
-    ),
-  showAviationMinHoursWeekBanner:
-    formModel.value.minHoursWeekAvi === FormYesNoOptions.No,
+// isBCInstitution/isBCPrivate live outside formModel (they come from
+// formContext, populated from the loaded program/institution, not user
+// input), but a few rule conditions below need them - JSON Schema/UI Schema
+// rules can only reference data within the same document, via scope. They
+// are stripped back out in onProgramFormChange before writing to formModel,
+// so they never reach the API payload.
+const formModelWithContext = computed(() => ({
+  ...formModel.value,
+  isBCInstitution: !!formContext.value?.isBCInstitution,
+  isBCPrivate: !!formContext.value?.isBCPrivate,
 }));
+
+const programFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
+const onProgramFormChange = (event: JsonFormsChangeEvent) => {
+  programFormErrors.value = event.errors;
+  const data = { ...event.data } as Record<string, unknown>;
+  delete data.isBCInstitution;
+  delete data.isBCPrivate;
+  formModel.value = data as unknown as ProgramFormModel;
+};
+
+// Fully static and self-contained: every value below is a literal (no
+// imported constant/regex/enum references), so this object is pure JSON
+// data that can be JSON.stringify()'d directly into a JSONB column and
+// handed to a server-side AJV instance unchanged - matching the "schema
+// resolved and owned server-side" direction from earlier. The 5 fields
+// marked PLACEHOLDER use made-up enum values standing in for what a real
+// lookup-resolving endpoint would provide; per "credentialType will use a
+// regular enum of values", these are plain "enum" arrays (raw values, no
+// separate title) rather than the labelled "oneOf" shape used for the
+// fixed, non-lookup fields below. Conditional requirements that depend on
+// more than one field use "allOf" of {if,then} pairs, since a single
+// if/then/else can only express one condition.
+const programFormSchema = {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      maxLength: 300,
+      title: "Program name",
+    },
+    description: {
+      type: "string",
+      maxLength: 500,
+      title: "Program description",
+    },
+    credentialType: {
+      oneOf: [
+        {
+          const: "undergraduateCertificate",
+          title: "Undergraduate Certificate",
+        },
+        { const: "undergraduateCitation", title: "Undergraduate Citation" },
+        { const: "undergraduateDiploma", title: "Undergraduate Diploma" },
+        { const: "undergraduateDegree", title: "Undergraduate Degree" },
+        { const: "graduateCertificate", title: "Graduate Certificate" },
+        { const: "graduateDiploma", title: "Graduate Diploma" },
+        {
+          const: "graduateDegreeOrMasters",
+          title: "Graduate Degree / Master's",
+        },
+        {
+          const: "postGraduateOrDoctorate",
+          title: "Post-Graduate / Doctorate",
+        },
+        { const: "qualifyingStudies", title: "Qualifying Studies" },
+      ],
+      title: "Credential type",
+    },
+    cipCode: {
+      type: "string",
+      pattern: "^\\d{2}\\.\\d{4}$",
+      title: "Classification of Instructional Programs (CIP)",
+      errorMessage: {
+        pattern:
+          "Classification of Instructional Programs (CIP) format is invalid.",
+      },
+    },
+    fieldOfStudyCode: {
+      type: "number",
+      title: "Field of study code",
+    },
+    nocCode: {
+      type: "string",
+      pattern: "^$|^\\d{5}$",
+      title: "National Occupational Classification (NOC)",
+      errorMessage: {
+        pattern:
+          "National Occupational Classification (NOC) format is invalid.",
+      },
+    },
+    sabcCode: {
+      type: "string",
+      pattern: "^$|^[A-Z]{3}\\d$",
+      title: "SABC program code",
+      errorMessage: { pattern: "SABC program code format is invalid." },
+    },
+    institutionProgramCode: {
+      type: "string",
+      maxLength: 50,
+      title: "Institution Program Code",
+    },
+    programIntensity: {
+      oneOf: [
+        { const: "Full Time and Part Time", title: "Yes" },
+        { const: "Full Time", title: "No" },
+      ],
+      title: "Are students able to take this on a part time basis?",
+    },
+    programDeliveryTypes: {
+      type: "array",
+      items: {
+        oneOf: [
+          { const: "deliveredOnSite", title: "On site" },
+          { const: "deliveredOnline", title: "Online" },
+        ],
+      },
+      minItems: 1,
+      title: "How will this program be delivered? (Select all that apply)",
+      errorMessage: {
+        minItems: "At least one program delivery type must be selected.",
+      },
+    },
+    isBCInstitution: { type: "boolean" },
+    isBCPrivate: { type: "boolean" },
+    deliveredOnlineAlsoOnsite: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Will the program also be offered and delivered at 100% course load on site?",
+    },
+    sameOnlineCreditsEarned: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Will the students earn the same number of credits in the same time period as students in other StudentAid BC eligible programs delivered on site?",
+    },
+    earnAcademicCreditsOtherInstitution: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Will they earn academic credits that are recognized at another designated institution listed in the BC Transfer Guide or other acceptable articulation agreements from other jurisdictions?",
+    },
+    completionYears: {
+      oneOf: [
+        { const: "12WeeksTo52Weeks", title: "12 weeks to 52 weeks" },
+        { const: "53WeeksTo59Weeks", title: "53 weeks to 59 weeks" },
+        {
+          const: "60WeeksToLessThan2Years",
+          title: "60 weeks to less than 2 years",
+        },
+        {
+          const: "2YearsToLessThan3Years",
+          title: "2 Years to less than 3Years",
+        },
+        {
+          const: "3YearsToLessThan4Years",
+          title: "3 Years to less than 4 Years",
+        },
+        {
+          const: "4YearsToLessThan5Years",
+          title: "4 Years to less than 5Years",
+        },
+        { const: "5YearsOrMore", title: "5 Years or More" },
+      ],
+      title: "Program length",
+    },
+    courseLoadCalculation: {
+      oneOf: [
+        { const: "credit", title: "Credit based" },
+        { const: "hours", title: "Hours based" },
+      ],
+      title: "Program course load calculation is:",
+    },
+    minHoursWeek: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Does this program include a minimum of 20 instructional hours per week?",
+    },
+    regulatoryBody: {
+      oneOf: [
+        { const: "ptiru", title: "PTIRU" },
+        { const: "dqab", title: "DQAB" },
+        {
+          const: "privateActLegislature",
+          title: "Private Act of B.C. Legislature",
+        },
+        { const: "skilledTradesBC", title: "Skilled Trades BC" },
+        { const: "icbc", title: "ICBC" },
+        {
+          const: "senateOrEducationCouncil",
+          title:
+            "Senate, Academic Council, Education Council, and/or Program Council and Board of Governors",
+        },
+        { const: "other", title: "Other" },
+      ],
+      title: "Which regulatory body does this program belong to?",
+    },
+    otherRegulatoryBody: {
+      type: "string",
+      maxLength: 100,
+      title: "Other institution regulatory body",
+    },
+    entranceRequirements: {
+      type: "array",
+      items: {
+        oneOf: [
+          {
+            const: "minHighSchool",
+            title: "Students to have graduated from grade 12 or equivalent.",
+          },
+          {
+            const: "hasMinimumAge",
+            title:
+              "Students are 19 years old or older before the start of classes.",
+          },
+          {
+            const: "requirementsByInstitution",
+            title:
+              "For post-secondary level academic credit-based programs: This program has entrance requirements established by the institution that enable completion of the program of study.",
+          },
+          {
+            const: "requirementsByBCITA",
+            title:
+              "This program is approved by the SkilledTradesBC and students must meet the entrance requirements set by the B.C. ITA.",
+          },
+          {
+            const: "noneOfTheAboveEntranceRequirements",
+            title: "None of the above",
+          },
+        ],
+      },
+      minItems: 1,
+      title:
+        "What are the entrance requirements for this program? (Select all that apply)",
+      errorMessage: {
+        minItems: "At least one entrance requirement must be selected.",
+      },
+      if: {
+        contains: { const: "noneOfTheAboveEntranceRequirements" },
+      },
+      then: {
+        maxItems: 1,
+        errorMessage: {
+          maxItems:
+            '"None of the above" cannot be combined with other entrance requirements.',
+        },
+      },
+    },
+    eslEligibility: {
+      oneOf: [
+        { const: "lessThan20", title: "Less than 20%" },
+        { const: "20OrMore", title: "20% or more" },
+      ],
+      title: "What percentage of the program has ESL Content?",
+    },
+    hasJointInstitution: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Is the program offered jointly or in partnership with other institutions?",
+    },
+    hasJointDesignatedInstitution: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Are all institutions you partner with for this program designated by StudentAid BC?",
+    },
+    hasWILComponent: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title: "Does this program have a WIL component?",
+    },
+    isWILApproved: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title: "Is the WIL approved by your regulator or oversight body?",
+    },
+    wilProgramEligibility: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Does the WIL meet the program eligibility requirements according to StudentAid BC policy?",
+    },
+    hasTravel: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title: "Is a field trip, field placement or travel part of this program?",
+    },
+    travelProgramEligibility: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Does the field trip, field placement, or travel meet the program eligibility requirements according to StudentAid BC policy?",
+    },
+    hasIntlExchange: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title: "Does the program have an international exchange?",
+    },
+    intlExchangeProgramEligibility: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Does the international exchange meet the program eligibility requirements according to StudentAid BC policy?",
+    },
+    isAviationProgram: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title: "Does this program contain aviation?",
+    },
+    credentialTypesAviation: {
+      type: "array",
+      oneOf: [
+        {
+          const: "commercialPilotTraining",
+          title: "Commercial Pilot Training",
+        },
+        { const: "instructorsRating", title: "Instructor's Rating" },
+        { const: "endorsements", title: "Endorsements" },
+        { const: "privatePilotTraining", title: "Private Pilot Training" },
+        ,
+      ],
+      minItems: 1,
+      title: "Which credential type(s) are included? (Select all that apply)",
+      errorMessage: {
+        minItems: "At least one credential type must be selected.",
+      },
+    },
+    minHoursWeekAvi: {
+      type: "string",
+      format: "yesNo",
+      enum: ["yes", "no"],
+      title:
+        "Does this program include a minimum of 15 instructional hours per week?",
+    },
+    programDeclaration: {
+      type: "boolean",
+      const: true,
+      errorMessage: { const: "You must confirm to proceed." },
+    },
+  },
+  required: [
+    "name",
+    "credentialType",
+    "cipCode",
+    "programIntensity",
+    "programDeliveryTypes",
+    "completionYears",
+    "courseLoadCalculation",
+    "regulatoryBody",
+    "entranceRequirements",
+    "eslEligibility",
+    "hasJointInstitution",
+    "hasWILComponent",
+    "hasTravel",
+    "hasIntlExchange",
+    "isAviationProgram",
+  ],
+  errorMessage: {
+    required: {
+      name: "Program name is required.",
+      credentialType: "Credential type is required.",
+      cipCode: "Classification of Instructional Programs (CIP) is required.",
+      programIntensity:
+        "Please indicate if students are able to take this on a part time basis.",
+      programDeliveryTypes: "Please select how this program will be delivered.",
+      completionYears: "Please select the program length.",
+      courseLoadCalculation:
+        "Please select the program course load calculation.",
+      regulatoryBody:
+        "Please select which regulatory body this program belongs to.",
+      entranceRequirements: "Please select at least one entrance requirement.",
+      eslEligibility:
+        "Please select the ESL content percentage for this program.",
+      hasJointInstitution:
+        "Please indicate if the program is offered jointly or in partnership with other institutions.",
+      hasWILComponent: "Please indicate if this program has a WIL component.",
+      hasTravel:
+        "Please indicate if a field trip, field placement or travel is part of this program.",
+      hasIntlExchange:
+        "Please indicate if the program has an international exchange.",
+      isAviationProgram: "Please indicate if this program contains aviation.",
+    },
+  },
+  allOf: [
+    {
+      if: {
+        required: ["isBCInstitution", "programDeliveryTypes"],
+        properties: {
+          isBCInstitution: { const: false },
+          programDeliveryTypes: {
+            contains: { const: "deliveredOnline" },
+          },
+        },
+      },
+      then: {
+        required: ["deliveredOnlineAlsoOnsite"],
+        errorMessage: {
+          required:
+            "Please indicate if the program will also be offered and delivered at 100% course load on site.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["isBCInstitution", "deliveredOnlineAlsoOnsite"],
+        properties: {
+          isBCInstitution: { const: false },
+          deliveredOnlineAlsoOnsite: { const: "no" },
+        },
+      },
+      then: {
+        required: ["sameOnlineCreditsEarned"],
+        errorMessage: {
+          required:
+            "Please indicate if students will earn the same number of credits in the same time period.",
+        },
+      },
+    },
+    {
+      if: {
+        required: [
+          "isBCInstitution",
+          "deliveredOnlineAlsoOnsite",
+          "sameOnlineCreditsEarned",
+        ],
+        properties: {
+          isBCInstitution: { const: false },
+          deliveredOnlineAlsoOnsite: { const: "no" },
+          sameOnlineCreditsEarned: { const: "no" },
+        },
+      },
+      then: {
+        required: ["earnAcademicCreditsOtherInstitution"],
+        errorMessage: {
+          required:
+            "Please indicate if students will earn academic credits recognized at another designated institution.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["courseLoadCalculation"],
+        properties: {
+          courseLoadCalculation: {
+            const: "hours",
+          },
+        },
+      },
+      then: {
+        required: ["minHoursWeek"],
+        errorMessage: {
+          required:
+            "Please indicate if this program includes a minimum of 20 instructional hours per week.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["regulatoryBody"],
+        properties: { regulatoryBody: { const: "other" } },
+      },
+      then: {
+        required: ["otherRegulatoryBody"],
+        errorMessage: {
+          required: "Please specify the other institution regulatory body.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["hasJointInstitution"],
+        properties: { hasJointInstitution: { const: "yes" } },
+      },
+      then: {
+        required: ["hasJointDesignatedInstitution"],
+        errorMessage: {
+          required:
+            "Please indicate if all partner institutions are designated by StudentAid BC.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["hasWILComponent"],
+        properties: { hasWILComponent: { const: "yes" } },
+      },
+      then: {
+        required: ["isWILApproved"],
+        errorMessage: {
+          required:
+            "Please indicate if the WIL is approved by your regulator or oversight body.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["hasWILComponent", "isWILApproved"],
+        properties: {
+          hasWILComponent: { const: "yes" },
+          isWILApproved: { const: "yes" },
+        },
+      },
+      then: {
+        required: ["wilProgramEligibility"],
+        errorMessage: {
+          required:
+            "Please indicate if the WIL meets the program eligibility requirements.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["hasTravel"],
+        properties: { hasTravel: { const: "yes" } },
+      },
+      then: {
+        required: ["travelProgramEligibility"],
+        errorMessage: {
+          required:
+            "Please indicate if the field trip, field placement, or travel meets the program eligibility requirements.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["hasIntlExchange"],
+        properties: { hasIntlExchange: { const: "yes" } },
+      },
+      then: {
+        required: ["intlExchangeProgramEligibility"],
+        errorMessage: {
+          required:
+            "Please indicate if the international exchange meets the program eligibility requirements.",
+        },
+      },
+    },
+    {
+      if: {
+        required: ["isAviationProgram"],
+        properties: { isAviationProgram: { const: "yes" } },
+      },
+      then: {
+        required: ["credentialTypesAviation", "minHoursWeekAvi"],
+        errorMessage: {
+          required:
+            "Please select at least one credential type and indicate if the program includes a minimum of 15 instructional hours per week.",
+        },
+      },
+    },
+  ],
+} as JsonSchema;
+
+// UI-only visibility rules (SHOW effects). Several mirror the equivalent
+// "then" branch above so display and requiredness agree, and use AND
+// conditions (with contains/not:{contains:} for array membership) since a
+// leaf condition can only reference one scope at a time.
+const programFormUiSchema = {
+  type: "VerticalLayout",
+  elements: [
+    {
+      type: "Group",
+      label: "Program details",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            { type: "Control", scope: "#/properties/name" },
+            {
+              type: "Control",
+              scope: "#/properties/description",
+              options: { multiline: true },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/credentialType",
+              options: { component: "select" },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/cipCode",
+              options: { hint: "Format (##.####)" },
+            },
+            { type: "Control", scope: "#/properties/fieldOfStudyCode" },
+            {
+              type: "Control",
+              scope: "#/properties/nocCode",
+              options: { hint: "Format (#####) Optional**" },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/sabcCode",
+              options: {
+                hint: "Format (XXX#) Mandatory field if using the 'Offerings Upload' feature. Otherwise optional.",
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/institutionProgramCode",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Program eligibility",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            {
+              type: "Control",
+              scope: "#/properties/programIntensity",
+              options: {
+                component: "radio",
+                tooltip:
+                  "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of: 60% or greater or Between 40 and 60% for students with a permanent disability.",
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/programDeliveryTypes",
+            },
+            {
+              type: "Label",
+              options: {
+                header:
+                  "This program requires review by StudentAid BC to determine eligibility.",
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/isBCPrivate",
+                      schema: { const: true },
+                    },
+                    {
+                      scope: "#/properties/programDeliveryTypes",
+                      schema: {
+                        contains: { const: ProgramDeliveryTypeValues.Online },
+                      },
+                    },
+                    {
+                      scope: "#/properties/programDeliveryTypes",
+                      schema: {
+                        not: {
+                          contains: { const: ProgramDeliveryTypeValues.Onsite },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/deliveredOnlineAlsoOnsite",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/isBCInstitution",
+                      schema: { const: false },
+                    },
+                    {
+                      scope: "#/properties/programDeliveryTypes",
+                      schema: {
+                        contains: { const: ProgramDeliveryTypeValues.Online },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/sameOnlineCreditsEarned",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/isBCInstitution",
+                      schema: { const: false },
+                    },
+                    {
+                      scope: "#/properties/deliveredOnlineAlsoOnsite",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/earnAcademicCreditsOtherInstitution",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/isBCInstitution",
+                      schema: { const: false },
+                    },
+                    {
+                      scope: "#/properties/deliveredOnlineAlsoOnsite",
+                      schema: { const: "no" },
+                    },
+                    {
+                      scope: "#/properties/sameOnlineCreditsEarned",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Label",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/isBCInstitution",
+                      schema: { const: false },
+                    },
+                    {
+                      scope: "#/properties/deliveredOnlineAlsoOnsite",
+                      schema: { const: "no" },
+                    },
+                    {
+                      scope: "#/properties/sameOnlineCreditsEarned",
+                      schema: { const: "no" },
+                    },
+                    {
+                      scope: "#/properties/earnAcademicCreditsOtherInstitution",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/completionYears",
+              options: {
+                component: "select",
+                hint: "This qualifies students for specific funds or grants.",
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/courseLoadCalculation",
+              options: { component: "radio" },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/minHoursWeek",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/courseLoadCalculation",
+                  schema: { const: ProgramCourseLoadCalculationTypes.Hours },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: {
+                summary:
+                  "The program needs to be a minimum of 20 instructional hours.",
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/courseLoadCalculation",
+                      schema: {
+                        const: ProgramCourseLoadCalculationTypes.Hours,
+                      },
+                    },
+                    {
+                      scope: "#/properties/minHoursWeek",
+                      schema: { const: "no" },
+                    },
+                    {
+                      scope: "#/properties/isAviationProgram",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/regulatoryBody",
+              options: {
+                component: "select",
+                hint: "All programs must be approved by your regulatory body to meet the criteria. If your program has not been approved yet, please contact your regulatory body first.",
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/otherRegulatoryBody",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/regulatoryBody",
+                  schema: { const: REGULATORY_BODY_OTHER },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Entrance requirements",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            {
+              type: "Control",
+              scope: "#/properties/entranceRequirements",
+            },
+            {
+              type: "Label",
+              options: { summary: "An entrance requirement is required." },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/entranceRequirements",
+                  schema: {
+                    contains: { const: PROGRAM_ENTRANCE_REQUIREMENT_NONE },
+                  },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "English as a Second Language (ESL) content",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            {
+              type: "Control",
+              scope: "#/properties/eslEligibility",
+              options: { component: "radio" },
+            },
+            {
+              type: "Label",
+              options: { summary: "ESL can't exceed 20% of course content." },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/eslEligibility",
+                  schema: { const: ProgramESLPercentage.GreaterThanEqual20 },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Program partnerships",
+      options: {
+        subtitleHtml:
+          'If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href="https://studentaidbc.ca/" target="_blank" rel="noopener noreferrer">StudentAidBC.ca</a>.',
+      },
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            {
+              type: "Control",
+              scope: "#/properties/hasJointInstitution",
+            },
+            {
+              type: "Control",
+              scope: "#/properties/hasJointDesignatedInstitution",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/hasJointInstitution",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: {
+                header: "Partner program review",
+                contentHtml:
+                  'This program requires additional review by StudentAid BC. Please email <a href="mailto:designat@gov.bc.ca">designat@gov.bc.ca</a> the name of the institution that you have partnered with, the name of this program, and any other details you want included as part of the review for this program.',
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/hasJointDesignatedInstitution",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: {
+                summary:
+                  "All partner institutions must be designated by StudentAid BC.",
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/hasJointDesignatedInstitution",
+                  schema: { const: "no" },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Work-integrated learning (WIL)",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            { type: "Control", scope: "#/properties/hasWILComponent" },
+            {
+              type: "Control",
+              scope: "#/properties/isWILApproved",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/hasWILComponent",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: {
+                summary:
+                  "The work-integrated learning component must be approved by your regulator or oversight body first.",
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/hasWILComponent",
+                      schema: { const: "yes" },
+                    },
+                    {
+                      scope: "#/properties/isWILApproved",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/wilProgramEligibility",
+              options: {
+                tooltipHtml:
+                  '<span>For the work-integrated learning experience to qualify for student financial assistance it must be:</span><ul class="ps-3"><li>Required for graduation (in the case of a co-op education placement it must either be required for graduation and/or result in a credential with a co-op designation);</li><li>Linked to the curriculum; and</li><li>Not exceed 50% of the program (or no more than 20% for practicums and 10% for preceptorships) unless otherwise regulated as a requirement by an oversight body (e.g., Early Childhood Educators (ECE) Registry).</li></ul>',
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/hasWILComponent",
+                      schema: { const: "yes" },
+                    },
+                    {
+                      scope: "#/properties/isWILApproved",
+                      schema: { const: "yes" },
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: { summary: "This must meet the StudentAid BC policy." },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/hasWILComponent",
+                      schema: { const: "yes" },
+                    },
+                    {
+                      scope: "#/properties/isWILApproved",
+                      schema: { const: "yes" },
+                    },
+                    {
+                      scope: "#/properties/wilProgramEligibility",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Field trip, field placement, or travel",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            { type: "Control", scope: "#/properties/hasTravel" },
+            {
+              type: "Control",
+              scope: "#/properties/travelProgramEligibility",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/hasTravel",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: { summary: "This must meet the StudentAid BC policy." },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/hasTravel",
+                      schema: { const: "yes" },
+                    },
+                    {
+                      scope: "#/properties/travelProgramEligibility",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "International exchange",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            { type: "Control", scope: "#/properties/hasIntlExchange" },
+            {
+              type: "Control",
+              scope: "#/properties/intlExchangeProgramEligibility",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/hasIntlExchange",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: { summary: "This must meet the StudentAid BC policy." },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  type: "AND",
+                  conditions: [
+                    {
+                      scope: "#/properties/hasIntlExchange",
+                      schema: { const: "yes" },
+                    },
+                    {
+                      scope: "#/properties/intlExchangeProgramEligibility",
+                      schema: { const: "no" },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Aviation",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            { type: "Control", scope: "#/properties/isAviationProgram" },
+            {
+              type: "Control",
+              scope: "#/properties/credentialTypesAviation",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/isAviationProgram",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: {
+                summary:
+                  "StudentAid BC does not provide any assistance to students for Private Pilot Training.",
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/credentialTypesAviation",
+                  schema: {
+                    contains: { const: AVIATION_PRIVATE_PILOT_TRAINING },
+                  },
+                },
+              },
+            },
+            {
+              type: "Control",
+              scope: "#/properties/minHoursWeekAvi",
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/isAviationProgram",
+                  schema: { const: "yes" },
+                },
+              },
+            },
+            {
+              type: "Label",
+              options: {
+                summary:
+                  "The aviation program needs to be a minimum of 15 instructional hours.",
+              },
+              rule: {
+                effect: RuleEffect.SHOW,
+                condition: {
+                  scope: "#/properties/minHoursWeekAvi",
+                  schema: { const: "no" },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      type: "Group",
+      label: "Declaration",
+      elements: [
+        {
+          type: "VerticalLayout",
+          elements: [
+            {
+              type: "Label",
+              options: {
+                plainText:
+                  "All information is subject to verification and auditing.",
+              },
+            },
+            { type: "Control", scope: "#/properties/programDeclaration" },
+          ],
+        },
+      ],
+    },
+  ],
+} as UISchemaElement;
+
 const submit = async () => {
-  const { valid } = await programForm.value.validate();
-  if (!valid) {
+  if ((programFormErrors.value?.length ?? 0) > 0) {
     const [errorSummary] = document.getElementsByClassName("error-summary");
     if (errorSummary) {
       errorSummary.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -895,69 +1326,6 @@ const submit = async () => {
     isBCPublic: formContext.value!.isBCPublic,
   };
   emit("submitted", submitData);
-};
-const updateEntranceRequirements = () => {
-  const currentEntranceRequirements = formModel.value.entranceRequirements;
-  if (!currentEntranceRequirements.length) {
-    previousEntranceRequirements = [];
-    return;
-  }
-  const isNonePreviouslySelected =
-    previousEntranceRequirements[0] === PROGRAM_ENTRANCE_REQUIREMENT_NONE;
-  if (isNonePreviouslySelected) {
-    formModel.value.entranceRequirements = currentEntranceRequirements.filter(
-      (requirement) => requirement !== PROGRAM_ENTRANCE_REQUIREMENT_NONE,
-    );
-  } else {
-    formModel.value.entranceRequirements = currentEntranceRequirements.includes(
-      PROGRAM_ENTRANCE_REQUIREMENT_NONE,
-    )
-      ? [PROGRAM_ENTRANCE_REQUIREMENT_NONE]
-      : currentEntranceRequirements;
-  }
-  previousEntranceRequirements = formModel.value.entranceRequirements;
-};
-
-const loadLookups = async (): Promise<void> => {
-  try {
-    loading.value = true;
-    const [
-      programCredentialType,
-      programLength,
-      programEntranceRequirement,
-      institutionRegulatoryBody,
-      programAviationCredential,
-    ] = await Promise.all([
-      SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-        SystemLookupCategory.ProgramCredentialType,
-      ),
-      SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-        SystemLookupCategory.ProgramLength,
-      ),
-      SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-        SystemLookupCategory.ProgramEntranceRequirement,
-      ),
-      SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-        SystemLookupCategory.InstitutionRegulatoryBody,
-      ),
-      SystemLookupConfigurationService.shared.getSystemLookupEntriesByCategory(
-        SystemLookupCategory.ProgramAviationCredential,
-      ),
-    ]);
-    programCredentialLookupItems.value = programCredentialType.items;
-    programLengthLookupItems.value = programLength.items;
-    programEntranceRequirementLookupItems.value =
-      programEntranceRequirement.items;
-    institutionRegulatoryBodyLookupItems.value =
-      institutionRegulatoryBody.items;
-    programAviationCredentialLookupItems.value =
-      programAviationCredential.items;
-    isLookupLoaded = true;
-  } catch {
-    snackBar.error("Unexpected error while loading data.");
-  } finally {
-    loading.value = false;
-  }
 };
 
 const loadProgram = async (programId: number) => {
@@ -1022,7 +1390,6 @@ const loadProgram = async (programId: number) => {
       isBCPublic: programDetails.isBCPublic,
       isBCInstitution: programDetails.isBCPrivate || programDetails.isBCPublic,
     };
-    previousEntranceRequirements = formModel.value.entranceRequirements;
     emit("loaded", programDetails);
   } catch {
     snackBar.error("Unexpected error while loading program data.");
@@ -1030,26 +1397,7 @@ const loadProgram = async (programId: number) => {
     loading.value = false;
   }
 };
-const calculateFieldOfStudyCode = async () => {
-  if (
-    isReadonly.value ||
-    !formModel.value.credentialType ||
-    !formModel.value.cipCode ||
-    !CIP_CODE_REGEX.test(formModel.value.cipCode)
-  ) {
-    return;
-  }
-  const evaluationResult = await EducationProgramService.shared.evaluate({
-    data: formModel.value,
-    calculatedDataKeys: [ProgramCalculatedDataKey.FieldOfStudyCode],
-  });
-  formModel.value.fieldOfStudyCode =
-    evaluationResult.calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode]!;
-};
 watchEffect(async () => {
-  if (!isLookupLoaded) {
-    await loadLookups();
-  }
   if (props.programId) {
     await loadProgram(props.programId);
   } else {
@@ -1061,16 +1409,4 @@ watchEffect(async () => {
     } as ProgramFormContext;
   }
 });
-watch(
-  componentDisplayConditions,
-  (conditions) => {
-    Object.entries(conditions).forEach(([key, value]) => {
-      if (!value && formModel.value[key] !== undefined) {
-        // Reset the form model value when the component is hidden.
-        formModel.value[key] = undefined;
-      }
-    });
-  },
-  { immediate: true },
-);
 </script>
