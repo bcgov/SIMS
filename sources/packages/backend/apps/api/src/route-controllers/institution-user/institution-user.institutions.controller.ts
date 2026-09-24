@@ -17,7 +17,7 @@ import {
   RequiresUserAccount,
   UserToken,
 } from "../../auth/decorators";
-import { UserService } from "../../services";
+import { InstitutionService, UserService, BCeIDService } from "../../services";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
   InstitutionUserAPIOutDTO,
@@ -50,10 +50,10 @@ import { InstitutionUserPaginationOptionsAPIInDTO } from "../models/pagination.d
 @ApiTags(`${ClientTypeBaseRoute.Institution}-institution-user`)
 export class InstitutionUserInstitutionsController extends BaseController {
   constructor(
-    // private readonly institutionService: InstitutionService,
+    private readonly institutionService: InstitutionService,
     private readonly institutionUserControllerService: InstitutionUserControllerService,
     private readonly userService: UserService,
-    //private readonly bceidAccountService: BCeIDService,
+    private readonly bceidAccountService: BCeIDService,
   ) {
     super();
   }
@@ -152,11 +152,10 @@ export class InstitutionUserInstitutionsController extends BaseController {
   async syncBCeIDInformation(
     @UserToken() token: IInstitutionUserToken,
   ): Promise<void> {
-    // await this.institutionService.syncBCeIDInformation(
-    //   token.userId,
-    //   token.idp_user_name,
-    // );
-    console.log("Sync BCeID information for user with id: " + token.userId);
+    await this.institutionService.syncBCeIDInformation(
+      token.userId,
+      token.idp_user_name,
+    );
   }
 
   /**
@@ -215,19 +214,19 @@ export class InstitutionUserInstitutionsController extends BaseController {
     // Try to find the business BCeID user on BCeID Web Service.
     // For basic BCeID user the information isExistingUser and isActiveUser
     // are enough to define if the user can complete the login or not.
-    // const businessBCeIDUserAccount =
-    //   await this.bceidAccountService.getAccountDetails(
-    //     token.idp_user_name,
-    //     BCeIDAccountTypeCodes.Business,
-    //   );
-    // if (businessBCeIDUserAccount) {
-    //   status.hasBusinessBCeIDAccount = true;
-    //   // Check if the institution associated with the BCeID business guid is already present.
-    //   status.associatedInstitutionExists =
-    //     await this.institutionService.doesExist(
-    //       businessBCeIDUserAccount.institution.guid,
-    //     );
-    // }
+    const businessBCeIDUserAccount =
+      await this.bceidAccountService.getAccountDetails(
+        token.idp_user_name,
+        BCeIDAccountTypeCodes.Business,
+      );
+    if (businessBCeIDUserAccount) {
+      status.hasBusinessBCeIDAccount = true;
+      // Check if the institution associated with the BCeID business guid is already present.
+      status.associatedInstitutionExists =
+        await this.institutionService.doesExist(
+          businessBCeIDUserAccount.institution.guid,
+        );
+    }
     return status;
   }
 
