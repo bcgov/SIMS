@@ -792,10 +792,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED);
     expect(response.body).toHaveLength(1);
-    const createdOffering = await db.educationProgramOffering.findOne({
-      where: { id: response.body[0].id },
-    });
-    expect(createdOffering).toBeDefined();
+    expect(
+      await db.educationProgramOffering.exists({
+        where: { id: response.body[0].id },
+      }),
+    ).toBe(true);
   });
 
   it("Should return a validation error when there is a study break outside of the offering period.", async () => {
