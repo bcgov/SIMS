@@ -30,7 +30,7 @@ export function formSubmission(
   headers: Record<string, string>,
 ): RefinedResponse<ResponseType> {
   return http.post(
-    `${FORMS_URL}/${formPath}/submission?dryRun=1`,
+    `${FORMS_URL}/${formPath}/submission?dryrun=1`,
     JSON.stringify(payload),
     { headers },
   );
