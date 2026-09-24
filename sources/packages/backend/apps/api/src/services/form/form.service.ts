@@ -97,7 +97,7 @@ export class FormService {
   ): Promise<DryRunSubmissionResult<T>> {
     try {
       const submissionResponse = await this.httpService.axiosRef.post(
-        `${this.config.formsUrl}/${formName}/submission?dryRun=1`,
+        `${this.config.formsUrl}/${formName}/submission?dryrun=1`,
         { data },
         this.authHeader,
       );

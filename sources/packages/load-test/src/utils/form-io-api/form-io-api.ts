@@ -30,7 +30,7 @@ export function formSubmission(
   headers: Record<string, string>,
 ): RefinedResponse<ResponseType> {
   return http.post(
-    `${FORMS_URL}/${formPath}/submission?dryRun=1`,
+    `${FORMS_URL}/${formPath}/submission?dryrun=1`,
     JSON.stringify(payload),
     { headers },
   );
@@ -43,7 +43,7 @@ export function formSubmission(
  * @returns get response.
  */
 export function getFormByAlias(
-  alias: string,
+  alias: string,  db.getCollectionNames().filter((name) => name.startsWith("form_"))  db.getCollectionNames().filter((name) => name.startsWith("form_"))
   headers: Record<string, string>,
 ): RefinedResponse<ResponseType> {
   return http.get(`${FORMS_URL}/${alias}`, { headers });
