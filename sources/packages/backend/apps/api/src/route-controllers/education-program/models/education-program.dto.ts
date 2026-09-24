@@ -511,3 +511,8 @@ export class EducationProgramPendingAPIOutDTO {
   institutionId: number;
   selectedLocationId: number;
 }
+
+export class EducationProgramConfigurationAPIOutDTO {
+  validationSchema: unknown;
+  visualSchema: unknown;
+}

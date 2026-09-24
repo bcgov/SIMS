@@ -262,6 +262,7 @@
       "suppliersitecode",
       "timestamptz",
       "typeorm",
+      "uischema",
       "unparse",
       "unzipper",
       "VALD",

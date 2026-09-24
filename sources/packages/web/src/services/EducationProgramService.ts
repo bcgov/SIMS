@@ -10,6 +10,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -232,5 +233,13 @@ export class EducationProgramService {
     payload: ProgramEvaluationAPIInDTO,
   ): Promise<ProgramEvaluationAPIOutDTO> {
     return ApiClient.EducationProgram.evaluate(payload);
+  }
+
+  async getEducationProgramConfiguration(
+    programYearId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramConfiguration(
+      programYearId,
+    );
   }
 }

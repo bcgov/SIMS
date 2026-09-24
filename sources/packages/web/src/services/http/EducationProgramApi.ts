@@ -7,6 +7,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -226,6 +227,16 @@ export class EducationProgramApi extends HttpBaseClient {
     return this.postCall(
       this.addClientRoot("education-program/evaluate"),
       payload,
+    );
+  }
+
+  async getEducationProgramConfiguration(
+    programYearId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(
+        `education-program/program-year/${programYearId}/configuration`,
+      ),
     );
   }
 }

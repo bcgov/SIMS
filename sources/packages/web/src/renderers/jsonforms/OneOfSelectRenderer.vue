@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { rendererProps, useJsonFormsEnumControl } from "@jsonforms/vue";
+import { rendererProps, useJsonFormsOneOfEnumControl } from "@jsonforms/vue";
 import type { ControlElement } from "@jsonforms/core";
 
 const props = defineProps(rendererProps<ControlElement>());
-// Plain "enum" (raw values, no separate title) rather than "oneOf" -
-// matches the lookup-backed fields this renderer targets, which are stored
-// as regular string enums. The dropdown label falls back to the raw value
-// itself when no title/i18n mapping is configured.
-const { control, handleChange } = useJsonFormsEnumControl(props);
+// "oneOf" (const/title pairs) rather than a plain "enum" - matches the
+// lookup-backed fields this renderer targets, where the display label
+// differs from the stored value.
+const { control, handleChange } = useJsonFormsOneOfEnumControl(props);
 
 const onUpdate = (value: string) => handleChange(control.value.path, value);
 

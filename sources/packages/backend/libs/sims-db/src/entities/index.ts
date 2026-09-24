@@ -129,3 +129,4 @@ export * from "./form-submission-item-decision.model";
 export * from "./disability-profile-status.type";
 export * from "./student-disability-profile.model";
 export * from "./student-disability-profile-disability.model";
+export * from "./education-program-configuration.model";

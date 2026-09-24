@@ -39,5 +39,6 @@ const onUpdate = (newValue: (string | number)[]) => {
     :items="items"
     :label="control.label"
     :readonly="control.readonly || !control.enabled"
+    color="primary"
   ></checkbox-options-group>
 </template>

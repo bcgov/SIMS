@@ -212,3 +212,8 @@ export interface ProgramEvaluationAPIInDTO {
 export interface ProgramEvaluationAPIOutDTO {
   calculatedData: ProgramEvaluationResult;
 }
+
+export interface EducationProgramConfigurationAPIOutDTO {
+  validationSchema: unknown;
+  visualSchema: unknown;
+}

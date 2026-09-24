@@ -79,6 +79,7 @@ export const TableNames = {
   FormSubmissions: "form_submissions",
   FormSubmissionItems: "form_submission_items",
   FormSubmissionItemDecisions: "form_submission_item_decisions",
+  EducationProgramsConfigurations: "education_programs_configurations",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;

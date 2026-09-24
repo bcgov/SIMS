@@ -20,3 +20,11 @@ export const programFormAjv = new Ajv({
 });
 addFormats(programFormAjv);
 addErrors(programFormAjv);
+
+/**
+ * "yesNo" is not a real data format, only a hint consumed by
+ * yesNoControlTester to route the control to RadioOptionsYesNo. Registering
+ * it as an always-valid format avoids Ajv's "unknown format ... ignored"
+ * warning.
+ */
+programFormAjv.addFormat("yesNo", true);

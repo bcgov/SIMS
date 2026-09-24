@@ -8,7 +8,13 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { Institution, Note, User, ProgramStatus } from ".";
+import {
+  Institution,
+  Note,
+  User,
+  ProgramStatus,
+  EducationProgramConfiguration,
+} from ".";
 import { ProgramIntensity } from "./program-intensity.type";
 import { isSameOrAfterDate } from "@sims/utilities";
 
@@ -451,6 +457,29 @@ export class EducationProgram extends RecordDataModel {
     nullable: true,
   })
   isActiveUpdatedOn?: Date;
+
+  /**
+   * Dynamic program data captured based on the associated {@link programConfiguration}.
+   */
+  @Column({
+    name: "program_data",
+    type: "jsonb",
+    nullable: true,
+  })
+  programData?: unknown;
+
+  /**
+   * Dynamic form configuration used to create and validate this education program.
+   */
+  @ManyToOne(() => EducationProgramConfiguration, {
+    eager: false,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: "program_configuration_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  programConfiguration?: EducationProgramConfiguration;
 }
 
 /**

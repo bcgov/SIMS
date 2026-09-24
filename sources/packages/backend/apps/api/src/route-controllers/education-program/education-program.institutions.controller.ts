@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  NotFoundException,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
@@ -20,6 +21,7 @@ import {
 import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
@@ -44,6 +46,9 @@ import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
 import { isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
+import { EducationProgramConfiguration } from "@sims/sims-db";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -53,6 +58,8 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly educationProgramService: EducationProgramService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
+    @InjectRepository(EducationProgramConfiguration)
+    private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
   ) {
     super();
   }
@@ -254,5 +261,22 @@ export class EducationProgramInstitutionsController extends BaseController {
         payload.data,
       );
     return { calculatedData };
+  }
+
+  @Get("program-year/:programYearId/configuration")
+  async getEducationProgramConfiguration(
+    @Param("programYearId", ParseIntPipe) programYearId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    const configuration = await this.educationProgramConfigurationRepo.findOne({
+      select: { id: true, validationSchema: true, visualSchema: true },
+      where: { programYear: { id: programYearId }, isActive: true },
+    });
+    if (!configuration) {
+      throw new NotFoundException("Education program configuration not found.");
+    }
+    return {
+      validationSchema: configuration.validationSchema,
+      visualSchema: configuration.visualSchema,
+    };
   }
 }

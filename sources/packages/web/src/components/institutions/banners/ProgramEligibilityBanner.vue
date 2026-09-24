@@ -4,7 +4,6 @@
     :header="header"
     :summary="summary"
     density="compact"
-    class="my-3"
   >
     <template v-if="$slots.content" #content>
       <slot name="content"></slot>
