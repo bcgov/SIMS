@@ -57,6 +57,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   let educationProgramDeliveredOnSiteSBC2: EducationProgram;
   let educationProgramSBC4: EducationProgram;
   let stopOfferingCreateRestriction: Restriction;
+  let noEffectRestriction: Restriction;
   let collegeFLocationKSEY: InstitutionLocation;
   let collegeFLocationYESK: InstitutionLocation;
   let collegeFLocationSEYK: InstitutionLocation;
@@ -183,11 +184,23 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         },
       }),
     );
+
+    // Restriction with action type 'No effect', simulating a restriction like REMIT.
+    noEffectRestriction = await db.restriction.save(
+      createFakeRestriction({
+        initialValues: {
+          restrictionType: RestrictionType.Institution,
+          actionType: [RestrictionActionType.NoEffect],
+        },
+      }),
+    );
   });
 
   beforeEach(async () => {
     await db.institutionRestriction.delete({
-      restriction: { id: stopOfferingCreateRestriction.id },
+      restriction: {
+        id: In([stopOfferingCreateRestriction.id, noEffectRestriction.id]),
+      },
     });
   });
 
@@ -717,6 +730,74 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
         });
     },
   );
+
+  it("Should return validation error when the institution has an active institution-wide restriction and an action type that blocks offering creation.", async () => {
+    // Arrange
+    // Upload file with 1 line for location code KSEY and program SABC code SBC2.
+    const singleOfferingFilePath = join(
+      __dirname,
+      "bulk-insert/single-upload-institution-wide-restriction.csv",
+    );
+
+    // Institution-wide restriction which must be enforced for every location and program.
+    await saveFakeInstitutionRestriction(db, {
+      restriction: stopOfferingCreateRestriction,
+      institution: collegeF,
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .attach("file", singleOfferingFilePath)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: "An offering has invalid data.",
+        errorType: OFFERING_VALIDATION_CRITICAL_ERROR,
+        objectInfo: [
+          {
+            recordIndex: 0,
+            locationCode: csvLocationCodeKSEY,
+            sabcProgramCode: csvProgramSABCCodeSBC2,
+            startDate: "2023-09-06",
+            endDate: "2024-08-15",
+            errors: [
+              "This program is restricted and no new offerings can be created for this program.",
+            ],
+            infos: [],
+            warnings: [],
+          },
+        ],
+      });
+  });
+
+  it("Should create the offering when the institution has an active institution-wide restriction and an action type that does not block offering creation", async () => {
+    // Arrange
+    // Upload file with 1 line for location code KSEY and program SABC code SBC2.
+    const singleOfferingFilePath = join(
+      __dirname,
+      "bulk-insert/single-upload-institution-wide-restriction.csv",
+    );
+
+    // Institution-wide restriction that does not include Stop offering create, so it must not block the upload.
+    await saveFakeInstitutionRestriction(db, {
+      restriction: noEffectRestriction,
+      institution: collegeF,
+    });
+
+    // Act/Assert
+    const response = await request(app.getHttpServer())
+      .post(endpoint)
+      .attach("file", singleOfferingFilePath)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.CREATED);
+    expect(response.body).toHaveLength(1);
+    expect(
+      await db.educationProgramOffering.exists({
+        where: { id: response.body[0].id },
+      }),
+    ).toBe(true);
+  });
 
   it("Should return a validation error when there is a study break outside of the offering period.", async () => {
     // Arrange
