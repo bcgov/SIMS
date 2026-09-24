@@ -100,8 +100,6 @@ export * from "./application-offering-change-request.model";
 export * from "./student-disability-status.type";
 export * from "./student-loan-balance.model";
 export * from "./ecert-feedback-error.model";
-export * from "./batch-reassessment-status.type";
-export * from "./batch-reassessment-application-result.type";
 export * from "./batch-reassessment.model";
 export * from "./batch-reassessment-application.model";
 export * from "./cas-invoice-batch-approval-status.type";

@@ -4,13 +4,15 @@ import {
   ApplicationStatus,
   BatchReassessment,
   BatchReassessmentApplication,
-  BatchReassessmentApplicationResult,
-  BatchReassessmentStatus,
   RecordDataModelService,
+  StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
 import { DataSource } from "typeorm";
-import { BatchReassessmentSummary } from "./batch-reassessment.service.models";
+import {
+  BatchReassessmentStatus,
+  BatchReassessmentSummary,
+} from "./batch-reassessment.service.models";
 import { SequenceControlService } from "@sims/services";
 import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
 import { CustomNamedError } from "@sims/utilities";
@@ -32,73 +34,56 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
   }
 
   /**
-   * Checks whether a batch manual reassessment is currently in progress.
-   * @returns `true` if a batch manual reassessment is in progress, otherwise `false`.
-   */
-  async isBatchInProgress(): Promise<boolean> {
-    return await this.repo.exists({
-      where: { status: BatchReassessmentStatus.InProgress },
-    });
-  }
-
-  /**
-   * Updates the processing status of a batch manual reassessment.
-   * @param batchReassessmentId batch manual reassessment id.
-   * @param status new batch manual reassessment status.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @returns the updated batch manual reassessment.
-   */
-  async updateBatchReassessment(
-    batchReassessmentId: number,
-    status: BatchReassessmentStatus,
-    auditUserId: number,
-  ): Promise<void> {
-    const auditUser = { id: auditUserId } as User;
-    await this.dataSource
-      .getRepository(BatchReassessment)
-      .update(
-        { id: batchReassessmentId },
-        { status, modifier: auditUser, updatedAt: new Date() },
-      );
-  }
-
-  /**
    * Gets persisted batch manual reassessment submissions and their application results.
    * @returns batch manual reassessment submissions.
    */
   async getBatchReassessmentSummary(): Promise<BatchReassessmentSummary[]> {
-    return this.repo
+    const rows = await this.repo
       .createQueryBuilder("batchReassessment")
       .select([
-        "batchReassessment.id AS id",
+        'batchReassessment.id AS "id"',
         'batchReassessment.batchNumber AS "batchNumber"',
-        "batchReassessment.status AS status",
         'batchReassessment.createdAt AS "createdAt"',
         'creator.firstName AS "creatorFirstName"',
         'creator.lastName AS "creatorLastName"',
       ])
       .addSelect(
-        "COUNT(CASE WHEN batchReassessmentApplication.result = 'Success' THEN 1 END)",
+        `COUNT("batchReassessmentApplication"."id")::int`,
+        "totalCount",
+      )
+      .addSelect(
+        `COUNT(CASE WHEN "studentAssessment"."student_assessment_status" = :completedStatus THEN 1 END)::int`,
         "successCount",
       )
       .addSelect(
-        "COUNT(CASE WHEN batchReassessmentApplication.result = 'Failure' THEN 1 END)",
+        `COUNT(CASE WHEN "batchReassessmentApplication"."student_assessment_id" IS NULL THEN 1 END)::int`,
         "failureCount",
       )
       .leftJoin(
         "batchReassessment.batchReassessmentApplications",
         "batchReassessmentApplication",
       )
+      .leftJoin(
+        "batchReassessmentApplication.studentAssessment",
+        "studentAssessment",
+      )
       .leftJoin("batchReassessment.creator", "creator")
+      .setParameter("completedStatus", StudentAssessmentStatus.Completed)
       .groupBy("batchReassessment.id")
-      .addGroupBy("batchReassessment.status")
-      .addGroupBy("batchReassessment.createdAt")
-      .addGroupBy("creator.firstName")
-      .addGroupBy("creator.lastName")
+      .addGroupBy("creator.id")
       .orderBy("batchReassessment.createdAt", "DESC")
-      .getRawMany<BatchReassessmentSummary>();
-  }
+      .getRawMany<Omit<BatchReassessmentSummary, "status">>();
 
+    const summaries: BatchReassessmentSummary[] = rows.map((row) => ({
+      ...row,
+      status:
+        row.totalCount === row.successCount + row.failureCount
+          ? BatchReassessmentStatus.Completed
+          : BatchReassessmentStatus.InProgress,
+    }));
+
+    return summaries;
+  }
   /**
    * Runs a batch reassessment for a list of application numbers.
    * Each application number is processed independently so failures do not stop
@@ -147,7 +132,6 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
       // Create a new batch reassessment to indicate that the batch is in progress.
       const batchReassessment = new BatchReassessment();
       batchReassessment.batchNumber = newBatchUniqueSequence;
-      batchReassessment.status = BatchReassessmentStatus.InProgress;
       batchReassessment.creator = creator;
       batchReassessment.createdAt = new Date();
       const savedBatchReassessment = await entityManager
@@ -164,7 +148,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
         batchReassessmentApplication.creator = creator;
 
         try {
-          // Fail early if the application id doesn't exist.
+          // Fail early if the application id doesn't exist as createManualReassessment doesn't handle undefined gracefully.
           if (!applicationId) {
             throw new CustomNamedError(
               "Application not found",
@@ -179,27 +163,14 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
               userId,
             );
           batchReassessmentApplication.studentAssessment = studentAssessment;
-          batchReassessmentApplication.result =
-            BatchReassessmentApplicationResult.Success;
         } catch (error) {
           batchReassessmentApplication.failureReason =
             error?.message ?? "Unknown error";
-          batchReassessmentApplication.result =
-            BatchReassessmentApplicationResult.Failure;
         }
         await entityManager
           .getRepository(BatchReassessmentApplication)
           .save(batchReassessmentApplication);
       }
-      // Update the batch reassessment status when processing is complete.
-      await entityManager.getRepository(BatchReassessment).update(
-        { id: savedBatchReassessment.id },
-        {
-          status: BatchReassessmentStatus.Completed,
-          modifier: { id: userId } as User,
-          updatedAt: new Date(),
-        },
-      );
     }); // End of transaction
   }
 }

@@ -1,7 +1,4 @@
-import {
-  BatchReassessmentStatus,
-  NOTE_DESCRIPTION_MAX_LENGTH,
-} from "@sims/sims-db";
+import { NOTE_DESCRIPTION_MAX_LENGTH } from "@sims/sims-db";
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -10,6 +7,7 @@ import {
   IsString,
   MaxLength,
 } from "class-validator";
+import { BatchReassessmentStatus } from "../../../services/batch-reassessment/batch-reassessment.service.models";
 
 /**
  * Maximum number of application numbers accepted in a single batch manual reassessment submission.
@@ -41,6 +39,7 @@ export class BatchSubmissionResultAPIOutDTO {
   createdAt: Date;
   creatorFirstName: string;
   creatorLastName: string;
+  totalCount: number;
   successCount: number;
   failureCount: number;
   status: BatchReassessmentStatus;

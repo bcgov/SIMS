@@ -1,7 +1,6 @@
 import {
   BatchReassessment,
   BatchReassessmentApplication,
-  BatchReassessmentApplicationResult,
   StudentAssessment,
   User,
 } from "@sims/sims-db";
@@ -33,8 +32,6 @@ export function createFakeBatchReassessmentApplication(
   batchReassessmentApplication.applicationNumber = relations.applicationNumber;
   batchReassessmentApplication.studentAssessment = relations.studentAssessment;
   batchReassessmentApplication.creator = relations.creator;
-  batchReassessmentApplication.result =
-    options?.initialValue?.result ?? BatchReassessmentApplicationResult.Success;
   batchReassessmentApplication.failureReason =
     options?.initialValue?.failureReason;
   return batchReassessmentApplication;

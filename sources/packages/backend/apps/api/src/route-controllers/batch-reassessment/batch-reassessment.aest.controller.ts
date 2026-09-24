@@ -1,11 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  UnprocessableEntityException,
-} from "@nestjs/common";
-import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import { Body, Controller, Get, Post } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -15,19 +9,13 @@ import {
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import { IUserToken, Role } from "../../auth";
 import { UserGroups } from "../../auth/user-groups.enum";
-import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   BatchReassessmentAPIInDTO,
   BatchSubmissionResultAPIOutDTO,
 } from "./models/batch-reassessment.dto";
 import { BatchReassessmentService } from "../../services";
-
-const BATCH_REASSESSMENT_ALREADY_IN_PROGRESS =
-  "BATCH_REASSESSMENT_ALREADY_IN_PROGRESS;";
-
-const BATCH_REASSESSMENT_ALREADY_IN_PROGRESS_MESSAGE =
-  "A batch manual reassessment is already in progress.";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.
@@ -45,28 +33,17 @@ export class BatchReassessmentAESTController extends BaseController {
 
   /**
    * Triggers a batch manual reassessment for a list of application numbers.
+   * Multiple invocations are prevented from running concurrently via the sequence control mechanism.
    * @param payload batch reassessment request payload.
    * @param userToken authenticated AEST user token.
    * @returns void.
    */
   @Roles(Role.AESTBatchReassessment)
   @Post()
-  @ApiUnprocessableEntityResponse({
-    description: BATCH_REASSESSMENT_ALREADY_IN_PROGRESS_MESSAGE,
-  })
   async createBatchReassessment(
     @Body() payload: BatchReassessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
   ): Promise<void> {
-    // TODO We can do this via sequence control
-    if (await this.batchReassessmentService.isBatchInProgress()) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          BATCH_REASSESSMENT_ALREADY_IN_PROGRESS_MESSAGE,
-          BATCH_REASSESSMENT_ALREADY_IN_PROGRESS,
-        ),
-      );
-    }
     await this.batchReassessmentService.createBatchReassessment(
       payload.applicationNumbers,
       payload.note,
@@ -90,8 +67,9 @@ export class BatchReassessmentAESTController extends BaseController {
         createdAt: batch.createdAt,
         creatorFirstName: batch.creatorFirstName,
         creatorLastName: batch.creatorLastName,
-        successCount: Number(batch.successCount),
-        failureCount: Number(batch.failureCount),
+        totalCount: batch.totalCount,
+        successCount: batch.successCount,
+        failureCount: batch.failureCount,
         status: batch.status,
       };
     });

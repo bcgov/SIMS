@@ -146,36 +146,3 @@ export interface AwardDisbursementValueAPIOutDTO {
 export interface ManualReassessmentAPIInDTO {
   note: string;
 }
-
-export const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 50000;
-
-/**
- * Payload used to trigger a batch manual reassessment for a list of application numbers.
- */
-export interface BatchReassessmentAPIInDTO {
-  applicationNumbers: string[];
-  note: string;
-}
-
-/**
- * Overall processing status of a batch manual reassessment submission.
- */
-export enum BatchSubmissionResultStatus {
-  Completed = "Completed",
-  InProgress = "In progress",
-}
-
-/**
- * Summary of a batch manual reassessment submission, including how many
- * applications were successfully reassessed and how many failed.
- */
-export interface BatchSubmissionResultAPIOutDTO {
-  batchId: number;
-  batchNumber: number;
-  createdAt: Date;
-  creatorFirstName: string;
-  creatorLastName: string;
-  successCount: number;
-  failureCount: number;
-  status: BatchSubmissionResultStatus;
-}

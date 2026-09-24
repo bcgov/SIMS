@@ -7,11 +7,7 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import {
-  BatchReassessment,
-  BatchReassessmentApplicationResult,
-  StudentAssessment,
-} from ".";
+import { BatchReassessment, StudentAssessment } from ".";
 
 /**
  * Processing result for one application included in a batch manual reassessment.
@@ -58,17 +54,6 @@ export class BatchReassessmentApplication extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   studentAssessment?: StudentAssessment;
-  /**
-   * Processing result for the application.
-   */
-  @Column({
-    name: "result",
-    type: "enum",
-    enum: BatchReassessmentApplicationResult,
-    enumName: "BatchReassessmentApplicationResult",
-    nullable: false,
-  })
-  result: BatchReassessmentApplicationResult;
   /**
    * Reason the application failed batch manual reassessment processing.
    */

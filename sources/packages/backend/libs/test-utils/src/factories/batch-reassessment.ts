@@ -1,8 +1,4 @@
-import {
-  BatchReassessment,
-  BatchReassessmentStatus,
-  User,
-} from "@sims/sims-db";
+import { BatchReassessment, User } from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
 
 /**
@@ -24,8 +20,6 @@ export function createFakeBatchReassessment(
   const batchReassessment = new BatchReassessment();
   batchReassessment.batchNumber =
     options?.initialValue?.batchNumber ?? faker.number.int(1000);
-  batchReassessment.status =
-    options?.initialValue?.status ?? BatchReassessmentStatus.InProgress;
   batchReassessment.creator = relations?.creator;
   batchReassessment.createdAt = options?.initialValue?.createdAt ?? new Date();
   return batchReassessment;

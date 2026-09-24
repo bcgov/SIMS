@@ -5,7 +5,9 @@ import {
   createE2EDataSources,
   createFakeBatchReassessment,
   createFakeBatchReassessmentApplication,
+  createFakeStudentAssessment,
   createFakeUser,
+  saveFakeApplication,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -14,84 +16,74 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { Role } from "../../../../auth";
-import {
-  BatchReassessmentApplicationResult,
-  BatchReassessmentStatus,
-  User,
-} from "@sims/sims-db";
+import { StudentAssessmentStatus, User } from "@sims/sims-db";
+import { BatchReassessmentStatus } from "../../../../services/batch-reassessment/batch-reassessment.service.models";
 import { addDays } from "@sims/utilities";
 
 describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let savedUser: User;
+  let auditUser: User;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    savedUser = await db.user.save(createFakeUser());
+    auditUser = await db.user.save(createFakeUser());
   });
 
   beforeEach(async () => {
-    // Clear the relevant tables before each test since all data is queried.
+    // Clear the tables before each test since all data is queried.
     await db.batchReassessmentApplication.deleteAll();
     await db.batchReassessment.deleteAll();
   });
 
-  it("Should return batch reassessments when requested by an authorized AEST user.", async () => {
+  it("Should return a Completed batch reassessment when requested by an authorized AEST user.", async () => {
     // Arrange
-    // Create two batches to be returned in createdAt DESC order.
     const now = new Date();
-    const newerBatch = createFakeBatchReassessment(
-      { creator: savedUser },
-      {
-        initialValue: {
-          createdAt: now,
-          status: BatchReassessmentStatus.InProgress,
-        },
-      },
-    );
-    await db.batchReassessment.save(newerBatch);
 
-    const olderBatch = createFakeBatchReassessment(
-      { creator: savedUser },
+    // Batch has 1 success (Completed assessment) and 1 failure ("Application not found").
+    const application = await saveFakeApplication(db.dataSource, {}, {});
+    const batch = createFakeBatchReassessment(
+      { creator: auditUser },
       {
         initialValue: {
           createdAt: addDays(-1, now),
-          status: BatchReassessmentStatus.Completed,
         },
       },
     );
-    await db.batchReassessment.save(olderBatch);
-    const olderBatchApp1 = createFakeBatchReassessmentApplication(
-      {
-        batchReassessment: olderBatch,
-        applicationNumber: "1000000001",
-        creator: savedUser,
-      },
-      { initialValue: { result: BatchReassessmentApplicationResult.Success } },
-    );
-    await db.batchReassessmentApplication.save(olderBatchApp1);
+    await db.batchReassessment.save(batch);
 
-    const newerBatchApp1 = createFakeBatchReassessmentApplication(
+    const reassessment = createFakeStudentAssessment(
+      { auditUser, application },
       {
-        batchReassessment: newerBatch,
-        applicationNumber: "1000000002",
-        creator: savedUser,
+        initialValue: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
       },
-      { initialValue: { result: BatchReassessmentApplicationResult.Success } },
     );
-    await db.batchReassessmentApplication.save(newerBatchApp1);
-    const newerBatchApp2 = createFakeBatchReassessmentApplication(
+    await db.studentAssessment.save(reassessment);
+
+    const batch1App1 = createFakeBatchReassessmentApplication(
       {
-        batchReassessment: newerBatch,
-        applicationNumber: "1000000003",
-        creator: savedUser,
+        batchReassessment: batch,
+        applicationNumber: application.applicationNumber,
+        studentAssessment: reassessment,
+        creator: auditUser,
       },
-      { initialValue: { result: BatchReassessmentApplicationResult.Failure } },
+      {},
     );
-    await db.batchReassessmentApplication.save(newerBatchApp2);
+    await db.batchReassessmentApplication.save(batch1App1);
+
+    const batch1App2 = createFakeBatchReassessmentApplication(
+      {
+        batchReassessment: batch,
+        applicationNumber: "1234567890",
+        creator: auditUser,
+      },
+      {},
+    );
+    await db.batchReassessmentApplication.save(batch1App2);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -103,24 +95,95 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       .expect(({ body }) =>
         expect(body).toEqual([
           {
-            batchId: newerBatch.id,
-            batchNumber: newerBatch.batchNumber,
-            createdAt: newerBatch.createdAt.toISOString(),
-            creatorFirstName: newerBatch.creator.firstName,
-            creatorLastName: newerBatch.creator.lastName,
+            batchId: batch.id,
+            batchNumber: batch.batchNumber,
+            createdAt: batch.createdAt.toISOString(),
+            creatorFirstName: batch.creator.firstName,
+            creatorLastName: batch.creator.lastName,
             successCount: 1,
             failureCount: 1,
-            status: newerBatch.status,
+            totalCount: 2,
+            status: BatchReassessmentStatus.Completed,
           },
+        ]),
+      );
+  });
+
+  it("Should return an In progress batch reassessment when requested by an authorized AEST user.", async () => {
+    // Arrange
+    const now = new Date();
+
+    // Batch has 1 pending (Assessment in progress) and 1 failure (Archived application).
+    const batch = createFakeBatchReassessment(
+      { creator: auditUser },
+      {
+        initialValue: {
+          createdAt: now,
+        },
+      },
+    );
+    await db.batchReassessment.save(batch);
+
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {},
+      { initialValues: {} },
+    );
+    const reassessment = createFakeStudentAssessment(
+      { auditUser, application },
+      {
+        initialValue: {
+          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
+        },
+      },
+    );
+    await db.studentAssessment.save(reassessment);
+
+    const batch2App1 = createFakeBatchReassessmentApplication(
+      {
+        batchReassessment: batch,
+        applicationNumber: application.applicationNumber,
+        studentAssessment: reassessment,
+        creator: auditUser,
+      },
+      {},
+    );
+    await db.batchReassessmentApplication.save(batch2App1);
+
+    const archivedApplication = await saveFakeApplication(
+      db.dataSource,
+      {},
+      { initialValues: { isArchived: true } },
+    );
+    const batch2App2 = createFakeBatchReassessmentApplication(
+      {
+        batchReassessment: batch,
+        applicationNumber: archivedApplication.applicationNumber,
+        creator: auditUser,
+      },
+      {},
+    );
+    await db.batchReassessmentApplication.save(batch2App2);
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(getEndpoint())
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toEqual([
           {
-            batchId: olderBatch.id,
-            batchNumber: olderBatch.batchNumber,
-            createdAt: olderBatch.createdAt.toISOString(),
-            creatorFirstName: olderBatch.creator.firstName,
-            creatorLastName: olderBatch.creator.lastName,
-            successCount: 1,
-            failureCount: 0,
-            status: olderBatch.status,
+            batchId: batch.id,
+            batchNumber: batch.batchNumber,
+            createdAt: batch.createdAt.toISOString(),
+            creatorFirstName: batch.creator.firstName,
+            creatorLastName: batch.creator.lastName,
+            successCount: 0,
+            failureCount: 1,
+            totalCount: 2,
+            status: BatchReassessmentStatus.InProgress,
           },
         ]),
       );
