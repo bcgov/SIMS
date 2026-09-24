@@ -7,8 +7,6 @@ import {
   ManualReassessmentAPIInDTO,
   PrimaryIdentifierAPIOutDTO,
   ApplicationWarningsAPIOutDTO,
-  BatchReassessmentAPIInDTO,
-  BatchSubmissionResultAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -132,30 +130,6 @@ export class StudentAssessmentApi extends HttpBaseClient {
         `assessment/application/${applicationId}/manual-reassessment`,
       ),
       payload,
-    );
-  }
-
-  /**
-   * Runs a batch reassessment for the given application numbers.
-   * @param payload application numbers to be reassessed.
-   * @returns void.
-   */
-  async batchReassessment(payload: BatchReassessmentAPIInDTO): Promise<void> {
-    await this.postCall(
-      this.addClientRoot("assessment/application/batch-reassessment"),
-      payload,
-    );
-  }
-
-  /**
-   * Gets batch manual reassessment submissions.
-   * @returns batch manual reassessment submissions.
-   */
-  async getBatchReassessment(): Promise<
-    BatchSubmissionResultAPIOutDTO[]
-  > {
-    return this.getCall<BatchSubmissionResultAPIOutDTO[]>(
-      this.addClientRoot("assessment/application/batch-reassessment"),
     );
   }
 }

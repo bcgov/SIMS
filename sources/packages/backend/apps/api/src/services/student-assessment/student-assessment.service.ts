@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   ApplicationExceptionStatus,
@@ -10,9 +10,6 @@ import {
   Application,
   StudentAssessmentStatus,
   NoteType,
-  BatchReassessmentStatus,
-  BatchReassessmentApplication,
-  BatchReassessmentApplicationResult,
 } from "@sims/sims-db";
 import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
@@ -26,7 +23,7 @@ import {
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 } from "@sims/services/constants";
 import { NoteSharedService, RestrictionSharedService } from "@sims/services";
-import { ApplicationService, BatchReassessmentService } from "../../services";
+import { ApplicationService } from "../../services";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { AcceptAssessmentEvaluationResult } from "./student-assessment.models";
 
@@ -41,8 +38,6 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
     private readonly applicationService: ApplicationService,
     private readonly eCertPreValidationService: ECertPreValidationService,
     private readonly restrictionSharedService: RestrictionSharedService,
-    @Inject(BatchReassessmentService)
-    private readonly batchReassessmentService: BatchReassessmentService,
   ) {
     super(dataSource.getRepository(StudentAssessment));
   }
@@ -354,6 +349,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           applicationId,
           { entityManager: transactionalEntityManager },
         );
+
       if (!application) {
         throw new CustomNamedError(
           "Application not found.",
@@ -430,79 +426,5 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       const savedApplication = await applicationRepo.save(applicationToBeSaved);
       return savedApplication.currentAssessment;
     });
-  }
-
-  /**
-   * Runs a batch reassessment for a list of application numbers.
-   * Each application number is processed independently so failures do not stop
-   * the remaining batch items from being attempted.
-   * @param applicationNumbers application numbers to be reassessed.
-   * @param note note describing the reason for the batch reassessment.
-   * @param userId user id who triggered the batch reassessment.
-   */
-  async runBatchReassessment(
-    applicationNumbers: string[],
-    note: string,
-    userId: number,
-  ): Promise<void> {
-    // Only process unique application numbers.
-    const uniqueApplicationNumbers = [...new Set(applicationNumbers)];
-    const applications = await this.dataSource
-      .getRepository(Application)
-      .createQueryBuilder("application")
-      .select(["application.id", "application.applicationNumber"])
-      .where("application.applicationNumber IN (:...applicationNumbers)", {
-        applicationNumbers: uniqueApplicationNumbers,
-      })
-      .andWhere("application.applicationStatus != :editedStatus", {
-        editedStatus: ApplicationStatus.Edited,
-      })
-      .getMany();
-    const applicationIdsByNumber = new Map(
-      applications.map((application) => [
-        application.applicationNumber,
-        application.id,
-      ]),
-    );
-    // Create a new batch reassessment to indicate that the batch is in progress.
-    const batchReassessment =
-      await this.batchReassessmentService.createBatchReassessment(userId);
-
-    for (const applicationNumber of uniqueApplicationNumbers) {
-      const applicationId = applicationIdsByNumber.get(applicationNumber);
-
-      const reassessmentApplication = {
-        application: { id: applicationId },
-        batchReassessment,
-        creator: { id: userId },
-      } as BatchReassessmentApplication;
-      try {
-        // Fail early if the application id doesn't exist.
-        if (!applicationId) {
-          throw new CustomNamedError(
-            "Application not found",
-            APPLICATION_NOT_FOUND,
-          );
-        }
-
-        await this.createManualReassessment(applicationId, note, userId);
-        reassessmentApplication.result =
-          BatchReassessmentApplicationResult.Success;
-      } catch (error) {
-        reassessmentApplication.failureReason =
-          error?.message ?? "Unknown error";
-        reassessmentApplication.result =
-          BatchReassessmentApplicationResult.Failed;
-      }
-      await this.batchReassessmentService.createBatchReassessmentApplication(
-        reassessmentApplication,
-      );
-    }
-    // Update the batch reassessment status when complete.
-    await this.batchReassessmentService.updateBatchReassessment(
-      batchReassessment.id,
-      BatchReassessmentStatus.Completed,
-      userId,
-    );
   }
 }

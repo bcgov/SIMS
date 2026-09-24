@@ -9,5 +9,5 @@ export enum BatchReassessmentApplicationResult {
   /**
    * The application failed manual reassessment processing.
    */
-  Failed = "Failed",
+  Failure = "Failure",
 }

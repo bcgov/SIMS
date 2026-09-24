@@ -5,10 +5,11 @@ import { BatchReassessmentStatus } from "@sims/sims-db";
  */
 export interface BatchReassessmentSummary {
   id: number;
+  batchNumber: number;
   createdAt: Date;
   creatorFirstName: string;
   creatorLastName: string;
   successCount: number;
-  failedCount: number;
+  failureCount: number;
   status: BatchReassessmentStatus;
 }

@@ -8,9 +8,9 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import {
-  Application,
   BatchReassessment,
   BatchReassessmentApplicationResult,
+  StudentAssessment,
 } from ".";
 
 /**
@@ -37,18 +37,27 @@ export class BatchReassessmentApplication extends RecordDataModel {
   })
   batchReassessment: BatchReassessment;
   /**
-   * Application processed for this batch manual reassessment.
+   * Application number submitted for this batch manual reassessment.
    */
-  @ManyToOne(() => Application, {
+  @Column({
+    name: "application_number",
+    type: "varchar",
+    nullable: false,
+  })
+  applicationNumber: string;
+  /**
+   * Assessment created for the application when processing succeeds.
+   */
+  @ManyToOne(() => StudentAssessment, {
     nullable: true,
     eager: false,
     cascade: false,
   })
   @JoinColumn({
-    name: "application_id",
+    name: "student_assessment_id",
     referencedColumnName: ColumnNames.ID,
   })
-  application?: Application;
+  studentAssessment?: StudentAssessment;
   /**
    * Processing result for the application.
    */

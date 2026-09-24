@@ -74,8 +74,8 @@
           :items="batchReassessmentHistory"
           :loading="batchReassessmentHistoryLoading"
         >
-          <template #[`item.batchId`]="{ item }">
-            {{ item.batchId }}
+          <template #[`item.batchNumber`]="{ item }">
+            {{ item.batchNumber }}
           </template>
           <template #[`item.submittedDate`]="{ item }">
             {{ getISODateHourMinuteString(item.createdAt) }}
@@ -84,13 +84,13 @@
             {{ item.creatorFirstName }} {{ item.creatorLastName }}
           </template>
           <template #[`item.totalCount`]="{ item }">
-            {{ item.successCount + item.failedCount }}
+            {{ item.successCount + item.failureCount }}
           </template>
           <template #[`item.successCount`]="{ item }">
             {{ item.successCount }}
           </template>
-          <template #[`item.failedCount`]="{ item }">
-            {{ item.failedCount }}
+          <template #[`item.failureCount`]="{ item }">
+            {{ item.failureCount }}
           </template>
           <template #[`item.status`]="{ item }">
             <status-chip-batch-reassessment :status="item.status" />
@@ -111,12 +111,12 @@ import StatusChipBatchReassessment from "@/components/generic/StatusChipBatchRea
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
-import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import {
   BatchSubmissionResultAPIOutDTO,
   BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS,
 } from "@/services/http/dto";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
+import { BatchReassessmentService } from "@/services/BatchReassessmentService";
 
 const APPLICATION_NUMBER_SIZE = 10;
 
@@ -182,7 +182,7 @@ const submitReassessment = async (
   userNoteModalResult: UserNoteModal<void>,
 ): Promise<boolean> => {
   try {
-    await StudentAssessmentsService.shared.batchReassessment({
+    await BatchReassessmentService.shared.createBatchReassessment({
       applicationNumbers: parseApplicationNumbers(),
       note: userNoteModalResult.note,
     });
@@ -204,7 +204,7 @@ const loadBatchReassessmentHistory = async () => {
   batchReassessmentHistoryLoading.value = true;
   try {
     batchReassessmentHistory.value =
-      await StudentAssessmentsService.shared.getBatchReassessment();
+      await BatchReassessmentService.shared.getBatchReassessment();
   } catch {
     snackBar.error("Unexpected error while loading the reassessment history.");
   } finally {

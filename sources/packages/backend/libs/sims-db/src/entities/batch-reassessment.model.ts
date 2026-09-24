@@ -14,6 +14,15 @@ export class BatchReassessment extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
+   * Sequential batch number displayed to users.
+   */
+  @Column({
+    name: "batch_number",
+    type: "integer",
+    nullable: false,
+  })
+  batchNumber: number;
+  /**
    *Processing status of the batch manual reassessment.
    */
   @Column({
