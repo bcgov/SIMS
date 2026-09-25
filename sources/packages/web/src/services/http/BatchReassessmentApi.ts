@@ -1,7 +1,7 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   BatchReassessmentAPIInDTO,
-  BatchSubmissionResultAPIOutDTO,
+  BatchReassessmentSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -23,8 +23,8 @@ export class BatchReassessmentApi extends HttpBaseClient {
    * Gets batch manual reassessment submissions.
    * @returns batch manual reassessment submissions.
    */
-  async getBatchReassessments(): Promise<BatchSubmissionResultAPIOutDTO[]> {
-    return this.getCall<BatchSubmissionResultAPIOutDTO[]>(
+  async getBatchReassessments(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
+    return this.getCall<BatchReassessmentSummaryAPIOutDTO[]>(
       this.addClientRoot("batch-reassessment"),
     );
   }

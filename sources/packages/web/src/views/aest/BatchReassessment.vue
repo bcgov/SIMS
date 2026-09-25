@@ -25,17 +25,13 @@
           />
 
           <div class="d-flex justify-end mt-4">
-            <check-permission-role :role="Role.AESTBatchReassessment">
-              <template #="{ notAllowed }">
-                <v-btn
-                  color="primary"
-                  :disabled="notAllowed || !applicationNumbers?.trim()"
-                  @click="openConfirmSubmitModal"
-                >
-                  Submit
-                </v-btn>
-              </template>
-            </check-permission-role>
+            <v-btn
+              color="primary"
+              :disabled="!applicationNumbers?.trim()"
+              @click="openConfirmSubmitModal"
+            >
+              Submit
+            </v-btn>
           </div>
         </v-form>
       </content-group>
@@ -84,7 +80,7 @@
             {{ item.creatorFirstName }} {{ item.creatorLastName }}
           </template>
           <template #[`item.totalCount`]="{ item }">
-            {{ item.successCount + item.failureCount }}
+            {{ item.totalCount }}
           </template>
           <template #[`item.successCount`]="{ item }">
             {{ item.successCount }}
@@ -103,16 +99,15 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { ApiProcessError, Role } from "@/types";
+import { ApiProcessError } from "@/types";
 import type { VForm } from "@/types";
 import { BatchReassessmentHistoryHeaders } from "@/types/contracts/DataTableContract";
-import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import StatusChipBatchReassessment from "@/components/generic/StatusChipBatchReassessment.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
 import {
-  BatchSubmissionResultAPIOutDTO,
+  BatchReassessmentSummaryAPIOutDTO,
   BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS,
 } from "@/services/http/dto";
 import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
@@ -124,7 +119,7 @@ const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();
 
 const applicationNumbers = ref("");
-const batchReassessmentHistory = ref<BatchSubmissionResultAPIOutDTO[]>([]);
+const batchReassessmentHistory = ref<BatchReassessmentSummaryAPIOutDTO[]>([]);
 const batchReassessmentHistoryLoading = ref(false);
 const batchReassessmentForm = ref({} as VForm);
 const confirmBatchReassessmentModal = ref(

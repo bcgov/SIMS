@@ -5,6 +5,7 @@ import {
   IsArray,
   IsNotEmpty,
   IsString,
+  Length,
   MaxLength,
 } from "class-validator";
 import { BatchReassessmentStatus } from "../../../services/batch-reassessment/batch-reassessment.service.models";
@@ -22,6 +23,7 @@ export class BatchReassessmentAPIInDTO {
   @ArrayNotEmpty()
   @ArrayMaxSize(BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS)
   @IsString({ each: true })
+  @Length(10, 10, { each: true })
   applicationNumbers: string[];
 
   @IsNotEmpty()

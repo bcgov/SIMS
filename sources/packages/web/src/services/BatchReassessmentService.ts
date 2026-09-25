@@ -1,7 +1,7 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   BatchReassessmentAPIInDTO,
-  BatchSubmissionResultAPIOutDTO,
+  BatchReassessmentSummaryAPIOutDTO,
 } from "@/services/http/dto";
 
 /**
@@ -30,7 +30,7 @@ export class BatchReassessmentService {
    * Gets batch manual reassessment submissions.
    * @returns batch manual reassessment submissions.
    */
-  async getBatchReassessment(): Promise<BatchSubmissionResultAPIOutDTO[]> {
+  async getBatchReassessment(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
     return ApiClient.BatchReassessmentApi.getBatchReassessments();
   }
 }

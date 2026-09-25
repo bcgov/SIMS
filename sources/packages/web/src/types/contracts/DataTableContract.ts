@@ -440,7 +440,6 @@ export const BatchReassessmentHistoryHeaders = [
   { title: "Successful", sortable: false, key: "successCount" },
   { title: "Failed", sortable: false, key: "failureCount" },
   { title: "Status", sortable: false, key: "status" },
-  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

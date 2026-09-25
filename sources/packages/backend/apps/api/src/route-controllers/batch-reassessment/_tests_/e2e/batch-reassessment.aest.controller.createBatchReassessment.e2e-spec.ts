@@ -266,6 +266,56 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     });
   });
 
+  it.only("Should return an error when no application numbers are provided.", async () => {
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      applicationNumbers: [],
+      note: "Batch reassessment test.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(getEndpoint())
+      .auth(token, BEARER_AUTH_TYPE)
+      .send(payload)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: ["applicationNumbers should not be empty"],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it.only("Should return an error when the application number is an invalid length.", async () => {
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      applicationNumbers: ["123"],
+      note: "Batch reassessment test.",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(getEndpoint())
+      .auth(token, BEARER_AUTH_TYPE)
+      .send(payload)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: [
+          "each value in applicationNumbers must be longer than or equal to 10 characters",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
   it(`Should return forbidden when the AEST user does not have the ${Role.AESTBatchReassessment} role.`, async () => {
     // Arrange
     const token = await getAESTToken();
