@@ -60,7 +60,7 @@ export class BatchReassessmentAESTController extends BaseController {
    */
   @Roles(Role.AESTBatchReassessment)
   @Get()
-  async getBatchReassessment(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
-    return await this.batchReassessmentService.getBatchReassessmentSummary();
+  async getBatchReassessments(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
+    return await this.batchReassessmentService.getBatchReassessmentSummaries();
   }
 }

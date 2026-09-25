@@ -18,9 +18,8 @@ import {
 import { Role } from "../../../../auth";
 import { StudentAssessmentStatus, User } from "@sims/sims-db";
 import { BatchReassessmentStatus } from "../../../../services/batch-reassessment/batch-reassessment.service.models";
-import { addDays } from "@sims/utilities";
 
-describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
+describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let auditUser: User;
@@ -42,13 +41,13 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
     // Arrange
     const now = new Date();
 
-    // Batch has 1 success (Completed assessment) and 1 failure ("Application not found").
-    const application = await saveFakeApplication(db.dataSource, {}, {});
+    // Batch has 1 success (Completed assessment) and 1 failure (Application not found).
+    const application = await saveFakeApplication(db.dataSource);
     const batch = createFakeBatchReassessment(
       { creator: auditUser },
       {
         initialValue: {
-          createdAt: addDays(-1, now),
+          createdAt: now,
         },
       },
     );
@@ -64,7 +63,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
     );
     await db.studentAssessment.save(reassessment);
 
-    const batch1App1 = createFakeBatchReassessmentApplication(
+    const batchApplication1 = createFakeBatchReassessmentApplication(
       {
         batchReassessment: batch,
         applicationNumber: application.applicationNumber,
@@ -73,9 +72,9 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       },
       {},
     );
-    await db.batchReassessmentApplication.save(batch1App1);
+    await db.batchReassessmentApplication.save(batchApplication1);
 
-    const batch1App2 = createFakeBatchReassessmentApplication(
+    const batchApplication2 = createFakeBatchReassessmentApplication(
       {
         batchReassessment: batch,
         applicationNumber: "1234567890",
@@ -83,7 +82,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       },
       {},
     );
-    await db.batchReassessmentApplication.save(batch1App2);
+    await db.batchReassessmentApplication.save(batchApplication2);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -113,7 +112,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
     // Arrange
     const now = new Date();
 
-    // Batch has 1 pending (Assessment in progress) and 1 failure (Archived application).
+    // Batch has 1 pending (Assessment submitted) and 1 failure (Archived application).
     const batch = createFakeBatchReassessment(
       { creator: auditUser },
       {
@@ -124,22 +123,14 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
     );
     await db.batchReassessment.save(batch);
 
-    const application = await saveFakeApplication(
-      db.dataSource,
-      {},
-      { initialValues: {} },
-    );
-    const reassessment = createFakeStudentAssessment(
-      { auditUser, application },
-      {
-        initialValue: {
-          studentAssessmentStatus: StudentAssessmentStatus.InProgress,
-        },
-      },
-    );
+    const application = await saveFakeApplication(db.dataSource);
+    const reassessment = createFakeStudentAssessment({
+      auditUser,
+      application,
+    });
     await db.studentAssessment.save(reassessment);
 
-    const batch2App1 = createFakeBatchReassessmentApplication(
+    const batchApplication1 = createFakeBatchReassessmentApplication(
       {
         batchReassessment: batch,
         applicationNumber: application.applicationNumber,
@@ -148,14 +139,14 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       },
       {},
     );
-    await db.batchReassessmentApplication.save(batch2App1);
+    await db.batchReassessmentApplication.save(batchApplication1);
 
     const archivedApplication = await saveFakeApplication(
       db.dataSource,
       {},
       { initialValues: { isArchived: true } },
     );
-    const batch2App2 = createFakeBatchReassessmentApplication(
+    const batchApplication2 = createFakeBatchReassessmentApplication(
       {
         batchReassessment: batch,
         applicationNumber: archivedApplication.applicationNumber,
@@ -163,7 +154,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       },
       {},
     );
-    await db.batchReassessmentApplication.save(batch2App2);
+    await db.batchReassessmentApplication.save(batchApplication2);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 

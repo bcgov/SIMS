@@ -222,7 +222,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
-
+    // Associated original asesssment is 'Submitted'.
     const application = await saveFakeApplication(db.dataSource);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -266,7 +266,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     });
   });
 
-  it.only("Should return an error when no application numbers are provided.", async () => {
+  it("Should return an error when no application numbers are provided.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -290,7 +290,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
       });
   });
 
-  it.only("Should return an error when the application number is an invalid length.", async () => {
+  it("Should return an error when the application number is an invalid length.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);

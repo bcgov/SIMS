@@ -37,7 +37,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
    * Gets persisted batch manual reassessment submissions and their application results.
    * @returns batch manual reassessment submissions.
    */
-  async getBatchReassessmentSummary(): Promise<BatchReassessmentSummary[]> {
+  async getBatchReassessmentSummaries(): Promise<BatchReassessmentSummary[]> {
     const rows = await this.repo
       .createQueryBuilder("batchReassessment")
       .select([
@@ -97,85 +97,101 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
     note: string,
     userId: number,
   ): Promise<BatchReassessment> {
-    // Only process unique application numbers.
-    const uniqueApplicationNumbers = [...new Set(applicationNumbers)];
+    // Only process distinct application numbers.
+    const distinctApplicationNumbers = [...new Set(applicationNumbers)];
+    const applicationIdsByNumber = await this.getApplicationIdsByNumber(
+      distinctApplicationNumbers,
+    );
+
+    let savedBatchReassessment: BatchReassessment;
+    return this.dataSource.transaction(async (entityManager) => {
+      // Consumes the next sequence number and blocks concurrent creation of a BatchReassessment
+      // while the sequence is locked. All the code in the callback will be executed within the
+      // transaction and under the sequence lock.
+      await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
+        BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME,
+        entityManager,
+        async (nextSequenceNumber: number) => {
+          const now = new Date();
+          const creator = { id: userId } as User;
+          // Create a new batch reassessment to indicate that the batch is in progress.
+          const batchReassessment = new BatchReassessment();
+          batchReassessment.batchNumber = nextSequenceNumber;
+          batchReassessment.creator = creator;
+          batchReassessment.createdAt = now;
+          batchReassessment.updatedAt = now;
+          savedBatchReassessment = await entityManager
+            .getRepository(BatchReassessment)
+            .save(batchReassessment);
+
+          for (const applicationNumber of distinctApplicationNumbers) {
+            const applicationId = applicationIdsByNumber.get(applicationNumber);
+            const batchReassessmentApplication =
+              new BatchReassessmentApplication();
+            // Always persist the applicationNumber for convenience, even though it can be determined
+            // from the assessment for successful applications.
+            batchReassessmentApplication.applicationNumber = applicationNumber;
+            batchReassessmentApplication.batchReassessment =
+              savedBatchReassessment;
+            batchReassessmentApplication.creator = creator;
+            batchReassessmentApplication.createdAt = now;
+            batchReassessmentApplication.updatedAt = now;
+
+            try {
+              // Fail early if the application id doesn't exist as createManualReassessment doesn't handle undefined gracefully.
+              if (!applicationId) {
+                throw new CustomNamedError(
+                  "Application not found",
+                  APPLICATION_NOT_FOUND,
+                );
+              }
+              const studentAssessment =
+                await this.studentAssessmentService.createManualReassessment(
+                  applicationId,
+                  note,
+                  userId,
+                  entityManager,
+                );
+              batchReassessmentApplication.studentAssessment =
+                studentAssessment;
+            } catch (error) {
+              batchReassessmentApplication.failureReason =
+                error?.message ?? "Unknown error";
+            }
+            await entityManager
+              .getRepository(BatchReassessmentApplication)
+              .save(batchReassessmentApplication);
+          }
+        },
+      );
+      return savedBatchReassessment;
+    });
+  }
+
+  /**
+   * Retrieves the application IDs for the given application numbers.
+   * @param applicationNumbers The list of application numbers to retrieve IDs for.
+   * @returns A map where the keys are application numbers and the values are the corresponding application IDs.
+   */
+  private async getApplicationIdsByNumber(
+    applicationNumbers: string[],
+  ): Promise<Map<string, number>> {
     const applications = await this.dataSource
       .getRepository(Application)
       .createQueryBuilder("application")
       .select(["application.id", "application.applicationNumber"])
       .where("application.applicationNumber IN (:...applicationNumbers)", {
-        applicationNumbers: uniqueApplicationNumbers,
+        applicationNumbers: applicationNumbers,
       })
       .andWhere("application.applicationStatus != :editedStatus", {
         editedStatus: ApplicationStatus.Edited,
       })
       .getMany();
-    const applicationIdsByNumber = new Map(
+    return new Map(
       applications.map((application) => [
         application.applicationNumber,
         application.id,
       ]),
     );
-
-    return this.dataSource.transaction(async (entityManager) => {
-      let newBatchUniqueSequence: number;
-      // Consumes the next sequence number and prevents concurrent access.
-      // TODO Run all code in the process callback to ensure transactional integrity.
-      await this.sequenceService.consumeNextSequenceWithExistingEntityManager(
-        BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME,
-        entityManager,
-        async (nextSequenceNumber: number) => {
-          newBatchUniqueSequence = nextSequenceNumber;
-        },
-      );
-      const now = new Date();
-      const creator = { id: userId } as User;
-      // Create a new batch reassessment to indicate that the batch is in progress.
-      const batchReassessment = new BatchReassessment();
-      batchReassessment.batchNumber = newBatchUniqueSequence;
-      batchReassessment.creator = creator;
-      batchReassessment.createdAt = now;
-      batchReassessment.updatedAt = now;
-      const savedBatchReassessment = await entityManager
-        .getRepository(BatchReassessment)
-        .save(batchReassessment);
-
-      for (const applicationNumber of uniqueApplicationNumbers) {
-        const applicationId = applicationIdsByNumber.get(applicationNumber);
-        const batchReassessmentApplication = new BatchReassessmentApplication();
-        // Always persist the applicationNumber for convenience, even though it can be determined
-        // from the assessment for successful applications.
-        batchReassessmentApplication.applicationNumber = applicationNumber;
-        batchReassessmentApplication.batchReassessment = savedBatchReassessment;
-        batchReassessmentApplication.creator = creator;
-        batchReassessmentApplication.createdAt = now;
-        batchReassessmentApplication.updatedAt = now;
-
-        try {
-          // Fail early if the application id doesn't exist as createManualReassessment doesn't handle undefined gracefully.
-          if (!applicationId) {
-            throw new CustomNamedError(
-              "Application not found",
-              APPLICATION_NOT_FOUND,
-            );
-          }
-          // TODO We need the ability to pass in the current entityManager.
-          const studentAssessment =
-            await this.studentAssessmentService.createManualReassessment(
-              applicationId,
-              note,
-              userId,
-            );
-          batchReassessmentApplication.studentAssessment = studentAssessment;
-        } catch (error) {
-          batchReassessmentApplication.failureReason =
-            error?.message ?? "Unknown error";
-        }
-        await entityManager
-          .getRepository(BatchReassessmentApplication)
-          .save(batchReassessmentApplication);
-      }
-      return savedBatchReassessment;
-    }); // End of transaction
   }
 }

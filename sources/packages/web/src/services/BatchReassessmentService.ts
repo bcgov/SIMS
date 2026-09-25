@@ -30,7 +30,7 @@ export class BatchReassessmentService {
    * Gets batch manual reassessment submissions.
    * @returns batch manual reassessment submissions.
    */
-  async getBatchReassessment(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
+  async getBatchReassessments(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
     return ApiClient.BatchReassessmentApi.getBatchReassessments();
   }
 }

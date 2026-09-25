@@ -199,7 +199,7 @@ const loadBatchReassessmentHistory = async () => {
   batchReassessmentHistoryLoading.value = true;
   try {
     batchReassessmentHistory.value =
-      await BatchReassessmentService.shared.getBatchReassessment();
+      await BatchReassessmentService.shared.getBatchReassessments();
   } catch {
     snackBar.error("Unexpected error while loading the reassessment history.");
   } finally {
