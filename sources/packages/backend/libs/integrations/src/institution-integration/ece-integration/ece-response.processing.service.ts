@@ -91,12 +91,13 @@ export class ECEResponseProcessingService {
     const filesByInstitutions = this.groupFilesByInstitutionCode(filePaths);
 
     // Process all the files in parallel.
-    const result = await processInParallel(
+    const results = await processInParallel(
       ([institutionCode, filePaths]) =>
         this.processInstitutionFiles(institutionCode, filePaths),
       [...filesByInstitutions],
     );
-    return result;
+    // Flatten the institution level process summary results into the expected response.
+    return results.flat();
   }
 
   /**
@@ -132,32 +133,35 @@ export class ECEResponseProcessingService {
   private async processInstitutionFiles(
     institutionCode: string,
     remoteFilePaths: string[],
-  ): Promise<ProcessSummaryResult> {
-    const processSummary = new ProcessSummaryResult();
-    // Log the files to be processed for the institution.
-    processSummary.summary.push(
-      `Processing file(s) for institution code: ${institutionCode}, files: ${remoteFilePaths.map((filePath) => basename(filePath)).join(", ")}.`,
-    );
+  ): Promise<ProcessSummaryResult[]> {
     const integrationLocation =
       await this.institutionLocationService.getIntegrationLocation(
         institutionCode,
       );
+    const processSummary = new ProcessSummaryResult();
     //If the file does not have integration location hasIntegration flag set to true, skip the file.
     if (!integrationLocation) {
       processSummary.warnings.push(
         `Integration location not found for institution code: ${institutionCode}.`,
       );
-      return processSummary;
+      return [processSummary];
     }
+    const processSummaries = [];
     // Process each file for the institution sequentially.
     for (const filePath of remoteFilePaths) {
+      const processSummary = new ProcessSummaryResult();
+      // Log the files to be processed for the institution.
+      processSummary.summary.push(
+        `Processing file for institution code: ${institutionCode}, file: ${basename(filePath)}.`,
+      );
       await this.processDisbursementsInECEResponseFile(
         integrationLocation,
         filePath,
         processSummary,
       );
+      processSummaries.push(processSummary);
     }
-    return processSummary;
+    return processSummaries;
   }
 
   /**
