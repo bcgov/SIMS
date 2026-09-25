@@ -35,6 +35,7 @@ import {
   ECertCancellationResponseIntegrationScheduler,
   T4AUploadEnqueuerScheduler,
   T4AUploadProcessor,
+  ReturnedLoansResponseIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -203,6 +204,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     ECertCancellationResponseIntegrationScheduler,
     T4AUploadEnqueuerScheduler,
     T4AUploadProcessor,
+    ReturnedLoansResponseIntegrationScheduler,
   ],
   controllers: [HealthController, MetricsController],
 })
