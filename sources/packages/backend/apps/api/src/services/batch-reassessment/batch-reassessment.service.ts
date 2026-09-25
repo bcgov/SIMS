@@ -52,7 +52,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
         "totalCount",
       )
       .addSelect(
-        `COUNT(CASE WHEN "studentAssessment"."student_assessment_status" = :completedStatus THEN 1 END)::int`,
+        `COUNT(CASE WHEN "studentAssessment"."student_assessment_status" = :completedStatus OR "studentAssessment"."student_assessment_status" = :cancelledStatus THEN 1 END)::int`,
         "successCount",
       )
       .addSelect(
@@ -69,6 +69,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
       )
       .leftJoin("batchReassessment.creator", "creator")
       .setParameter("completedStatus", StudentAssessmentStatus.Completed)
+      .setParameter("cancelledStatus", StudentAssessmentStatus.Cancelled)
       .groupBy("batchReassessment.id")
       .addGroupBy("creator.id")
       .orderBy("batchReassessment.createdAt", "DESC")

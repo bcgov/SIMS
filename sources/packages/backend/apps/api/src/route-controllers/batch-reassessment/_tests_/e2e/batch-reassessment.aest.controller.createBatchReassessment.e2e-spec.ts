@@ -222,7 +222,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
-    // Associated original asesssment is 'Submitted'.
+    // Associated original asessment is 'Submitted'.
     const application = await saveFakeApplication(db.dataSource);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);

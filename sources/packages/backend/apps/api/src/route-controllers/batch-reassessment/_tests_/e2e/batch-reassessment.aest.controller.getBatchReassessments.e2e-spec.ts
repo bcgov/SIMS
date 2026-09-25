@@ -16,7 +16,11 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { Role } from "../../../../auth";
-import { StudentAssessmentStatus, User } from "@sims/sims-db";
+import {
+  ApplicationStatus,
+  StudentAssessmentStatus,
+  User,
+} from "@sims/sims-db";
 import { BatchReassessmentStatus } from "../../../../services/batch-reassessment/batch-reassessment.service.models";
 
 describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
@@ -37,7 +41,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     await db.batchReassessment.deleteAll();
   });
 
-  it("Should return a Completed batch reassessment when requested by an authorized AEST user.", async () => {
+  it("Should return a Completed batch reassessment with correct counts when one application succeeds and one fails.", async () => {
     // Arrange
     const now = new Date();
 
@@ -108,7 +112,78 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
       );
   });
 
-  it("Should return an In progress batch reassessment when requested by an authorized AEST user.", async () => {
+  it("Should return a Completed batch reassessment with correct counts when the assessment was cancelled.", async () => {
+    // Arrange
+    const now = new Date();
+
+    // Batch has an application with an assessment that was subsequently Cancelled.
+    // We need to ensure that it is counted as a Success since the assessment ran to completion.
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {},
+      {
+        applicationStatus: ApplicationStatus.Cancelled,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      },
+    );
+    const batch = createFakeBatchReassessment(
+      { creator: auditUser },
+      {
+        initialValue: {
+          createdAt: now,
+        },
+      },
+    );
+    await db.batchReassessment.save(batch);
+
+    const reassessment = createFakeStudentAssessment(
+      { auditUser, application },
+      {
+        initialValue: {
+          studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
+        },
+      },
+    );
+    await db.studentAssessment.save(reassessment);
+
+    const batchApplication1 = createFakeBatchReassessmentApplication(
+      {
+        batchReassessment: batch,
+        applicationNumber: application.applicationNumber,
+        studentAssessment: reassessment,
+        creator: auditUser,
+      },
+      {},
+    );
+    await db.batchReassessmentApplication.save(batchApplication1);
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(getEndpoint())
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: batch.id,
+            batchNumber: batch.batchNumber,
+            createdAt: batch.createdAt.toISOString(),
+            creatorFirstName: batch.creator.firstName,
+            creatorLastName: batch.creator.lastName,
+            failureCount: 0,
+            successCount: 1,
+            totalCount: 1,
+            status: BatchReassessmentStatus.Completed,
+          },
+        ]),
+      );
+  });
+
+  it("Should return an In progress batch reassessment when one application is pending and one fails.", async () => {
     // Arrange
     const now = new Date();
 
