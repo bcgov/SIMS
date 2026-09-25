@@ -6,7 +6,6 @@ import VerticalLayoutRenderer from "./VerticalLayoutRenderer.vue";
 import GroupLayoutRenderer from "./GroupLayoutRenderer.vue";
 import FieldOfStudyCodeRenderer from "./FieldOfStudyCodeRenderer.vue";
 import CheckboxOptionsGroupRenderer from "./CheckboxOptionsGroupRenderer.vue";
-import AviationCredentialsOptionsRenderer from "./AviationCredentialsOptionsRenderer.vue";
 import OneOfRadioOptionsRenderer from "./OneOfRadioOptionsRenderer.vue";
 import OneOfSelectRenderer from "./OneOfSelectRenderer.vue";
 import BannerRenderer from "./BannerRenderer.vue";
@@ -19,7 +18,6 @@ import {
   groupLayoutTester,
   fieldOfStudyCodeTester,
   checkboxOptionsGroupTester,
-  aviationCredentialsOptionsTester,
   oneOfRadioTester,
   oneOfSelectTester,
   bannerTester,
@@ -55,10 +53,6 @@ export const programFormRenderers: JsonFormsRendererRegistryEntry[] = [
   {
     renderer: markRaw(CheckboxOptionsGroupRenderer),
     tester: checkboxOptionsGroupTester,
-  },
-  {
-    renderer: markRaw(AviationCredentialsOptionsRenderer),
-    tester: aviationCredentialsOptionsTester,
   },
   { renderer: markRaw(OneOfRadioOptionsRenderer), tester: oneOfRadioTester },
   { renderer: markRaw(OneOfSelectRenderer), tester: oneOfSelectTester },

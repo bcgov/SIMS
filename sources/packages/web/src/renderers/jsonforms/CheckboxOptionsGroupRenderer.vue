@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { rendererProps, useJsonFormsMultiEnumControl } from "@jsonforms/vue";
-import type { ControlElement } from "@jsonforms/core";
+import {
+  rendererProps,
+  useDispatch,
+  useJsonFormsMultiEnumControl,
+} from "@jsonforms/vue";
+import { update, type ControlElement } from "@jsonforms/core";
 import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 const { control, addItem, removeItem } = useJsonFormsMultiEnumControl(props);
@@ -14,6 +19,16 @@ const items = computed(() =>
     title: option.label,
     value: option.value,
   })),
+);
+
+// useJsonFormsMultiEnumControl only exposes addItem/removeItem (single-value
+// dispatches), not a whole-array handleChange, so build one the same way
+// mapDispatchToControlProps does to clear the full selection when hidden.
+const dispatch = useDispatch();
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  (path, value) => dispatch(update(path, () => value)),
 );
 
 // CheckboxOptionsGroup's v-model manages the whole selected array natively

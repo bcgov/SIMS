@@ -57,24 +57,7 @@ export const fieldOfStudyCodeTester = rankWith(
  */
 export const checkboxOptionsGroupTester = rankWith(
   10,
-  and(
-    uiTypeIs("Control"),
-    schemaMatches((schema) => {
-      if (schema.type !== "array" || !schema.items) {
-        return false;
-      }
-      const itemsSchema = schema.items as { enum?: unknown; oneOf?: unknown };
-      return !!itemsSchema.enum || !!itemsSchema.oneOf;
-    }),
-  ),
-);
-
-export const aviationCredentialsOptionsTester = rankWith(
-  10,
-  and(
-    uiTypeIs("Control"),
-    schemaMatches((schema) => schema.format === "aviationCredentials"),
-  ),
+  and(uiTypeIs("Control"), optionIs("component", "checkboxOptionsGroup")),
 );
 
 /**
