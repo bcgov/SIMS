@@ -13,9 +13,10 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   BatchReassessmentAPIInDTO,
-  BatchSubmissionResultAPIOutDTO,
+  BatchReassessmentSummaryAPIOutDTO,
 } from "./models/batch-reassessment.dto";
 import { BatchReassessmentService } from "../../services";
+import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.
@@ -43,12 +44,14 @@ export class BatchReassessmentAESTController extends BaseController {
   async createBatchReassessment(
     @Body() payload: BatchReassessmentAPIInDTO,
     @UserToken() userToken: IUserToken,
-  ): Promise<void> {
-    await this.batchReassessmentService.createBatchReassessment(
-      payload.applicationNumbers,
-      payload.note,
-      userToken.userId,
-    );
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const batchReassessment =
+      await this.batchReassessmentService.createBatchReassessment(
+        payload.applicationNumbers,
+        payload.note,
+        userToken.userId,
+      );
+    return { id: batchReassessment.id };
   }
 
   /**
@@ -57,21 +60,7 @@ export class BatchReassessmentAESTController extends BaseController {
    */
   @Roles(Role.AESTBatchReassessment)
   @Get()
-  async getBatchReassessment(): Promise<BatchSubmissionResultAPIOutDTO[]> {
-    const batches =
-      await this.batchReassessmentService.getBatchReassessmentSummary();
-    return batches.map((batch) => {
-      return {
-        batchId: batch.id,
-        batchNumber: batch.batchNumber,
-        createdAt: batch.createdAt,
-        creatorFirstName: batch.creatorFirstName,
-        creatorLastName: batch.creatorLastName,
-        totalCount: batch.totalCount,
-        successCount: batch.successCount,
-        failureCount: batch.failureCount,
-        status: batch.status,
-      };
-    });
+  async getBatchReassessment(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
+    return await this.batchReassessmentService.getBatchReassessmentSummary();
   }
 }

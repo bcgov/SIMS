@@ -95,7 +95,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       .expect(({ body }) =>
         expect(body).toEqual([
           {
-            batchId: batch.id,
+            id: batch.id,
             batchNumber: batch.batchNumber,
             createdAt: batch.createdAt.toISOString(),
             creatorFirstName: batch.creator.firstName,
@@ -175,7 +175,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessment", () => {
       .expect(({ body }) =>
         expect(body).toEqual([
           {
-            batchId: batch.id,
+            id: batch.id,
             batchNumber: batch.batchNumber,
             createdAt: batch.createdAt.toISOString(),
             creatorFirstName: batch.creator.firstName,

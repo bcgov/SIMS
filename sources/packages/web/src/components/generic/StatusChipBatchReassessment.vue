@@ -3,19 +3,19 @@
 </template>
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
-import { BatchSubmissionResultStatus } from "@/services/http/dto";
+import { BatchReassessmentStatus } from "@/services/http/dto";
 import { StatusChipTypes } from "@/types";
 
 export default defineComponent({
   props: {
     status: {
-      type: String as PropType<BatchSubmissionResultStatus>,
+      type: String as PropType<BatchReassessmentStatus>,
       required: true,
     },
   },
   setup(props) {
     const chipStatus = computed(() => {
-      return props.status === BatchSubmissionResultStatus.Completed
+      return props.status === BatchReassessmentStatus.Completed
         ? StatusChipTypes.Success
         : StatusChipTypes.Warning;
     });

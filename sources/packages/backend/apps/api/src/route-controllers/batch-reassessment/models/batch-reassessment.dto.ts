@@ -33,8 +33,8 @@ export class BatchReassessmentAPIInDTO {
  * Summary of a batch manual reassessment submission, including how many
  * applications were successfully reassessed and how many failed.
  */
-export class BatchSubmissionResultAPIOutDTO {
-  batchId: number;
+export class BatchReassessmentSummaryAPIOutDTO {
+  id: number;
   batchNumber: number;
   createdAt: Date;
   creatorFirstName: string;

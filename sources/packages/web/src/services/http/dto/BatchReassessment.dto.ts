@@ -11,7 +11,7 @@ export interface BatchReassessmentAPIInDTO {
 /**
  * Overall processing status of a batch manual reassessment submission.
  */
-export enum BatchSubmissionResultStatus {
+export enum BatchReassessmentStatus {
   Completed = "Completed",
   InProgress = "In progress",
 }
@@ -20,8 +20,8 @@ export enum BatchSubmissionResultStatus {
  * Summary of a batch manual reassessment submission, including how many
  * applications were successfully reassessed and how many failed.
  */
-export interface BatchSubmissionResultAPIOutDTO {
-  batchId: number;
+export interface BatchReassessmentSummaryAPIOutDTO {
+  id: number;
   batchNumber: number;
   createdAt: Date;
   creatorFirstName: string;
@@ -29,5 +29,5 @@ export interface BatchSubmissionResultAPIOutDTO {
   totalCount: number;
   successCount: number;
   failureCount: number;
-  status: BatchSubmissionResultStatus;
+  status: BatchReassessmentStatus;
 }

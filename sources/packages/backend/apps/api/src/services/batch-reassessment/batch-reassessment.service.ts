@@ -96,7 +96,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
     applicationNumbers: string[],
     note: string,
     userId: number,
-  ): Promise<void> {
+  ): Promise<BatchReassessment> {
     // Only process unique application numbers.
     const uniqueApplicationNumbers = [...new Set(applicationNumbers)];
     const applications = await this.dataSource
@@ -128,12 +128,14 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
           newBatchUniqueSequence = nextSequenceNumber;
         },
       );
+      const now = new Date();
       const creator = { id: userId } as User;
       // Create a new batch reassessment to indicate that the batch is in progress.
       const batchReassessment = new BatchReassessment();
       batchReassessment.batchNumber = newBatchUniqueSequence;
       batchReassessment.creator = creator;
-      batchReassessment.createdAt = new Date();
+      batchReassessment.createdAt = now;
+      batchReassessment.updatedAt = now;
       const savedBatchReassessment = await entityManager
         .getRepository(BatchReassessment)
         .save(batchReassessment);
@@ -146,6 +148,8 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
         batchReassessmentApplication.applicationNumber = applicationNumber;
         batchReassessmentApplication.batchReassessment = savedBatchReassessment;
         batchReassessmentApplication.creator = creator;
+        batchReassessmentApplication.createdAt = now;
+        batchReassessmentApplication.updatedAt = now;
 
         try {
           // Fail early if the application id doesn't exist as createManualReassessment doesn't handle undefined gracefully.
@@ -171,6 +175,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
           .getRepository(BatchReassessmentApplication)
           .save(batchReassessmentApplication);
       }
+      return savedBatchReassessment;
     }); // End of transaction
   }
 }
