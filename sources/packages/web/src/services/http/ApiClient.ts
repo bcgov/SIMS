@@ -38,6 +38,7 @@ import { SystemLookupConfigurationApi } from "@/services/http/SystemLookupConfig
 import { FormSubmissionApi } from "@/services/http/FormSubmissionApi";
 import { MSFAANumberApi } from "@/services/http/MSFAANumberApi";
 import { DisabilityProfileApi } from "@/services/http/DisabilityProfileApi";
+import { BatchReassessmentApi } from "@/services/http/BatchReassessmentApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -81,6 +82,7 @@ const ApiClient = {
   FormSubmissionApi: new FormSubmissionApi(),
   MSFAANumberApi: new MSFAANumberApi(),
   DisabilityProfileApi: new DisabilityProfileApi(),
+  BatchReassessmentApi: new BatchReassessmentApi(),
 };
 
 export default ApiClient;

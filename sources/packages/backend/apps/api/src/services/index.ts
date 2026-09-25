@@ -49,6 +49,7 @@ export * from "./disbursement-schedule/disbursement-schedule.models";
 export * from "./designation-agreement/designation-agreement.service";
 export * from "./sin-validation/sin-validation.service";
 export * from "./designation-agreement/designation-agreement-locations.service";
+export * from "./batch-reassessment/batch-reassessment.service";
 export * from "./student-assessment/student-assessment.service";
 export * from "./student-assessment/student-assessment.constants";
 export * from "./student-scholastic-standings/student-scholastic-standings.service";

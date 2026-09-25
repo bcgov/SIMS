@@ -29,6 +29,7 @@ import StudentNotes from "@/views/aest/student/StudentNotes.vue";
 import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
 import Reports from "@/views/aest/Reports.vue";
+import BatchReassessment from "@/views/aest/BatchReassessment.vue";
 import FormioEditor from "@/views/aest/FormioEditor.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import CASInvoices from "@/views/aest/CASInvoices.vue";
@@ -782,6 +783,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         name: AESTRoutesConst.REPORTS,
         components: {
           default: Reports,
+          sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.BatchReassessment,
+        name: AESTRoutesConst.BATCH_REASSESSMENT,
+        components: {
+          default: BatchReassessment,
           sidebar: AESTHomeSideBar,
         },
         meta: {
