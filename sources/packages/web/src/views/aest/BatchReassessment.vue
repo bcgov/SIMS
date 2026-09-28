@@ -19,7 +19,7 @@
             :rules="[checkApplicationNumbers]"
             label="Paste your applications here"
             variant="outlined"
-            rows="8"
+            max-rows="20"
             auto-grow
             hide-details="auto"
           />
