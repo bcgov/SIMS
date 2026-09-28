@@ -1,7 +1,7 @@
 CREATE TABLE sims.batch_reassessment_applications (
     id SERIAL PRIMARY KEY,
     batch_reassessment_id INT NOT NULL REFERENCES sims.batch_reassessments(id),
-    application_number VARCHAR(10) NOT NULL,
+    application_number CHAR(10) NOT NULL,
     student_assessment_id INT REFERENCES sims.student_assessments(id),
     failure_reason TEXT,
     -- Audit columns
@@ -12,7 +12,7 @@ CREATE TABLE sims.batch_reassessment_applications (
 );
 
 -- ## Comments
-COMMENT ON TABLE sims.batch_reassessment_applications IS 'Processing result for one application included in a batch manual reassessment.';
+COMMENT ON TABLE sims.batch_reassessment_applications IS 'Details of an application included in a batch manual reassessment.';
 
 COMMENT ON COLUMN sims.batch_reassessment_applications.id IS 'Auto-generated sequential primary key column.';
 

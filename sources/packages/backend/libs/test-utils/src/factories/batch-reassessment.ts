@@ -6,7 +6,7 @@ import { faker } from "@faker-js/faker";
  * @param relations optional relations.
  * - `creator` user that created the batch reassessment.
  * @param options initial values for the batch reassessment.
- * - `initialValue` values that override the default batch reassessment values.
+ * - `initialValues` values that override the default batch reassessment values.
  * @returns a new batch reassessment to be saved to the database.
  */
 export function createFakeBatchReassessment(
@@ -14,13 +14,13 @@ export function createFakeBatchReassessment(
     creator?: User;
   },
   options?: {
-    initialValue?: Partial<BatchReassessment>;
+    initialValues?: Partial<BatchReassessment>;
   },
 ): BatchReassessment {
   const batchReassessment = new BatchReassessment();
   batchReassessment.batchNumber =
-    options?.initialValue?.batchNumber ?? faker.number.int(1000);
+    options?.initialValues?.batchNumber ?? faker.number.int(1000);
   batchReassessment.creator = relations?.creator;
-  batchReassessment.createdAt = options?.initialValue?.createdAt ?? new Date();
+  batchReassessment.createdAt = options?.initialValues?.createdAt ?? new Date();
   return batchReassessment;
 }

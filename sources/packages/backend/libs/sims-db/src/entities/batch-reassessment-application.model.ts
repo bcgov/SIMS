@@ -10,7 +10,7 @@ import { RecordDataModel } from "./record.model";
 import { BatchReassessment, StudentAssessment } from ".";
 
 /**
- * Processing result for one application included in a batch manual reassessment.
+ * Details of an application included in a batch manual reassessment.
  */
 @Entity({ name: TableNames.BatchReassessmentApplications })
 export class BatchReassessmentApplication extends RecordDataModel {

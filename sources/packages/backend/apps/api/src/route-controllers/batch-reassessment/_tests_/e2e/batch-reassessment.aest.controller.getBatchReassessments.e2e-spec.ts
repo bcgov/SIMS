@@ -50,7 +50,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     const batch = createFakeBatchReassessment(
       { creator: auditUser },
       {
-        initialValue: {
+        initialValues: {
           createdAt: now,
         },
       },
@@ -84,7 +84,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
         applicationNumber: "1234567890",
         creator: auditUser,
       },
-      {},
+      { initialValues: { failureReason: "Application not found" } },
     );
     await db.batchReassessmentApplication.save(batchApplication2);
 
@@ -131,7 +131,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     const batch = createFakeBatchReassessment(
       { creator: auditUser },
       {
-        initialValue: {
+        initialValues: {
           createdAt: now,
         },
       },
@@ -191,7 +191,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     const batch = createFakeBatchReassessment(
       { creator: auditUser },
       {
-        initialValue: {
+        initialValues: {
           createdAt: now,
         },
       },
@@ -227,7 +227,12 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
         applicationNumber: archivedApplication.applicationNumber,
         creator: auditUser,
       },
-      {},
+      {
+        initialValues: {
+          failureReason:
+            "Application cannot have manual reassessment after being archived.",
+        },
+      },
     );
     await db.batchReassessmentApplication.save(batchApplication2);
 

@@ -34,7 +34,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
   }
 
   /**
-   * Gets persisted batch manual reassessment submissions and their application results.
+   * Gets persisted batch manual reassessment submissions and their associated applications.
    * @returns batch manual reassessment submissions.
    */
   async getBatchReassessmentSummaries(): Promise<BatchReassessmentSummary[]> {
@@ -115,7 +115,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
         async (nextSequenceNumber: number) => {
           const now = new Date();
           const creator = { id: userId } as User;
-          // Create a new batch reassessment to indicate that the batch is in progress.
+          // Create a new batch reassessment.
           const batchReassessment = new BatchReassessment();
           batchReassessment.batchNumber = nextSequenceNumber;
           batchReassessment.creator = creator;
@@ -170,7 +170,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
   }
 
   /**
-   * Retrieves the application Ids for the current application for the given application numbers.
+   * Retrieves the application Ids of the current application for the given application numbers.
    * @param applicationNumbers The list of application numbers to retrieve IDs for.
    * @returns A map where the keys are application numbers and the values are the corresponding application IDs.
    */

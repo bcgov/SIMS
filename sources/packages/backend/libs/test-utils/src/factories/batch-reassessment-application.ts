@@ -6,14 +6,14 @@ import {
 } from "@sims/sims-db";
 
 /**
- * Creates a fake application result for a batch manual reassessment.
- * @param relations required and optional relations for the result.
- * - `batchReassessment` batch that includes the application result.
+ * Creates a fake batch reassessment application for a batch manual reassessment.
+ * @param relations required and optional relations for the application.
+ * - `batchReassessment` batch that includes the application.
  * - `applicationNumber` application number submitted for the batch.
  * - `studentAssessment` assessment created for the application, when available.
- * - `creator` user that created the result.
- * @param options initial values for the application result.
- * - `initialValue` values that override the default result values.
+ * - `creator` user that created the application.
+ * @param options initial values for the application.
+ * - `initialValues` values that override the default values.
  * @returns a new batch reassessment application to be saved to the database.
  */
 export function createFakeBatchReassessmentApplication(
@@ -24,7 +24,7 @@ export function createFakeBatchReassessmentApplication(
     creator?: User;
   },
   options?: {
-    initialValue?: Partial<BatchReassessmentApplication>;
+    initialValues?: Partial<BatchReassessmentApplication>;
   },
 ): BatchReassessmentApplication {
   const batchReassessmentApplication = new BatchReassessmentApplication();
@@ -33,6 +33,6 @@ export function createFakeBatchReassessmentApplication(
   batchReassessmentApplication.studentAssessment = relations.studentAssessment;
   batchReassessmentApplication.creator = relations.creator;
   batchReassessmentApplication.failureReason =
-    options?.initialValue?.failureReason;
+    options?.initialValues?.failureReason;
   return batchReassessmentApplication;
 }

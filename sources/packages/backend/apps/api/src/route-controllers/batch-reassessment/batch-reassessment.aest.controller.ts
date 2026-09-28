@@ -37,7 +37,7 @@ export class BatchReassessmentAESTController extends BaseController {
    * Multiple invocations are prevented from running concurrently via the sequence control mechanism.
    * @param payload batch reassessment request payload.
    * @param userToken authenticated AEST user token.
-   * @returns void.
+   * @returns the primary identifier of the created batch reassessment.
    */
   @Roles(Role.AESTBatchReassessment)
   @Post()
