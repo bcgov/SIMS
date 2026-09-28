@@ -494,10 +494,10 @@ export class ECEResponseProcessingService {
           }
         } else {
           processSummary.errors.push(
-            `Unexpected error happened when processing disbursement ${disbursementScheduleId}. ${error}}`,
+            `Unexpected error happened when processing disbursement ${disbursementScheduleId}. ${parseJSONError(error)}`,
           );
           notificationProcessSummary.errors.push(
-            `Unexpected error happened when processing disbursement ${disbursementScheduleId}. ${error}}`,
+            `Unexpected error happened when processing disbursement ${disbursementScheduleId}. ${parseJSONError(error)}`,
           );
         }
       }
