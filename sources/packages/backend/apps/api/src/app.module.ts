@@ -3,6 +3,7 @@ import {
   Module,
   NestModule,
   OnModuleInit,
+  RequestMethod,
 } from "@nestjs/common";
 import { collectDefaultMetrics, register } from "prom-client";
 import { AppService } from "./app.service";
@@ -148,6 +149,10 @@ export class AppModule implements NestModule, OnModuleInit {
     consumer
       .apply(json({ limit: JSON_300KB }))
       .forRoutes(DynamicFormAESTController);
+    consumer.apply(json({ limit: JSON_300KB })).forRoutes({
+      path: `${ClientTypeBaseRoute.AEST}/batch-reassessment`,
+      method: RequestMethod.POST,
+    });
     // Apply the body parser global configuration after the specific ones to allow the proper evaluation of the routes.
     consumer.apply(json()).forRoutes("*");
   }

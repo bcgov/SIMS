@@ -13,7 +13,7 @@ import { BatchReassessmentStatus } from "../../../services/batch-reassessment/ba
 /**
  * Maximum number of application numbers accepted in a single batch manual reassessment submission.
  */
-const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 50000;
+const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 20000;
 
 /**
  * Payload used to trigger a batch manual reassessment for a list of application numbers.

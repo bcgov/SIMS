@@ -13,6 +13,7 @@ import {
   saveFakeApplication,
 } from "@sims/test-utils";
 import {
+  ApplicationStatus,
   AssessmentTriggerType,
   BatchReassessment,
   NoteType,
@@ -218,11 +219,11 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     });
   });
 
-  it("Should create a batch reassessment with failure when the original assessment isn't complete.", async () => {
+  it("Should create a batch reassessment with failure when the original assessment isn't completed.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
-    // Associated original asessment is 'Submitted'.
+    // Associated original assessment is 'Submitted'.
     const application = await saveFakeApplication(db.dataSource);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -264,6 +265,91 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
         },
       ],
     });
+  });
+
+  it("Should reassess the latest version of the application when the application has been edited.", async () => {
+    // Arrange
+    const now = new Date();
+    MockDate.set(now);
+
+    // Original application.
+    const originalApplication = await saveFakeApplication(
+      db.dataSource,
+      {},
+      { initialValues: { applicationStatus: ApplicationStatus.Edited } },
+    );
+
+    // Current application awaiting Enrolment.
+    const currentApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        parentApplication: originalApplication,
+        precedingApplication: originalApplication,
+      },
+      {
+        initialValues: {
+          applicationNumber: originalApplication.applicationNumber,
+          applicationStatus: ApplicationStatus.Completed,
+        },
+        currentAssessmentInitialValues: {
+          assessmentDate: now,
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      },
+    );
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const payload = {
+      applicationNumbers: [originalApplication.applicationNumber],
+      note: "Batch reassessment test.",
+    };
+
+    // Act/Assert
+    let batchReassessmentId;
+    await request(app.getHttpServer())
+      .post(getEndpoint())
+      .auth(token, BEARER_AUTH_TYPE)
+      .send(payload)
+      .expect(HttpStatus.CREATED)
+      .then((response) => {
+        expect(response.body.id).toBeGreaterThan(0);
+        batchReassessmentId = response.body.id;
+      });
+
+    const batchReassessment = await findBatchReassessment(batchReassessmentId);
+    expect(batchReassessment).toEqual({
+      id: batchReassessmentId,
+      batchNumber: expect.any(Number),
+      creator: ministryUser,
+      createdAt: now,
+      updatedAt: now,
+      batchReassessmentApplications: [
+        {
+          id: expect.any(Number),
+          applicationNumber: originalApplication.applicationNumber,
+          studentAssessment: {
+            id: expect.any(Number),
+            triggerType: AssessmentTriggerType.ManualReassessment,
+            studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+          },
+          failureReason: null,
+          createdAt: now,
+          creator: ministryUser,
+          updatedAt: now,
+        },
+      ],
+    });
+
+    // Assert that the manual reassessment is linked to the current application.
+    const manualReassessment = await db.studentAssessment.findOneOrFail({
+      select: { id: true, application: { id: true } },
+      relations: { application: true },
+      where: {
+        id: batchReassessment.batchReassessmentApplications[0].studentAssessment
+          .id,
+      },
+    });
+    expect(manualReassessment.application.id).toBe(currentApplication.id);
   });
 
   it("Should return an error when no application numbers are provided.", async () => {

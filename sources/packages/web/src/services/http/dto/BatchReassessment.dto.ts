@@ -1,4 +1,4 @@
-export const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 50000;
+export const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 20000;
 
 /**
  * Payload used to trigger a batch manual reassessment for a list of application numbers.
