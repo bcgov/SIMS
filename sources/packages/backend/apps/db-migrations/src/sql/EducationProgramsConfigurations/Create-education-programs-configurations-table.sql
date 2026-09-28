@@ -1068,6 +1068,7 @@ SELECT
       "required": [
           "context",
           "programName",
+          "programDescription",
           "credentialType",
           "cipCode",
           "programIntensity",

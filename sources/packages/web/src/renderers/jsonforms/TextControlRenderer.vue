@@ -7,7 +7,10 @@ import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 const props = defineProps(rendererProps<ControlElement>());
 const { control, handleChange } = useJsonFormsControl(props);
 
-const onUpdate = (value: string) => handleChange(control.value.path, value);
+// A cleared field is removed from the data rather than kept as "", which
+// would satisfy "required" (e.g. programName has no minLength).
+const onUpdate = (value: string) =>
+  handleChange(control.value.path, value === "" ? undefined : value);
 
 useClearDataWhenHidden(
   computed(() => control.value.visible),

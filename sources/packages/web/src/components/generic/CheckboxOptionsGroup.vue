@@ -12,7 +12,13 @@
         hide-details
       ></v-checkbox>
     </template>
-    <v-input :model-value="model" hide-details="auto" :rules="rules"> </v-input>
+    <v-input
+      :model-value="model"
+      hide-details="auto"
+      :rules="rules"
+      :error-messages="errorMessages"
+    >
+    </v-input>
   </div>
 </template>
 
@@ -32,11 +38,14 @@ withDefaults(
     itemValue?: "value" | "lookupKey";
     itemTitle?: "title" | "lookupValue";
     rules?: ((v: ModelType) => boolean | string)[];
+    // Displayed for the whole group, below the options.
+    errorMessages?: string[];
   }>(),
   {
     itemValue: "value",
     itemTitle: "title",
     rules: undefined,
+    errorMessages: undefined,
   },
 );
 

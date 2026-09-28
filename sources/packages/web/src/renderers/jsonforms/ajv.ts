@@ -1,4 +1,5 @@
 import Ajv from "ajv";
+import type { ErrorObject } from "ajv";
 import addFormats from "ajv-formats";
 import addErrors from "ajv-errors";
 
@@ -28,3 +29,30 @@ addErrors(programFormAjv);
  * warning.
  */
 programFormAjv.addFormat("yesNo", true);
+
+/**
+ * ajv-errors reports a custom "required" message as an "errorMessage" error
+ * on the parent object (e.g. instancePath "" for a root property), which
+ * JSONForms can't map to a control: its getControlPath only reads the missing
+ * property from errors whose keyword is "required". Each such message is
+ * re-pointed at the missing property, so it can be supplied to JSONForms as
+ * "additionalErrors" and displayed by that property's control.
+ * @param errors validation errors reported by JSONForms.
+ * @returns one error per missing property, at the property path.
+ */
+export function getRequiredErrorsPerProperty(
+  errors: ErrorObject[] = [],
+): ErrorObject[] {
+  return errors.flatMap((error) => {
+    if (error.keyword !== "errorMessage") {
+      return [];
+    }
+    const originalErrors = (error.params.errors ?? []) as ErrorObject[];
+    return originalErrors
+      .filter((originalError) => originalError.keyword === "required")
+      .map((originalError) => ({
+        ...error,
+        instancePath: `${error.instancePath}/${originalError.params.missingProperty}`,
+      }));
+  });
+}

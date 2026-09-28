@@ -54,5 +54,6 @@ watch([credentialType, cipCode], async ([newCredentialType, newCipCode]) => {
     :label="control.label"
     :loading="calculating"
     readonly
+    :error-messages="control.errors ? [control.errors] : []"
   />
 </template>
