@@ -1,27 +1,31 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { rendererProps, useJsonFormsMultiEnumControl } from "@jsonforms/vue";
-import type { ControlElement } from "@jsonforms/core";
+import { rendererProps, useJsonFormsControl } from "@jsonforms/vue";
+import type { ControlElement, JsonSchema } from "@jsonforms/core";
 import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue";
 import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "@/constants/program-constants";
 
 const props = defineProps(rendererProps<ControlElement>());
-const { control, addItem, removeItem } = useJsonFormsMultiEnumControl(props);
+const { control, handleChange } = useJsonFormsControl(props);
 
 const items = computed(() =>
-  control.value.options.map((option) => ({
-    title: option.label,
-    value: option.value,
-  })),
+  Object.entries(control.value.schema.properties ?? {}).map(
+    ([key, schema]) => ({
+      title: (schema as JsonSchema).title ?? key,
+      value: key,
+    }),
+  ),
 );
 
-// "None of the above" is mutually exclusive with every other entrance
-// requirement: picking it clears any other selection, and picking any
-// other requirement while it's selected clears it - mirrors the original
-// updateEntranceRequirements() behaviour exactly.
-const onUpdate = (newValue: string[]) => {
-  const oldValue = (control.value.data ?? []) as string[];
-  const noneWasSelected = oldValue.includes(PROGRAM_ENTRANCE_REQUIREMENT_NONE);
+const selected = computed(() => {
+  const data = (control.value.data ?? {}) as Record<string, boolean>;
+  return items.value.map((item) => item.value).filter((key) => data[key]);
+});
+
+const onUpdate = (newValue: Array<string | number>) => {
+  const noneWasSelected = selected.value.includes(
+    PROGRAM_ENTRANCE_REQUIREMENT_NONE,
+  );
   let nextValue = newValue;
   if (noneWasSelected) {
     // Something else was just toggled alongside (or "none" was just
@@ -34,12 +38,11 @@ const onUpdate = (newValue: string[]) => {
     // collapse down to "none" alone.
     nextValue = [PROGRAM_ENTRANCE_REQUIREMENT_NONE];
   }
-  nextValue
-    .filter((value) => !oldValue.includes(value))
-    .forEach((value) => addItem(control.value.path, value));
-  oldValue
-    .filter((value) => !nextValue.includes(value))
-    .forEach((value) => removeItem?.(control.value.path, value));
+  // Every key is always present, the unchecked ones saved as false.
+  const data = Object.fromEntries(
+    items.value.map(({ value }) => [value, nextValue.includes(value)]),
+  );
+  handleChange(control.value.path, data);
 };
 </script>
 
@@ -47,7 +50,7 @@ const onUpdate = (newValue: string[]) => {
   <checkbox-options-group
     v-if="control.visible"
     color="primary"
-    :model-value="control.data"
+    :model-value="selected"
     @update:model-value="onUpdate"
     :items="items"
     :label="control.label"

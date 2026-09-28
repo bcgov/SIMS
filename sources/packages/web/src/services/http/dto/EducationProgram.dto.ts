@@ -69,6 +69,42 @@ export interface EducationProgramAPIOutDTO {
 }
 
 /**
+ * Values pre-populated into the program data only to execute the
+ * client and server side validations. Never changed by the user
+ * and never persisted.
+ */
+export interface EducationProgramContextAPIOutDTO {
+  hasOfferings: boolean;
+  isActive: boolean;
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
+  isBCInstitution: boolean;
+}
+
+/**
+ * Dynamic program data, whose shape is defined by the program
+ * configuration schemas, plus the pre-populated context.
+ */
+export type EducationProgramDataAPIOutDTO = Record<string, unknown> & {
+  context: EducationProgramContextAPIOutDTO;
+};
+
+export interface EducationProgramDynamicAPIOutDTO {
+  id: number;
+  programData: EducationProgramDataAPIOutDTO;
+  visualSchema: unknown;
+  validationSchema: unknown;
+  institutionId: number;
+  institutionName: string;
+  submittedDate: Date;
+  submittedBy: string;
+  assessedDate?: Date;
+  assessedBy?: string;
+  effectiveEndDate?: string;
+  isExpired: boolean;
+}
+
+/**
  * Education program information to be displayed in a summary list.
  */
 export interface EducationProgramsSummaryAPIOutDTO {

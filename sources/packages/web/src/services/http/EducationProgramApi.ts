@@ -8,6 +8,7 @@ import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramDynamicAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -66,6 +67,14 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<EducationProgramAPIOutDTO> {
     return this.getCall<EducationProgramAPIOutDTO>(
       this.addClientRoot(`education-program/${programId}`),
+    );
+  }
+
+  async getEducationProgramDynamic(
+    programId: number,
+  ): Promise<EducationProgramDynamicAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`education-program/${programId}/dynamic`),
     );
   }
 

@@ -22,6 +22,7 @@ import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramDynamicAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
@@ -43,12 +44,13 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramService } from "../../services/education-program/education-program.service";
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
-import { credentialTypeToDisplay } from "../../utilities";
-import { isSameOrAfterDate } from "@sims/utilities";
+import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
+import { getISODateOnlyString, isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
-import { EducationProgramConfiguration } from "@sims/sims-db";
+import { EducationProgram, EducationProgramConfiguration } from "@sims/sims-db";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { EducationProgramOfferingService } from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -60,6 +62,9 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
     @InjectRepository(EducationProgramConfiguration)
     private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
+    @InjectRepository(EducationProgram)
+    private readonly educationProgramRepo: Repository<EducationProgram>,
+    private readonly educationProgramOfferingService: EducationProgramOfferingService,
   ) {
     super();
   }
@@ -238,6 +243,91 @@ export class EducationProgramInstitutionsController extends BaseController {
       programId,
       userToken.authorizations.institutionId,
     );
+  }
+
+  /**
+   * Get the education program information.
+   * @param programId program id.
+   * @returns programs information.
+   * */
+  @ApiNotFoundResponse({
+    description: "Not able to find the requested program.",
+  })
+  @Get(":programId/dynamic")
+  async getEducationProgramDynamic(
+    @Param("programId", ParseIntPipe) programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<EducationProgramDynamicAPIOutDTO> {
+    const programPromise = this.educationProgramRepo.findOne({
+      select: {
+        id: true,
+        programData: true,
+        programConfiguration: {
+          id: true,
+          visualSchema: true,
+          validationSchema: true,
+        },
+        institution: {
+          id: true,
+          operatingName: true,
+          institutionType: {
+            id: true,
+          },
+        },
+        isActive: true,
+        submittedDate: true,
+        submittedBy: { id: true, firstName: true, lastName: true },
+        assessedDate: true,
+        assessedBy: { id: true, firstName: true, lastName: true },
+        effectiveEndDate: true,
+      },
+      relations: {
+        institution: { institutionType: true },
+        programConfiguration: true,
+        submittedBy: true,
+        assessedBy: true,
+      },
+      where: {
+        id: programId,
+        institution: { id: userToken.authorizations.institutionId },
+      },
+    });
+    const hasOfferingsPromise =
+      this.educationProgramOfferingService.hasExistingOffering(programId);
+    // Wait for the program and for the offering check to be retrieved.
+    const [program, hasOfferings] = await Promise.all([
+      programPromise,
+      hasOfferingsPromise,
+    ]);
+
+    if (!program) {
+      throw new NotFoundException("Education program not found.");
+    }
+    return {
+      id: program.id,
+      programData: {
+        ...(program.programData as Record<string, unknown>),
+        context: {
+          hasOfferings: hasOfferings,
+          isActive: program.isActive && !program.isExpired,
+          isBCPublic: program.institution.institutionType.isBCPublic,
+          isBCPrivate: program.institution.institutionType.isBCPrivate,
+          isBCInstitution:
+            program.institution.institutionType.isBCPrivate ||
+            program.institution.institutionType.isBCPublic,
+        },
+      },
+      visualSchema: program.programConfiguration.visualSchema,
+      validationSchema: program.programConfiguration.validationSchema,
+      institutionId: program.institution.id,
+      institutionName: program.institution.operatingName,
+      submittedDate: program.submittedDate,
+      submittedBy: getUserFullName(program.submittedBy),
+      assessedDate: program.assessedDate,
+      assessedBy: getUserFullName(program.assessedBy),
+      effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
+      isExpired: program.isExpired,
+    };
   }
 
   /**

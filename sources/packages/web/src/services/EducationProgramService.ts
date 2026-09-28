@@ -11,6 +11,7 @@ import {
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramDynamicAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -92,6 +93,12 @@ export class EducationProgramService {
     programId: number,
   ): Promise<EducationProgramAPIOutDTO> {
     return ApiClient.EducationProgram.getEducationProgram(programId);
+  }
+
+  async getEducationProgramDynamic(
+    programId: number,
+  ): Promise<EducationProgramDynamicAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramDynamic(programId);
   }
 
   /**
