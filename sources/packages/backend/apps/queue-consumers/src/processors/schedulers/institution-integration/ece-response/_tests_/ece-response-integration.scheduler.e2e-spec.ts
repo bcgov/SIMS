@@ -1831,7 +1831,7 @@ describe(
       );
     });
 
-    it.only("Should create file-specific notification attachments when multiple files are processed for the same institution.", async () => {
+    it("Should create file-specific notification attachments when multiple files are processed for the same institution.", async () => {
       // Arrange
       await enableIntegration(locationCONF, db);
       const application = await saveFakeApplicationDisbursements(
