@@ -170,7 +170,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
   }
 
   /**
-   * Retrieves the application IDs for the given application numbers.
+   * Retrieves the application Ids for the current application for the given application numbers.
    * @param applicationNumbers The list of application numbers to retrieve IDs for.
    * @returns A map where the keys are application numbers and the values are the corresponding application IDs.
    */
