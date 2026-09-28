@@ -14,6 +14,7 @@ import { IsNull } from "typeorm";
 import { formatDate } from "@sims/utilities/date-utils";
 
 export const CONR_008_CONF_FILE = "CONR-008-CONF-20250502-144027.TXT";
+export const CONR_008_CONF_SECOND_FILE = "CONR-008-CONF-20250502-144028.TXT";
 export const CONR_008_WARN_FILE = "CONR-008-WARN-20250502-144027.TXT";
 export const CONR_008_DECL_FILE = "CONR-008-DECL-20250502-144027.TXT";
 export const CONR_008_SKIP_FILE = "CONR-008-SKIP-20250502-144027.TXT";
@@ -187,6 +188,7 @@ export async function getUnsentECEResponseNotifications(
       },
       dateSent: IsNull(),
     },
+    order: { id: "ASC" },
   });
 }
 

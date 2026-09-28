@@ -172,7 +172,11 @@ export class ECEResponseProcessingService {
     processSummary: ProcessSummaryResult,
   ): Promise<void> {
     // Start processing the file.
+    const notificationProcessSummary = new ProcessSummaryResult();
     processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
+    notificationProcessSummary.summary.push(
+      `Starting download of file ${remoteFilePath}.`,
+    );
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     // Disbursement processing count.
     const disbursementProcessingDetails = new DisbursementProcessingDetails();
@@ -185,6 +189,7 @@ export class ECEResponseProcessingService {
       const filteredECEFileDetailRecords = this.sanitizeDisbursements(
         eceFileDetailRecords,
         processSummary,
+        notificationProcessSummary,
         disbursementProcessingDetails,
       );
       // Transform ECE response detail records to disbursements which could be individually processed.
@@ -192,6 +197,7 @@ export class ECEResponseProcessingService {
         await this.transformDetailRecordsToDisbursements(
           filteredECEFileDetailRecords,
           processSummary,
+          notificationProcessSummary,
           disbursementProcessingDetails,
         );
       const auditUser = this.systemUsersService.systemUser;
@@ -199,7 +205,14 @@ export class ECEResponseProcessingService {
         disbursementsToProcess,
         auditUser.id,
         processSummary,
+        notificationProcessSummary,
         disbursementProcessingDetails,
+      );
+      processSummary.summary.push(
+        `Completed processing the file ${remoteFilePath}.`,
+      );
+      notificationProcessSummary.summary.push(
+        `Completed processing the file ${remoteFilePath}.`,
       );
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
@@ -216,10 +229,18 @@ export class ECEResponseProcessingService {
       processSummary.errors.push(
         `Error processing the file ${remoteFilePath}. ${error}`,
       );
+      notificationProcessSummary.errors.push(
+        `Error processing the file ${remoteFilePath}. ${error}`,
+      );
       processSummary.errors.push("File processing aborted.");
+      notificationProcessSummary.errors.push("File processing aborted.");
     } finally {
       // Archive the ECE response file, if the file exist in remote server.
-      await this.archiveProcessedFile(remoteFilePath, processSummary);
+      await this.archiveProcessedFile(
+        remoteFilePath,
+        processSummary,
+        notificationProcessSummary,
+      );
 
       // Create notification email which gets sent to
       // the integration contacts of the institution
@@ -228,6 +249,7 @@ export class ECEResponseProcessingService {
         integrationLocation,
         disbursementProcessingDetails,
         processSummary,
+        notificationProcessSummary,
       );
     }
 
@@ -248,10 +270,12 @@ export class ECEResponseProcessingService {
    * Sanitize all the disbursement records before processing.
    * @param eceFileDetailRecords ECE disbursement records
    * @param processSummaryResult process summary result.
+   * @param notificationProcessSummary notification process summary.
    */
   private sanitizeDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
     processSummaryResult: ProcessSummaryResult,
+    notificationProcessSummary: ProcessSummaryResult,
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): ECEResponseFileDetail[] {
     let hasErrors = false;
@@ -267,6 +291,7 @@ export class ECEResponseProcessingService {
       if (warningMessage) {
         // Record has a warning, exclude it from the result.
         processSummaryResult.warnings.push(warningMessage);
+        notificationProcessSummary.warnings.push(warningMessage);
         ++disbursementProcessingDetails.totalRecordsSkipped;
         return false;
       }
@@ -278,6 +303,9 @@ export class ECEResponseProcessingService {
         hasErrors = true;
         ++disbursementProcessingDetails.fileParsingErrors;
         processSummaryResult.errors.push(
+          `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
+        );
+        notificationProcessSummary.errors.push(
           `${errorMessage} at line ${eceDetailRecord.lineNumber}.`,
         );
       }
@@ -296,6 +324,7 @@ export class ECEResponseProcessingService {
    * Transform the detail records to individual disbursements.
    * @param eceFileDetailRecords detail records of ece file.
    * @param processSummary process summary.
+   * @param notificationProcessSummary notification process summary.
    * @param disbursementProcessingDetails disbursement processing count.
    * @returns disbursements to be processed, and its awards grouped from
    * the ECE file detail records.
@@ -303,6 +332,7 @@ export class ECEResponseProcessingService {
   private async transformDetailRecordsToDisbursements(
     eceFileDetailRecords: ECEResponseFileDetail[],
     processSummary: ProcessSummaryResult,
+    notificationProcessSummary: ProcessSummaryResult,
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): Promise<ECEDisbursements> {
     const disbursementValueIds = eceFileDetailRecords.map(
@@ -319,6 +349,9 @@ export class ECEResponseProcessingService {
       if (!scheduleId) {
         // Disbursement schedule not found for the disbursement value ID.
         processSummary.warnings.push(
+          `Disbursement schedule not found for disbursement value ID: ${record.disbursementValueId}, record at line ${record.lineNumber} skipped.`,
+        );
+        notificationProcessSummary.warnings.push(
           `Disbursement schedule not found for disbursement value ID: ${record.disbursementValueId}, record at line ${record.lineNumber} skipped.`,
         );
         ++disbursementProcessingDetails.totalRecordsSkipped;
@@ -346,12 +379,14 @@ export class ECEResponseProcessingService {
    * @param disbursements disbursements to be processed,
    * @param auditUserId user who confirm or decline the enrolment.
    * @param processSummary process summary.
+   * @param notificationProcessSummary notification process summary.
    * @returns count of disbursements processed, successfully updated, skipped and failed.
    */
   private async validateAndUpdateEnrolmentStatus(
     disbursements: ECEDisbursements,
     auditUserId: number,
     processSummary: ProcessSummaryResult,
+    notificationProcessSummary: ProcessSummaryResult,
     disbursementProcessingDetails: DisbursementProcessingDetails,
   ): Promise<DisbursementProcessingDetails> {
     const disbursementSchedules = Object.entries(disbursements);
@@ -393,8 +428,14 @@ export class ECEResponseProcessingService {
             processSummary.warnings.push(
               `Disbursement ${disbursementScheduleId} had remittance requested but due to restrictions will not be submitted.`,
             );
+            notificationProcessSummary.warnings.push(
+              `Disbursement ${disbursementScheduleId} had remittance requested but due to restrictions will not be submitted.`,
+            );
           }
           processSummary.summary.push(
+            `Disbursement ${disbursementScheduleId}, enrolment confirmed.`,
+          );
+          notificationProcessSummary.summary.push(
             `Disbursement ${disbursementScheduleId}, enrolment confirmed.`,
           );
         } else {
@@ -412,6 +453,9 @@ export class ECEResponseProcessingService {
           processSummary.summary.push(
             `Disbursement ${disbursementScheduleId}, enrolment declined.`,
           );
+          notificationProcessSummary.summary.push(
+            `Disbursement ${disbursementScheduleId}, enrolment declined.`,
+          );
         }
       } catch (error: unknown) {
         if (error instanceof CustomNamedError) {
@@ -421,10 +465,16 @@ export class ECEResponseProcessingService {
               processSummary.warnings.push(
                 `Disbursement ${disbursementScheduleId}, record skipped due to reason: ${error.message}`,
               );
+              notificationProcessSummary.warnings.push(
+                `Disbursement ${disbursementScheduleId}, record skipped due to reason: ${error.message}`,
+              );
               break;
             case ENROLMENT_ALREADY_COMPLETED:
               ++disbursementProcessingDetails.duplicateDisbursements;
               processSummary.warnings.push(
+                `Disbursement ${disbursementScheduleId}, record is considered as duplicate and skipped due to reason: ${error.message}`,
+              );
+              notificationProcessSummary.warnings.push(
                 `Disbursement ${disbursementScheduleId}, record is considered as duplicate and skipped due to reason: ${error.message}`,
               );
               break;
@@ -437,10 +487,16 @@ export class ECEResponseProcessingService {
               processSummary.warnings.push(
                 `Disbursement ${disbursementScheduleId} failed to process due to an error: ${error.message}`,
               );
+              notificationProcessSummary.warnings.push(
+                `Disbursement ${disbursementScheduleId} failed to process due to an error: ${error.message}`,
+              );
               break;
           }
         } else {
           processSummary.errors.push(
+            `Unexpected error happened when processing disbursement ${disbursementScheduleId}. ${error}}`,
+          );
+          notificationProcessSummary.errors.push(
             `Unexpected error happened when processing disbursement ${disbursementScheduleId}. ${error}}`,
           );
         }
@@ -500,11 +556,13 @@ export class ECEResponseProcessingService {
    * @param institutionCode institution of the processing file.
    * @param disbursementProcessingDetails disbursement processing count.
    * @param processSummaryResult process summary details.
+   * @param notificationProcessSummary notification process summary.
    */
   private async createECEResponseProcessingNotification(
     integrationLocation: InstitutionLocation,
     disbursementProcessingDetails: DisbursementProcessingDetails,
     processSummaryResult: ProcessSummaryResult,
+    notificationProcessSummary: ProcessSummaryResult,
   ): Promise<void> {
     try {
       // Create email notifications only if integration contacts are available.
@@ -525,8 +583,9 @@ export class ECEResponseProcessingService {
             disbursementProcessingDetails.duplicateDisbursements,
           disbursementsFailedToProcess:
             disbursementProcessingDetails.disbursementsFailedToProcess,
-          attachmentFileContent:
-            this.buildEmailAttachmentBody(processSummaryResult),
+          attachmentFileContent: this.buildEmailAttachmentBody(
+            notificationProcessSummary,
+          ),
         };
 
         await this.notificationActionsService.saveECEResponseFileProcessingNotification(
@@ -576,10 +635,12 @@ export class ECEResponseProcessingService {
    * Archive the ece response file.
    * @param remoteFilePath file path.
    * @param processSummary process summary.
+   * @param notificationProcessSummary notification process summary.
    */
   private async archiveProcessedFile(
     remoteFilePath: string,
     processSummary: ProcessSummaryResult,
+    notificationProcessSummary: ProcessSummaryResult,
   ): Promise<void> {
     try {
       // Archiving the file once it has been processed.
@@ -587,10 +648,15 @@ export class ECEResponseProcessingService {
       processSummary.summary.push(
         `The file ${remoteFilePath} has been archived after processing.`,
       );
+      notificationProcessSummary.summary.push(
+        `The file ${remoteFilePath} has been archived after processing.`,
+      );
     } catch (error: unknown) {
       const logMessage = `Error while archiving the file: ${remoteFilePath}.`;
       processSummary.errors.push(logMessage);
+      notificationProcessSummary.errors.push(logMessage);
       processSummary.errors.push(parseJSONError(error));
+      notificationProcessSummary.errors.push(parseJSONError(error));
       this.logger.error(logMessage, error);
     }
   }
