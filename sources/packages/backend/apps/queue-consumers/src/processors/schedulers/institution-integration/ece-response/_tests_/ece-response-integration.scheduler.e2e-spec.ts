@@ -66,7 +66,6 @@ import {
   ENRL_DATE_PLACEHOLDER_3,
   REMITTANCE_AMOUNT_PLACEHOLDER,
 } from "./ece-response-helper";
-import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
 import MockDate from "mockdate";
 
@@ -1250,7 +1249,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on header: 2`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. The ECE response file has an invalid record type on header: 2`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -1302,7 +1301,7 @@ describe(
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
           "ERROR: Invalid record type on detail: 3 at line 2.",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -1353,7 +1352,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The ECE response file has an invalid record type on footer: 4`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. The ECE response file has an invalid record type on footer: 4`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -1404,7 +1403,7 @@ describe(
           "Disbursements skipped to be processed: 0",
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. ${FILE_PARSING_ERROR}: The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. The total count of detail records mentioned in the footer record does not match with the actual total details records count.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);
@@ -1463,7 +1462,7 @@ describe(
           "Disbursements considered duplicate and skipped: 0",
           "Disbursements failed to process: 0",
           "ERROR: Invalid unique index number for the disbursement value ID record, Invalid application number at line 2.",
-          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. Error: The file consists of invalid data and cannot be processed.`,
+          `ERROR: Error processing the file ${confirmEnrolmentResponseFile}. The file consists of invalid data and cannot be processed.`,
           "ERROR: File processing aborted.",
         ]),
       ).toBe(true);

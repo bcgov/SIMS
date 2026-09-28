@@ -227,10 +227,10 @@ export class ECEResponseProcessingService {
       }
       this.logger.error(error);
       processSummary.errors.push(
-        `Error processing the file ${remoteFilePath}. ${error}`,
+        `Error processing the file ${remoteFilePath}. ${error instanceof Error ? error.message : JSON.stringify(error)}`,
       );
       notificationProcessSummary.errors.push(
-        `Error processing the file ${remoteFilePath}. ${error}`,
+        `Error processing the file ${remoteFilePath}. ${error instanceof Error ? error.message : JSON.stringify(error)}`,
       );
       processSummary.errors.push("File processing aborted.");
       notificationProcessSummary.errors.push("File processing aborted.");
