@@ -115,6 +115,7 @@
                       "label": "Last name",
                       "tableView": true,
                       "calculateValue": "value = data.lastName;",
+                      "calculateServer": true,
                       "validate": {
                         "required": true
                       },
@@ -140,6 +141,7 @@
                       "label": "Date of birth",
                       "tableView": true,
                       "calculateValue": "value = data.dateOfBirth;",
+                      "calculateServer": true,
                       "validate": {
                         "required": true
                       },
@@ -165,6 +167,7 @@
                       "label": "Email address",
                       "tableView": true,
                       "calculateValue": "value = data.email;",
+                      "calculateServer": true,
                       "validate": {
                         "required": true
                       },
