@@ -82,4 +82,7 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         });
     },
   );
+  afterAll(async () => {
+    await app?.close();
+  });
 });
