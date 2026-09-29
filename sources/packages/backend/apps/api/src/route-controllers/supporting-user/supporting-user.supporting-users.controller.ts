@@ -28,7 +28,10 @@ import {
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
 } from "../../services/supporting-user/constants";
-import { getSupportingUserFormType } from "../../utilities";
+import {
+  getSupportingUserFormType,
+  assertUserTokenHasRequiredInfo,
+} from "../../utilities";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -148,6 +151,8 @@ export class SupportingUserSupportingUsersController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Body() payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
+    // Ensures that the user token has all the required information before proceeding.
+    assertUserTokenHasRequiredInfo(userToken);
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.
     const userQuery = this.userService.syncUser(

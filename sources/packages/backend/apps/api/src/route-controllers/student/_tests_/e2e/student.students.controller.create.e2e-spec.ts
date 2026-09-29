@@ -5,6 +5,7 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
+  mockJWTToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
@@ -24,6 +25,7 @@ import { In } from "typeorm";
 import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "../../models/student.dto";
 import { applySINNumberFormat } from "@sims/test-utils/utils";
+import { MISSING_USER_INFO } from "../../../../constants";
 
 const SIN_NUMBER_A = "544962244";
 const SIN_NUMBER_B = "317149003";
@@ -117,6 +119,38 @@ describe("StudentStudentsController(e2e)-create", () => {
         sin: SIN_NUMBER_A,
       },
     });
+  });
+
+  it("Should return a bad request error when the BCSC authentication token is missing the mandatory e-mail information.", async () => {
+    // Arrange
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+    // Mocked user info to populate the JWT token with a new, not yet associated, user.
+    const user = createFakeUser();
+    // Mocked BCSC token without a verified email address.
+    await mockJWTToken(appModule, (jwtPayload) => {
+      jwtPayload.userName = user.userName;
+      jwtPayload.lastName = user.lastName;
+      jwtPayload.givenNames = user.firstName;
+      jwtPayload.birthdate = "2000-01-01";
+      jwtPayload.email = undefined;
+    });
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message:
+          "Some mandatory profile information (e-mail, last name, or date of birth) was not " +
+          "provided by the identity provider. Please ensure your BC Services Card identity " +
+          "information, including a verified e-mail address, is complete and try again.",
+        errorType: MISSING_USER_INFO,
+      });
   });
 
   it("Should refresh the cached login information after creating a student account.", async () => {

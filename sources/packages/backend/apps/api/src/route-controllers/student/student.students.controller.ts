@@ -56,6 +56,7 @@ import { Response } from "express";
 import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
+  assertUserTokenHasRequiredInfo,
   defaultFileFilter,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
@@ -135,6 +136,9 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
+    // Ensures that the user token has all the required information before proceeding.
+    assertUserTokenHasRequiredInfo(studentUserToken);
+
     const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
@@ -177,6 +181,8 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
     if (studentUserToken.identityProvider === IdentityProviders.BCSC) {
+      // Ensures that the user token has all the required information before proceeding.
+      assertUserTokenHasRequiredInfo(studentUserToken);
       await this.studentService.updateStudentUserData(
         {
           studentId: studentUserToken.studentId,

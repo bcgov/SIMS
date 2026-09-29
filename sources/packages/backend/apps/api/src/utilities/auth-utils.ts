@@ -1,4 +1,11 @@
-import { INestApplication, ValidationPipe } from "@nestjs/common";
+import {
+  BadRequestException,
+  INestApplication,
+  ValidationPipe,
+} from "@nestjs/common";
+import { IUserToken } from "../auth/userToken.interface";
+import { MISSING_USER_INFO } from "../constants";
+import { ApiProcessError } from "../types";
 
 export function extractRawUserName(userName: string): string {
   const atIndex = userName.indexOf("@");
@@ -67,4 +74,25 @@ export function getUserFullName(user?: {
   return user
     ? `${(user.firstName ?? "").trim()} ${(user.lastName ?? "").trim()}`.trim()
     : "";
+}
+
+/**
+ * Ensures the user token has the required information (e-mail, last name, and birthdate).
+ * @param userToken user token to have the required fields validated.
+ */
+export function assertUserTokenHasRequiredInfo(userToken: IUserToken): void {
+  const isMissingRequiredInfo =
+    !userToken.email?.trim() ||
+    !userToken.lastName?.trim() ||
+    !userToken.birthdate?.trim();
+  if (isMissingRequiredInfo) {
+    throw new BadRequestException(
+      new ApiProcessError(
+        "Some mandatory profile information (e-mail, last name, or date of birth) was not " +
+          "provided by the identity provider. Please ensure your BC Services Card identity " +
+          "information, including a verified e-mail address, is complete and try again.",
+        MISSING_USER_INFO,
+      ),
+    );
+  }
 }

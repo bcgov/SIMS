@@ -41,6 +41,7 @@ import StudentProfileForm from "@/components/common/StudentProfileForm.vue";
 import {
   STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS,
   CANADA_COUNTRY_CODE,
+  MISSING_USER_INFO,
 } from "@/constants";
 
 export default defineComponent({
@@ -155,11 +156,18 @@ export default defineComponent({
           });
         }
       } catch (error: unknown) {
-        if (
-          error instanceof ApiProcessError &&
-          error.errorType === STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS
-        ) {
-          snackBar.error("The user has been used in a previous request.");
+        if (error instanceof ApiProcessError) {
+          switch (error.errorType) {
+            case STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS:
+              snackBar.error("The user has been used in a previous request.");
+              break;
+            case MISSING_USER_INFO:
+              snackBar.error(error.message);
+              break;
+            default:
+              snackBar.error("Error while saving student.");
+              break;
+          }
         } else {
           snackBar.error("Error while saving student.");
         }
