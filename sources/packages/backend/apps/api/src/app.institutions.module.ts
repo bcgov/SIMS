@@ -23,6 +23,7 @@ import {
   StudentService,
   EducationProgramOfferingImportCSVService,
   EducationProgramOfferingValidationService,
+  EducationProgramDataValidationService,
   StudentAppealService,
   ApplicationExceptionService,
   StudentAppealRequestsService,
@@ -230,6 +231,7 @@ import {
     EducationProgramFieldOfStudyCodeEvaluator,
     EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
+    EducationProgramDataValidationService,
   ],
 })
 export class AppInstitutionsModule {}

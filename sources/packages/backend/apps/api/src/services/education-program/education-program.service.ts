@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
   RecordDataModelService,
   EducationProgram,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   Institution,
   Note,
@@ -34,6 +35,7 @@ import {
   PendingEducationProgram,
   EducationProgramSummary,
   ProgramCalculatedDataKey,
+  SaveEducationProgramDynamicData,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -115,6 +117,55 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
+   * Gets a program with the information needed to validate its dynamic data,
+   * ensuring that the program belongs to the expected institution.
+   * @param programId program id.
+   * @param institutionId expected institution id.
+   * @returns education program with its data and configuration.
+   */
+  async getInstitutionProgramDynamic(
+    programId: number,
+    institutionId: number,
+  ): Promise<EducationProgram> {
+    return this.repo.findOne({
+      select: {
+        id: true,
+        isActive: true,
+        effectiveEndDate: true,
+        programData: true,
+        programConfiguration: {
+          id: true,
+          validationSchema: true,
+          updatedAt: true,
+        },
+        institution: { id: true, institutionType: { id: true } },
+      },
+      relations: {
+        programConfiguration: true,
+        institution: { institutionType: true },
+      },
+      where: {
+        id: programId,
+        institution: { id: institutionId },
+      },
+    });
+  }
+
+  /**
+   * Gets an active program configuration to validate a new program data.
+   * @param programConfigurationId program configuration id.
+   * @returns program configuration, if found and active.
+   */
+  async getActiveProgramConfiguration(
+    programConfigurationId: number,
+  ): Promise<EducationProgramConfiguration> {
+    return this.dataSource.getRepository(EducationProgramConfiguration).findOne({
+      select: { id: true, validationSchema: true, updatedAt: true },
+      where: { id: programConfigurationId, isActive: true },
+    });
+  }
+
+  /**
    * Gets a program details for a student
    * This returns only a subset of the educationProgram
    * id in the query.
@@ -147,6 +198,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param programId if provided will update the record, otherwise will insert a new one.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param educationProgram Information used to save the program.
+   * @param dynamicData dynamic program data, already validated against its
+   * configuration, to be persisted alongside the program columns. When the
+   * program has offerings, it is expected to have only the name and
+   * description changed, the same way as the program columns.
    * @returns Education program created/updated.
    */
   async saveEducationProgram(
@@ -154,6 +209,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     auditUserId: number,
     educationProgram: SaveEducationProgram,
     programId?: number,
+    dynamicData?: SaveEducationProgramDynamicData,
   ): Promise<EducationProgram> {
     let hasExistingOffering = false;
     let program = new EducationProgram();
@@ -273,6 +329,22 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     program.id = programId;
     program.name = educationProgram.name;
     program.description = educationProgram.description;
+    if (dynamicData) {
+      program.programData = hasExistingOffering
+        ? dynamicData.programData
+        : {
+            ...dynamicData.programData,
+            // Calculated by the server, never trusted from the submitted data.
+            fieldOfStudyCode: program.fieldOfStudyCode,
+          };
+      if (!programId) {
+        // The configuration is kept for the program lifetime, since its data
+        // is always validated against the configuration it was created with.
+        program.programConfiguration = {
+          id: dynamicData.programConfigurationId,
+        } as EducationProgramConfiguration;
+      }
+    }
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
     if (!programId) {

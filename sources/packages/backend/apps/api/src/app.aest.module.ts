@@ -26,6 +26,7 @@ import {
   StudentAccountApplicationsService,
   InstitutionRestrictionService,
   EducationProgramOfferingValidationService,
+  EducationProgramDataValidationService,
   DisbursementScheduleService,
   ApplicationOfferingChangeRequestService,
   StudentLoanBalanceService,
@@ -299,6 +300,7 @@ import {
     EducationProgramFieldOfStudyCodeEvaluator,
     EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
+    EducationProgramDataValidationService,
   ],
 })
 export class AppAESTModule {}

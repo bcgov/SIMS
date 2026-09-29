@@ -3,6 +3,7 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import { getPaginationQueryString } from "@/helpers";
 import {
   ApproveProgramAPIInDTO,
+  CreateEducationProgramDynamicAPIInDTO,
   DeactivateProgramAPIInDTO,
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
@@ -86,6 +87,19 @@ export class EducationProgramApi extends HttpBaseClient {
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
     await this.postCall(this.addClientRoot("education-program"), payload);
+  }
+
+  /**
+   * Creates a new education program.
+   * @param payload information to create the new program.
+   */
+  async createEducationProgramDynamic(
+    payload: CreateEducationProgramDynamicAPIInDTO,
+  ): Promise<void> {
+    await this.postCall(
+      this.addClientRoot("education-program/dynamic"),
+      payload,
+    );
   }
 
   /**

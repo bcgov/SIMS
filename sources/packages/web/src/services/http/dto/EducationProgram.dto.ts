@@ -253,3 +253,19 @@ export interface EducationProgramConfigurationAPIOutDTO {
   validationSchema: unknown;
   visualSchema: unknown;
 }
+
+/**
+ * Dynamic program data used to update an education program.
+ * Its content is validated against the program configuration schema.
+ */
+export interface EducationProgramDynamicAPIInDTO {
+  programData: Record<string, unknown>;
+}
+
+/**
+ * Dynamic program data used to create an education program,
+ * and the configuration it was filled in against.
+ */
+export interface CreateEducationProgramDynamicAPIInDTO extends EducationProgramDynamicAPIInDTO {
+  programConfigurationId: number;
+}

@@ -144,3 +144,44 @@ export interface ProgramEvaluationContext {
   isBCPublic: boolean;
   isBCPrivate: boolean;
 }
+
+/**
+ * Values added to the dynamic program data only to execute the validations,
+ * since the configuration schemas depend on them. Always built by the server
+ * and never persisted.
+ */
+export interface EducationProgramDataContext {
+  hasOfferings: boolean;
+  isActive: boolean;
+  isBCPublic: boolean;
+  isBCPrivate: boolean;
+  isBCInstitution: boolean;
+}
+
+/**
+ * Dynamic program data, whose shape is defined by the program configuration.
+ * Only the properties the server needs to know about are declared.
+ */
+export interface EducationProgramDynamicData extends Record<string, unknown> {
+  programName?: string;
+  programDescription?: string;
+  programDeliveryTypes?: ProgramDeliveryTypeValues[];
+  credentialTypesAviation?: string[];
+  fieldOfStudyCode?: number;
+}
+
+/**
+ * Dynamic program data and the configuration it was validated against,
+ * persisted alongside the program columns.
+ */
+export interface SaveEducationProgramDynamicData {
+  programData: EducationProgramDynamicData;
+  programConfigurationId: number;
+}
+
+/**
+ * Result of the dynamic program data validation.
+ */
+export type EducationProgramDataValidationResult =
+  | { isValid: true; programData: EducationProgramDynamicData }
+  | { isValid: false; errors: string[] };

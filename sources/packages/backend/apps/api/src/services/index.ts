@@ -17,6 +17,7 @@ export * from "./restriction/student-restriction.service";
 export * from "./restriction/institution-restriction.service";
 export * from "./education-program-offering/education-program-offering.service";
 export * from "./education-program/education-program.service";
+export * from "./education-program/education-program-data-validation.service";
 export * from "./student-appeal/student-appeal.service";
 export * from "./student-appeal-request/student-appeal-request.service";
 export * from "./dynamic-form-configuration/dynamic-form-configuration.service";

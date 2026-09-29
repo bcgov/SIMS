@@ -799,6 +799,7 @@ SELECT
   $$
     {
       "type": "object",
+      "additionalProperties": false,
       "allOf": [
           {
           "if": {

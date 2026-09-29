@@ -6,6 +6,7 @@ import {
 import ApiClient from "@/services/http/ApiClient";
 import {
   ApproveProgramAPIInDTO,
+  CreateEducationProgramDynamicAPIInDTO,
   DeactivateProgramAPIInDTO,
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
@@ -110,6 +111,16 @@ export class EducationProgramService {
     payload: EducationProgramAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.createEducationProgram(payload);
+  }
+
+  /**
+   * Creates a new education program.
+   * @param payload information to create the new program.
+   */
+  async createEducationProgramDynamic(
+    payload: CreateEducationProgramDynamicAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.EducationProgram.createEducationProgramDynamic(payload);
   }
 
   /**

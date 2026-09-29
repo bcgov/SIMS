@@ -71,8 +71,7 @@ const formModel = ref<Record<string, unknown>>({});
 // The context is kept in the form data, never changed by the user, since the
 // schemas' rules and validations depend on it.
 const formContext = computed(
-  () =>
-    formModel.value.context as EducationProgramContextAPIOutDTO | undefined,
+  () => formModel.value.context as EducationProgramContextAPIOutDTO | undefined,
 );
 
 // Errors are always computed; only shown once the user tries to submit.
@@ -134,7 +133,11 @@ const submit = async () => {
   // The context is only used for the validations and is never submitted.
   const programData = { ...formModel.value };
   delete programData.context;
-  emit("submitted", programData);
+  await EducationProgramService.shared.createEducationProgramDynamic({
+    programConfigurationId: 6,
+    programData,
+  });
+  //emit("submitted", programData);
 };
 
 const loadProgram = async (programId: number) => {

@@ -65,6 +65,15 @@ export const EDUCATION_PROGRAM_NOT_FOUND = "EDUCATION_PROGRAM_NOT_FOUND";
  */
 export const EDUCATION_PROGRAM_INVALID_OPERATION =
   "EDUCATION_PROGRAM_INVALID_OPERATION";
+/**
+ * Education program dynamic data does not satisfy its configuration validation schema.
+ */
+export const EDUCATION_PROGRAM_DATA_INVALID = "EDUCATION_PROGRAM_DATA_INVALID";
+/**
+ * Education program configuration not found or not active.
+ */
+export const EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND =
+  "EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND";
 
 export const STUDENT_ACCOUNT_APPLICATION_NOT_FOUND =
   "STUDENT_ACCOUNT_APPLICATION_NOT_FOUND";

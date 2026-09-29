@@ -80,9 +80,9 @@ SET
       'none',
       COALESCE(none_of_entrance_requirements, FALSE)
     ),
-    'hasWilComponent',
+    'hasWILComponent',
     has_wil_component,
-    'isWilApproved',
+    'isWILApproved',
     is_wil_approved,
     'wilProgramEligibility',
     wil_program_eligibility,

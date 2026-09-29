@@ -19,9 +19,11 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import {
+  CreateEducationProgramDynamicAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramDynamicAPIInDTO,
   EducationProgramDynamicAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
   ProgramEvaluationAPIInDTO,
@@ -173,6 +175,74 @@ export class EducationProgramInstitutionsController extends BaseController {
       userToken.authorizations.institutionId,
       userToken.userId,
       programId,
+    );
+  }
+
+  /**
+   * Creates a new education program from its dynamic data, validated
+   * against the provided program configuration.
+   * @param payload program configuration and dynamic data of the new program.
+   * @returns id of the created program.
+   */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to a save the program due to an invalid program data or " +
+      "program configuration not found or not active or " +
+      "duplicate SABC code.",
+  })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
+  @Post("dynamic")
+  async createEducationProgramDynamic(
+    @Body() payload: CreateEducationProgramDynamicAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
+    const newProgram =
+      await this.educationProgramControllerService.saveProgramDynamic(
+        payload.programData,
+        userToken.authorizations.institutionId,
+        userToken.userId,
+        { programConfigurationId: payload.programConfigurationId },
+      );
+    return { id: newProgram.id };
+  }
+
+  /**
+   * Updates an existing education program from its dynamic data, validated
+   * against the program configuration the program was created with.
+   * @param programId program to be updated.
+   * @param payload dynamic data of the program.
+   */
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Not able to a save the program due to an invalid program data or " +
+      "SABC code is duplicated or " +
+      "program is inactive.",
+  })
+  @ApiNotFoundResponse({
+    description: "Not able to find the education program.",
+  })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
+  @Patch(":programId/dynamic")
+  async updateEducationProgramDynamic(
+    @Param("programId", ParseIntPipe) programId: number,
+    @Body() payload: EducationProgramDynamicAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<void> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
+    await this.educationProgramControllerService.saveProgramDynamic(
+      payload.programData,
+      userToken.authorizations.institutionId,
+      userToken.userId,
+      { programId },
     );
   }
 
@@ -365,6 +435,7 @@ export class EducationProgramInstitutionsController extends BaseController {
       throw new NotFoundException("Education program configuration not found.");
     }
     return {
+      id: configuration.id,
       validationSchema: configuration.validationSchema,
       visualSchema: configuration.visualSchema,
     };
