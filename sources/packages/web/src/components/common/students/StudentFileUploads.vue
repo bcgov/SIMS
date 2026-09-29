@@ -47,11 +47,8 @@
             {{ getISODateHourMinuteString(item.createdAt) }}
           </template>
           <template #[`item.fileName`]="{ item }">
-            <div v-if="canDownloadFiles">
-              <div
-                class="file-label"
-                @click="fileUtils.downloadStudentDocument(item)"
-              >
+            <div v-if="canViewFiles">
+              <div class="file-label" @click="viewStudentDocument(item)">
                 <span class="mr-4">
                   <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
                 ></span>
@@ -177,7 +174,7 @@ export default defineComponent({
       required: false,
       default: false,
     },
-    canDownloadFiles: {
+    canViewFiles: {
       type: Boolean,
       required: false,
       default: false,
@@ -200,7 +197,7 @@ export default defineComponent({
       {} as ModalDialog<UserNoteModal<DeleteFileParameter>>,
     );
     const { getISODateHourMinuteString, emptyStringFiller } = useFormatters();
-    const fileUtils = useFileUtils();
+    const { viewStudentDocument } = useFileUtils();
     const initialData = ref({ studentId: props.studentId });
     const formioUtils = useFormioUtils();
     const snackBar = useSnackBar();
@@ -277,7 +274,7 @@ export default defineComponent({
     onMounted(loadStudentFileUploads);
 
     return {
-      fileUtils,
+      viewStudentDocument,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       getISODateHourMinuteString,

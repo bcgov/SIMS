@@ -3,7 +3,7 @@
     <student-file-uploads
       :student-id="studentId"
       :can-upload-files="true"
-      :can-download-files="true"
+      :can-view-files="true"
       :can-view-uploaded-by="true"
       :can-delete-files="true"
       @upload-file="uploadFile"
