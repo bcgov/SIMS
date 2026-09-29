@@ -21,6 +21,7 @@ import {
   ApplicationStatus,
   DynamicFormConfiguration,
   DynamicFormType,
+  OfferingIntensity,
   SupportingUser,
   SupportingUserType,
 } from "@sims/sims-db";
@@ -59,8 +60,8 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     });
   });
 
-  beforeEach(() => {
-    resetMockJWTUserInfo(appModule);
+  beforeEach(async () => {
+    await resetMockJWTUserInfo(appModule);
   });
 
   it("Should clear cached login information after synchronizing a supporting user.", async () => {
@@ -256,9 +257,12 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
   it("Should update the supporting user details when the supporting user is a partner not able to report.", async () => {
     // Arrange
     // Create fake application and supporting user.
+    // Full time offering is required for the partner form to show the
+    // employment insurance, disability, income assistance and dependant fields.
     const { application, supportingUser: partner } =
       await createApplicationAndSupportingUser({
         supportingUserType: SupportingUserType.Partner,
+        offeringIntensity: OfferingIntensity.fullTime,
       });
     const student = application.student;
     // Mock student user token.
@@ -267,7 +271,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     const token = await getStudentToken(
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
-    const payload = createSupportingUserPayload();
+    const payload = createPartnerSupportingUserPayload();
 
     // Act
     await request(app.getHttpServer())
@@ -305,6 +309,20 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
       },
       supportingData: {
         totalIncome: payload.supportingData.totalIncome,
+        hasEmploymentInsuranceBenefits:
+          payload.supportingData.hasEmploymentInsuranceBenefits,
+        hasFedralProvincialPDReceipt:
+          payload.supportingData.hasFedralProvincialPDReceipt,
+        hasTotalIncomeAssistance:
+          payload.supportingData.hasTotalIncomeAssistance,
+        hasBCEAIncomeAssistance: payload.supportingData.hasBCEAIncomeAssistance,
+        bceaIncomeAssistanceAmount:
+          payload.supportingData.bceaIncomeAssistanceAmount,
+        partnerCaringForDependant:
+          payload.supportingData.partnerCaringForDependant,
+        partnerFulltimeStudent: payload.supportingData.partnerFulltimeStudent,
+        partnerPayStudentLoan: payload.supportingData.partnerPayStudentLoan,
+        partnerPaySupport: payload.supportingData.partnerPaySupport,
         iAgreeToAboveStudentAidBCConsent:
           payload.supportingData.iAgreeToAboveStudentAidBCConsent,
         iAgreeToTheAboveCRAConsent:
@@ -330,12 +348,16 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
    * Create fake application and supporting user.
    * @param options options.
    *  - `isAbleToReport` is supporting user able to report.
+   *  - `applicationStatus` is the status of the application.
+   *  - `supportingUserType` is the type of the supporting user.
+   *  - `offeringIntensity` is the offering intensity of the application.
    * @returns application and supporting user.
    */
   async function createApplicationAndSupportingUser(options?: {
     isAbleToReport?: boolean;
     applicationStatus?: ApplicationStatus;
     supportingUserType?: SupportingUserType;
+    offeringIntensity?: OfferingIntensity;
   }): Promise<{ application: Application; supportingUser: SupportingUser }> {
     // Arrange
     // Create fake application.
@@ -345,6 +367,7 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
         programYear: recentPYParentForm.programYear,
       },
       {
+        offeringIntensity: options?.offeringIntensity,
         initialValues: {
           applicationStatus:
             options?.applicationStatus ?? ApplicationStatus.InProgress,
@@ -368,52 +391,84 @@ describe("SupportingUserStudentsController(e2e)-submitSupportingUserDetails", ()
     return { application, supportingUser };
   }
 
-  /**
-   * Create a valid supporting user payload with all required fields for the
-   * parent Form.io form when isAbleToReport is false (student-reported).
-   * @returns supporting user payload.
-   */
-  function createSupportingUserPayload(): ReportedSupportingUserAPIInDTO {
-    return {
-      givenNames: faker.string.alpha({ length: 50 }),
-      lastName: faker.string.alpha({ length: 50 }),
-      addressLine1: faker.location.streetAddress(),
-      city: faker.location.city(),
-      country: "Canada",
-      phone: faker.phone.number({ style: "national" }),
-      postalCode: faker.location.zipCode(),
-      provinceState: faker.location.state(),
-      supportingData: {
-        relationshipToStudent: "parent",
-        totalIncome: 1000,
-        cppLine30800: 0,
-        cppLine31000: 0,
-        totalIncomeTaxLine43500: 0,
-        eiLine31200: 0,
-        parentalContributions: 0,
-        foreignAssets: 0,
-        parentsOtherDependants: "no",
-        iAgreeToAboveStudentAidBCConsent: true,
-        iAgreeToTheAboveCRAConsent: true,
-      },
-    };
-  }
-
-  /**
-   * Create an invalid supporting user payload that passes DTO validation
-   * but fails Form.io required field validations.
-   * @returns invalid supporting user payload.
-   */
-  function createInvalidSupportingUserPayload(): ReportedSupportingUserAPIInDTO {
-    return {
-      ...createSupportingUserPayload(),
-      // Passes IsNotEmptyObject() DTO validation but is missing all
-      // required Form.io fields, causing Form.io to return a 400 error.
-      supportingData: { dummy: "invalid" },
-    };
-  }
-
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/**
+ * Create a valid supporting user payload with all required fields for the
+ * parent Form.io form when isAbleToReport is false (student-reported).
+ * @returns supporting user payload.
+ */
+function createSupportingUserPayload(): ReportedSupportingUserAPIInDTO {
+  return {
+    givenNames: faker.string.alpha({ length: 50 }),
+    lastName: faker.string.alpha({ length: 50 }),
+    addressLine1: faker.location.streetAddress(),
+    city: faker.location.city(),
+    country: "Canada",
+    phone: faker.phone.number({ style: "national" }),
+    postalCode: faker.location.zipCode(),
+    provinceState: faker.location.state(),
+    supportingData: {
+      relationshipToStudent: "parent",
+      totalIncome: 1000,
+      cppLine30800: 0,
+      cppLine31000: 0,
+      totalIncomeTaxLine43500: 0,
+      eiLine31200: 0,
+      parentalContributions: 0,
+      foreignAssets: 0,
+      parentsOtherDependants: "no",
+      iAgreeToAboveStudentAidBCConsent: true,
+      iAgreeToTheAboveCRAConsent: true,
+    },
+  };
+}
+
+/**
+ * Create a valid supporting user payload with all required fields for the
+ * partner Form.io form when the application offering intensity is full time.
+ * @returns supporting user payload.
+ */
+function createPartnerSupportingUserPayload(): ReportedSupportingUserAPIInDTO {
+  return {
+    givenNames: faker.string.alpha({ length: 50 }),
+    lastName: faker.string.alpha({ length: 50 }),
+    addressLine1: faker.location.streetAddress(),
+    city: faker.location.city(),
+    country: "Canada",
+    phone: faker.phone.number({ style: "national" }),
+    postalCode: faker.location.zipCode(),
+    provinceState: faker.location.state(),
+    supportingData: {
+      totalIncome: 800,
+      hasEmploymentInsuranceBenefits: "no",
+      hasFedralProvincialPDReceipt: "no",
+      hasTotalIncomeAssistance: "no",
+      hasBCEAIncomeAssistance: "yes",
+      bceaIncomeAssistanceAmount: 1500,
+      partnerCaringForDependant: "no",
+      partnerFulltimeStudent: "no",
+      partnerPayStudentLoan: "no",
+      partnerPaySupport: "no",
+      iAgreeToAboveStudentAidBCConsent: true,
+      iAgreeToTheAboveCRAConsent: true,
+    },
+  };
+}
+
+/**
+ * Create an invalid supporting user payload that passes DTO validation
+ * but fails Form.io required field validations.
+ * @returns invalid supporting user payload.
+ */
+function createInvalidSupportingUserPayload(): ReportedSupportingUserAPIInDTO {
+  return {
+    ...createSupportingUserPayload(),
+    // Passes IsNotEmptyObject() DTO validation but is missing all
+    // required Form.io fields, causing Form.io to return a 400 error.
+    supportingData: { dummy: "invalid" },
+  };
+}
