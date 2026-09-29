@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -23,6 +24,7 @@ import {
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo } from "@sims/sims-db";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
+import { MISSING_USER_INFO } from "../../constants";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -30,7 +32,8 @@ import {
 } from "../../services/supporting-user/constants";
 import {
   getSupportingUserFormType,
-  assertUserTokenHasRequiredInfo,
+  isUserTokenMissingRequiredInfo,
+  MISSING_USER_INFO_MESSAGE,
 } from "../../utilities";
 import {
   ApiBadRequestResponse,
@@ -152,7 +155,11 @@ export class SupportingUserSupportingUsersController extends BaseController {
     @Body() payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
     // Ensures that the user token has all the required information before proceeding.
-    assertUserTokenHasRequiredInfo(userToken);
+    if (isUserTokenMissingRequiredInfo(userToken)) {
+      throw new BadRequestException(
+        new ApiProcessError(MISSING_USER_INFO_MESSAGE, MISSING_USER_INFO),
+      );
+    }
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.
     const userQuery = this.userService.syncUser(
