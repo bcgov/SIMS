@@ -153,7 +153,13 @@ export class SupportingUserStudentsController {
       await this.supportingUserControllerService.validateDryRunSubmission(
         supportingUser.application.programYear.id,
         supportingUser.supportingUserType,
-        { ...payload, isAbleToReport: supportingUser.isAbleToReport },
+        {
+          ...payload,
+          isAbleToReport: supportingUser.isAbleToReport,
+          offeringIntensity: supportingUser.application.offeringIntensity,
+          programYearStartDate:
+            supportingUser.application.programYear.startDate,
+        },
       );
     // Update supporting user reported data.
     await this.supportingUserService.updateReportedData(
