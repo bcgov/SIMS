@@ -47,33 +47,34 @@ export class BatchReassessmentService {
       .addSelect("batchReassessment.createdAt", "createdAt")
       .addSelect("creator.firstName", "creatorFirstName")
       .addSelect("creator.lastName", "creatorLastName")
-      .addSelect(
-        `COUNT("batchReassessmentApplication"."id")::int`,
-        "totalCount",
-      )
-      .addSelect(
-        `COUNT(CASE WHEN "studentAssessment"."student_assessment_status" IN (:...successStatuses) THEN 1 END)::int`,
-        "successCount",
-      )
-      .addSelect(
-        `COUNT(CASE WHEN "studentAssessment"."id" IS NULL THEN 1 END)::int`,
-        "failureCount",
-      )
-      .leftJoin(
-        "batchReassessment.batchReassessmentApplications",
-        "batchReassessmentApplication",
-      )
-      .leftJoin(
-        "batchReassessmentApplication.studentAssessment",
-        "studentAssessment",
+      .addSelect('counts."totalCount"', "totalCount")
+      .addSelect('counts."successCount"', "successCount")
+      .addSelect('counts."failureCount"', "failureCount")
+      // Application counts aggregated per batch.
+      .innerJoin(
+        (subQuery) =>
+          subQuery
+            .select("batchApplication.batchReassessment.id", "batchId")
+            .addSelect("COUNT(*)::int", "totalCount")
+            .addSelect(
+              "COUNT(*) FILTER (WHERE studentAssessment.studentAssessmentStatus IN (:...successStatuses))::int",
+              "successCount",
+            )
+            .addSelect(
+              "COUNT(*) FILTER (WHERE studentAssessment.id IS NULL)::int",
+              "failureCount",
+            )
+            .from(BatchReassessmentApplication, "batchApplication")
+            .leftJoin("batchApplication.studentAssessment", "studentAssessment")
+            .groupBy("batchApplication.batchReassessment.id")
+            .setParameter("successStatuses", [
+              StudentAssessmentStatus.Completed,
+              StudentAssessmentStatus.Cancelled,
+            ]),
+        "counts",
+        'counts."batchId" = batchReassessment.id',
       )
       .leftJoin("batchReassessment.creator", "creator")
-      .setParameter("successStatuses", [
-        StudentAssessmentStatus.Completed,
-        StudentAssessmentStatus.Cancelled,
-      ])
-      .groupBy("batchReassessment.id")
-      .addGroupBy("creator.id")
       .orderBy("batchReassessment.createdAt", "DESC")
       .getRawMany<Omit<BatchReassessmentSummary, "status">>();
 
