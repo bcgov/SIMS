@@ -24,8 +24,7 @@ export interface BatchReassessmentSummaryAPIOutDTO {
   id: number;
   batchNumber: number;
   createdAt: Date;
-  creatorFirstName: string;
-  creatorLastName: string;
+  creatorName: string;
   totalCount: number;
   successCount: number;
   failureCount: number;

@@ -4,11 +4,10 @@ import {
   ApplicationStatus,
   BatchReassessment,
   BatchReassessmentApplication,
-  RecordDataModelService,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { DataSource } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import {
   BatchReassessmentStatus,
   BatchReassessmentSummary,
@@ -17,6 +16,7 @@ import { SequenceControlService } from "@sims/services";
 import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
 import { CustomNamedError } from "@sims/utilities";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
+import { InjectRepository } from "@nestjs/typeorm/dist/common/typeorm.decorators";
 
 const BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME = "BATCH_REASSESSMENT_NUMBER";
 
@@ -24,39 +24,39 @@ const BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME = "BATCH_REASSESSMENT_NUMBER";
  * Provides batch manual reassessment retrieval operations.
  */
 @Injectable()
-export class BatchReassessmentService extends RecordDataModelService<BatchReassessment> {
+export class BatchReassessmentService {
   constructor(
     private readonly dataSource: DataSource,
+    @InjectRepository(Application)
+    private readonly applicationRepo: Repository<Application>,
+    @InjectRepository(BatchReassessment)
+    private readonly batchReassessmentRepo: Repository<BatchReassessment>,
     private readonly sequenceService: SequenceControlService,
     private readonly studentAssessmentService: StudentAssessmentService,
-  ) {
-    super(dataSource.getRepository(BatchReassessment));
-  }
+  ) {}
 
   /**
    * Gets persisted batch manual reassessment submissions and their associated applications.
    * @returns batch manual reassessment submissions.
    */
   async getBatchReassessmentSummaries(): Promise<BatchReassessmentSummary[]> {
-    const rows = await this.repo
+    const rows = await this.batchReassessmentRepo
       .createQueryBuilder("batchReassessment")
-      .select([
-        'batchReassessment.id AS "id"',
-        'batchReassessment.batchNumber AS "batchNumber"',
-        'batchReassessment.createdAt AS "createdAt"',
-        'creator.firstName AS "creatorFirstName"',
-        'creator.lastName AS "creatorLastName"',
-      ])
+      .select("batchReassessment.id", "id")
+      .addSelect("batchReassessment.batchNumber", "batchNumber")
+      .addSelect("batchReassessment.createdAt", "createdAt")
+      .addSelect("creator.firstName", "creatorFirstName")
+      .addSelect("creator.lastName", "creatorLastName")
       .addSelect(
         `COUNT("batchReassessmentApplication"."id")::int`,
         "totalCount",
       )
       .addSelect(
-        `COUNT(CASE WHEN "studentAssessment"."student_assessment_status" = :completedStatus OR "studentAssessment"."student_assessment_status" = :cancelledStatus THEN 1 END)::int`,
+        `COUNT(CASE WHEN "studentAssessment"."student_assessment_status" IN (:...successStatuses) THEN 1 END)::int`,
         "successCount",
       )
       .addSelect(
-        `COUNT(CASE WHEN "batchReassessmentApplication"."student_assessment_id" IS NULL THEN 1 END)::int`,
+        `COUNT(CASE WHEN "studentAssessment"."id" IS NULL THEN 1 END)::int`,
         "failureCount",
       )
       .leftJoin(
@@ -68,8 +68,10 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
         "studentAssessment",
       )
       .leftJoin("batchReassessment.creator", "creator")
-      .setParameter("completedStatus", StudentAssessmentStatus.Completed)
-      .setParameter("cancelledStatus", StudentAssessmentStatus.Cancelled)
+      .setParameter("successStatuses", [
+        StudentAssessmentStatus.Completed,
+        StudentAssessmentStatus.Cancelled,
+      ])
       .groupBy("batchReassessment.id")
       .addGroupBy("creator.id")
       .orderBy("batchReassessment.createdAt", "DESC")
@@ -177,8 +179,7 @@ export class BatchReassessmentService extends RecordDataModelService<BatchReasse
   private async getApplicationIdsByNumber(
     applicationNumbers: string[],
   ): Promise<Map<string, number>> {
-    const applications = await this.dataSource
-      .getRepository(Application)
+    const applications = await this.applicationRepo
       .createQueryBuilder("application")
       .select(["application.id", "application.applicationNumber"])
       .where("application.applicationNumber IN (:...applicationNumbers)", {

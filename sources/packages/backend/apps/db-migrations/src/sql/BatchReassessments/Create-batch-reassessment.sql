@@ -1,10 +1,10 @@
 CREATE TABLE sims.batch_reassessments (
     id SERIAL PRIMARY KEY,
-    batch_number INTEGER NOT NULL,
+    batch_number INT UNIQUE NOT NULL,
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
+    creator INT NOT NULL DEFAULT NULL REFERENCES sims.users(id),
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 

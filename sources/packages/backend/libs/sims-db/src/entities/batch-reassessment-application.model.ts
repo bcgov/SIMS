@@ -23,8 +23,6 @@ export class BatchReassessmentApplication extends RecordDataModel {
    * Batch manual reassessment that included this application.
    */
   @ManyToOne(() => BatchReassessment, {
-    eager: false,
-    cascade: false,
     nullable: false,
   })
   @JoinColumn({
@@ -37,18 +35,12 @@ export class BatchReassessmentApplication extends RecordDataModel {
    */
   @Column({
     name: "application_number",
-    type: "varchar",
-    nullable: false,
   })
   applicationNumber: string;
   /**
    * Assessment created for the application when processing succeeds.
    */
-  @ManyToOne(() => StudentAssessment, {
-    nullable: true,
-    eager: false,
-    cascade: false,
-  })
+  @ManyToOne(() => StudentAssessment)
   @JoinColumn({
     name: "student_assessment_id",
     referencedColumnName: ColumnNames.ID,

@@ -7,7 +7,7 @@ CREATE TABLE sims.batch_reassessment_applications (
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    creator INT NULL DEFAULT NULL REFERENCES sims.users(id),
+    creator INT NOT NULL DEFAULT NULL REFERENCES sims.users(id),
     modifier INT NULL DEFAULT NULL REFERENCES sims.users(id)
 );
 

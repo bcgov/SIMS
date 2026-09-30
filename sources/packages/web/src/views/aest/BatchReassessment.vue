@@ -77,7 +77,7 @@
             {{ getISODateHourMinuteString(item.createdAt) }}
           </template>
           <template #[`item.submittedBy`]="{ item }">
-            {{ item.creatorFirstName }} {{ item.creatorLastName }}
+            {{ item.creatorName }}
           </template>
           <template #[`item.totalCount`]="{ item }">
             {{ item.totalCount }}

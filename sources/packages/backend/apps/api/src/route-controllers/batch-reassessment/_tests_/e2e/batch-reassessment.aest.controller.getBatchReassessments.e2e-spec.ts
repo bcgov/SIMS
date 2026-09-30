@@ -22,6 +22,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { BatchReassessmentStatus } from "../../../../services/batch-reassessment/batch-reassessment.service.models";
+import { getUserFullName } from "../../../../utilities";
 
 describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
   let app: INestApplication;
@@ -101,8 +102,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
             id: batch.id,
             batchNumber: batch.batchNumber,
             createdAt: batch.createdAt.toISOString(),
-            creatorFirstName: batch.creator.firstName,
-            creatorLastName: batch.creator.lastName,
+            creatorName: getUserFullName(batch.creator),
             successCount: 1,
             failureCount: 1,
             totalCount: 2,
@@ -172,8 +172,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
             id: batch.id,
             batchNumber: batch.batchNumber,
             createdAt: batch.createdAt.toISOString(),
-            creatorFirstName: batch.creator.firstName,
-            creatorLastName: batch.creator.lastName,
+            creatorName: getUserFullName(batch.creator),
             failureCount: 0,
             successCount: 1,
             totalCount: 1,
@@ -249,8 +248,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
             id: batch.id,
             batchNumber: batch.batchNumber,
             createdAt: batch.createdAt.toISOString(),
-            creatorFirstName: batch.creator.firstName,
-            creatorLastName: batch.creator.lastName,
+            creatorName: getUserFullName(batch.creator),
             successCount: 0,
             failureCount: 1,
             totalCount: 2,

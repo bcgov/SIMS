@@ -1,4 +1,7 @@
-import { NOTE_DESCRIPTION_MAX_LENGTH } from "@sims/sims-db";
+import {
+  APPLICATION_NUMBER_LENGTH,
+  NOTE_DESCRIPTION_MAX_LENGTH,
+} from "@sims/sims-db";
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -23,9 +26,8 @@ export class BatchReassessmentAPIInDTO {
   @ArrayNotEmpty()
   @ArrayMaxSize(BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS)
   @IsString({ each: true })
-  @Length(10, 10, { each: true })
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH, { each: true })
   applicationNumbers: string[];
-
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   note: string;
@@ -39,8 +41,7 @@ export class BatchReassessmentSummaryAPIOutDTO {
   id: number;
   batchNumber: number;
   createdAt: Date;
-  creatorFirstName: string;
-  creatorLastName: string;
+  creatorName: string;
   totalCount: number;
   successCount: number;
   failureCount: number;
