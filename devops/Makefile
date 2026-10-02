@@ -405,7 +405,11 @@ deploy-and-run-migrations-job:
 		| oc -n $(NAMESPACE) apply -f -
 	@oc -n $(NAMESPACE) wait --for=condition=complete job/$(MIGRATIONS_JOB_NAME) --timeout=$(MIGRATIONS_OC_TIMEOUT); \
 		EXIT_CODE=$$?; \
-		oc -n $(NAMESPACE) logs job/$(MIGRATIONS_JOB_NAME); \
+		oc -n $(NAMESPACE) logs \
+			--selector=job-name=$(MIGRATIONS_JOB_NAME) \
+			--all-containers=true \
+			--prefix=true \
+			--tail=-1; \
 		exit $$EXIT_CODE
 
 delete-migrations-job:
