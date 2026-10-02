@@ -10,7 +10,6 @@ import {
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
 import { AuthorizedParties } from "../../../../auth/authorized-parties.enum";
-import { MISSING_USER_INFO } from "../../../../constants";
 import {
   IdentityProviders,
   OfferingIntensity,
@@ -75,10 +74,9 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message:
-            "Some mandatory profile information (e-mail, last name, or date of birth) was not " +
-            "provided by the identity provider. Please ensure your BC Services Card identity " +
-            "information, including a verified e-mail address, is complete and try again.",
-          errorType: MISSING_USER_INFO,
+            "The authenticated user token is missing required profile information.",
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
         });
     },
   );

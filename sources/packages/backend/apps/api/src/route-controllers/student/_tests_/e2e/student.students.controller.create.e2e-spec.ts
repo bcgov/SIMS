@@ -25,7 +25,6 @@ import { In } from "typeorm";
 import { DisabilityStatus, IdentityProviders, NoteType } from "@sims/sims-db";
 import { CreateStudentAPIInDTO } from "../../models/student.dto";
 import { applySINNumberFormat } from "@sims/test-utils/utils";
-import { MISSING_USER_INFO } from "../../../../constants";
 
 const SIN_NUMBER_A = "544962244";
 const SIN_NUMBER_B = "317149003";
@@ -146,10 +145,9 @@ describe("StudentStudentsController(e2e)-create", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message:
-          "Some mandatory profile information (e-mail, last name, or date of birth) was not " +
-          "provided by the identity provider. Please ensure your BC Services Card identity " +
-          "information, including a verified e-mail address, is complete and try again.",
-        errorType: MISSING_USER_INFO,
+          "The BCSC identity token is missing required profile information.",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 

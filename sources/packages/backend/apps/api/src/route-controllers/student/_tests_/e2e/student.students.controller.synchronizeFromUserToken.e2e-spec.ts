@@ -6,7 +6,6 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   mockJWTToken,
-  mockUserLoginInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
@@ -14,7 +13,6 @@ import {
   saveFakeStudent,
 } from "@sims/test-utils";
 import { TestingModule } from "@nestjs/testing";
-import { MISSING_USER_INFO } from "../../../../constants";
 
 describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
   let app: INestApplication;
@@ -33,10 +31,9 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
   it("Should return a bad request error when the BCSC authentication token is missing the mandatory profile information.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    // Mock the user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
-    // Mocked BCSC token without a verified email address.
+    // Mock a BCSC token for the persisted student without a verified email address.
     await mockJWTToken(appModule, (jwtPayload) => {
+      jwtPayload.userName = student.user.userName;
       jwtPayload.email = undefined;
       jwtPayload.lastName = "Doe";
       jwtPayload.birthdate = "2000-01-01";
@@ -52,10 +49,9 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message:
-          "Some mandatory profile information (e-mail, last name, or date of birth) was not " +
-          "provided by the identity provider. Please ensure your BC Services Card identity " +
-          "information, including a verified e-mail address, is complete and try again.",
-        errorType: MISSING_USER_INFO,
+          "The BCSC identity token is missing required profile information.",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
       });
   });
 
@@ -64,14 +60,13 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: { birthDate: "1990-01-01" },
     });
-    // Mock the user service to return the saved student.
-    await mockUserLoginInfo(appModule, student);
-    // Mocked BCSC token with updated profile information to be synchronized.
+    // Mock a BCSC token for the persisted student with updated profile information.
     const updatedEmail = `updated.${student.user.email}`;
     const updatedLastName = `Updated${student.user.lastName}`;
     const updatedGivenNames = `Updated${student.user.firstName}`;
     const updatedBirthdate = "1995-05-05";
     await mockJWTToken(appModule, (jwtPayload) => {
+      jwtPayload.userName = student.user.userName;
       jwtPayload.email = updatedEmail;
       jwtPayload.lastName = updatedLastName;
       jwtPayload.givenNames = updatedGivenNames;

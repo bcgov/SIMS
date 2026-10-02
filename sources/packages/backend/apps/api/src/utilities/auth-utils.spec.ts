@@ -83,12 +83,12 @@ describe("isUserTokenMissingRequiredInfo", () => {
   it.each([
     ["email", { ...VALID_USER_TOKEN, email: undefined }],
     ["email", { ...VALID_USER_TOKEN, email: "   " }],
-    ["lastName", { ...VALID_USER_TOKEN, lastName: undefined }],
-    ["lastName", { ...VALID_USER_TOKEN, lastName: "   " }],
-    ["birthdate", { ...VALID_USER_TOKEN, birthdate: undefined }],
-    ["birthdate", { ...VALID_USER_TOKEN, birthdate: "   " }],
+    ["last name", { ...VALID_USER_TOKEN, lastName: undefined }],
+    ["last name", { ...VALID_USER_TOKEN, lastName: "   " }],
+    ["date of birth", { ...VALID_USER_TOKEN, birthdate: undefined }],
+    ["date of birth", { ...VALID_USER_TOKEN, birthdate: "   " }],
   ])(
-    "Should return true when the user token is missing the %s.",
+    "Should return true when the user token is missing the user's %s.",
     (_: string, userToken: IUserToken) => {
       // Act
       const result = isUserTokenMissingRequiredInfo(userToken);

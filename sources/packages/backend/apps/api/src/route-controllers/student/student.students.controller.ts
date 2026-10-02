@@ -61,7 +61,6 @@ import {
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MinFileSizeValidator,
-  MISSING_USER_INFO_MESSAGE,
   PaginatedResults,
   uploadLimits,
 } from "../../utilities";
@@ -72,7 +71,6 @@ import { ApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { FormNames } from "../../services/form/constants";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import {
-  MISSING_USER_INFO,
   STUDENT_ACCOUNT_CREATION_FOUND_SIN_WITH_MISMATCH_DATA,
   STUDENT_ACCOUNT_CREATION_MULTIPLES_SIN_FOUND,
 } from "../../constants";
@@ -141,7 +139,7 @@ export class StudentStudentsController extends BaseController {
     // Ensures that the user token has all the required information before proceeding.
     if (isUserTokenMissingRequiredInfo(studentUserToken)) {
       throw new BadRequestException(
-        new ApiProcessError(MISSING_USER_INFO_MESSAGE, MISSING_USER_INFO),
+        "The BCSC identity token is missing required profile information.",
       );
     }
 
@@ -198,7 +196,7 @@ export class StudentStudentsController extends BaseController {
       // Ensures that the user token has all the required information before proceeding.
       if (isUserTokenMissingRequiredInfo(studentUserToken)) {
         throw new BadRequestException(
-          new ApiProcessError(MISSING_USER_INFO_MESSAGE, MISSING_USER_INFO),
+          "The BCSC identity token is missing required profile information.",
         );
       }
       await this.studentService.updateStudentUserData(

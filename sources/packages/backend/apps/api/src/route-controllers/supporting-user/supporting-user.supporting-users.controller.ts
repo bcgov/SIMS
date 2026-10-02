@@ -24,7 +24,6 @@ import {
 } from "./models/supporting-user.dto";
 import { AddressInfo, ContactInfo } from "@sims/sims-db";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
-import { MISSING_USER_INFO } from "../../constants";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -33,7 +32,6 @@ import {
 import {
   getSupportingUserFormType,
   isUserTokenMissingRequiredInfo,
-  MISSING_USER_INFO_MESSAGE,
 } from "../../utilities";
 import {
   ApiBadRequestResponse,
@@ -157,7 +155,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // Ensures that the user token has all the required information before proceeding.
     if (isUserTokenMissingRequiredInfo(userToken)) {
       throw new BadRequestException(
-        new ApiProcessError(MISSING_USER_INFO_MESSAGE, MISSING_USER_INFO),
+        "The authenticated user token is missing required profile information.",
       );
     }
     // Regardless of the API call is successful or not, create/update
