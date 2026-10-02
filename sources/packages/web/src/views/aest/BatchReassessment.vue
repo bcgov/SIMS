@@ -1,17 +1,18 @@
 <template>
-  <full-page-container :full-width="true">
+  <full-page-container
+    :full-width="true"
+    :layout-template="LayoutTemplates.Centered"
+  >
     <template #header>
       <header-navigator title="Ministry" sub-title="Batch Reassessment" />
     </template>
-
-    <body-header-container>
+    <body-header-container :enable-card-view="true">
       <template #header>
         <body-header
           title="Batch manual reassessment"
           sub-title="Enter the application numbers that require manual reassessment."
         />
       </template>
-
       <content-group>
         <v-form ref="batchReassessmentForm">
           <v-textarea
@@ -23,16 +24,13 @@
             auto-grow
             hide-details="auto"
           />
-
-          <div class="d-flex justify-end mt-4">
-            <v-btn
-              color="primary"
-              :disabled="!applicationNumbers?.trim()"
-              @click="openConfirmSubmitModal"
-            >
-              Submit
-            </v-btn>
-          </div>
+          <footer-buttons
+            primary-label="Submit"
+            justify="end"
+            @primary-click="openConfirmSubmitModal"
+            :disable-primary-button="!applicationNumbers?.trim()"
+            :show-secondary-button="false"
+          />
         </v-form>
       </content-group>
     </body-header-container>
@@ -53,74 +51,32 @@
       </template>
     </user-note-confirm-modal>
 
-    <body-header-container>
-      <template #header>
-        <body-header
-          title="Batch manual reassessment history"
-          sub-title="View the history of batch manual reassessments. Each batch shows
-            the submission details and processing status. View the results for a
-            batch to review which applications were successfully reassessed and
-            which failed, including any applicable error details."
-        />
-      </template>
-
-      <content-group>
-        <v-data-table
-          :headers="BatchReassessmentHistoryHeaders"
-          :items="batchReassessmentHistory"
-          :loading="batchReassessmentHistoryLoading"
-        >
-          <template #[`item.batchNumber`]="{ item }">
-            {{ item.batchNumber }}
-          </template>
-          <template #[`item.submittedDate`]="{ item }">
-            {{ getISODateHourMinuteString(item.createdAt) }}
-          </template>
-          <template #[`item.submittedBy`]="{ item }">
-            {{ item.creatorName }}
-          </template>
-          <template #[`item.totalCount`]="{ item }">
-            {{ item.totalCount }}
-          </template>
-          <template #[`item.successCount`]="{ item }">
-            {{ item.successCount }}
-          </template>
-          <template #[`item.failureCount`]="{ item }">
-            {{ item.failureCount }}
-          </template>
-          <template #[`item.status`]="{ item }">
-            <status-chip-batch-reassessment :status="item.status" />
-          </template>
-        </v-data-table>
-      </content-group>
-    </body-header-container>
+    <batch-reassessment-history ref="batchReassessmentHistory" />
   </full-page-container>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { ApiProcessError } from "@/types";
+import { ref } from "vue";
+import { ApiProcessError, LayoutTemplates } from "@/types";
 import type { VForm } from "@/types";
-import { BatchReassessmentHistoryHeaders } from "@/types/contracts/DataTableContract";
-import StatusChipBatchReassessment from "@/components/generic/StatusChipBatchReassessment.vue";
+import BatchReassessmentHistory from "@/components/aest/BatchReassessmentHistory.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
-import {
-  BatchReassessmentSummaryAPIOutDTO,
-  BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS,
-} from "@/services/http/dto";
-import { ModalDialog, useFormatters, useSnackBar } from "@/composables";
+import { ModalDialog, useSnackBar } from "@/composables";
 import { BatchReassessmentService } from "@/services/BatchReassessmentService";
 
 const APPLICATION_NUMBER_SIZE = 10;
+const APPLICATION_NUMBER_REGEX = /[\s,]+/;
+
+const MAX_APPLICATION_NUMBERS = 20000;
 
 const snackBar = useSnackBar();
-const { getISODateHourMinuteString } = useFormatters();
 
 const applicationNumbers = ref("");
-const batchReassessmentHistory = ref<BatchReassessmentSummaryAPIOutDTO[]>([]);
-const batchReassessmentHistoryLoading = ref(false);
+const batchReassessmentHistory = ref(
+  {} as InstanceType<typeof BatchReassessmentHistory>,
+);
 const batchReassessmentForm = ref({} as VForm);
 const confirmBatchReassessmentModal = ref(
   {} as ModalDialog<UserNoteModal<void>>,
@@ -131,17 +87,14 @@ const checkApplicationNumbers = (value: string) => {
     return "Application numbers are required.";
   }
 
-  const entries = value
-    .split(/[\s,]+/)
-    .map((entry) => entry.trim())
-    .filter(Boolean);
+  const entries = value.split(APPLICATION_NUMBER_REGEX).filter(Boolean);
 
   if (!entries.length) {
     return "Application numbers are required.";
   }
 
-  if (entries.length > BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS) {
-    return `A maximum of ${BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS} application numbers can be submitted at once.`;
+  if (entries.length > MAX_APPLICATION_NUMBERS) {
+    return `A maximum of ${MAX_APPLICATION_NUMBERS} application numbers can be submitted at once.`;
   }
 
   const hasInvalidEntry = entries.some(
@@ -149,17 +102,14 @@ const checkApplicationNumbers = (value: string) => {
       !new RegExp(String.raw`^\d{${APPLICATION_NUMBER_SIZE}}$`).test(entry),
   );
   if (hasInvalidEntry) {
-    return `Each application number must be exactly ${APPLICATION_NUMBER_SIZE} numbers and be separated by spaces, line breaks, or commas.`;
+    return `Each application number must be exactly ${APPLICATION_NUMBER_SIZE} digits and be separated by spaces, line breaks, or commas.`;
   }
 
   return true;
 };
 
 const parseApplicationNumbers = () =>
-  applicationNumbers.value
-    .split(/[\s,]+/)
-    .map((value) => value.trim())
-    .filter(Boolean);
+  applicationNumbers.value.split(APPLICATION_NUMBER_REGEX).filter(Boolean);
 
 const openConfirmSubmitModal = async () => {
   const { valid } = await batchReassessmentForm.value.validate();
@@ -183,7 +133,7 @@ const submitReassessment = async (
     });
     snackBar.success("Batch reassessment triggered successfully.");
     batchReassessmentForm.value.reset();
-    await loadBatchReassessmentHistory();
+    await batchReassessmentHistory.value.reload();
     return true;
   } catch (error) {
     if (error instanceof ApiProcessError) {
@@ -194,18 +144,4 @@ const submitReassessment = async (
     return false;
   }
 };
-
-const loadBatchReassessmentHistory = async () => {
-  batchReassessmentHistoryLoading.value = true;
-  try {
-    batchReassessmentHistory.value =
-      await BatchReassessmentService.shared.getBatchReassessments();
-  } catch {
-    snackBar.error("Unexpected error while loading the reassessment history.");
-  } finally {
-    batchReassessmentHistoryLoading.value = false;
-  }
-};
-
-onMounted(loadBatchReassessmentHistory);
 </script>

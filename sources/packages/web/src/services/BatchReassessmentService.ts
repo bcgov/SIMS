@@ -18,7 +18,6 @@ export class BatchReassessmentService {
   /**
    * Runs a batch reassessment for the given application numbers.
    * @param payload application numbers to be reassessed.
-   * @returns void.
    */
   async createBatchReassessment(
     payload: BatchReassessmentAPIInDTO,

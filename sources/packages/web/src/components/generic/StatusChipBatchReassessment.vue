@@ -1,25 +1,19 @@
 <template>
   <chip-status :status="chipStatus" :label="status" />
 </template>
-<script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
-import { BatchReassessmentStatus } from "@/services/http/dto";
-import { StatusChipTypes } from "@/types";
+<script setup lang="ts">
+import { computed } from "vue";
+import { BatchReassessmentStatus, StatusChipTypes } from "@/types";
 
-export default defineComponent({
-  props: {
-    status: {
-      type: String as PropType<BatchReassessmentStatus>,
-      required: true,
-    },
-  },
-  setup(props) {
-    const chipStatus = computed(() => {
-      return props.status === BatchReassessmentStatus.Completed
-        ? StatusChipTypes.Success
-        : StatusChipTypes.Warning;
-    });
-    return { chipStatus };
-  },
-});
+interface Props {
+  status: BatchReassessmentStatus;
+}
+
+const props = defineProps<Props>();
+
+const chipStatus = computed(() =>
+  props.status === BatchReassessmentStatus.Completed
+    ? StatusChipTypes.Success
+    : StatusChipTypes.Warning,
+);
 </script>

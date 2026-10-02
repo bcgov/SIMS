@@ -11,7 +11,6 @@ export class BatchReassessmentApi extends HttpBaseClient {
   /**
    * Creates a batch reassessment for the given application numbers.
    * @param payload application numbers to be reassessed.
-   * @returns void.
    */
   async createBatchReassessment(
     payload: BatchReassessmentAPIInDTO,
@@ -24,8 +23,6 @@ export class BatchReassessmentApi extends HttpBaseClient {
    * @returns batch manual reassessment submissions.
    */
   async getBatchReassessments(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
-    return this.getCall<BatchReassessmentSummaryAPIOutDTO[]>(
-      this.addClientRoot("batch-reassessment"),
-    );
+    return this.getCall(this.addClientRoot("batch-reassessment"));
   }
 }

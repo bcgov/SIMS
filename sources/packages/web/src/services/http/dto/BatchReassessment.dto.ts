@@ -1,4 +1,4 @@
-export const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 20000;
+import { BatchReassessmentStatus } from "@/types";
 
 /**
  * Payload used to trigger a batch manual reassessment for a list of application numbers.
@@ -6,14 +6,6 @@ export const BATCH_REASSESSMENT_MAX_APPLICATION_NUMBERS = 20000;
 export interface BatchReassessmentAPIInDTO {
   applicationNumbers: string[];
   note: string;
-}
-
-/**
- * Overall processing status of a batch manual reassessment submission.
- */
-export enum BatchReassessmentStatus {
-  Completed = "Completed",
-  InProgress = "In progress",
 }
 
 /**
