@@ -146,15 +146,6 @@ export function getCurrencyFormatMessage(propertyDisplayName: string): string {
 }
 
 /**
- * Provides a user-friendly message to a field that needs integer validation.
- * @param propertyDisplayName property display name.
- * @returns friendly message to the field the that needs integer validation.
- */
-function getIntegerFormatMessage(propertyDisplayName: string): string {
-  return `${propertyDisplayName} must be an integer.`;
-}
-
-/**
  * Provides a user-friendly message to a field that needs a enum like validation.
  * @param propertyDisplayName property display name.
  * @returns friendly message to the field the that needs a enum like validation.
@@ -742,7 +733,7 @@ export class OfferingValidationModel {
   )
   // The underlying DB column is a smallint, so a decimal value would otherwise
   // only fail later at the raw INSERT instead of during this validation.
-  @IsInt({ message: getIntegerFormatMessage(userFriendlyNames.courseLoad) })
+  @IsInt({ message: `${userFriendlyNames.courseLoad} must be an integer.` })
   @Min(OFFERING_COURSE_LOAD_MIN_VALUE, {
     message: getMinFormatMessage(
       userFriendlyNames.courseLoad,
@@ -959,7 +950,7 @@ export class OfferingValidationModel {
   // The underlying DB column is a smallint, so a decimal value would otherwise
   // only fail later at the raw INSERT instead of during this validation.
   @IsInt({
-    message: getIntegerFormatMessage(userFriendlyNames.totalOnlineDuration),
+    message: `${userFriendlyNames.totalOnlineDuration} must be an integer.`,
   })
   @Min(OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE, {
     message: getMinFormatMessage(
@@ -1004,7 +995,7 @@ export class OfferingValidationModel {
   // The underlying DB column is a smallint, so a decimal value would otherwise
   // only fail later at the raw INSERT instead of during this validation.
   @IsInt({
-    message: getIntegerFormatMessage(userFriendlyNames.minimumOnlineDuration),
+    message: `${userFriendlyNames.minimumOnlineDuration} must be an integer.`,
   })
   @Min(OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE, {
     message: getMinFormatMessage(
@@ -1049,7 +1040,7 @@ export class OfferingValidationModel {
   // The underlying DB column is a smallint, so a decimal value would otherwise
   // only fail later at the raw INSERT instead of during this validation.
   @IsInt({
-    message: getIntegerFormatMessage(userFriendlyNames.maximumOnlineDuration),
+    message: `${userFriendlyNames.maximumOnlineDuration} must be an integer.`,
   })
   @Min(OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE, {
     message: getMinFormatMessage(

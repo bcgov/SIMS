@@ -50,6 +50,7 @@ import {
 import {
   OfferingYesNoOptions,
   OnlineInstructionModeOptions,
+  userFriendlyNames,
 } from "../../../../services";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
@@ -731,7 +732,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: ["Course load must be an integer."],
+        message: [`${userFriendlyNames.courseLoad} must be an integer.`],
         error: "The validated offerings have critical errors.",
       });
   });
