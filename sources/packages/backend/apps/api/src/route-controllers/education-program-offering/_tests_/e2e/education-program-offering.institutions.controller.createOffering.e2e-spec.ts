@@ -6,6 +6,7 @@ import {
   OfferingIntensity,
   OfferingStatus,
   OfferingTypes,
+  ProgramIntensity,
   Restriction,
   RestrictionActionType,
   RestrictionType,
@@ -49,6 +50,7 @@ import {
 import {
   OfferingYesNoOptions,
   OnlineInstructionModeOptions,
+  userFriendlyNames,
 } from "../../../../services";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { InstitutionUserTypes } from "../../../../auth";
@@ -673,6 +675,64 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
         message: [
           "Online instruction mode is not allowed for provided institution type or offering delivery type and offering online delivery inputs.",
         ],
+        error: "The validated offerings have critical errors.",
+      });
+  });
+
+  it("Should throw bad request error when trying to create a part-time offering with a decimal course load.", async () => {
+    // Arrange
+    // Course load is persisted in a smallint database column, hence a decimal
+    // value must be rejected before reaching the database, not cause a DB error.
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const fakeEducationProgram = createFakeEducationProgram({
+      institution: collegeF,
+      user: collegeFUser,
+    });
+    fakeEducationProgram.programIntensity = ProgramIntensity.fullTimePartTime;
+    const savedFakeEducationProgram =
+      await db.educationProgram.save(fakeEducationProgram);
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${savedFakeEducationProgram.id}`;
+    const studyBreak = {
+      breakStartDate: "2023-12-01",
+      breakEndDate: "2024-01-01",
+    };
+
+    const payload: Partial<EducationProgramOfferingAPIInDTO> = {
+      offeringName: "Offering 1",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: OfferingYesNoOptions.No,
+      studyStartDate: "2023-09-01",
+      studyEndDate: "2024-06-30",
+      lacksStudyBreaks: false,
+      studyBreaks: [
+        {
+          breakStartDate: studyBreak.breakStartDate,
+          breakEndDate: studyBreak.breakEndDate,
+        },
+      ],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      courseLoad: 33.33,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: [`${userFriendlyNames.courseLoad} must be an integer.`],
         error: "The validated offerings have critical errors.",
       });
   });

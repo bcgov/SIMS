@@ -299,6 +299,7 @@
                   "mask": false,
                   "tableView": false,
                   "delimiter": false,
+                  "decimalLimit": 0,
                   "requireDecimal": false,
                   "inputFormat": "plain",
                   "truncateMultipleSpaces": false,
@@ -523,6 +524,7 @@
                   },
                   "requireDecimal": false,
                   "delimiter": false,
+                  "decimalLimit": 0,
                   "lockKey": true
                 },
                 {
@@ -566,6 +568,7 @@
                     "when": "isOnlineDurationSameAlways",
                     "eq": "no"
                   },
+                  "decimalLimit": 0,
                   "lockKey": true
                 },
                 {
@@ -610,6 +613,7 @@
                     "when": "isOnlineDurationSameAlways",
                     "eq": "no"
                   },
+                  "decimalLimit": 0,
                   "lockKey": true
                 }
               ],
