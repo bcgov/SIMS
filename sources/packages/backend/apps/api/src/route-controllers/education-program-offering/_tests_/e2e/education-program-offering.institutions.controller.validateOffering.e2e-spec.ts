@@ -530,6 +530,54 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
+  it("Should return an error when a decimal course load is passed in for a part-time education program offering.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-07-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      // Course load is persisted in a smallint database column and must be rejected
+      // before reaching the database when a decimal value is provided.
+      courseLoad: 33.33,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        errors: [`${userFriendlyNames.courseLoad} must be an integer.`],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 47,
+          totalDays: 47,
+          totalFundedWeeks: 7,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
   it("Should validate an offering when valid data with study breaks is passed in for a part-time education program offering.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(

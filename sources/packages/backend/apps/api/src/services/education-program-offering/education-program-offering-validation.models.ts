@@ -5,6 +5,7 @@ import {
   IsDateString,
   IsEnum,
   IsIn,
+  IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
@@ -142,6 +143,15 @@ function getMaxFormatMessage(propertyDisplayName: string, max: number): string {
  */
 export function getCurrencyFormatMessage(propertyDisplayName: string): string {
   return `${propertyDisplayName} must be a number without a group separator or decimals.`;
+}
+
+/**
+ * Provides a user-friendly message to a field that needs integer validation.
+ * @param propertyDisplayName property display name.
+ * @returns friendly message to the field the that needs integer validation.
+ */
+function getIntegerFormatMessage(propertyDisplayName: string): string {
+  return `${propertyDisplayName} must be an integer.`;
 }
 
 /**
@@ -730,6 +740,9 @@ export class OfferingValidationModel {
     (offering: OfferingValidationModel) =>
       offering.offeringIntensity === OfferingIntensity.partTime,
   )
+  // The underlying DB column is a smallint, so a decimal value would otherwise
+  // only fail later at the raw INSERT instead of during this validation.
+  @IsInt({ message: getIntegerFormatMessage(userFriendlyNames.courseLoad) })
   @Min(OFFERING_COURSE_LOAD_MIN_VALUE, {
     message: getMinFormatMessage(
       userFriendlyNames.courseLoad,
@@ -943,8 +956,10 @@ export class OfferingValidationModel {
       message: `${userFriendlyNames.totalOnlineDuration} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
     },
   )
-  @IsNumber(undefined, {
-    message: `${userFriendlyNames.totalOnlineDuration} must be a number.`,
+  // The underlying DB column is a smallint, so a decimal value would otherwise
+  // only fail later at the raw INSERT instead of during this validation.
+  @IsInt({
+    message: getIntegerFormatMessage(userFriendlyNames.totalOnlineDuration),
   })
   @Min(OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE, {
     message: getMinFormatMessage(
@@ -986,8 +1001,10 @@ export class OfferingValidationModel {
       message: `${userFriendlyNames.minimumOnlineDuration} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
     },
   )
-  @IsNumber(undefined, {
-    message: `${userFriendlyNames.minimumOnlineDuration} must be a number.`,
+  // The underlying DB column is a smallint, so a decimal value would otherwise
+  // only fail later at the raw INSERT instead of during this validation.
+  @IsInt({
+    message: getIntegerFormatMessage(userFriendlyNames.minimumOnlineDuration),
   })
   @Min(OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE, {
     message: getMinFormatMessage(
@@ -1029,8 +1046,10 @@ export class OfferingValidationModel {
       message: `${userFriendlyNames.maximumOnlineDuration} is not allowed for provided institution type or offering delivery type and offering online delivery inputs.`,
     },
   )
-  @IsNumber(undefined, {
-    message: `${userFriendlyNames.maximumOnlineDuration} must be a number.`,
+  // The underlying DB column is a smallint, so a decimal value would otherwise
+  // only fail later at the raw INSERT instead of during this validation.
+  @IsInt({
+    message: getIntegerFormatMessage(userFriendlyNames.maximumOnlineDuration),
   })
   @Min(OFFERING_MINIMUM_ONLINE_DURATION_PERCENTAGE, {
     message: getMinFormatMessage(
