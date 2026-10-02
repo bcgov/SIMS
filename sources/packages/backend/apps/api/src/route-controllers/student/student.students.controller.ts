@@ -57,6 +57,7 @@ import { StudentControllerService } from "..";
 import { FileInterceptor } from "@nestjs/platform-express";
 import {
   defaultFileFilter,
+  isUserTokenMissingRequiredInfo,
   MAX_UPLOAD_FILES,
   MAX_UPLOAD_PARTS,
   MinFileSizeValidator,
@@ -135,10 +136,25 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
+    // Ensures that the user token has all the required information before proceeding.
+    if (isUserTokenMissingRequiredInfo(studentUserToken)) {
+      throw new BadRequestException(
+        "The BCSC identity token is missing required profile information.",
+      );
+    }
+
+    // The read-only identity fields displayed to the student are calculated by the form
+    // from the trusted BCSC token.
     const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
-        payload,
+        {
+          ...payload,
+          firstName: studentUserToken.givenNames,
+          lastName: studentUserToken.lastName,
+          email: studentUserToken.email,
+          dateOfBirth: studentUserToken.birthdate,
+        },
       );
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
@@ -177,6 +193,12 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
   ): Promise<void> {
     if (studentUserToken.identityProvider === IdentityProviders.BCSC) {
+      // Ensures that the user token has all the required information before proceeding.
+      if (isUserTokenMissingRequiredInfo(studentUserToken)) {
+        throw new BadRequestException(
+          "The BCSC identity token is missing required profile information.",
+        );
+      }
       await this.studentService.updateStudentUserData(
         {
           studentId: studentUserToken.studentId,
@@ -367,10 +389,18 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
+    // The read-only identity fields displayed to the student are calculated by the form
+    // from the trusted BCSC token.
     const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
-        payload,
+        {
+          ...payload,
+          firstName: studentUserToken.givenNames,
+          lastName: studentUserToken.lastName,
+          email: studentUserToken.email,
+          dateOfBirth: studentUserToken.birthdate,
+        },
       );
     if (!submissionResult.valid) {
       throw new BadRequestException(

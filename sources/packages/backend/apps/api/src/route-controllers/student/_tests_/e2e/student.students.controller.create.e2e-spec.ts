@@ -5,6 +5,7 @@ import {
   createTestingAppModule,
   FakeStudentUsersTypes,
   getStudentToken,
+  mockJWTToken,
   mockJWTUserInfo,
   resetMockJWTUserInfo,
 } from "../../../../testHelpers";
@@ -117,6 +118,37 @@ describe("StudentStudentsController(e2e)-create", () => {
         sin: SIN_NUMBER_A,
       },
     });
+  });
+
+  it("Should return a bad request error when the BCSC authentication token is missing the mandatory e-mail information.", async () => {
+    // Arrange
+    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+    // Mocked user info to populate the JWT token with a new, not yet associated, user.
+    const user = createFakeUser();
+    // Mocked BCSC token without a verified email address.
+    await mockJWTToken(appModule, (jwtPayload) => {
+      jwtPayload.userName = user.userName;
+      jwtPayload.lastName = user.lastName;
+      jwtPayload.givenNames = user.firstName;
+      jwtPayload.birthdate = "2000-01-01";
+      jwtPayload.email = undefined;
+    });
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message:
+          "The BCSC identity token is missing required profile information.",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
   });
 
   it("Should refresh the cached login information after creating a student account.", async () => {

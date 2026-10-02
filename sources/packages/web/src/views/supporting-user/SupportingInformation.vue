@@ -118,6 +118,7 @@ import {
 } from "@/composables";
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
+import { MISSING_USER_INFO } from "@/constants";
 import { PropType, ref, defineComponent } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
@@ -278,6 +279,7 @@ export default defineComponent({
         if (error instanceof ApiProcessError) {
           switch (error.errorType) {
             case STUDENT_APPLICATION_NOT_FOUND:
+            case MISSING_USER_INFO:
               snackBar.error(
                 error.message,
                 snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,

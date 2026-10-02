@@ -58,6 +58,7 @@ export default defineComponent({
     const studentStore = useStudentStore();
     const processing = ref(false);
     const isDataReady = ref(false);
+    const studentSaveErrorMessage = "Error while saving student.";
 
     const populateBCSCAddressFields = (data: StudentProfileFormModel) => {
       if (!bcscParsedToken.address) {
@@ -160,9 +161,9 @@ export default defineComponent({
           error.errorType === STUDENT_ACCOUNT_APPLICATION_USER_ALREADY_EXISTS
         ) {
           snackBar.error("The user has been used in a previous request.");
-        } else {
-          snackBar.error("Error while saving student.");
+          return;
         }
+        snackBar.error(studentSaveErrorMessage);
       } finally {
         processing.value = false;
       }

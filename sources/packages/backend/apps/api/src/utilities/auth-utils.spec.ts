@@ -1,5 +1,16 @@
 // Target module
-import { extractRawUserName, getUserFullName } from "./auth-utils";
+import {
+  extractRawUserName,
+  getUserFullName,
+  isUserTokenMissingRequiredInfo,
+} from "./auth-utils";
+import { IUserToken } from "../auth/userToken.interface";
+
+const VALID_USER_TOKEN = {
+  email: "some.email@some.domain.com",
+  lastName: "Doe",
+  birthdate: "2000-01-01",
+} as IUserToken;
 
 describe("Extract user real user name when Keycloak changed it (e.g. realUserName@bceid)", () => {
   it("Should extract the real user name when the user name has a @bceid appended", () => {
@@ -59,4 +70,30 @@ describe("Extract user real user name when Keycloak changed it (e.g. realUserNam
     // Assert
     expect(result).toBe("");
   });
+});
+
+describe("isUserTokenMissingRequiredInfo", () => {
+  it("Should return false when the user token has all the required information.", () => {
+    // Act
+    const result = isUserTokenMissingRequiredInfo(VALID_USER_TOKEN);
+    // Assert
+    expect(result).toBe(false);
+  });
+
+  it.each([
+    ["email", { ...VALID_USER_TOKEN, email: undefined }],
+    ["email", { ...VALID_USER_TOKEN, email: "   " }],
+    ["last name", { ...VALID_USER_TOKEN, lastName: undefined }],
+    ["last name", { ...VALID_USER_TOKEN, lastName: "   " }],
+    ["date of birth", { ...VALID_USER_TOKEN, birthdate: undefined }],
+    ["date of birth", { ...VALID_USER_TOKEN, birthdate: "   " }],
+  ])(
+    "Should return true when the user token is missing the user's %s.",
+    (_: string, userToken: IUserToken) => {
+      // Act
+      const result = isUserTokenMissingRequiredInfo(userToken);
+      // Assert
+      expect(result).toBe(true);
+    },
+  );
 });

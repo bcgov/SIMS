@@ -1,19 +1,19 @@
 <template>
   <formio-container
-    formName="studentProfile"
-    :formData="formModel"
+    form-name="studentProfile"
+    :form-data="formModel"
     :is-data-ready="isDataReady"
     @loaded="$emit('loaded', $event)"
     @submitted="$emit('submitted', $event)"
-    @customEvent="$emit('customEvent', $event)"
+    @custom-event="$emit('customEvent', $event)"
   >
     <template #actions="{ submit }">
       <footer-buttons
         v-if="showActionButtons"
         :processing="processing"
-        @primaryClick="submit"
-        :primaryLabel="saveLabel"
-        :showSecondaryButton="false"
+        @primary-click="submit"
+        :primary-label="saveLabel"
+        :show-secondary-button="false"
       />
     </template>
   </formio-container>
@@ -29,12 +29,10 @@ export default defineComponent({
     formModel: {
       type: Object as PropType<StudentProfileFormModel>,
       required: true,
-      default: {} as StudentProfileFormModel,
     },
     processing: {
       type: Boolean,
       required: true,
-      default: false,
     },
     isDataReady: {
       type: Boolean,
