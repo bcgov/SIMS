@@ -10,7 +10,7 @@
         >
           <div
             class="file-label"
-            @click="fileUtils.downloadStudentDocument(ministryDocument)"
+            @click="viewStudentDocument(ministryDocument)"
           >
             <span class="mr-4">
               <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
@@ -32,10 +32,7 @@
           v-for="studentDocument in studentDocuments"
           :key="studentDocument.uniqueFileName"
         >
-          <div
-            class="file-label"
-            @click="fileUtils.downloadStudentDocument(studentDocument)"
-          >
+          <div class="file-label" @click="viewStudentDocument(studentDocument)">
             <span class="mr-4">
               <v-icon icon="fa:far fa-file-alt" size="20"></v-icon
             ></span>
@@ -64,7 +61,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const fileUtils = useFileUtils();
+    const { viewStudentDocument } = useFileUtils();
     const studentDocuments = ref([] as StudentUploadFileAPIOutDTO[]);
     const ministryDocuments = ref([] as StudentUploadFileAPIOutDTO[]);
 
@@ -87,7 +84,7 @@ export default defineComponent({
         immediate: true,
       },
     );
-    return { fileUtils, studentDocuments, ministryDocuments };
+    return { viewStudentDocument, studentDocuments, ministryDocuments };
   },
 });
 </script>
