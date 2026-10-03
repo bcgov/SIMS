@@ -61,14 +61,20 @@ export class BatchReassessmentAESTController extends BaseController {
    */
   @Get()
   async getBatchReassessments(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
-    return (
-      await this.batchReassessmentService.getBatchReassessmentSummaries()
-    ).map(({ creatorFirstName, creatorLastName, ...summary }) => ({
-      ...summary,
+    const summaries =
+      await this.batchReassessmentService.getBatchReassessmentSummaries();
+    return summaries.map((summary) => ({
+      id: summary.id,
+      batchNumber: summary.batchNumber,
+      createdAt: summary.createdAt,
       creatorName: getUserFullName({
-        firstName: creatorFirstName,
-        lastName: creatorLastName,
+        firstName: summary.creatorFirstName,
+        lastName: summary.creatorLastName,
       }),
+      totalCount: summary.totalCount,
+      successCount: summary.successCount,
+      failureCount: summary.failureCount,
+      status: summary.status,
     }));
   }
 }

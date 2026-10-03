@@ -66,7 +66,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     };
 
     // Act/Assert
-    let batchReassessmentId;
+    let batchReassessmentId: number;
     await request(app.getHttpServer())
       .post(getEndpoint())
       .auth(token, BEARER_AUTH_TYPE)
@@ -94,6 +94,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
             id: expect.any(Number),
             triggerType: AssessmentTriggerType.ManualReassessment,
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+            application: { id: application.id },
           },
           failureReason: null,
           createdAt: now,
@@ -331,6 +332,9 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
             id: expect.any(Number),
             triggerType: AssessmentTriggerType.ManualReassessment,
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+            application: {
+              id: currentApplication.id,
+            },
           },
           failureReason: null,
           createdAt: now,
@@ -339,17 +343,6 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
         },
       ],
     });
-
-    // Assert that the manual reassessment is linked to the current application.
-    const manualReassessment = await db.studentAssessment.findOneOrFail({
-      select: { id: true, application: { id: true } },
-      relations: { application: true },
-      where: {
-        id: batchReassessment.batchReassessmentApplications[0].studentAssessment
-          .id,
-      },
-    });
-    expect(manualReassessment.application.id).toBe(currentApplication.id);
   });
 
   it("Should return an error when no application numbers are provided.", async () => {
@@ -424,8 +417,8 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
 
   /**
    * Helper function to find a batch reassessment by its ID.
-   * @param batchReassessmentId
-   * @returns
+   * @param batchReassessmentId The ID of the batch reassessment to find.
+   * @returns The batch reassessment entity corresponding to the given ID.
    */
   async function findBatchReassessment(
     batchReassessmentId: number,
@@ -446,6 +439,9 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
             id: true,
             triggerType: true,
             studentAssessmentStatus: true,
+            application: {
+              id: true,
+            },
           },
           failureReason: true,
           createdAt: true,
@@ -459,7 +455,9 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
         creator: true,
         batchReassessmentApplications: {
           creator: true,
-          studentAssessment: true,
+          studentAssessment: {
+            application: true,
+          },
         },
       },
       where: { id: batchReassessmentId },

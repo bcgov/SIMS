@@ -88,6 +88,7 @@ export class BatchReassessmentService {
 
     return summaries;
   }
+
   /**
    * Runs a batch reassessment for a list of application numbers.
    * Each application number is processed independently so failures do not stop
@@ -158,9 +159,13 @@ export class BatchReassessmentService {
                 );
               batchReassessmentApplication.studentAssessment =
                 studentAssessment;
-            } catch (error) {
-              batchReassessmentApplication.failureReason =
-                error?.message ?? "Unknown error";
+            } catch (error: unknown) {
+              if (error instanceof CustomNamedError) {
+                batchReassessmentApplication.failureReason =
+                  error?.message ?? "Unknown error";
+              } else {
+                throw error;
+              }
             }
             await entityManager
               .getRepository(BatchReassessmentApplication)

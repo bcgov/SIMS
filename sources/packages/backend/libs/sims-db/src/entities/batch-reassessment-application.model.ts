@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
@@ -40,7 +41,7 @@ export class BatchReassessmentApplication extends RecordDataModel {
   /**
    * Assessment created for the application when processing succeeds.
    */
-  @ManyToOne(() => StudentAssessment)
+  @OneToOne(() => StudentAssessment)
   @JoinColumn({
     name: "student_assessment_id",
     referencedColumnName: ColumnNames.ID,

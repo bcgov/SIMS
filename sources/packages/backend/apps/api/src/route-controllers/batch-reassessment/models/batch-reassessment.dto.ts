@@ -11,7 +11,7 @@ import {
   Length,
   MaxLength,
 } from "class-validator";
-import { BatchReassessmentStatus } from "../../../services/batch-reassessment/batch-reassessment.service.models";
+import { BatchReassessmentStatus } from "../../../services";
 
 /**
  * Maximum number of application numbers accepted in a single batch manual reassessment submission.

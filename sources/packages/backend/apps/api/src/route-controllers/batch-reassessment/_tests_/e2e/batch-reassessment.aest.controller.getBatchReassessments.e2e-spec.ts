@@ -21,8 +21,9 @@ import {
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
-import { BatchReassessmentStatus } from "../../../../services/batch-reassessment/batch-reassessment.service.models";
+import { BatchReassessmentStatus } from "../../../../services";
 import { getUserFullName } from "../../../../utilities";
+import { addDays } from "@sims/utilities/date-utils";
 
 describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
   let app: INestApplication;
@@ -34,12 +35,6 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     app = nestApplication;
     db = createE2EDataSources(dataSource);
     auditUser = await db.user.save(createFakeUser());
-  });
-
-  beforeEach(async () => {
-    // Clear the tables before each test since all data is queried.
-    await db.batchReassessmentApplication.deleteAll();
-    await db.batchReassessment.deleteAll();
   });
 
   it("Should return a Completed batch reassessment with correct counts when one application succeeds and one fails.", async () => {
@@ -68,15 +63,12 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     );
     await db.studentAssessment.save(reassessment);
 
-    const batchApplication1 = createFakeBatchReassessmentApplication(
-      {
-        batchReassessment: batch,
-        applicationNumber: application.applicationNumber,
-        studentAssessment: reassessment,
-        creator: auditUser,
-      },
-      {},
-    );
+    const batchApplication1 = createFakeBatchReassessmentApplication({
+      batchReassessment: batch,
+      applicationNumber: application.applicationNumber,
+      studentAssessment: reassessment,
+      creator: auditUser,
+    });
     await db.batchReassessmentApplication.save(batchApplication1);
 
     const batchApplication2 = createFakeBatchReassessmentApplication(
@@ -97,18 +89,20 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
-        expect(body).toEqual([
-          {
-            id: batch.id,
-            batchNumber: batch.batchNumber,
-            createdAt: batch.createdAt.toISOString(),
-            creatorName: getUserFullName(batch.creator),
-            successCount: 1,
-            failureCount: 1,
-            totalCount: 2,
-            status: BatchReassessmentStatus.Completed,
-          },
-        ]),
+        expect(body).toEqual(
+          expect.arrayContaining([
+            {
+              id: batch.id,
+              batchNumber: batch.batchNumber,
+              createdAt: batch.createdAt.toISOString(),
+              creatorName: getUserFullName(batch.creator),
+              successCount: 1,
+              failureCount: 1,
+              totalCount: 2,
+              status: BatchReassessmentStatus.Completed,
+            },
+          ]),
+        ),
       );
   });
 
@@ -148,15 +142,12 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     );
     await db.studentAssessment.save(reassessment);
 
-    const batchApplication1 = createFakeBatchReassessmentApplication(
-      {
-        batchReassessment: batch,
-        applicationNumber: application.applicationNumber,
-        studentAssessment: reassessment,
-        creator: auditUser,
-      },
-      {},
-    );
+    const batchApplication1 = createFakeBatchReassessmentApplication({
+      batchReassessment: batch,
+      applicationNumber: application.applicationNumber,
+      studentAssessment: reassessment,
+      creator: auditUser,
+    });
     await db.batchReassessmentApplication.save(batchApplication1);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
@@ -167,18 +158,20 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
-        expect(body).toEqual([
-          {
-            id: batch.id,
-            batchNumber: batch.batchNumber,
-            createdAt: batch.createdAt.toISOString(),
-            creatorName: getUserFullName(batch.creator),
-            failureCount: 0,
-            successCount: 1,
-            totalCount: 1,
-            status: BatchReassessmentStatus.Completed,
-          },
-        ]),
+        expect(body).toEqual(
+          expect.arrayContaining([
+            {
+              id: batch.id,
+              batchNumber: batch.batchNumber,
+              createdAt: batch.createdAt.toISOString(),
+              creatorName: getUserFullName(batch.creator),
+              failureCount: 0,
+              successCount: 1,
+              totalCount: 1,
+              status: BatchReassessmentStatus.Completed,
+            },
+          ]),
+        ),
       );
   });
 
@@ -204,15 +197,12 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
     });
     await db.studentAssessment.save(reassessment);
 
-    const batchApplication1 = createFakeBatchReassessmentApplication(
-      {
-        batchReassessment: batch,
-        applicationNumber: application.applicationNumber,
-        studentAssessment: reassessment,
-        creator: auditUser,
-      },
-      {},
-    );
+    const batchApplication1 = createFakeBatchReassessmentApplication({
+      batchReassessment: batch,
+      applicationNumber: application.applicationNumber,
+      studentAssessment: reassessment,
+      creator: auditUser,
+    });
     await db.batchReassessmentApplication.save(batchApplication1);
 
     const archivedApplication = await saveFakeApplication(
@@ -243,19 +233,62 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessments", () => {
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
-        expect(body).toEqual([
-          {
-            id: batch.id,
-            batchNumber: batch.batchNumber,
-            createdAt: batch.createdAt.toISOString(),
-            creatorName: getUserFullName(batch.creator),
-            successCount: 0,
-            failureCount: 1,
-            totalCount: 2,
-            status: BatchReassessmentStatus.InProgress,
-          },
-        ]),
+        expect(body).toEqual(
+          expect.arrayContaining([
+            {
+              id: batch.id,
+              batchNumber: batch.batchNumber,
+              createdAt: batch.createdAt.toISOString(),
+              creatorName: getUserFullName(batch.creator),
+              successCount: 0,
+              failureCount: 1,
+              totalCount: 2,
+              status: BatchReassessmentStatus.InProgress,
+            },
+          ]),
+        ),
       );
+  });
+
+  it("Should return batch reassessments ordered by most recent batch first when multiple batches exist.", async () => {
+    // Arrange
+    const now = new Date();
+    const olderBatch = createFakeBatchReassessment(
+      { creator: auditUser },
+      { initialValues: { createdAt: addDays(-1, now) } },
+    );
+    const newerBatch = createFakeBatchReassessment(
+      { creator: auditUser },
+      { initialValues: { createdAt: now } },
+    );
+    await db.batchReassessment.save([olderBatch, newerBatch]);
+
+    const batchApplications = [olderBatch, newerBatch].map((batch) =>
+      createFakeBatchReassessmentApplication(
+        {
+          batchReassessment: batch,
+          applicationNumber: "1234567890",
+          creator: auditUser,
+        },
+        { initialValues: { failureReason: "Application not found" } },
+      ),
+    );
+    await db.batchReassessmentApplication.save(batchApplications);
+
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(getEndpoint())
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) => {
+        const expectedIds = [newerBatch.id, olderBatch.id];
+        const returnedIds = body
+          .map((batch: { id: number }) => batch.id)
+          .filter((id: number) => expectedIds.includes(id));
+        expect(returnedIds).toEqual(expectedIds);
+      });
   });
 
   it(`Should throw a HttpStatus Forbidden (403) error when the AEST user does not have the ${Role.AESTBatchReassessment} role.`, async () => {
