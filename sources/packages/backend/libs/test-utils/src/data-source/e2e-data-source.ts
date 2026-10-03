@@ -70,6 +70,8 @@ import {
   FormSubmissionItemDecision,
   StudentDisabilityProfileDisability,
   StudentDisabilityProfile,
+  BatchReassessment,
+  BatchReassessmentApplication,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -90,6 +92,10 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     applicationStudentFile: dataSource.getRepository(ApplicationStudentFile),
     applicationRestrictionBypass: dataSource.getRepository(
       ApplicationRestrictionBypass,
+    ),
+    batchReassessment: dataSource.getRepository(BatchReassessment),
+    batchReassessmentApplication: dataSource.getRepository(
+      BatchReassessmentApplication,
     ),
     betaUsersAuthorizations: dataSource.getRepository(BetaUsersAuthorizations),
     casSupplier: dataSource.getRepository(CASSupplier),
@@ -202,6 +208,8 @@ export interface E2EDataSources {
   applicationException: Repository<ApplicationException>;
   applicationStudentFile: Repository<ApplicationStudentFile>;
   applicationRestrictionBypass: Repository<ApplicationRestrictionBypass>;
+  batchReassessment: Repository<BatchReassessment>;
+  batchReassessmentApplication: Repository<BatchReassessmentApplication>;
   betaUsersAuthorizations: Repository<BetaUsersAuthorizations>;
   casSupplier: Repository<CASSupplier>;
   casInvoiceBatch: Repository<CASInvoiceBatch>;

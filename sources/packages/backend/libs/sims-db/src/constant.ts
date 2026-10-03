@@ -79,6 +79,8 @@ export const TableNames = {
   FormSubmissions: "form_submissions",
   FormSubmissionItems: "form_submission_items",
   FormSubmissionItemDecisions: "form_submission_item_decisions",
+  BatchReassessments: "batch_reassessments",
+  BatchReassessmentApplications: "batch_reassessment_applications",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;
