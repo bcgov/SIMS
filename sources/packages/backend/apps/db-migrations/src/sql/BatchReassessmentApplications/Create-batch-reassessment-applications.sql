@@ -3,7 +3,7 @@ CREATE TABLE sims.batch_reassessment_applications (
     batch_reassessment_id INT NOT NULL REFERENCES sims.batch_reassessments(id),
     application_number CHAR(10) NOT NULL,
     student_assessment_id INT UNIQUE REFERENCES sims.student_assessments(id),
-    failure_reason TEXT,
+    failure_reason VARCHAR(250),
     -- Audit columns
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

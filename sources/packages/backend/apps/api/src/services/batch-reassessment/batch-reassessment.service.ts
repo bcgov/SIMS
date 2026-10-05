@@ -13,7 +13,7 @@ import {
   BatchReassessmentSummary,
 } from "./batch-reassessment.service.models";
 import { SequenceControlService } from "@sims/services";
-import { APPLICATION_NOT_FOUND } from "@sims/services/constants";
+import { APPLICATION_NOT_FOUND } from "../application/application.service";
 import { CustomNamedError } from "@sims/utilities";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { InjectRepository } from "@nestjs/typeorm/dist/common/typeorm.decorators";
@@ -161,10 +161,12 @@ export class BatchReassessmentService {
                 studentAssessment;
             } catch (error: unknown) {
               if (error instanceof CustomNamedError) {
-                batchReassessmentApplication.failureReason =
-                  error?.message ?? "Unknown error";
+                batchReassessmentApplication.failureReason = error.message;
               } else {
-                throw error;
+                throw new Error(
+                  `Unexpected error while processing application number ${applicationNumber}.`,
+                  { cause: error },
+                );
               }
             }
             await entityManager

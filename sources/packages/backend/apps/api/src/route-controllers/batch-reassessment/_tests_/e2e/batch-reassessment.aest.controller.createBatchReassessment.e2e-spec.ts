@@ -39,7 +39,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
     ministryUser = { id: auditUser.id } as User;
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     MockDate.reset();
   });
 

@@ -336,43 +336,51 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * @param applicationId Application id.
    * @param note Note describing why the reassessment is needed.
    * @param userId User id who triggered the manual reassessment.
-   * @param transactionalEntityManager Optional manager for joining the caller's transaction.
+   * @param entityManager entity manager to execute in transaction.
    * @returns The assessment created.
    */
   async createManualReassessment(
     applicationId: number,
     note: string,
     userId: number,
-    transactionalEntityManager?: EntityManager,
+    entityManager?: EntityManager,
   ): Promise<StudentAssessment> {
-    const createReassessment = (
-      scopedEntityManager: EntityManager,
-    ): Promise<StudentAssessment> =>
-      this.createManualReassessmentWithEntityManager(
+    if (entityManager) {
+      return this.internalCreateManualReassessment(
         applicationId,
         note,
         userId,
-        scopedEntityManager,
+        entityManager,
       );
-
-    if (transactionalEntityManager) {
-      // A nested transaction creates a savepoint on the caller's transaction connection.
-      return transactionalEntityManager.transaction(createReassessment);
     }
-
-    return this.dataSource.transaction(createReassessment);
+    return this.dataSource.transaction(async (transactionalEntityManager) => {
+      return this.internalCreateManualReassessment(
+        applicationId,
+        note,
+        userId,
+        transactionalEntityManager,
+      );
+    });
   }
 
-  private async createManualReassessmentWithEntityManager(
+  /**
+   * Internal method to create a manual reassessment for the application.
+   * @param applicationId Application id.
+   * @param note Note describing why the reassessment is needed.
+   * @param userId User id who triggered the manual reassessment.
+   * @param entityManager entity manager to execute in transaction.
+   * @returns The assessment created.
+   */
+  private async internalCreateManualReassessment(
     applicationId: number,
     note: string,
     userId: number,
-    transactionalEntityManager: EntityManager,
+    entityManager: EntityManager,
   ): Promise<StudentAssessment> {
     const application =
       await this.applicationService.getApplicationAssessmentStatusDetails(
         applicationId,
-        { entityManager: transactionalEntityManager },
+        { entityManager },
       );
 
     if (!application) {
@@ -423,7 +431,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       NoteType.Application,
       note,
       userId,
-      transactionalEntityManager,
+      entityManager,
     );
 
     const auditUser = { id: userId } as User;
@@ -446,8 +454,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
       submittedDate: now,
     } as StudentAssessment;
 
-    const applicationRepo =
-      transactionalEntityManager.getRepository(Application);
+    const applicationRepo = entityManager.getRepository(Application);
     const savedApplication = await applicationRepo.save(applicationToBeSaved);
     return savedApplication.currentAssessment;
   }

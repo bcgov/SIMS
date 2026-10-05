@@ -10,6 +10,8 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { BatchReassessment, StudentAssessment } from ".";
 
+export const FAILURE_REASON_MAX_LENGTH = 250;
+
 /**
  * Details of an application included in a batch manual reassessment.
  */
@@ -52,7 +54,7 @@ export class BatchReassessmentApplication extends RecordDataModel {
    */
   @Column({
     name: "failure_reason",
-    type: "text",
+    length: FAILURE_REASON_MAX_LENGTH,
     nullable: true,
   })
   failureReason?: string;
