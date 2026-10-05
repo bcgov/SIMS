@@ -19,7 +19,8 @@ export function createFakeBatchReassessment(
 ): BatchReassessment {
   const batchReassessment = new BatchReassessment();
   batchReassessment.batchNumber =
-    options?.initialValues?.batchNumber ?? faker.number.int(1000);
+    options?.initialValues?.batchNumber ??
+    faker.number.int({ min: 1000, max: 9999 });
   batchReassessment.creator = relations?.creator;
   batchReassessment.createdAt = options?.initialValues?.createdAt ?? new Date();
   return batchReassessment;

@@ -2351,7 +2351,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
   }
 
   /**
-   * Gets current application and assessment status details for the provided applicaion numbers.
+   * Gets current application and assessment status details for the provided application numbers.
    * @param applicationNumbers the list of application numbers to retrieve the current applications for.
    * @param options method options:
    * - `entityManager`: entity manager to be optionally used.

@@ -437,11 +437,24 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
    * Validates whether the application is eligible for a manual reassessment.
    * @param application the application to validate for manual reassessment.
    */
-  private validateManualAssessment(application: Application): void {
+  private validateManualAssessment(application?: Application): void {
     if (!application) {
       throw new CustomNamedError(
         "Application not found.",
         APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // Ensure that the provided application has the necessary data for validation.
+    // A regular Error is thrown as failure would be due to a misconfigured call rather than a business rule violation.
+    if (
+      application.isArchived === undefined ||
+      !application.applicationStatus ||
+      !application.studentAssessments ||
+      !application.currentAssessment
+    ) {
+      throw new Error(
+        "Application data required for validation was not loaded.",
       );
     }
     if (application.isArchived) {
