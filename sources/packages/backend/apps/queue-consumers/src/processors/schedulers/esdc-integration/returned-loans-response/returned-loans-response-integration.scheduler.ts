@@ -18,7 +18,6 @@ export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<voi
 
   /**
    * Process the returned loans response file(s) and update the relevant records.
-   * Both Full-time and Part-time returned loans response files are processed by this scheduler.
    * @param _job process job.
    * @param processSummary process summary for logging.
    * @returns process summary.
