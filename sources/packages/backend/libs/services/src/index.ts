@@ -18,6 +18,7 @@ export * from "./report/report.service";
 export * from "./sin-validation/models/sin-validation-models";
 export * from "./students-assessments/assessment-sequential-processing.service";
 export * from "./note/note.shared.service";
+export * from "./note/note.models";
 export * from "./sfas/index";
 export * from "./system-users/index";
 export * from "./confirmation-of-enrollment/models/confirmation-of-enrollment.models";

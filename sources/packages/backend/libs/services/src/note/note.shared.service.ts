@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
+import { StudentNote } from "./note.models";
 import { Institution, Note, NoteType, Student, User } from "@sims/sims-db";
+import { ColumnNames, TableNames } from "@sims/sims-db/constant";
 import { EntityManager } from "typeorm";
 
 /**
@@ -39,6 +41,47 @@ export class NoteSharedService {
       entityManager,
     );
     return savedNote;
+  }
+
+  /**
+   * Creates multiple notes and associates each one with its respective student.
+   * @param studentNotes notes to be created, each one associated with a student.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager transactional entity manager.
+   * @returns notes created, in the same order as the provided studentNotes.
+   */
+  async createStudentNotes(
+    studentNotes: StudentNote[],
+    auditUserId: number,
+    entityManager: EntityManager,
+  ): Promise<Note[]> {
+    if (!studentNotes.length) {
+      return [];
+    }
+    const notesToCreate = studentNotes.map((studentNote) =>
+      this.buildNote(
+        studentNote.noteType,
+        studentNote.description,
+        auditUserId,
+      ),
+    );
+    // Single bulk save for all the notes.
+    const savedNotes = await entityManager
+      .getRepository(Note)
+      .save(notesToCreate);
+
+    const studentNoteRelations = savedNotes.map((savedNote, index) => ({
+      [ColumnNames.StudentId]: studentNotes[index].studentId,
+      [ColumnNames.NoteId]: savedNote.id,
+    }));
+    // Single bulk insert for all the student-note associations.
+    await entityManager
+      .createQueryBuilder()
+      .insert()
+      .into(TableNames.StudentNotes)
+      .values(studentNoteRelations)
+      .execute();
+    return savedNotes;
   }
 
   /**
@@ -111,12 +154,27 @@ export class NoteSharedService {
     auditUserId: number,
     entityManager: EntityManager,
   ): Promise<Note> {
-    const auditUser = { id: auditUserId } as User;
     // Create the note to be associated with the student or the institution user.
+    const newNote = this.buildNote(noteType, noteDescription, auditUserId);
+    return entityManager.getRepository(Note).save(newNote);
+  }
+
+  /**
+   * Builds a new note to be persisted.
+   * @param noteType note type.
+   * @param noteDescription note description.
+   * @param auditUserId user that should be considered the one that is causing the changes.
+   * @returns note to be saved.
+   */
+  private buildNote(
+    noteType: NoteType,
+    noteDescription: string,
+    auditUserId: number,
+  ): Note {
     const newNote = new Note();
     newNote.description = noteDescription;
     newNote.noteType = noteType;
-    newNote.creator = auditUser;
-    return entityManager.getRepository(Note).save(newNote);
+    newNote.creator = { id: auditUserId } as User;
+    return newNote;
   }
 }

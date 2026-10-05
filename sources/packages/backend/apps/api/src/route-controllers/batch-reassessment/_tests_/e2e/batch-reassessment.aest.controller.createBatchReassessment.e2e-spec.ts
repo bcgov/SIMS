@@ -159,7 +159,7 @@ describe("BatchReassessmentAESTController(e2e)-createBatchReassessment", () => {
           id: expect.any(Number),
           applicationNumber: invalidApplicationNumber,
           studentAssessment: null,
-          failureReason: "Application not found",
+          failureReason: "Application not found.",
           createdAt: now,
           creator: ministryUser,
           updatedAt: now,

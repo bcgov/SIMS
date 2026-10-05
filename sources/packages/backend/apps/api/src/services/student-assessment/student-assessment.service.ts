@@ -11,7 +11,7 @@ import {
   StudentAssessmentStatus,
   NoteType,
 } from "@sims/sims-db";
-import { Brackets, DataSource, EntityManager } from "typeorm";
+import { Brackets, DataSource } from "typeorm";
 import { CustomNamedError } from "@sims/utilities";
 import {
   ASSESSMENT_CANNOT_BE_ACCEPTED_DUE_TO_INSTITUTION_RESTRICTION,
@@ -25,7 +25,10 @@ import {
 import { NoteSharedService, RestrictionSharedService } from "@sims/services";
 import { ApplicationService } from "../../services";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { AcceptAssessmentEvaluationResult } from "./student-assessment.models";
+import {
+  AcceptAssessmentEvaluationResult,
+  BatchManualReassessmentResult,
+} from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -333,56 +336,108 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
 
   /**
    * Creates a manual assessment for the application.
-   * @param applicationId Application id.
-   * @param note Note describing why the reassessment is needed.
-   * @param userId User id who triggered the manual reassessment.
-   * @param entityManager entity manager to execute in transaction.
-   * @returns The assessment created.
+   * @param applicationId application id.
+   * @param note note describing why the reassessment is needed.
+   * @param userId user id who triggered the manual reassessment.
+   * @returns the assessment created.
    */
   async createManualReassessment(
     applicationId: number,
     note: string,
     userId: number,
-    entityManager?: EntityManager,
   ): Promise<StudentAssessment> {
-    if (entityManager) {
-      return this.internalCreateManualReassessment(
-        applicationId,
-        note,
-        userId,
-        entityManager,
-      );
-    }
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      return this.internalCreateManualReassessment(
-        applicationId,
+      const application =
+        await this.applicationService.getApplicationAssessmentStatusDetails(
+          applicationId,
+          { entityManager: transactionalEntityManager },
+        );
+
+      this.validateManualAssessment(application);
+
+      await this.noteSharedService.createStudentNote(
+        application.student.id,
+        NoteType.Application,
         note,
         userId,
         transactionalEntityManager,
       );
+
+      const applicationToBeSaved = this.buildManualReassessmentApplication(
+        application,
+        userId,
+      );
+      const applicationRepo =
+        transactionalEntityManager.getRepository(Application);
+      const savedApplication = await applicationRepo.save(applicationToBeSaved);
+      return savedApplication.currentAssessment;
     });
   }
 
   /**
-   * Internal method to create a manual reassessment for the application.
-   * @param applicationId Application id.
-   * @param note Note describing why the reassessment is needed.
-   * @param userId User id who triggered the manual reassessment.
-   * @param entityManager entity manager to execute in transaction.
-   * @returns The assessment created.
+   * Builds the application, assessment, and note data required for a manual reassessment
+   * without persisting it. Used by batch reassessment processing, where applications are
+   * validated and built one by one but persisted together in a single bulk save, avoiding
+   * one database round trip per application.
+   * @param application application entity.
+   * @param note note describing why the reassessment is needed.
+   * @param userId user id who triggered the manual reassessment.
+   * @returns application, with the new assessment attached, and the note, both ready to be saved.
    */
-  private async internalCreateManualReassessment(
-    applicationId: number,
+  createBatchManualReassessment(
+    application: Application,
     note: string,
     userId: number,
-    entityManager: EntityManager,
-  ): Promise<StudentAssessment> {
-    const application =
-      await this.applicationService.getApplicationAssessmentStatusDetails(
-        applicationId,
-        { entityManager },
-      );
+  ): BatchManualReassessmentResult {
+    this.validateManualAssessment(application);
+    return {
+      application: this.buildManualReassessmentApplication(application, userId),
+      note: {
+        studentId: application.student.id,
+        noteType: NoteType.Application,
+        description: note,
+      },
+    };
+  }
 
+  /**
+   * Builds the application and assessment data required for a manual reassessment without
+   * persisting it, allowing the caller to decide when and how to save it.
+   * @param application application entity.
+   * @param userId user id who triggered the manual reassessment.
+   * @returns application, with the new assessment attached, ready to be saved.
+   */
+  private buildManualReassessmentApplication(
+    application: Application,
+    userId: number,
+  ): Application {
+    const auditUser = { id: userId } as User;
+    const now = new Date();
+    const oldCurrentAssessment = application.currentAssessment;
+    const applicationToBeSaved = {
+      id: application.id,
+      modifier: auditUser,
+      updatedAt: now,
+    } as Application;
+    applicationToBeSaved.currentAssessment = {
+      application: applicationToBeSaved,
+      offering: { id: oldCurrentAssessment.offering.id },
+      studentAppeal: oldCurrentAssessment.studentAppeal,
+      formSubmission: oldCurrentAssessment.formSubmission,
+      triggerType: AssessmentTriggerType.ManualReassessment,
+      creator: auditUser,
+      createdAt: now,
+      submittedBy: auditUser,
+      submittedDate: now,
+    } as StudentAssessment;
+    return applicationToBeSaved;
+  }
+
+  /**
+   * Validates whether the application is eligible for a manual reassessment.
+   * @param application the application to validate for manual reassessment.
+   */
+  private validateManualAssessment(application: Application): void {
     if (!application) {
       throw new CustomNamedError(
         "Application not found.",
@@ -425,37 +480,5 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
-
-    await this.noteSharedService.createStudentNote(
-      application.student.id,
-      NoteType.Application,
-      note,
-      userId,
-      entityManager,
-    );
-
-    const auditUser = { id: userId } as User;
-    const now = new Date();
-    const oldCurrentAssessment = application.currentAssessment;
-    const applicationToBeSaved = {
-      id: application.id,
-      modifier: auditUser,
-      updatedAt: now,
-    } as Application;
-    applicationToBeSaved.currentAssessment = {
-      application: applicationToBeSaved,
-      offering: { id: oldCurrentAssessment.offering.id },
-      studentAppeal: oldCurrentAssessment.studentAppeal,
-      formSubmission: oldCurrentAssessment.formSubmission,
-      triggerType: AssessmentTriggerType.ManualReassessment,
-      creator: auditUser,
-      createdAt: now,
-      submittedBy: auditUser,
-      submittedDate: now,
-    } as StudentAssessment;
-
-    const applicationRepo = entityManager.getRepository(Application);
-    const savedApplication = await applicationRepo.save(applicationToBeSaved);
-    return savedApplication.currentAssessment;
   }
 }

@@ -5,6 +5,7 @@ import {
   Not,
   Brackets,
   EntityManager,
+  FindOptionsWhere,
   SelectQueryBuilder,
 } from "typeorm";
 import {
@@ -2342,12 +2343,54 @@ export class ApplicationService extends RecordDataModelService<Application> {
     applicationId: number,
     options?: { entityManager?: EntityManager },
   ): Promise<Application> {
+    const [application] = await this.findApplicationsAssessmentStatusDetails(
+      { id: applicationId },
+      options,
+    );
+    return application;
+  }
+
+  /**
+   * Gets current application and assessment status details for the provided applicaion numbers.
+   * @param applicationNumbers the list of application numbers to retrieve the current applications for.
+   * @param options method options:
+   * - `entityManager`: entity manager to be optionally used.
+   * @returns a list of current applications matching the provided application numbers.
+   */
+  async getApplicationsAssessmentStatusDetails(
+    applicationNumbers: string[],
+    options?: { entityManager?: EntityManager },
+  ): Promise<Application[]> {
+    return this.findApplicationsAssessmentStatusDetails(
+      {
+        applicationNumber: In(applicationNumbers),
+        applicationStatus: Not(ApplicationStatus.Edited),
+      },
+      options,
+    );
+  }
+
+  /**
+   * Gets the applications and the related data required to validate and
+   * create a manual reassessment.
+   * @param where application filter. The original assessment filter is always applied.
+   * @param options method options:
+   * - `entityManager`: entity manager to be optionally used.
+   * @returns applications matching the filter.
+   */
+  private async findApplicationsAssessmentStatusDetails(
+    where: FindOptionsWhere<Application>,
+    options?: { entityManager?: EntityManager },
+  ): Promise<Application[]> {
     const applicationRepo = options?.entityManager
       ? options.entityManager.getRepository(Application)
       : this.repo;
-    return applicationRepo.findOne({
+    return applicationRepo.find({
       select: {
         id: true,
+        isArchived: true,
+        applicationStatus: true,
+        applicationNumber: true,
         currentAssessment: {
           id: true,
           assessmentDate: true,
@@ -2357,8 +2400,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         },
         studentAssessments: { studentAssessmentStatus: true },
         student: { id: true },
-        isArchived: true,
-        applicationStatus: true,
       },
       relations: {
         currentAssessment: {
@@ -2370,7 +2411,7 @@ export class ApplicationService extends RecordDataModelService<Application> {
         student: true,
       },
       where: {
-        id: applicationId,
+        ...where,
         studentAssessments: {
           triggerType: AssessmentTriggerType.OriginalAssessment,
         },

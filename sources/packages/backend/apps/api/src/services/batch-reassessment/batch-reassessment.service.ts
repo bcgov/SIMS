@@ -1,42 +1,46 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
-  ApplicationStatus,
   BatchReassessment,
   BatchReassessmentApplication,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
+import { ApplicationService } from "../application/application.service";
 import { DataSource, Repository } from "typeorm";
 import {
   BatchReassessmentStatus,
   BatchReassessmentSummary,
 } from "./batch-reassessment.service.models";
-import { SequenceControlService } from "@sims/services";
-import { APPLICATION_NOT_FOUND } from "../application/application.service";
 import { CustomNamedError } from "@sims/utilities";
+import {
+  NoteSharedService,
+  SequenceControlService,
+  StudentNote,
+} from "@sims/services";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
-import { InjectRepository } from "@nestjs/typeorm/dist/common/typeorm.decorators";
+import { InjectRepository } from "@nestjs/typeorm";
 
 const BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME = "BATCH_REASSESSMENT_NUMBER";
+const BATCH_REASSESSMENT_CHUNK_SIZE = 1000;
 
 /**
- * Provides batch manual reassessment retrieval operations.
+ * Provides batch manual reassessment operations.
  */
 @Injectable()
 export class BatchReassessmentService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(Application)
-    private readonly applicationRepo: Repository<Application>,
     @InjectRepository(BatchReassessment)
     private readonly batchReassessmentRepo: Repository<BatchReassessment>,
+    private readonly applicationService: ApplicationService,
     private readonly sequenceService: SequenceControlService,
     private readonly studentAssessmentService: StudentAssessmentService,
+    private readonly noteSharedService: NoteSharedService,
   ) {}
 
   /**
-   * Gets persisted batch manual reassessment submissions and their associated applications.
+   * Gets persisted batch manual reassessment submissions and their summary counts.
    * @returns batch manual reassessment submissions.
    */
   async getBatchReassessmentSummaries(): Promise<BatchReassessmentSummary[]> {
@@ -96,6 +100,7 @@ export class BatchReassessmentService {
    * @param applicationNumbers application numbers to be reassessed.
    * @param note note describing the reason for the batch reassessment.
    * @param userId user id who triggered the batch reassessment.
+   * @returns the created batch reassessment.
    */
   async createBatchReassessment(
     applicationNumbers: string[],
@@ -104,9 +109,6 @@ export class BatchReassessmentService {
   ): Promise<BatchReassessment> {
     // Only process distinct application numbers.
     const distinctApplicationNumbers = [...new Set(applicationNumbers)];
-    const applicationIdsByNumber = await this.getApplicationIdsByNumber(
-      distinctApplicationNumbers,
-    );
 
     let savedBatchReassessment: BatchReassessment;
     return this.dataSource.transaction(async (entityManager) => {
@@ -119,6 +121,7 @@ export class BatchReassessmentService {
         async (nextSequenceNumber: number) => {
           const now = new Date();
           const creator = { id: userId } as User;
+
           // Create a new batch reassessment.
           const batchReassessment = new BatchReassessment();
           batchReassessment.batchNumber = nextSequenceNumber;
@@ -129,79 +132,92 @@ export class BatchReassessmentService {
             .getRepository(BatchReassessment)
             .save(batchReassessment);
 
-          for (const applicationNumber of distinctApplicationNumbers) {
-            const applicationId = applicationIdsByNumber.get(applicationNumber);
-            const batchReassessmentApplication =
-              new BatchReassessmentApplication();
-            // Always persist the applicationNumber for convenience, even though it can be determined
-            // from the assessment for successful applications.
-            batchReassessmentApplication.applicationNumber = applicationNumber;
-            batchReassessmentApplication.batchReassessment =
-              savedBatchReassessment;
-            batchReassessmentApplication.creator = creator;
-            batchReassessmentApplication.createdAt = now;
-            batchReassessmentApplication.updatedAt = now;
+          const applicationNumbersToChunk = [...distinctApplicationNumbers];
 
-            try {
-              // Fail early if the application id doesn't exist as createManualReassessment doesn't handle undefined gracefully.
-              if (!applicationId) {
-                throw new CustomNamedError(
-                  "Application not found",
-                  APPLICATION_NOT_FOUND,
-                );
-              }
-              const studentAssessment =
-                await this.studentAssessmentService.createManualReassessment(
-                  applicationId,
+          while (applicationNumbersToChunk.length > 0) {
+            // Chunk the application numbers into smaller batches to process them efficiently.
+            const applicationNumberChunk = applicationNumbersToChunk.splice(
+              0,
+              BATCH_REASSESSMENT_CHUNK_SIZE,
+            );
+            const applications =
+              await this.applicationService.getApplicationsAssessmentStatusDetails(
+                applicationNumberChunk,
+                { entityManager },
+              );
+            const applicationsByNumber = new Map(
+              applications.map((application) => [
+                application.applicationNumber,
+                application,
+              ]),
+            );
+            const batchReassessmentApplicationsToSave: BatchReassessmentApplication[] =
+              [];
+            const applicationsToSave: Application[] = [];
+            const notesToSave: StudentNote[] = [];
+
+            for (const applicationNumber of applicationNumberChunk) {
+              const batchReassessmentApplication =
+                new BatchReassessmentApplication();
+              // Always persist the applicationNumber for convenience, even though it can be determined
+              // from the assessment for successful applications.
+              batchReassessmentApplication.applicationNumber =
+                applicationNumber;
+              batchReassessmentApplication.batchReassessment =
+                savedBatchReassessment;
+              batchReassessmentApplication.creator = creator;
+              batchReassessmentApplication.createdAt = now;
+              batchReassessmentApplication.updatedAt = now;
+              batchReassessmentApplicationsToSave.push(
+                batchReassessmentApplication,
+              );
+
+              try {
+                // Missing applications will trigger a validation error.
+                const application = applicationsByNumber.get(applicationNumber);
+                const {
+                  application: applicationToBeSaved,
+                  note: noteToBeSaved,
+                } = this.studentAssessmentService.createBatchManualReassessment(
+                  application,
                   note,
                   userId,
-                  entityManager,
                 );
-              batchReassessmentApplication.studentAssessment =
-                studentAssessment;
-            } catch (error: unknown) {
-              if (error instanceof CustomNamedError) {
-                batchReassessmentApplication.failureReason = error.message;
-              } else {
-                throw new Error(
-                  `Unexpected error while processing application number ${applicationNumber}.`,
-                  { cause: error },
-                );
+                applicationsToSave.push(applicationToBeSaved);
+                notesToSave.push(noteToBeSaved);
+                // The assessment id is populated once the applications are saved.
+                batchReassessmentApplication.studentAssessment =
+                  applicationToBeSaved.currentAssessment;
+              } catch (error: unknown) {
+                if (error instanceof CustomNamedError) {
+                  batchReassessmentApplication.failureReason = error.message;
+                } else {
+                  throw new Error(
+                    `Unexpected error while processing application number ${applicationNumber}.`,
+                    { cause: error },
+                  );
+                }
               }
             }
+
+            // Single bulk insert for all the notes of the chunk.
+            await this.noteSharedService.createStudentNotes(
+              notesToSave,
+              userId,
+              entityManager,
+            );
+            // Single save for all the applications/assessments of the chunk.
+            await entityManager
+              .getRepository(Application)
+              .save(applicationsToSave);
+            // Single bulk insert for all the batch reassessment applications of the chunk.
             await entityManager
               .getRepository(BatchReassessmentApplication)
-              .save(batchReassessmentApplication);
+              .insert(batchReassessmentApplicationsToSave);
           }
         },
       );
       return savedBatchReassessment;
     });
-  }
-
-  /**
-   * Retrieves the application Ids of the current application for the given application numbers.
-   * @param applicationNumbers The list of application numbers to retrieve IDs for.
-   * @returns A map where the keys are application numbers and the values are the corresponding application IDs.
-   */
-  private async getApplicationIdsByNumber(
-    applicationNumbers: string[],
-  ): Promise<Map<string, number>> {
-    const applications = await this.applicationRepo
-      .createQueryBuilder("application")
-      .select(["application.id", "application.applicationNumber"])
-      .where("application.applicationNumber IN (:...applicationNumbers)", {
-        applicationNumbers: applicationNumbers,
-      })
-      .andWhere("application.applicationStatus != :editedStatus", {
-        editedStatus: ApplicationStatus.Edited,
-      })
-      .getMany();
-    return new Map(
-      applications.map((application) => [
-        application.applicationNumber,
-        application.id,
-      ]),
-    );
   }
 }
