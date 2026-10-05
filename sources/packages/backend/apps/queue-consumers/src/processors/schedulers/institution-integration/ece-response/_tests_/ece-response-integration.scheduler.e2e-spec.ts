@@ -203,7 +203,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 19",
+        "Error(s): 0, Warning(s): 2, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -300,7 +300,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 19",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -448,7 +448,7 @@ describe(
         expect(result).toStrictEqual([
           "ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-          "Error(s): 0, Warning(s): 2, Info: 19",
+          "Error(s): 0, Warning(s): 2, Info: 20",
         ]);
         expect(
           mockedJob.containLogMessages([
@@ -544,7 +544,7 @@ describe(
         expect(result).toStrictEqual([
           "ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-          "Error(s): 0, Warning(s): 1, Info: 19",
+          "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
         expect(
           mockedJob.containLogMessages([
@@ -641,7 +641,7 @@ describe(
         expect(result).toStrictEqual([
           "ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-          "Error(s): 0, Warning(s): 1, Info: 19",
+          "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
         expect(
           mockedJob.containLogMessages([
@@ -751,7 +751,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 19",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -883,7 +883,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 18",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -961,7 +961,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 19",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1047,7 +1047,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 18",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1114,7 +1114,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 18",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1192,7 +1192,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 18",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1537,7 +1537,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 18",
+        "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1636,7 +1636,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 19",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1721,7 +1721,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 18",
+        "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1808,7 +1808,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 18",
+        "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
