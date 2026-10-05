@@ -1,4 +1,4 @@
-import { ReturnedLoansResponseFileDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-detail";
+import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-file-detail";
 
 /**
  * Returned loan response file detail.
