@@ -72,7 +72,7 @@ describe("Extract user real user name when Keycloak changed it (e.g. realUserNam
   });
 });
 
-describe("isUserTokenMissingRequiredInfo", () => {
+describe("Validation of user token required information", () => {
   it("Should return false when the user token has all the required information.", () => {
     // Act
     const result = isUserTokenMissingRequiredInfo(VALID_USER_TOKEN);
