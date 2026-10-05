@@ -174,11 +174,11 @@ export class ECEResponseProcessingService {
     remoteFilePath: string,
     processSummary: ProcessSummaryResult,
   ): Promise<void> {
+    // Start processing the file.
     processSummary.summary.push(
       `Processing file ${basename(remoteFilePath)} for institution code: ${integrationLocation.institutionCode}.`,
+      `Starting download of file ${remoteFilePath}.`,
     );
-    // Start processing the file.
-    processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     // Disbursement processing count.
     const disbursementProcessingDetails = new DisbursementProcessingDetails();
