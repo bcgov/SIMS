@@ -28,773 +28,796 @@ INSERT INTO
 SELECT
   $$
   {
-    "type": "VerticalLayout",
-    "elements": [
-      {
-        "type": "Group",
-        "label": "Program details",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/programName"
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/programDescription",
-                "options": {
-                  "multiline": true
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/credentialType",
-                "options": {
-                  "component": "select"
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/cipCode",
-                "options": {
-                  "hint": "Format (##.####)"
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/fieldOfStudyCode"
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/nocCode",
-                "options": {
-                  "hint": "Format (#####) Optional**"
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/sabcCode",
-                "options": {
-                  "hint": "Format (XXX#) Mandatory field if using the 'Offerings Upload' feature. Otherwise optional."
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/institutionProgramCode"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Program eligibility",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/programIntensity",
-                "options": {
-                  "tooltip": "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of: 60% or greater or Between 40 and 60% for students with a permanent disability.",
-                  "component": "radio"
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/programDeliveryTypes",
-                "options": {
-                  "component": "checkboxOptionsGroup"
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/context/properties/isBCPrivate",
-                        "schema": {
-                          "const": true
-                        }
-                      },
-                      {
-                        "scope": "#/properties/programDeliveryTypes",
-                        "schema": {
-                          "contains": {
-                            "const": "deliveredOnline"
-                          }
-                        }
-                      },
-                      {
-                        "scope": "#/properties/programDeliveryTypes",
-                        "schema": {
-                          "not": {
-                            "contains": {
-                              "const": "deliveredOnSite"
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "header": "This program requires review by StudentAid BC to determine eligibility."
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/context/properties/isBCInstitution",
-                        "schema": {
-                          "const": false
-                        }
-                      },
-                      {
-                        "scope": "#/properties/programDeliveryTypes",
-                        "schema": {
-                          "contains": {
-                            "const": "deliveredOnline"
-                          }
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/deliveredOnlineAlsoOnsite"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/context/properties/isBCInstitution",
-                        "schema": {
-                          "const": false
-                        }
-                      },
-                      {
-                        "scope": "#/properties/deliveredOnlineAlsoOnsite",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/sameOnlineCreditsEarned"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/context/properties/isBCInstitution",
-                        "schema": {
-                          "const": false
-                        }
-                      },
-                      {
-                        "scope": "#/properties/deliveredOnlineAlsoOnsite",
-                        "schema": {
-                          "const": "no"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/sameOnlineCreditsEarned",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/earnAcademicCreditsOtherInstitution"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/context/properties/isBCInstitution",
-                        "schema": {
-                          "const": false
-                        }
-                      },
-                      {
-                        "scope": "#/properties/deliveredOnlineAlsoOnsite",
-                        "schema": {
-                          "const": "no"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/sameOnlineCreditsEarned",
-                        "schema": {
-                          "const": "no"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/earnAcademicCreditsOtherInstitution",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label"
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/completionYears",
-                "options": {
-                  "hint": "This qualifies students for specific funds or grants.",
-                  "component": "select"
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/courseLoadCalculation",
-                "options": {
-                  "component": "radio"
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/courseLoadCalculation",
-                    "schema": {
-                      "const": "hours"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/minHoursWeek"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/courseLoadCalculation",
-                        "schema": {
-                          "const": "hours"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/minHoursWeek",
-                        "schema": {
-                          "const": "no"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/isAviationProgram",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "The program needs to be a minimum of 20 instructional hours."
-                }
-              },
-              {
-                "type": "Control",
-                "scope": "#/properties/regulatoryBody",
-                "options": {
-                  "hint": "All programs must be approved by your regulatory body to meet the criteria. If your program has not been approved yet, please contact your regulatory body first.",
-                  "component": "select"
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/regulatoryBody",
-                    "schema": {
-                      "const": "other"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/otherRegulatoryBody"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Entrance requirements",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/entranceRequirements"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/entranceRequirements/properties/noneOfTheAboveEntranceRequirements",
-                    "schema": {
-                      "const": true
-                    }
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "An entrance requirement is required."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "English as a Second Language (ESL) content",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/eslEligibility",
-                "options": {
-                  "component": "radio"
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/eslEligibility",
-                    "schema": {
-                      "const": "20OrMore"
-                    }
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "ESL can't exceed 20% of course content."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Program partnerships",
-        "options": {
-          "subtitleHtml": "If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href=\"https://studentaidbc.ca/\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAidBC.ca</a>."
-        },
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/hasJointInstitution"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/hasJointInstitution",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/hasJointDesignatedInstitution"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/hasJointDesignatedInstitution",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "header": "Partner program review",
-                  "contentHtml": "This program requires additional review by StudentAid BC. Please email <a href=\"mailto:designat@gov.bc.ca\">designat@gov.bc.ca</a> the name of the institution that you have partnered with, the name of this program, and any other details you want included as part of the review for this program."
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/hasJointDesignatedInstitution",
-                    "schema": {
-                      "const": "no"
-                    }
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "All partner institutions must be designated by StudentAid BC."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Work-integrated learning (WIL)",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/hasWILComponent"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/hasWILComponent",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/isWILApproved"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/hasWILComponent",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/isWILApproved",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "The work-integrated learning component must be approved by your regulator or oversight body first."
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/hasWILComponent",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/isWILApproved",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/wilProgramEligibility",
-                "options": {
-                  "tooltipHtml": "<span>For the work-integrated learning experience to qualify for student financial assistance it must be:</span><ul class=\"ps-3\"><li>Required for graduation (in the case of a co-op education placement it must either be required for graduation and/or result in a credential with a co-op designation);</li><li>Linked to the curriculum; and</li><li>Not exceed 50% of the program (or no more than 20% for practicums and 10% for preceptorships) unless otherwise regulated as a requirement by an oversight body (e.g., Early Childhood Educators (ECE) Registry).</li></ul>"
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/hasWILComponent",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/isWILApproved",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/wilProgramEligibility",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "This must meet the StudentAid BC policy."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Field trip, field placement, or travel",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/hasTravel"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/hasTravel",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/travelProgramEligibility"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/hasTravel",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/travelProgramEligibility",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "This must meet the StudentAid BC policy."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "International exchange",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/hasIntlExchange"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/hasIntlExchange",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/intlExchangeProgramEligibility"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "type": "AND",
-                    "conditions": [
-                      {
-                        "scope": "#/properties/hasIntlExchange",
-                        "schema": {
-                          "const": "yes"
-                        }
-                      },
-                      {
-                        "scope": "#/properties/intlExchangeProgramEligibility",
-                        "schema": {
-                          "const": "no"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "This must meet the StudentAid BC policy."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Aviation",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Control",
-                "scope": "#/properties/isAviationProgram"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/isAviationProgram",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/credentialTypesAviation",
-                "options": {
-                  "component": "checkboxOptionsGroup"
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/credentialTypesAviation",
-                    "schema": {
-                      "type": "array",
-                      "contains": {
-                        "const": "privatePilotTraining"
-                      }
-                    }
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "StudentAid BC does not provide any assistance to students for Private Pilot Training."
-                }
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/isAviationProgram",
-                    "schema": {
-                      "const": "yes"
-                    }
-                  }
-                },
-                "type": "Control",
-                "scope": "#/properties/minHoursWeekAvi"
-              },
-              {
-                "rule": {
-                  "effect": "SHOW",
-                  "condition": {
-                    "scope": "#/properties/minHoursWeekAvi",
-                    "schema": {
-                      "const": "no"
-                    }
-                  }
-                },
-                "type": "Label",
-                "options": {
-                  "summary": "The aviation program needs to be a minimum of 15 instructional hours."
-                }
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "Group",
-        "label": "Declaration",
-        "elements": [
-          {
-            "type": "VerticalLayout",
-            "elements": [
-              {
-                "type": "Label",
-                "options": {
-                  "plainText": "All information is subject to verification and auditing."
-                }
-              },
-              {
-                "type": "Control",
-                "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
-                "scope": "#/properties/programDeclaration"
-              }
-            ]
-          }
-        ]
+  "rule": {
+    "effect": "DISABLE",
+    "condition": {
+      "scope": "#/properties/context/properties/hasOfferings",
+      "schema": {
+        "const": true
       }
-    ]
-  }
+    }
+  },
+  "type": "VerticalLayout",
+  "elements": [
+    {
+      "type": "Group",
+      "label": "Program details",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "rule": {
+                "effect": "ENABLE",
+                "condition": {
+                  "scope": "#/properties/context/properties/hasOfferings",
+                  "schema": {}
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/programName"
+            },
+            {
+              "rule": {
+                "effect": "ENABLE",
+                "condition": {
+                  "scope": "#/properties/context/properties/hasOfferings",
+                  "schema": {}
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/programDescription",
+              "options": {
+                "multiline": true
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/credentialType",
+              "options": {
+                "component": "select"
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/cipCode",
+              "options": {
+                "hint": "Format (##.####)"
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/fieldOfStudyCode"
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/nocCode",
+              "options": {
+                "hint": "Format (#####) Optional**"
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/sabcCode",
+              "options": {
+                "hint": "Format (XXX#) Mandatory field if using the 'Offerings Upload' feature. Otherwise optional."
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/institutionProgramCode"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Program eligibility",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/programIntensity",
+              "options": {
+                "tooltip": "A part-time program has a course load between 20 and 59%. A full-time program must have a course load of: 60% or greater or Between 40 and 60% for students with a permanent disability.",
+                "component": "radio"
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/programDeliveryTypes",
+              "options": {
+                "component": "checkboxOptionsGroup"
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/context/properties/isBCPrivate",
+                      "schema": {
+                        "const": true
+                      }
+                    },
+                    {
+                      "scope": "#/properties/programDeliveryTypes",
+                      "schema": {
+                        "contains": {
+                          "const": "deliveredOnline"
+                        }
+                      }
+                    },
+                    {
+                      "scope": "#/properties/programDeliveryTypes",
+                      "schema": {
+                        "not": {
+                          "contains": {
+                            "const": "deliveredOnSite"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label",
+              "options": {
+                "header": "This program requires review by StudentAid BC to determine eligibility."
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/context/properties/isBCInstitution",
+                      "schema": {
+                        "const": false
+                      }
+                    },
+                    {
+                      "scope": "#/properties/programDeliveryTypes",
+                      "schema": {
+                        "contains": {
+                          "const": "deliveredOnline"
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/deliveredOnlineAlsoOnsite"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/context/properties/isBCInstitution",
+                      "schema": {
+                        "const": false
+                      }
+                    },
+                    {
+                      "scope": "#/properties/deliveredOnlineAlsoOnsite",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/sameOnlineCreditsEarned"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/context/properties/isBCInstitution",
+                      "schema": {
+                        "const": false
+                      }
+                    },
+                    {
+                      "scope": "#/properties/deliveredOnlineAlsoOnsite",
+                      "schema": {
+                        "const": "no"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/sameOnlineCreditsEarned",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/earnAcademicCreditsOtherInstitution"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/context/properties/isBCInstitution",
+                      "schema": {
+                        "const": false
+                      }
+                    },
+                    {
+                      "scope": "#/properties/deliveredOnlineAlsoOnsite",
+                      "schema": {
+                        "const": "no"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/sameOnlineCreditsEarned",
+                      "schema": {
+                        "const": "no"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/earnAcademicCreditsOtherInstitution",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label"
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/completionYears",
+              "options": {
+                "hint": "This qualifies students for specific funds or grants.",
+                "component": "select"
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/courseLoadCalculation",
+              "options": {
+                "component": "radio"
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/courseLoadCalculation",
+                  "schema": {
+                    "const": "hours"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/minHoursWeek"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/courseLoadCalculation",
+                      "schema": {
+                        "const": "hours"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/minHoursWeek",
+                      "schema": {
+                        "const": "no"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/isAviationProgram",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "The program needs to be a minimum of 20 instructional hours."
+              }
+            },
+            {
+              "type": "Control",
+              "scope": "#/properties/regulatoryBody",
+              "options": {
+                "hint": "All programs must be approved by your regulatory body to meet the criteria. If your program has not been approved yet, please contact your regulatory body first.",
+                "component": "select"
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/regulatoryBody",
+                  "schema": {
+                    "const": "other"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/otherRegulatoryBody"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Entrance requirements",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/entranceRequirements"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/entranceRequirements/properties/noneOfTheAboveEntranceRequirements",
+                  "schema": {
+                    "const": true
+                  }
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "An entrance requirement is required."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "English as a Second Language (ESL) content",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/eslEligibility",
+              "options": {
+                "component": "radio"
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/eslEligibility",
+                  "schema": {
+                    "const": "20OrMore"
+                  }
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "ESL can't exceed 20% of course content."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Program partnerships",
+      "options": {
+        "subtitleHtml": "If this program is offered at a partner institution, that institution must also be designated by SABC. Find out which institutions are designated on <a href=\"https://studentaidbc.ca/\" target=\"_blank\" rel=\"noopener noreferrer\">StudentAidBC.ca</a>."
+      },
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/hasJointInstitution"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/hasJointInstitution",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/hasJointDesignatedInstitution"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/hasJointDesignatedInstitution",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Label",
+              "options": {
+                "header": "Partner program review",
+                "contentHtml": "This program requires additional review by StudentAid BC. Please email <a href=\"mailto:designat@gov.bc.ca\">designat@gov.bc.ca</a> the name of the institution that you have partnered with, the name of this program, and any other details you want included as part of the review for this program."
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/hasJointDesignatedInstitution",
+                  "schema": {
+                    "const": "no"
+                  }
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "All partner institutions must be designated by StudentAid BC."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Work-integrated learning (WIL)",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/hasWILComponent"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/hasWILComponent",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/isWILApproved"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/hasWILComponent",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/isWILApproved",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "The work-integrated learning component must be approved by your regulator or oversight body first."
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/hasWILComponent",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/isWILApproved",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/wilProgramEligibility",
+              "options": {
+                "tooltipHtml": "<span>For the work-integrated learning experience to qualify for student financial assistance it must be:</span><ul class=\"ps-3\"><li>Required for graduation (in the case of a co-op education placement it must either be required for graduation and/or result in a credential with a co-op designation);</li><li>Linked to the curriculum; and</li><li>Not exceed 50% of the program (or no more than 20% for practicums and 10% for preceptorships) unless otherwise regulated as a requirement by an oversight body (e.g., Early Childhood Educators (ECE) Registry).</li></ul>"
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/hasWILComponent",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/isWILApproved",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/wilProgramEligibility",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "This must meet the StudentAid BC policy."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Field trip, field placement, or travel",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/hasTravel"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/hasTravel",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/travelProgramEligibility"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/hasTravel",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/travelProgramEligibility",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "This must meet the StudentAid BC policy."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "International exchange",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/hasIntlExchange"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/hasIntlExchange",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/intlExchangeProgramEligibility"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "type": "AND",
+                  "conditions": [
+                    {
+                      "scope": "#/properties/hasIntlExchange",
+                      "schema": {
+                        "const": "yes"
+                      }
+                    },
+                    {
+                      "scope": "#/properties/intlExchangeProgramEligibility",
+                      "schema": {
+                        "const": "no"
+                      }
+                    }
+                  ]
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "This must meet the StudentAid BC policy."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Aviation",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Control",
+              "scope": "#/properties/isAviationProgram"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/isAviationProgram",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/credentialTypesAviation",
+              "options": {
+                "component": "checkboxOptionsGroup"
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/credentialTypesAviation",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "privatePilotTraining"
+                    }
+                  }
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "StudentAid BC does not provide any assistance to students for Private Pilot Training."
+              }
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/isAviationProgram",
+                  "schema": {
+                    "const": "yes"
+                  }
+                }
+              },
+              "type": "Control",
+              "scope": "#/properties/minHoursWeekAvi"
+            },
+            {
+              "rule": {
+                "effect": "SHOW",
+                "condition": {
+                  "scope": "#/properties/minHoursWeekAvi",
+                  "schema": {
+                    "const": "no"
+                  }
+                }
+              },
+              "type": "Label",
+              "options": {
+                "summary": "The aviation program needs to be a minimum of 15 instructional hours."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Group",
+      "label": "Declaration",
+      "elements": [
+        {
+          "type": "VerticalLayout",
+          "elements": [
+            {
+              "type": "Label",
+              "options": {
+                "plainText": "All information is subject to verification and auditing."
+              }
+            },
+            {
+              "type": "Control",
+              "label": "I confirm this program meets the policies outlined in the StudentAid BC policy manual.",
+              "scope": "#/properties/programDeclaration"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
   $$::jsonb AS visual_schema,
   $$
     {

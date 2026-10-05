@@ -44,6 +44,7 @@ import {
 } from "@/renderers/jsonforms/ajv";
 import { JsonSchema, UISchemaElement, ValidationMode } from "@jsonforms/core";
 import { ErrorMessage } from "@/types";
+import { defineProps, defineEmits, withDefaults } from "vue";
 
 interface ProgramFormProps {
   programId?: number;
