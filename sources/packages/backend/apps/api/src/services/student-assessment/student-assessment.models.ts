@@ -3,8 +3,8 @@ import { ECertPreValidatorResult } from "@sims/integrations/services/disbursemen
 import {
   AcceptAssessmentRestriction,
   AcceptAssessmentRestrictionsEvaluationResult,
+  StudentNote,
 } from "@sims/services";
-import { StudentNote } from "@sims/services";
 import { Application } from "@sims/sims-db";
 
 /**
