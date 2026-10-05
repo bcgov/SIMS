@@ -4,6 +4,7 @@ import { Job, Queue } from "bull";
 import { BaseScheduler } from "../../base-scheduler";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
+import { ReturnedLoansResponseProcessingService } from "@sims/integrations/esdc-integration";
 
 @Processor(QueueNames.ReturnedLoansResponseIntegration)
 export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<void> {
@@ -11,6 +12,7 @@ export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<voi
     @InjectQueue(QueueNames.ReturnedLoansResponseIntegration)
     schedulerQueue: Queue<void>,
     queueService: QueueService,
+    private readonly returnedLoansResponseProcessingService: ReturnedLoansResponseProcessingService,
     logger: LoggerService,
   ) {
     super(schedulerQueue, queueService, logger);
@@ -26,9 +28,11 @@ export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<voi
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {
-    processSummary.info("Starting RTG response integration processing.");
-    // TODO: Implement the processing logic for RTG response integration.
-
-    return ["Process finalized with success.", `Received files: 0.`];
+    const processingResponse =
+      await this.returnedLoansResponseProcessingService.process(processSummary);
+    return [
+      "Process finalized with success.",
+      `Received files: ${processingResponse.receivedFiles}.`,
+    ];
   }
 }

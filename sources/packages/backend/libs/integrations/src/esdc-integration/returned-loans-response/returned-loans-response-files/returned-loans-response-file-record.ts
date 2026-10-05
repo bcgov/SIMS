@@ -8,7 +8,7 @@ import { getDateOnlyFromFormat } from "@sims/utilities";
  * Base class for returned loans response file record.
  */
 export abstract class ReturnedLoansResponseFileRecord {
-  constructor(protected readonly line: string) {}
+  constructor(readonly line: string) {}
 
   /**
    * Record type of the record in the file.

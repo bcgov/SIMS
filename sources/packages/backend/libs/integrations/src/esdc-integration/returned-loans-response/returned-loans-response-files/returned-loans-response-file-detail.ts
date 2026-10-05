@@ -3,19 +3,12 @@ import { ReturnedLoansResponseFileRecord } from "@sims/integrations/esdc-integra
 /**
  * Returned loan response file detail.
  */
-export abstract class ReturnedLoansResponseFileDetail extends ReturnedLoansResponseFileRecord {
+export class ReturnedLoansResponseFileDetail extends ReturnedLoansResponseFileRecord {
   constructor(
-    protected readonly line: string,
-    protected readonly _lineNumber: number,
+    readonly line: string,
+    readonly lineNumber: number,
   ) {
     super(line);
-  }
-
-  /**
-   * Line number of the detail record in the response file.
-   */
-  get lineNumber(): number {
-    return this._lineNumber;
   }
 
   /**

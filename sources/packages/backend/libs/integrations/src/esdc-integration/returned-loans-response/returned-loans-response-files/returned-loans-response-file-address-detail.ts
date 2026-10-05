@@ -5,10 +5,10 @@ import { ReturnedLoansResponseFileDetail } from "@sims/integrations/esdc-integra
  */
 export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansResponseFileDetail {
   constructor(
-    line: string,
-    protected readonly _lineNumber: number,
+    readonly line: string,
+    readonly lineNumber: number,
   ) {
-    super(line, _lineNumber);
+    super(line, lineNumber);
   }
 
   /**

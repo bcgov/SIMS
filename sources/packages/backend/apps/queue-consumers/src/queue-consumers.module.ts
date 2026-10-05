@@ -66,6 +66,7 @@ import {
   SINValidationModule,
   StudentLoanBalancesIntegrationModule,
   ECertCancellationResponseIntegrationModule,
+  ReturnedLoansResponseIntegrationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
 import { T4AIntegrationModule } from "@sims/integrations/t4a";
@@ -130,6 +131,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     ApplicationChangesReportIntegrationModule,
     ECertCancellationResponseIntegrationModule,
     T4AIntegrationModule,
+    ReturnedLoansResponseIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,
