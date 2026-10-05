@@ -191,12 +191,12 @@ export class BatchReassessmentService {
               } catch (error: unknown) {
                 if (error instanceof CustomNamedError) {
                   batchReassessmentApplication.failureReason = error.message;
-                } else {
-                  throw new Error(
-                    `Unexpected error while processing application number ${applicationNumber}.`,
-                    { cause: error },
-                  );
+                  continue;
                 }
+                throw new Error(
+                  `Unexpected error while processing application number ${applicationNumber}.`,
+                  { cause: error },
+                );
               }
             }
 
