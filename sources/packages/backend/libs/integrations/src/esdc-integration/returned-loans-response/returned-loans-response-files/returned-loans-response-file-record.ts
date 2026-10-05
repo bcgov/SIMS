@@ -1,7 +1,7 @@
 import {
   DATE_FORMAT,
   ReturnedLoansResponseRecordType,
-} from "@sims/integrations/esdc-integration/returned-loans-response/models/returned-loans-response.model";
+} from "../models/returned-loans-response.model";
 import { getDateOnlyFromFormat } from "@sims/utilities";
 
 /**

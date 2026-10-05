@@ -1,4 +1,4 @@
-import { ReturnedLoansResponseFileDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-detail";
+import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-file-detail";
 
 /**
  * Returned loan response file address detail.
@@ -33,16 +33,9 @@ export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansRespons
   }
 
   /**
-   * Customer(student) birth date string.
-   */
-  private get dateOfBirthString(): string {
-    return this.line.substring(59, 67);
-  }
-
-  /**
    * Customer(student) birth date.
    */
   get dateOfBirth(): Date {
-    return this.convertToDateRecord(this.dateOfBirthString);
+    return this.convertToDateRecord(this.line.substring(59, 67));
   }
 }

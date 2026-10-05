@@ -154,7 +154,7 @@ export class ReturnedLoansResponseProcessingService {
             detailRecord.lineNumber,
           );
         processSummary.info(
-          `Received returned loan detail record at line ${returnedLoanDetailRecord.lineNumber}.`,
+          `Received returned loan detail record with return reason ${returnedLoanDetailRecord.returnReason} at line ${returnedLoanDetailRecord.lineNumber}.`,
         );
         break;
       }
