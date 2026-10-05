@@ -12,6 +12,6 @@ export class ReturnedLoansResponseFileFooter extends ReturnedLoansResponseFileRe
    * Count of number of detail records.
    */
   get totalDetailRecords(): number {
-    return parseInt(this.line.substring(2, 8));
+    return Number.parseInt(this.line.substring(2, 8));
   }
 }
