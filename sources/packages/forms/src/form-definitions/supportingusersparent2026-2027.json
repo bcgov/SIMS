@@ -4,9 +4,7 @@
   "path": "supportingusersparent2026-2027",
   "type": "form",
   "display": "wizard",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "title": "Parent's Profile",
@@ -165,8 +163,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.dateOfBirth;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyDateOfBirth",
                       "type": "textfield",
@@ -188,8 +189,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.lastName;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyLastName",
                       "type": "textfield",
@@ -201,8 +205,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.email;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyEmail",
                       "type": "textfield",

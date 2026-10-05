@@ -4,9 +4,7 @@
   "path": "supportinguserspartner2026-2027",
   "type": "form",
   "display": "wizard",
-  "tags": [
-    "common"
-  ],
+  "tags": ["common"],
   "components": [
     {
       "title": "Partner's profile",
@@ -163,7 +161,10 @@
                       "label": "Date of birth",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
+                      "validate": {
+                        "required": true
+                      },
+                      "validateWhenHidden": false,
                       "key": "dateOfBirth",
                       "type": "textfield",
                       "input": true,
@@ -184,8 +185,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.lastName;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyLastName",
                       "type": "textfield",
@@ -196,7 +200,10 @@
                       "label": "Email address",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
+                      "validate": {
+                        "required": true
+                      },
+                      "validateWhenHidden": false,
                       "key": "email",
                       "type": "textfield",
                       "input": true,
