@@ -31,6 +31,7 @@ import {
   OfferingValidationInfos,
   OfferingValidationWarnings,
   OfferingYesNoOptions,
+  OnlineInstructionModeOptions,
   userFriendlyNames,
 } from "../../../../services";
 import {
@@ -519,6 +520,54 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       .expect({
         offeringStatus: "Approved",
         errors: [],
+        infos: [],
+        warnings: [],
+        studyPeriodBreakdown: {
+          fundedStudyPeriodDays: 47,
+          totalDays: 47,
+          totalFundedWeeks: 7,
+          unfundedStudyPeriodDays: 0,
+        },
+      });
+  });
+
+  it("Should return an error when a decimal course load is passed in for a part-time education program offering.", async () => {
+    // Arrange
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    const endpoint = `/institutions/education-program-offering/location/${collegeFLocation.id}/education-program/${collegeFPartTimeProgram.id}/validation`;
+    const payload = {
+      offeringName: "Offering validation",
+      yearOfStudy: 1,
+      offeringIntensity: OfferingIntensity.partTime,
+      offeringDelivered: OfferingDeliveryOptions.Onsite,
+      isAviationOffering: OfferingYesNoOptions.No,
+      hasOfferingWILComponent: "no",
+      studyStartDate: "2024-07-01",
+      studyEndDate: "2024-08-16",
+      lacksStudyBreaks: true,
+      studyBreaks: [],
+      offeringType: OfferingTypes.Public,
+      offeringDeclaration: true,
+      actualTuitionCosts: 1234,
+      programRelatedCosts: 3211,
+      mandatoryFees: 456,
+      exceptionalExpenses: 555,
+      // Course load is persisted in a smallint database column and must be rejected
+      // before reaching the database when a decimal value is provided.
+      courseLoad: 33.33,
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        errors: [`${userFriendlyNames.courseLoad} must be an integer.`],
         infos: [],
         warnings: [],
         studyPeriodBreakdown: {
@@ -1133,7 +1182,119 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       });
   });
 
+  describe.each([
+    {
+      field: "totalOnlineDuration",
+      displayName: userFriendlyNames.totalOnlineDuration,
+      onlineDurationInputs: {
+        isOnlineDurationSameAlways: OfferingYesNoOptions.Yes,
+        totalOnlineDuration: 45,
+      },
+    },
+    {
+      field: "minimumOnlineDuration",
+      displayName: userFriendlyNames.minimumOnlineDuration,
+      onlineDurationInputs: {
+        isOnlineDurationSameAlways: OfferingYesNoOptions.No,
+        minimumOnlineDuration: 30,
+        maximumOnlineDuration: 60,
+      },
+    },
+    {
+      field: "maximumOnlineDuration",
+      displayName: userFriendlyNames.maximumOnlineDuration,
+      onlineDurationInputs: {
+        isOnlineDurationSameAlways: OfferingYesNoOptions.No,
+        minimumOnlineDuration: 30,
+        maximumOnlineDuration: 60,
+      },
+    },
+  ])(
+    "Online duration integer validation - $field",
+    ({ field, displayName, onlineDurationInputs }) => {
+      it.each([
+        { value: 45.5, expectedResult: "an integer validation error" },
+        { value: 45, expectedResult: "an approved offering" },
+      ])(
+        "Should return $expectedResult when the online duration is $value.",
+        async ({ value }) => {
+          // Arrange
+          // Use an isolated program that allows blended delivery without changing shared fixtures.
+          const program = await db.educationProgram.save(
+            createFakeEducationProgram(
+              { institution: collegeF, user: collegeFUser },
+              {
+                initialValue: {
+                  sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),
+                  deliveredOnSite: true,
+                  deliveredOnline: true,
+                },
+              },
+            ),
+          );
+          const institutionUserToken = await getInstitutionToken(
+            InstitutionTokenTypes.CollegeFUser,
+          );
+          const endpoint = getEndpoint(collegeFLocation.id, program.id);
+          // Keep the percentages within their limits and minimum below maximum
+          // so a fractional value fails only the integer validation.
+          const payload = {
+            offeringName: "Online duration validation",
+            yearOfStudy: 1,
+            offeringIntensity: OfferingIntensity.fullTime,
+            offeringDelivered: OfferingDeliveryOptions.Blended,
+            isAviationOffering: OfferingYesNoOptions.No,
+            hasOfferingWILComponent: OfferingYesNoOptions.No,
+            studyStartDate: "2024-05-23",
+            studyEndDate: "2024-08-16",
+            lacksStudyBreaks: true,
+            studyBreaks: [],
+            offeringType: OfferingTypes.Public,
+            offeringDeclaration: true,
+            actualTuitionCosts: 1234,
+            programRelatedCosts: 3211,
+            mandatoryFees: 456,
+            exceptionalExpenses: 555,
+            onlineInstructionMode: OnlineInstructionModeOptions.SynchronousOnly,
+            ...onlineDurationInputs,
+            [field]: value,
+          };
+          const isInteger = Number.isInteger(value);
+
+          // Act/Assert
+          await request(app.getHttpServer())
+            .post(endpoint)
+            .send(payload)
+            .auth(institutionUserToken, BEARER_AUTH_TYPE)
+            .expect(HttpStatus.OK)
+            .expect({
+              ...(isInteger && { offeringStatus: OfferingStatus.Approved }),
+              errors: isInteger ? [] : [`${displayName} must be an integer.`],
+              infos: [],
+              warnings: [],
+              studyPeriodBreakdown: {
+                fundedStudyPeriodDays: 86,
+                totalDays: 86,
+                totalFundedWeeks: 13,
+                unfundedStudyPeriodDays: 0,
+              },
+            });
+        },
+      );
+    },
+  );
+
   afterAll(async () => {
     await app?.close();
   });
 });
+
+/**
+ * Gets the endpoint to validate an offering for a program and location.
+ * @param locationId Institution location identifier.
+ * @param programId Education program identifier.
+ * @returns Offering validation endpoint.
+ */
+function getEndpoint(locationId: number, programId: number): string {
+  return `/institutions/education-program-offering/location/${locationId}/education-program/${programId}/validation`;
+}
