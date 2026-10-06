@@ -1,5 +1,5 @@
 import {
-  DATE_FORMAT,
+  RETURNED_LOANS_RESPONSE_DATE_FORMAT,
   ReturnedLoansResponseRecordType,
 } from "../models/returned-loans-response.model";
 import { getDateOnlyFromFormat } from "@sims/utilities";
@@ -19,10 +19,10 @@ export abstract class ReturnedLoansResponseFileRecord {
 
   /**
    * Converts a date string from the response file to a Date object.
-   * @param dateText Date string in the format specified by DATE_FORMAT.
+   * @param dateText Date string in the format specified by date format.
    * @returns Date object representing the date.
    */
   protected convertToDateRecord(dateText: string): Date {
-    return getDateOnlyFromFormat(dateText, DATE_FORMAT);
+    return getDateOnlyFromFormat(dateText, RETURNED_LOANS_RESPONSE_DATE_FORMAT);
   }
 }

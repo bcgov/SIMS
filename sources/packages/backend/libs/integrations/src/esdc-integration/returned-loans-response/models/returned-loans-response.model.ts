@@ -14,7 +14,7 @@ export enum ReturnedLoansResponseRecordType {
  * Date format used in the returned loans response file.
  * Official document states the format as CCYYMMDD which corresponds to YYYYMMDD.
  */
-export const DATE_FORMAT = "YYYYMMDD";
+export const RETURNED_LOANS_RESPONSE_DATE_FORMAT = "YYYYMMDD";
 
 /**
  * Returned loans response downloaded file.

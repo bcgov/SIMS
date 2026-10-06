@@ -14,7 +14,7 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import Client from "ssh2-sftp-client";
 import { join } from "node:path";
 import { ReturnedLoansResponseIntegrationScheduler } from "../returned-loans-response-integration.scheduler";
-import { ReturnedLoansResponseRecordType } from "@sims/integrations/esdc-integration/returned-loans-response/models/returned-loans-response.model";
+import { ReturnedLoansResponseRecordType } from "@sims/integrations/esdc-integration";
 
 const OTH_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.OTH.D2026222.001";
 const PDD_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.PDD.D2026222.001";
