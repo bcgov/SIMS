@@ -35,6 +35,7 @@ import {
   ECertCancellationResponseIntegrationScheduler,
   T4AUploadEnqueuerScheduler,
   T4AUploadProcessor,
+  ReturnedLoansResponseIntegrationScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -65,6 +66,7 @@ import {
   SINValidationModule,
   StudentLoanBalancesIntegrationModule,
   ECertCancellationResponseIntegrationModule,
+  ReturnedLoansResponseIntegrationModule,
 } from "@sims/integrations/esdc-integration";
 import { CRAIntegrationModule } from "@sims/integrations/cra-integration/cra-integration.module";
 import { T4AIntegrationModule } from "@sims/integrations/t4a";
@@ -129,6 +131,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     ApplicationChangesReportIntegrationModule,
     ECertCancellationResponseIntegrationModule,
     T4AIntegrationModule,
+    ReturnedLoansResponseIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,
@@ -203,6 +206,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     ECertCancellationResponseIntegrationScheduler,
     T4AUploadEnqueuerScheduler,
     T4AUploadProcessor,
+    ReturnedLoansResponseIntegrationScheduler,
   ],
   controllers: [HealthController, MetricsController],
 })

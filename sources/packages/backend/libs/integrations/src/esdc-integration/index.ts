@@ -61,3 +61,7 @@ export * from "./application-changes-report/application-changes-report-integrati
 export * from "./e-cert-cancellation-response/e-cert-cancellation-response.integration.service";
 export * from "./e-cert-cancellation-response/e-cert-cancellation-response.processing.service";
 export * from "./e-cert-cancellation-response/e-cert-cancellation-response-integration.module";
+export * from "./returned-loans-response/models/returned-loans-response.model";
+export * from "./returned-loans-response/returned-loans-response.integration.service";
+export * from "./returned-loans-response/returned-loans-response.processing.service";
+export * from "./returned-loans-response/returned-loans-response-integration.module";
