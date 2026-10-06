@@ -19,7 +19,7 @@ export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<voi
   }
 
   /**
-   * Process the returned loans response file(s) and update the relevant records.
+   * Process the returned loans response file(s).
    * @param _job process job.
    * @param processSummary process summary for logging.
    * @returns process summary.
