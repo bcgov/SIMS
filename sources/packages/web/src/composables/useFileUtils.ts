@@ -85,7 +85,13 @@ export function useFileUtils() {
     });
 
     const url = URL.createObjectURL(blob);
-    window.open(url, "_blank");
+    if (!window.open(url, "_blank")) {
+      // Tab blocked (e.g. pop-up blocker), release the url immediately.
+      URL.revokeObjectURL(url);
+      useSnackBar().warn(
+        "The file could not be opened. Please allow pop-ups for this site.",
+      );
+    }
   };
 
   /**
