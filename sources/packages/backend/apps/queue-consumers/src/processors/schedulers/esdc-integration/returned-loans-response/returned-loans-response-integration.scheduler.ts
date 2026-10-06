@@ -6,6 +6,10 @@ import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { ReturnedLoansResponseProcessingService } from "@sims/integrations/esdc-integration";
 
+/**
+ * Scheduler to process Return to Government(RTG) files.
+ ** Both OTH (270 days file) and PDD (Death, Permanent Disability file) RTG files are processed by this scheduler.
+ */
 @Processor(QueueNames.ReturnedLoansResponseIntegration)
 export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<void> {
   constructor(

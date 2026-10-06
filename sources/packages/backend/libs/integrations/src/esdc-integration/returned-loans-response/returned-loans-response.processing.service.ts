@@ -31,6 +31,7 @@ export class ReturnedLoansResponseProcessingService {
    * Processes the returned loans response file(s).
    * Both OTH (270 days file) and PDD (Death, Permanent Disability file) are processed.
    * @param processSummary process summary.
+   * @returns processing result.
    */
   async process(
     processSummary: ProcessSummary,
