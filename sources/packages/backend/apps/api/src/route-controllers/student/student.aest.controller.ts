@@ -137,7 +137,7 @@ export class StudentAESTController extends BaseController {
   })
   @ApiForbiddenResponse({
     description:
-      "This file has not been scanned and will be available to download once it is determined to be safe or " +
+      "This file has not been scanned and will be available to view once it is determined to be safe or " +
       "the original file was deleted due to security rules.",
   })
   async getUploadedFile(
