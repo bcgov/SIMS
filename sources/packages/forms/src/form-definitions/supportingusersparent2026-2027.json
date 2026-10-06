@@ -4,7 +4,9 @@
   "path": "supportingusersparent2026-2027",
   "type": "form",
   "display": "wizard",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Parent's Profile",
@@ -77,6 +79,7 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
+              "clearOnHide": false,
               "key": "givenNames",
               "type": "textfield",
               "input": true
@@ -90,6 +93,7 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
+              "clearOnHide": false,
               "key": "lastName",
               "type": "textfield",
               "input": true

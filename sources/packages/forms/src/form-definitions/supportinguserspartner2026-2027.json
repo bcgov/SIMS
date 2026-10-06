@@ -4,7 +4,9 @@
   "path": "supportinguserspartner2026-2027",
   "type": "form",
   "display": "wizard",
-  "tags": ["common"],
+  "tags": [
+    "common"
+  ],
   "components": [
     {
       "title": "Partner's profile",
@@ -77,6 +79,7 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
+              "clearOnHide": false,
               "key": "givenNames",
               "type": "textfield",
               "input": true
@@ -89,6 +92,7 @@
                 "required": true
               },
               "validateWhenHidden": false,
+              "clearOnHide": false,
               "key": "lastName",
               "type": "textfield",
               "input": true
