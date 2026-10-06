@@ -1,6 +1,6 @@
 <template>
   <tab-container>
-    <student-file-uploads :studentId="studentId" />
+    <student-file-uploads :student-id="studentId" />
   </tab-container>
 </template>
 

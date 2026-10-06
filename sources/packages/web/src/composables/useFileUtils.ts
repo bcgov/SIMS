@@ -49,7 +49,7 @@ export function useFileUtils() {
     } catch (error: unknown) {
       if (!useFileUtils().handleFileScanProcessError(error)) {
         throw new Error(
-          "There was an unexpected error while opening the file.",
+          "There was an unexpected error while viewing the file.",
         );
       }
     }

@@ -160,7 +160,7 @@ export class StudentControllerService {
     ) {
       throw new ForbiddenException(
         new ApiProcessError(
-          "This file has not been scanned and will be available to download once it is determined to be safe.",
+          "This file has not been scanned and will be available to view once it is determined to be safe.",
           FILE_HAS_NOT_BEEN_SCANNED_YET,
         ),
       );

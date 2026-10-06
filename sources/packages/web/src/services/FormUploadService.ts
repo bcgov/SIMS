@@ -64,7 +64,7 @@ export default class FormUploadService {
     } catch (error: unknown) {
       if (!useFileUtils().handleFileScanProcessError(error)) {
         throw new Error(
-          "There was an unexpected error while downloading the file.",
+          "There was an unexpected error while viewing the file.",
         );
       }
     }
