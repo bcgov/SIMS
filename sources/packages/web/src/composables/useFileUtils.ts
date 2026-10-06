@@ -85,13 +85,17 @@ export function useFileUtils() {
     });
 
     const url = URL.createObjectURL(blob);
-    if (!window.open(url, "_blank")) {
+    const newTab = window.open(url, "_blank");
+    if (!newTab) {
       // Tab blocked (e.g. pop-up blocker), release the url immediately.
       URL.revokeObjectURL(url);
       useSnackBar().warn(
         "The file could not be opened. Please allow pop-ups for this site.",
       );
+      return;
     }
+    // Prevent the opened content from accessing the application window.
+    newTab.opener = null;
   };
 
   /**
