@@ -41,11 +41,10 @@ export class ReturnedLoansResponseProcessingService {
         this.esdcConfig.ftpResponseFolder,
         // The regex pattern to match the returned loans response file for OTH (270 days file) and PDD (Death, Permanent Disability file).
         new RegExp(
-          `^${this.esdcConfig.environmentCode}EDU.PBC.RTG.(OTH|PDD).D[0-9]{7}.[0-9]{3}$`,
+          `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.RTG\\.(OTH|PDD)\\.D[0-9]{7}\\.[0-9]{3}$`,
           "i",
         ),
       );
-
     if (!remoteFilePaths.length) {
       const message = "There are no returned loans response files received.";
       this.logger.log(message);
@@ -69,9 +68,7 @@ export class ReturnedLoansResponseProcessingService {
   }
 
   /**
-   * Processes an returned loans response file.
-   * The processing of a cancellation involves rejecting the eligible disbursements
-   * identified by the document number in the cancellation response file.
+   * Processes a returned loans response file.
    * @param remoteFilePath remote file path.
    * @param processSummary process summary.
    */
@@ -117,13 +114,10 @@ export class ReturnedLoansResponseProcessingService {
     }
 
     fileProcessSummary.info(
-      `Finished processing records for the returned loans response file: ${remoteFilePath}.`,
+      `Finished processing records for the returned loans response file ${remoteFilePath}.`,
     );
 
-    // Archive the processed file on successful completion.
-    if (!processSummary.getLogLevelSum().error) {
-      await this.archiveFile(remoteFilePath, processSummary);
-    }
+    // TODO: When the archive requirements are defined, implement the logic to archive the processed file.
   }
 
   /**
@@ -160,29 +154,9 @@ export class ReturnedLoansResponseProcessingService {
       }
       default:
         processSummary.info(
-          `Invalid record type ${detailRecord.recordType} at line ${detailRecord.lineNumber}.`,
+          `Invalid detail record type ${detailRecord.recordType} at line ${detailRecord.lineNumber}.`,
         );
         return;
-    }
-  }
-
-  /**
-   * Archive the processed file after successful processing.
-   * @param remoteFilePath remote file path to archive.
-   * @param processSummary process summary.
-   */
-  private async archiveFile(
-    remoteFilePath: string,
-    processSummary: ProcessSummary,
-  ): Promise<void> {
-    try {
-      await this.integrationService.archiveFile(remoteFilePath);
-    } catch (error: unknown) {
-      // Log the error but do not abort the process, allowing other records to be processed.
-      processSummary.error(
-        `Error archiving the file ${remoteFilePath}.`,
-        error,
-      );
     }
   }
 }
