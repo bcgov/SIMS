@@ -3,7 +3,9 @@ import { ECertPreValidatorResult } from "@sims/integrations/services/disbursemen
 import {
   AcceptAssessmentRestriction,
   AcceptAssessmentRestrictionsEvaluationResult,
+  StudentNote,
 } from "@sims/services";
+import { Application } from "@sims/sims-db";
 
 /**
  * Consolidate different evaluation results to determine if a
@@ -55,4 +57,19 @@ export class AcceptAssessmentEvaluationResult {
    * the Student Assessment from being accepted by the Student.
    */
   readonly eCertFailedValidations: ReadonlyArray<ECertFailedValidationResult>;
+}
+
+/**
+ * Application, with the new assessment attached, and the associated note, built for a
+ * manual reassessment but not yet persisted.
+ */
+export interface BatchManualReassessmentResult {
+  /**
+   * Application, with the new assessment attached, ready to be saved.
+   */
+  application: Application;
+  /**
+   * Note explaining the reassessment, ready to be saved and associated with the student.
+   */
+  note: StudentNote;
 }

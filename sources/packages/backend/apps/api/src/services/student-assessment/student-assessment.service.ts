@@ -25,7 +25,10 @@ import {
 import { NoteSharedService, RestrictionSharedService } from "@sims/services";
 import { ApplicationService } from "../../services";
 import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
-import { AcceptAssessmentEvaluationResult } from "./student-assessment.models";
+import {
+  AcceptAssessmentEvaluationResult,
+  BatchManualReassessmentResult,
+} from "./student-assessment.models";
 
 /**
  * Manages the student assessment related operations.
@@ -334,7 +337,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
   /**
    * Creates a manual assessment for the application.
    * @param applicationId application id.
-   * @param note note.
+   * @param note note describing why the reassessment is needed.
    * @param userId user id who triggered the manual reassessment.
    * @returns the assessment created.
    */
@@ -350,48 +353,7 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
           { entityManager: transactionalEntityManager },
         );
 
-      if (!application) {
-        throw new CustomNamedError(
-          "Application not found.",
-          APPLICATION_NOT_FOUND,
-        );
-      }
-      if (application.isArchived) {
-        throw new CustomNamedError(
-          "Application cannot have manual reassessment after being archived.",
-          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-        );
-      }
-      if (
-        [
-          ApplicationStatus.Cancelled,
-          ApplicationStatus.Edited,
-          ApplicationStatus.Draft,
-        ].includes(application.applicationStatus)
-      ) {
-        throw new CustomNamedError(
-          `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Edited} or ${ApplicationStatus.Draft}.`,
-          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-        );
-      }
-      const [originalAssessment] = application.studentAssessments;
-      if (
-        originalAssessment.studentAssessmentStatus !==
-        StudentAssessmentStatus.Completed
-      ) {
-        throw new CustomNamedError(
-          `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment.`,
-          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-        );
-      }
-      // Check if the current assessment date is populated to ensure
-      // the assessment had its calculations completed.
-      if (!application.currentAssessment.assessmentDate) {
-        throw new CustomNamedError(
-          "The assessment must have been completed to allow its reassessment.",
-          INVALID_OPERATION_IN_THE_CURRENT_STATUS,
-        );
-      }
+      this.validateManualAssessment(application);
 
       await this.noteSharedService.createStudentNote(
         application.student.id,
@@ -401,30 +363,135 @@ export class StudentAssessmentService extends RecordDataModelService<StudentAsse
         transactionalEntityManager,
       );
 
-      const auditUser = { id: userId } as User;
-      const now = new Date();
-      const oldCurrentAssessment = application.currentAssessment;
-      const applicationToBeSaved = {
-        id: application.id,
-        modifier: auditUser,
-        updatedAt: now,
-      } as Application;
-      applicationToBeSaved.currentAssessment = {
-        application: applicationToBeSaved,
-        offering: { id: oldCurrentAssessment.offering.id },
-        studentAppeal: oldCurrentAssessment.studentAppeal,
-        formSubmission: oldCurrentAssessment.formSubmission,
-        triggerType: AssessmentTriggerType.ManualReassessment,
-        creator: auditUser,
-        createdAt: now,
-        submittedBy: auditUser,
-        submittedDate: now,
-      } as StudentAssessment;
-
+      const applicationToBeSaved = this.buildManualReassessmentApplication(
+        application,
+        userId,
+      );
       const applicationRepo =
         transactionalEntityManager.getRepository(Application);
       const savedApplication = await applicationRepo.save(applicationToBeSaved);
       return savedApplication.currentAssessment;
     });
+  }
+
+  /**
+   * Builds the application, assessment, and note data required for a manual reassessment
+   * without persisting it. Used by batch reassessment processing, where applications are
+   * validated and built one by one but persisted together in a single bulk save, avoiding
+   * one database round trip per application.
+   * @param application application entity.
+   * @param note note describing why the reassessment is needed.
+   * @param userId user id who triggered the manual reassessment.
+   * @returns application, with the new assessment attached, and the note, both ready to be saved.
+   */
+  createBatchManualReassessment(
+    application: Application,
+    note: string,
+    userId: number,
+  ): BatchManualReassessmentResult {
+    this.validateManualAssessment(application);
+    return {
+      application: this.buildManualReassessmentApplication(application, userId),
+      note: {
+        studentId: application.student.id,
+        noteType: NoteType.Application,
+        description: note,
+      },
+    };
+  }
+
+  /**
+   * Builds the application and assessment data required for a manual reassessment without
+   * persisting it, allowing the caller to decide when and how to save it.
+   * @param application application entity.
+   * @param userId user id who triggered the manual reassessment.
+   * @returns application, with the new assessment attached, ready to be saved.
+   */
+  private buildManualReassessmentApplication(
+    application: Application,
+    userId: number,
+  ): Application {
+    const auditUser = { id: userId } as User;
+    const now = new Date();
+    const oldCurrentAssessment = application.currentAssessment;
+    const applicationToBeSaved = {
+      id: application.id,
+      modifier: auditUser,
+      updatedAt: now,
+    } as Application;
+    applicationToBeSaved.currentAssessment = {
+      application: applicationToBeSaved,
+      offering: { id: oldCurrentAssessment.offering.id },
+      studentAppeal: oldCurrentAssessment.studentAppeal,
+      formSubmission: oldCurrentAssessment.formSubmission,
+      triggerType: AssessmentTriggerType.ManualReassessment,
+      creator: auditUser,
+      createdAt: now,
+      submittedBy: auditUser,
+      submittedDate: now,
+    } as StudentAssessment;
+    return applicationToBeSaved;
+  }
+
+  /**
+   * Validates whether the application is eligible for a manual reassessment.
+   * @param application the application to validate for manual reassessment.
+   */
+  private validateManualAssessment(application?: Application): void {
+    if (!application) {
+      throw new CustomNamedError(
+        "Application not found.",
+        APPLICATION_NOT_FOUND,
+      );
+    }
+
+    // Ensure that the provided application has the necessary data for validation.
+    // A regular Error is thrown as failure would be due to a misconfigured call rather than a business rule violation.
+    if (
+      application.isArchived === undefined ||
+      !application.applicationStatus ||
+      !application.studentAssessments ||
+      !application.currentAssessment
+    ) {
+      throw new Error(
+        "Application data required for validation was not loaded.",
+      );
+    }
+    if (application.isArchived) {
+      throw new CustomNamedError(
+        "Application cannot have manual reassessment after being archived.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+    if (
+      [
+        ApplicationStatus.Cancelled,
+        ApplicationStatus.Edited,
+        ApplicationStatus.Draft,
+      ].includes(application.applicationStatus)
+    ) {
+      throw new CustomNamedError(
+        `Application cannot have manual reassessment in any of the statuses: ${ApplicationStatus.Cancelled}, ${ApplicationStatus.Edited} or ${ApplicationStatus.Draft}.`,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+    const [originalAssessment] = application.studentAssessments;
+    if (
+      originalAssessment.studentAssessmentStatus !==
+      StudentAssessmentStatus.Completed
+    ) {
+      throw new CustomNamedError(
+        `Application original assessment expected to be '${StudentAssessmentStatus.Completed}' to allow manual reassessment.`,
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
+    // Check if the current assessment date is populated to ensure
+    // the assessment had its calculations completed.
+    if (!application.currentAssessment.assessmentDate) {
+      throw new CustomNamedError(
+        "The assessment must have been completed to allow its reassessment.",
+        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+      );
+    }
   }
 }

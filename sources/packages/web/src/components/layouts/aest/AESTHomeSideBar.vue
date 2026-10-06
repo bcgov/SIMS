@@ -37,6 +37,16 @@
             />
           </template>
         </check-permission-role>
+        <check-permission-role :role="Role.AESTBatchReassessment">
+          <template #="{ notAllowed }">
+            <v-list-item
+              :to="{ name: AESTRoutesConst.BATCH_REASSESSMENT }"
+              prepend-icon="mdi-clipboard-check-multiple-outline"
+              title="Batch Reassessment"
+              :disabled="notAllowed"
+            />
+          </template>
+        </check-permission-role>
         <check-permission-role :role="Role.AESTQueueDashboardAdmin">
           <template #="{ isAllowed }">
             <v-list-item

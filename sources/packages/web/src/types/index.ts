@@ -56,3 +56,4 @@ export * from "@/types/contracts/FormSubmissionContracts";
 export * from "@/types/RouteNavigation";
 export * from "@/types/contracts/StudentDisabilityProfile";
 export * from "@/types/contracts/DisabilityProfile";
+export * from "@/types/contracts/BatchReassessment";
