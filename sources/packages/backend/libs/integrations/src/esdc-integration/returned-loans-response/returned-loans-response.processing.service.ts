@@ -9,8 +9,8 @@ import {
 } from "./models/returned-loans-response.model";
 import { ReturnedLoansResponseIntegrationService } from "./returned-loans-response.integration.service";
 import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-files/returned-loans-response-file-detail";
-import { ReturnedLoansResponseFileAddressDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-address-detail";
-import { ReturnedLoansResponseFileReturnedLoanDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
+import { ReturnedLoansResponseFileAddressDetail } from "./returned-loans-response-files/returned-loans-response-file-address-detail";
+import { ReturnedLoansResponseFileReturnedLoanDetail } from "./returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
 
 /**
  * Processes the returned loans response file(s)
