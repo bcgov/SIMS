@@ -36,6 +36,15 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
       result.summary.forEach((info) => locationResultSummary.info(info));
       result.warnings.forEach((error) => locationResultSummary.warn(error));
       result.errors.forEach((error) => locationResultSummary.error(error));
+      result.children?.forEach((child) => {
+        const locationFileSummaryResult = new ProcessSummary();
+        locationResultSummary.children(locationFileSummaryResult);
+        child.summary.forEach((info) => locationFileSummaryResult.info(info));
+        child.warnings.forEach((warning) =>
+          locationFileSummaryResult.warn(warning),
+        );
+        child.errors.forEach((error) => locationFileSummaryResult.error(error));
+      });
     });
     return `ECE response files received: ${processingResult.length}. Check logs for details.`;
   }

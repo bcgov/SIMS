@@ -2,10 +2,12 @@ import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
 import {
   COE_WINDOW,
+  END_OF_LINE,
   QueueNames,
   addDays,
   formatDate,
   getISODateOnlyString,
+  getPSTPDTDateTime,
 } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -42,6 +44,7 @@ import {
   getUnsentECEResponseNotifications,
   replaceFilePlaceHolder,
   CONR_008_CONF_FILE,
+  CONR_008_CONF_SECOND_FILE,
   CONR_008_DECL_FILE,
   CONR_008_SKIP_FILE,
   CONR_008_FAIL_FILE,
@@ -63,9 +66,14 @@ import {
   ENRL_DATE_PLACEHOLDER_3,
   REMITTANCE_AMOUNT_PLACEHOLDER,
 } from "./ece-response-helper";
-import { FILE_PARSING_ERROR } from "@sims/services/constants";
 import { IsNull } from "typeorm";
 import MockDate from "mockdate";
+import { FILE_PARSING_ERROR } from "@sims/services/constants";
+
+type ExpectedMessageContent = {
+  params: Record<string, string | number>;
+  attachments: { content: string; filename: string; mimeType: string }[];
+};
 
 describe(
   describeProcessorRootTest(QueueNames.ECEProcessResponseIntegration),
@@ -122,6 +130,7 @@ describe(
     });
 
     beforeEach(async () => {
+      MockDate.reset();
       // Set has integration to false to all institution location.
       // Enable the flag during test for given location.
       await db.institutionLocation.update(
@@ -194,7 +203,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 17",
+        "Error(s): 0, Warning(s): 2, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -291,7 +300,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 17",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -439,7 +448,7 @@ describe(
         expect(result).toStrictEqual([
           "ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-          "Error(s): 0, Warning(s): 2, Info: 17",
+          "Error(s): 0, Warning(s): 2, Info: 20",
         ]);
         expect(
           mockedJob.containLogMessages([
@@ -535,7 +544,7 @@ describe(
         expect(result).toStrictEqual([
           "ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-          "Error(s): 0, Warning(s): 1, Info: 17",
+          "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
         expect(
           mockedJob.containLogMessages([
@@ -632,7 +641,7 @@ describe(
         expect(result).toStrictEqual([
           "ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-          "Error(s): 0, Warning(s): 1, Info: 17",
+          "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
         expect(
           mockedJob.containLogMessages([
@@ -742,7 +751,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 17",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -874,7 +883,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -952,7 +961,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 17",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1038,7 +1047,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1105,7 +1114,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1183,7 +1192,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 16",
+        "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1528,7 +1537,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 16",
+        "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1627,7 +1636,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 1, Info: 17",
+        "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1712,7 +1721,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 16",
+        "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1799,7 +1808,7 @@ describe(
       expect(result).toStrictEqual([
         "ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
-        "Error(s): 0, Warning(s): 2, Info: 16",
+        "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
       expect(
         mockedJob.containLogMessages([
@@ -1825,6 +1834,122 @@ describe(
       expect(notifications).toHaveLength(
         locationCONF.integrationContacts.length,
       );
+    });
+
+    it("Should create file-specific notification attachments when multiple files are processed for the same institution.", async () => {
+      // Arrange
+      await enableIntegration(locationCONF, db);
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        undefined,
+        {
+          applicationStatus: ApplicationStatus.Enrolment,
+        },
+      );
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const [referenceDisbursementValue] = disbursement.disbursementValues;
+      const mockedJob = mockBullJob<void>();
+      mockDownloadFiles(
+        sftpClientMock,
+        [CONR_008_CONF_FILE, CONR_008_CONF_SECOND_FILE],
+        (fileContent: string) =>
+          replaceFilePlaceHolder(fileContent, [
+            {
+              placeholder: AWARD_VALUE_ID_PLACEHOLDER,
+              value: referenceDisbursementValue.id,
+            },
+            {
+              placeholder: APP_NUMBER_PLACEHOLDER,
+              value: application.applicationNumber,
+            },
+            { placeholder: ENRL_DATE_PLACEHOLDER },
+            { placeholder: REMITTANCE_AMOUNT_PLACEHOLDER },
+          ]),
+      );
+
+      // Act
+      const mockedDate = new Date();
+      MockDate.set(mockedDate);
+      const result = await processor.processQueue(mockedJob.job);
+      const notifications = await getUnsentECEResponseNotifications(db);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "ECE response files received: 1. Check logs for details.",
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 3, Info: 34",
+      ]);
+      expect(notifications).toHaveLength(
+        locationCONF.integrationContacts!.length * 2,
+      );
+      const firstFilePath = join(
+        eceResponseMockDownloadFolder,
+        CONR_008_CONF_FILE,
+      );
+      const secondFilePath = join(
+        eceResponseMockDownloadFolder,
+        CONR_008_CONF_SECOND_FILE,
+      );
+      const unknownDisbursementWarning =
+        "Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.";
+      const expectedNotificationDate = `${getPSTPDTDateTime(mockedDate)} PST/PDT`;
+      const expectedMessageContents = [
+        createExpectedMessageContent(
+          locationCONF.institutionCode,
+          expectedNotificationDate,
+          [
+            `Processing file ${CONR_008_CONF_FILE} for institution code: ${locationCONF.institutionCode}.`,
+            `Starting download of file ${firstFilePath}.`,
+            `Disbursement ${disbursement.id}, enrolment confirmed.`,
+            `Completed processing the file ${firstFilePath}.`,
+            `The file ${firstFilePath} has been archived after processing.`,
+          ],
+          [unknownDisbursementWarning],
+          [],
+          1,
+          0,
+        ),
+        createExpectedMessageContent(
+          locationCONF.institutionCode,
+          expectedNotificationDate,
+          [
+            `Processing file ${CONR_008_CONF_SECOND_FILE} for institution code: ${locationCONF.institutionCode}.`,
+            `Starting download of file ${secondFilePath}.`,
+            `Completed processing the file ${secondFilePath}.`,
+            `The file ${secondFilePath} has been archived after processing.`,
+          ],
+          [
+            unknownDisbursementWarning,
+            `Disbursement ${disbursement.id}, record is considered as duplicate and skipped due to reason: Enrolment already completed and can neither be confirmed nor declined`,
+          ],
+          [],
+          0,
+          1,
+        ),
+      ];
+      const [emailAddress] = locationCONF.integrationContacts!;
+      const expectedNotifications = expectedMessageContents.map(
+        (messageContent) => ({
+          id: expect.any(Number),
+          messagePayload: {
+            email_address: emailAddress,
+            template_id: "a662979f-07d4-44c0-a38f-ab9fda5671fe",
+            personalisation: {
+              ...messageContent.params,
+              application_file: {
+                file: messageContent.attachments[0].content,
+                filename: "Processing_Summary_Report.txt",
+                sending_method: "attach",
+              },
+            },
+          },
+          templateId: "11990ef0-dcfc-407c-8a1f-ebca135bdfe7",
+          recipients: [emailAddress],
+          messageContent,
+        }),
+      );
+      expect(notifications).toEqual(expectedNotifications);
     });
 
     it("Should order files by name and group files per institution code when multiple files are present for distinct institutions.", async () => {
@@ -1857,3 +1982,55 @@ describe(
     });
   },
 );
+
+/**
+ * Creates the expected message content for the notification.
+ * @param institutionCode The code of the institution.
+ * @param expectedNotificationDate The expected date of the notification.
+ * @param summary The summary messages for the notification.
+ * @param warnings The warning messages for the notification.
+ * @param errors The error messages for the notification.
+ * @param disbursementsSuccessfullyProcessed The number of disbursements successfully processed.
+ * @param duplicateDisbursements The number of duplicate disbursements.
+ * @returns The expected message content for the notification.
+ */
+function createExpectedMessageContent(
+  institutionCode: string,
+  expectedNotificationDate: string,
+  summary: string[],
+  warnings: string[],
+  errors: string[],
+  disbursementsSuccessfullyProcessed: number,
+  duplicateDisbursements: number,
+): ExpectedMessageContent {
+  return {
+    params: {
+      institutionCode,
+      fileParsingErrors: 0,
+      totalRecords: 2,
+      totalRecordsSkipped: 1,
+      totalDisbursements: 1,
+      disbursementsSuccessfullyProcessed,
+      disbursementsSkipped: 0,
+      duplicateDisbursements,
+      disbursementsFailedToProcess: 0,
+      date: expectedNotificationDate,
+    },
+    attachments: [
+      {
+        content: Buffer.from(
+          `${[
+            "Summary:",
+            summary.join(END_OF_LINE),
+            "Warnings:",
+            warnings.length ? warnings.join(END_OF_LINE) : "NONE",
+            "Errors:",
+            errors.length ? errors.join(END_OF_LINE) : "NONE",
+          ].join("\n")}\n`,
+        ).toString("base64"),
+        filename: "Processing_Summary_Report.txt",
+        mimeType: "text/plain",
+      },
+    ],
+  };
+}

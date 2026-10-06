@@ -149,13 +149,16 @@ export class ECEResponseProcessingService {
       );
       return processSummary;
     }
+    processSummary.children = [];
     // Process each file for the institution sequentially.
     for (const filePath of remoteFilePaths) {
+      const locationFileSummary = new ProcessSummaryResult();
       await this.processDisbursementsInECEResponseFile(
         integrationLocation,
         filePath,
-        processSummary,
+        locationFileSummary,
       );
+      processSummary.children.push(locationFileSummary);
     }
     return processSummary;
   }
@@ -172,7 +175,10 @@ export class ECEResponseProcessingService {
     processSummary: ProcessSummaryResult,
   ): Promise<void> {
     // Start processing the file.
-    processSummary.summary.push(`Starting download of file ${remoteFilePath}.`);
+    processSummary.summary.push(
+      `Processing file ${basename(remoteFilePath)} for institution code: ${integrationLocation.institutionCode}.`,
+      `Starting download of file ${remoteFilePath}.`,
+    );
     this.logger.log(`Starting download of file ${remoteFilePath}.`);
     // Disbursement processing count.
     const disbursementProcessingDetails = new DisbursementProcessingDetails();
@@ -200,6 +206,9 @@ export class ECEResponseProcessingService {
         auditUser.id,
         processSummary,
         disbursementProcessingDetails,
+      );
+      processSummary.summary.push(
+        `Completed processing the file ${remoteFilePath}.`,
       );
       this.logger.log(`Completed processing the file ${remoteFilePath}.`);
     } catch (error: unknown) {
