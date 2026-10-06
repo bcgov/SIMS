@@ -41,7 +41,7 @@ export class ReturnedLoansResponseProcessingService {
         this.esdcConfig.ftpResponseFolder,
         // The regex pattern to match the returned loans response file for OTH (270 days file) and PDD (Death, Permanent Disability file).
         new RegExp(
-          `^${this.esdcConfig.environmentCode}EDU\\.PBC\\.RTG\\.(OTH|PDD)\\.D[0-9]{7}\\.[0-9]{3}$`,
+          String.raw`^${this.esdcConfig.environmentCode}EDU\.PBC\.RTG\.(OTH|PDD)\.D[0-9]{7}\.[0-9]{3}$`,
           "i",
         ),
       );

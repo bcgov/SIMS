@@ -39,7 +39,7 @@ describe(
       processor = app.get(ReturnedLoansResponseIntegrationScheduler);
     });
 
-    beforeEach(async () => {
+    beforeEach(() => {
       jest.clearAllMocks();
     });
 
