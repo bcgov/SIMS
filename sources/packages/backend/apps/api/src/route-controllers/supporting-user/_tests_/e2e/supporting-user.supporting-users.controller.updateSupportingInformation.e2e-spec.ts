@@ -96,127 +96,148 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
     },
   );
 
-  it("Should save supporting information when a parent submits valid data with all required authentication information.", async () => {
-    // Arrange
-    const parentForm = await db.dynamicFormConfiguration.findOneOrFail({
-      relations: { programYear: true },
-      where: {
-        formType: DynamicFormType.SupportingUsersParent,
-        programYear: { active: true },
-      },
-      order: { programYear: { startDate: "DESC" } },
-    });
-    const application = await saveFakeApplication(
-      db.dataSource,
-      { programYear: parentForm.programYear },
-      {
-        initialValues: {
-          applicationStatus: ApplicationStatus.InProgress,
-          offeringIntensity: OfferingIntensity.fullTime,
+  it.each(["2025-2026", "2026-2027"])(
+    "Should save supporting information when a parent submits valid data with all required authentication information for program year %s.",
+    async (programYear: string) => {
+      // Arrange
+      const parentForm = await db.dynamicFormConfiguration.findOneOrFail({
+        relations: { programYear: true },
+        where: {
+          formType: DynamicFormType.SupportingUsersParent,
+          programYear: { programYear },
         },
-      },
-    );
-    const parent = await db.supportingUser.save(
-      createFakeSupportingUser(
-        { application },
+        order: { programYear: { startDate: "DESC" } },
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        { programYear: parentForm.programYear },
         {
           initialValues: {
-            fullName: "Jane Doe",
-            isAbleToReport: true,
-            supportingUserType: SupportingUserType.Parent,
+            applicationStatus: ApplicationStatus.InProgress,
+            offeringIntensity: OfferingIntensity.fullTime,
           },
         },
-      ),
-    );
-    // Use a distinct identity from the student who submitted the application.
-    const user = createFakeUser();
-    const birthDate = "1980-01-01";
-    await mockJWTToken(appModule, (jwtPayload) => {
-      jwtPayload.azp = AuthorizedParties.supportingUsers;
-      jwtPayload.identityProvider = IdentityProviders.BCSC;
-      jwtPayload.userName = user.userName;
-      jwtPayload.givenNames = user.firstName;
-      jwtPayload.lastName = user.lastName;
-      jwtPayload.email = user.email;
-      jwtPayload.birthdate = birthDate;
-    });
-    const supportingUserToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
-    const payload: UpdateSupportingUserAPIInDTO = {
-      applicationNumber: application.applicationNumber,
-      studentsLastName: application.student.user.lastName,
-      supportingUserType: SupportingUserType.Parent,
-      fullName: parent.fullName,
-      offeringIntensity: OfferingIntensity.fullTime,
-      addressLine1: "123 Some Street",
-      addressLine2: undefined,
-      city: "Victoria",
-      country: "Canada",
-      phone: "2505551234",
-      postalCode: "V8V1V1",
-      provinceState: "BC",
-      sin: "544 962 244",
-      hasValidSIN: FormYesNoOptions.Yes,
-      supportingData: {
-        relationshipToStudent: "parent",
-        totalIncome: 1000,
-        cppLine30800: 0,
-        cppLine31000: 0,
-        totalIncomeTaxLine43500: 0,
-        eiLine31200: 0,
-        parentalContributions: 0,
-        foreignAssets: 0,
-        parentsOtherDependants: "no",
-        iAgreeToAboveStudentAidBCConsent: true,
-        iAgreeToTheAboveCRAConsent: true,
-      },
-    };
-
-    // Act
-    await request(app.getHttpServer())
-      .patch(getEndpoint())
-      .send(payload)
-      .auth(supportingUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({});
-
-    // Assert
-    const updatedParent = await db.supportingUser.findOneOrFail({
-      where: { id: parent.id },
-      relations: { user: true, modifier: true },
-    });
-    expect(updatedParent).toMatchObject({
-      birthDate,
-      sin: "544962244",
-      personalInfo: { hasValidSIN: FormYesNoOptions.Yes },
-      supportingData: payload.supportingData,
-      contactInfo: {
-        phone: payload.phone,
-        address: {
-          addressLine1: payload.addressLine1,
-          city: payload.city,
-          country: payload.country,
-          postalCode: payload.postalCode,
-          provinceState: payload.provinceState,
+      );
+      const parent = await db.supportingUser.save(
+        createFakeSupportingUser(
+          { application },
+          {
+            initialValues: {
+              fullName: "Jane Doe",
+              isAbleToReport: true,
+              supportingUserType: SupportingUserType.Parent,
+            },
+          },
+        ),
+      );
+      // Use a distinct identity from the student who submitted the application.
+      const user = createFakeUser();
+      const birthDate = "1980-01-01";
+      await mockJWTToken(appModule, (jwtPayload) => {
+        jwtPayload.azp = AuthorizedParties.supportingUsers;
+        jwtPayload.identityProvider = IdentityProviders.BCSC;
+        jwtPayload.userName = user.userName;
+        jwtPayload.givenNames = user.firstName;
+        jwtPayload.lastName = user.lastName;
+        jwtPayload.email = user.email;
+        jwtPayload.birthdate = birthDate;
+      });
+      const supportingUserToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const payload: UpdateSupportingUserAPIInDTO = {
+        applicationNumber: application.applicationNumber,
+        studentsLastName: application.student.user.lastName,
+        supportingUserType: SupportingUserType.Parent,
+        fullName: parent.fullName,
+        offeringIntensity: OfferingIntensity.fullTime,
+        addressLine1: "123 Some Street",
+        addressLine2: undefined,
+        city: "Victoria",
+        country: "Canada",
+        phone: "2505551234",
+        postalCode: "V8V1V1",
+        provinceState: "BC",
+        sin: "544 962 244",
+        hasValidSIN: FormYesNoOptions.Yes,
+        supportingData: {
+          relationshipToStudent: "parent",
+          totalIncome: 1000,
+          cppLine30800: 0,
+          cppLine31000: 0,
+          totalIncomeTaxLine43500: 0,
+          eiLine31200: 0,
+          parentalContributions: 0,
+          foreignAssets: 0,
+          parentsOtherDependants: "no",
+          iAgreeToAboveStudentAidBCConsent: true,
+          iAgreeToTheAboveCRAConsent: true,
         },
-      },
-      user: {
-        userName: user.userName,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-      },
-      modifier: { id: updatedParent.user.id },
-    });
-    expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        correlationKey: parent.id.toString(),
-        name: "supporting-user-info-received",
-        variables: {},
-      }),
-    );
-  });
+      };
+
+      // Act
+      await request(app.getHttpServer())
+        .patch(getEndpoint())
+        .send(payload)
+        .auth(supportingUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      // Assert
+      const updatedParent = await db.supportingUser.findOneOrFail({
+        select: {
+          id: true,
+          birthDate: true,
+          sin: true,
+          personalInfo: true,
+          supportingData: true,
+          contactInfo: true,
+          user: {
+            id: true,
+            userName: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+          modifier: { id: true },
+        },
+        where: { id: parent.id },
+        relations: { user: true, modifier: true },
+        loadEagerRelations: false,
+      });
+      expect(updatedParent).toEqual({
+        id: parent.id,
+        birthDate,
+        sin: "544962244",
+        personalInfo: { hasValidSIN: FormYesNoOptions.Yes },
+        supportingData: payload.supportingData,
+        contactInfo: {
+          phone: payload.phone,
+          address: {
+            addressLine1: payload.addressLine1,
+            city: payload.city,
+            country: payload.country,
+            postalCode: payload.postalCode,
+            provinceState: payload.provinceState,
+          },
+        },
+        user: {
+          id: expect.any(Number),
+          userName: user.userName,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        modifier: { id: updatedParent.user.id },
+      });
+      expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          correlationKey: parent.id.toString(),
+          name: "supporting-user-info-received",
+          variables: {},
+        }),
+      );
+    },
+  );
 
   afterAll(async () => {
     await app?.close();

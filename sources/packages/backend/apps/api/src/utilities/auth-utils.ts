@@ -71,15 +71,6 @@ export function getUserFullName(user?: {
 }
 
 /**
- * Message to be used along with the {@link MISSING_USER_INFO} error type whenever
- * a user token is missing some of the mandatory profile information.
- */
-export const MISSING_USER_INFO_MESSAGE =
-  "Some mandatory profile information (e-mail, last name, or date of birth) was not " +
-  "provided by the identity provider. Please ensure your BC Services Card identity " +
-  "information, including a verified e-mail address, is complete and try again.";
-
-/**
  * Checks if the user token is missing any of the required information (e-mail, last
  * name, and birthdate). This is a pure check, callers (controllers) are responsible
  * for throwing the proper `HttpException` when the required information is missing.

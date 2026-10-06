@@ -79,7 +79,9 @@
                       "label": "Date of birth",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
+                      "validate": {
+                        "required": true
+                      },
                       "key": "dateOfBirth",
                       "type": "textfield",
                       "input": true,
@@ -99,7 +101,9 @@
                       "label": "Last name",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
+                      "validate": {
+                        "required": true
+                      },
                       "key": "lastName",
                       "type": "textfield",
                       "input": true,
@@ -109,7 +113,9 @@
                       "label": "Email address",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
+                      "validate": {
+                        "required": true
+                      },
                       "key": "email",
                       "type": "textfield",
                       "input": true,
