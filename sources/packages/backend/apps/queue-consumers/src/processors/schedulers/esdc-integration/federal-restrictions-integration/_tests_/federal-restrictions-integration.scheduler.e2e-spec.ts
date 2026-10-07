@@ -321,7 +321,7 @@ describe(
     });
 
     FEDERAL_RESTRICTIONS_FILES_INVALID.forEach((fileName) => {
-      it(`Should not process the federal restrictions files when the file name ${fileName} is not a match.`, async () => {
+      it(`Should not process the federal restrictions file when the file name (${fileName}) is not a match.`, async () => {
         // Arrange
         mockDownloadFiles(sftpClientMock, [fileName], undefined, {
           applyListFilter: true,
