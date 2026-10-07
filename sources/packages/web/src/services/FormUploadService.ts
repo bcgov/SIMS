@@ -48,13 +48,14 @@ export default class FormUploadService {
   public async downloadFile(fileInfo: FormUploadFileInfo) {
     try {
       const fileContent = await ApiClient.FileUpload.download(fileInfo.url);
-      // Change the storage type to base64 to allow the file to be "downloaded"
-      // using the bytes retrieved instead of just opening an url.
-      // if we use directly the url we will not have the opportunity to authorize
-      // the file download.
+      // Form.io only forces a download (via downloadjs) when storage is
+      // "base64" or "indexeddb". Any other storage value makes it open the
+      // url with window.open, so a blob url is used here to open the file
+      // in a new tab instead of forcing a download.
+      const blobUrl = URL.createObjectURL(fileContent.data);
       return {
-        storage: "base64",
-        url: fileContent.data,
+        storage: "url",
+        url: blobUrl,
         originalName: fileInfo.originalName,
         name: fileInfo.name,
         type: fileInfo.type,
@@ -63,7 +64,7 @@ export default class FormUploadService {
     } catch (error: unknown) {
       if (!useFileUtils().handleFileScanProcessError(error)) {
         throw new Error(
-          "There was an unexpected error while downloading the file.",
+          "There was an unexpected error while viewing the file.",
         );
       }
     }

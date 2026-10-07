@@ -35,6 +35,27 @@ export function useFileUtils() {
   };
 
   /**
+   * Opens the document or file uploaded in a new browser tab instead of downloading it.
+   * @param studentDocument student document to be viewed.
+   */
+  const viewStudentDocument = async (
+    studentDocument: StudentDocument,
+  ): Promise<void> => {
+    try {
+      const response = await StudentService.shared.downloadStudentFile(
+        studentDocument.uniqueFileName,
+      );
+      viewFileAsBlob(response);
+    } catch (error: unknown) {
+      if (!useFileUtils().handleFileScanProcessError(error)) {
+        throw new Error(
+          "There was an unexpected error while viewing the file.",
+        );
+      }
+    }
+  };
+
+  /**
    * Download reports as file through API call.
    * @param filterData filter data sent as payload to API.
    */
@@ -52,6 +73,29 @@ export function useFileUtils() {
     const fileName =
       response.headers["content-disposition"].split("filename=")[1];
     downloadFile(blob, fileName);
+  };
+
+  /**
+   * Opens a file as blob in a new browser tab using Axios http response.
+   * @param response axios response object from http response.
+   */
+  const viewFileAsBlob = (response: AxiosResponse<any>): void => {
+    const blob = new Blob([response.data], {
+      type: response.headers["content-type"] as string | undefined,
+    });
+
+    const url = URL.createObjectURL(blob);
+    const newTab = window.open(url, "_blank");
+    if (!newTab) {
+      // Tab blocked (e.g. pop-up blocker), release the url immediately.
+      URL.revokeObjectURL(url);
+      useSnackBar().warn(
+        "The file could not be opened. Please allow pop-ups for this site.",
+      );
+      return;
+    }
+    // Prevent the opened content from accessing the application window.
+    newTab.opener = null;
   };
 
   /**
@@ -107,6 +151,7 @@ export function useFileUtils() {
 
   return {
     downloadStudentDocument,
+    viewStudentDocument,
     downloadReports,
     handleFileScanProcessError,
     downloadFileAsBlob,
