@@ -62,7 +62,7 @@ export class FedRestrictionProcessingService {
     // Both the legacy file name (e.g. PCSLS.PBC.RESTR.LIST.DYYYYMMDD.###.zip) and the
     // new file name (e.g. PEDU.PBC.RESTR.LIST.DYYYYJJJJ.###.zip) are supported during the cutover.
     const fileSearch = new RegExp(
-      `^${this.esdcConfig.environmentCode}(CSLS|EDU)\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*\\.zip$`,
+      String.raw`^${this.esdcConfig.environmentCode}(CSLS|EDU)\.PBC\.RESTR\.LIST\.D[\w]*\.[\d]*\.zip$`,
       "i",
     );
     const filePaths = await this.integrationService.getResponseFilesFullPath(
