@@ -114,8 +114,11 @@
                     {
                       "label": "Last name",
                       "tableView": true,
-                      "persistent": "client-only",
                       "calculateValue": "value = data.lastName;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "key": "readOnlyLastName",
                       "attributes": {
                         "data-cy": "lastName"
@@ -137,8 +140,11 @@
                     {
                       "label": "Date of birth",
                       "tableView": true,
-                      "persistent": "client-only",
                       "calculateValue": "value = data.dateOfBirth;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "key": "readOnlyDateOfBirth",
                       "attributes": {
                         "data-cy": "dateOfBirth"
@@ -160,8 +166,11 @@
                     {
                       "label": "Email address",
                       "tableView": true,
-                      "persistent": "client-only",
                       "calculateValue": "value = data.email;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "key": "readOnlyEmail",
                       "attributes": {
                         "data-cy": "email"

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   HttpCode,
@@ -28,7 +29,10 @@ import {
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
 } from "../../services/supporting-user/constants";
-import { getSupportingUserFormType } from "../../utilities";
+import {
+  getSupportingUserFormType,
+  isUserTokenMissingRequiredInfo,
+} from "../../utilities";
 import {
   ApiBadRequestResponse,
   ApiTags,
@@ -148,6 +152,12 @@ export class SupportingUserSupportingUsersController extends BaseController {
     @UserToken() userToken: IUserToken,
     @Body() payload: UpdateSupportingUserAPIInDTO,
   ): Promise<void> {
+    // Ensures that the user token has all the required information before proceeding.
+    if (isUserTokenMissingRequiredInfo(userToken)) {
+      throw new BadRequestException(
+        "The authenticated user token is missing required profile information.",
+      );
+    }
     // Regardless of the API call is successful or not, create/update
     // the user being used to execute the request.
     const userQuery = this.userService.syncUser(
@@ -199,7 +209,14 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    const submissionData = { ...payload, isAbleToReport: true };
+    const submissionData = {
+      ...payload,
+      givenNames: userToken.givenNames,
+      lastName: userToken.lastName,
+      dateOfBirth: userToken.birthdate,
+      email: userToken.email,
+      isAbleToReport: true,
+    };
     const submissionResult =
       await this.supportingUserControllerService.validateDryRunSubmission(
         supportingUser.application.programYear.id,

@@ -1,4 +1,5 @@
 import { INestApplication, ValidationPipe } from "@nestjs/common";
+import { IUserToken } from "../auth/userToken.interface";
 
 export function extractRawUserName(userName: string): string {
   const atIndex = userName.indexOf("@");
@@ -67,4 +68,19 @@ export function getUserFullName(user?: {
   return user
     ? `${(user.firstName ?? "").trim()} ${(user.lastName ?? "").trim()}`.trim()
     : "";
+}
+
+/**
+ * Checks if the user token is missing any of the required information (e-mail, last
+ * name, and birthdate). This is a pure check, callers (controllers) are responsible
+ * for throwing the proper `HttpException` when the required information is missing.
+ * @param userToken user token to have the required fields validated.
+ * @returns true if the token is missing any of the required fields, otherwise, false.
+ */
+export function isUserTokenMissingRequiredInfo(userToken: IUserToken): boolean {
+  return (
+    !userToken.email?.trim() ||
+    !userToken.lastName?.trim() ||
+    !userToken.birthdate?.trim()
+  );
 }

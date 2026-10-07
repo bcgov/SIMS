@@ -79,6 +79,7 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
+              "clearOnHide": false,
               "key": "givenNames",
               "type": "textfield",
               "input": true
@@ -92,6 +93,7 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
+              "clearOnHide": false,
               "key": "lastName",
               "type": "textfield",
               "input": true
@@ -165,8 +167,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.dateOfBirth;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyDateOfBirth",
                       "type": "textfield",
@@ -188,8 +193,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.lastName;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyLastName",
                       "type": "textfield",
@@ -201,8 +209,11 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
-                      "persistent": false,
                       "calculateValue": "value = data.email;",
+                      "calculateServer": true,
+                      "validate": {
+                        "required": true
+                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyEmail",
                       "type": "textfield",
