@@ -45,22 +45,15 @@ export default class FormUploadService {
     }
   }
 
-  public async downloadFile(fileInfo: FormUploadFileInfo) {
+  public async downloadFile(fileInfo: FormUploadFileInfo): Promise<void> {
     try {
       const fileContent = await ApiClient.FileUpload.download(fileInfo.url);
-      // Form.io only forces a download (via downloadjs) when storage is
-      // "base64" or "indexeddb". Any other storage value makes it open the
-      // url with window.open, so a blob url is used here to open the file
-      // in a new tab instead of forcing a download.
-      const blobUrl = URL.createObjectURL(fileContent.data);
-      return {
-        storage: "url",
-        url: blobUrl,
-        originalName: fileInfo.originalName,
-        name: fileInfo.name,
-        type: fileInfo.type,
-        size: fileContent.data.size,
-      };
+      // The file is opened here instead of returning a url for Form.io to open,
+      // so the blob url can be revoked once the viewer tab is closed. Returning
+      // nothing prevents Form.io from opening a second tab.
+      // Note: Form.io image file components (image: true) expect a url to be
+      // returned to render thumbnails and are not supported.
+      useFileUtils().viewBlob(fileContent.data);
     } catch (error: unknown) {
       if (!useFileUtils().handleFileScanProcessError(error)) {
         throw new Error(
