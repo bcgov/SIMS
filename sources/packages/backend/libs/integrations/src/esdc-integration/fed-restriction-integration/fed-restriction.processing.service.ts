@@ -59,8 +59,10 @@ export class FedRestrictionProcessingService {
   ): Promise<FederalRestrictionProcessResult> {
     const auditUser = this.systemUsersService.systemUser;
     // Get the list of all ZIP files from SFTP ordered by file name.
+    // Both the legacy file name (e.g. PCSLS.PBC.RESTR.LIST.DYYYYMMDD.###.zip) and the
+    // new file name (e.g. PEDU.PBC.RESTR.LIST.DYYYYJJJJ.###.zip) are supported during the cutover.
     const fileSearch = new RegExp(
-      `^${this.esdcConfig.environmentCode}CSLS\\.PBC\\.RESTR\\.LIST\\.D[\\w]*\\.[\\d]*\\.(zip|ZIP)$`,
+      String.raw`^${this.esdcConfig.environmentCode}(CSLS|EDU)\.PBC\.RESTR\.LIST\.D[\w]*\.[\d]*\.zip$`,
       "i",
     );
     const filePaths = await this.integrationService.getResponseFilesFullPath(

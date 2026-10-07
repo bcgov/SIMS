@@ -30,12 +30,27 @@ import { SystemUsersService } from "@sims/services";
  * Close to real-world Federal Restrictions file with 10 records, including one record with an unknown restriction
  * code to validate the creation of new restrictions when unknown codes are present in the file.
  */
-const FEDERAL_RESTRICTIONS_FILE = "DCSLS.PBC.RESTR.LIST.D20260406.zip";
+const FEDERAL_RESTRICTIONS_FILE = "DCSLS.PBC.RESTR.LIST.D20260406.001.zip";
 /**
  * Fake restriction file that should be considered older than the FEDERAL_RESTRICTIONS_FILE, used to validate the
  * deletion of old files from the SFTP server.
  */
-const FEDERAL_RESTRICTIONS_FILE_OLD = "DCSLS.PBC.RESTR.LIST.D20260405.zip";
+const FEDERAL_RESTRICTIONS_FILE_OLD = "DCSLS.PBC.RESTR.LIST.D20260405.001.zip";
+/**
+ * Federal Restrictions file using the new file name format with the same
+ * records as the FEDERAL_RESTRICTIONS_FILE.
+ */
+const FEDERAL_RESTRICTIONS_FILE_NEW_NAME =
+  "DEDU.PBC.RESTR.LIST.D20260406.001.ZIP";
+/**
+ * Federal Restrictions files that don't match the file filter.
+ */
+const FEDERAL_RESTRICTIONS_FILES_INVALID = [
+  "SEDU.PBC.RESTR.LIST.D20260406.001.zip",
+  "DEDU.PBC.LIST.D20260406.001.zip",
+  "DEDU.PBC.RESTR.LIST.001.zip",
+  "DEDU.PBC.RESTR.LIST.D20260406.001",
+];
 /**
  * Fake new restriction code that must be created and generate a warning log message.
  */
@@ -61,6 +76,8 @@ describe(
     let nonDownloadedOldFile: string;
     let archivedDownloadedFile: string;
     let archivedNonDownloadedOldFile: string;
+    let downloadedNewFile: string;
+    let archivedDownloadedNewFile: string;
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
@@ -70,13 +87,19 @@ describe(
         "federal-restrictions-response-files",
       );
       process.env.ESDC_RESPONSE_FOLDER = mockResponseFolder;
-      [downloadedFile, nonDownloadedOldFile] = [
+      [downloadedFile, nonDownloadedOldFile, downloadedNewFile] = [
         FEDERAL_RESTRICTIONS_FILE,
         FEDERAL_RESTRICTIONS_FILE_OLD,
+        FEDERAL_RESTRICTIONS_FILE_NEW_NAME,
       ].map((file) => join(mockResponseFolder, file));
-      [archivedDownloadedFile, archivedNonDownloadedOldFile] = [
+      [
+        archivedDownloadedFile,
+        archivedNonDownloadedOldFile,
+        archivedDownloadedNewFile,
+      ] = [
         FEDERAL_RESTRICTIONS_FILE,
         FEDERAL_RESTRICTIONS_FILE_OLD,
+        FEDERAL_RESTRICTIONS_FILE_NEW_NAME,
       ].map((file) => join(mockResponseFolder, "Archive", parse(file).name));
       // Created the testing module and get the processor and dependencies
       // after the environment variable is set and the mock file paths are defined.
@@ -116,10 +139,12 @@ describe(
         // Arrange
         const now = new Date();
         MockDate.set(now);
-        mockDownloadFiles(sftpClientMock, [
-          FEDERAL_RESTRICTIONS_FILE,
-          FEDERAL_RESTRICTIONS_FILE_OLD,
-        ]);
+        mockDownloadFiles(
+          sftpClientMock,
+          [FEDERAL_RESTRICTIONS_FILE, FEDERAL_RESTRICTIONS_FILE_OLD],
+          undefined,
+          { applyListFilter: true },
+        );
         // Queued job.
         const mockedJob = mockBullJob<void>();
 
@@ -262,6 +287,64 @@ describe(
         });
       },
     );
+
+    it("Should process the federal restrictions file and create a student federal restriction when the file uses the new file name format.", async () => {
+      // Arrange
+      mockDownloadFiles(
+        sftpClientMock,
+        [FEDERAL_RESTRICTIONS_FILE_NEW_NAME],
+        undefined,
+        { applyListFilter: true },
+      );
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toEqual([
+        "Federal restrictions import process finished.",
+        `Processed file: ${downloadedNewFile}`,
+        `Files found: ${downloadedNewFile}.`,
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        "Error(s): 0, Warning(s): 1, Info: 5",
+      ]);
+      expect(sftpClientMock.rename).toHaveBeenCalledTimes(1);
+      expect(sftpClientMock.rename).toHaveBeenCalledWith(
+        downloadedNewFile,
+        expect.stringContaining(archivedDownloadedNewFile),
+      );
+      // Assert the total federal restrictions were imported.
+      const importedRestrictions = await db.federalRestriction.count();
+      expect(importedRestrictions).toBe(10);
+    });
+
+    FEDERAL_RESTRICTIONS_FILES_INVALID.forEach((fileName) => {
+      it(`Should not process the federal restrictions file when the file name (${fileName}) is not a match.`, async () => {
+        // Arrange
+        mockDownloadFiles(sftpClientMock, [fileName], undefined, {
+          applyListFilter: true,
+        });
+
+        // Clear the restrictions manually since the job will not process any files.
+        await db.federalRestriction.clear();
+
+        // Queued job.
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        const result = await processor.processQueue(mockedJob.job);
+
+        // Assert
+        expect(result).toEqual(["No files found to be processed."]);
+        // Assert no files were downloaded or archived.
+        expect(sftpClientMock.get).not.toHaveBeenCalled();
+        // Assert no total federal restrictions were imported.
+        const importedRestrictions = await db.federalRestriction.count();
+        expect(importedRestrictions).toBe(0);
+      });
+    });
 
     afterAll(async () => {
       await app?.close();

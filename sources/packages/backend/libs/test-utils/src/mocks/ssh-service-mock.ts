@@ -95,16 +95,28 @@ export function getUploadedFiles(
  * @param filePaths list of files to be returned from the disk.
  * @param fileTransformation allow the file content to be manipulated
  * before be returned from the SSH get method mock result.
+ * @param options mock options.
+ * - `applyListFilter`: when true, the filter provided to the SSH list method
+ * is applied to the file names, ensuring only the files matching the
+ * expected file name pattern are returned, as in a real scenario.
  */
 export function mockDownloadFiles(
   sshClientMock: DeepMocked<Client>,
   filePaths: string[],
   fileTransformation?: (fileContent: string) => string,
+  options?: { applyListFilter?: boolean },
 ): void {
   const fileInfos = filePaths.map(
     (filePath) => ({ name: filePath }) as Client.FileInfo,
   );
-  sshClientMock.list.mockResolvedValue(fileInfos);
+  sshClientMock.list.mockImplementation(
+    (_remoteFilePath: string, filter?: Client.ListFilterFunction) =>
+      Promise.resolve(
+        options?.applyListFilter && filter
+          ? fileInfos.filter((fileInfo) => filter(fileInfo))
+          : fileInfos,
+      ),
+  );
   sshClientMock.stat.mockImplementation((filePath: string) => {
     const fileBuffer = readFileSync(filePath);
     return Promise.resolve({ size: fileBuffer.length } as Client.FileStats);
