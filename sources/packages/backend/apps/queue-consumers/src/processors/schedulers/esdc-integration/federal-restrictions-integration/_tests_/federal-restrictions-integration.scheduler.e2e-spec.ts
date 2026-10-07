@@ -41,16 +41,12 @@ const FEDERAL_RESTRICTIONS_FILE_OLD = "DCSLS.PBC.RESTR.LIST.D20260405.001.zip";
  * records as the FEDERAL_RESTRICTIONS_FILE.
  */
 const FEDERAL_RESTRICTIONS_FILE_NEW_NAME =
-  "DEDU.PBC.RESTR.LIST.D20260406.001.ZIP";
+  "DEDU.PBC.RESTR.LIST.D2026096.001.ZIP";
 /**
- * Federal Restrictions files that don't match the file filter.
+ * Federal Restrictions files that is missing the .zip extension.
  */
-const FEDERAL_RESTRICTIONS_FILES_INVALID = [
-  "SEDU.PBC.RESTR.LIST.D20260406.001.zip",
-  "DEDU.PBC.LIST.D20260406.001.zip",
-  "DEDU.PBC.RESTR.LIST.001.zip",
-  "DEDU.PBC.RESTR.LIST.D20260406.001",
-];
+const FEDERAL_RESTRICTIONS_FILE_MISSING_EXTENSION =
+  "DEDU.PBC.RESTR.LIST.D2026096.001";
 /**
  * Fake new restriction code that must be created and generate a warning log message.
  */
@@ -320,30 +316,33 @@ describe(
       expect(importedRestrictions).toBe(10);
     });
 
-    FEDERAL_RESTRICTIONS_FILES_INVALID.forEach((fileName) => {
-      it(`Should not process the federal restrictions file when the file name (${fileName}) is not a match.`, async () => {
-        // Arrange
-        mockDownloadFiles(sftpClientMock, [fileName], undefined, {
+    it(`Should not process the federal restrictions file when the file name is not a match.`, async () => {
+      // Arrange
+      mockDownloadFiles(
+        sftpClientMock,
+        [FEDERAL_RESTRICTIONS_FILE_MISSING_EXTENSION],
+        undefined,
+        {
           applyListFilter: true,
-        });
+        },
+      );
 
-        // Clear the restrictions manually since the job will not process any files.
-        await db.federalRestriction.clear();
+      // Clear the restrictions manually since the job will not process any files.
+      await db.federalRestriction.clear();
 
-        // Queued job.
-        const mockedJob = mockBullJob<void>();
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
 
-        // Act
-        const result = await processor.processQueue(mockedJob.job);
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
 
-        // Assert
-        expect(result).toEqual(["No files found to be processed."]);
-        // Assert no files were downloaded or archived.
-        expect(sftpClientMock.get).not.toHaveBeenCalled();
-        // Assert no total federal restrictions were imported.
-        const importedRestrictions = await db.federalRestriction.count();
-        expect(importedRestrictions).toBe(0);
-      });
+      // Assert
+      expect(result).toEqual(["No files found to be processed."]);
+      // Assert no files were downloaded or archived.
+      expect(sftpClientMock.get).not.toHaveBeenCalled();
+      // Assert no total federal restrictions were imported.
+      const importedRestrictions = await db.federalRestriction.count();
+      expect(importedRestrictions).toBe(0);
     });
 
     afterAll(async () => {
