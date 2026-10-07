@@ -113,7 +113,7 @@ export function mockDownloadFiles(
     (_remoteFilePath: string, filter?: Client.ListFilterFunction) =>
       Promise.resolve(
         options?.applyListFilter && filter
-          ? fileInfos.filter(filter)
+          ? fileInfos.filter((fileInfo) => filter(fileInfo))
           : fileInfos,
       ),
   );
