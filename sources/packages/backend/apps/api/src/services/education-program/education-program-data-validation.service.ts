@@ -59,6 +59,8 @@ export class EducationProgramDataValidationService {
     const validator = this.getValidator(configuration);
     // Any context provided by the client is replaced by the server one.
     const data: EducationProgramDynamicData = { ...programData, context };
+    // Warnings are calculated by the client only to show the warning banners.
+    delete data.warnings;
     if (!validator(data)) {
       // "if" errors only state that a "then" failed, which is already
       // reported by the "then" own error.

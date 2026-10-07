@@ -137,33 +137,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/context/properties/isBCPrivate",
-                      "schema": {
-                        "const": true
-                      }
-                    },
-                    {
-                      "scope": "#/properties/programDeliveryTypes",
-                      "schema": {
-                        "contains": {
-                          "const": "deliveredOnline"
-                        }
-                      }
-                    },
-                    {
-                      "scope": "#/properties/programDeliveryTypes",
-                      "schema": {
-                        "not": {
-                          "contains": {
-                            "const": "deliveredOnSite"
-                          }
-                        }
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "onlineDeliveryReview"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label",
@@ -255,33 +235,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/context/properties/isBCInstitution",
-                      "schema": {
-                        "const": false
-                      }
-                    },
-                    {
-                      "scope": "#/properties/deliveredOnlineAlsoOnsite",
-                      "schema": {
-                        "const": "no"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/sameOnlineCreditsEarned",
-                      "schema": {
-                        "const": "no"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/earnAcademicCreditsOtherInstitution",
-                      "schema": {
-                        "const": "no"
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "onlineDeliveryIneligible"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label"
@@ -318,27 +278,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/courseLoadCalculation",
-                      "schema": {
-                        "const": "hours"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/minHoursWeek",
-                      "schema": {
-                        "const": "no"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/isAviationProgram",
-                      "schema": {
-                        "const": "no"
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "minHoursWeek"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label",
@@ -386,9 +332,12 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/entranceRequirements/properties/noneOfTheAboveEntranceRequirements",
+                  "scope": "#/properties/warnings",
                   "schema": {
-                    "const": true
+                    "type": "array",
+                    "contains": {
+                      "const": "noEntranceRequirements"
+                    }
                   }
                 }
               },
@@ -419,9 +368,12 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/eslEligibility",
+                  "scope": "#/properties/warnings",
                   "schema": {
-                    "const": "20OrMore"
+                    "type": "array",
+                    "contains": {
+                      "const": "eslContentExceeded"
+                    }
                   }
                 }
               },
@@ -465,9 +417,12 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/hasJointDesignatedInstitution",
+                  "scope": "#/properties/warnings",
                   "schema": {
-                    "const": "yes"
+                    "type": "array",
+                    "contains": {
+                      "const": "partnerProgramReview"
+                    }
                   }
                 }
               },
@@ -481,9 +436,12 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/hasJointDesignatedInstitution",
+                  "scope": "#/properties/warnings",
                   "schema": {
-                    "const": "no"
+                    "type": "array",
+                    "contains": {
+                      "const": "partnerNotDesignated"
+                    }
                   }
                 }
               },
@@ -524,21 +482,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/hasWILComponent",
-                      "schema": {
-                        "const": "yes"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/isWILApproved",
-                      "schema": {
-                        "const": "no"
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "wilNotApproved"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label",
@@ -577,27 +527,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/hasWILComponent",
-                      "schema": {
-                        "const": "yes"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/isWILApproved",
-                      "schema": {
-                        "const": "yes"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/wilProgramEligibility",
-                      "schema": {
-                        "const": "no"
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "wilIneligible"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label",
@@ -637,21 +573,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/hasTravel",
-                      "schema": {
-                        "const": "yes"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/travelProgramEligibility",
-                      "schema": {
-                        "const": "no"
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "travelIneligible"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label",
@@ -691,21 +619,13 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "type": "AND",
-                  "conditions": [
-                    {
-                      "scope": "#/properties/hasIntlExchange",
-                      "schema": {
-                        "const": "yes"
-                      }
-                    },
-                    {
-                      "scope": "#/properties/intlExchangeProgramEligibility",
-                      "schema": {
-                        "const": "no"
-                      }
+                  "scope": "#/properties/warnings",
+                  "schema": {
+                    "type": "array",
+                    "contains": {
+                      "const": "intlExchangeIneligible"
                     }
-                  ]
+                  }
                 }
               },
               "type": "Label",
@@ -748,7 +668,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/credentialTypesAviation",
+                  "scope": "#/properties/warnings",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -779,9 +699,12 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/minHoursWeekAvi",
+                  "scope": "#/properties/warnings",
                   "schema": {
-                    "const": "no"
+                    "type": "array",
+                    "contains": {
+                      "const": "minHoursWeekAvi"
+                    }
                   }
                 }
               },
@@ -1135,6 +1058,13 @@ SELECT
               "isBCInstitution": {
               "type": "boolean"
               }
+          }
+          },
+          "warnings": {
+          "type": "array",
+          "readOnly": true,
+          "items": {
+              "type": "string"
           }
           },
           "programName": {
@@ -1605,7 +1535,171 @@ SELECT
           "programDeliveryTypes": "Please select how this program will be delivered.",
           "courseLoadCalculation": "Please select the program course load calculation."
           }
-      }
+      },
+      "x-warnings": [
+          {
+          "code": "onlineDeliveryReview",
+          "message": "This program requires review by StudentAid BC to determine eligibility.",
+          "condition": {
+              "required": ["context", "programDeliveryTypes"],
+              "properties": {
+              "context": {
+                  "required": ["isBCPrivate"],
+                  "properties": { "isBCPrivate": { "const": true } }
+              },
+              "programDeliveryTypes": {
+                  "contains": { "const": "deliveredOnline" },
+                  "not": { "contains": { "const": "deliveredOnSite" } }
+              }
+              }
+          }
+          },
+          {
+          "code": "onlineDeliveryIneligible",
+          "message": "This program is ineligible for StudentAid BC funding.",
+          "condition": {
+              "required": [
+              "context",
+              "programDeliveryTypes",
+              "deliveredOnlineAlsoOnsite",
+              "sameOnlineCreditsEarned",
+              "earnAcademicCreditsOtherInstitution"
+              ],
+              "properties": {
+              "context": {
+                  "required": ["isBCInstitution"],
+                  "properties": { "isBCInstitution": { "const": false } }
+              },
+              "programDeliveryTypes": { "contains": { "const": "deliveredOnline" } },
+              "deliveredOnlineAlsoOnsite": { "const": "no" },
+              "sameOnlineCreditsEarned": { "const": "no" },
+              "earnAcademicCreditsOtherInstitution": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "minHoursWeek",
+          "message": "The program needs to be a minimum of 20 instructional hours.",
+          "condition": {
+              "required": ["courseLoadCalculation", "minHoursWeek", "isAviationProgram"],
+              "properties": {
+              "courseLoadCalculation": { "const": "hours" },
+              "minHoursWeek": { "const": "no" },
+              "isAviationProgram": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "noEntranceRequirements",
+          "message": "An entrance requirement is required.",
+          "condition": {
+              "required": ["entranceRequirements"],
+              "properties": {
+              "entranceRequirements": {
+                  "required": ["noneOfTheAboveEntranceRequirements"],
+                  "properties": { "noneOfTheAboveEntranceRequirements": { "const": true } }
+              }
+              }
+          }
+          },
+          {
+          "code": "eslContentExceeded",
+          "message": "ESL can't exceed 20% of course content.",
+          "condition": {
+              "required": ["eslEligibility"],
+              "properties": { "eslEligibility": { "const": "20OrMore" } }
+          }
+          },
+          {
+          "code": "partnerProgramReview",
+          "message": "This program requires additional review by StudentAid BC.",
+          "condition": {
+              "required": ["hasJointInstitution", "hasJointDesignatedInstitution"],
+              "properties": {
+              "hasJointInstitution": { "const": "yes" },
+              "hasJointDesignatedInstitution": { "const": "yes" }
+              }
+          }
+          },
+          {
+          "code": "partnerNotDesignated",
+          "message": "All partner institutions must be designated by StudentAid BC.",
+          "condition": {
+              "required": ["hasJointInstitution", "hasJointDesignatedInstitution"],
+              "properties": {
+              "hasJointInstitution": { "const": "yes" },
+              "hasJointDesignatedInstitution": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "wilNotApproved",
+          "message": "The work-integrated learning component must be approved by your regulator or oversight body first.",
+          "condition": {
+              "required": ["hasWILComponent", "isWILApproved"],
+              "properties": {
+              "hasWILComponent": { "const": "yes" },
+              "isWILApproved": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "wilIneligible",
+          "message": "The work-integrated learning must meet the StudentAid BC policy.",
+          "condition": {
+              "required": ["hasWILComponent", "isWILApproved", "wilProgramEligibility"],
+              "properties": {
+              "hasWILComponent": { "const": "yes" },
+              "isWILApproved": { "const": "yes" },
+              "wilProgramEligibility": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "travelIneligible",
+          "message": "The field trip, field placement, or travel must meet the StudentAid BC policy.",
+          "condition": {
+              "required": ["hasTravel", "travelProgramEligibility"],
+              "properties": {
+              "hasTravel": { "const": "yes" },
+              "travelProgramEligibility": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "intlExchangeIneligible",
+          "message": "The international exchange must meet the StudentAid BC policy.",
+          "condition": {
+              "required": ["hasIntlExchange", "intlExchangeProgramEligibility"],
+              "properties": {
+              "hasIntlExchange": { "const": "yes" },
+              "intlExchangeProgramEligibility": { "const": "no" }
+              }
+          }
+          },
+          {
+          "code": "privatePilotTraining",
+          "message": "StudentAid BC does not provide any assistance to students for Private Pilot Training.",
+          "condition": {
+              "required": ["isAviationProgram", "credentialTypesAviation"],
+              "properties": {
+              "isAviationProgram": { "const": "yes" },
+              "credentialTypesAviation": { "contains": { "const": "privatePilotTraining" } }
+              }
+          }
+          },
+          {
+          "code": "minHoursWeekAvi",
+          "message": "The aviation program needs to be a minimum of 15 instructional hours.",
+          "condition": {
+              "required": ["isAviationProgram", "minHoursWeekAvi"],
+              "properties": {
+              "isAviationProgram": { "const": "yes" },
+              "minHoursWeekAvi": { "const": "no" }
+              }
+          }
+          }
+      ]
     }
     $$::jsonb AS validation_schema,
   id AS program_year_id,

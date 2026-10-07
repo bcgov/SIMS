@@ -39,6 +39,7 @@ import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
 import { programFormRenderers } from "@/renderers/jsonforms";
 import {
+  createWarningsCalculator,
   getRequiredErrorsPerProperty,
   programFormAjv,
 } from "@/renderers/jsonforms/ajv";
@@ -87,13 +88,31 @@ const isProgramDetailReadonly = computed(
 const programFormSchema = ref<JsonSchema>({} as JsonSchema);
 const programFormUiSchema = ref<UISchemaElement>({} as UISchemaElement);
 
+const calculateWarnings = computed(() =>
+  createWarningsCalculator(programFormSchema.value),
+);
+/**
+ * Sets the warnings triggered by the form data, which are used by the
+ * UI schema rules to show the warning banners. Like the context, the
+ * warnings are never changed by the user and never submitted.
+ * @param data form data.
+ * @returns form data with its triggered warnings.
+ */
+const withWarnings = (
+  data: Record<string, unknown>,
+): Record<string, unknown> => ({
+  ...data,
+  warnings: calculateWarnings.value(data),
+});
+
 const programFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
 const onProgramFormChange = (event: JsonFormsChangeEvent) => {
   programFormErrors.value = event.errors;
-  if (JSON.stringify(event.data) === JSON.stringify(formModel.value)) {
+  const data = withWarnings(event.data);
+  if (JSON.stringify(data) === JSON.stringify(formModel.value)) {
     return;
   }
-  formModel.value = event.data;
+  formModel.value = data;
 };
 
 // Custom "required" messages re-pointed at their properties, so each control
@@ -131,9 +150,10 @@ const submit = async () => {
       ?.scrollIntoView({ block: "center", behavior: "smooth" });
     return;
   }
-  // The context is only used for the validations and is never submitted.
+  // The context and the warnings are only used by the form and are never submitted.
   const programData = { ...formModel.value };
   delete programData.context;
+  delete programData.warnings;
   await EducationProgramService.shared.createEducationProgramDynamic({
     programConfigurationId: 6,
     programData,
@@ -148,9 +168,10 @@ const loadProgram = async (programId: number) => {
       await EducationProgramService.shared.getEducationProgramDynamic(
         programId,
       );
-    formModel.value = programDetails.programData;
     programFormSchema.value = programDetails.validationSchema as JsonSchema;
     programFormUiSchema.value = programDetails.visualSchema as UISchemaElement;
+    // Set after the schema, since the warnings are declared by it.
+    formModel.value = withWarnings(programDetails.programData);
     emit("loaded", programDetails);
   } catch {
     snackBar.error("Unexpected error while loading program data.");
@@ -182,6 +203,7 @@ watchEffect(async () => {
       programConfiguration.validationSchema as JsonSchema;
     programFormUiSchema.value =
       programConfiguration.visualSchema as UISchemaElement;
+    formModel.value = withWarnings(formModel.value);
     loading.value = false;
   }
 });
