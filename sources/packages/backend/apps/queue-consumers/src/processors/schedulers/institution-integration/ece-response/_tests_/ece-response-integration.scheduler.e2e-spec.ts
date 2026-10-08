@@ -201,7 +201,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 2, Info: 20",
       ]);
@@ -298,7 +298,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
@@ -446,7 +446,7 @@ describe(
 
         // Assert
         expect(result).toStrictEqual([
-          "ECE response files received: 1. Check logs for details.",
+          "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
           "Error(s): 0, Warning(s): 2, Info: 20",
         ]);
@@ -542,7 +542,7 @@ describe(
 
         // Assert
         expect(result).toStrictEqual([
-          "ECE response files received: 1. Check logs for details.",
+          "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
           "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
@@ -639,7 +639,7 @@ describe(
 
         // Assert
         expect(result).toStrictEqual([
-          "ECE response files received: 1. Check logs for details.",
+          "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
           "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
           "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
@@ -749,7 +749,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
@@ -881,7 +881,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
@@ -959,7 +959,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
@@ -1045,7 +1045,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
@@ -1112,7 +1112,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
@@ -1190,7 +1190,7 @@ describe(
       // Act
       const result = await processor.processQueue(mockedJob.job);
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 19",
       ]);
@@ -1535,7 +1535,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
@@ -1634,7 +1634,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 1, Info: 20",
       ]);
@@ -1719,7 +1719,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
@@ -1806,7 +1806,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 2, Info: 19",
       ]);
@@ -1876,7 +1876,7 @@ describe(
 
       // Assert
       expect(result).toStrictEqual([
-        "ECE response files received: 1. Check logs for details.",
+        "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         "Error(s): 0, Warning(s): 3, Info: 34",
       ]);
