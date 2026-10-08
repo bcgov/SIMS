@@ -20,6 +20,7 @@
           :headers="BatchReassessmentHistoryHeaders"
           :items="batchReassessmentHistory"
           :loading="batchReassessmentHistoryLoading"
+          :mobile="isMobile"
         >
           <template #[`item.batchNumber`]="{ item }">
             {{ item.batchNumber }}
@@ -49,7 +50,7 @@
             <v-btn
               color="primary"
               variant="outlined"
-              :disabled="!item.totalCount"
+              v-if="item.totalCount"
               @click="goToBatchReassessmentDetail(item.id)"
               >View</v-btn
             >
@@ -63,6 +64,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
 import { BatchReassessmentHistoryHeaders } from "@/types/contracts/DataTableContract";
 import StatusChipBatchReassessment from "@/components/generic/StatusChipBatchReassessment.vue";
 import { BatchReassessmentSummaryAPIOutDTO } from "@/services/http/dto";
@@ -73,6 +75,7 @@ import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 const router = useRouter();
 const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();
+const { mobile: isMobile } = useDisplay();
 
 const batchReassessmentHistory = ref<BatchReassessmentSummaryAPIOutDTO[]>([]);
 const batchReassessmentHistoryLoading = ref(false);

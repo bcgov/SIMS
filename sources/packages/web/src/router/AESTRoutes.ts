@@ -333,7 +333,25 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.AssessmentSummary,
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-            props: true,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+              // When navigating from the batch manual reassessment results,
+              // allow the user to navigate back to the batch.
+              backTarget: route.query.batchReassessmentId
+                ? {
+                    name: "Batch manual reassessment outcome",
+                    to: {
+                      name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+                      params: {
+                        batchReassessmentId: route.query.batchReassessmentId,
+                      },
+                    },
+                  }
+                : undefined,
+            }),
             component: AssessmentsSummary,
             meta: {
               clientType: ClientIdType.AEST,

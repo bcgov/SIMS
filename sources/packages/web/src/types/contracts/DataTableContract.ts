@@ -445,6 +445,16 @@ export const BatchReassessmentHistoryHeaders = [
 ];
 
 /**
+ * Batch manual reassessment application outcome headers.
+ */
+export const BatchReassessmentApplicationHeaders = [
+  { title: "Application Number", sortable: false, key: "applicationNumber" },
+  { title: "Result", sortable: false, key: "result" },
+  { title: "Failure Reason", sortable: false, key: "failureReason" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
  * CAS invoice headers.
  */
 export const CASInvoiceHeaders = [
