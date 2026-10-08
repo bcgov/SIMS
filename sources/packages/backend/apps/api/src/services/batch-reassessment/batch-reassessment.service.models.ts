@@ -24,5 +24,6 @@ export interface BatchReassessmentSummary {
   totalCount: number;
   successCount: number;
   failureCount: number;
+  pendingCount: number;
   status: BatchReassessmentStatus;
 }

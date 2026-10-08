@@ -80,15 +80,20 @@ export class BatchReassessmentService {
       )
       .leftJoin("batchReassessment.creator", "creator")
       .orderBy("batchReassessment.createdAt", "DESC")
-      .getRawMany<Omit<BatchReassessmentSummary, "status">>();
+      .getRawMany<Omit<BatchReassessmentSummary, "status" | "pendingCount">>();
 
-    const summaries: BatchReassessmentSummary[] = rows.map((row) => ({
-      ...row,
-      status:
-        row.totalCount === row.successCount + row.failureCount
-          ? BatchReassessmentStatus.Completed
-          : BatchReassessmentStatus.InProgress,
-    }));
+    const summaries: BatchReassessmentSummary[] = rows.map((row) => {
+      // Applications that have an assessment that has not yet reached a final status.
+      const pendingCount = row.totalCount - row.successCount - row.failureCount;
+      return {
+        ...row,
+        pendingCount,
+        status:
+          pendingCount === 0
+            ? BatchReassessmentStatus.Completed
+            : BatchReassessmentStatus.InProgress,
+      };
+    });
 
     return summaries;
   }

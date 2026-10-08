@@ -30,6 +30,7 @@ import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
 import Reports from "@/views/aest/Reports.vue";
 import BatchReassessment from "@/views/aest/BatchReassessment.vue";
+import BatchReassessmentDetail from "@/views/aest/BatchReassessmentDetail.vue";
 import FormioEditor from "@/views/aest/FormioEditor.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import CASInvoices from "@/views/aest/CASInvoices.vue";
@@ -795,6 +796,24 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         components: {
           default: BatchReassessment,
           sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.BatchReassessmentDetail,
+        name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+        components: {
+          default: BatchReassessmentDetail,
+          sidebar: AESTHomeSideBar,
+        },
+        props: {
+          default: (route) => ({
+            batchReassessmentId: Number.parseInt(
+              route.params.batchReassessmentId as string,
+            ),
+          }),
         },
         meta: {
           clientType: ClientIdType.AEST,

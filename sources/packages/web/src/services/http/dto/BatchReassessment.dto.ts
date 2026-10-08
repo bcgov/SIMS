@@ -10,7 +10,8 @@ export interface BatchReassessmentAPIInDTO {
 
 /**
  * Summary of a batch manual reassessment submission, including how many
- * applications were successfully reassessed and how many failed.
+ * applications were successfully reassessed, how many failed, and how many
+ * are still pending.
  */
 export interface BatchReassessmentSummaryAPIOutDTO {
   id: number;
@@ -20,5 +21,6 @@ export interface BatchReassessmentSummaryAPIOutDTO {
   totalCount: number;
   successCount: number;
   failureCount: number;
+  pendingCount: number;
   status: BatchReassessmentStatus;
 }

@@ -74,6 +74,7 @@ export class BatchReassessmentAESTController extends BaseController {
       totalCount: summary.totalCount,
       successCount: summary.successCount,
       failureCount: summary.failureCount,
+      pendingCount: summary.pendingCount,
       status: summary.status,
     }));
   }

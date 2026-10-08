@@ -35,7 +35,8 @@ export class BatchReassessmentAPIInDTO {
 
 /**
  * Summary of a batch manual reassessment submission, including how many
- * applications were successfully reassessed and how many failed.
+ * applications were successfully reassessed, how many failed, and how many
+ * are still pending.
  */
 export class BatchReassessmentSummaryAPIOutDTO {
   id: number;
@@ -45,5 +46,6 @@ export class BatchReassessmentSummaryAPIOutDTO {
   totalCount: number;
   successCount: number;
   failureCount: number;
+  pendingCount: number;
   status: BatchReassessmentStatus;
 }
