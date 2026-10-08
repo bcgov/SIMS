@@ -82,7 +82,11 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
     await request(app.getHttpServer())
       .patch(endpoint)
       .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK);
+      .expect(HttpStatus.OK)
+      .expect({
+        hasStudentAccount: true,
+        isStudentProfileUpdated: true,
+      });
 
     // Assert that the student and user data were updated with the token information.
     const updatedStudent = await db.student.findOne({
