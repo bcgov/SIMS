@@ -120,6 +120,7 @@ export class ApplicationAPIOutDTO {
 export class SupportingUserFormDataAPIOutDTO {
   formName: string;
   isAbleToReport: boolean;
+  offeringIntensity: OfferingIntensity;
   /**
    * Start date of the program year, used for dynamic tax year calculations.
    */

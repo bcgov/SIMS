@@ -67,6 +67,7 @@ export interface ApplicationAPIOutDTO {
 export interface SupportingUserFormDataAPIOutDTO {
   formName: string;
   isAbleToReport: boolean;
+  offeringIntensity: OfferingIntensity;
   supportingData: unknown;
   contactInfo: ContactInformationAPIOutDTO;
   sin: string;
