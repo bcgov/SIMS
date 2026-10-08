@@ -12,7 +12,7 @@
     "format": "prettier --write \"src/**/*.{ts,vue,scss,html,json}\""
   },
   "dependencies": {
-    "@bcgov/bc-sans": "^2.1.0",
+    "@bcgov/bc-sans": "^2.1.2",
     "@formio/bootstrap": "^3.2.2",
     "@formio/js": "^5.4.0",
     "@mdi/font": "^7.4.47",
