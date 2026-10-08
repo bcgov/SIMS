@@ -159,8 +159,7 @@ export class AuthService {
    */
   private async processStudentLogin(): Promise<void> {
     const studentStore = useStudentStore(store);
-    // This method will result in a success call only when the
-    // student account is present. This is the usual flow.
+    // Synchronize BCSC profile data and determine whether the student account exists.
     const syncResult = await StudentService.shared.synchronizeFromUserToken();
     // Redirect to student profile creation if the student account is missing.
     if (!syncResult.hasStudentAccount) {

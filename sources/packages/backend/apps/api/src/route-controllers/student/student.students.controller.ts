@@ -190,6 +190,7 @@ export class StudentStudentsController extends BaseController {
    * the user and student data currently on DB.
    ** If the endpoint user does not have a student account the API returns the result of the sync operation
    ** indicating that the user does not have a student account and no profile update was performed.
+   * @returns The student account synchronization result.
    */
   @RequiresUserAccount(false)
   @RequiresStudentAccount(false)

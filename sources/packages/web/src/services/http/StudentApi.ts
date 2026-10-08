@@ -81,8 +81,7 @@ export class StudentApi extends HttpBaseClient {
   /**
    * Use the information available in the authentication token to update
    * the user and student data currently on DB.
-   * If the user account does not exists an API custom error will be returned
-   * from the API with the error code MISSING_STUDENT_ACCOUNT.
+   * If the user account does not exists, the synchronization result will indicate that the student account is not available.
    * @returns synchronization result indicating if the student account exists and if the profile was updated.
    */
   public async synchronizeFromUserToken(): Promise<SyncStudentAPIOutDTO> {
