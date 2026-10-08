@@ -46,6 +46,6 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
         child.errors.forEach((error) => locationFileSummaryResult.error(error));
       });
     });
-    return `ECE response files received: ${processingResult.length}. Check logs for details.`;
+    return `Institution locations processed as a result of ECE response files received: ${processingResult.length}. Check logs for details.`;
   }
 }
