@@ -164,7 +164,7 @@ export class AuthService {
     const syncResult = await StudentService.shared.synchronizeFromUserToken();
     // Redirect to student profile creation if the student account is missing.
     if (!syncResult.hasStudentAccount) {
-      this.redirectToStudentProfileCreate();
+      await this.redirectToStudentProfileCreate();
       return;
     }
     // When the above method returns a success result we can also
