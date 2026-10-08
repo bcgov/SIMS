@@ -264,3 +264,8 @@ export interface UpdateModifiedIndependentStatusAPIInDTO {
 export interface DeleteStudentFileAPIInDTO {
   noteDescription: string;
 }
+
+export interface SyncStudentAPIOutDTO {
+  hasStudentAccount: boolean;
+  isStudentProfileUpdated: boolean;
+}

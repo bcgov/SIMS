@@ -19,6 +19,7 @@ import {
   LegacyStudentMatchesAPIInDTO,
   UpdateModifiedIndependentStatusAPIInDTO,
   DeleteStudentFileAPIInDTO,
+  SyncStudentAPIOutDTO,
 } from "@/services/http/dto";
 import { AxiosResponse } from "axios";
 
@@ -84,11 +85,10 @@ export class StudentService {
    * the user and student data currently on DB.
    * If the user account does not exists an API custom error will be returned
    * from the API with the error code MISSING_STUDENT_ACCOUNT.
-   * @returns true if the student account was found and updated, otherwise false
-   * if the student account is missing.
+   * @returns synchronization result indicating if the student account exists and if the profile was updated.
    */
-  async synchronizeFromUserToken(): Promise<void> {
-    await ApiClient.Students.synchronizeFromUserToken();
+  async synchronizeFromUserToken(): Promise<SyncStudentAPIOutDTO> {
+    return ApiClient.Students.synchronizeFromUserToken();
   }
 
   async applyForDisabilityStatus(): Promise<void> {

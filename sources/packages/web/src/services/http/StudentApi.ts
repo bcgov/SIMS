@@ -21,6 +21,7 @@ import {
   LegacyStudentMatchesAPIInDTO,
   UpdateModifiedIndependentStatusAPIInDTO,
   DeleteStudentFileAPIInDTO,
+  SyncStudentAPIOutDTO,
 } from "@/services/http/dto";
 
 export class StudentApi extends HttpBaseClient {
@@ -82,9 +83,10 @@ export class StudentApi extends HttpBaseClient {
    * the user and student data currently on DB.
    * If the user account does not exists an API custom error will be returned
    * from the API with the error code MISSING_STUDENT_ACCOUNT.
+   * @returns synchronization result indicating if the student account exists and if the profile was updated.
    */
-  public async synchronizeFromUserToken(): Promise<void> {
-    await this.patchCall(this.addClientRoot("student/sync"), null);
+  public async synchronizeFromUserToken(): Promise<SyncStudentAPIOutDTO> {
+    return this.patchCall(this.addClientRoot("student/sync"), null);
   }
 
   /**

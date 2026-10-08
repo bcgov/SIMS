@@ -6,9 +6,11 @@ import {
   FakeStudentUsersTypes,
   getStudentToken,
   mockJWTToken,
+  mockJWTUserInfo,
 } from "../../../../testHelpers";
 import {
   createE2EDataSources,
+  createFakeUser,
   E2EDataSources,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -108,6 +110,26 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
         email: updatedEmail,
       },
     });
+  });
+
+  it("Should return response indicating no student account and hence no profile update when the authenticated user does not have a student account.", async () => {
+    // Arrange
+    const user = createFakeUser();
+    // Mock a BCSC token for the user without a student account.
+    await mockJWTUserInfo(appModule, user);
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        hasStudentAccount: false,
+        isStudentProfileUpdated: false,
+      });
   });
 
   afterAll(async () => {

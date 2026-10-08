@@ -394,3 +394,8 @@ export class LegacyStudentMatchesAPIInDTO {
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   noteDescription: string;
 }
+
+export class SyncStudentAPIOutDTO {
+  hasStudentAccount: boolean;
+  isStudentProfileUpdated: boolean;
+}
