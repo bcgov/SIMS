@@ -1,0 +1,1 @@
+DROP TABLE sims.education_programs_configurations;
