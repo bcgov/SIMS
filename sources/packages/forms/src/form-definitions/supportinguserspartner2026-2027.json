@@ -79,7 +79,6 @@
                 "maxLength": 100
               },
               "validateWhenHidden": false,
-              "clearOnHide": false,
               "key": "givenNames",
               "type": "textfield",
               "input": true
@@ -92,7 +91,6 @@
                 "required": true
               },
               "validateWhenHidden": false,
-              "clearOnHide": false,
               "key": "lastName",
               "type": "textfield",
               "input": true
@@ -165,10 +163,7 @@
                       "label": "Date of birth",
                       "disabled": true,
                       "tableView": true,
-                      "validate": {
-                        "required": true
-                      },
-                      "validateWhenHidden": false,
+                      "persistent": false,
                       "key": "dateOfBirth",
                       "type": "textfield",
                       "input": true,
@@ -189,11 +184,8 @@
                       "applyMaskOn": "change",
                       "disabled": true,
                       "tableView": true,
+                      "persistent": false,
                       "calculateValue": "value = data.lastName;",
-                      "calculateServer": true,
-                      "validate": {
-                        "required": true
-                      },
                       "validateWhenHidden": false,
                       "key": "readOnlyLastName",
                       "type": "textfield",
@@ -204,10 +196,7 @@
                       "label": "Email address",
                       "disabled": true,
                       "tableView": true,
-                      "validate": {
-                        "required": true
-                      },
-                      "validateWhenHidden": false,
+                      "persistent": false,
                       "key": "email",
                       "type": "textfield",
                       "input": true,
