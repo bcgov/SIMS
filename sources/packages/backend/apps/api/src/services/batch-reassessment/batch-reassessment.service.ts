@@ -3,16 +3,19 @@ import {
   Application,
   BatchReassessment,
   BatchReassessmentApplication,
+  StudentAssessment,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
 import { ApplicationService } from "../application/application.service";
 import { DataSource, Repository } from "typeorm";
 import {
+  BatchReassessmentApplicationOutcome,
+  BatchReassessmentApplicationResult,
   BatchReassessmentStatus,
   BatchReassessmentSummary,
 } from "./batch-reassessment.service.models";
-import { CustomNamedError } from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   NoteSharedService,
   SequenceControlService,
@@ -20,9 +23,20 @@ import {
 } from "@sims/services";
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { InjectRepository } from "@nestjs/typeorm";
+import {
+  BatchReassessmentApplicationsPaginationOptions,
+  PaginatedResults,
+} from "../../utilities";
 
 const BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME = "BATCH_REASSESSMENT_NUMBER";
 const BATCH_REASSESSMENT_CHUNK_SIZE = 1000;
+/**
+ * Assessment statuses considered final, meaning the application was successfully reassessed.
+ */
+const BATCH_REASSESSMENT_SUCCESS_STATUSES = [
+  StudentAssessmentStatus.Completed,
+  StudentAssessmentStatus.Cancelled,
+];
 
 /**
  * Provides batch manual reassessment operations.
@@ -33,6 +47,8 @@ export class BatchReassessmentService {
     private readonly dataSource: DataSource,
     @InjectRepository(BatchReassessment)
     private readonly batchReassessmentRepo: Repository<BatchReassessment>,
+    @InjectRepository(BatchReassessmentApplication)
+    private readonly batchReassessmentApplicationRepo: Repository<BatchReassessmentApplication>,
     private readonly applicationService: ApplicationService,
     private readonly sequenceService: SequenceControlService,
     private readonly studentAssessmentService: StudentAssessmentService,
@@ -71,10 +87,10 @@ export class BatchReassessmentService {
             .from(BatchReassessmentApplication, "batchApplication")
             .leftJoin("batchApplication.studentAssessment", "studentAssessment")
             .groupBy("batchApplication.batchReassessment.id")
-            .setParameter("successStatuses", [
-              StudentAssessmentStatus.Completed,
-              StudentAssessmentStatus.Cancelled,
-            ]),
+            .setParameter(
+              "successStatuses",
+              BATCH_REASSESSMENT_SUCCESS_STATUSES,
+            ),
         "counts",
         'counts."batchId" = batchReassessment.id',
       )
@@ -96,6 +112,107 @@ export class BatchReassessmentService {
     });
 
     return summaries;
+  }
+
+  /**
+   * Checks if a batch manual reassessment exists.
+   * @param batchReassessmentId batch manual reassessment ID.
+   * @returns true if the batch manual reassessment exists, otherwise false.
+   */
+  async batchReassessmentExists(batchReassessmentId: number): Promise<boolean> {
+    return this.batchReassessmentRepo.exists({
+      where: { id: batchReassessmentId },
+    });
+  }
+
+  /**
+   * Gets the reassessment outcome of each application in a batch manual reassessment.
+   * @param batchReassessmentId batch manual reassessment ID.
+   * @param paginationOptions pagination options, with optional application number
+   * search criteria and result filter.
+   * @returns paginated application outcomes, ordered by application number by default.
+   */
+  async getBatchReassessmentApplications(
+    batchReassessmentId: number,
+    paginationOptions: BatchReassessmentApplicationsPaginationOptions,
+  ): Promise<PaginatedResults<BatchReassessmentApplicationOutcome>> {
+    const query = this.batchReassessmentApplicationRepo
+      .createQueryBuilder("batchApplication")
+      .select([
+        "batchApplication.id",
+        "batchApplication.applicationNumber",
+        "batchApplication.failureReason",
+        "studentAssessment.id",
+        "studentAssessment.studentAssessmentStatus",
+        "application.id",
+        "student.id",
+      ])
+      .leftJoin("batchApplication.studentAssessment", "studentAssessment")
+      .leftJoin("studentAssessment.application", "application")
+      .leftJoin("application.student", "student")
+      .where("batchApplication.batchReassessment.id = :batchReassessmentId", {
+        batchReassessmentId,
+      });
+    if (paginationOptions.searchCriteria) {
+      query.andWhere("batchApplication.applicationNumber ILIKE :search", {
+        search: `%${paginationOptions.searchCriteria.trim()}%`,
+      });
+    }
+    switch (paginationOptions.result) {
+      case BatchReassessmentApplicationResult.Successful:
+        query.andWhere(
+          "studentAssessment.studentAssessmentStatus IN (:...successStatuses)",
+        );
+        break;
+      case BatchReassessmentApplicationResult.Failed:
+        query.andWhere("studentAssessment.id IS NULL");
+        break;
+      case BatchReassessmentApplicationResult.Pending:
+        query.andWhere(
+          "studentAssessment.studentAssessmentStatus NOT IN (:...successStatuses)",
+        );
+        break;
+    }
+    query.setParameter("successStatuses", BATCH_REASSESSMENT_SUCCESS_STATUSES);
+    query
+      .orderBy(
+        "batchApplication.applicationNumber",
+        paginationOptions.sortOrder ?? FieldSortOrder.ASC,
+      )
+      .skip(paginationOptions.page * paginationOptions.pageLimit)
+      .take(paginationOptions.pageLimit);
+    const [batchApplications, count] = await query.getManyAndCount();
+    return {
+      results: batchApplications.map((batchApplication) => ({
+        applicationNumber: batchApplication.applicationNumber,
+        applicationId: batchApplication.studentAssessment?.application.id,
+        studentId: batchApplication.studentAssessment?.application.student.id,
+        result: this.getBatchReassessmentApplicationResult(
+          batchApplication.studentAssessment,
+        ),
+        failureReason: batchApplication.failureReason,
+      })),
+      count,
+    };
+  }
+
+  /**
+   * Determines the outcome of an application in a batch manual reassessment.
+   * @param studentAssessment assessment created by the batch manual
+   * reassessment, if one was created.
+   * @returns the application reassessment result.
+   */
+  private getBatchReassessmentApplicationResult(
+    studentAssessment?: StudentAssessment,
+  ): BatchReassessmentApplicationResult {
+    if (!studentAssessment) {
+      return BatchReassessmentApplicationResult.Failed;
+    }
+    return BATCH_REASSESSMENT_SUCCESS_STATUSES.includes(
+      studentAssessment.studentAssessmentStatus,
+    )
+      ? BatchReassessmentApplicationResult.Successful
+      : BatchReassessmentApplicationResult.Pending;
   }
 
   /**

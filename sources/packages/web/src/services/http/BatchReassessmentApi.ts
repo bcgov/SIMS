@@ -1,3 +1,4 @@
+import { getPaginationQueryString } from "@/helpers";
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   BatchReassessmentAPIInDTO,
@@ -31,74 +32,20 @@ export class BatchReassessmentApi extends HttpBaseClient {
 
   /**
    * Gets the reassessment outcome of each application in a batch manual reassessment.
-   * TODO: Stubbed data, replace with the call below once the API endpoint is available.
-   * `batch-reassessment/${batchReassessmentId}/applications?${getPaginationQueryString(paginationOptions)}`
-   * @param _batchReassessmentId batch manual reassessment ID.
-   * @param paginationOptions pagination options, with optional search criteria
-   * `applicationNumber` and `result`.
+   * @param batchReassessmentId batch manual reassessment ID.
+   * @param paginationOptions pagination options, with the application number as search criteria.
+   * @param result optional reassessment result to filter by.
    * @returns paginated application outcomes ordered by application number.
    */
   async getBatchReassessmentApplications(
-    _batchReassessmentId: number,
+    batchReassessmentId: number,
     paginationOptions: PaginationOptions,
+    result?: BatchReassessmentApplicationResult,
   ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
-    const searchCriteria = (paginationOptions.searchCriteria ?? {}) as Record<
-      string,
-      string
-    >;
-    const filtered = STUB_BATCH_REASSESSMENT_APPLICATIONS.filter(
-      (application) =>
-        (!searchCriteria.result ||
-          application.result === searchCriteria.result) &&
-        (!searchCriteria.applicationNumber ||
-          application.applicationNumber.includes(
-            searchCriteria.applicationNumber,
-          )),
-    ).sort((a, b) => a.applicationNumber.localeCompare(b.applicationNumber));
-    const start = (paginationOptions.page - 1) * paginationOptions.pageLimit;
-    return {
-      results: filtered.slice(start, start + paginationOptions.pageLimit),
-      count: filtered.length,
-    };
+    let url = `batch-reassessment/${batchReassessmentId}/applications?${getPaginationQueryString(paginationOptions)}`;
+    if (result) {
+      url += `&result=${result}`;
+    }
+    return this.getCall(this.addClientRoot(url));
   }
 }
-
-/**
- * TODO: Remove once the API endpoint is available.
- */
-const STUB_FAILURE_REASONS = [
-  "The application does not have a valid assessment calculation.",
-  "The application is date archived and not eligible.",
-  "The application is cancelled and not eligible.",
-  "The application number does not exist.",
-  "The application experienced an unexpected error.",
-];
-
-/**
- * TODO: Remove once the API endpoint is available.
- */
-const STUB_BATCH_REASSESSMENT_APPLICATIONS: BatchReassessmentApplicationAPIOutDTO[] =
-  Array.from({ length: 27 }, (_, index) => {
-    const applicationNumber = `${2600000000 + index * 7}`;
-    if (index % 3 === 1) {
-      const failureReason =
-        STUB_FAILURE_REASONS[
-          Math.floor(index / 3) % STUB_FAILURE_REASONS.length
-        ];
-      const exists = failureReason !== STUB_FAILURE_REASONS[3];
-      return {
-        applicationNumber,
-        result: BatchReassessmentApplicationResult.Failed,
-        failureReason,
-      };
-    }
-    return {
-      applicationNumber,
-      applicationId: index + 1,
-      studentId: 1,
-      result:
-        index % 3 === 0
-          ? BatchReassessmentApplicationResult.Successful
-          : BatchReassessmentApplicationResult.Pending,
-    };
-  });

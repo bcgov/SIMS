@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from "@nestjs/common";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -13,11 +22,16 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   BatchReassessmentAPIInDTO,
+  BatchReassessmentApplicationAPIOutDTO,
   BatchReassessmentSummaryAPIOutDTO,
 } from "./models/batch-reassessment.dto";
 import { BatchReassessmentService } from "../../services";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { getUserFullName } from "../../utilities";
+import {
+  BatchReassessmentApplicationsPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.
@@ -77,5 +91,34 @@ export class BatchReassessmentAESTController extends BaseController {
       pendingCount: summary.pendingCount,
       status: summary.status,
     }));
+  }
+
+  /**
+   * Gets the reassessment outcome of each application in a batch manual reassessment.
+   * @param batchReassessmentId batch manual reassessment ID.
+   * @param paginationOptions pagination options, with optional application number
+   * search criteria and result filter.
+   * @returns paginated application outcomes.
+   */
+  @Get(":batchReassessmentId/applications")
+  @ApiNotFoundResponse({ description: "Batch reassessment not found." })
+  async getBatchReassessmentApplications(
+    @Param("batchReassessmentId", ParseIntPipe) batchReassessmentId: number,
+    @Query()
+    paginationOptions: BatchReassessmentApplicationsPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
+    const batchReassessmentExists =
+      await this.batchReassessmentService.batchReassessmentExists(
+        batchReassessmentId,
+      );
+    if (!batchReassessmentExists) {
+      throw new NotFoundException(
+        `Batch reassessment with ID ${batchReassessmentId} not found.`,
+      );
+    }
+    return this.batchReassessmentService.getBatchReassessmentApplications(
+      batchReassessmentId,
+      paginationOptions,
+    );
   }
 }

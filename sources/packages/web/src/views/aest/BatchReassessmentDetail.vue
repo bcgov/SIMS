@@ -18,17 +18,18 @@
       <search-table
         v-model="searchCriteria"
         search-label="Search application number"
-        :loading="isLoading"
+        :loading="loading"
         @search="searchApplications"
       >
         <template #append-search>
           <v-btn-toggle
             v-model="selectedFilter"
+            mandatory
             color="primary"
             density="compact"
             class="btn-toggle"
             selected-class="selected-btn-toggle"
-            @update:model-value="onFilterChange"
+            @update:model-value="loadApplications"
           >
             <v-btn
               v-for="filter in ResultFilter"
@@ -42,14 +43,14 @@
           </v-btn-toggle>
         </template>
         <toggle-content
-          :toggled="!paginatedApplications.count && !isLoading"
+          :toggled="!paginatedApplications.count && !loading"
           message="No applications found."
         >
           <v-data-table-server
             :headers="BatchReassessmentApplicationHeaders"
             :items="paginatedApplications.results"
             :items-length="paginatedApplications.count"
-            :loading="isLoading"
+            :loading="loading"
             :items-per-page="DEFAULT_PAGE_LIMIT"
             :items-per-page-options="ITEMS_PER_PAGE"
             @update:options="pageEvent"
@@ -111,7 +112,7 @@ import StatusChipBatchReassessmentApplicationResult from "@/components/generic/S
 const ResultFilter = {
   All: "All",
   ...BatchReassessmentApplicationResult,
-};
+} as const;
 
 interface Props {
   batchReassessmentId: number;
@@ -121,9 +122,11 @@ const props = defineProps<Props>();
 const { mobile: isMobile } = useDisplay();
 const router = useRouter();
 const snackBar = useSnackBar();
-const isLoading = ref(false);
+const loading = ref(false);
 const searchCriteria = ref("");
-const selectedFilter = ref<string>(ResultFilter.All);
+const selectedFilter = ref<BatchReassessmentApplicationResult | "All">(
+  ResultFilter.All,
+);
 const paginatedApplications = ref<
   PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>
 >({ results: [], count: 0 });
@@ -152,43 +155,25 @@ const goToAssessmentsSummary = (
 
 const loadApplications = async () => {
   try {
-    isLoading.value = true;
-    const criteria: Record<string, string> = {};
-    if (selectedFilter.value !== ResultFilter.All) {
-      criteria.result = selectedFilter.value;
-    }
-    const applicationNumber = searchCriteria.value?.trim();
-    if (applicationNumber) {
-      criteria.applicationNumber = applicationNumber;
-    }
+    loading.value = true;
     paginatedApplications.value =
       await BatchReassessmentService.shared.getBatchReassessmentApplications(
         props.batchReassessmentId,
-        { ...currentPagination, searchCriteria: criteria },
+        { ...currentPagination, searchCriteria: searchCriteria.value },
+        selectedFilter.value === ResultFilter.All
+          ? undefined
+          : selectedFilter.value,
       );
   } catch {
     snackBar.error(
       "Unexpected error while loading the batch reassessment results.",
     );
   } finally {
-    isLoading.value = false;
+    loading.value = false;
   }
 };
 
 const searchApplications = async () => {
-  await loadApplications();
-};
-
-/**
- * Handles the filter toggle change. When all buttons are deselected (i.e., the
- * user clicks the currently active button), resets the selection back to "All"
- * to ensure at least one filter is always active.
- * @param value the new filter value from the toggle.
- */
-const onFilterChange = async (value: string | undefined) => {
-  if (value === undefined) {
-    selectedFilter.value = ResultFilter.All;
-  }
   await loadApplications();
 };
 
