@@ -267,5 +267,5 @@ export interface DeleteStudentFileAPIInDTO {
 
 export interface SyncStudentAPIOutDTO {
   hasStudentAccount: boolean;
-  isStudentProfileUpdated: boolean;
+  isStudentProfileUpdated?: boolean;
 }

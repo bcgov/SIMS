@@ -397,5 +397,5 @@ export class LegacyStudentMatchesAPIInDTO {
 
 export class SyncStudentAPIOutDTO {
   hasStudentAccount: boolean;
-  isStudentProfileUpdated: boolean;
+  isStudentProfileUpdated?: boolean;
 }

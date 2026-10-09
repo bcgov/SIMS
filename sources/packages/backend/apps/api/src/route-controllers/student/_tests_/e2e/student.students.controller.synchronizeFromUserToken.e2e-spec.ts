@@ -116,7 +116,7 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
     });
   });
 
-  it("Should return response indicating no student account and hence no profile update when the authenticated user does not have a student account.", async () => {
+  it("Should return response indicating no student account and hence no profile update status when the authenticated user does not have a student account.", async () => {
     // Arrange
     const user = createFakeUser();
     // Mock a BCSC token for the user without a student account.
@@ -132,7 +132,6 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
       .expect(HttpStatus.OK)
       .expect({
         hasStudentAccount: false,
-        isStudentProfileUpdated: false,
       });
   });
 

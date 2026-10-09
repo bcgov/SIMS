@@ -201,7 +201,6 @@ export class StudentStudentsController extends BaseController {
     if (!studentUserToken.studentId) {
       return {
         hasStudentAccount: false,
-        isStudentProfileUpdated: false,
       };
     }
     // Student must have a BCSC identity provider to proceed with synchronization.
