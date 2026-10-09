@@ -1,4 +1,7 @@
-import { BatchReassessmentStatus } from "@/types";
+import {
+  BatchReassessmentApplicationResult,
+  BatchReassessmentStatus,
+} from "@/types";
 
 /**
  * Payload used to trigger a batch manual reassessment for a list of application numbers.
@@ -10,7 +13,8 @@ export interface BatchReassessmentAPIInDTO {
 
 /**
  * Summary of a batch manual reassessment submission, including how many
- * applications were successfully reassessed and how many failed.
+ * applications were successfully reassessed, how many failed, and how many
+ * are still pending.
  */
 export interface BatchReassessmentSummaryAPIOutDTO {
   id: number;
@@ -20,5 +24,17 @@ export interface BatchReassessmentSummaryAPIOutDTO {
   totalCount: number;
   successCount: number;
   failureCount: number;
+  pendingCount: number;
   status: BatchReassessmentStatus;
+}
+
+/**
+ * Outcome of the reassessment of a single application in a batch manual reassessment.
+ */
+export interface BatchReassessmentApplicationAPIOutDTO {
+  applicationNumber: string;
+  applicationId?: number;
+  studentId?: number;
+  result: BatchReassessmentApplicationResult;
+  failureReason?: string;
 }

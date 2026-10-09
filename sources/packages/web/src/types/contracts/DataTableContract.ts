@@ -439,7 +439,19 @@ export const BatchReassessmentHistoryHeaders = [
   { title: "Applications", sortable: false, key: "totalCount" },
   { title: "Successful", sortable: false, key: "successCount" },
   { title: "Failed", sortable: false, key: "failureCount" },
+  { title: "Pending", sortable: false, key: "pendingCount" },
   { title: "Status", sortable: false, key: "status" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Batch manual reassessment application results headers.
+ */
+export const BatchReassessmentApplicationHeaders = [
+  { title: "Application Number", sortable: false, key: "applicationNumber" },
+  { title: "Result", sortable: false, key: "result" },
+  { title: "Failure Reason", sortable: false, key: "failureReason" },
+  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

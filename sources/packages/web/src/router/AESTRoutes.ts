@@ -30,6 +30,7 @@ import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
 import Reports from "@/views/aest/Reports.vue";
 import BatchReassessment from "@/views/aest/BatchReassessment.vue";
+import BatchReassessmentDetail from "@/views/aest/BatchReassessmentDetail.vue";
 import FormioEditor from "@/views/aest/FormioEditor.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import CASInvoices from "@/views/aest/CASInvoices.vue";
@@ -332,7 +333,25 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.AssessmentSummary,
             name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
-            props: true,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+              applicationId: Number.parseInt(
+                route.params.applicationId as string,
+              ),
+              // When navigating from the batch manual reassessment results,
+              // allow the user to navigate back to the batch.
+              backTarget: route.query.batchReassessmentId
+                ? {
+                    name: "Batch manual reassessment outcome",
+                    to: {
+                      name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+                      params: {
+                        batchReassessmentId: route.query.batchReassessmentId,
+                      },
+                    },
+                  }
+                : undefined,
+            }),
             component: AssessmentsSummary,
             meta: {
               clientType: ClientIdType.AEST,
@@ -795,6 +814,24 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         components: {
           default: BatchReassessment,
           sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.BatchReassessmentDetail,
+        name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+        components: {
+          default: BatchReassessmentDetail,
+          sidebar: AESTHomeSideBar,
+        },
+        props: {
+          default: (route) => ({
+            batchReassessmentId: Number.parseInt(
+              route.params.batchReassessmentId as string,
+            ),
+          }),
         },
         meta: {
           clientType: ClientIdType.AEST,

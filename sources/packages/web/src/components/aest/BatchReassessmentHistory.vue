@@ -20,6 +20,7 @@
           :headers="BatchReassessmentHistoryHeaders"
           :items="batchReassessmentHistory"
           :loading="batchReassessmentHistoryLoading"
+          :mobile="isMobile"
         >
           <template #[`item.batchNumber`]="{ item }">
             {{ item.batchNumber }}
@@ -39,8 +40,20 @@
           <template #[`item.failureCount`]="{ item }">
             {{ item.failureCount }}
           </template>
+          <template #[`item.pendingCount`]="{ item }">
+            {{ item.pendingCount }}
+          </template>
           <template #[`item.status`]="{ item }">
             <status-chip-batch-reassessment :status="item.status" />
+          </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              v-if="item.totalCount"
+              @click="goToBatchReassessmentDetail(item.id)"
+              >View</v-btn
+            >
           </template>
         </v-data-table>
       </toggle-content>
@@ -50,14 +63,19 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useDisplay } from "vuetify";
 import { BatchReassessmentHistoryHeaders } from "@/types/contracts/DataTableContract";
 import StatusChipBatchReassessment from "@/components/generic/StatusChipBatchReassessment.vue";
 import { BatchReassessmentSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
 import { BatchReassessmentService } from "@/services/BatchReassessmentService";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
+const router = useRouter();
 const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();
+const { mobile: isMobile } = useDisplay();
 
 const batchReassessmentHistory = ref<BatchReassessmentSummaryAPIOutDTO[]>([]);
 const batchReassessmentHistoryLoading = ref(false);
@@ -72,6 +90,13 @@ const loadBatchReassessmentHistory = async () => {
   } finally {
     batchReassessmentHistoryLoading.value = false;
   }
+};
+
+const goToBatchReassessmentDetail = (batchReassessmentId: number) => {
+  router.push({
+    name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+    params: { batchReassessmentId },
+  });
 };
 
 onMounted(loadBatchReassessmentHistory);

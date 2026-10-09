@@ -11,7 +11,10 @@ import {
   Length,
   MaxLength,
 } from "class-validator";
-import { BatchReassessmentStatus } from "../../../services";
+import {
+  BatchReassessmentApplicationResult,
+  BatchReassessmentStatus,
+} from "../../../services";
 
 /**
  * Maximum number of application numbers accepted in a single batch manual reassessment submission.
@@ -35,7 +38,8 @@ export class BatchReassessmentAPIInDTO {
 
 /**
  * Summary of a batch manual reassessment submission, including how many
- * applications were successfully reassessed and how many failed.
+ * applications were successfully reassessed, how many failed, and how many
+ * are still pending.
  */
 export class BatchReassessmentSummaryAPIOutDTO {
   id: number;
@@ -45,5 +49,17 @@ export class BatchReassessmentSummaryAPIOutDTO {
   totalCount: number;
   successCount: number;
   failureCount: number;
+  pendingCount: number;
   status: BatchReassessmentStatus;
+}
+
+/**
+ * Outcome of the reassessment of a single application in a batch manual reassessment.
+ */
+export class BatchReassessmentApplicationAPIOutDTO {
+  applicationNumber: string;
+  applicationId?: number;
+  studentId?: number;
+  result: BatchReassessmentApplicationResult;
+  failureReason?: string;
 }

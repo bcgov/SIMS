@@ -6,7 +6,7 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
-import { AppealType } from "../services";
+import { AppealType, BatchReassessmentApplicationResult } from "../services";
 
 /**
  *  Base Pagination option.
@@ -108,4 +108,14 @@ export interface OfferingPaginationOptions extends PaginationOptions {
    * Study start date to filter.
    */
   studyStartDateToFilter?: string;
+}
+
+/**
+ * Batch reassessment applications pagination options.
+ */
+export interface BatchReassessmentApplicationsPaginationOptions extends PaginationOptions {
+  /**
+   * Reassessment result to filter the applications.
+   */
+  result?: BatchReassessmentApplicationResult;
 }
