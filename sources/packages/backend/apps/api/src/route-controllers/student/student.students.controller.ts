@@ -48,6 +48,7 @@ import {
   StudentFileUploaderAPIInDTO,
   StudentProfileAPIOutDTO,
   StudentUploadFileAPIOutDTO,
+  SyncStudentAPIOutDTO,
   UniqueFileNameParamAPIInDTO,
   UpdateStudentAPIInDTO,
 } from "./models/student.dto";
@@ -187,11 +188,26 @@ export class StudentStudentsController extends BaseController {
   /**
    * Use the information available in the authentication token to update
    * the user and student data currently on DB.
+   * If the endpoint user does not have a student account the API returns the result of the sync operation
+   * indicating that the user does not have a student account and no profile update was performed.
+   * @returns The student account synchronization result.
    */
+  @ApiBadRequestResponse({
+    description:
+      "The BCSC identity token is missing required profile information.",
+  })
+  @RequiresUserAccount(false)
+  @RequiresStudentAccount(false)
   @Patch("/sync")
   async synchronizeFromUserToken(
     @UserToken() studentUserToken: StudentUserToken,
-  ): Promise<void> {
+  ): Promise<SyncStudentAPIOutDTO> {
+    if (!studentUserToken.studentId) {
+      return {
+        hasStudentAccount: false,
+      };
+    }
+    // Student must have a BCSC identity provider to proceed with synchronization.
     if (studentUserToken.identityProvider === IdentityProviders.BCSC) {
       // Ensures that the user token has all the required information before proceeding.
       if (isUserTokenMissingRequiredInfo(studentUserToken)) {
@@ -211,6 +227,9 @@ export class StudentStudentsController extends BaseController {
         studentUserToken.userId,
       );
     }
+    return {
+      hasStudentAccount: true,
+    };
   }
 
   /**
