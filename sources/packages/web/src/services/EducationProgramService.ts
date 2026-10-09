@@ -10,6 +10,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -80,6 +81,19 @@ export class EducationProgramService {
       })),
       count: programs.count,
     };
+  }
+
+  /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  async getEducationProgramConfiguration(
+    programConfigurationId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramConfiguration(
+      programConfigurationId,
+    );
   }
 
   /**

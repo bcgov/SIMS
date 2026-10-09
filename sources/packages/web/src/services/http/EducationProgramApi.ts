@@ -7,6 +7,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -53,6 +54,21 @@ export class EducationProgramApi extends HttpBaseClient {
     return this.getCall<
       PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
     >(this.addClientRoot(url));
+  }
+
+  /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  async getEducationProgramConfiguration(
+    programConfigurationId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(
+        `education-program/configuration/${programConfigurationId}`,
+      ),
+    );
   }
 
   /**

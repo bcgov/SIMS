@@ -1,10 +1,7 @@
 import {
-  AviationProgramCredentialTypes,
-  EntranceRequirements,
   FormYesNoOptions,
   ProgramCalculatedDataKey,
   ProgramCourseLoadCalculationTypes,
-  ProgramDeliveryTypes,
   ProgramDeliveryTypeValues,
   ProgramESLPercentage,
   ProgramEvaluationResult,
@@ -14,57 +11,52 @@ import {
 import { Expose } from "class-transformer";
 
 /**
- * Complete education program information needed for the institution.
+ * Values pre-populated into the program data only to execute the
+ * client and server side validations. Never changed by the user
+ * and never persisted.
+ */
+export class EducationProgramContextAPIOutDTO {
+  hasOfferings: boolean;
+  isActive: boolean;
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
+  isBCInstitution: boolean;
+}
+
+/**
+ * Dynamic program data, whose shape is defined by the program
+ * configuration schemas, plus the pre-populated context.
+ */
+export interface EducationProgramDataAPIOutDTO {
+  [key: string]: unknown;
+  context: EducationProgramContextAPIOutDTO;
+}
+
+export interface EducationProgramConfigurationAPIOutDTO {
+  programData: EducationProgramDataAPIOutDTO;
+  visualSchema: unknown;
+  validationSchema: unknown;
+}
+
+/**
+ * Education program complete information.
  * Shared between the Ministry and the Institution.
  */
 export interface EducationProgramAPIOutDTO {
   id: number;
-  name: string;
-  description: string;
+  programStatus: ProgramStatus;
+  visualSchema: unknown;
+  validationSchema: unknown;
   credentialType: string;
   credentialTypeToDisplay: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  programStatus: ProgramStatus;
-  regulatoryBody: string;
-  otherRegulatoryBody?: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite?: string;
-  sameOnlineCreditsEarned?: string;
-  earnAcademicCreditsOtherInstitution?: string;
-  courseLoadCalculation: string;
-  completionYears: string;
-  eslEligibility: string;
-  hasJointInstitution: string;
-  hasJointDesignatedInstitution: string;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode?: string;
-  minHoursWeek?: string;
-  isAviationProgram?: string;
-  credentialTypesAviation?: AviationProgramCredentialTypes;
-  minHoursWeekAvi?: string;
-  entranceRequirements: EntranceRequirements;
-  hasWILComponent: string;
-  isWILApproved?: string;
-  wilProgramEligibility?: string;
-  hasTravel: string;
-  travelProgramEligibility?: string;
-  hasIntlExchange?: string;
-  intlExchangeProgramEligibility?: string;
-  programDeclaration: boolean;
-  hasOfferings: boolean;
+  programData: EducationProgramDataAPIOutDTO;
   institutionId: number;
   institutionName: string;
-  isBCPublic: boolean;
-  isBCPrivate: boolean;
   submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate?: string;
-  fieldOfStudyCode: number;
-  isActive: boolean;
   isExpired: boolean;
 }
 

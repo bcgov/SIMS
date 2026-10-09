@@ -13,10 +13,8 @@ import {
   ValidateIf,
 } from "class-validator";
 import {
-  EntranceRequirements,
   ProgramCalculatedDataKey,
   ProgramCourseLoadCalculationTypes,
-  ProgramDeliveryTypes,
   ProgramDeliveryTypeValues,
   ProgramESLPercentage,
   ProgramEvaluationResult,
@@ -25,7 +23,6 @@ import {
   NOTE_DESCRIPTION_MAX_LENGTH,
   ProgramStatus,
   ProgramIntensity,
-  AviationProgramCredentialTypes,
   CREDENTIAL_TYPE_MAX_LENGTH,
   CIP_CODE_MAX_LENGTH,
   PROGRAM_NAME_MAX_LENGTH,
@@ -47,58 +44,51 @@ import {
 } from "../../../services/education-program/constants";
 
 /**
+ * Values pre-populated into the program data only to execute the
+ * client and server side validations. Never changed by the user
+ * and never persisted.
+ */
+export class EducationProgramContextAPIOutDTO {
+  hasOfferings: boolean;
+  isActive: boolean;
+  isBCPrivate: boolean;
+  isBCPublic: boolean;
+  isBCInstitution: boolean;
+}
+
+/**
+ * Dynamic program data, whose shape is defined by the program
+ * configuration schemas, plus the pre-populated context.
+ */
+export class EducationProgramDataAPIOutDTO {
+  [key: string]: unknown;
+  context: EducationProgramContextAPIOutDTO;
+}
+
+export class EducationProgramConfigurationAPIOutDTO {
+  programData: EducationProgramDataAPIOutDTO;
+  visualSchema: unknown;
+  validationSchema: unknown;
+}
+
+/**
  * Education program complete information.
  * Shared between the Ministry and the Institution.
  */
-export class EducationProgramAPIOutDTO {
+export class EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIOutDTO {
   id: number;
-  name: string;
-  description: string;
+  programStatus: ProgramStatus;
   credentialType: string;
   credentialTypeToDisplay: string;
-  cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  fieldOfStudyCode: number;
-  programStatus: ProgramStatus;
-  regulatoryBody: string;
-  otherRegulatoryBody?: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite?: string;
-  sameOnlineCreditsEarned?: string;
-  earnAcademicCreditsOtherInstitution?: string;
-  courseLoadCalculation: string;
-  completionYears: string;
-  eslEligibility: string;
-  hasJointInstitution: string;
-  hasJointDesignatedInstitution: string;
-  programIntensity: ProgramIntensity;
-  institutionProgramCode?: string;
-  minHoursWeek?: string;
-  isAviationProgram?: string;
-  credentialTypesAviation?: AviationProgramCredentialTypes;
-  minHoursWeekAvi?: string;
-  entranceRequirements: EntranceRequirements;
-  hasWILComponent: string;
-  isWILApproved?: string;
-  wilProgramEligibility?: string;
-  hasTravel: string;
-  travelProgramEligibility?: string;
-  hasIntlExchange?: string;
-  intlExchangeProgramEligibility?: string;
-  programDeclaration: boolean;
-  hasOfferings: boolean;
-  institutionId: number;
-  institutionName: string;
-  isBCPublic: boolean;
-  isBCPrivate: boolean;
   submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate?: string;
-  isActive: boolean;
   isExpired: boolean;
+  // TODO: Why these fields are included in the API output?
+  institutionId: number;
+  institutionName: string;
 }
 
 export class StudentEducationProgramAPIOutDTO {

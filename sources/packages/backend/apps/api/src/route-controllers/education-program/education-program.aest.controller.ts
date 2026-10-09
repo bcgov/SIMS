@@ -7,7 +7,10 @@ import {
   Patch,
   Query,
 } from "@nestjs/common";
-import { IUserToken } from "../../auth/userToken.interface";
+import {
+  IInstitutionUserToken,
+  IUserToken,
+} from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
 import {
   AllowAuthorizedParty,
@@ -22,6 +25,7 @@ import {
   EducationProgramsSummaryAPIOutDTO,
   DeactivateProgramAPIInDTO,
   EducationProgramPendingAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
 } from "./models/education-program.dto";
 import { EducationProgramService } from "../../services";
 import { ClientTypeBaseRoute } from "../../types";
@@ -79,6 +83,23 @@ export class EducationProgramAESTController extends BaseController {
       })),
       count: programs.count,
     };
+  }
+
+  /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  @Get("configuration/:programConfigurationId")
+  async getEducationProgramConfiguration(
+    @Param("programConfigurationId", ParseIntPipe)
+    programConfigurationId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return this.educationProgramControllerService.getEducationProgramConfiguration(
+      programConfigurationId,
+      userToken.authorizations.institutionId,
+    );
   }
 
   /**

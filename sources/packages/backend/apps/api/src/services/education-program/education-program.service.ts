@@ -556,6 +556,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.hasIntlExchange",
         "programs.intlExchangeProgramEligibility",
         "programs.programDeclaration",
+        "programs.programData",
         "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
@@ -568,11 +569,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.assessedDate",
         "programs.effectiveEndDate",
         "programs.isActive",
+        "programConfiguration.id",
+        "programConfiguration.visualSchema",
+        "programConfiguration.validationSchema",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
+      .innerJoin("programs.programConfiguration", "programConfiguration")
       .where("programs.id = :id", { id: programId });
     if (institutionId) {
       query.andWhere("institution.id = :institutionId", { institutionId });

@@ -13,11 +13,13 @@ import {
 import {
   AviationProgramCredentialTypes,
   EducationProgram,
+  EducationProgramConfiguration,
   SystemLookupCategory,
 } from "@sims/sims-db";
 import {
   EducationProgramAPIOutDTO,
   EducationProgramAPIInDTO,
+  EducationProgramConfigurationAPIOutDTO,
 } from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
@@ -38,6 +40,8 @@ import { InstitutionUserTypes } from "../../auth";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "../../services/education-program/constants";
 import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
 
 @Injectable()
 export class EducationProgramControllerService {
@@ -46,6 +50,8 @@ export class EducationProgramControllerService {
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly institutionService: InstitutionService,
     private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
+    @InjectRepository(EducationProgramConfiguration)
+    private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
   ) {}
 
   /**
@@ -93,6 +99,45 @@ export class EducationProgramControllerService {
   }
 
   /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration.
+   * @param institutionId ID of the institution requesting the configuration.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  async getEducationProgramConfiguration(
+    programConfigurationId: number,
+    institutionId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    const institution =
+      await this.institutionService.getInstitutionTypeById(institutionId);
+    const programConfiguration =
+      await this.educationProgramConfigurationRepo.findOneOrFail({
+        select: {
+          id: true,
+          visualSchema: true,
+          validationSchema: true,
+          isActive: true,
+        },
+        where: { id: programConfigurationId, isActive: true },
+      });
+    return {
+      programData: {
+        context: {
+          hasOfferings: false,
+          isActive: true,
+          isBCPublic: institution.institutionType.isBCPublic,
+          isBCPrivate: institution.institutionType.isBCPrivate,
+          isBCInstitution:
+            institution.institutionType.isBCPrivate ||
+            institution.institutionType.isBCPublic,
+        },
+      },
+      visualSchema: programConfiguration.visualSchema,
+      validationSchema: programConfiguration.validationSchema,
+    };
+  }
+
+  /**
    * Education program information shared between the Ministry and the Institution.
    * @param programId program id.
    * @param institutionId when provided, ensures the proper authorization
@@ -114,59 +159,28 @@ export class EducationProgramControllerService {
       programPromise,
       hasOfferingsPromise,
     ]);
-
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
-
     return {
       id: program.id,
       programStatus: program.programStatus,
-      name: program.name,
-      description: program.description,
       credentialType: program.credentialType,
       credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
-      cipCode: program.cipCode,
-      nocCode: program.nocCode,
-      sabcCode: program.sabcCode,
-      fieldOfStudyCode: program.fieldOfStudyCode,
-      regulatoryBody: program.regulatoryBody,
-      otherRegulatoryBody: program.otherRegulatoryBody,
-      programDeliveryTypes: {
-        deliveredOnSite: program.deliveredOnSite,
-        deliveredOnline: program.deliveredOnline,
+      programData: {
+        ...program.programData,
+        context: {
+          hasOfferings: hasOfferings,
+          isActive: program.isActive && !program.isExpired,
+          isBCPublic: program.institution.institutionType.isBCPublic,
+          isBCPrivate: program.institution.institutionType.isBCPrivate,
+          isBCInstitution:
+            program.institution.institutionType.isBCPrivate ||
+            program.institution.institutionType.isBCPublic,
+        },
       },
-      deliveredOnlineAlsoOnsite: program.deliveredOnlineAlsoOnsite,
-      sameOnlineCreditsEarned: program.sameOnlineCreditsEarned,
-      earnAcademicCreditsOtherInstitution:
-        program.earnAcademicCreditsOtherInstitution,
-      courseLoadCalculation: program.courseLoadCalculation,
-      completionYears: program.completionYears,
-      eslEligibility: program.eslEligibility,
-      hasJointInstitution: program.hasJointInstitution,
-      hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
-      programIntensity: program.programIntensity,
-      institutionProgramCode: program.institutionProgramCode,
-      minHoursWeek: program.minHoursWeek,
-      isAviationProgram: program.isAviationProgram,
-      credentialTypesAviation: program.credentialTypesAviation,
-      minHoursWeekAvi: program.minHoursWeekAvi,
-      entranceRequirements: {
-        hasMinimumAge: program.hasMinimumAge,
-        minHighSchool: program.minHighSchool,
-        requirementsByInstitution: program.requirementsByInstitution,
-        requirementsByBCITA: program.requirementsByBCITA,
-        noneOfTheAboveEntranceRequirements:
-          program.noneOfTheAboveEntranceRequirements,
-      },
-      hasWILComponent: program.hasWILComponent,
-      isWILApproved: program.isWILApproved,
-      wilProgramEligibility: program.wilProgramEligibility,
-      hasTravel: program.hasTravel,
-      travelProgramEligibility: program.travelProgramEligibility,
-      hasIntlExchange: program.hasIntlExchange,
-      intlExchangeProgramEligibility: program.intlExchangeProgramEligibility,
-      programDeclaration: program.programDeclaration,
+      visualSchema: program.programConfiguration.visualSchema,
+      validationSchema: program.programConfiguration.validationSchema,
       institutionId: program.institution.id,
       institutionName: program.institution.operatingName,
       submittedDate: program.submittedDate,
@@ -174,10 +188,6 @@ export class EducationProgramControllerService {
       effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
       assessedDate: program.assessedDate,
       assessedBy: getUserFullName(program.assessedBy),
-      isBCPublic: program.institution.institutionType.isBCPublic,
-      isBCPrivate: program.institution.institutionType.isBCPrivate,
-      hasOfferings,
-      isActive: program.isActive,
       isExpired: program.isExpired,
     };
   }
