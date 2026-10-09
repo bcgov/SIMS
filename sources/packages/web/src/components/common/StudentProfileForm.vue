@@ -11,6 +11,7 @@
       <footer-buttons
         v-if="showActionButtons"
         :processing="processing"
+        :disable-primary-button="isEmailMissing"
         @primary-click="submit"
         :primary-label="saveLabel"
         :show-secondary-button="false"
@@ -19,45 +20,28 @@
   </formio-container>
 </template>
 
-<script lang="ts">
-import { ref, computed, PropType, defineComponent } from "vue";
+<script setup lang="ts">
+import { computed, defineProps, defineEmits } from "vue";
 import { StudentProfileFormModel, StudentProfileFormModes } from "@/types";
 
-export default defineComponent({
-  emits: ["submitted", "customEvent", "loaded"],
-  props: {
-    formModel: {
-      type: Object as PropType<StudentProfileFormModel>,
-      required: true,
-    },
-    processing: {
-      type: Boolean,
-      required: true,
-    },
-    isDataReady: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup(props) {
-    const initialData = ref({} as StudentProfileFormModel);
+const props = defineProps<{
+  formModel: StudentProfileFormModel;
+  processing: boolean;
+  isDataReady: boolean;
+}>();
 
-    const saveLabel = computed(() =>
-      props.formModel.mode === StudentProfileFormModes.StudentEdit
-        ? "Save profile"
-        : "Create profile",
-    );
+defineEmits(["submitted", "customEvent", "loaded"]);
 
-    const showActionButtons = computed(
-      () =>
-        props.formModel.mode !== StudentProfileFormModes.AESTAccountApproval,
-    );
+const saveLabel = computed(() =>
+  props.formModel.mode === StudentProfileFormModes.StudentEdit
+    ? "Save profile"
+    : "Create profile",
+);
 
-    return {
-      initialData,
-      saveLabel,
-      showActionButtons,
-    };
-  },
-});
+const showActionButtons = computed(
+  () => props.formModel.mode !== StudentProfileFormModes.AESTAccountApproval,
+);
+
+// Email is mandatory for all users, the profile cannot be saved without it.
+const isEmailMissing = computed(() => !props.formModel.email?.trim());
 </script>

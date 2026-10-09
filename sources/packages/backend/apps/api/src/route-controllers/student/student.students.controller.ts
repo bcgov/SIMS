@@ -144,18 +144,10 @@ export class StudentStudentsController extends BaseController {
       );
     }
 
-    // The read-only identity fields displayed to the student are calculated by the form
-    // from the trusted BCSC token.
     const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
-        {
-          ...payload,
-          firstName: studentUserToken.givenNames,
-          lastName: studentUserToken.lastName,
-          email: studentUserToken.email,
-          dateOfBirth: studentUserToken.birthdate,
-        },
+        payload,
       );
     if (!submissionResult.valid) {
       throw new UnprocessableEntityException(
@@ -408,18 +400,10 @@ export class StudentStudentsController extends BaseController {
     @UserToken() studentUserToken: StudentUserToken,
     @Body() payload: UpdateStudentAPIInDTO,
   ): Promise<void> {
-    // The read-only identity fields displayed to the student are calculated by the form
-    // from the trusted BCSC token.
     const submissionResult =
       await this.formService.dryRunSubmission<StudentInfo>(
         FormNames.StudentProfile,
-        {
-          ...payload,
-          firstName: studentUserToken.givenNames,
-          lastName: studentUserToken.lastName,
-          email: studentUserToken.email,
-          dateOfBirth: studentUserToken.birthdate,
-        },
+        payload,
       );
     if (!submissionResult.valid) {
       throw new BadRequestException(
@@ -467,6 +451,8 @@ export class StudentStudentsController extends BaseController {
         studentProfile.lastName,
         studentProfile.firstName,
       );
+    // TEMPORARY: simulates a missing email for testing, remove after testing.
+    studentProfile.email = "";
     return studentProfile;
   }
 }

@@ -114,11 +114,8 @@
                     {
                       "label": "Last name",
                       "tableView": true,
+                      "persistent": "client-only",
                       "calculateValue": "value = data.lastName;",
-                      "calculateServer": true,
-                      "validate": {
-                        "required": true
-                      },
                       "key": "readOnlyLastName",
                       "attributes": {
                         "data-cy": "lastName"
@@ -140,11 +137,8 @@
                     {
                       "label": "Date of birth",
                       "tableView": true,
+                      "persistent": "client-only",
                       "calculateValue": "value = data.dateOfBirth;",
-                      "calculateServer": true,
-                      "validate": {
-                        "required": true
-                      },
                       "key": "readOnlyDateOfBirth",
                       "attributes": {
                         "data-cy": "dateOfBirth"
@@ -166,11 +160,8 @@
                     {
                       "label": "Email address",
                       "tableView": true,
+                      "persistent": "client-only",
                       "calculateValue": "value = data.email;",
-                      "calculateServer": true,
-                      "validate": {
-                        "required": true
-                      },
                       "key": "readOnlyEmail",
                       "attributes": {
                         "data-cy": "email"
@@ -329,6 +320,26 @@
               "tableView": false
             }
           ]
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "className": "alert alert-danger fa fa-ban w-100",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<strong class=\"ml-2\">Missing Information</strong>\n<br />\n<span>\n  The information collected from your BC Services Card account is incomplete.\n  Please go to your\n  <a\n    class=\"formio-href\"\n    href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\"\n    target=\"_blank\"\n    rel=\"noopener noreferrer\"\n  >\n    BC Service Card account</a\n  >\n  to update your Email Address.\n</span>",
+          "refreshOnChange": true,
+          "customClass": "banner-alert",
+          "key": "emailRequiredBanner",
+          "customConditional": "show = !data.email;",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false,
+          "hideOnChildrenHidden": false
         },
         {
           "label": "HTML",
