@@ -144,7 +144,6 @@ export default abstract class HttpBaseClient {
    * Executes a HTTP request using a PATCH verb including the authentication token.
    * @param url API endpoint URI.
    * @param payload data to be sent.
-   * @param suppressErrorHandler optionally skip the global error handling.
    * @returns the response data from the API call, if present.
    */
   protected async patchCall<T, TResult = void>(

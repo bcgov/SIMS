@@ -188,10 +188,14 @@ export class StudentStudentsController extends BaseController {
   /**
    * Use the information available in the authentication token to update
    * the user and student data currently on DB.
-   ** If the endpoint user does not have a student account the API returns the result of the sync operation
-   ** indicating that the user does not have a student account and no profile update was performed.
+   * If the endpoint user does not have a student account the API returns the result of the sync operation
+   * indicating that the user does not have a student account and no profile update was performed.
    * @returns The student account synchronization result.
    */
+  @ApiBadRequestResponse({
+    description:
+      "The BCSC identity token is missing required profile information.",
+  })
   @RequiresUserAccount(false)
   @RequiresStudentAccount(false)
   @Patch("/sync")
@@ -211,28 +215,21 @@ export class StudentStudentsController extends BaseController {
           "The BCSC identity token is missing required profile information.",
         );
       }
-      const isStudentProfileUpdated =
-        await this.studentService.updateStudentUserData(
-          {
-            studentId: studentUserToken.studentId,
-            lastName: studentUserToken.lastName,
-            givenNames: studentUserToken.givenNames,
-            birthdate: studentUserToken.birthdate,
-            email: studentUserToken.email,
-            noteDescription: BCSC_STUDENT_PROFILE_UPDATE_NOTE,
-          },
-          studentUserToken.userId,
-        );
-      return {
-        hasStudentAccount: true,
-        isStudentProfileUpdated,
-      };
-    } else {
-      return {
-        hasStudentAccount: true,
-        isStudentProfileUpdated: false,
-      };
+      await this.studentService.updateStudentUserData(
+        {
+          studentId: studentUserToken.studentId,
+          lastName: studentUserToken.lastName,
+          givenNames: studentUserToken.givenNames,
+          birthdate: studentUserToken.birthdate,
+          email: studentUserToken.email,
+          noteDescription: BCSC_STUDENT_PROFILE_UPDATE_NOTE,
+        },
+        studentUserToken.userId,
+      );
     }
+    return {
+      hasStudentAccount: true,
+    };
   }
 
   /**
