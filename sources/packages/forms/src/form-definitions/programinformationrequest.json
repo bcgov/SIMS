@@ -405,7 +405,11 @@
           "customConditional": "show=data.denyProgramInformationRequest;",
           "type": "select",
           "input": true,
-          "searchThreshold": 0.3
+          "selectThreshold": 0.3,
+          "customOptions": {
+            "searchResultLimit": -1
+          },
+          "sortSearchAlphabetically": true
         },
         {
           "label": "Other reason",
@@ -443,7 +447,11 @@
           "type": "select",
           "input": true,
           "hideOnChildrenHidden": false,
-          "searchThreshold": 0.3
+          "selectThreshold": 0.3,
+          "customOptions": {
+            "searchResultLimit": -1
+          },
+          "sortSearchAlphabetically": true
         },
         {
           "label": "Offering",
@@ -459,7 +467,11 @@
           "customConditional": "show =!data.denyProgramInformationRequest;",
           "type": "select",
           "input": true,
-          "searchThreshold": 0.3
+          "selectThreshold": 0.3,
+          "customOptions": {
+            "searchResultLimit": -1
+          },
+          "sortSearchAlphabetically": true
         },
         {
           "label": "Study period warning",
