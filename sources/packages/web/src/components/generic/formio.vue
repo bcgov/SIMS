@@ -55,7 +55,7 @@ const alphabetical = (a: any, b: any) =>
     numeric: true,
   });
 
-// ...inside the existing guarded block:
+// Apply custom sorting only to explicitly configured select components.
 SelectComponent.prototype.choicesOptions = function () {
   const options = originalChoicesOptions.call(this);
   if (this.component.sortSearchAlphabetically) {
