@@ -432,8 +432,6 @@ export class StudentStudentsController extends BaseController {
         studentProfile.lastName,
         studentProfile.firstName,
       );
-    // TEMPORARY: simulates a missing email for testing, remove after testing.
-    studentProfile.email = "";
     return studentProfile;
   }
 }
