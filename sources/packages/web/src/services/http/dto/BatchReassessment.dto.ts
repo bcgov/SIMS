@@ -36,5 +36,5 @@ export interface BatchReassessmentApplicationAPIOutDTO {
   applicationId?: number;
   studentId?: number;
   result: BatchReassessmentApplicationResult;
-  failureReason?: string;
+  failureReason: string | null;
 }

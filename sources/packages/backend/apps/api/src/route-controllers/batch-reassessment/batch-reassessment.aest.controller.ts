@@ -116,9 +116,20 @@ export class BatchReassessmentAESTController extends BaseController {
         `Batch reassessment with ID ${batchReassessmentId} not found.`,
       );
     }
-    return this.batchReassessmentService.getBatchReassessmentApplications(
-      batchReassessmentId,
-      paginationOptions,
-    );
+    const applications =
+      await this.batchReassessmentService.getBatchReassessmentApplications(
+        batchReassessmentId,
+        paginationOptions,
+      );
+    return {
+      results: applications.results.map((application) => ({
+        applicationNumber: application.applicationNumber,
+        applicationId: application.applicationId,
+        studentId: application.studentId,
+        result: application.result,
+        failureReason: application.failureReason,
+      })),
+      count: applications.count,
+    };
   }
 }
