@@ -31,8 +31,8 @@ describe("StudentStudentsController(e2e)-update", () => {
     db = createE2EDataSources(dataSource);
   });
 
-  beforeEach(() => {
-    resetMockJWTUserInfo(appModule);
+  beforeEach(async () => {
+    await resetMockJWTUserInfo(appModule);
   });
 
   it.each([IdentityProviders.BCSC, IdentityProviders.BCeIDBoth])(
