@@ -41,7 +41,7 @@ import { LoggerModule } from "@sims/utilities/logger";
 import { ConfigModule } from "@sims/utilities/config";
 import { DatabaseModule } from "@sims/sims-db";
 import { NotificationsModule } from "@sims/services/notifications";
-import { QueueModule } from "@sims/services/queue";
+import { BulMQModule, QueueModule } from "@sims/services/queue";
 import { AppExternalModule } from "./app.external.module";
 import { AccessLoggerMiddleware } from "./middlewares";
 import { TerminusModule } from "@nestjs/terminus";
@@ -68,6 +68,7 @@ import { DEFAULT_METRICS_APP_LABEL } from "./route-controllers/metrics/metrics.m
     AppExternalModule,
     AppSupportingUsersModule,
     QueueModule,
+    BulMQModule,
     ClamAntivirusModule,
     FeatureTogglesModule,
     TerminusModule,

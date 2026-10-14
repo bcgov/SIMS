@@ -3,9 +3,12 @@ import { ModuleRef } from "@nestjs/core";
 import { BULL_BOARD_INSTANCE, BullBoardInstance } from "@bull-board/nestjs";
 import { QueueService } from "@sims/services/queue/queue.service";
 import { getQueueToken } from "@nestjs/bull";
+import { getQueueToken as getQueueTokenBullMQ } from "@nestjs/bull";
 import { Queue } from "bull";
+import { Queue as BullMQQueue } from "bullmq";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
 import { LoggerService } from "@sims/utilities/logger";
+import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 
 @Module({})
 export class BullBoardQueuesRegistrationModule implements OnModuleInit {
@@ -39,5 +42,15 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
       });
       this.board.addQueue(queueAdapter);
     });
+    const queueProvider = this.moduleRef.get<BullMQQueue>(
+      getQueueTokenBullMQ("start-application"),
+      {
+        strict: false,
+      },
+    );
+    const queueAdapter = new BullMQAdapter(queueProvider, {
+      readOnlyMode: false,
+    });
+    this.board.addQueue(queueAdapter);
   }
 }
