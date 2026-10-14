@@ -36,6 +36,7 @@ import {
   T4AUploadEnqueuerScheduler,
   T4AUploadProcessor,
   ReturnedLoansResponseIntegrationScheduler,
+  BullMqQueueProcessor,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -208,6 +209,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     T4AUploadEnqueuerScheduler,
     T4AUploadProcessor,
     ReturnedLoansResponseIntegrationScheduler,
+    BullMqQueueProcessor,
   ],
   controllers: [HealthController, MetricsController],
 })

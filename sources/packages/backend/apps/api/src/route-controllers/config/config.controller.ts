@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Body, Controller, Get, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Public } from "../../auth/decorators/public.decorator";
 import { ConfigService } from "@sims/utilities/config";
@@ -6,12 +6,18 @@ import BaseController from "../BaseController";
 import { ConfigAPIOutDTO } from "./models/config.dto";
 import { BULL_BOARD_ROUTE } from "@sims/services/constants";
 import { AllowDuringMaintenanceMode } from "../../auth/decorators";
+import { InjectQueue } from "@nestjs/bullmq";
+import { Queue } from "bullmq";
 
 @AllowDuringMaintenanceMode()
 @Controller("config")
 @ApiTags("config")
 export class ConfigController extends BaseController {
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    @InjectQueue("start-application")
+    private readonly startApplicationQueue: Queue,
+  ) {
     super();
   }
 
@@ -54,5 +60,12 @@ export class ConfigController extends BaseController {
       maintenanceModeExternal: this.configService.maintenanceModeExternal,
       featureToggles: this.configService.featureToggles,
     };
+  }
+  @Public()
+  @Post("send-queue-message")
+  async sendQueueMessage(@Body() payload: { count: number }): Promise<void> {
+    await this.startApplicationQueue.add("start-application-job", {
+      count: payload.count,
+    });
   }
 }
