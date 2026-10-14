@@ -51,7 +51,7 @@
               color="primary"
               variant="outlined"
               v-if="item.totalCount"
-              @click="goToBatchReassessmentDetail(item.id)"
+              @click="goToBatchReassessmentOutcome(item.id)"
               >View</v-btn
             >
           </template>
@@ -92,9 +92,9 @@ const loadBatchReassessmentHistory = async () => {
   }
 };
 
-const goToBatchReassessmentDetail = (batchReassessmentId: number) => {
+const goToBatchReassessmentOutcome = (batchReassessmentId: number) => {
   router.push({
-    name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+    name: AESTRoutesConst.BATCH_REASSESSMENT_OUTCOME,
     params: { batchReassessmentId },
   });
 };

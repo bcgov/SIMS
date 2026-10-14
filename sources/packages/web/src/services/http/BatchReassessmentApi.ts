@@ -31,7 +31,7 @@ export class BatchReassessmentApi extends HttpBaseClient {
   }
 
   /**
-   * Gets the reassessment outcome of each application in a batch manual reassessment.
+   * Gets the reassessment outcome of all applications in a batch manual reassessment.
    * @param batchReassessmentId batch manual reassessment ID.
    * @param paginationOptions pagination options, with the application number as search criteria.
    * @param result optional reassessment result to filter by.

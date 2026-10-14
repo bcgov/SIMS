@@ -177,6 +177,10 @@ const searchApplications = async () => {
   await loadApplications();
 };
 
+/**
+ * Page event handler.
+ * @param event The data table page event.
+ */
 const pageEvent = async (event: DataTableOptions) => {
   currentPagination.page = event.page;
   currentPagination.pageLimit = event.itemsPerPage;

@@ -29,7 +29,7 @@ export interface BatchReassessmentSummaryAPIOutDTO {
 }
 
 /**
- * Outcome of the reassessment of a single application in a batch manual reassessment.
+ * Outcome of the reassessment of an application in a batch manual reassessment.
  */
 export interface BatchReassessmentApplicationAPIOutDTO {
   applicationNumber: string;

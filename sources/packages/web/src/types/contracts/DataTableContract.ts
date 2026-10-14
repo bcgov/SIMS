@@ -445,7 +445,7 @@ export const BatchReassessmentHistoryHeaders = [
 ];
 
 /**
- * Batch manual reassessment application results headers.
+ * Batch manual reassessment results headers.
  */
 export const BatchReassessmentApplicationHeaders = [
   { title: "Application Number", sortable: false, key: "applicationNumber" },

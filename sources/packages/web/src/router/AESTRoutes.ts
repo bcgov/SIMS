@@ -30,7 +30,7 @@ import StudentRestrictions from "@/views/aest/student/StudentRestrictions.vue";
 import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocationEdit.vue";
 import Reports from "@/views/aest/Reports.vue";
 import BatchReassessment from "@/views/aest/BatchReassessment.vue";
-import BatchReassessmentDetail from "@/views/aest/BatchReassessmentDetail.vue";
+import BatchReassessmentOutcome from "@/views/aest/BatchReassessmentOutcome.vue";
 import FormioEditor from "@/views/aest/FormioEditor.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import CASInvoices from "@/views/aest/CASInvoices.vue";
@@ -344,7 +344,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
                 ? {
                     name: "Batch manual reassessment outcome",
                     to: {
-                      name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+                      name: AESTRoutesConst.BATCH_REASSESSMENT_OUTCOME,
                       params: {
                         batchReassessmentId: route.query.batchReassessmentId,
                       },
@@ -820,10 +820,10 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.BatchReassessmentDetail,
-        name: AESTRoutesConst.BATCH_REASSESSMENT_DETAIL,
+        path: AppRoutes.BatchReassessmentOutcome,
+        name: AESTRoutesConst.BATCH_REASSESSMENT_OUTCOME,
         components: {
-          default: BatchReassessmentDetail,
+          default: BatchReassessmentOutcome,
           sidebar: AESTHomeSideBar,
         },
         props: {
