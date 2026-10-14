@@ -88,12 +88,13 @@
           class="float-right"
           color="primary"
           v-show="!isLastPage"
+          :disabled="isEmailMissing"
           @click="wizardGoNext"
           >Next step</v-btn
         >
         <v-btn
           class="float-right"
-          :disabled="!isLastPage || submitting"
+          :disabled="!isLastPage || submitting || isEmailMissing"
           v-show="!isFirstPage"
           color="primary"
           @click="wizardSubmit()"
@@ -106,7 +107,7 @@
   </full-page-container>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { useRouter } from "vue-router";
 import {
   useAuthBCSC,
@@ -119,234 +120,202 @@ import {
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import { MISSING_USER_INFO } from "@/constants";
-import { PropType, ref, defineComponent } from "vue";
+import { ref, computed, defineProps } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
   SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION,
-  WizardNavigationEvent,
   SupportingUserType,
-  FormIOForm,
-  VForm,
   ApiProcessError,
   OfferingIntensity,
 } from "@/types";
+import type { WizardNavigationEvent, FormIOForm, VForm } from "@/types";
 import { UpdateSupportingUserAPIInDTO } from "@/services/http/dto";
 
-export default defineComponent({
-  props: {
-    supportingUserType: {
-      type: String as PropType<SupportingUserType>,
-      required: true,
+interface Props {
+  supportingUserType: SupportingUserType;
+}
+
+const props = defineProps<Props>();
+
+const router = useRouter();
+const snackBar = useSnackBar();
+const { dateOnlyLongString, getISODateOnlyString } = useFormatters();
+const { bcscParsedToken } = useAuthBCSC();
+const submitting = ref(false);
+const formName = ref();
+const applicationNumber = ref("");
+const studentsLastName = ref("");
+const initialData = ref();
+const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
+const isFirstPage = ref(true);
+const isLastPage = ref(false);
+const showNav = ref(false);
+let formInstance: FormIOForm;
+const searchApplicationsForm = ref({} as VForm);
+const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
+const fullName = ref<string>();
+const studentsDateOfBirth = ref<Date>();
+
+const wizardSubmit = () => {
+  formInstance.submit();
+};
+
+const formLoaded = async (form: FormIOForm) => {
+  showNav.value = true;
+  formInstance = form;
+  // Disable internal submit button.
+  disableWizardButtons(formInstance);
+  formInstance.options.buttonSettings.showSubmit = false;
+  // Handle the navigation using the breadcrumbs.
+  formInstance.on(
+    "wizardPageSelected",
+    (_page: WizardNavigationEvent, index: number) => {
+      isFirstPage.value = index === 0;
+      isLastPage.value = formInstance.isLastPage();
     },
-  },
-  setup(props) {
-    const router = useRouter();
-    const snackBar = useSnackBar();
-    const { dateOnlyLongString } = useFormatters();
-    const { bcscParsedToken } = useAuthBCSC();
-    const submitting = ref(false);
-    const formName = ref();
-    const applicationNumber = ref("");
-    const studentsLastName = ref("");
-    const initialData = ref();
-    const { disableWizardButtons, excludeExtraneousValues } = useFormioUtils();
-    const isFirstPage = ref(true);
-    const isLastPage = ref(false);
-    const showNav = ref(false);
-    let formInstance: FormIOForm;
-    const searchApplicationsForm = ref({} as VForm);
-    const { checkOnlyDigitsRule, checkNullOrEmptyRule } = useRules();
-    const fullName = ref<string>();
-    const studentsDateOfBirth = ref<Date>();
-    const { getISODateOnlyString } = useFormatters();
+  );
+  // Handle the navigation using next/prev buttons.
+  const prevNextNavigation = (navigation: WizardNavigationEvent) => {
+    isFirstPage.value = navigation.page === 0;
+    isLastPage.value = formInstance.isLastPage();
+  };
+  formInstance.on("prevPage", prevNextNavigation);
+  formInstance.on("nextPage", prevNextNavigation);
+};
 
-    const wizardSubmit = () => {
-      formInstance.submit();
-    };
+const setInitialData = (
+  programYearStartDate: string,
+  offeringIntensity: OfferingIntensity,
+) => {
+  initialData.value = {
+    givenNames: bcscParsedToken.givenNames,
+    lastName: bcscParsedToken.lastName,
+    email: bcscParsedToken.email,
+    gender: bcscParsedToken.gender,
+    dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
+    programYearStartDate,
+    offeringIntensity,
+    // Temporary solution until the supporting user search and submit is enhanced.
+    isAbleToReport: true,
+  };
+};
 
-    const formLoaded = async (form: FormIOForm) => {
-      showNav.value = true;
-      formInstance = form;
-      // Disable internal submit button.
-      disableWizardButtons(formInstance);
-      formInstance.options.buttonSettings.showSubmit = false;
-      // Handle the navigation using the breadcrumbs.
-      formInstance.on(
-        "wizardPageSelected",
-        (_page: WizardNavigationEvent, index: number) => {
-          isFirstPage.value = index === 0;
-          isLastPage.value = formInstance.isLastPage();
-        },
+/**
+ * The 3 pieces of information necessary to identify a Student application.
+ * Used for search the application and submit supporting information.
+ */
+const getIdentifiedApplication = () => {
+  return {
+    applicationNumber: applicationNumber.value.trim(),
+    studentsLastName: studentsLastName.value.trim(),
+    supportingUserType: props.supportingUserType,
+    fullName: fullName.value?.trim(),
+    studentsDateOfBirth: studentsDateOfBirth.value
+      ? getISODateOnlyString(studentsDateOfBirth.value)
+      : undefined,
+  };
+};
+
+const applicationSearch = async () => {
+  const validationResult = await searchApplicationsForm.value.validate();
+  if (!validationResult.valid) {
+    return;
+  }
+
+  try {
+    const searchResult =
+      await SupportingUsersService.shared.getApplicationDetails(
+        getIdentifiedApplication(),
       );
-      // Handle the navigation using next/prev buttons.
-      const prevNextNavigation = (navigation: WizardNavigationEvent) => {
-        isFirstPage.value = navigation.page === 0;
-        isLastPage.value = formInstance.isLastPage();
-      };
-      formInstance.on("prevPage", prevNextNavigation);
-      formInstance.on("nextPage", prevNextNavigation);
-    };
-
-    const setInitialData = (
-      programYearStartDate: string,
-      offeringIntensity: OfferingIntensity,
-    ) => {
-      initialData.value = {
-        givenNames: bcscParsedToken.givenNames,
-        lastName: bcscParsedToken.lastName,
-        email: bcscParsedToken.email,
-        gender: bcscParsedToken.gender,
-        dateOfBirth: dateOnlyLongString(bcscParsedToken.birthdate),
-        programYearStartDate,
-        offeringIntensity,
-        // Temporary solution until the supporting user search and submit is enhanced.
-        isAbleToReport: true,
-      };
-    };
-
-    /**
-     * The 3 pieces of information necessary to identify a Student application.
-     * Used for search the application and submit supporting information.
-     */
-    const getIdentifiedApplication = () => {
-      return {
-        applicationNumber: applicationNumber.value.trim(),
-        studentsLastName: studentsLastName.value.trim(),
-        supportingUserType: props.supportingUserType,
-        fullName: fullName.value?.trim(),
-        studentsDateOfBirth: studentsDateOfBirth.value
-          ? getISODateOnlyString(studentsDateOfBirth.value)
-          : undefined,
-      };
-    };
-
-    const applicationSearch = async () => {
-      const validationResult = await searchApplicationsForm.value.validate();
-      if (!validationResult.valid) {
-        return;
-      }
-
-      try {
-        const searchResult =
-          await SupportingUsersService.shared.getApplicationDetails(
-            getIdentifiedApplication(),
-          );
-        setInitialData(
-          searchResult.programYearStartDate,
-          searchResult.offeringIntensity,
-        );
-        formName.value = searchResult.formName;
-      } catch (error: unknown) {
-        showNav.value = false;
-        formName.value = null;
-        if (error instanceof ApiProcessError) {
-          switch (error.errorType) {
-            case STUDENT_APPLICATION_NOT_FOUND:
-              snackBar.warn(`Application not found. ${error.message}`);
-              break;
-            case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-              snackBar.error(
-                `The student cannot act as a supporting user for its own application.
-                ${error.message}`,
-                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-              );
-              break;
-          }
-        } else {
+    setInitialData(
+      searchResult.programYearStartDate,
+      searchResult.offeringIntensity,
+    );
+    formName.value = searchResult.formName;
+  } catch (error: unknown) {
+    showNav.value = false;
+    formName.value = null;
+    if (error instanceof ApiProcessError) {
+      switch (error.errorType) {
+        case STUDENT_APPLICATION_NOT_FOUND:
+          snackBar.warn(`Application not found. ${error.message}`);
+          break;
+        case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
           snackBar.error(
-            "An unexpected error happened while searching for the application.",
+            `The student cannot act as a supporting user for its own application.
+            ${error.message}`,
+            snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
           );
-        }
+          break;
       }
-    };
+    } else {
+      snackBar.error(
+        "An unexpected error happened while searching for the application.",
+      );
+    }
+  }
+};
 
-    const submitted = async (formData: unknown) => {
-      submitting.value = true;
-      try {
-        const typedData = excludeExtraneousValues(
-          UpdateSupportingUserAPIInDTO,
-          formData,
-        );
-        await SupportingUsersService.shared.updateSupportingInformation({
-          ...typedData,
-          ...getIdentifiedApplication(),
-        });
+const submitted = async (formData: unknown) => {
+  submitting.value = true;
+  try {
+    const typedData = excludeExtraneousValues(
+      UpdateSupportingUserAPIInDTO,
+      formData,
+    );
+    await SupportingUsersService.shared.updateSupportingInformation({
+      ...typedData,
+      ...getIdentifiedApplication(),
+    });
 
-        snackBar.success("Supporting data submitted with success.");
-        router.push({ name: SupportingUserRoutesConst.DASHBOARD });
-      } catch (error: unknown) {
-        if (error instanceof ApiProcessError) {
-          switch (error.errorType) {
-            case STUDENT_APPLICATION_NOT_FOUND:
-            case MISSING_USER_INFO:
-              snackBar.error(
-                error.message,
-                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-              );
-              break;
-            case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
-              snackBar.warn(
-                `User already provided data.
-                ${error.message}`,
-                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-              );
-              break;
-            case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
-              snackBar.error(
-                `The student cannot act as a supporting user for its own application. ${error.message}`,
-                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-              );
-              break;
-            default:
-              snackBar.error(
-                "Unexpected error while submitting the supporting data.",
-                snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
-              );
-              break;
-          }
-        } else {
+    snackBar.success("Supporting data submitted with success.");
+    router.push({ name: SupportingUserRoutesConst.DASHBOARD });
+  } catch (error: unknown) {
+    if (error instanceof ApiProcessError) {
+      switch (error.errorType) {
+        case STUDENT_APPLICATION_NOT_FOUND:
+        case MISSING_USER_INFO:
+          snackBar.error(error.message, snackBar.EXTENDED_MESSAGE_DISPLAY_TIME);
+          break;
+        case SUPPORTING_USER_ALREADY_PROVIDED_DATA:
+          snackBar.warn(
+            `User already provided data.
+            ${error.message}`,
+            snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+          );
+          break;
+        case SUPPORTING_USER_IS_THE_STUDENT_FROM_APPLICATION:
           snackBar.error(
-            "An unexpected error happened while submitting supporting data.",
+            `The student cannot act as a supporting user for its own application. ${error.message}`,
+            snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
           );
-        }
-      } finally {
-        submitting.value = false;
+          break;
+        default:
+          snackBar.error(
+            "Unexpected error while submitting the supporting data.",
+            snackBar.EXTENDED_MESSAGE_DISPLAY_TIME,
+          );
+          break;
       }
-    };
+    } else {
+      snackBar.error(
+        "An unexpected error happened while submitting supporting data.",
+      );
+    }
+  } finally {
+    submitting.value = false;
+  }
+};
 
-    const wizardGoPrevious = () => {
-      formInstance.prevPage();
-    };
+const wizardGoPrevious = () => {
+  formInstance.prevPage();
+};
 
-    const wizardGoNext = () => {
-      formInstance.nextPage();
-    };
+const wizardGoNext = () => {
+  formInstance.nextPage();
+};
 
-    return {
-      formName,
-      initialData,
-      submitted,
-      submitting,
-      applicationNumber,
-      studentsLastName,
-      applicationSearch,
-      wizardGoNext,
-      wizardGoPrevious,
-      wizardSubmit,
-      formLoaded,
-      isFirstPage,
-      isLastPage,
-      showNav,
-      checkOnlyDigitsRule,
-      checkNullOrEmptyRule,
-      searchApplicationsForm,
-      fullName,
-      studentsDateOfBirth,
-      SupportingUserType,
-      getISODateOnlyString,
-      DATE_ONLY_ISO_FORMAT,
-    };
-  },
-});
+// Email is mandatory, the supporting information cannot be provided without it.
+const isEmailMissing = computed(() => !initialData.value?.email?.trim());
 </script>
