@@ -209,14 +209,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
-    const submissionData = {
-      ...payload,
-      givenNames: userToken.givenNames,
-      lastName: userToken.lastName,
-      dateOfBirth: userToken.birthdate,
-      email: userToken.email,
-      isAbleToReport: true,
-    };
+    const submissionData = { ...payload, isAbleToReport: true };
     const submissionResult =
       await this.supportingUserControllerService.validateDryRunSubmission(
         supportingUser.application.programYear.id,

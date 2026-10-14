@@ -79,9 +79,7 @@
                       "label": "Date of birth",
                       "disabled": true,
                       "tableView": true,
-                      "validate": {
-                        "required": true
-                      },
+                      "persistent": false,
                       "key": "dateOfBirth",
                       "type": "textfield",
                       "input": true,
@@ -101,9 +99,7 @@
                       "label": "Last name",
                       "disabled": true,
                       "tableView": true,
-                      "validate": {
-                        "required": true
-                      },
+                      "persistent": false,
                       "key": "lastName",
                       "type": "textfield",
                       "input": true,
@@ -113,9 +109,7 @@
                       "label": "Email address",
                       "disabled": true,
                       "tableView": true,
-                      "validate": {
-                        "required": true
-                      },
+                      "persistent": false,
                       "key": "email",
                       "type": "textfield",
                       "input": true,
@@ -135,6 +129,25 @@
               "input": false,
               "tableView": false,
               "hideOnChildrenHidden": false
+            },
+            {
+              "label": "HTML",
+              "tag": "p",
+              "className": "alert alert-danger fa fa-ban w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong class=\"pl-5\">Missing Information</strong>\n<br />\n<span>\n  The information collected from your BC Services Card account is incomplete.\n  Please go to your\n  <a\n    class=\"formio-href\"\n    href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\"\n    target=\"_blank\"\n    rel=\"noopener noreferrer\"\n  >\n    BC Services Card account</a\n  >\n  to update your Email Address.\n</span>",
+              "refreshOnChange": true,
+              "customClass": "banner-alert",
+              "key": "emailRequiredBanner",
+              "customConditional": "show = !(data.email || \"\").trim();",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
             },
             {
               "label": "HTML",

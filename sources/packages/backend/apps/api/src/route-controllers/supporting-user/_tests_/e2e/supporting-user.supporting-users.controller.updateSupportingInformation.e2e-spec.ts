@@ -239,6 +239,136 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
     },
   );
 
+  it.each(["2024-2025", "2025-2026", "2026-2027"])(
+    "Should save supporting information when a partner submits valid data with all required authentication information for program year %s.",
+    async (programYear: string) => {
+      // Arrange
+      const partnerForm = await db.dynamicFormConfiguration.findOneOrFail({
+        relations: { programYear: true },
+        where: {
+          formType: DynamicFormType.SupportingUsersPartner,
+          programYear: { programYear },
+        },
+        order: { programYear: { startDate: "DESC" } },
+      });
+      const application = await saveFakeApplication(
+        db.dataSource,
+        { programYear: partnerForm.programYear },
+        {
+          initialValues: {
+            applicationStatus: ApplicationStatus.InProgress,
+            offeringIntensity: OfferingIntensity.partTime,
+          },
+        },
+      );
+      const partner = await db.supportingUser.save(
+        createFakeSupportingUser(
+          { application },
+          {
+            initialValues: {
+              isAbleToReport: true,
+              supportingUserType: SupportingUserType.Partner,
+            },
+          },
+        ),
+      );
+      // Use a distinct identity from the student who submitted the application.
+      const user = createFakeUser();
+      const birthDate = "1980-01-01";
+      await mockJWTToken(appModule, (jwtPayload) => {
+        jwtPayload.azp = AuthorizedParties.supportingUsers;
+        jwtPayload.identityProvider = IdentityProviders.BCSC;
+        jwtPayload.userName = user.userName;
+        jwtPayload.givenNames = user.firstName;
+        jwtPayload.lastName = user.lastName;
+        jwtPayload.email = user.email;
+        jwtPayload.birthdate = birthDate;
+      });
+      const supportingUserToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+      const payload: UpdateSupportingUserAPIInDTO = {
+        applicationNumber: application.applicationNumber,
+        studentsLastName: application.student.user.lastName,
+        studentsDateOfBirth: application.student.birthDate,
+        supportingUserType: SupportingUserType.Partner,
+        offeringIntensity: OfferingIntensity.partTime,
+        addressLine1: "123 Some Street",
+        addressLine2: undefined,
+        city: "Victoria",
+        country: "Canada",
+        phone: "2505551234",
+        postalCode: "V8V1V1",
+        provinceState: "BC",
+        sin: "544 962 244",
+        hasValidSIN: FormYesNoOptions.Yes,
+        supportingData: {
+          totalIncome: 1000,
+          iAgreeToAboveStudentAidBCConsent: true,
+          iAgreeToTheAboveCRAConsent: true,
+        },
+      };
+
+      // Act
+      await request(app.getHttpServer())
+        .patch(getEndpoint())
+        .send(payload)
+        .auth(supportingUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      // Assert
+      const updatedPartner = await db.supportingUser.findOneOrFail({
+        select: {
+          id: true,
+          birthDate: true,
+          sin: true,
+          supportingData: true,
+          contactInfo: true,
+          user: {
+            id: true,
+            userName: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        where: { id: partner.id },
+        relations: { user: true },
+        loadEagerRelations: false,
+      });
+      expect(updatedPartner).toEqual({
+        id: partner.id,
+        birthDate,
+        sin: "544962244",
+        supportingData: payload.supportingData,
+        contactInfo: {
+          phone: payload.phone,
+          address: {
+            addressLine1: payload.addressLine1,
+            city: payload.city,
+            country: payload.country,
+            postalCode: payload.postalCode,
+            provinceState: payload.provinceState,
+          },
+        },
+        user: {
+          id: expect.any(Number),
+          userName: user.userName,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+      });
+      expect(zeebeClient.publishMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          correlationKey: partner.id.toString(),
+          name: "supporting-user-info-received",
+          variables: {},
+        }),
+      );
+    },
+  );
+
   afterAll(async () => {
     await app?.close();
   });
