@@ -88,12 +88,13 @@
           class="float-right"
           color="primary"
           v-show="!isLastPage"
+          :disabled="isEmailMissing"
           @click="wizardGoNext"
           >Next step</v-btn
         >
         <v-btn
           class="float-right"
-          :disabled="!isLastPage || submitting"
+          :disabled="!isLastPage || submitting || isEmailMissing"
           v-show="!isFirstPage"
           color="primary"
           @click="wizardSubmit()"
@@ -119,7 +120,7 @@ import {
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import { MISSING_USER_INFO } from "@/constants";
-import { PropType, ref, defineComponent } from "vue";
+import { PropType, ref, computed, defineComponent } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
@@ -323,6 +324,9 @@ export default defineComponent({
       formInstance.nextPage();
     };
 
+    // Email is mandatory, the supporting information cannot be provided without it.
+    const isEmailMissing = computed(() => !initialData.value?.email?.trim());
+
     return {
       formName,
       initialData,
@@ -332,6 +336,7 @@ export default defineComponent({
       studentsLastName,
       applicationSearch,
       wizardGoNext,
+      isEmailMissing,
       wizardGoPrevious,
       wizardSubmit,
       formLoaded,

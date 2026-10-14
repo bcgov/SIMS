@@ -257,7 +257,7 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         {
           initialValues: {
             applicationStatus: ApplicationStatus.InProgress,
-            offeringIntensity: OfferingIntensity.fullTime,
+            offeringIntensity: OfferingIntensity.partTime,
           },
         },
       );
@@ -292,7 +292,7 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         studentsLastName: application.student.user.lastName,
         studentsDateOfBirth: application.student.birthDate,
         supportingUserType: SupportingUserType.Partner,
-        offeringIntensity: OfferingIntensity.fullTime,
+        offeringIntensity: OfferingIntensity.partTime,
         addressLine1: "123 Some Street",
         addressLine2: undefined,
         city: "Victoria",
@@ -302,7 +302,11 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         provinceState: "BC",
         sin: "544 962 244",
         hasValidSIN: FormYesNoOptions.Yes,
-        supportingData: getPartnerSupportingData(programYear),
+        supportingData: {
+          totalIncome: 1000,
+          iAgreeToAboveStudentAidBCConsent: true,
+          iAgreeToTheAboveCRAConsent: true,
+        },
       };
 
       // Act
@@ -369,37 +373,6 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
     await app?.close();
   });
 });
-
-/**
- * Gets the partner supporting data accepted by the partner form of the program year.
- * The 2024-2025 form has additional partner questions and no BCEA question,
- * while the following program years have the BCEA question.
- * @param programYear program year of the partner form.
- * @returns partner supporting data.
- */
-function getPartnerSupportingData(programYear: string): unknown {
-  const commonData = {
-    totalIncome: 1000,
-    hasEmploymentInsuranceBenefits: "no",
-    hasFedralProvincialPDReceipt: "no",
-    hasTotalIncomeAssistance: "no",
-    partnerCaringForDependant: "no",
-    partnerFulltimeStudent: "no",
-    partnerPayStudentLoan: "no",
-    partnerPaySupport: "no",
-    iAgreeToAboveStudentAidBCConsent: true,
-    iAgreeToTheAboveCRAConsent: true,
-  };
-  if (programYear === "2024-2025") {
-    return {
-      ...commonData,
-      partnerEmployed: "no",
-      partnerLivingWithStudent: "no",
-      isPartnerTakingCareOfEligibleDependents: "no",
-    };
-  }
-  return { ...commonData, hasBCEAIncomeAssistance: "no" };
-}
 
 /**
  * Gets the endpoint for a supporting user to submit their information.

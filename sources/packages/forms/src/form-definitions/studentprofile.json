@@ -335,7 +335,7 @@
           "refreshOnChange": true,
           "customClass": "banner-alert",
           "key": "emailRequiredBanner",
-          "customConditional": "show = !data.email;",
+          "customConditional": "show = !(data.email || \"\").trim();",
           "type": "htmlelement",
           "input": false,
           "tableView": false,

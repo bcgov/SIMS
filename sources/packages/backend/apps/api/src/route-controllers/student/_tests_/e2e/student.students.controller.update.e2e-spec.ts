@@ -98,7 +98,12 @@ describe("StudentStudentsController(e2e)-update", () => {
       .patch(endpoint)
       .send({ mode: "student-edit", identityProvider: IdentityProviders.BCSC })
       .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.BAD_REQUEST);
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: "Not able to update a student due to an invalid request.",
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
   });
 
   afterAll(async () => {
