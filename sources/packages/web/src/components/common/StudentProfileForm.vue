@@ -24,11 +24,13 @@
 import { computed, defineProps, defineEmits } from "vue";
 import { StudentProfileFormModel, StudentProfileFormModes } from "@/types";
 
-const props = defineProps<{
+interface Props {
   formModel: StudentProfileFormModel;
   processing: boolean;
   isDataReady: boolean;
-}>();
+}
+
+const props = defineProps<Props>();
 
 defineEmits(["submitted", "customEvent", "loaded"]);
 

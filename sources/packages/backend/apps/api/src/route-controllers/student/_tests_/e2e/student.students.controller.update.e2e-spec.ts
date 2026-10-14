@@ -44,11 +44,7 @@ describe("StudentStudentsController(e2e)-update", () => {
       const studentToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
-      const payload: UpdateStudentAPIInDTO = {
-        mode: "student-edit",
-        identityProvider,
-        phone: "2505551234",
-        gender: "nonBinary",
+      const address = {
         addressLine1: "123 Some Street",
         addressLine2: "Unit 2",
         city: "Victoria",
@@ -56,7 +52,14 @@ describe("StudentStudentsController(e2e)-update", () => {
         country: "Canada",
         selectedCountry: "Canada",
         postalCode: "V8V1V1",
-        canadaPostalCode: "V8V1V1",
+      };
+      const payload: UpdateStudentAPIInDTO = {
+        mode: "student-edit",
+        identityProvider,
+        phone: "2505551234",
+        gender: "nonBinary",
+        ...address,
+        canadaPostalCode: address.postalCode,
       };
 
       // Act/Assert
@@ -72,16 +75,7 @@ describe("StudentStudentsController(e2e)-update", () => {
       });
       expect(updatedStudent.gender).toBe(payload.gender);
       expect(updatedStudent.contactInfo.phone).toBe(payload.phone);
-      expect(updatedStudent.contactInfo.address).toEqual(
-        expect.objectContaining({
-          addressLine1: payload.addressLine1,
-          addressLine2: payload.addressLine2,
-          city: payload.city,
-          provinceState: payload.provinceState,
-          country: payload.country,
-          postalCode: payload.postalCode,
-        }),
-      );
+      expect(updatedStudent.contactInfo.address).toEqual(address);
     },
   );
 
