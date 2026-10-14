@@ -24,7 +24,7 @@ import {
 import { StudentAssessmentService } from "../student-assessment/student-assessment.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
-  BatchReassessmentApplicationsPaginationOptions,
+  BatchReassessmentApplicationPaginationOptions,
   PaginatedResults,
 } from "../../utilities";
 
@@ -98,7 +98,7 @@ export class BatchReassessmentService {
       .orderBy("batchReassessment.createdAt", "DESC")
       .getRawMany<Omit<BatchReassessmentSummary, "status" | "pendingCount">>();
 
-    const summaries: BatchReassessmentSummary[] = rows.map((row) => {
+    return rows.map((row) => {
       // Applications that have an assessment that has not yet reached a final status.
       const pendingCount = row.totalCount - row.successCount - row.failureCount;
       return {
@@ -110,8 +110,6 @@ export class BatchReassessmentService {
             : BatchReassessmentStatus.InProgress,
       };
     });
-
-    return summaries;
   }
 
   /**
@@ -134,7 +132,7 @@ export class BatchReassessmentService {
    */
   async getBatchReassessmentApplications(
     batchReassessmentId: number,
-    paginationOptions: BatchReassessmentApplicationsPaginationOptions,
+    paginationOptions: BatchReassessmentApplicationPaginationOptions,
   ): Promise<PaginatedResults<BatchReassessmentApplicationOutcome>> {
     const query = this.batchReassessmentApplicationRepo
       .createQueryBuilder("batchApplication")
@@ -162,6 +160,7 @@ export class BatchReassessmentService {
       case BatchReassessmentApplicationResult.Successful:
         query.andWhere(
           "studentAssessment.studentAssessmentStatus IN (:...successStatuses)",
+          { successStatuses: BATCH_REASSESSMENT_SUCCESS_STATUSES },
         );
         break;
       case BatchReassessmentApplicationResult.Failed:
@@ -170,17 +169,17 @@ export class BatchReassessmentService {
       case BatchReassessmentApplicationResult.Pending:
         query.andWhere(
           "studentAssessment.studentAssessmentStatus NOT IN (:...successStatuses)",
+          { successStatuses: BATCH_REASSESSMENT_SUCCESS_STATUSES },
         );
         break;
     }
-    query.setParameter("successStatuses", BATCH_REASSESSMENT_SUCCESS_STATUSES);
     query
       .orderBy(
         "batchApplication.applicationNumber",
         paginationOptions.sortOrder ?? FieldSortOrder.ASC,
       )
-      .skip(paginationOptions.page * paginationOptions.pageLimit)
-      .take(paginationOptions.pageLimit);
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
     const [batchApplications, count] = await query.getManyAndCount();
     return {
       results: batchApplications.map((batchApplication) => ({

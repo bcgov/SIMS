@@ -8,6 +8,7 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
+import { BatchReassessmentApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   AllowAuthorizedParty,
@@ -28,10 +29,7 @@ import {
 import { BatchReassessmentService } from "../../services";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { getUserFullName } from "../../utilities";
-import {
-  BatchReassessmentApplicationsPaginationOptionsAPIInDTO,
-  PaginatedResultsAPIOutDTO,
-} from "../models/pagination.dto";
+import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.
@@ -94,7 +92,7 @@ export class BatchReassessmentAESTController extends BaseController {
   }
 
   /**
-   * Gets the reassessment outcome of each application in a batch manual reassessment.
+   * Gets the reassessment outcome of all applications in a batch manual reassessment.
    * @param batchReassessmentId batch manual reassessment ID.
    * @param paginationOptions pagination options, with optional application number
    * search criteria and result filter.
@@ -105,7 +103,7 @@ export class BatchReassessmentAESTController extends BaseController {
   async getBatchReassessmentApplications(
     @Param("batchReassessmentId", ParseIntPipe) batchReassessmentId: number,
     @Query()
-    paginationOptions: BatchReassessmentApplicationsPaginationOptionsAPIInDTO,
+    paginationOptions: BatchReassessmentApplicationPaginationOptionsAPIInDTO,
   ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
     const batchReassessmentExists =
       await this.batchReassessmentService.batchReassessmentExists(

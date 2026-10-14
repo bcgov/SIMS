@@ -111,9 +111,9 @@ export interface OfferingPaginationOptions extends PaginationOptions {
 }
 
 /**
- * Batch reassessment applications pagination options.
+ * Batch reassessment application pagination options.
  */
-export interface BatchReassessmentApplicationsPaginationOptions extends PaginationOptions {
+export interface BatchReassessmentApplicationPaginationOptions extends PaginationOptions {
   /**
    * Reassessment result to filter the applications.
    */

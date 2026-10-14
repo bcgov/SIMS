@@ -54,7 +54,7 @@ export class BatchReassessmentSummaryAPIOutDTO {
 }
 
 /**
- * Outcome of the reassessment of a single application in a batch manual reassessment.
+ * Outcome of the reassessment of an application in a batch manual reassessment.
  */
 export class BatchReassessmentApplicationAPIOutDTO {
   applicationNumber: string;

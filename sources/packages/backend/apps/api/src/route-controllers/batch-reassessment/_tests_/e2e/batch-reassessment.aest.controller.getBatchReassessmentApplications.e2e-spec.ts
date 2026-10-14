@@ -90,10 +90,14 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
       },
     );
     const submittedAssessment = await db.studentAssessment.save(
-      createFakeStudentAssessment({
-        auditUser,
-        application: pendingApplication,
-      }),
+      createFakeStudentAssessment(
+        { auditUser, application: pendingApplication },
+        {
+          initialValue: {
+            studentAssessmentStatus: StudentAssessmentStatus.Submitted,
+          },
+        },
+      ),
     );
     // Batch applications, where the failed one has no assessment.
     await db.batchReassessmentApplication.save([
@@ -303,7 +307,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
 
     // Act/Assert
     const endpoint = getEndpoint(
-      1,
+      batch.id,
       "page=0&pageLimit=10&result=SomeInvalidResult",
     );
     await request(app.getHttpServer())
@@ -325,7 +329,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
 
     // Act/Assert
     const endpoint = getEndpoint(
-      1,
+      batch.id,
       "page=0&pageLimit=10&sortField=SomeInvalidField",
     );
     await request(app.getHttpServer())

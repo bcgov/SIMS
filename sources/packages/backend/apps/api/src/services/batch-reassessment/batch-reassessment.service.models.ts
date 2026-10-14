@@ -29,7 +29,7 @@ export interface BatchReassessmentSummary {
 }
 
 /**
- * Outcome of the reassessment of a single application in a batch manual reassessment.
+ * Result of the reassessment of an application in a batch manual reassessment.
  */
 export enum BatchReassessmentApplicationResult {
   /**

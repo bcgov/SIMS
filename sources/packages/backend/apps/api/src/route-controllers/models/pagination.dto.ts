@@ -247,22 +247,22 @@ export class PIRPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
 }
 
 /**
- * Common DTO result used when an API endpoint
- * must enable pagination and search options.
+ * Batch reassessment application specific pagination options.
  */
-export class PaginatedResultsAPIOutDTO<T> {
-  results: T[];
-  count: number;
-}
-
-/**
- * Batch reassessment applications specific pagination options.
- */
-export class BatchReassessmentApplicationsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+export class BatchReassessmentApplicationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn(["applicationNumber"])
   sortField?: string;
   @IsOptional()
   @IsEnum(BatchReassessmentApplicationResult)
   result?: BatchReassessmentApplicationResult;
+}
+
+/**
+ * Common DTO result used when an API endpoint
+ * must enable pagination and search options.
+ */
+export class PaginatedResultsAPIOutDTO<T> {
+  results: T[];
+  count: number;
 }
