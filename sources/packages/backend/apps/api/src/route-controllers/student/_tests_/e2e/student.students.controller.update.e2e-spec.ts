@@ -100,6 +100,47 @@ describe("StudentStudentsController(e2e)-update", () => {
       .auth(studentToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
+        message: [
+          "phone must be longer than or equal to 10 characters",
+          "addressLine1 should not be empty",
+          "city should not be empty",
+          "country should not be empty",
+          "postalCode should not be empty",
+          "selectedCountry should not be empty",
+        ],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
+  it("Should return a bad request error when the submitted data is not valid for the student profile form.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    await mockJWTUserInfo(appModule, student.user);
+    const studentToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const payload: UpdateStudentAPIInDTO = {
+      mode: "student-edit",
+      identityProvider: IdentityProviders.BCSC,
+      phone: "2505551234",
+      gender: "invalid-gender",
+      addressLine1: "123 Some Street",
+      city: "Victoria",
+      provinceState: "BC",
+      country: "Canada",
+      selectedCountry: "Canada",
+      postalCode: "V8V1V1",
+      canadaPostalCode: "V8V1V1",
+    };
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(studentToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
         message: "Not able to update a student due to an invalid request.",
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,
