@@ -8,7 +8,10 @@ import {
   Post,
   Query,
 } from "@nestjs/common";
-import { BatchReassessmentApplicationPaginationOptionsAPIInDTO } from "../models/pagination.dto";
+import {
+  BatchReassessmentApplicationPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
 import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   AllowAuthorizedParty,
@@ -29,7 +32,6 @@ import {
 import { BatchReassessmentService } from "../../services";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { getUserFullName } from "../../utilities";
-import { PaginatedResultsAPIOutDTO } from "../models/pagination.dto";
 
 /**
  * Provides AEST endpoints for submitting and reviewing batch manual reassessments.

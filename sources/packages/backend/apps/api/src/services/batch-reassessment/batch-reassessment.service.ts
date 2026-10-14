@@ -117,7 +117,7 @@ export class BatchReassessmentService {
    * @param batchReassessmentId batch manual reassessment ID.
    * @returns true if the batch manual reassessment exists, otherwise false.
    */
-  async batchReassessmentExists(batchReassessmentId: number): Promise<boolean> {
+  batchReassessmentExists(batchReassessmentId: number): Promise<boolean> {
     return this.batchReassessmentRepo.exists({
       where: { id: batchReassessmentId },
     });
