@@ -48,6 +48,7 @@ import {
   FormSubmissionUpdateModifiedIndependentOnDecisionAction,
   FormSubmissionUpdateModifiedIndependentOnCancelAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
+  EducationProgramSaveService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -118,6 +119,7 @@ import {
   EducationProgramFieldOfStudyCodeEvaluator,
   EducationProgramStatusEvaluator,
 } from "./services/education-program/education-program-evaluator";
+import { EducationProgramDataValidationService } from "./services/education-program/education-program-data-validation.service";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],
@@ -178,6 +180,8 @@ import {
     COEDeniedReasonService,
     InstitutionTypeService,
     EducationProgramService,
+    EducationProgramDataValidationService,
+    EducationProgramSaveService,
     EducationProgramOfferingService,
     PIRDeniedReasonService,
     EducationProgramControllerService,

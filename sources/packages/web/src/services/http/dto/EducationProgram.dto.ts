@@ -33,6 +33,7 @@ export interface EducationProgramDataAPIOutDTO {
 }
 
 export interface EducationProgramConfigurationAPIOutDTO {
+  configurationId: number;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -152,6 +153,33 @@ export class EducationProgramAPIInDTO {
   isBCPrivate: boolean;
   @Expose()
   isBCPublic: boolean;
+}
+
+/**
+ * Dynamic program data used to create an education program,
+ * and the configuration it was filled in against.
+ */
+export interface CreateEducationProgramAPIInDTO {
+  /**
+   * Program configuration ID against which the program is being created.
+   */
+  programConfigurationId: number;
+  /**
+   * Dynamic program data, whose shape is defined by the program
+   * configuration schemas.
+   */
+  programData: Record<string, unknown>;
+}
+
+/**
+ * Dynamic program data used to update an education program.
+ */
+export interface UpdateEducationProgramAPIInDTO {
+  /**
+   * Dynamic program data, whose shape is defined by the program
+   * configuration schemas.
+   */
+  programData: Record<string, unknown>;
 }
 
 export interface StudentEducationProgramAPIOutDTO {

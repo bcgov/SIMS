@@ -18,11 +18,13 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import {
-  EducationProgramAPIInDTO,
+  CreateEducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "./models/education-program.dto";
 import { ClientTypeBaseRoute } from "../../types";
 import {
@@ -44,6 +46,10 @@ import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
 import { isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
+import {
+  EducationProgramData,
+  EducationProgramSaveService,
+} from "../../services";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -51,6 +57,7 @@ import { EducationProgramEvaluationService } from "../../services/education-prog
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
     private readonly educationProgramService: EducationProgramService,
+    private readonly educationProgramSaveService: EducationProgramSaveService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
   ) {
@@ -102,10 +109,32 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration. If not provided,
+   * the most recent active configuration is returned.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find an active program configuration.",
+  })
+  @Get(["configuration", "configuration/:programConfigurationId"])
+  async getEducationProgramConfiguration(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("programConfigurationId", new ParseIntPipe({ optional: true }))
+    programConfigurationId?: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return this.educationProgramControllerService.getEducationProgramConfiguration(
+      userToken.authorizations.institutionId,
+      { programConfigurationId },
+    );
+  }
+
+  /**
    * Creates a new education program.
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
+  // TODO: Review the comments.
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to a save the program due to an invalid request or " +
@@ -116,14 +145,15 @@ export class EducationProgramInstitutionsController extends BaseController {
   })
   @Post()
   async createEducationProgram(
-    @Body() payload: EducationProgramAPIInDTO,
+    @Body() payload: CreateEducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     this.educationProgramControllerService.checkInstitutionAuthorization(
       userToken.authorizations,
     );
-    const newProgram = await this.educationProgramControllerService.saveProgram(
-      payload,
+    const newProgram = await this.educationProgramSaveService.createProgram(
+      payload.programData as EducationProgramData,
+      payload.programConfigurationId,
       userToken.authorizations.institutionId,
       userToken.userId,
     );
@@ -135,6 +165,7 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param programId program to be updated.
    * @param payload information to be updated.
    */
+  // TODO: Review the comments.
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to a save the program due to an invalid request or " +
@@ -150,17 +181,17 @@ export class EducationProgramInstitutionsController extends BaseController {
   @Patch(":programId")
   async updateEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
-    @Body() payload: EducationProgramAPIInDTO,
+    @Body() payload: UpdateEducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     this.educationProgramControllerService.checkInstitutionAuthorization(
       userToken.authorizations,
     );
-    await this.educationProgramControllerService.saveProgram(
-      payload,
+    await this.educationProgramSaveService.updateProgram(
+      programId,
+      payload.programData as EducationProgramData,
       userToken.authorizations.institutionId,
       userToken.userId,
-      programId,
     );
   }
 

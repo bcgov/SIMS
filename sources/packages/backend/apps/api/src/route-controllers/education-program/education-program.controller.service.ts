@@ -100,27 +100,36 @@ export class EducationProgramControllerService {
 
   /**
    * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration.
    * @param institutionId ID of the institution requesting the configuration.
+   * @param options method options.
+   * - `programConfigurationId` ID of the program configuration. If not provided,
+   * the most recent active configuration is returned.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(
-    programConfigurationId: number,
     institutionId: number,
+    options?: { programConfigurationId?: number },
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     const institution =
       await this.institutionService.getInstitutionTypeById(institutionId);
     const programConfiguration =
-      await this.educationProgramConfigurationRepo.findOneOrFail({
+      await this.educationProgramConfigurationRepo.findOne({
         select: {
           id: true,
           visualSchema: true,
           validationSchema: true,
           isActive: true,
         },
-        where: { id: programConfigurationId, isActive: true },
+        where: { id: options?.programConfigurationId, isActive: true },
+        order: { createdAt: "DESC" },
       });
+    if (!programConfiguration) {
+      throw new NotFoundException(
+        "Not able to find an active program configuration.",
+      );
+    }
     return {
+      configurationId: programConfiguration.id,
       programData: {
         context: {
           hasOfferings: false,
@@ -169,6 +178,8 @@ export class EducationProgramControllerService {
       credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
       programData: {
         ...program.programData,
+        programName: program.name,
+        programDescription: program.description,
         context: {
           hasOfferings: hasOfferings,
           isActive: program.isActive && !program.isExpired,

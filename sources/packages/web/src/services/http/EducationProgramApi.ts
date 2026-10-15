@@ -3,18 +3,20 @@ import HttpBaseClient from "./common/HttpBaseClient";
 import { getPaginationQueryString } from "@/helpers";
 import {
   ApproveProgramAPIInDTO,
+  CreateEducationProgramAPIInDTO,
   DeactivateProgramAPIInDTO,
   DeclineProgramAPIInDTO,
-  EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
   StudentEducationProgramAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "@/services/http/dto";
 
 export class EducationProgramApi extends HttpBaseClient {
@@ -58,17 +60,17 @@ export class EducationProgramApi extends HttpBaseClient {
 
   /**
    * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration.
+   * @param programConfigurationId ID of the program configuration. If not provided,
+   * the most recent active configuration is returned.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(
-    programConfigurationId: number,
+    programConfigurationId?: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.getCall(
-      this.addClientRoot(
-        `education-program/configuration/${programConfigurationId}`,
-      ),
-    );
+    const url = programConfigurationId
+      ? `education-program/configuration/${programConfigurationId}`
+      : "education-program/configuration";
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**
@@ -87,21 +89,22 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Creates a new education program.
    * @param payload information to create the new program.
+   * @returns id of the created program.
    */
   async createEducationProgram(
-    payload: EducationProgramAPIInDTO,
-  ): Promise<void> {
-    await this.postCall(this.addClientRoot("education-program"), payload);
+    payload: CreateEducationProgramAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall(this.addClientRoot("education-program"), payload);
   }
 
   /**
-   * Updates the main information for an existing education program.
+   * Updates an existing education program.
    * @param programId program to be updated.
    * @param payload information to be updated.
    */
   async updateEducationProgram(
     programId: number,
-    payload: EducationProgramAPIInDTO,
+    payload: UpdateEducationProgramAPIInDTO,
   ): Promise<void> {
     await this.patchCall(
       this.addClientRoot(`education-program/${programId}`),

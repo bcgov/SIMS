@@ -47,9 +47,23 @@ import { ErrorMessage } from "@/types";
 import { defineProps, defineEmits, withDefaults } from "vue";
 
 interface ProgramFormProps {
+  /**
+   * ID of the program to be edited.'
+   * If not provided, a new program will be created.
+   */
   programId?: number;
+  /**
+   * ID of the program configuration. If not provided, the most recent active configuration is used.
+   * Once the UI allow the user to select a specific program configuration, this property will be used.
+   */
   programConfigurationId?: number;
+  /**
+   * Indicates whether the form is read-only.
+   */
   readOnly?: boolean;
+  /**
+   * Indicates whether the form is currently processing a submission.
+   */
   isProcessing?: boolean;
 }
 
@@ -66,6 +80,8 @@ const emit = defineEmits<{
   submitted: [program: EducationProgramAPIOutDTO];
   loaded: [program: EducationProgramAPIOutDTO];
 }>();
+
+let programConfigurationId: number;
 const formModel = ref<Record<string, unknown>>({});
 // The context is kept in the form data, never changed by the user, since the
 // schemas' rules and validations depend on it.
@@ -152,8 +168,8 @@ const submit = async () => {
   const programData = { ...formModel.value };
   delete programData.context;
   delete programData.warnings;
-  await EducationProgramService.shared.createEducationProgramDynamic({
-    programConfigurationId: 6,
+  await EducationProgramService.shared.createEducationProgram({
+    programConfigurationId,
     programData,
   });
   //emit("submitted", programData);
@@ -176,13 +192,14 @@ const loadProgram = async (programId: number) => {
   }
 };
 
-const loadProgramForCreation = async (programConfigurationId: number) => {
+const loadProgramForCreation = async () => {
   try {
     loading.value = true;
     const programConfiguration =
       await EducationProgramService.shared.getEducationProgramConfiguration(
-        programConfigurationId,
+        props.programConfigurationId,
       );
+    programConfigurationId = programConfiguration.configurationId;
     programFormSchema.value =
       programConfiguration.validationSchema as JsonSchema;
     programFormUiSchema.value =
@@ -200,12 +217,6 @@ watchEffect(async () => {
     await loadProgram(props.programId);
     return;
   }
-  if (props.programConfigurationId) {
-    await loadProgramForCreation(props.programConfigurationId);
-    return;
-  }
-  throw new Error(
-    "Either programId or programConfigurationId must be provided.",
-  );
+  await loadProgramForCreation();
 });
 </script>

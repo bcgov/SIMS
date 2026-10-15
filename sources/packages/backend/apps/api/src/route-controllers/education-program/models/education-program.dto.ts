@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsOptional,
+  IsPositive,
   Matches,
   MaxLength,
   ValidateIf,
@@ -34,7 +35,11 @@ import {
   PROGRAM_COMPLETION_YEARS_MAX_LENGTH,
   LOOKUP_KEY_MAX_LENGTH,
 } from "@sims/sims-db";
-import { AllowIf, IsDateAfter } from "../../../utilities/class-validation";
+import {
+  AllowIf,
+  IsDateAfter,
+  JsonMaxSize,
+} from "../../../utilities/class-validation";
 import { getPSTPDTDateFormatted } from "@sims/utilities";
 import {
   CIP_CODE_REGEX,
@@ -42,6 +47,7 @@ import {
   OTHER_REGULATORY_BODY,
   SABC_PROGRAM_CODE_REGEX,
 } from "../../../services/education-program/constants";
+import { JSON_20KB } from "../../../constants";
 
 /**
  * Values pre-populated into the program data only to execute the
@@ -66,6 +72,7 @@ export class EducationProgramDataAPIOutDTO {
 }
 
 export class EducationProgramConfigurationAPIOutDTO {
+  configurationId: number;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -89,6 +96,39 @@ export class EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIO
   // TODO: Why these fields are included in the API output?
   institutionId: number;
   institutionName: string;
+}
+
+/**
+ * Dynamic program data used to create an education program,
+ * and the configuration it was filled in against.
+ */
+export class CreateEducationProgramAPIInDTO {
+  /**
+   * Program configuration ID against which the program is being created.
+   */
+  @IsPositive()
+  programConfigurationId: number;
+  /**
+   * Dynamic program data, validated later against the configuration's
+   * validation schema (AJV). Only the shape and size are checked here.
+   */
+  @IsNotEmptyObject()
+  @JsonMaxSize(JSON_20KB)
+  programData: { [key: string]: unknown };
+}
+
+/**
+ * Dynamic program data used to create an education program,
+ * and the configuration it was filled in against.
+ */
+export class UpdateEducationProgramAPIInDTO {
+  /**
+   * Dynamic program data, validated later against the configuration's
+   * validation schema (AJV). Only the shape and size are checked here.
+   */
+  @IsNotEmptyObject()
+  @JsonMaxSize(JSON_20KB)
+  programData: { [key: string]: unknown };
 }
 
 export class StudentEducationProgramAPIOutDTO {
