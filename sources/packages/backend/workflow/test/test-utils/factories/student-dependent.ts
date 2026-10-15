@@ -190,17 +190,51 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
 }
 
 /**
- * Creates a student dependent that will be eligible for contribution.
- * The dependent will be 19 years old and attending post secondary school.
- * @param options method options.
- * - `referenceDate` reference date to define the dependent birthday.
- * @returns an eligible dependent.
+ * Creates student dependents at contribution eligibility age boundaries.
+ * @param options Options for constructing the dependent.
+ * - `referenceDate` Reference date used to calculate the dependents' birthdays.
+ * @returns Dependents eligible for contribution based on their age and school attendance.
  */
-export function createFakeStudentDependentEligibleForContribution(options: {
+export function createFakeStudentDependentsEligibleForContribution(options: {
+  referenceDate: Date | string;
+}): StudentDependent[] {
+  const twentyThreeYearsBeforeReferenceDate = addToDateOnlyString(
+    options.referenceDate,
+    -23,
+    "years",
+  );
+  const dependentValues = {
+    attendingPostSecondarySchool: YesNoOptions.Yes,
+    declaredOnTaxes: YesNoOptions.No,
+    relationship: DependantRelationship.Child,
+  };
+  return [
+    {
+      dateOfBirth: addToDateOnlyString(options.referenceDate, -1, "day"),
+      ...dependentValues,
+    },
+    {
+      dateOfBirth: addToDateOnlyString(
+        twentyThreeYearsBeforeReferenceDate,
+        1,
+        "day",
+      ),
+      ...dependentValues,
+    },
+  ];
+}
+
+/**
+ * Creates a student dependent at the contribution age cutoff who is not eligible.
+ * @param options Options for constructing the dependent.
+ * - `referenceDate` Reference date used to calculate the dependent's birthday.
+ * @returns A dependent who is not eligible for contribution based on age.
+ */
+export function createFakeStudentDependentNotEligibleForContribution(options: {
   referenceDate: Date | string;
 }): StudentDependent {
   return {
-    dateOfBirth: addToDateOnlyString(options.referenceDate, -19, "years"),
+    dateOfBirth: addToDateOnlyString(options.referenceDate, -23, "years"),
     attendingPostSecondarySchool: YesNoOptions.Yes,
     declaredOnTaxes: YesNoOptions.No,
     relationship: DependantRelationship.Child,

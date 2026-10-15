@@ -5,7 +5,10 @@ import {
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
-import { createFakeStudentDependentEligibleForContribution } from "../../../test-utils/factories";
+import {
+  createFakeStudentDependentNotEligibleForContribution,
+  createFakeStudentDependentsEligibleForContribution,
+} from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eligible-dependants.`, () => {
   it("Should calculate total parent eligible contribution dependants when two parents are present and the first parent is declaring other dependents.", async () => {
@@ -18,7 +21,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
       { parentIsAbleToReport: YesNoOptions.Yes },
       { parentIsAbleToReport: YesNoOptions.Yes },
     ];
-    // Parent 1 has one eligible dependent.
+    // Parent 1 has two eligible dependents.
     assessmentConsolidatedData.parent1TotalIncome = 99999;
     assessmentConsolidatedData.parent1NetAssets = 1000;
     assessmentConsolidatedData.parent1CppEmployment = 500;
@@ -26,7 +29,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
     assessmentConsolidatedData.parent1Tax = 700;
     assessmentConsolidatedData.parent1Contributions = 0;
     assessmentConsolidatedData.parent1DependentTable = [
-      createFakeStudentDependentEligibleForContribution({
+      ...createFakeStudentDependentsEligibleForContribution({
+        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+      }),
+      createFakeStudentDependentNotEligibleForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
       }),
     ];
@@ -45,21 +51,21 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
     );
 
     // Assert
-    // Parent 1 has 1 eligible dependents, total eligible dependents is 2 (plus 1 is added in the workflow).
+    // Parent 1 has 2 eligible dependents, total eligible dependents is 3 (plus 1 is added in the workflow).
     expect(
       calculatedAssessment.variables
         .calculatedDataTotalEligibleParent1ContributionDependants,
-    ).toBe(2);
+    ).toBe(3);
     // Parent 2 has no eligible dependents; default to 1 when not provided.
     expect(
       calculatedAssessment.variables
         .calculatedDataTotalEligibleParent2ContributionDependants,
     ).toBe(1);
-    // The final value must be the max between the two parents, which is 2.
+    // The final value must be the max between the two parents, which is 3.
     expect(
       calculatedAssessment.variables
         .calculatedDataTotalParentEligibleContributionDependants,
-    ).toBe(2);
+    ).toBe(3);
   });
 
   it("Should calculate total parent eligible contribution dependants when two parents are present and the second parent is declaring other dependents.", async () => {
@@ -85,10 +91,10 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
     assessmentConsolidatedData.parent2Tax = 700;
     assessmentConsolidatedData.parent2Contributions = 0;
     assessmentConsolidatedData.parent2DependentTable = [
-      createFakeStudentDependentEligibleForContribution({
+      ...createFakeStudentDependentsEligibleForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
       }),
-      createFakeStudentDependentEligibleForContribution({
+      createFakeStudentDependentNotEligibleForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
       }),
     ];
