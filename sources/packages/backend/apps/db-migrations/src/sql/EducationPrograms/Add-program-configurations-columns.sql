@@ -37,11 +37,19 @@ SET
       'regulatoryBody',
       regulatory_body,
       'programDeliveryTypes',
-      JSONB_BUILD_OBJECT(
-        'onSite',
-        COALESCE(delivered_on_site, FALSE),
-        'online',
-        COALESCE(delivered_online, FALSE)
+      -- Array of the selected delivery types (at least one is always selected).
+      TO_JSONB(
+        ARRAY_REMOVE(
+          ARRAY[
+            CASE
+              WHEN delivered_on_site THEN 'deliveredOnSite'
+            END,
+            CASE
+              WHEN delivered_online THEN 'deliveredOnline'
+            END
+          ],
+          NULL
+        )
       ),
       'deliveredOnlineAlsoOnSite',
       delivered_online_also_onsite,
@@ -70,17 +78,31 @@ SET
       'minHoursWeekAvi',
       min_hours_week_avi,
       'entranceRequirements',
-      JSONB_BUILD_OBJECT(
-        'hasMinimumAge',
-        COALESCE(has_minimum_age, FALSE),
-        'minHighSchool',
-        COALESCE(min_high_school, FALSE),
-        'requirementsByInstitution',
-        COALESCE(requirements_by_institution, FALSE),
-        'requirementsByBCITA',
-        COALESCE(requirements_by_bcita, FALSE),
-        'none',
-        COALESCE(none_of_entrance_requirements, FALSE)
+      -- Array of the selected entrance requirements, removed when none is selected.
+      NULLIF(
+        TO_JSONB(
+          ARRAY_REMOVE(
+            ARRAY[
+              CASE
+                WHEN has_minimum_age THEN 'hasMinimumAge'
+              END,
+              CASE
+                WHEN min_high_school THEN 'minHighSchool'
+              END,
+              CASE
+                WHEN requirements_by_institution THEN 'requirementsByInstitution'
+              END,
+              CASE
+                WHEN requirements_by_bcita THEN 'requirementsByBCITA'
+              END,
+              CASE
+                WHEN none_of_entrance_requirements THEN 'noneOfTheAboveEntranceRequirements'
+              END
+            ],
+            NULL
+          )
+        ),
+        '[]'::JSONB
       ),
       'hasWILComponent',
       has_wil_component,
@@ -103,7 +125,24 @@ SET
       'otherRegulatoryBody',
       other_regulatory_body,
       'credentialTypesAviation',
-      credential_types_aviation
+      (
+        -- Convert the object of booleans into an array of the selected keys.
+        -- Non-object values (e.g. JSON null) are passed as SQL NULL, producing no rows.
+        SELECT
+          JSONB_AGG(
+            credential_types.key
+            ORDER BY
+              credential_types.key
+          )
+        FROM
+          JSONB_EACH(
+            CASE
+              WHEN JSONB_TYPEOF(credential_types_aviation) = 'object' THEN credential_types_aviation
+            END
+          ) credential_types
+        WHERE
+          credential_types.value = 'true'::JSONB
+      )
     )
   );
 

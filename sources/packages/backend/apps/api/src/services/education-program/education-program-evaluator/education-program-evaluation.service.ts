@@ -7,7 +7,6 @@ import { EducationProgramBaseEvaluator } from "./education-program-base-evaluato
 import {
   ProgramEvaluationContext,
   ProgramCalculatedDataKey,
-  ProgramEvaluationData,
   ProgramEvaluationResult,
 } from "../education-program.service.models";
 import { Injectable } from "@nestjs/common";
@@ -36,7 +35,7 @@ export class EducationProgramEvaluationService {
   async evaluate(
     institutionId: number,
     calculatedDataKeys: ProgramCalculatedDataKey[],
-    data: Partial<ProgramEvaluationData>,
+    data: unknown,
   ): Promise<ProgramEvaluationResult> {
     const institution = await this.institutionRepo.findOne({
       select: { id: true, institutionType: { id: true } },

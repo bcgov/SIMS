@@ -6,20 +6,18 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
-  EducationProgramOfferingService,
   EducationProgramService,
   InstitutionUserAuthorizations,
 } from "../../services";
+import { EducationProgramSaveService } from "../../services";
 import {
   AviationProgramCredentialTypes,
   EducationProgram,
-  EducationProgramConfiguration,
   SystemLookupCategory,
 } from "@sims/sims-db";
 import {
   EducationProgramAPIOutDTO,
   EducationProgramAPIInDTO,
-  EducationProgramConfigurationAPIOutDTO,
 } from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
@@ -40,18 +38,14 @@ import { InstitutionUserTypes } from "../../auth";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "../../services/education-program/constants";
 import { SystemLookupConfigurationService } from "@sims/services/system-lookup-configuration";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 
 @Injectable()
 export class EducationProgramControllerService {
   constructor(
     private readonly programService: EducationProgramService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService,
+    private readonly educationProgramSaveService: EducationProgramSaveService,
     private readonly institutionService: InstitutionService,
     private readonly systemLookupConfigurationService: SystemLookupConfigurationService,
-    @InjectRepository(EducationProgramConfiguration)
-    private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
   ) {}
 
   /**
@@ -99,54 +93,6 @@ export class EducationProgramControllerService {
   }
 
   /**
-   * Get the program configuration including context, visual schema, and validation schema.
-   * @param institutionId ID of the institution requesting the configuration.
-   * @param options method options.
-   * - `programConfigurationId` ID of the program configuration. If not provided,
-   * the most recent active configuration is returned.
-   * @returns the program configuration including context, visual schema, and validation schema.
-   */
-  async getEducationProgramConfiguration(
-    institutionId: number,
-    options?: { programConfigurationId?: number },
-  ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    const institution =
-      await this.institutionService.getInstitutionTypeById(institutionId);
-    const programConfiguration =
-      await this.educationProgramConfigurationRepo.findOne({
-        select: {
-          id: true,
-          visualSchema: true,
-          validationSchema: true,
-          isActive: true,
-        },
-        where: { id: options?.programConfigurationId, isActive: true },
-        order: { createdAt: "DESC" },
-      });
-    if (!programConfiguration) {
-      throw new NotFoundException(
-        "Not able to find an active program configuration.",
-      );
-    }
-    return {
-      configurationId: programConfiguration.id,
-      programData: {
-        context: {
-          hasOfferings: false,
-          isActive: true,
-          isBCPublic: institution.institutionType.isBCPublic,
-          isBCPrivate: institution.institutionType.isBCPrivate,
-          isBCInstitution:
-            institution.institutionType.isBCPrivate ||
-            institution.institutionType.isBCPublic,
-        },
-      },
-      visualSchema: programConfiguration.visualSchema,
-      validationSchema: programConfiguration.validationSchema,
-    };
-  }
-
-  /**
    * Education program information shared between the Ministry and the Institution.
    * @param programId program id.
    * @param institutionId when provided, ensures the proper authorization
@@ -161,12 +107,14 @@ export class EducationProgramControllerService {
       programId,
       institutionId,
     );
-    const hasOfferingsPromise =
-      this.educationProgramOfferingService.hasExistingOffering(programId);
+    const programConfigurationPromise =
+      this.educationProgramSaveService.getEducationProgramConfigurationFromProgram(
+        programId,
+      );
     // Wait for the program and for the offering check to be retrieved.
-    const [program, hasOfferings] = await Promise.all([
+    const [program, programConfiguration] = await Promise.all([
       programPromise,
-      hasOfferingsPromise,
+      programConfigurationPromise,
     ]);
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
@@ -176,22 +124,13 @@ export class EducationProgramControllerService {
       programStatus: program.programStatus,
       credentialType: program.credentialType,
       credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
+      configurationId: programConfiguration.configurationId,
       programData: {
         ...program.programData,
-        programName: program.name,
-        programDescription: program.description,
-        context: {
-          hasOfferings: hasOfferings,
-          isActive: program.isActive && !program.isExpired,
-          isBCPublic: program.institution.institutionType.isBCPublic,
-          isBCPrivate: program.institution.institutionType.isBCPrivate,
-          isBCInstitution:
-            program.institution.institutionType.isBCPrivate ||
-            program.institution.institutionType.isBCPublic,
-        },
+        context: programConfiguration.context,
       },
-      visualSchema: program.programConfiguration.visualSchema,
-      validationSchema: program.programConfiguration.validationSchema,
+      visualSchema: programConfiguration.visualSchema,
+      validationSchema: programConfiguration.validationSchema,
       institutionId: program.institution.id,
       institutionName: program.institution.operatingName,
       submittedDate: program.submittedDate,

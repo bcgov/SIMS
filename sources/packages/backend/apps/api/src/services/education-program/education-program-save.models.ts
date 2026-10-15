@@ -1,9 +1,11 @@
 import { FormYesNoOptions, ProgramIntensity } from "@sims/sims-db";
 import {
-  EntranceRequirements,
+  EntranceRequirementValues,
   ProgramCourseLoadCalculationTypes,
+  ProgramDeliveryTypeValues,
   ProgramESLPercentage,
 } from "./education-program.service.models";
+import { AviationCredentialTypeOptions } from "../education-program-offering/education-program-offering-validation.models";
 
 export interface EducationProgramContext {
   hasOfferings: boolean;
@@ -30,16 +32,13 @@ export interface EducationProgramDynamicData extends EducationProgramData {
   sabcCode?: string;
   regulatoryBody: string;
   otherRegulatoryBody?: string;
-  programDeliveryTypes: {
-    onSite?: FormYesNoOptions;
-    online?: FormYesNoOptions;
-  };
+  programDeliveryTypes: ProgramDeliveryTypeValues[];
   deliveredOnlineAlsoOnsite?: FormYesNoOptions;
   sameOnlineCreditsEarned?: FormYesNoOptions;
   earnAcademicCreditsOtherInstitution?: FormYesNoOptions;
   courseLoadCalculation: ProgramCourseLoadCalculationTypes;
   completionYears: string;
-  entranceRequirements: EntranceRequirements;
+  entranceRequirements: EntranceRequirementValues[];
   eslEligibility: ProgramESLPercentage;
   hasJointInstitution: FormYesNoOptions;
   hasJointDesignatedInstitution?: FormYesNoOptions;
@@ -47,12 +46,7 @@ export interface EducationProgramDynamicData extends EducationProgramData {
   institutionProgramCode?: string;
   minHoursWeek?: FormYesNoOptions;
   isAviationProgram: FormYesNoOptions;
-  credentialTypesAviation?: {
-    endorsements: boolean;
-    instructorsRating: boolean;
-    privatePilotTraining: boolean;
-    commercialPilotTraining: boolean;
-  };
+  credentialTypesAviation?: AviationCredentialTypeOptions[];
   minHoursWeekAvi?: FormYesNoOptions;
   hasWILComponent: FormYesNoOptions;
   isWILApproved?: FormYesNoOptions;

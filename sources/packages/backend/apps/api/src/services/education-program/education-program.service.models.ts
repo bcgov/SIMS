@@ -91,6 +91,14 @@ export enum ProgramDeliveryTypeValues {
   Online = "deliveredOnline",
 }
 
+export enum EntranceRequirementValues {
+  HasMinimumAge = "hasMinimumAge",
+  MinHighSchool = "minHighSchool",
+  RequirementsByInstitution = "requirementsByInstitution",
+  RequirementsByBCITA = "requirementsByBCITA",
+  NoneOfTheAboveEntranceRequirements = "noneOfTheAboveEntranceRequirements",
+}
+
 export enum ProgramCourseLoadCalculationTypes {
   Credit = "credit",
   Hours = "hours",

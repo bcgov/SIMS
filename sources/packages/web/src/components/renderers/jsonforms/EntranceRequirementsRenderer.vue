@@ -1,26 +1,28 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { rendererProps, useJsonFormsControl } from "@jsonforms/vue";
-import type { ControlElement, JsonSchema } from "@jsonforms/core";
+import {
+  rendererProps,
+  useDispatch,
+  useJsonFormsMultiEnumControl,
+} from "@jsonforms/vue";
+import { update, type ControlElement } from "@jsonforms/core";
 import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue";
 import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "@/constants/program-constants";
 
 const props = defineProps(rendererProps<ControlElement>());
-const { control, handleChange } = useJsonFormsControl(props);
+const { control } = useJsonFormsMultiEnumControl(props);
+const dispatch = useDispatch();
 
+// CheckboxOptionsGroup expects { title, value } items; JSONForms derives
+// { label, value } EnumOptions from the schema's items.enum (or items.oneOf).
 const items = computed(() =>
-  Object.entries(control.value.schema.properties ?? {}).map(
-    ([key, schema]) => ({
-      title: (schema as JsonSchema).title ?? key,
-      value: key,
-    }),
-  ),
+  control.value.options.map((option) => ({
+    title: option.label,
+    value: option.value,
+  })),
 );
 
-const selected = computed(() => {
-  const data = (control.value.data ?? {}) as Record<string, boolean>;
-  return items.value.map((item) => item.value).filter((key) => data[key]);
-});
+const selected = computed(() => (control.value.data ?? []) as string[]);
 
 const onUpdate = (newValue: Array<string | number>) => {
   const noneWasSelected = selected.value.includes(
@@ -38,11 +40,14 @@ const onUpdate = (newValue: Array<string | number>) => {
     // collapse down to "none" alone.
     nextValue = [PROGRAM_ENTRANCE_REQUIREMENT_NONE];
   }
-  // Every key is always present, the unchecked ones saved as false.
-  const data = Object.fromEntries(
-    items.value.map(({ value }) => [value, nextValue.includes(value)]),
-  );
-  handleChange(control.value.path, data);
+  // Keep the selected values in the same order as the options.
+  const data =
+    items.value
+      ?.map(({ value }) => value)
+      .filter((value) => nextValue.includes(value)) ?? [];
+  // useJsonFormsMultiEnumControl only exposes single-value addItem/removeItem,
+  // so the whole array is replaced in one dispatch.
+  dispatch(update(control.value.path, () => data));
 };
 </script>
 

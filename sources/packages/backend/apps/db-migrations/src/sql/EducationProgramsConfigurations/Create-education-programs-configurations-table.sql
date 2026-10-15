@@ -1341,67 +1341,43 @@ SELECT
           "maxLength": 100
           },
           "entranceRequirements": {
-          "type": "object",
-          "title": "What are the entrance requirements for this program? (Select all that apply)",
-          "properties": {
-              "minHighSchool": {
-              "type": "boolean",
-              "title": "Students to have graduated from grade 12 or equivalent."
+          "type": "array",
+          "items": {
+              "oneOf": [
+              {
+                  "const": "minHighSchool",
+                  "title": "Students to have graduated from grade 12 or equivalent."
               },
-              "hasMinimumAge": {
-              "type": "boolean",
-              "title": "Students are 19 years old or older before the start of classes."
+              {
+                  "const": "hasMinimumAge",
+                  "title": "Students are 19 years old or older before the start of classes."
               },
-              "requirementsByInstitution": {
-              "type": "boolean",
-              "title": "For post-secondary level academic credit-based programs: This program has entrance requirements established by the institution that enable completion of the program of study."
+              {
+                  "const": "requirementsByInstitution",
+                  "title": "For post-secondary level academic credit-based programs: This program has entrance requirements established by the institution that enable completion of the program of study."
               },
-              "requirementsByBCITA": {
-              "type": "boolean",
-              "title": "This program is approved by the SkilledTradesBC and students must meet the entrance requirements set by the B.C. ITA."
+              {
+                  "const": "requirementsByBCITA",
+                  "title": "This program is approved by the SkilledTradesBC and students must meet the entrance requirements set by the B.C. ITA."
               },
-              "noneOfTheAboveEntranceRequirements": {
-              "type": "boolean",
-              "title": "None of the above"
+              {
+                  "const": "noneOfTheAboveEntranceRequirements",
+                  "title": "None of the above"
               }
+              ]
           },
-          "anyOf": [
-              {
-              "properties": { "minHighSchool": { "const": true } },
-              "required": ["minHighSchool"]
-              },
-              {
-              "properties": { "hasMinimumAge": { "const": true } },
-              "required": ["hasMinimumAge"]
-              },
-              {
-              "properties": { "requirementsByInstitution": { "const": true } },
-              "required": ["requirementsByInstitution"]
-              },
-              {
-              "properties": { "requirementsByBCITA": { "const": true } },
-              "required": ["requirementsByBCITA"]
-              },
-              {
-              "properties": { "noneOfTheAboveEntranceRequirements": { "const": true } },
-              "required": ["noneOfTheAboveEntranceRequirements"]
-              }
-          ],
+          "title": "What are the entrance requirements for this program? (Select all that apply)",
+          "minItems": 1,
+          "uniqueItems": true,
           "if": {
-              "properties": { "noneOfTheAboveEntranceRequirements": { "const": true } },
-              "required": ["noneOfTheAboveEntranceRequirements"]
+              "contains": { "const": "noneOfTheAboveEntranceRequirements" }
           },
           "then": {
-              "properties": {
-              "minHighSchool": { "const": false },
-              "hasMinimumAge": { "const": false },
-              "requirementsByInstitution": { "const": false },
-              "requirementsByBCITA": { "const": false }
-              },
+              "maxItems": 1,
               "errorMessage": "'None of the above' cannot be combined with other entrance requirements."
           },
           "errorMessage": {
-              "anyOf": "At least one entrance requirement must be selected."
+              "minItems": "At least one entrance requirement must be selected."
           }
           },
           "programDeliveryTypes": {
@@ -1613,10 +1589,7 @@ SELECT
           "condition": {
               "required": ["entranceRequirements"],
               "properties": {
-              "entranceRequirements": {
-                  "required": ["noneOfTheAboveEntranceRequirements"],
-                  "properties": { "noneOfTheAboveEntranceRequirements": { "const": true } }
-              }
+              "entranceRequirements": { "contains": { "const": "noneOfTheAboveEntranceRequirements" } }
               }
           }
           },

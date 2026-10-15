@@ -123,10 +123,25 @@ export class EducationProgramInstitutionsController extends BaseController {
     @Param("programConfigurationId", new ParseIntPipe({ optional: true }))
     programConfigurationId?: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.educationProgramControllerService.getEducationProgramConfiguration(
-      userToken.authorizations.institutionId,
-      { programConfigurationId },
-    );
+    const configuration =
+      await this.educationProgramSaveService.getEducationProgramConfiguration(
+        userToken.authorizations.institutionId,
+        { programConfigurationId },
+      );
+    return {
+      configurationId: configuration.configurationId,
+      programData: {
+        context: {
+          hasOfferings: configuration.context.hasOfferings,
+          isActive: configuration.context.isActive,
+          isBCPublic: configuration.context.isBCPublic,
+          isBCPrivate: configuration.context.isBCPrivate,
+          isBCInstitution: configuration.context.isBCInstitution,
+        },
+      },
+      visualSchema: configuration.visualSchema,
+      validationSchema: configuration.validationSchema,
+    };
   }
 
   /**

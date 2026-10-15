@@ -4,15 +4,17 @@ import {
   UnprocessableEntityException,
 } from "@nestjs/common";
 import {
+  AviationCredentialTypeOptions,
   EducationProgramOfferingService,
   EducationProgramService,
 } from "../../services";
 import { EducationProgramEvaluationService } from "./education-program-evaluator";
 import {
+  AviationProgramCredentialTypes,
   EducationProgram,
   EducationProgramConfiguration,
-  FormYesNoOptions,
   Institution,
+  InstitutionType,
   ProgramStatus,
   User,
 } from "@sims/sims-db";
@@ -33,7 +35,14 @@ import {
   EducationProgramDynamicData,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./education-program-data-validation.service";
-import { ProgramCalculatedDataKey } from "./education-program.service.models";
+import { EducationProgramDataValidationContext } from "./education-program-data-validation.models";
+import {
+  EntranceRequirements,
+  EntranceRequirementValues,
+  ProgramCalculatedDataKey,
+  ProgramDeliveryTypes,
+  ProgramDeliveryTypeValues,
+} from "./education-program.service.models";
 import { CustomNamedError } from "@sims/utilities";
 import { OTHER_REGULATORY_BODY } from "./constants";
 
@@ -54,13 +63,15 @@ export class EducationProgramSaveService {
 
   /**
    * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration.
    * @param institutionId ID of the institution requesting the configuration.
+   * @param options method options.
+   * - `programConfigurationId` ID of the program configuration. If not provided,
+   * the most recent active configuration is returned.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  async getEducationProgramConfigurationForCreation(
-    programConfigurationId: number,
+  async getEducationProgramConfiguration(
     institutionId: number,
+    options?: { programConfigurationId?: number },
   ): Promise<EducationProgramDynamicConfiguration> {
     const institution =
       await this.institutionService.getInstitutionTypeById(institutionId);
@@ -71,24 +82,27 @@ export class EducationProgramSaveService {
           visualSchema: true,
           validationSchema: true,
           updatedAt: true,
+          programYear: {
+            id: true,
+            startDate: true,
+          },
         },
-        where: { id: programConfigurationId, isActive: true },
+        relations: {
+          programYear: true,
+        },
+        where: { id: options?.programConfigurationId, isActive: true },
+        order: {
+          programYear: { startDate: "DESC" },
+        },
       });
-    return {
-      configurationId: programConfiguration.id,
-      updatedAt: programConfiguration.updatedAt,
-      context: {
+    return this.createProgramContext(
+      institution.institutionType,
+      programConfiguration,
+      {
         hasOfferings: false,
         isActive: true,
-        isBCPublic: institution.institutionType.isBCPublic,
-        isBCPrivate: institution.institutionType.isBCPrivate,
-        isBCInstitution:
-          institution.institutionType.isBCPrivate ||
-          institution.institutionType.isBCPublic,
       },
-      visualSchema: programConfiguration.visualSchema,
-      validationSchema: programConfiguration.validationSchema,
-    };
+    );
   }
 
   async getEducationProgramConfigurationFromProgram(
@@ -105,6 +119,7 @@ export class EducationProgramSaveService {
           id: true,
           visualSchema: true,
           validationSchema: true,
+          updatedAt: true,
         },
         institution: {
           id: true,
@@ -124,19 +139,29 @@ export class EducationProgramSaveService {
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
-    const institution = program.institution;
+    const institutionType = program.institution.institutionType;
     const programConfiguration = program.programConfiguration;
+    return this.createProgramContext(institutionType, programConfiguration, {
+      hasOfferings,
+      isActive: program.isActive && !program.isExpired,
+    });
+  }
+
+  private createProgramContext(
+    institutionType: InstitutionType,
+    programConfiguration: EducationProgramConfiguration,
+    options: { hasOfferings: boolean; isActive: boolean },
+  ): EducationProgramDynamicConfiguration {
     return {
       configurationId: programConfiguration.id,
       updatedAt: programConfiguration.updatedAt,
       context: {
-        hasOfferings: hasOfferings,
-        isActive: program.isActive && !program.isExpired,
-        isBCPublic: institution.institutionType.isBCPublic,
-        isBCPrivate: institution.institutionType.isBCPrivate,
+        hasOfferings: options.hasOfferings,
+        isActive: options.isActive,
+        isBCPublic: institutionType.isBCPublic,
+        isBCPrivate: institutionType.isBCPrivate,
         isBCInstitution:
-          institution.institutionType.isBCPrivate ||
-          institution.institutionType.isBCPublic,
+          institutionType.isBCPrivate || institutionType.isBCPublic,
       },
       visualSchema: programConfiguration.visualSchema,
       validationSchema: programConfiguration.validationSchema,
@@ -149,11 +174,10 @@ export class EducationProgramSaveService {
     institutionId: number,
     auditUserId: number,
   ): Promise<EducationProgram> {
-    const configuration =
-      await this.getEducationProgramConfigurationForCreation(
-        programConfigurationId,
-        institutionId,
-      );
+    const configuration = await this.getEducationProgramConfiguration(
+      institutionId,
+      { programConfigurationId },
+    );
     if (!configuration) {
       throw new UnprocessableEntityException(
         new ApiProcessError(
@@ -166,7 +190,11 @@ export class EducationProgramSaveService {
       ...programData,
       context: configuration.context,
     };
-    this.validateEducationProgramData(configuration, programDataToValidate);
+    await this.validateEducationProgramData(
+      configuration,
+      programDataToValidate,
+      { institutionId },
+    );
     return this.saveEducationProgram(
       institutionId,
       auditUserId,
@@ -213,7 +241,11 @@ export class EducationProgramSaveService {
         context: configuration.context,
       };
     }
-    this.validateEducationProgramData(configuration, programDataToUpdate);
+    await this.validateEducationProgramData(
+      configuration,
+      programDataToUpdate,
+      { institutionId, programId },
+    );
     return this.saveEducationProgram(
       institutionId,
       auditUserId,
@@ -226,14 +258,16 @@ export class EducationProgramSaveService {
     );
   }
 
-  private validateEducationProgramData(
+  private async validateEducationProgramData(
     configuration: EducationProgramDynamicConfiguration,
     programData: EducationProgramData,
-  ): void {
+    validationContext: EducationProgramDataValidationContext,
+  ): Promise<void> {
     const validationResult =
-      this.educationProgramDataValidationService.validate(
+      await this.educationProgramDataValidationService.validate(
         configuration,
         programData,
+        validationContext,
       );
     if (validationResult.isValid === false) {
       throw new CustomNamedError(
@@ -283,114 +317,30 @@ export class EducationProgramSaveService {
         );
       }
     }
-    // TODO: move the validation for SABC code duplication to the validation service (AJV)?
-    // if (programData.sabcCode) {
-    //   const isSABCCodeDuplicate =
-    //     await this.educationProgramService.hasExistingProgramWithSameSABCCode(
-    //       institutionId,
-    //       programData.sabcCode,
-    //       options?.programId,
-    //     );
-    //   if (isSABCCodeDuplicate) {
-    //     throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
-    //   }
-    // }
-
-    // Values also saved to the existing program structure until the
-    // dynamic data is the only source of the program data.
-    const dynamicProgramData = programData as EducationProgramDynamicData;
-    // TODO: review FieldOfStudyCode evaluator.
     const calculatedData =
       await this.educationProgramEvaluationService.evaluate(
         institutionId,
         [ProgramCalculatedDataKey.FieldOfStudyCode],
-        {
-          credentialType: dynamicProgramData.credentialType,
-          programDeliveryTypes: {
-            deliveredOnline:
-              dynamicProgramData.programDeliveryTypes?.online ===
-              FormYesNoOptions.Yes,
-            deliveredOnSite:
-              dynamicProgramData.programDeliveryTypes?.onSite ===
-              FormYesNoOptions.Yes,
-          },
-        },
+        programData,
       );
     const fieldOfStudyCode =
       calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
     if (!context.hasOfferings) {
-      // Assign attributes for update from payload only if existing program has no offering(s).
-      program.fieldOfStudyCode = fieldOfStudyCode;
-      program.credentialType = dynamicProgramData.credentialType;
-      program.cipCode = dynamicProgramData.cipCode;
-      program.nocCode = dynamicProgramData.nocCode || null;
-      // Save SABC code as null in case of not answered in the form.
-      // This way it can be saved when multiple programs does not have a SABC code.
-      program.sabcCode = dynamicProgramData.sabcCode?.trim() || null;
-      program.regulatoryBody = dynamicProgramData.regulatoryBody;
-      program.otherRegulatoryBody =
-        dynamicProgramData.regulatoryBody === OTHER_REGULATORY_BODY
-          ? dynamicProgramData.otherRegulatoryBody
-          : null;
-      program.deliveredOnSite =
-        dynamicProgramData.programDeliveryTypes?.onSite ===
-        FormYesNoOptions.Yes;
-      program.deliveredOnline =
-        dynamicProgramData.programDeliveryTypes?.online ===
-        FormYesNoOptions.Yes;
-      program.deliveredOnlineAlsoOnsite =
-        dynamicProgramData.deliveredOnlineAlsoOnsite || null;
-      program.sameOnlineCreditsEarned =
-        dynamicProgramData.sameOnlineCreditsEarned || null;
-      program.earnAcademicCreditsOtherInstitution =
-        dynamicProgramData.earnAcademicCreditsOtherInstitution || null;
-      program.courseLoadCalculation = dynamicProgramData.courseLoadCalculation;
-      program.completionYears = dynamicProgramData.completionYears;
-      program.eslEligibility = dynamicProgramData.eslEligibility;
-      program.hasJointInstitution = dynamicProgramData.hasJointInstitution;
-      program.hasJointDesignatedInstitution =
-        dynamicProgramData.hasJointDesignatedInstitution || null;
       // TODO: Calculate program status.
       program.programStatus = ProgramStatus.Pending;
-      program.programIntensity = dynamicProgramData.programIntensity;
-      program.institutionProgramCode =
-        dynamicProgramData.institutionProgramCode || null;
-      program.minHoursWeek = dynamicProgramData.minHoursWeek || null;
-      program.isAviationProgram = dynamicProgramData.isAviationProgram;
-      program.credentialTypesAviation =
-        dynamicProgramData.credentialTypesAviation || null;
-      program.minHoursWeekAvi = dynamicProgramData.minHoursWeekAvi || null;
-      program.hasMinimumAge =
-        dynamicProgramData.entranceRequirements.hasMinimumAge;
-      program.minHighSchool =
-        dynamicProgramData.entranceRequirements.minHighSchool;
-      program.requirementsByInstitution =
-        dynamicProgramData.entranceRequirements.requirementsByInstitution;
-      program.requirementsByBCITA =
-        dynamicProgramData.entranceRequirements.requirementsByBCITA;
-      program.noneOfTheAboveEntranceRequirements =
-        dynamicProgramData.entranceRequirements.noneOfTheAboveEntranceRequirements;
-      program.hasWILComponent = dynamicProgramData.hasWILComponent;
-      program.isWILApproved = dynamicProgramData.isWILApproved || null;
-      program.wilProgramEligibility =
-        dynamicProgramData.wilProgramEligibility || null;
-      program.hasTravel = dynamicProgramData.hasTravel;
-      program.travelProgramEligibility =
-        dynamicProgramData.travelProgramEligibility || null;
-      program.hasIntlExchange = dynamicProgramData.hasIntlExchange;
-      program.intlExchangeProgramEligibility =
-        dynamicProgramData.intlExchangeProgramEligibility || null;
-      program.programDeclaration = dynamicProgramData.programDeclaration;
+      this.assignProgramLegacyData(
+        program,
+        programData as EducationProgramDynamicData,
+        fieldOfStudyCode,
+      );
     }
     program.id = options?.programId;
     program.name = programData.programName;
     program.description = programData.programDescription;
     program.programData = { ...programData, fieldOfStudyCode };
-
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
     if (!options?.programId) {
-      // Institution should never be updated after creation.
       program.institution = { id: institutionId } as Institution;
       program.programConfiguration = {
         id: options.programConfigurationId,
@@ -415,5 +365,137 @@ export class EducationProgramSaveService {
         .getRepository(EducationProgram)
         .save(program);
     });
+  }
+
+  /**
+   * Use the submitted dynamic program data to assign legacy program attributes.
+   * @param program education program entity to which legacy attributes will be assigned.
+   * @param dynamicProgramData dynamic program data submitted by the user.
+   * @param fieldOfStudyCode field of study code calculated from the dynamic program data.
+   */
+  private assignProgramLegacyData(
+    program: EducationProgram,
+    dynamicProgramData: EducationProgramDynamicData,
+    fieldOfStudyCode: number,
+  ): void {
+    const {
+      programDeliveryTypes,
+      entranceRequirements,
+      credentialTypesAviation,
+    } = this.buildLegacyProgramData(dynamicProgramData);
+    // Assign attributes for update from payload only if existing program has no offering(s).
+    program.fieldOfStudyCode = fieldOfStudyCode;
+    program.credentialType = dynamicProgramData.credentialType;
+    program.cipCode = dynamicProgramData.cipCode;
+    program.nocCode = dynamicProgramData.nocCode || null;
+    // Save SABC code as null in case of not answered in the form.
+    // This way it can be saved when multiple programs does not have a SABC code.
+    program.sabcCode = dynamicProgramData.sabcCode?.trim() || null;
+    program.regulatoryBody = dynamicProgramData.regulatoryBody;
+    program.otherRegulatoryBody =
+      dynamicProgramData.regulatoryBody === OTHER_REGULATORY_BODY
+        ? dynamicProgramData.otherRegulatoryBody
+        : null;
+    program.deliveredOnSite = programDeliveryTypes.deliveredOnSite;
+    program.deliveredOnline = programDeliveryTypes.deliveredOnline;
+    program.deliveredOnlineAlsoOnsite =
+      dynamicProgramData.deliveredOnlineAlsoOnsite || null;
+    program.sameOnlineCreditsEarned =
+      dynamicProgramData.sameOnlineCreditsEarned || null;
+    program.earnAcademicCreditsOtherInstitution =
+      dynamicProgramData.earnAcademicCreditsOtherInstitution || null;
+    program.courseLoadCalculation = dynamicProgramData.courseLoadCalculation;
+    program.completionYears = dynamicProgramData.completionYears;
+    program.eslEligibility = dynamicProgramData.eslEligibility;
+    program.hasJointInstitution = dynamicProgramData.hasJointInstitution;
+    program.hasJointDesignatedInstitution =
+      dynamicProgramData.hasJointDesignatedInstitution || null;
+    program.programIntensity = dynamicProgramData.programIntensity;
+    program.institutionProgramCode =
+      dynamicProgramData.institutionProgramCode || null;
+    program.minHoursWeek = dynamicProgramData.minHoursWeek || null;
+    program.isAviationProgram = dynamicProgramData.isAviationProgram;
+    program.credentialTypesAviation = credentialTypesAviation || null;
+    program.minHoursWeekAvi = dynamicProgramData.minHoursWeekAvi || null;
+    program.hasMinimumAge = entranceRequirements.hasMinimumAge;
+    program.minHighSchool = entranceRequirements.minHighSchool;
+    program.requirementsByInstitution =
+      entranceRequirements.requirementsByInstitution;
+    program.requirementsByBCITA = entranceRequirements.requirementsByBCITA;
+    program.noneOfTheAboveEntranceRequirements =
+      entranceRequirements.noneOfTheAboveEntranceRequirements;
+    program.hasWILComponent = dynamicProgramData.hasWILComponent;
+    program.isWILApproved = dynamicProgramData.isWILApproved || null;
+    program.wilProgramEligibility =
+      dynamicProgramData.wilProgramEligibility || null;
+    program.hasTravel = dynamicProgramData.hasTravel;
+    program.travelProgramEligibility =
+      dynamicProgramData.travelProgramEligibility || null;
+    program.hasIntlExchange = dynamicProgramData.hasIntlExchange;
+    program.intlExchangeProgramEligibility =
+      dynamicProgramData.intlExchangeProgramEligibility || null;
+    program.programDeclaration = dynamicProgramData.programDeclaration;
+  }
+
+  /**
+   * Convert non-primitive education program data into a structured format suitable for saving.
+   * Used temporarily for legacy support.
+   * @param programData education program data.
+   * @returns transformed education program data.
+   */
+  private buildLegacyProgramData(programData: EducationProgramDynamicData): {
+    programDeliveryTypes: ProgramDeliveryTypes;
+    entranceRequirements: EntranceRequirements;
+    credentialTypesAviation?: AviationProgramCredentialTypes;
+  } {
+    const programDeliveryTypes: ProgramDeliveryTypes = {
+      deliveredOnSite: programData.programDeliveryTypes.includes(
+        ProgramDeliveryTypeValues.Onsite,
+      ),
+      deliveredOnline: programData.programDeliveryTypes.includes(
+        ProgramDeliveryTypeValues.Online,
+      ),
+    };
+    const entranceRequirements: EntranceRequirements = {
+      hasMinimumAge: programData.entranceRequirements.includes(
+        EntranceRequirementValues.HasMinimumAge,
+      ),
+      minHighSchool: programData.entranceRequirements.includes(
+        EntranceRequirementValues.MinHighSchool,
+      ),
+      requirementsByInstitution: programData.entranceRequirements.includes(
+        EntranceRequirementValues.RequirementsByInstitution,
+      ),
+      requirementsByBCITA: programData.entranceRequirements.includes(
+        EntranceRequirementValues.RequirementsByBCITA,
+      ),
+      noneOfTheAboveEntranceRequirements:
+        programData.entranceRequirements.includes(
+          EntranceRequirementValues.NoneOfTheAboveEntranceRequirements,
+        ),
+    };
+    const credentialTypesAviation: AviationProgramCredentialTypes =
+      programData.credentialTypesAviation
+        ? {
+            commercialPilotTraining:
+              programData.credentialTypesAviation.includes(
+                AviationCredentialTypeOptions.CommercialPilotTraining,
+              ),
+            endorsements: programData.credentialTypesAviation.includes(
+              AviationCredentialTypeOptions.Endorsements,
+            ),
+            instructorsRating: programData.credentialTypesAviation.includes(
+              AviationCredentialTypeOptions.InstructorsRating,
+            ),
+            privatePilotTraining: programData.credentialTypesAviation.includes(
+              AviationCredentialTypeOptions.PrivatePilotTraining,
+            ),
+          }
+        : undefined;
+    return {
+      programDeliveryTypes,
+      entranceRequirements,
+      credentialTypesAviation,
+    };
   }
 }

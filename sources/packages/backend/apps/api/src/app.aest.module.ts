@@ -9,6 +9,7 @@ import {
   DesignationAgreementLocationService,
   EducationProgramOfferingService,
   EducationProgramService,
+  EducationProgramSaveService,
   InstitutionService,
   BCeIDService,
   UserService,
@@ -154,6 +155,7 @@ import {
   EducationProgramStatusEvaluator,
   EducationProgramEvaluationService,
 } from "./services/education-program/education-program-evaluator";
+import { EducationProgramDataValidationService } from "./services/education-program/education-program-data-validation.service";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],
@@ -209,6 +211,8 @@ import {
     DesignationAgreementLocationService,
     EducationProgramOfferingService,
     EducationProgramService,
+    EducationProgramSaveService,
+    EducationProgramDataValidationService,
     InstitutionService,
     BCeIDService,
     UserService,
