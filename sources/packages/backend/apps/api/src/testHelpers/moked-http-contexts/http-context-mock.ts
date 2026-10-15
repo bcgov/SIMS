@@ -1,5 +1,5 @@
 import { ExecutionContext } from "@nestjs/common";
-import { HttpArgumentsHost } from "@nestjs/common/interfaces";
+import { HttpArgumentsHost } from "@nestjs/common/interfaces/index.js";
 
 export function createFakeHttpContext(request: any): ExecutionContext {
   const executionContext = {} as ExecutionContext;
