@@ -37,6 +37,7 @@ import {
   T4AUploadProcessor,
   ReturnedLoansResponseIntegrationScheduler,
   BullMqQueueProcessor,
+  BullMqQueueScheduler,
 } from "./processors";
 import {
   DisbursementScheduleSharedService,
@@ -91,6 +92,7 @@ import {
   CASInvoiceBatchService,
   CASInvoiceService,
   ProgramSuspensionBlockingAssessmentNotification,
+  QueueSchedulerService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -210,6 +212,8 @@ import { LoggerModule } from "@sims/utilities/logger";
     T4AUploadProcessor,
     ReturnedLoansResponseIntegrationScheduler,
     BullMqQueueProcessor,
+    BullMqQueueScheduler,
+    QueueSchedulerService,
   ],
   controllers: [HealthController, MetricsController],
 })

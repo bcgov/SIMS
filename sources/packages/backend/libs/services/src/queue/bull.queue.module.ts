@@ -24,6 +24,16 @@ const BULL_MQ_QUEUES: {
       },
     },
   },
+  {
+    name: "ier12-integration-1",
+    queueOptions: {
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: 180000,
+        removeOnComplete: { age: 86400000 },
+      },
+    },
+  },
 ];
 
 /**

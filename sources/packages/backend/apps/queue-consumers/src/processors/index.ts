@@ -37,3 +37,4 @@ export * from "./schedulers/cas-integration/cas-send-invoices.scheduler";
 export * from "./schedulers/esdc-integration/e-cert-cancellation-response/ecert-cancellation-response-integration.scheduler";
 export * from "./schedulers/esdc-integration/returned-loans-response/returned-loans-response-integration.scheduler";
 export * from "./bull-mq-queue-processor";
+export * from "./bull-mq-scheduler";

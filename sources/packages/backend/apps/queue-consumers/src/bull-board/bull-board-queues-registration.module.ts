@@ -42,15 +42,17 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
       });
       this.board.addQueue(queueAdapter);
     });
-    const queueProvider = this.moduleRef.get<BullMQQueue>(
-      getQueueTokenBullMQ("start-application"),
-      {
-        strict: false,
-      },
-    );
-    const queueAdapter = new BullMQAdapter(queueProvider, {
-      readOnlyMode: false,
+    ["start-application", "ier12-integration-1"].forEach((queueName) => {
+      const queueProvider = this.moduleRef.get<BullMQQueue>(
+        getQueueTokenBullMQ(queueName),
+        {
+          strict: false,
+        },
+      );
+      const queueAdapter = new BullMQAdapter(queueProvider, {
+        readOnlyMode: false,
+      });
+      this.board.addQueue(queueAdapter);
     });
-    this.board.addQueue(queueAdapter);
   }
 }
