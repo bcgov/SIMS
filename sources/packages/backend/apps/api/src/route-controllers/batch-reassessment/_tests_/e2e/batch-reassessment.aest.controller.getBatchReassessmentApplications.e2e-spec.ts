@@ -331,6 +331,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         {
           initialValue: {
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
+            triggerType: AssessmentTriggerType.ManualReassessment,
           },
         },
       ),
