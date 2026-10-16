@@ -259,7 +259,10 @@
               "type": "select",
               "input": true,
               "lockKey": true,
-              "searchThreshold": 0.3
+              "selectThreshold": 0.3,
+              "customOptions": {
+                "searchResultLimit": -1
+              }
             },
             {
               "label": "Select your institution:",
@@ -378,7 +381,10 @@
                   "type": "select",
                   "input": true,
                   "lockKey": true,
-                  "searchThreshold": 0.3
+                  "selectThreshold": 0.3,
+                  "customOptions": {
+                    "searchResultLimit": -1
+                  }
                 },
                 {
                   "label": "Select your program of study:",
@@ -856,7 +862,10 @@
                   "customConditional": "show =\n  (!!data.selectedLocation &&\n  !!data.selectedProgram &&\n  !!!data.mySchoolIsNotListed &&\n  !(data.myProgramNotListed ? data.myProgramNotListed.programnotListed : false) &&\n  !(data.myStudyPeriodIsntListed ? data.myStudyPeriodIsntListed.offeringnotListed : false) &&\n  !!!data.isReadOnly\n  );",
                   "type": "select",
                   "input": true,
-                  "searchThreshold": 0.3
+                  "selectThreshold": 0.3,
+                  "customOptions": {
+                    "searchResultLimit": -1
+                  }
                 },
                 {
                   "label": "Select your study dates",
