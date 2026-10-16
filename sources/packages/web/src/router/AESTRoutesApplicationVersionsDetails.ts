@@ -32,6 +32,19 @@ export const AESTRoutesApplicationVersionsDetails: Array<RouteRecordRaw> = [
     name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
     props: (route) => ({
       ...RouteHelper.defaultDetailsRoute(route),
+      // When navigating from the batch manual reassessment outcome,
+      // allow the user to navigate back to the batch.
+      backTarget: route.query.batchReassessmentId
+        ? {
+            name: "Batch manual reassessment outcome",
+            to: {
+              name: AESTRoutesConst.BATCH_REASSESSMENT_OUTCOME,
+              params: {
+                batchReassessmentId: route.query.batchReassessmentId,
+              },
+            },
+          }
+        : undefined,
     }),
     component: AssessmentsSummaryVersion,
     meta: {

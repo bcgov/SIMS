@@ -18,8 +18,11 @@ import {
 import { Role } from "../../../../auth";
 import {
   Application,
+  ApplicationStatus,
+  AssessmentTriggerType,
   BatchReassessment,
   StudentAssessmentStatus,
+  User,
 } from "@sims/sims-db";
 import { BatchReassessmentApplicationResult } from "../../../../services";
 
@@ -32,13 +35,14 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
   let completedApplication: Application;
   let cancelledApplication: Application;
   let pendingApplication: Application;
+  let auditUser: User;
   const failedApplicationNumber = "9999999999";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    const auditUser = await db.user.save(createFakeUser());
+    auditUser = await db.user.save(createFakeUser());
 
     // Creates a batch reassessment with two successful (completed and cancelled assessments),
     // one pending (submitted assessment), and one failed (no assessment) application.
@@ -51,6 +55,9 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
       {},
       {
         applicationNumber: "9900000001",
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
       },
     );
     const completedAssessment = await db.studentAssessment.save(
@@ -58,6 +65,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         { auditUser, application: completedApplication },
         {
           initialValue: {
+            triggerType: AssessmentTriggerType.ManualReassessment,
             studentAssessmentStatus: StudentAssessmentStatus.Completed,
           },
         },
@@ -69,6 +77,9 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
       {},
       {
         applicationNumber: "9900000002",
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
       },
     );
     const cancelledAssessment = await db.studentAssessment.save(
@@ -76,6 +87,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         { auditUser, application: cancelledApplication },
         {
           initialValue: {
+            triggerType: AssessmentTriggerType.ManualReassessment,
             studentAssessmentStatus: StudentAssessmentStatus.Cancelled,
           },
         },
@@ -87,6 +99,9 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
       {},
       {
         applicationNumber: "9910000001",
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
       },
     );
     const submittedAssessment = await db.studentAssessment.save(
@@ -94,6 +109,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         { auditUser, application: pendingApplication },
         {
           initialValue: {
+            triggerType: AssessmentTriggerType.ManualReassessment,
             studentAssessmentStatus: StudentAssessmentStatus.Submitted,
           },
         },
@@ -145,6 +161,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
           {
             applicationNumber: completedApplication.applicationNumber,
             applicationId: completedApplication.id,
+            currentApplicationId: completedApplication.id,
             studentId: completedApplication.student.id,
             result: BatchReassessmentApplicationResult.Successful,
             failureReason: null,
@@ -152,6 +169,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
           {
             applicationNumber: cancelledApplication.applicationNumber,
             applicationId: cancelledApplication.id,
+            currentApplicationId: cancelledApplication.id,
             studentId: cancelledApplication.student.id,
             result: BatchReassessmentApplicationResult.Successful,
             failureReason: null,
@@ -159,6 +177,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
           {
             applicationNumber: pendingApplication.applicationNumber,
             applicationId: pendingApplication.id,
+            currentApplicationId: pendingApplication.id,
             studentId: pendingApplication.student.id,
             result: BatchReassessmentApplicationResult.Pending,
             failureReason: null,
@@ -188,6 +207,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
           {
             applicationNumber: pendingApplication.applicationNumber,
             applicationId: pendingApplication.id,
+            currentApplicationId: pendingApplication.id,
             studentId: pendingApplication.student.id,
             result: BatchReassessmentApplicationResult.Pending,
             failureReason: null,
@@ -221,6 +241,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
           {
             applicationNumber: cancelledApplication.applicationNumber,
             applicationId: cancelledApplication.id,
+            currentApplicationId: cancelledApplication.id,
             studentId: cancelledApplication.student.id,
             result: BatchReassessmentApplicationResult.Successful,
             failureReason: null,
@@ -228,6 +249,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
           {
             applicationNumber: completedApplication.applicationNumber,
             applicationId: completedApplication.id,
+            currentApplicationId: completedApplication.id,
             studentId: completedApplication.student.id,
             result: BatchReassessmentApplicationResult.Successful,
             failureReason: null,
@@ -245,6 +267,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         {
           applicationNumber: completedApplication.applicationNumber,
           applicationId: completedApplication.id,
+          currentApplicationId: completedApplication.id,
           studentId: completedApplication.student.id,
           result: BatchReassessmentApplicationResult.Successful,
           failureReason: null,
@@ -252,6 +275,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         {
           applicationNumber: cancelledApplication.applicationNumber,
           applicationId: cancelledApplication.id,
+          currentApplicationId: cancelledApplication.id,
           studentId: cancelledApplication.student.id,
           result: BatchReassessmentApplicationResult.Successful,
           failureReason: null,
@@ -259,6 +283,7 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         {
           applicationNumber: pendingApplication.applicationNumber,
           applicationId: pendingApplication.id,
+          currentApplicationId: pendingApplication.id,
           studentId: pendingApplication.student.id,
           result: BatchReassessmentApplicationResult.Pending,
           failureReason: null,
@@ -282,6 +307,77 @@ describe("BatchReassessmentAESTController(e2e)-getBatchReassessmentApplications"
         .expect(HttpStatus.OK)
         .expect({ results: expectedResults, count: expectedResults.length });
     });
+  });
+
+  it("Should return the correct current application ID when the application was edited after the batch manual reassessment.", async () => {
+    // Arrange
+    const batchReassessment = await db.batchReassessment.save(
+      createFakeBatchReassessment({ creator: auditUser }),
+    );
+    // Original application, edited after the batch manual reassessment.
+    const editedApplication = await saveFakeApplication(
+      db.dataSource,
+      undefined,
+      {
+        applicationStatus: ApplicationStatus.Edited,
+        currentAssessmentInitialValues: {
+          studentAssessmentStatus: StudentAssessmentStatus.Completed,
+        },
+      },
+    );
+    const editedAssessment = await db.studentAssessment.save(
+      createFakeStudentAssessment(
+        { auditUser, application: editedApplication },
+        {
+          initialValue: {
+            studentAssessmentStatus: StudentAssessmentStatus.Completed,
+          },
+        },
+      ),
+    );
+    // Current application version created from the edited original application.
+    const currentApplication = await saveFakeApplication(
+      db.dataSource,
+      {
+        student: editedApplication.student,
+        parentApplication: { id: editedApplication.id } as Application,
+        precedingApplication: { id: editedApplication.id } as Application,
+      },
+      {
+        applicationNumber: editedApplication.applicationNumber,
+        offeringIntensity:
+          editedApplication.currentAssessment.offering.offeringIntensity,
+      },
+    );
+    await db.batchReassessmentApplication.save(
+      createFakeBatchReassessmentApplication({
+        batchReassessment: batchReassessment,
+        applicationNumber: editedApplication.applicationNumber,
+        studentAssessment: editedAssessment,
+        creator: auditUser,
+      }),
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    const endpoint = getEndpoint(batchReassessment.id, "page=0&pageLimit=10");
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            applicationNumber: editedApplication.applicationNumber,
+            applicationId: editedApplication.id,
+            currentApplicationId: currentApplication.id,
+            studentId: editedApplication.student.id,
+            result: BatchReassessmentApplicationResult.Successful,
+            failureReason: null,
+          },
+        ],
+        count: 1,
+      });
   });
 
   it("Should throw a HttpStatus Not Found (404) error when the batch reassessment does not exist.", async () => {

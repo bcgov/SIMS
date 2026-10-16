@@ -125,6 +125,7 @@ export class BatchReassessmentAESTController extends BaseController {
       results: applications.results.map((application) => ({
         applicationNumber: application.applicationNumber,
         applicationId: application.applicationId,
+        currentApplicationId: application.currentApplicationId,
         studentId: application.studentId,
         result: application.result,
         failureReason: application.failureReason,

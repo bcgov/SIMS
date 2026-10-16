@@ -68,7 +68,7 @@
               />
             </template>
             <template #[`item.failureReason`]="{ item }">
-              {{ item.failureReason }}
+              {{ emptyStringFiller(item.failureReason) }}
             </template>
             <template #[`item.action`]="{ item }">
               <v-btn
@@ -87,7 +87,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import {
@@ -106,7 +106,7 @@ import {
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import { BatchReassessmentService } from "@/services/BatchReassessmentService";
-import { useSnackBar } from "@/composables";
+import { useFormatters, useSnackBar } from "@/composables";
 import StatusChipBatchReassessmentApplicationResult from "@/components/generic/StatusChipBatchReassessmentApplicationResult.vue";
 
 const ResultFilter = {
@@ -122,7 +122,9 @@ const props = defineProps<Props>();
 const { mobile: isMobile } = useDisplay();
 const router = useRouter();
 const snackBar = useSnackBar();
-const loading = ref(false);
+const { emptyStringFiller } = useFormatters();
+// Starts as loading to render the data table, which triggers the initial load on mount.
+const loading = ref(true);
 const searchCriteria = ref("");
 const selectedFilter = ref<BatchReassessmentApplicationResult | "All">(
   ResultFilter.All,
@@ -138,18 +140,33 @@ const currentPagination: PaginationOptions = {
 
 /**
  * Navigates to the application assessments, allowing the user to navigate back to this batch.
+ * When the reassessed application is no longer the current version, navigates to the
+ * assessments of that application version instead.
  * @param application application to navigate to.
  */
 const goToAssessmentsSummary = (
   application: BatchReassessmentApplicationAPIOutDTO,
 ) => {
+  const query = { batchReassessmentId: props.batchReassessmentId };
+  if (application.applicationId !== application.currentApplicationId) {
+    router.push({
+      name: AESTRoutesConst.ASSESSMENTS_SUMMARY_VERSION,
+      params: {
+        studentId: application.studentId,
+        applicationId: application.currentApplicationId,
+        versionApplicationId: application.applicationId,
+      },
+      query,
+    });
+    return;
+  }
   router.push({
     name: AESTRoutesConst.ASSESSMENTS_SUMMARY,
     params: {
       studentId: application.studentId,
       applicationId: application.applicationId,
     },
-    query: { batchReassessmentId: props.batchReassessmentId },
+    query,
   });
 };
 
@@ -185,8 +202,4 @@ const pageEvent = async (event: DataTableOptions) => {
   currentPagination.pageLimit = event.itemsPerPage;
   await loadApplications();
 };
-
-onMounted(async () => {
-  await loadApplications();
-});
 </script>

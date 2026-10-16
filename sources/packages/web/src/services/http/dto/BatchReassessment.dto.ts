@@ -34,6 +34,7 @@ export interface BatchReassessmentSummaryAPIOutDTO {
 export interface BatchReassessmentApplicationAPIOutDTO {
   applicationNumber: string;
   applicationId?: number;
+  currentApplicationId?: number;
   studentId?: number;
   result: BatchReassessmentApplicationResult;
   failureReason: string | null;

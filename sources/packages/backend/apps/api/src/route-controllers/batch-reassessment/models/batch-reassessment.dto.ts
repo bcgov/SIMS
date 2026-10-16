@@ -59,6 +59,7 @@ export class BatchReassessmentSummaryAPIOutDTO {
 export class BatchReassessmentApplicationAPIOutDTO {
   applicationNumber: string;
   applicationId?: number;
+  currentApplicationId?: number;
   studentId?: number;
   result: BatchReassessmentApplicationResult;
   failureReason: string | null;

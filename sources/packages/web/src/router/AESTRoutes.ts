@@ -338,7 +338,7 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               applicationId: Number.parseInt(
                 route.params.applicationId as string,
               ),
-              // When navigating from the batch manual reassessment results,
+              // When navigating from the batch manual reassessment outcome,
               // allow the user to navigate back to the batch.
               backTarget: route.query.batchReassessmentId
                 ? {

@@ -52,6 +52,7 @@ export enum BatchReassessmentApplicationResult {
 export interface BatchReassessmentApplicationOutcome {
   applicationNumber: string;
   applicationId?: number;
+  currentApplicationId?: number;
   studentId?: number;
   result: BatchReassessmentApplicationResult;
   failureReason?: string;

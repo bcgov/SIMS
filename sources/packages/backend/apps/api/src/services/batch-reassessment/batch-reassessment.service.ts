@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
   Application,
+  ApplicationStatus,
   BatchReassessment,
   BatchReassessmentApplication,
   StudentAssessment,
@@ -31,7 +32,7 @@ import {
 const BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME = "BATCH_REASSESSMENT_NUMBER";
 const BATCH_REASSESSMENT_CHUNK_SIZE = 1000;
 /**
- * Assessment statuses indicating the application was successfully reassessed, including cancellations in progress..
+ * Assessment statuses indicating the application was successfully reassessed, including cancellations in progress.
  */
 const BATCH_REASSESSMENT_SUCCESS_STATUSES = [
   StudentAssessmentStatus.Completed,
@@ -145,17 +146,29 @@ export class BatchReassessmentService {
         "studentAssessment.id",
         "studentAssessment.studentAssessmentStatus",
         "application.id",
+        // Required to map the current application version through the parent application.
+        "parentApplication.id",
+        "currentApplication.id",
         "student.id",
       ])
       .leftJoin("batchApplication.studentAssessment", "studentAssessment")
       .leftJoin("studentAssessment.application", "application")
       .leftJoin("application.student", "student")
+      .leftJoin("application.parentApplication", "parentApplication")
+      // Current application version, the only one that will not have its main status as 'Edited'.
+      .leftJoin(
+        "parentApplication.versions",
+        "currentApplication",
+        "currentApplication.applicationStatus != :editedStatus",
+        { editedStatus: ApplicationStatus.Edited },
+      )
       .where("batchApplication.batchReassessment.id = :batchReassessmentId", {
         batchReassessmentId,
       });
-    if (paginationOptions.searchCriteria) {
+    const searchCriteria = paginationOptions.searchCriteria?.trim();
+    if (searchCriteria) {
       query.andWhere("batchApplication.applicationNumber ILIKE :search", {
-        search: `%${paginationOptions.searchCriteria.trim()}%`,
+        search: `%${searchCriteria}%`,
       });
     }
     switch (paginationOptions.result) {
@@ -184,15 +197,22 @@ export class BatchReassessmentService {
       .limit(paginationOptions.pageLimit);
     const [batchApplications, count] = await query.getManyAndCount();
     return {
-      results: batchApplications.map((batchApplication) => ({
-        applicationNumber: batchApplication.applicationNumber,
-        applicationId: batchApplication.studentAssessment?.application.id,
-        studentId: batchApplication.studentAssessment?.application.student.id,
-        result: this.getBatchReassessmentApplicationResult(
-          batchApplication.studentAssessment,
-        ),
-        failureReason: batchApplication.failureReason,
-      })),
+      results: batchApplications.map((batchApplication) => {
+        const application = batchApplication.studentAssessment?.application;
+        // The versions join is filtered to the current application only.
+        const [currentApplication] =
+          application?.parentApplication.versions ?? [];
+        return {
+          applicationNumber: batchApplication.applicationNumber,
+          applicationId: application?.id,
+          currentApplicationId: currentApplication?.id,
+          studentId: application?.student.id,
+          result: this.getBatchReassessmentApplicationResult(
+            batchApplication.studentAssessment,
+          ),
+          failureReason: batchApplication.failureReason,
+        };
+      }),
       count,
     };
   }
