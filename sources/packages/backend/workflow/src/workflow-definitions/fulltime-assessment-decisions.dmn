@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnFullTimeAssessmentDecisions" name="dmnFullTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.49.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="dmnFullTimeAssessmentDecisions" name="dmnFullTimeAssessmentDecisions" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.52.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0" camunda:diagramRelationId="1a575ead-1e6d-468c-901a-766a35569b38">
   <decision id="dmnFullTimeProgramYearMaximums" name="dmnFullTimeProgramYearMaximums">
     <decisionTable id="DecisionTable_1oyvbif">
       <input id="InputClause_02zjhj9" label="programYear">
@@ -1468,7 +1468,7 @@
           <text>388</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0c6y85j">
-          <text>360</text>
+          <text>359</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_042lvzx">
           <text>417</text>
@@ -1501,7 +1501,7 @@
           <text>417</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0y3jn98">
-          <text>412</text>
+          <text>479</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_1jhyzxq">
           <text>564</text>
@@ -1570,7 +1570,7 @@
           <text>757</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_16n8f5b">
-          <text>699</text>
+          <text>698</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0o1wg9n">
           <text>812</text>
@@ -1672,7 +1672,7 @@
           <text>200</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0v2m3dx">
-          <text>167</text>
+          <text>166</text>
         </outputEntry>
         <outputEntry id="LiteralExpression_0i3rdcq">
           <text>196</text>
