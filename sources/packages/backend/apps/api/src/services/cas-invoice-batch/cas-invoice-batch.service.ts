@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   CASInvoiceBatch,
   CASInvoiceBatchApprovalStatus,
+  CASInvoiceStatus,
   User,
 } from "@sims/sims-db";
 import { In, Repository } from "typeorm";
@@ -15,6 +16,10 @@ import {
   CAS_INVOICE_BATCH_NOT_FOUND,
   CAS_INVOICE_BATCH_NOT_PENDING,
 } from "../../constants";
+import {
+  CASInvoiceBatchAwardAmount,
+  CASInvoiceBatchProcessingSummary,
+} from "./cas-invoice-batch.models";
 
 @Injectable()
 export class CASInvoiceBatchService {
@@ -68,9 +73,8 @@ export class CASInvoiceBatchService {
     approvalStatus: CASInvoiceBatchApprovalStatus,
     auditUserId: number,
   ): Promise<void> {
-    const casInvoiceBatch = await this.getCASInvoiceBatchRecord(
-      casInvoiceBatchId,
-    );
+    const casInvoiceBatch =
+      await this.getCASInvoiceBatchRecord(casInvoiceBatchId);
     if (!casInvoiceBatch) {
       throw new CustomNamedError(
         `CAS invoice batch with ID ${casInvoiceBatchId} not found.`,
@@ -94,6 +98,101 @@ export class CASInvoiceBatchService {
         approvalStatusUpdatedOn: new Date(),
       },
     );
+  }
+
+  /**
+   * Checks if CAS invoice batch exists.
+   * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * @returns true if the CAS invoice batch exists, false otherwise.
+   */
+  async checkCASInvoiceBatchExists(
+    casInvoiceBatchId: number,
+  ): Promise<boolean> {
+    return this.casInvoiceBatchRepo.exists({
+      where: { id: casInvoiceBatchId },
+    });
+  }
+
+  /**
+   * Retrieve the total amounts of a CAS invoice batch for each
+   * distribution account type (award code, offering intensity and operation code).
+   * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * @returns total amounts for each distribution account type.
+   */
+  async getCASInvoiceBatchDistributionTotals(
+    casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchAwardAmount[]> {
+    const distributionTotals = await this.casInvoiceBatchRepo
+      .createQueryBuilder("casInvoiceBatch")
+      .select("casDistributionAccount.awardValueCode", "awardValueCode")
+      .addSelect(
+        "casDistributionAccount.offeringIntensity",
+        "offeringIntensity",
+      )
+      .addSelect("casDistributionAccount.operationCode", "operationCode")
+      .addSelect("SUM(casInvoiceDetail.valueAmount)", "total")
+      .innerJoin("casInvoiceBatch.casInvoices", "casInvoice")
+      .innerJoin("casInvoice.casInvoiceDetails", "casInvoiceDetail")
+      .innerJoin(
+        "casInvoiceDetail.casDistributionAccount",
+        "casDistributionAccount",
+      )
+      .where("casInvoiceBatch.id = :casInvoiceBatchId", { casInvoiceBatchId })
+      .groupBy("casDistributionAccount.awardValueCode")
+      .addGroupBy("casDistributionAccount.offeringIntensity")
+      .addGroupBy("casDistributionAccount.operationCode")
+      .orderBy("casDistributionAccount.awardValueCode")
+      .addOrderBy("casDistributionAccount.offeringIntensity")
+      .addOrderBy("casDistributionAccount.operationCode")
+      .getRawMany<
+        Omit<CASInvoiceBatchAwardAmount, "total"> & {
+          total: string;
+        }
+      >();
+    // The total is returned from DB as string, needs to be converted to a number,
+    // since valueAmount is defined as numeric in the DB.
+    return distributionTotals.map((distributionTotal) => ({
+      ...distributionTotal,
+      total: +distributionTotal.total,
+    }));
+  }
+
+  /**
+   * Retrieve the count of invoices of a CAS invoice batch for each invoice status.
+   * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * @returns count of invoices for each invoice status.
+   */
+  async getCASInvoiceBatchProcessingSummary(
+    casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchProcessingSummary> {
+    return this.casInvoiceBatchRepo
+      .createQueryBuilder("casInvoiceBatch")
+      .select("COUNT(casInvoice.id)::int", "totalInvoices")
+      .addSelect(
+        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :pendingStatus)::int",
+        "totalPending",
+      )
+      .addSelect(
+        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :sentStatus)::int",
+        "totalSent",
+      )
+      .addSelect(
+        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :manualInterventionStatus)::int",
+        "totalManualIntervention",
+      )
+      .addSelect(
+        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :resolvedStatus)::int",
+        "totalResolved",
+      )
+      .leftJoin("casInvoiceBatch.casInvoices", "casInvoice")
+      .where("casInvoiceBatch.id = :casInvoiceBatchId", { casInvoiceBatchId })
+      .setParameters({
+        pendingStatus: CASInvoiceStatus.Pending,
+        sentStatus: CASInvoiceStatus.Sent,
+        manualInterventionStatus: CASInvoiceStatus.ManualIntervention,
+        resolvedStatus: CASInvoiceStatus.Resolved,
+      })
+      .getRawOne<CASInvoiceBatchProcessingSummary>();
   }
 
   /**

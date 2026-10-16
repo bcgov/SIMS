@@ -31,6 +31,7 @@ import {
 } from "../../services";
 import {
   CASInvoiceBatchAPIOutDTO,
+  CASInvoiceBatchSummaryTotalsAPIOutDTO,
   UpdateCASInvoiceBatchAPIInDTO,
 } from "./models/cas-invoice-batch.dto";
 import { getUserFullName } from "../../utilities";
@@ -120,6 +121,52 @@ export class CASInvoiceBatchAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Summary totals of a CAS invoice batch, including the count of invoices
+   * for each invoice status and the total amounts for each distribution account type.
+   * @param casInvoiceBatchId batch ID to have the summary totals retrieved for.
+   * @returns batch processing summary and distribution totals.
+   */
+  @Roles(Role.AESTCASInvoicing)
+  @Get(":casInvoiceBatchId/batch-summary-totals")
+  @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
+  async getCASInvoiceBatchSummaryTotals(
+    @Param("casInvoiceBatchId", ParseIntPipe) casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchSummaryTotalsAPIOutDTO> {
+    const casInvoiceBatchExists =
+      await this.casInvoiceBatchService.checkCASInvoiceBatchExists(
+        casInvoiceBatchId,
+      );
+    if (!casInvoiceBatchExists) {
+      throw new NotFoundException(
+        `CAS invoice batch with ID ${casInvoiceBatchId} not found.`,
+      );
+    }
+    const [processingSummary, distributionTotals] = await Promise.all([
+      this.casInvoiceBatchService.getCASInvoiceBatchProcessingSummary(
+        casInvoiceBatchId,
+      ),
+      this.casInvoiceBatchService.getCASInvoiceBatchDistributionTotals(
+        casInvoiceBatchId,
+      ),
+    ]);
+    return {
+      processingSummary: {
+        totalInvoices: processingSummary.totalInvoices,
+        totalPending: processingSummary.totalPending,
+        totalSent: processingSummary.totalSent,
+        totalManualIntervention: processingSummary.totalManualIntervention,
+        totalResolved: processingSummary.totalResolved,
+      },
+      awardAmounts: distributionTotals.map((distributionTotal) => ({
+        awardValueCode: distributionTotal.awardValueCode,
+        offeringIntensity: distributionTotal.offeringIntensity,
+        operationCode: distributionTotal.operationCode,
+        total: distributionTotal.total,
+      })),
+    };
   }
 
   /**
