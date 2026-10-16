@@ -262,8 +262,7 @@
               "selectThreshold": 0.3,
               "customOptions": {
                 "searchResultLimit": -1
-              },
-              "sortSearchAlphabetically": true
+              }
             },
             {
               "label": "Select your institution:",
@@ -385,8 +384,7 @@
                   "selectThreshold": 0.3,
                   "customOptions": {
                     "searchResultLimit": -1
-                  },
-                  "sortSearchAlphabetically": true
+                  }
                 },
                 {
                   "label": "Select your program of study:",
@@ -867,8 +865,7 @@
                   "selectThreshold": 0.3,
                   "customOptions": {
                     "searchResultLimit": -1
-                  },
-                  "sortSearchAlphabetically": true
+                  }
                 },
                 {
                   "label": "Select your study dates",

@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ref, watch, watchEffect } from "vue";
-import { Formio, Components } from "@formio/js";
+import { Formio } from "@formio/js";
 import ApiClient from "@/services/http/ApiClient";
 import FormUploadService from "@/services/FormUploadService";
 import {
@@ -31,53 +31,6 @@ import {
   useAward,
 } from "@/composables";
 import { FORMIO_LOAD_DATA_PROCESSING_VIEW_DELAY } from "@/constants/system-constants";
-
-// Form.io's Select component (ChoicesJS widget) returns search results ordered by Fuse.js relevance score.
-// Choices.js keeps that order while searching, ignoring its own sorter. Components that set
-// "sortSearchAlphabetically": true in the form definition get a custom Fuse "sortFn" so the filtered results
-// are displayed in dictionary order instead. The result is divided into two sets:
-// exact matches and non-exact matches, with exact matches appearing first and both sets sorted alphabetically.
-// This is patched once at module scope (not inside setup) so it is applied only
-// one time, and it wraps the original "choicesOptions" so every other option
-// calculated by Form.io (threshold, search fields, etc.) is preserved.
-const SelectComponent = (Components as any).components.select;
-const originalChoicesOptions = SelectComponent.prototype.choicesOptions;
-
-// Fuse hands its internal record to the sort function: the label is stored at
-// item[0].v (first search field). The label is wrapped on HTML tags (e.g. <span>),
-// which are removed to compare only the text displayed to the user.
-const labelText = (result: any): string =>
-  (result.item?.[0]?.v ?? result.item?.label ?? "").replace(/<[^>]*>/g, "");
-
-const alphabetical = (a: any, b: any) =>
-  labelText(a).localeCompare(labelText(b), undefined, {
-    sensitivity: "base",
-    numeric: true,
-  });
-
-// Apply custom sorting only to explicitly configured select components.
-SelectComponent.prototype.choicesOptions = function () {
-  const options = originalChoicesOptions.call(this);
-  if (this.component.sortSearchAlphabetically) {
-    options.fuseOptions = {
-      ...options.fuseOptions,
-      sortFn: (a: any, b: any) => {
-        // "this" is the Select component; its Choices instance exists by the time a search runs.
-        const query = (this.choices?.input?.value ?? "")
-          .trim()
-          .replace(/\s{2,}/g, " ")
-          .toLowerCase();
-        if (query) {
-          const aExact = labelText(a).toLowerCase().includes(query);
-          const bExact = labelText(b).toLowerCase().includes(query);
-          if (aExact !== bExact) return aExact ? -1 : 1;
-        }
-        return alphabetical(a, b);
-      },
-    };
-  }
-  return options;
-};
 
 export default defineComponent({
   emits: {

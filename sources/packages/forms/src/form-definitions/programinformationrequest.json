@@ -408,8 +408,7 @@
           "selectThreshold": 0.3,
           "customOptions": {
             "searchResultLimit": -1
-          },
-          "sortSearchAlphabetically": true
+          }
         },
         {
           "label": "Other reason",
@@ -450,8 +449,7 @@
           "selectThreshold": 0.3,
           "customOptions": {
             "searchResultLimit": -1
-          },
-          "sortSearchAlphabetically": true
+          }
         },
         {
           "label": "Offering",
@@ -470,8 +468,7 @@
           "selectThreshold": 0.3,
           "customOptions": {
             "searchResultLimit": -1
-          },
-          "sortSearchAlphabetically": true
+          }
         },
         {
           "label": "Study period warning",
