@@ -198,7 +198,7 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
  * - `daysOffSet` Optional number of days to offset the dependent's birthday.
  * @returns Dependents eligible for contribution based on their age and school attendance.
  */
-export function createFakeStudentDependentsForContribution(options: {
+export function createFakeStudentDependentForContribution(options: {
   referenceDate: Date | string;
   age: number;
   attendingPostSecondarySchool: YesNoOptions;
