@@ -31,10 +31,12 @@ import {
 const BATCH_REASSESSMENT_NUMBER_SEQUENCE_NAME = "BATCH_REASSESSMENT_NUMBER";
 const BATCH_REASSESSMENT_CHUNK_SIZE = 1000;
 /**
- * Assessment statuses considered final, meaning the application was successfully reassessed.
+ * Assessment statuses indicating the application was successfully reassessed, including cancellations in progress..
  */
 const BATCH_REASSESSMENT_SUCCESS_STATUSES = [
   StudentAssessmentStatus.Completed,
+  StudentAssessmentStatus.CancellationRequested,
+  StudentAssessmentStatus.CancellationQueued,
   StudentAssessmentStatus.Cancelled,
 ];
 
@@ -70,6 +72,7 @@ export class BatchReassessmentService {
       .addSelect('counts."totalCount"', "totalCount")
       .addSelect('counts."successCount"', "successCount")
       .addSelect('counts."failureCount"', "failureCount")
+      .addSelect('counts."pendingCount"', "pendingCount")
       // Application counts aggregated per batch.
       .innerJoin(
         (subQuery) =>
@@ -84,6 +87,10 @@ export class BatchReassessmentService {
               "COUNT(*) FILTER (WHERE studentAssessment.id IS NULL)::int",
               "failureCount",
             )
+            .addSelect(
+              "COUNT(*) FILTER (WHERE studentAssessment.studentAssessmentStatus NOT IN (:...successStatuses))::int",
+              "pendingCount",
+            )
             .from(BatchReassessmentApplication, "batchApplication")
             .leftJoin("batchApplication.studentAssessment", "studentAssessment")
             .groupBy("batchApplication.batchReassessment.id")
@@ -96,20 +103,15 @@ export class BatchReassessmentService {
       )
       .leftJoin("batchReassessment.creator", "creator")
       .orderBy("batchReassessment.createdAt", "DESC")
-      .getRawMany<Omit<BatchReassessmentSummary, "status" | "pendingCount">>();
+      .getRawMany<Omit<BatchReassessmentSummary, "status">>();
 
-    return rows.map((row) => {
-      // Applications that have an assessment that has not yet reached a final status.
-      const pendingCount = row.totalCount - row.successCount - row.failureCount;
-      return {
-        ...row,
-        pendingCount,
-        status:
-          pendingCount === 0
-            ? BatchReassessmentStatus.Completed
-            : BatchReassessmentStatus.InProgress,
-      };
-    });
+    return rows.map((row) => ({
+      ...row,
+      status:
+        row.pendingCount === 0
+          ? BatchReassessmentStatus.Completed
+          : BatchReassessmentStatus.InProgress,
+    }));
   }
 
   /**

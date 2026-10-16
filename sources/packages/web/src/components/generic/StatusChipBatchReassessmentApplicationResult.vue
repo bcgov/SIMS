@@ -17,8 +17,10 @@ const statusChipType = computed(() => {
       return StatusChipTypes.Success;
     case BatchReassessmentApplicationResult.Failed:
       return StatusChipTypes.Error;
-    default:
+    case BatchReassessmentApplicationResult.Pending:
       return StatusChipTypes.Warning;
+    default:
+      return StatusChipTypes.Inactive;
   }
 });
 </script>

@@ -5,7 +5,7 @@ import {
   BatchReassessmentSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { BatchReassessmentApplicationResult, PaginationOptions } from "@/types";
+import { PaginationOptions } from "@/types";
 
 /**
  * Client service layer for Batch Reassessments.
@@ -39,19 +39,17 @@ export class BatchReassessmentService {
   /**
    * Gets the reassessment outcome of all applications in a batch manual reassessment.
    * @param batchReassessmentId batch manual reassessment ID.
-   * @param paginationOptions pagination options, with the application number as search criteria.
-   * @param result optional reassessment result to filter by.
+   * @param paginationOptions pagination options, with the application number
+   * (`searchCriteria`) and optional `result` filter as search criteria.
    * @returns paginated application outcomes ordered by application number.
    */
   async getBatchReassessmentApplications(
     batchReassessmentId: number,
     paginationOptions: PaginationOptions,
-    result?: BatchReassessmentApplicationResult,
   ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
     return ApiClient.BatchReassessmentApi.getBatchReassessmentApplications(
       batchReassessmentId,
       paginationOptions,
-      result,
     );
   }
 }

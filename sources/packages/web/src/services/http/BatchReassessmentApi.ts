@@ -6,7 +6,7 @@ import {
   BatchReassessmentSummaryAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { BatchReassessmentApplicationResult, PaginationOptions } from "@/types";
+import { PaginationOptions } from "@/types";
 
 /**
  * Http API client for Batch Reassessments.
@@ -33,19 +33,15 @@ export class BatchReassessmentApi extends HttpBaseClient {
   /**
    * Gets the reassessment outcome of all applications in a batch manual reassessment.
    * @param batchReassessmentId batch manual reassessment ID.
-   * @param paginationOptions pagination options, with the application number as search criteria.
-   * @param result optional reassessment result to filter by.
+   * @param paginationOptions pagination options, with the application number
+   * (`searchCriteria`) and optional `result` filter as search criteria.
    * @returns paginated application outcomes ordered by application number.
    */
   async getBatchReassessmentApplications(
     batchReassessmentId: number,
     paginationOptions: PaginationOptions,
-    result?: BatchReassessmentApplicationResult,
   ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
-    let url = `batch-reassessment/${batchReassessmentId}/applications?${getPaginationQueryString(paginationOptions)}`;
-    if (result) {
-      url += `&result=${result}`;
-    }
+    const url = `batch-reassessment/${batchReassessmentId}/applications?${getPaginationQueryString(paginationOptions)}`;
     return this.getCall(this.addClientRoot(url));
   }
 }

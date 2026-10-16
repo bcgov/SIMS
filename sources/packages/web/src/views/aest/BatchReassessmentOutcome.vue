@@ -5,7 +5,7 @@
   >
     <template #header>
       <header-navigator
-        title="Back to batch reassessment"
+        title="Batch Reassessment"
         :route-location="{ name: AESTRoutesConst.BATCH_REASSESSMENT }"
         sub-title="Batch manual reassessment outcome"
       />
@@ -19,7 +19,7 @@
         v-model="searchCriteria"
         search-label="Search application number"
         :loading="loading"
-        @search="searchApplications"
+        @search="loadApplications"
       >
         <template #append-search>
           <v-btn-toggle
@@ -156,13 +156,16 @@ const goToAssessmentsSummary = (
 const loadApplications = async () => {
   try {
     loading.value = true;
+    const criteria: Record<string, string> = {
+      searchCriteria: searchCriteria.value,
+    };
+    if (selectedFilter.value !== ResultFilter.All) {
+      criteria.result = selectedFilter.value;
+    }
     paginatedApplications.value =
       await BatchReassessmentService.shared.getBatchReassessmentApplications(
         props.batchReassessmentId,
-        { ...currentPagination, searchCriteria: searchCriteria.value },
-        selectedFilter.value === ResultFilter.All
-          ? undefined
-          : selectedFilter.value,
+        { ...currentPagination, searchCriteria: criteria },
       );
   } catch {
     snackBar.error(
@@ -171,10 +174,6 @@ const loadApplications = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const searchApplications = async () => {
-  await loadApplications();
 };
 
 /**
