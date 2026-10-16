@@ -8,6 +8,7 @@ import FieldOfStudyCodeRenderer from "./FieldOfStudyCodeRenderer.vue";
 import CheckboxOptionsGroupRenderer from "./CheckboxOptionsGroupRenderer.vue";
 import OneOfRadioOptionsRenderer from "./OneOfRadioOptionsRenderer.vue";
 import OneOfSelectRenderer from "./OneOfSelectRenderer.vue";
+import LabelRenderer from "./LabelRenderer.vue";
 import BannerRenderer from "./BannerRenderer.vue";
 import BooleanCheckboxRenderer from "./BooleanCheckboxRenderer.vue";
 import EntranceRequirementsRenderer from "./EntranceRequirementsRenderer.vue";
@@ -20,6 +21,7 @@ import {
   checkboxOptionsGroupTester,
   oneOfRadioTester,
   oneOfSelectTester,
+  labelTester,
   bannerTester,
   booleanCheckboxTester,
   entranceRequirementsTester,
@@ -56,6 +58,7 @@ export const programFormRenderers: JsonFormsRendererRegistryEntry[] = [
   },
   { renderer: markRaw(OneOfRadioOptionsRenderer), tester: oneOfRadioTester },
   { renderer: markRaw(OneOfSelectRenderer), tester: oneOfSelectTester },
+  { renderer: markRaw(LabelRenderer), tester: labelTester },
   { renderer: markRaw(BannerRenderer), tester: bannerTester },
   {
     renderer: markRaw(BooleanCheckboxRenderer),

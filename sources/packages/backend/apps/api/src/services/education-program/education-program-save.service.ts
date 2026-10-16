@@ -35,7 +35,7 @@ import {
   EducationProgramDynamicData,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./education-program-data-validation.service";
-import { EducationProgramDataValidationContext } from "./education-program-data-validation.models";
+import { EducationProgramDataValidationResult } from "./education-program-data-validation.models";
 import {
   EntranceRequirements,
   EntranceRequirementValues,
@@ -190,21 +190,23 @@ export class EducationProgramSaveService {
       ...programData,
       context: configuration.context,
     };
-    await this.validateEducationProgramData(
-      configuration,
-      programDataToValidate,
-      { institutionId },
-    );
-    return this.saveEducationProgram(
-      institutionId,
-      auditUserId,
-      programData,
-      configuration.context,
-      {
-        programId: undefined,
-        programConfigurationId: programConfigurationId,
-      },
-    );
+    const validationResult =
+      await this.educationProgramDataValidationService.validate(
+        configuration,
+        programDataToValidate,
+        { institutionId },
+      );
+    if (validationResult.isValid) {
+      return this.saveEducationProgram(
+        institutionId,
+        auditUserId,
+        validationResult,
+        configuration.context,
+        {
+          programConfigurationId: programConfigurationId,
+        },
+      );
+    }
   }
 
   async updateProgram(
@@ -241,15 +243,16 @@ export class EducationProgramSaveService {
         context: configuration.context,
       };
     }
-    await this.validateEducationProgramData(
-      configuration,
-      programDataToUpdate,
-      { institutionId, programId },
-    );
+    const validationResult =
+      await this.educationProgramDataValidationService.validate(
+        configuration,
+        programDataToUpdate,
+        { institutionId, programId: programId },
+      );
     return this.saveEducationProgram(
       institutionId,
       auditUserId,
-      programData,
+      validationResult,
       configuration.context,
       {
         programId: programId,
@@ -258,30 +261,10 @@ export class EducationProgramSaveService {
     );
   }
 
-  private async validateEducationProgramData(
-    configuration: EducationProgramDynamicConfiguration,
-    programData: EducationProgramData,
-    validationContext: EducationProgramDataValidationContext,
-  ): Promise<void> {
-    const validationResult =
-      await this.educationProgramDataValidationService.validate(
-        configuration,
-        programData,
-        validationContext,
-      );
-    if (validationResult.isValid === false) {
-      throw new CustomNamedError(
-        "Education program data is not valid.",
-        EDUCATION_PROGRAM_DATA_INVALID,
-        validationResult.errors,
-      );
-    }
-  }
-
   private async saveEducationProgram(
     institutionId: number,
     auditUserId: number,
-    programData: EducationProgramData,
+    validationResult: EducationProgramDataValidationResult,
     context: EducationProgramContext,
     options?: { programId?: number; programConfigurationId?: number },
   ): Promise<EducationProgram> {
@@ -289,6 +272,13 @@ export class EducationProgramSaveService {
       throw new CustomNamedError(
         "Program configuration ID is required when creating a new program.",
         EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+      );
+    }
+    if (validationResult.isValid === false) {
+      throw new CustomNamedError(
+        "Education program data is not valid.",
+        EDUCATION_PROGRAM_DATA_INVALID,
+        validationResult.errors,
       );
     }
     let program = new EducationProgram();
@@ -321,23 +311,26 @@ export class EducationProgramSaveService {
       await this.educationProgramEvaluationService.evaluate(
         institutionId,
         [ProgramCalculatedDataKey.FieldOfStudyCode],
-        programData,
+        validationResult.programData,
       );
     const fieldOfStudyCode =
       calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
     if (!context.hasOfferings) {
       // TODO: Calculate program status.
-      program.programStatus = ProgramStatus.Pending;
+      program.programStatus =
+        validationResult.warnings.length > 0
+          ? ProgramStatus.Pending
+          : ProgramStatus.Approved;
       this.assignProgramLegacyData(
         program,
-        programData as EducationProgramDynamicData,
+        validationResult.programData as EducationProgramDynamicData,
         fieldOfStudyCode,
       );
     }
     program.id = options?.programId;
-    program.name = programData.programName;
-    program.description = programData.programDescription;
-    program.programData = { ...programData, fieldOfStudyCode };
+    program.name = validationResult.programData.programName;
+    program.description = validationResult.programData.programDescription;
+    program.programData = { ...validationResult.programData, fieldOfStudyCode };
     const auditUser = { id: auditUserId } as User;
     const now = new Date();
     if (!options?.programId) {

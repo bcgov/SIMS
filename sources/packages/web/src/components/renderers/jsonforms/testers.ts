@@ -80,10 +80,18 @@ export const oneOfSelectTester = rankWith(
 );
 
 /**
- * Matches Label elements, used here to render a conditional info banner
- * (header/summary supplied via UI Schema options) rather than plain text.
+ * Matches any Label element, rendering its standard "text" as plain text.
  */
-export const bannerTester = rankWith(10, uiTypeIs("Label"));
+export const labelTester = rankWith(1, uiTypeIs("Label"));
+
+/**
+ * Matches Label elements explicitly flagged, via UI Schema options, to render
+ * as a banner (type/header/content supplied via UI Schema options).
+ */
+export const bannerTester = rankWith(
+  10,
+  and(uiTypeIs("Label"), optionIs("component", "banner")),
+);
 
 /**
  * Matches plain boolean controls (e.g. the declaration checkbox), routing

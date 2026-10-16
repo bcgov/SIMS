@@ -166,6 +166,8 @@ SELECT
               },
               "type": "Label",
               "options": {
+                "component": "banner",
+                "type": "warning",
                 "header": "This program requires review by StudentAid BC to determine eligibility."
               }
             },
@@ -262,7 +264,12 @@ SELECT
                   }
                 }
               },
-              "type": "Label"
+              "type": "Label",
+              "options": {
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding"
+              }
             },
             {
               "type": "Control",
@@ -307,7 +314,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "The program needs to be a minimum of 20 instructional hours."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "The program needs to be a minimum of 20 instructional hours."
               }
             },
             {
@@ -361,7 +371,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "An entrance requirement is required."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "An entrance requirement is required."
               }
             }
           ]
@@ -397,7 +410,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "ESL can't exceed 20% of course content."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "ESL can't exceed 20% of course content."
               }
             }
           ]
@@ -446,8 +462,10 @@ SELECT
               },
               "type": "Label",
               "options": {
+                "component": "banner",
+                "type": "warning",
                 "header": "Partner program review",
-                "contentHtml": "This program requires additional review by StudentAid BC. Please email <a href=\"mailto:designat@gov.bc.ca\">designat@gov.bc.ca</a> the name of the institution that you have partnered with, the name of this program, and any other details you want included as part of the review for this program."
+                "content": "This program requires additional review by StudentAid BC. Please email <a href=\"mailto:designat@gov.bc.ca\">designat@gov.bc.ca</a> the name of the institution that you have partnered with, the name of this program, and any other details you want included as part of the review for this program."
               }
             },
             {
@@ -465,7 +483,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "All partner institutions must be designated by StudentAid BC."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "All partner institutions must be designated by StudentAid BC."
               }
             }
           ]
@@ -511,7 +532,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "The work-integrated learning component must be approved by your regulator or oversight body first."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "The work-integrated learning component must be approved by your regulator or oversight body first."
               }
             },
             {
@@ -556,7 +580,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "This must meet the StudentAid BC policy."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "This must meet the StudentAid BC policy."
               }
             }
           ]
@@ -602,7 +629,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "This must meet the StudentAid BC policy."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "This must meet the StudentAid BC policy."
               }
             }
           ]
@@ -648,7 +678,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "This must meet the StudentAid BC policy."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "This must meet the StudentAid BC policy."
               }
             }
           ]
@@ -697,7 +730,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "StudentAid BC does not provide any assistance to students for Private Pilot Training."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "StudentAid BC does not provide any assistance to students for Private Pilot Training."
               }
             },
             {
@@ -728,7 +764,10 @@ SELECT
               },
               "type": "Label",
               "options": {
-                "summary": "The aviation program needs to be a minimum of 15 instructional hours."
+                "component": "banner",
+                "type": "warning",
+                "header": "This program is ineligible for StudentAid BC funding",
+                "content": "The aviation program needs to be a minimum of 15 instructional hours."
               }
             }
           ]
@@ -744,9 +783,7 @@ SELECT
           "elements": [
             {
               "type": "Label",
-              "options": {
-                "plainText": "All information is subject to verification and auditing."
-              }
+              "text": "All information is subject to verification and auditing."
             },
             {
               "type": "Control",
@@ -1088,7 +1125,10 @@ SELECT
           "programName": {
           "type": "string",
           "title": "Program name",
-          "maxLength": 300
+          "maxLength": 300,
+          "errorMessage": {
+              "maxLength": "Program name must not exceed 300 characters."
+          }
           },
           "cipCode": {
           "type": "string",
@@ -1126,7 +1166,10 @@ SELECT
           "programDescription": {
           "type": "string",
           "title": "Program description",
-          "maxLength": 500
+          "maxLength": 500,
+          "errorMessage": {
+              "maxLength": "Program description must not exceed 500 characters."
+          }
           },
           "minHoursWeek": {
           "enum": [
@@ -1338,7 +1381,10 @@ SELECT
           "otherRegulatoryBody": {
           "type": "string",
           "title": "Other institution regulatory body",
-          "maxLength": 100
+          "maxLength": 100,
+          "errorMessage": {
+              "maxLength": "Other institution regulatory body must not exceed 100 characters."
+          }
           },
           "entranceRequirements": {
           "type": "array",
@@ -1425,7 +1471,10 @@ SELECT
           "institutionProgramCode": {
           "type": "string",
           "title": "Institution Program Code",
-          "maxLength": 50
+          "maxLength": 50,
+          "errorMessage": {
+              "maxLength": "Institution program code must not exceed 50 characters."
+          }
           },
           "credentialTypesAviation": {
           "type": "array",
