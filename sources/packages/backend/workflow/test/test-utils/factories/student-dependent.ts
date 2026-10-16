@@ -210,11 +210,7 @@ export function createFakeStudentDependentsForContribution(options: {
     "years",
   );
   if (options.daysOffSet) {
-    dateOfBirth = addToDateOnlyString(
-      options.referenceDate,
-      options.daysOffSet,
-      "day",
-    );
+    dateOfBirth = addToDateOnlyString(dateOfBirth, options.daysOffSet, "day");
   }
   return {
     dateOfBirth,
