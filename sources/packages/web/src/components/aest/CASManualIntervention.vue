@@ -8,6 +8,7 @@
     <content-group>
       <toggle-content :toggled="!paginatedInvoices.count && !invoiceLoading">
         <v-data-table-server
+          :mobile="isMobile"
           :headers="CASInvoiceHeaders"
           :items="paginatedInvoices.results"
           :items-length="paginatedInvoices.count"
@@ -102,6 +103,7 @@ import {
   Role,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
+import { useDisplay } from "vuetify";
 import { CASInvoiceService } from "@/services/CASInvoiceService";
 import { CASInvoiceAPIOutDTO } from "@/services/http/dto/CASInvoice.dto";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
@@ -118,6 +120,7 @@ export default defineComponent({
   },
   setup() {
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
     const { getISODateHourMinuteString } = useFormatters();
     const invoiceLoading = ref(false);
     const resolveInvoiceModal = ref({} as ModalDialog<boolean>);
@@ -188,6 +191,7 @@ export default defineComponent({
     };
 
     return {
+      isMobile,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       Role,

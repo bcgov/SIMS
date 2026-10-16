@@ -2,6 +2,7 @@ import { PaginationOptions } from "@/types";
 import HttpBaseClient from "./common/HttpBaseClient";
 import {
   CASInvoiceBatchAPIOutDTO,
+  CASInvoiceBatchSummaryTotalsAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   UpdateCASInvoiceBatchAPIInDTO,
 } from "@/services/http/dto";
@@ -36,6 +37,19 @@ export class CASInvoiceBatchApi extends HttpBaseClient {
     casInvoiceBatchId: number,
   ): Promise<AxiosResponse<unknown>> {
     return this.downloadFile(`cas-invoice-batch/${casInvoiceBatchId}/report`);
+  }
+
+  /**
+   * Summary totals of a CAS invoice batch, including the count of invoices
+   * for each invoice status and the total amounts for each distribution account type.
+   * @param casInvoiceBatchId batch ID to have the summary totals retrieved for.
+   * @returns batch processing summary and distribution totals.
+   */
+  async getCASInvoiceBatchSummaryTotals(
+    casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchSummaryTotalsAPIOutDTO> {
+    const url = `cas-invoice-batch/${casInvoiceBatchId}/batch-summary-totals`;
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**

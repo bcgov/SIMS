@@ -50,6 +50,7 @@
           :toggled="!paginatedBatches.count && !invoiceBatchesLoading"
         >
           <v-data-table-server
+            :mobile="isMobile"
             :headers="CASInvoicesBatchesHeaders"
             :items="paginatedBatches.results"
             :items-length="paginatedBatches.count"
@@ -122,6 +123,15 @@
                 </template>
               </check-permission-role>
             </template>
+            <template #expanded-row="{ columns, item }">
+              <tr>
+                <td :colspan="columns.length" class="pb-4">
+                  <c-a-s-invoice-batch-summary-totals
+                    :cas-invoice-batch-id="item.id"
+                  />
+                </td>
+              </tr>
+            </template>
           </v-data-table-server>
         </toggle-content>
       </content-group>
@@ -165,9 +175,11 @@ import {
   DataTableSortByOrder,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
+import { useDisplay } from "vuetify";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CASManualIntervention from "@/components/aest/CASManualIntervention.vue";
+import CASInvoiceBatchSummaryTotals from "@/components/aest/CASInvoiceBatchSummaryTotals.vue";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
@@ -186,9 +198,11 @@ export default defineComponent({
     StatusInvoiceBatchApproval,
     ConfirmModal,
     CASManualIntervention,
+    CASInvoiceBatchSummaryTotals,
   },
   setup() {
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString, getISODateHourMinuteString } = useFormatters();
     const approveBatchModal = ref({} as ModalDialog<boolean>);
     const rejectBatchModal = ref({} as ModalDialog<boolean>);
@@ -305,6 +319,7 @@ export default defineComponent({
     };
 
     return {
+      isMobile,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       Role,
