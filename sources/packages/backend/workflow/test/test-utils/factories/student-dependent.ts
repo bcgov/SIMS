@@ -195,22 +195,26 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
  * - `referenceDate` Reference date used to calculate the dependents' birthdays.
  * - `age` Age of the dependent.
  * - `attendingPostSecondarySchool` Whether the dependent is attending post-secondary school.
- * - `daysOffSet` Optional number of days to offset the dependent's birthday.
+ * - `ageOffsetInDays` Optional number of days to offset the dependent's age. Example: -1 makes the dependent one day younger than the specified age.
  * @returns Dependents eligible for contribution based on their age and school attendance.
  */
 export function createFakeStudentDependentForContribution(options: {
   referenceDate: Date | string;
   age: number;
   attendingPostSecondarySchool: YesNoOptions;
-  daysOffSet?: number;
+  ageOffsetInDays?: number;
 }): StudentDependent {
   let dateOfBirth = addToDateOnlyString(
     options.referenceDate,
     -options.age,
     "years",
   );
-  if (options.daysOffSet) {
-    dateOfBirth = addToDateOnlyString(dateOfBirth, options.daysOffSet, "day");
+  if (options.ageOffsetInDays) {
+    dateOfBirth = addToDateOnlyString(
+      dateOfBirth,
+      -options.ageOffsetInDays,
+      "day",
+    );
   }
   return {
     dateOfBirth,
