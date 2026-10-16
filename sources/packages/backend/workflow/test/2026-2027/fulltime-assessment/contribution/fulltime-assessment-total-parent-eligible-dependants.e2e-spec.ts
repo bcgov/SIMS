@@ -49,7 +49,7 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
         age: 23,
         attendingPostSecondarySchool: YesNoOptions.Yes,
-        daysOffSet: -1,
+        ageOffsetInDays: -1,
       }),
     ];
 
