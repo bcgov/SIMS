@@ -193,50 +193,31 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
  * Creates student dependents at contribution eligibility age boundaries.
  * @param options Options for constructing the dependent.
  * - `referenceDate` Reference date used to calculate the dependents' birthdays.
+ * - `age` Age of the dependent.
+ * - `attendingPostSecondarySchool` Whether the dependent is attending post-secondary school.
+ * - `daysOffSet` Optional number of days to offset the dependent's birthday.
  * @returns Dependents eligible for contribution based on their age and school attendance.
  */
-export function createFakeStudentDependentsEligibleForContribution(options: {
+export function createFakeStudentDependentsForContribution(options: {
   referenceDate: Date | string;
-}): StudentDependent[] {
-  const twentyThreeYearsBeforeReferenceDate = addToDateOnlyString(
+  age: number;
+  attendingPostSecondarySchool: YesNoOptions;
+  daysOffSet?: number;
+}): StudentDependent {
+  let dateOfBirth = addToDateOnlyString(
     options.referenceDate,
-    -23,
+    -options.age,
     "years",
   );
-  const dependentValues = {
-    attendingPostSecondarySchool: YesNoOptions.Yes,
-    declaredOnTaxes: YesNoOptions.No,
-    relationship: DependantRelationship.Child,
-  };
-  return [
-    {
-      dateOfBirth: addToDateOnlyString(options.referenceDate, -1, "day"),
-      ...dependentValues,
-    },
-    {
-      dateOfBirth: addToDateOnlyString(
-        twentyThreeYearsBeforeReferenceDate,
-        1,
-        "day",
-      ),
-      ...dependentValues,
-    },
-  ];
-}
-
-/**
- * Creates a student dependent at the contribution age cutoff who is not eligible.
- * @param options Options for constructing the dependent.
- * - `referenceDate` Reference date used to calculate the dependent's birthday.
- * @returns A dependent who is not eligible for contribution based on age.
- */
-export function createFakeStudentDependentNotEligibleForContribution(options: {
-  referenceDate: Date | string;
-}): StudentDependent {
+  if (options.daysOffSet) {
+    dateOfBirth = addToDateOnlyString(dateOfBirth, options.daysOffSet, "day");
+  }
   return {
-    dateOfBirth: addToDateOnlyString(options.referenceDate, -23, "years"),
-    attendingPostSecondarySchool: YesNoOptions.Yes,
+    dateOfBirth,
+    attendingPostSecondarySchool: options.attendingPostSecondarySchool,
+    // Not relevant for the contribution eligibility calculation.
     declaredOnTaxes: YesNoOptions.No,
+    // Not relevant for the contribution eligibility calculation.
     relationship: DependantRelationship.Child,
   };
 }

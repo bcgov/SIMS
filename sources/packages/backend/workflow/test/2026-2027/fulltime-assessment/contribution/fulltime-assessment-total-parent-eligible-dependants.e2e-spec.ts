@@ -5,10 +5,7 @@ import {
   executeFullTimeAssessmentForProgramYear,
 } from "../../../test-utils";
 import { YesNoOptions } from "@sims/test-utils";
-import {
-  createFakeStudentDependentNotEligibleForContribution,
-  createFakeStudentDependentsEligibleForContribution,
-} from "../../../test-utils/factories";
+import { createFakeStudentDependentsForContribution } from "../../../test-utils/factories";
 
 describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eligible-dependants.`, () => {
   it("Should calculate total parent eligible contribution dependants when two parents are present and the first parent is declaring other dependents.", async () => {
@@ -29,13 +26,33 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
     assessmentConsolidatedData.parent1Tax = 700;
     assessmentConsolidatedData.parent1Contributions = 0;
     assessmentConsolidatedData.parent1DependentTable = [
-      ...createFakeStudentDependentsEligibleForContribution({
+      // 15 years old attending post-secondary school (eligible for contribution).
+      createFakeStudentDependentsForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 15,
+        attendingPostSecondarySchool: YesNoOptions.Yes,
       }),
-      createFakeStudentDependentNotEligibleForContribution({
+      // 15 years old attending not post-secondary school (not eligible for contribution).
+      createFakeStudentDependentsForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 15,
+        attendingPostSecondarySchool: YesNoOptions.No,
+      }),
+      // On the day completing 23 years old (not eligible for contribution).
+      createFakeStudentDependentsForContribution({
+        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 23,
+        attendingPostSecondarySchool: YesNoOptions.Yes,
+      }),
+      // One day before completing 23 years old (eligible for contribution).
+      createFakeStudentDependentsForContribution({
+        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 23,
+        attendingPostSecondarySchool: YesNoOptions.Yes,
+        daysOffSet: 1,
       }),
     ];
+
     // Parent 2 has no eligible dependents.
     assessmentConsolidatedData.parent2TotalIncome = 99999;
     assessmentConsolidatedData.parent2NetAssets = 1000;
@@ -91,11 +108,30 @@ describe(`E2E Test Workflow fulltime-assessment-${PROGRAM_YEAR}-total-parent-eli
     assessmentConsolidatedData.parent2Tax = 700;
     assessmentConsolidatedData.parent2Contributions = 0;
     assessmentConsolidatedData.parent2DependentTable = [
-      ...createFakeStudentDependentsEligibleForContribution({
+      // 15 years old attending post-secondary school (eligible for contribution).
+      createFakeStudentDependentsForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 15,
+        attendingPostSecondarySchool: YesNoOptions.Yes,
       }),
-      createFakeStudentDependentNotEligibleForContribution({
+      // 15 years old attending not post-secondary school (not eligible for contribution).
+      createFakeStudentDependentsForContribution({
         referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 15,
+        attendingPostSecondarySchool: YesNoOptions.No,
+      }),
+      // On the day completing 23 years old (not eligible for contribution).
+      createFakeStudentDependentsForContribution({
+        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 23,
+        attendingPostSecondarySchool: YesNoOptions.Yes,
+      }),
+      // One day before completing 23 years old (eligible for contribution).
+      createFakeStudentDependentsForContribution({
+        referenceDate: assessmentConsolidatedData.offeringStudyStartDate,
+        age: 23,
+        attendingPostSecondarySchool: YesNoOptions.Yes,
+        daysOffSet: 1,
       }),
     ];
 
