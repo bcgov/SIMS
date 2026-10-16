@@ -8,7 +8,7 @@ import {
  * Result of the dynamic program data validation.
  */
 export type EducationProgramDataValidationResult =
-  | { isValid: true; programData: EducationProgramData }
+  | { isValid: true; programData: EducationProgramData; warnings: string[] }
   | { isValid: false; errors: string[] };
 
 export interface EducationProgramDataWithContext extends EducationProgramData {
@@ -31,6 +31,28 @@ export interface EducationProgramDataValidationContext {
 }
 
 /**
+ * Warning declared in the validation schema "x-warnings" keyword. It doesn't
+ * make the data invalid, it is only triggered when the data matches its condition.
+ */
+export interface ProgramSchemaWarning {
+  code: string;
+  message: string;
+  condition: AnySchemaObject;
+}
+
+/**
+ * Warning condition compiled from a program configuration validation schema.
+ */
+export interface ProgramCompiledWarning {
+  code: string;
+  /**
+   * Condition compiled, kept to remove it from the AJV cache once outdated.
+   */
+  condition: AnySchemaObject;
+  validate: ValidateFunction;
+}
+
+/**
  * Validator compiled from a specific version of a program configuration.
  */
 export interface ProgramCompiledValidator {
@@ -43,4 +65,8 @@ export interface ProgramCompiledValidator {
    */
   schema: AnySchemaObject;
   validator: ValidateFunction;
+  /**
+   * Warning conditions declared in the schema "x-warnings" keyword.
+   */
+  warnings: ProgramCompiledWarning[];
 }

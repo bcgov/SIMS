@@ -4,7 +4,6 @@ import Ajv, {
   AsyncSchema,
   AsyncValidateFunction,
   ErrorObject,
-  ValidateFunction,
 } from "ajv";
 import addErrors from "ajv-errors";
 import addFormats from "ajv-formats";
@@ -17,6 +16,8 @@ import {
   EducationProgramDataValidationResult,
   EducationProgramDataWithContext,
   ProgramCompiledValidator,
+  ProgramCompiledWarning,
+  ProgramSchemaWarning,
 } from "./education-program-data-validation.models";
 import { EducationProgramService } from "./education-program.service";
 
@@ -103,13 +104,13 @@ export class EducationProgramDataValidationService {
     programData: EducationProgramData,
     validationContext: EducationProgramDataValidationContext,
   ): Promise<EducationProgramDataValidationResult> {
-    const validator = this.getValidator(configuration);
+    const { validator, warnings } = this.getValidator(configuration);
     // Any context provided by the client is replaced by the server one.
     const data: EducationProgramDataWithContext = {
       ...programData,
       context: configuration.context,
     };
-    // Warnings are calculated by the client only to show the warning banners.
+    // Any warnings provided by the client are recalculated by the server.
     delete data.warnings;
     const messages = validator(data) ? [] : this.getMessages(validator.errors);
     try {
@@ -123,8 +124,28 @@ export class EducationProgramDataValidationService {
     if (messages.length) {
       return { isValid: false, errors: [...new Set(messages)] };
     }
+    // Calculated with the context, the same way the client does.
+    const triggeredWarnings = this.calculateWarnings(warnings, data);
     delete data.context;
-    return { isValid: true, programData: data };
+    return { isValid: true, programData: data, warnings: triggeredWarnings };
+  }
+
+  /**
+   * Calculates the warnings, declared in the validation schema "x-warnings"
+   * keyword, triggered by the program data.
+   * Must be kept aligned with the web createWarningsCalculator
+   * (web/src/components/renderers/jsonforms/ajv.ts).
+   * @param warnings compiled warning conditions.
+   * @param data program data, including its context.
+   * @returns codes of the warnings triggered by the data.
+   */
+  private calculateWarnings(
+    warnings: ProgramCompiledWarning[],
+    data: EducationProgramDataWithContext,
+  ): string[] {
+    return warnings
+      .filter((warning) => warning.validate(data))
+      .map((warning) => warning.code);
   }
 
   /**
@@ -178,11 +199,11 @@ export class EducationProgramDataValidationService {
    * The validator of a previous version of the configuration is discarded,
    * also from the AJV cache, to keep only one validator per configuration.
    * @param configuration program configuration providing the validation schema.
-   * @returns compiled validator.
+   * @returns compiled validator and warning conditions.
    */
   private getValidator(
     configuration: EducationProgramDynamicConfiguration,
-  ): ValidateFunction {
+  ): ProgramCompiledValidator {
     if (!configuration.updatedAt) {
       // Without the version, a validator compiled from an outdated schema could be used.
       throw new Error(
@@ -192,18 +213,28 @@ export class EducationProgramDataValidationService {
     const updatedAt = configuration.updatedAt.getTime();
     const cached = this.validators.get(configuration.configurationId);
     if (cached?.updatedAt === updatedAt) {
-      return cached.validator;
+      return cached;
     }
     if (cached) {
       this.ajv.removeSchema(cached.schema);
+      cached.warnings.forEach((warning) =>
+        this.ajv.removeSchema(warning.condition),
+      );
     }
     const schema = configuration.validationSchema as AnySchemaObject;
-    const validator = this.ajv.compile(schema);
-    this.validators.set(configuration.configurationId, {
+    const schemaWarnings = (schema["x-warnings"] ??
+      []) as ProgramSchemaWarning[];
+    const compiledValidator: ProgramCompiledValidator = {
       updatedAt,
       schema,
-      validator,
-    });
-    return validator;
+      validator: this.ajv.compile(schema),
+      warnings: schemaWarnings.map((warning) => ({
+        code: warning.code,
+        condition: warning.condition,
+        validate: this.ajv.compile(warning.condition),
+      })),
+    };
+    this.validators.set(configuration.configurationId, compiledValidator);
+    return compiledValidator;
   }
 }
