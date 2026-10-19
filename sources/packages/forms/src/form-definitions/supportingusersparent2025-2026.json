@@ -1038,7 +1038,7 @@
                               "tableView": false
                             },
                             {
-                              "label": "Will this dependant be attending high school or full-time post-secondary school at the start of the Student's study period?",
+                              "label": "Will this dependant be attending full-time post-secondary school at the start of the Student's study period?",
                               "optionsLabelPosition": "right",
                               "inline": false,
                               "tableView": false,
