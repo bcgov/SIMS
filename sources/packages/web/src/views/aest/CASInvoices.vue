@@ -123,12 +123,33 @@
                 </template>
               </check-permission-role>
             </template>
+            <template
+              #[`item.data-table-expand`]="{
+                internalItem,
+                isExpanded,
+                toggleExpand,
+              }"
+            >
+              <v-btn
+                :append-icon="
+                  isExpanded(internalItem)
+                    ? '$expanderCollapseIcon'
+                    : '$expanderExpandIcon'
+                "
+                text="Details"
+                variant="text"
+                color="primary"
+                @click="toggleExpand(internalItem)"
+              ></v-btn>
+            </template>
             <template #expanded-row="{ columns, item }">
               <tr>
-                <td :colspan="columns.length" class="pb-4">
-                  <c-a-s-invoice-batch-summary-totals
-                    :cas-invoice-batch-id="item.id"
-                  />
+                <td :colspan="columns.length" class="py-4">
+                  <content-group>
+                    <c-a-s-invoice-batch-summary-totals
+                      :cas-invoice-batch-id="item.id"
+                    />
+                  </content-group>
                 </td>
               </tr>
             </template>

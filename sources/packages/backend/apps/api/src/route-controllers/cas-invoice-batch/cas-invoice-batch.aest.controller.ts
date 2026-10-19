@@ -155,10 +155,12 @@ export class CASInvoiceBatchAESTController extends BaseController {
     return {
       processingSummary: {
         totalInvoices: processingSummary.totalInvoices,
-        totalPending: processingSummary.totalPending,
-        totalSent: processingSummary.totalSent,
-        totalManualIntervention: processingSummary.totalManualIntervention,
-        totalResolved: processingSummary.totalResolved,
+        invoiceStatusCounts: processingSummary.invoiceStatusCounts.map(
+          (invoiceStatusCount) => ({
+            invoiceStatus: invoiceStatusCount.invoiceStatus,
+            count: invoiceStatusCount.count,
+          }),
+        ),
       },
       awardAmounts: distributionTotals.map((distributionTotal) => ({
         awardValueCode: distributionTotal.awardValueCode,

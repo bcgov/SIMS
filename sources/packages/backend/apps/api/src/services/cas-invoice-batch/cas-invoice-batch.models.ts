@@ -1,4 +1,4 @@
-import { OfferingIntensity } from "@sims/sims-db";
+import { CASInvoiceStatus, OfferingIntensity } from "@sims/sims-db";
 
 export interface CASInvoiceBatchReport {
   batchName: string;
@@ -17,12 +17,17 @@ export interface CASInvoiceBatchAwardAmount {
 }
 
 /**
+ * Count of CAS invoices in a batch for an invoice status.
+ */
+export interface CASInvoiceStatusCount {
+  invoiceStatus: CASInvoiceStatus;
+  count: number;
+}
+
+/**
  * Count of CAS invoices in a batch for each invoice status.
  */
 export interface CASInvoiceBatchProcessingSummary {
   totalInvoices: number;
-  totalPending: number;
-  totalSent: number;
-  totalManualIntervention: number;
-  totalResolved: number;
+  invoiceStatusCounts: CASInvoiceStatusCount[];
 }

@@ -1,5 +1,6 @@
 import {
   CASInvoiceBatchApprovalStatus,
+  CASInvoiceStatus,
   OfferingIntensity,
 } from "@sims/sims-db";
 import { IsIn } from "class-validator";
@@ -34,14 +35,19 @@ export class CASInvoiceBatchAwardAmountAPIOutDTO {
 }
 
 /**
+ * Count of CAS invoices in a batch for an invoice status.
+ */
+export class CASInvoiceStatusCountAPIOutDTO {
+  invoiceStatus: CASInvoiceStatus;
+  count: number;
+}
+
+/**
  * Count of CAS invoices in a batch for each invoice status.
  */
 export class CASInvoiceBatchProcessingSummaryAPIOutDTO {
   totalInvoices: number;
-  totalPending: number;
-  totalSent: number;
-  totalManualIntervention: number;
-  totalResolved: number;
+  invoiceStatusCounts: CASInvoiceStatusCountAPIOutDTO[];
 }
 
 /**

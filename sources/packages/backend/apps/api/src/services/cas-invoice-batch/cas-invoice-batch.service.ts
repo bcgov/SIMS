@@ -19,6 +19,7 @@ import {
 import {
   CASInvoiceBatchAwardAmount,
   CASInvoiceBatchProcessingSummary,
+  CASInvoiceStatusCount,
 } from "./cas-invoice-batch.models";
 
 @Injectable()
@@ -160,39 +161,41 @@ export class CASInvoiceBatchService {
   /**
    * Retrieve the count of invoices of a CAS invoice batch for each invoice status.
    * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * Every invoice status is returned, in the enum order, including
+   * the ones without invoices.
    * @returns count of invoices for each invoice status.
    */
   async getCASInvoiceBatchProcessingSummary(
     casInvoiceBatchId: number,
   ): Promise<CASInvoiceBatchProcessingSummary> {
-    return this.casInvoiceBatchRepo
+    const invoiceStatusCounts = await this.casInvoiceBatchRepo
       .createQueryBuilder("casInvoiceBatch")
-      .select("COUNT(casInvoice.id)::int", "totalInvoices")
-      .addSelect(
-        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :pendingStatus)::int",
-        "totalPending",
-      )
-      .addSelect(
-        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :sentStatus)::int",
-        "totalSent",
-      )
-      .addSelect(
-        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :manualInterventionStatus)::int",
-        "totalManualIntervention",
-      )
-      .addSelect(
-        "COUNT(casInvoice.id) FILTER (WHERE casInvoice.invoiceStatus = :resolvedStatus)::int",
-        "totalResolved",
-      )
-      .leftJoin("casInvoiceBatch.casInvoices", "casInvoice")
+      .select("casInvoice.invoiceStatus", "invoiceStatus")
+      .addSelect("COUNT(casInvoice.id)::int", "count")
+      .innerJoin("casInvoiceBatch.casInvoices", "casInvoice")
       .where("casInvoiceBatch.id = :casInvoiceBatchId", { casInvoiceBatchId })
-      .setParameters({
-        pendingStatus: CASInvoiceStatus.Pending,
-        sentStatus: CASInvoiceStatus.Sent,
-        manualInterventionStatus: CASInvoiceStatus.ManualIntervention,
-        resolvedStatus: CASInvoiceStatus.Resolved,
-      })
-      .getRawOne<CASInvoiceBatchProcessingSummary>();
+      .groupBy("casInvoice.invoiceStatus")
+      .getRawMany<CASInvoiceStatusCount>();
+    // Statuses without invoices are not returned by the query and must be added with zero.
+    const countsByStatus = new Map(
+      invoiceStatusCounts.map(({ invoiceStatus, count }) => [
+        invoiceStatus,
+        count,
+      ]),
+    );
+    const allInvoiceStatusCounts = Object.values(CASInvoiceStatus).map(
+      (invoiceStatus) => ({
+        invoiceStatus,
+        count: countsByStatus.get(invoiceStatus) ?? 0,
+      }),
+    );
+    return {
+      totalInvoices: allInvoiceStatusCounts.reduce(
+        (total, { count }) => total + count,
+        0,
+      ),
+      invoiceStatusCounts: allInvoiceStatusCounts,
+    };
   }
 
   /**

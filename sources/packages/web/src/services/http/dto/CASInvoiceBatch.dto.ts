@@ -1,4 +1,8 @@
-import { CASInvoiceBatchApprovalStatus, OfferingIntensity } from "@/types";
+import {
+  CASInvoiceBatchApprovalStatus,
+  CASInvoiceStatus,
+  OfferingIntensity,
+} from "@/types";
 
 export interface CASInvoiceBatchAPIOutDTO {
   id: number;
@@ -26,12 +30,14 @@ export interface CASInvoiceBatchAwardAmountAPIOutDTO {
 /**
  * Count of CAS invoices in a batch for each invoice status.
  */
+export interface CASInvoiceStatusCountAPIOutDTO {
+  invoiceStatus: CASInvoiceStatus;
+  count: number;
+}
+
 export interface CASInvoiceBatchProcessingSummaryAPIOutDTO {
   totalInvoices: number;
-  totalPending: number;
-  totalSent: number;
-  totalManualIntervention: number;
-  totalResolved: number;
+  invoiceStatusCounts: CASInvoiceStatusCountAPIOutDTO[];
 }
 
 /**

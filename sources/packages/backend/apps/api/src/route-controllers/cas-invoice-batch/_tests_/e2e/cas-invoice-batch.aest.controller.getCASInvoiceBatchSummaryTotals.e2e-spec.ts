@@ -172,10 +172,12 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
       .expect({
         processingSummary: {
           totalInvoices: 4,
-          totalPending: 1,
-          totalSent: 1,
-          totalManualIntervention: 1,
-          totalResolved: 1,
+          invoiceStatusCounts: [
+            { invoiceStatus: CASInvoiceStatus.Pending, count: 1 },
+            { invoiceStatus: CASInvoiceStatus.Sent, count: 1 },
+            { invoiceStatus: CASInvoiceStatus.ManualIntervention, count: 1 },
+            { invoiceStatus: CASInvoiceStatus.Resolved, count: 1 },
+          ],
         },
         // Ordered by award value code, offering intensity (as declared in the
         // DB enum, part-time first) and operation code.
@@ -250,10 +252,12 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
       .expect({
         processingSummary: {
           totalInvoices: 0,
-          totalPending: 0,
-          totalSent: 0,
-          totalManualIntervention: 0,
-          totalResolved: 0,
+          invoiceStatusCounts: [
+            { invoiceStatus: CASInvoiceStatus.Pending, count: 0 },
+            { invoiceStatus: CASInvoiceStatus.Sent, count: 0 },
+            { invoiceStatus: CASInvoiceStatus.ManualIntervention, count: 0 },
+            { invoiceStatus: CASInvoiceStatus.Resolved, count: 0 },
+          ],
         },
         awardAmounts: [],
       });
