@@ -1084,7 +1084,8 @@ SELECT
           "hasWILComponent",
           "hasTravel",
           "hasIntlExchange",
-          "isAviationProgram"
+          "isAviationProgram",
+          "programDeclaration"
       ],
       "properties": {
           "context": {
@@ -1576,7 +1577,8 @@ SELECT
           "hasJointInstitution": "Please indicate if the program is offered jointly or in partnership with other institutions.",
           "entranceRequirements": "Please select at least one entrance requirement.",
           "programDeliveryTypes": "Please select how this program will be delivered.",
-          "courseLoadCalculation": "Please select the program course load calculation."
+          "courseLoadCalculation": "Please select the program course load calculation.",
+          "programDeclaration": "You must confirm to proceed."
           }
       },
       "x-warnings": [

@@ -1,7 +1,7 @@
 <template>
   <body-header-container title="Program"
     ><content-group>
-      <error-summary :errors="errorSummaryMessages" />
+      <error-summary ref="errorSummary" :errors="errorSummaryMessages" />
       <v-skeleton-loader :loading="loading" type="article, text@5">
         <json-forms
           :data="formModel"
@@ -11,7 +11,7 @@
           :validation-mode="validationMode"
           :additional-errors="requiredErrorsPerProperty"
           :ajv="programFormAjv"
-          :readonly="isProgramDetailReadonly"
+          :readonly="readOnly"
           @change="onProgramFormChange"
         />
       </v-skeleton-loader>
@@ -22,17 +22,19 @@
       @primary-click="submit"
       :disable-primary-button="isProcessing"
       :processing="isProcessing"
-      v-if="!isReadonly && !loading"
+      v-if="!readOnly && !loading"
     />
   </body-header-container>
 </template>
 <script setup lang="ts">
 import { useSnackBar } from "@/composables";
-import { computed, nextTick, ref, watchEffect } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watchEffect } from "vue";
+import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import {
+  CreateEducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
-  EducationProgramContextAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "@/services/http/dto";
 import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
@@ -48,62 +50,56 @@ import { defineProps, defineEmits, withDefaults } from "vue";
 
 interface ProgramFormProps {
   /**
-   * ID of the program to be edited.'
+   * ID of the program to be edited.
    * If not provided, a new program will be created.
    */
   programId?: number;
-  /**
-   * ID of the program configuration. If not provided, the most recent active configuration is used.
-   * Once the UI allow the user to select a specific program configuration, this property will be used.
-   */
-  programConfigurationId?: number;
   /**
    * Indicates whether the form is read-only.
    */
   readOnly?: boolean;
   /**
    * Indicates whether the form is currently processing a submission.
+   * Allow controls of the loading from the consumer that is submitting the form.
    */
   isProcessing?: boolean;
 }
 
-const loading = ref(true);
-const snackBar = useSnackBar();
 const props = withDefaults(defineProps<ProgramFormProps>(), {
   programId: undefined,
-  programConfigurationId: undefined,
   readOnly: true,
   isProcessing: false,
 });
 const emit = defineEmits<{
   cancel: [];
-  submitted: [program: EducationProgramAPIOutDTO];
+  create: [program: CreateEducationProgramAPIInDTO];
+  update: [program: UpdateEducationProgramAPIInDTO];
   loaded: [program: EducationProgramAPIOutDTO];
 }>();
 
-let programConfigurationId: number;
+const loading = ref(true);
+const snackBar = useSnackBar();
+const errorSummary =
+  useTemplateRef<InstanceType<typeof ErrorSummary>>("errorSummary");
+
+/**
+ * Program configuration ID used when creating a new program.
+ * Currently the most recent program configuration is used for creation,
+ * later, the configuration must be explicitly selected by the user.
+ */
+let programConfigurationIdForCreation: number | undefined;
+
 const formModel = ref<Record<string, unknown>>({});
-// The context is kept in the form data, never changed by the user, since the
-// schemas' rules and validations depend on it.
-const formContext = computed(
-  () => formModel.value.context as EducationProgramContextAPIOutDTO | undefined,
-);
 
 // Errors are always computed; only shown once the user tries to submit.
 const validationMode = ref<ValidationMode>("ValidateAndHide");
-
-const isReadonly = computed(
-  () => props.readOnly || (!!props.programId && !formContext.value?.isActive),
-);
-const isProgramDetailReadonly = computed(
-  () => isReadonly.value || !!formContext.value?.hasOfferings,
-);
 const programFormSchema = ref<JsonSchema>({} as JsonSchema);
 const programFormUiSchema = ref<UISchemaElement>({} as UISchemaElement);
 
 const calculateWarnings = computed(() =>
   createWarningsCalculator(programFormSchema.value),
 );
+
 /**
  * Sets the warnings triggered by the form data, which are used by the
  * UI schema rules to show the warning banners. Like the context, the
@@ -119,6 +115,7 @@ const withWarnings = (
 });
 
 const programFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
+
 const onProgramFormChange = (event: JsonFormsChangeEvent) => {
   programFormErrors.value = event.errors;
   const data = withWarnings(event.data);
@@ -137,14 +134,12 @@ const requiredErrorsPerProperty = computed(() =>
     : [],
 );
 
-// Not named "errorSummary": <script setup> would resolve the <error-summary>
-// tag to that variable instead of the ErrorSummary component.
 const errorSummaryMessages = computed<ErrorMessage[]>(() => {
   if (validationMode.value !== "ValidateAndShow") {
     return [];
   }
-  // "if" errors only state that a "then" failed, which is already reported
-  // by the "then" own error.
+  // "if" errors only state that a "then" schema failed, which is already
+  // reported by the "then" schema's own error.
   const messages = (programFormErrors.value ?? [])
     .filter((error) => error.keyword !== "if")
     .map((error) => error.message ?? "");
@@ -158,21 +153,27 @@ const submit = async () => {
   if (programFormErrors.value?.length) {
     // Wait for the summary to render before scrolling to it.
     await nextTick();
-    document
-      .getElementsByClassName("error-summary")[0]
-      ?.scrollIntoView({ block: "center", behavior: "smooth" });
+    errorSummary.value?.$el?.scrollIntoView?.({
+      block: "center",
+      behavior: "smooth",
+    });
     return;
   }
+  const programData = { ...formModel.value };
   // The context and the warnings are only used by the form and are never submitted.
   // Context and warnings should be recalculated by the server.
-  const programData = { ...formModel.value };
   delete programData.context;
   delete programData.warnings;
-  await EducationProgramService.shared.createEducationProgram({
-    programConfigurationId,
-    programData,
-  });
-  //emit("submitted", programData);
+  if (props.programId) {
+    emit("update", { programData });
+  } else if (programConfigurationIdForCreation) {
+    emit("create", {
+      programData,
+      programConfigurationId: programConfigurationIdForCreation,
+    });
+  } else {
+    snackBar.error("Unable to create program: missing program configuration.");
+  }
 };
 
 const loadProgram = async (programId: number) => {
@@ -195,11 +196,10 @@ const loadProgram = async (programId: number) => {
 const loadProgramForCreation = async () => {
   try {
     loading.value = true;
+    // Load the most recent active program configuration for creation.
     const programConfiguration =
-      await EducationProgramService.shared.getEducationProgramConfiguration(
-        props.programConfigurationId,
-      );
-    programConfigurationId = programConfiguration.configurationId;
+      await EducationProgramService.shared.getEducationProgramConfiguration();
+    programConfigurationIdForCreation = programConfiguration.configurationId;
     programFormSchema.value =
       programConfiguration.validationSchema as JsonSchema;
     programFormUiSchema.value =

@@ -36,13 +36,13 @@
       :program-id="programId"
       :is-processing="processing"
       @loaded="loaded"
-      @submitted="submit"
+      @updated="submit"
       @cancel="goBack"
     />
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
+import { useInstitutionAuth, useSnackBar } from "@/composables";
 import { computed, ref } from "vue";
 import type { BackTarget } from "@/types";
 import {
@@ -54,8 +54,8 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import {
-  EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "@/services/http/dto";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -72,19 +72,14 @@ const router = useRouter();
 const canEditOnlyBasicInfo = ref(false);
 const { isReadOnlyUser } = useInstitutionAuth();
 const readOnly = computed(() => isReadOnlyUser(props.locationId));
-const { excludeExtraneousValues } = useFormioUtils();
 const processing = ref(false);
 
-const submit = async (program: EducationProgramAPIInDTO) => {
+const submit = async (program: UpdateEducationProgramAPIInDTO) => {
   processing.value = true;
   try {
-    const typedData = excludeExtraneousValues(
-      EducationProgramAPIInDTO,
-      program,
-    );
     await EducationProgramService.shared.updateEducationProgram(
       props.programId,
-      typedData,
+      program,
     );
     snackBar.success("Education Program updated successfully!");
     await goBack();
