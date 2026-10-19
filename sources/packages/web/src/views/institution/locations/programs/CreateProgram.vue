@@ -12,7 +12,7 @@
       :is-b-c-public="institutionState.isBCPublic"
       :is-b-c-private="institutionState.isBCPrivate"
       :is-processing="processing"
-      @created="submit"
+      @create="submit"
       @cancel="goBack"
     />
   </full-page-container>

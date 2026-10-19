@@ -45,11 +45,19 @@ export interface EducationProgramConfigurationAPIOutDTO {
  */
 export interface EducationProgramAPIOutDTO {
   id: number;
+  name: string;
+  description: string;
   programStatus: ProgramStatus;
   visualSchema: unknown;
   validationSchema: unknown;
   credentialType: string;
   credentialTypeToDisplay: string;
+  cipCode: string;
+  nocCode?: string;
+  sabcCode?: string;
+  institutionProgramCode?: string;
+  programIntensity: ProgramIntensity;
+  isActive: boolean;
   programData: EducationProgramDataAPIOutDTO;
   institutionId: number;
   institutionName: string;

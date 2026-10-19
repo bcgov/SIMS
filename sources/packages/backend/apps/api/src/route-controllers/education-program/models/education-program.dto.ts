@@ -84,9 +84,19 @@ export class EducationProgramConfigurationAPIOutDTO {
  */
 export class EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIOutDTO {
   id: number;
+  // Program attributes persisted in dedicated columns, independent
+  // of the dynamic program data shape defined by the configuration.
+  name: string;
+  description: string;
   programStatus: ProgramStatus;
   credentialType: string;
   credentialTypeToDisplay: string;
+  cipCode: string;
+  nocCode?: string;
+  sabcCode?: string;
+  institutionProgramCode?: string;
+  programIntensity: ProgramIntensity;
+  isActive: boolean;
   submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;

@@ -121,9 +121,6 @@ export class EducationProgramControllerService {
     }
     return {
       id: program.id,
-      programStatus: program.programStatus,
-      credentialType: program.credentialType,
-      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
       configurationId: programConfiguration.configurationId,
       programData: {
         ...program.programData,
@@ -138,6 +135,20 @@ export class EducationProgramControllerService {
       effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
       assessedDate: program.assessedDate,
       assessedBy: getUserFullName(program.assessedBy),
+      // Program attributes persisted in dedicated columns, independent
+      // of the dynamic program data shape defined by the configuration.
+      // Kept for backward compatibility.
+      name: program.name,
+      description: program.description,
+      programStatus: program.programStatus,
+      credentialType: program.credentialType,
+      credentialTypeToDisplay: credentialTypeToDisplay(program.credentialType),
+      cipCode: program.cipCode,
+      nocCode: program.nocCode,
+      sabcCode: program.sabcCode,
+      institutionProgramCode: program.institutionProgramCode,
+      programIntensity: program.programIntensity,
+      isActive: program.isActive,
       isExpired: program.isExpired,
     };
   }

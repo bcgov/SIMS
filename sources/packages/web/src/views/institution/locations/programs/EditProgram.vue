@@ -36,7 +36,7 @@
       :program-id="programId"
       :is-processing="processing"
       @loaded="loaded"
-      @updated="submit"
+      @update="submit"
       @cancel="goBack"
     />
   </full-page-container>
