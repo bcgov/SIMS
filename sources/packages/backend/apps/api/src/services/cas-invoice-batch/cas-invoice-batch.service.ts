@@ -160,9 +160,8 @@ export class CASInvoiceBatchService {
 
   /**
    * Retrieve the count of invoices of a CAS invoice batch for each invoice status.
+   * Every invoice status is returned, including the ones without invoices.
    * @param casInvoiceBatchId ID of the CAS invoice batch.
-   * Every invoice status is returned, in the enum order, including
-   * the ones without invoices.
    * @returns count of invoices for each invoice status.
    */
   async getCASInvoiceBatchProcessingSummary(

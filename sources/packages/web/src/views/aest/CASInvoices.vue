@@ -131,6 +131,7 @@
               }"
             >
               <v-btn
+                :aria-expanded="isExpanded(internalItem)"
                 :append-icon="
                   isExpanded(internalItem)
                     ? '$expanderCollapseIcon'

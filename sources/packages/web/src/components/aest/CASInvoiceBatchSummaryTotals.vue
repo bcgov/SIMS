@@ -5,8 +5,8 @@
     <v-table striped="even">
       <thead>
         <tr>
-          <th id="invoiceStatus" class="text-left">Result</th>
-          <th id="invoiceCount" class="text-left">Count</th>
+          <th scope="col" class="text-left">Result</th>
+          <th scope="col" class="text-left">Count</th>
         </tr>
       </thead>
       <tbody>
@@ -14,14 +14,14 @@
           v-for="invoiceStatusCount in sortedInvoiceStatusCounts"
           :key="invoiceStatusCount.invoiceStatus"
         >
-          <td headers="invoiceStatus">
+          <td>
             {{ getInvoiceStatusLabel(invoiceStatusCount.invoiceStatus) }}
           </td>
-          <td headers="invoiceCount">{{ invoiceStatusCount.count }}</td>
+          <td>{{ invoiceStatusCount.count }}</td>
         </tr>
         <tr class="font-weight-bold">
-          <td headers="invoiceStatus">Total</td>
-          <td headers="invoiceCount">
+          <td>Total</td>
+          <td>
             {{ summaryTotals.processingSummary.totalInvoices }}
           </td>
         </tr>
@@ -31,8 +31,8 @@
     <v-table v-if="summaryTotals.awardAmounts.length" striped="even">
       <thead>
         <tr>
-          <th id="distributionAccount" class="text-left">Distribution</th>
-          <th id="awardAmount" class="text-left">Amount</th>
+          <th scope="col" class="text-left">Distribution</th>
+          <th scope="col" class="text-left">Amount</th>
         </tr>
       </thead>
       <tbody>
@@ -40,10 +40,10 @@
           v-for="distributionTotal in summaryTotals.awardAmounts"
           :key="getDistributionTotalLabel(distributionTotal)"
         >
-          <td headers="distributionAccount">
+          <td>
             {{ getDistributionTotalLabel(distributionTotal) }}
           </td>
-          <td headers="awardAmount">
+          <td>
             {{ formatCurrency(distributionTotal.total) }}
           </td>
         </tr>

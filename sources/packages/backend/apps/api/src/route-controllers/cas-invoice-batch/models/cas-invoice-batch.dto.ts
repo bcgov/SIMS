@@ -25,7 +25,7 @@ export class UpdateCASInvoiceBatchAPIInDTO {
 }
 
 /**
- * Total amount of a CAS invoice batch for a award.
+ * Total amount of a CAS invoice batch for an award.
  */
 export class CASInvoiceBatchAwardAmountAPIOutDTO {
   awardValueCode: string;

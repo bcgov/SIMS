@@ -7,7 +7,7 @@ export interface CASInvoiceBatchReport {
 }
 
 /**
- * Total amount of a CAS invoice batch for a award.
+ * Total amount of a CAS invoice batch for an award.
  */
 export interface CASInvoiceBatchAwardAmount {
   awardValueCode: string;
