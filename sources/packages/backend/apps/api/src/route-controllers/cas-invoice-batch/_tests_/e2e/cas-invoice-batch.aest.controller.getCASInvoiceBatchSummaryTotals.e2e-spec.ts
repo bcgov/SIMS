@@ -72,6 +72,32 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
           casInvoiceInitialValues: { invoiceStatus: CASInvoiceStatus.Sent },
         },
       ),
+      // Second full-time invoice sent to CAS.
+      saveFakeInvoiceIntoBatchWithInvoiceDetails(
+        db,
+        {
+          casInvoiceBatch,
+          creator: systemUsersService.systemUser,
+          disbursementValues: [
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
+              "BCAG",
+              20,
+              { effectiveAmount: 15 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCTotalGrant,
+              "BCSG",
+              20,
+              { effectiveAmount: 15 },
+            ),
+          ],
+        },
+        {
+          offeringIntensity: OfferingIntensity.fullTime,
+          casInvoiceInitialValues: { invoiceStatus: CASInvoiceStatus.Sent },
+        },
+      ),
       // Part-time invoice requiring manual intervention.
       saveFakeInvoiceIntoBatchWithInvoiceDetails(
         db,
@@ -161,7 +187,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
         },
       ),
     ]);
-    const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/summary-totals`;
+    const endpoint = getEndpoint(casInvoiceBatch.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -171,10 +197,10 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
       .expect(HttpStatus.OK)
       .expect({
         processingSummary: {
-          totalInvoices: 4,
+          totalInvoices: 5,
           invoiceStatusCounts: [
             { invoiceStatus: CASInvoiceStatus.Pending, count: 1 },
-            { invoiceStatus: CASInvoiceStatus.Sent, count: 1 },
+            { invoiceStatus: CASInvoiceStatus.Sent, count: 2 },
             { invoiceStatus: CASInvoiceStatus.ManualIntervention, count: 1 },
             { invoiceStatus: CASInvoiceStatus.Resolved, count: 1 },
           ],
@@ -198,13 +224,13 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
             awardValueCode: "BCAG",
             offeringIntensity: OfferingIntensity.fullTime,
             operationCode: "CR",
-            total: 5,
+            total: 20,
           },
           {
             awardValueCode: "BCAG",
             offeringIntensity: OfferingIntensity.fullTime,
             operationCode: "DR",
-            total: 5,
+            total: 20,
           },
           {
             awardValueCode: "SBSD",
@@ -241,7 +267,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
         creator: systemUsersService.systemUser,
       }),
     );
-    const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/summary-totals`;
+    const endpoint = getEndpoint(casInvoiceBatch.id);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -265,7 +291,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
 
   it("Should throw a HttpStatus Not Found (404) when the requested invoice batch does not exist.", async () => {
     // Arrange
-    const endpoint = "/aest/cas-invoice-batch/999999/summary-totals";
+    const endpoint = getEndpoint(999999);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -282,7 +308,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
 
   it("Should throw a HttpStatus Forbidden (403) error when an unauthorized Ministry user tries to get the invoice batch summary totals.", async () => {
     // Arrange
-    const endpoint = "/aest/cas-invoice-batch/999999/summary-totals";
+    const endpoint = getEndpoint(999999);
     const token = await getAESTToken(AESTGroups.MOFOperations);
 
     // Act/Assert
@@ -301,3 +327,12 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
     await app?.close();
   });
 });
+
+/**
+ * Returns the endpoint URL for a CAS invoice batch summary totals.
+ * @param casInvoiceBatchId ID of the CAS invoice batch.
+ * @returns the endpoint URL.
+ */
+function getEndpoint(casInvoiceBatchId: number): string {
+  return `/aest/cas-invoice-batch/${casInvoiceBatchId}/summary-totals`;
+}
