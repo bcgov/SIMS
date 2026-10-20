@@ -237,6 +237,9 @@ jobs:
           if [[ -z "$migrations" ]]; then
             migrations="None"
           fi
+          migrations="${migrations//'%'/'%25'}"
+          migrations="${migrations//$'\r'/'%0D'}"
+          migrations="${migrations//$'\n'/'%0A'}"
           echo "::notice title=Database migrations since $PREVIOUS_TAG::$migrations"
 
   # Deploy SIMS API.
