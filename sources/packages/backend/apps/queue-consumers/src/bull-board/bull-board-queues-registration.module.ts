@@ -51,6 +51,7 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
       );
       const queueAdapter = new BullMQAdapter(queueProvider, {
         readOnlyMode: false,
+        delimiter: "-",
       });
       this.board.addQueue(queueAdapter);
     });

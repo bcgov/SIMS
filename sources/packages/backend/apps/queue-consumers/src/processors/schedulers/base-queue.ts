@@ -46,7 +46,7 @@ export abstract class BaseQueue<T> {
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.warn) {
         this.metricsService.incrementJobEventCounter(
-          job,
+          { queueName: job.queue.name, isScheduler: !!job.opts?.repeat },
           QueuesMetricsEvents.JobFinalizedWithWarnings,
           { incrementValue: logsSum.warn },
         );
@@ -61,7 +61,7 @@ export abstract class BaseQueue<T> {
     } catch (error: unknown) {
       // Throw an error to force the queue to retry.
       if (error instanceof CustomNamedError) {
-        throw new Error(error.message);
+        throw new Error(error.message, { cause: error });
       }
       const errorMessage = `Unexpected error while executing queue ${job.queue.name}, job ID ${job.id}.`;
       this.logger.error(errorMessage, error);
