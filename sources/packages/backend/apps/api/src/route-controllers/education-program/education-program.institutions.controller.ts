@@ -3,12 +3,14 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
+  NotFoundException,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -26,7 +28,7 @@ import {
   ProgramEvaluationAPIOutDTO,
   UpdateEducationProgramAPIInDTO,
 } from "./models/education-program.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -44,12 +46,17 @@ import { EducationProgramService } from "../../services/education-program/educat
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
-import { isSameOrAfterDate } from "@sims/utilities";
+import { CustomNamedError, isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
 import {
   EducationProgramData,
   EducationProgramSaveService,
 } from "../../services";
+import {
+  EDUCATION_PROGRAM_INVALID_OPERATION,
+  DUPLICATE_SABC_CODE,
+  EDUCATION_PROGRAM_NOT_FOUND,
+} from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -149,7 +156,6 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
-  // TODO: Review the comments.
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to a save the program due to an invalid request or " +
@@ -166,13 +172,27 @@ export class EducationProgramInstitutionsController extends BaseController {
     this.educationProgramControllerService.checkInstitutionAuthorization(
       userToken.authorizations,
     );
-    const newProgram = await this.educationProgramSaveService.createProgram(
-      payload.programData as EducationProgramData,
-      payload.programConfigurationId,
-      userToken.authorizations.institutionId,
-      userToken.userId,
-    );
-    return { id: newProgram.id };
+    try {
+      const newProgram = await this.educationProgramSaveService.createProgram(
+        payload.programData as EducationProgramData,
+        payload.programConfigurationId,
+        userToken.authorizations.institutionId,
+        userToken.userId,
+      );
+      return { id: newProgram.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case EDUCATION_PROGRAM_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+          case DUPLICATE_SABC_CODE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   /**
@@ -180,7 +200,6 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param programId program to be updated.
    * @param payload information to be updated.
    */
-  // TODO: Review the comments.
   @ApiUnprocessableEntityResponse({
     description:
       "Not able to a save the program due to an invalid request or " +
@@ -202,12 +221,28 @@ export class EducationProgramInstitutionsController extends BaseController {
     this.educationProgramControllerService.checkInstitutionAuthorization(
       userToken.authorizations,
     );
-    await this.educationProgramSaveService.updateProgram(
-      programId,
-      payload.programData as EducationProgramData,
-      userToken.authorizations.institutionId,
-      userToken.userId,
-    );
+    try {
+      await this.educationProgramSaveService.updateProgram(
+        programId,
+        payload.programData as EducationProgramData,
+        userToken.authorizations.institutionId,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case EDUCATION_PROGRAM_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case EDUCATION_PROGRAM_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+          case DUPLICATE_SABC_CODE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   /**

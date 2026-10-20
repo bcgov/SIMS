@@ -7,6 +7,7 @@ import {
   AviationCredentialTypeOptions,
   EducationProgramOfferingService,
   EducationProgramService,
+  UserService,
 } from "../../services";
 import { EducationProgramEvaluationService } from "./education-program-evaluator";
 import {
@@ -19,6 +20,7 @@ import {
   User,
 } from "@sims/sims-db";
 import {
+  DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_INVALID_OPERATION,
@@ -27,7 +29,7 @@ import {
 import { ApiProcessError } from "../../types";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, EntityManager, Repository } from "typeorm";
 import {
   EducationProgramContext,
   EducationProgramData,
@@ -35,7 +37,11 @@ import {
   EducationProgramDynamicData,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./education-program-data-validation.service";
-import { EducationProgramDataValidationResult } from "./education-program-data-validation.models";
+import {
+  EducationProgramDataValidationContext,
+  EducationProgramDataValidationSuccess,
+  SABC_CODE_UNIQUE_KEYWORD,
+} from "./education-program-data-validation.models";
 import {
   EntranceRequirements,
   EntranceRequirementValues,
@@ -45,6 +51,10 @@ import {
 } from "./education-program.service.models";
 import { CustomNamedError } from "@sims/utilities";
 import { OTHER_REGULATORY_BODY } from "./constants";
+import {
+  NotificationActionsService,
+  InstitutionAddsPendingProgramNotification,
+} from "@sims/services";
 
 @Injectable()
 export class EducationProgramSaveService {
@@ -59,6 +69,8 @@ export class EducationProgramSaveService {
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
     private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramDataValidationService: EducationProgramDataValidationService,
+    private readonly notificationActionsService: NotificationActionsService,
+    private readonly userService: UserService,
   ) {}
 
   /**
@@ -120,6 +132,9 @@ export class EducationProgramSaveService {
           visualSchema: true,
           validationSchema: true,
           updatedAt: true,
+          programYear: {
+            id: true,
+          },
         },
         institution: {
           id: true,
@@ -127,7 +142,7 @@ export class EducationProgramSaveService {
         },
       },
       relations: {
-        programConfiguration: true,
+        programConfiguration: { programYear: true },
         institution: { institutionType: true },
       },
       where: { id: programId },
@@ -154,6 +169,7 @@ export class EducationProgramSaveService {
   ): EducationProgramDynamicConfiguration {
     return {
       configurationId: programConfiguration.id,
+      programYearId: programConfiguration.programYear.id,
       updatedAt: programConfiguration.updatedAt,
       context: {
         hasOfferings: options.hasOfferings,
@@ -190,23 +206,23 @@ export class EducationProgramSaveService {
       ...programData,
       context: configuration.context,
     };
-    const validationResult =
-      await this.educationProgramDataValidationService.validate(
-        configuration,
-        programDataToValidate,
-        { institutionId },
-      );
-    if (validationResult.isValid) {
-      return this.saveEducationProgram(
+    const validationResult = await this.getValidatedResult(
+      configuration,
+      programDataToValidate,
+      {
         institutionId,
-        auditUserId,
-        validationResult,
-        configuration.context,
-        {
-          programConfigurationId: programConfigurationId,
-        },
-      );
-    }
+        programYearId: configuration.programYearId,
+      },
+    );
+    return this.saveEducationProgram(
+      institutionId,
+      auditUserId,
+      validationResult,
+      configuration.context,
+      {
+        programConfigurationId: programConfigurationId,
+      },
+    );
   }
 
   async updateProgram(
@@ -221,12 +237,25 @@ export class EducationProgramSaveService {
         institutionId,
       );
     if (!program) {
-      throw new NotFoundException("Not able to find the education program.");
+      throw new CustomNamedError(
+        "Not able to find the education program.",
+        EDUCATION_PROGRAM_NOT_FOUND,
+      );
+    }
+    if (!program.isActive) {
+      throw new CustomNamedError(
+        "Education program cannot be edited when inactive.",
+        EDUCATION_PROGRAM_INVALID_OPERATION,
+      );
+    }
+    if (program.isExpired) {
+      throw new CustomNamedError(
+        "Education program cannot be edited when expired.",
+        EDUCATION_PROGRAM_INVALID_OPERATION,
+      );
     }
     const configuration =
-      await this.getEducationProgramConfigurationFromProgram(
-        program.programConfiguration.id,
-      );
+      await this.getEducationProgramConfigurationFromProgram(program.id);
     let programDataToUpdate: EducationProgramData;
     if (configuration.context.hasOfferings) {
       // Only the name and description can be changed once the program has
@@ -243,12 +272,15 @@ export class EducationProgramSaveService {
         context: configuration.context,
       };
     }
-    const validationResult =
-      await this.educationProgramDataValidationService.validate(
-        configuration,
-        programDataToUpdate,
-        { institutionId, programId: programId },
-      );
+    const validationResult = await this.getValidatedResult(
+      configuration,
+      programDataToUpdate,
+      {
+        institutionId,
+        programYearId: configuration.programYearId,
+        programId: programId,
+      },
+    );
     return this.saveEducationProgram(
       institutionId,
       auditUserId,
@@ -261,10 +293,42 @@ export class EducationProgramSaveService {
     );
   }
 
+  /**
+   * Get the successful validation result for the program data.
+   * If the validation fails, a CustomNamedError is thrown with specific error codes for different failure reasons.
+   * @param configuration program configuration providing the validation schema.
+   * @param programData dynamic program data to be validated.
+   * @param validationContext server-side information required by the backend-only validations.
+   * @returns the successful validation result for the program data.
+   */
+  private async getValidatedResult(
+    configuration: EducationProgramDynamicConfiguration,
+    programData: EducationProgramData,
+    validationContext: EducationProgramDataValidationContext,
+  ): Promise<EducationProgramDataValidationSuccess> {
+    const validationResult =
+      await this.educationProgramDataValidationService.validate(
+        configuration,
+        programData,
+        validationContext,
+      );
+    if (validationResult.isValid === true) {
+      return validationResult;
+    }
+    if (validationResult.failedKeywords.includes(SABC_CODE_UNIQUE_KEYWORD)) {
+      throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
+    }
+    throw new CustomNamedError(
+      "Education program data is not valid.",
+      EDUCATION_PROGRAM_DATA_INVALID,
+      validationResult.errors,
+    );
+  }
+
   private async saveEducationProgram(
     institutionId: number,
     auditUserId: number,
-    validationResult: EducationProgramDataValidationResult,
+    validationResult: EducationProgramDataValidationSuccess,
     context: EducationProgramContext,
     options?: { programId?: number; programConfigurationId?: number },
   ): Promise<EducationProgram> {
@@ -274,13 +338,6 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
       );
     }
-    if (validationResult.isValid === false) {
-      throw new CustomNamedError(
-        "Education program data is not valid.",
-        EDUCATION_PROGRAM_DATA_INVALID,
-        validationResult.errors,
-      );
-    }
     let program = new EducationProgram();
     if (options?.programId) {
       // Ensures that the user has access to the institution associated with the program id being updated.
@@ -288,24 +345,6 @@ export class EducationProgramSaveService {
         options.programId,
         institutionId,
       );
-      if (!program) {
-        throw new CustomNamedError(
-          "Not able to find the education program.",
-          EDUCATION_PROGRAM_NOT_FOUND,
-        );
-      }
-      if (!program.isActive) {
-        throw new CustomNamedError(
-          "Education program cannot be edited when inactive.",
-          EDUCATION_PROGRAM_INVALID_OPERATION,
-        );
-      }
-      if (program.isExpired) {
-        throw new CustomNamedError(
-          "Education program cannot be edited when expired.",
-          EDUCATION_PROGRAM_INVALID_OPERATION,
-        );
-      }
     }
     const calculatedData =
       await this.educationProgramEvaluationService.evaluate(
@@ -316,7 +355,6 @@ export class EducationProgramSaveService {
     const fieldOfStudyCode =
       calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
     if (!context.hasOfferings) {
-      // TODO: Calculate program status.
       program.programStatus =
         validationResult.warnings.length > 0
           ? ProgramStatus.Pending
@@ -346,17 +384,14 @@ export class EducationProgramSaveService {
       program.modifier = auditUser;
       program.updatedAt = now;
     }
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      // TODO: send notification.
-      //   await this.saveInstitutionAddsPendingProgramNotification(
-      //     { name: program.name, programStatus: program.programStatus },
-      //     institutionId,
-      //     auditUserId,
-      //     transactionalEntityManager,
-      //   );
-      return transactionalEntityManager
-        .getRepository(EducationProgram)
-        .save(program);
+    return this.dataSource.transaction(async (entityManager) => {
+      await this.saveInstitutionAddsPendingProgramNotification(
+        { name: program.name, programStatus: program.programStatus },
+        institutionId,
+        auditUserId,
+        entityManager,
+      );
+      return entityManager.getRepository(EducationProgram).save(program);
     });
   }
 
@@ -490,5 +525,40 @@ export class EducationProgramSaveService {
       entranceRequirements,
       credentialTypesAviation,
     };
+  }
+
+  /**
+   * Saves institution adds pending program notification for the ministry.
+   * @param program program
+   * @param institutionId related institution id.
+   * @param entityManager
+   */
+  private async saveInstitutionAddsPendingProgramNotification(
+    program: Pick<EducationProgram, "name" | "programStatus">,
+    institutionId: number,
+    userId: number,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    if (program.programStatus !== ProgramStatus.Pending) {
+      return;
+    }
+    const institution = await this.institutionService.getInstitutionDetailById(
+      institutionId,
+      { entityManager },
+    );
+    const userEmail = await this.userService.getUserEmail(userId, {
+      entityManager,
+    });
+    const ministryNotification: InstitutionAddsPendingProgramNotification = {
+      institutionName: institution.legalOperatingName,
+      institutionOperatingName: institution.operatingName,
+      programName: program.name,
+      institutionPrimaryEmail: institution.primaryEmail,
+      email: userEmail,
+    };
+    await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
+      ministryNotification,
+      entityManager,
+    );
   }
 }

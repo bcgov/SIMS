@@ -60,6 +60,7 @@ export interface EducationProgramDynamicData extends EducationProgramData {
 
 export interface EducationProgramDynamicConfiguration {
   configurationId: number;
+  programYearId: number;
   visualSchema: unknown;
   validationSchema: unknown;
   context: EducationProgramContext;

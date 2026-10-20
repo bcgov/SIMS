@@ -1,16 +1,41 @@
-import { AnySchemaObject, ValidateFunction } from "ajv";
+import { AnySchemaObject, AsyncSchema, ValidateFunction } from "ajv";
 import {
   EducationProgramContext,
   EducationProgramData,
 } from "./education-program-save.models";
 
 /**
+ * Successful validation result for the program data.
+ */
+export type EducationProgramDataValidationSuccess = {
+  isValid: true;
+  programData: EducationProgramData;
+  warnings: string[];
+};
+
+/**
+ * Failed validation result for the program data.
+ */
+export type EducationProgramDataValidationError = {
+  isValid: false;
+  errors: string[];
+  /**
+   * Keywords that failed the validation, allowing a specific failure
+   * (e.g. {@link SABC_CODE_UNIQUE_KEYWORD}) to be detected regardless
+   * of its custom message.
+   */
+  failedKeywords: string[];
+};
+
+/**
  * Result of the dynamic program data validation.
  */
 export type EducationProgramDataValidationResult =
-  | { isValid: true; programData: EducationProgramData; warnings: string[] }
-  | { isValid: false; errors: string[] };
+  EducationProgramDataValidationSuccess | EducationProgramDataValidationError;
 
+/**
+ * Program data with the associated context for validation purposes.
+ */
 export interface EducationProgramDataWithContext extends EducationProgramData {
   context: EducationProgramContext;
 }
@@ -24,6 +49,10 @@ export interface EducationProgramDataValidationContext {
    * Institution the program belongs to.
    */
   institutionId: number;
+  /**
+   * Program year the program belongs to.
+   */
+  programYearId: number;
   /**
    * Program being updated, not present when the program is being created.
    */
@@ -70,3 +99,28 @@ export interface ProgramCompiledValidator {
    */
   warnings: ProgramCompiledWarning[];
 }
+
+/**
+ * AJV custom async keyword ensuring the SABC code is not used by another
+ * active program of the same institution for the same program year.
+ */
+export const SABC_CODE_UNIQUE_KEYWORD = "sabcCodeUnique";
+
+/**
+ * Validations executed only by the backend, since they depend on server-side
+ * information (e.g. DB queries). Kept apart from the configuration validation
+ * schema, which is shared with the client form is synchronous for now.
+ */
+export const BACKEND_VALIDATION_SCHEMA: AsyncSchema = {
+  $async: true,
+  type: "object",
+  properties: {
+    sabcCode: {
+      [SABC_CODE_UNIQUE_KEYWORD]: true,
+      errorMessage: {
+        [SABC_CODE_UNIQUE_KEYWORD]:
+          "SABC program code is already in use by another active program.",
+      },
+    },
+  },
+};

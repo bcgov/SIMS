@@ -1,10 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import Ajv, {
-  AnySchemaObject,
-  AsyncSchema,
-  AsyncValidateFunction,
-  ErrorObject,
-} from "ajv";
+import Ajv, { AnySchemaObject, AsyncValidateFunction, ErrorObject } from "ajv";
 import addErrors from "ajv-errors";
 import addFormats from "ajv-formats";
 import {
@@ -18,33 +13,10 @@ import {
   ProgramCompiledValidator,
   ProgramCompiledWarning,
   ProgramSchemaWarning,
+  SABC_CODE_UNIQUE_KEYWORD,
 } from "./education-program-data-validation.models";
 import { EducationProgramService } from "./education-program.service";
-
-/**
- * AJV custom async keyword ensuring the SABC code is not used by another
- * active program of the same institution.
- */
-const SABC_CODE_UNIQUE_KEYWORD = "sabcCodeUnique";
-
-/**
- * Validations executed only by the backend, since they depend on server-side
- * information (e.g. DB queries). Kept apart from the configuration validation
- * schema, which is shared with the client form and must remain synchronous.
- */
-const BACKEND_VALIDATION_SCHEMA: AsyncSchema = {
-  $async: true,
-  type: "object",
-  properties: {
-    sabcCode: {
-      [SABC_CODE_UNIQUE_KEYWORD]: true,
-      errorMessage: {
-        [SABC_CODE_UNIQUE_KEYWORD]:
-          "SABC program code is already in use by another active program.",
-      },
-    },
-  },
-};
+import { BACKEND_VALIDATION_SCHEMA } from "./education-program-data-validation.models";
 
 /**
  * Validates the dynamic education program data against the validation schema
@@ -112,17 +84,23 @@ export class EducationProgramDataValidationService {
     };
     // Any warnings provided by the client are recalculated by the server.
     delete data.warnings;
-    const messages = validator(data) ? [] : this.getMessages(validator.errors);
+    const errors: Partial<ErrorObject>[] = validator(data)
+      ? []
+      : [...(validator.errors ?? [])];
     try {
       await this.backendValidator.call(validationContext, data);
     } catch (error: unknown) {
       if (!(error instanceof Ajv.ValidationError)) {
         throw error;
       }
-      messages.push(...this.getMessages(error.errors));
+      errors.push(...error.errors);
     }
-    if (messages.length) {
-      return { isValid: false, errors: [...new Set(messages)] };
+    if (errors.length) {
+      return {
+        isValid: false,
+        errors: [...new Set(this.getMessages(errors))],
+        failedKeywords: this.getFailedKeywords(errors),
+      };
     }
     // Calculated with the context, the same way the client does.
     const triggeredWarnings = this.calculateWarnings(warnings, data);
@@ -153,12 +131,30 @@ export class EducationProgramDataValidationService {
    * @param errors AJV validation errors.
    * @returns validation messages.
    */
-  private getMessages(errors?: Partial<ErrorObject>[] | null): string[] {
+  private getMessages(errors: Partial<ErrorObject>[]): string[] {
     // "if" errors only state that a "then" failed, which is already
     // reported by the "then" own error.
-    return (errors ?? [])
+    return errors
       .filter((error) => error.keyword !== "if")
       .map((error) => error.message ?? error.keyword);
+  }
+
+  /**
+   * Gets the keywords that failed the validation. An error replaced by a custom
+   * message is reported by ajv-errors as an "errorMessage" error, keeping the
+   * replaced errors in its params, hence the original keywords are read from there.
+   * @param errors AJV validation errors.
+   * @returns distinct failed keywords.
+   */
+  private getFailedKeywords(errors: Partial<ErrorObject>[]): string[] {
+    const keywords = errors.flatMap((error) =>
+      error.keyword === "errorMessage"
+        ? (error.params?.errors as Partial<ErrorObject>[]).map(
+            (replacedError) => replacedError.keyword,
+          )
+        : [error.keyword],
+    );
+    return [...new Set(keywords.filter((keyword) => !!keyword))];
   }
 
   /**
@@ -186,9 +182,15 @@ export class EducationProgramDataValidationService {
           await educationProgramService.hasExistingProgramWithSameSABCCode(
             this.institutionId,
             sabcCode.trim(),
+            this.programYearId,
             this.programId,
           );
-        return !isDuplicate;
+        if (isDuplicate) {
+          throw new Ajv.ValidationError([
+            { keyword: SABC_CODE_UNIQUE_KEYWORD },
+          ]);
+        }
+        return true;
       },
     });
   }
