@@ -32,7 +32,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should get the batch processing summary and distribution totals when the batch has invoices in different statuses and offering intensities.", async () => {
+  it("Should get the batch processing summary and distribution type amounts when the batch has invoices in different statuses and offering intensities.", async () => {
     // Arrange
     const casInvoiceBatch = await db.casInvoiceBatch.save(
       createFakeCASInvoiceBatch({
@@ -161,7 +161,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
         },
       ),
     ]);
-    const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/batch-summary-totals`;
+    const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/summary-totals`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -181,7 +181,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
         },
         // Ordered by award value code, offering intensity (as declared in the
         // DB enum, part-time first) and operation code.
-        awardAmounts: [
+        distributionTypeAmounts: [
           {
             awardValueCode: "BCAG",
             offeringIntensity: OfferingIntensity.partTime,
@@ -234,14 +234,14 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
       });
   });
 
-  it("Should get zeroed totals and no distribution totals when the batch has no invoices.", async () => {
+  it("Should get zeroed totals and no distribution type amounts when the batch has no invoices.", async () => {
     // Arrange
     const casInvoiceBatch = await db.casInvoiceBatch.save(
       createFakeCASInvoiceBatch({
         creator: systemUsersService.systemUser,
       }),
     );
-    const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/batch-summary-totals`;
+    const endpoint = `/aest/cas-invoice-batch/${casInvoiceBatch.id}/summary-totals`;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -259,13 +259,13 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
             { invoiceStatus: CASInvoiceStatus.Resolved, count: 0 },
           ],
         },
-        awardAmounts: [],
+        distributionTypeAmounts: [],
       });
   });
 
   it("Should throw a HttpStatus Not Found (404) when the requested invoice batch does not exist.", async () => {
     // Arrange
-    const endpoint = "/aest/cas-invoice-batch/999999/batch-summary-totals";
+    const endpoint = "/aest/cas-invoice-batch/999999/summary-totals";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -282,7 +282,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
 
   it("Should throw a HttpStatus Forbidden (403) error when an unauthorized Ministry user tries to get the invoice batch summary totals.", async () => {
     // Arrange
-    const endpoint = "/aest/cas-invoice-batch/999999/batch-summary-totals";
+    const endpoint = "/aest/cas-invoice-batch/999999/summary-totals";
     const token = await getAESTToken(AESTGroups.MOFOperations);
 
     // Act/Assert

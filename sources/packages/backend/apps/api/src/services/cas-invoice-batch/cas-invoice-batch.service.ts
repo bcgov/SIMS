@@ -17,7 +17,7 @@ import {
   CAS_INVOICE_BATCH_NOT_PENDING,
 } from "../../constants";
 import {
-  CASInvoiceBatchAwardAmount,
+  CASInvoiceBatchDistributionTypeAmount,
   CASInvoiceBatchProcessingSummary,
   CASInvoiceStatusCount,
 } from "./cas-invoice-batch.models";
@@ -102,7 +102,7 @@ export class CASInvoiceBatchService {
   }
 
   /**
-   * Checks if CAS invoice batch exists.
+   * Checks if the CAS invoice batch exists.
    * @param casInvoiceBatchId ID of the CAS invoice batch.
    * @returns true if the CAS invoice batch exists, false otherwise.
    */
@@ -114,14 +114,14 @@ export class CASInvoiceBatchService {
 
   /**
    * Retrieve the total amounts of a CAS invoice batch for each
-   * distribution account type (award code, offering intensity and operation code).
+   * distribution type (award code, offering intensity and operation code).
    * @param casInvoiceBatchId ID of the CAS invoice batch.
-   * @returns total amounts for each distribution account type.
+   * @returns total amounts for each distribution type.
    */
-  async getCASInvoiceBatchDistributionTotals(
+  async getCASInvoiceBatchDistributionTypeAmounts(
     casInvoiceBatchId: number,
-  ): Promise<CASInvoiceBatchAwardAmount[]> {
-    const distributionTotals = await this.casInvoiceBatchRepo
+  ): Promise<CASInvoiceBatchDistributionTypeAmount[]> {
+    const distributionTypeAmounts = await this.casInvoiceBatchRepo
       .createQueryBuilder("casInvoiceBatch")
       .select("casDistributionAccount.awardValueCode", "awardValueCode")
       .addSelect(
@@ -144,15 +144,15 @@ export class CASInvoiceBatchService {
       .addOrderBy("casDistributionAccount.offeringIntensity")
       .addOrderBy("casDistributionAccount.operationCode")
       .getRawMany<
-        Omit<CASInvoiceBatchAwardAmount, "total"> & {
+        Omit<CASInvoiceBatchDistributionTypeAmount, "total"> & {
           total: string;
         }
       >();
-    // The total is returned from DB as string, needs to be converted to a number,
-    // since valueAmount is defined as numeric in the DB.
-    return distributionTotals.map((distributionTotal) => ({
-      ...distributionTotal,
-      total: +distributionTotal.total,
+    // SUM over the numeric valueAmount column is returned by the DB driver
+    // as a string and must be converted to a number.
+    return distributionTypeAmounts.map((distributionTypeAmount) => ({
+      ...distributionTypeAmount,
+      total: +distributionTypeAmount.total,
     }));
   }
 
@@ -160,7 +160,7 @@ export class CASInvoiceBatchService {
    * Retrieve the count of invoices of a CAS invoice batch for each invoice status.
    * Every invoice status is returned, including the ones without invoices.
    * @param casInvoiceBatchId ID of the CAS invoice batch.
-   * @returns count of invoices for each invoice status.
+   * @returns total count of invoices and count for each invoice status.
    */
   async getCASInvoiceBatchProcessingSummary(
     casInvoiceBatchId: number,

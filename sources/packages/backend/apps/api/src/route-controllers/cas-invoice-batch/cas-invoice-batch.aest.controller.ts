@@ -125,12 +125,12 @@ export class CASInvoiceBatchAESTController extends BaseController {
 
   /**
    * Summary totals of a CAS invoice batch, including the count of invoices
-   * for each invoice status and the total amounts for each distribution account type.
+   * for each invoice status and the total amounts for each distribution type.
    * @param casInvoiceBatchId batch ID to have the summary totals retrieved for.
-   * @returns batch processing summary and distribution totals.
+   * @returns batch processing summary and distribution type amounts.
    */
   @Roles(Role.AESTCASInvoicing)
-  @Get(":casInvoiceBatchId/batch-summary-totals")
+  @Get(":casInvoiceBatchId/summary-totals")
   @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
   async getCASInvoiceBatchSummaryTotals(
     @Param("casInvoiceBatchId", ParseIntPipe) casInvoiceBatchId: number,
@@ -144,11 +144,11 @@ export class CASInvoiceBatchAESTController extends BaseController {
         `CAS invoice batch with ID ${casInvoiceBatchId} not found.`,
       );
     }
-    const [processingSummary, distributionTotals] = await Promise.all([
+    const [processingSummary, distributionTypeAmounts] = await Promise.all([
       this.casInvoiceBatchService.getCASInvoiceBatchProcessingSummary(
         casInvoiceBatchId,
       ),
-      this.casInvoiceBatchService.getCASInvoiceBatchDistributionTotals(
+      this.casInvoiceBatchService.getCASInvoiceBatchDistributionTypeAmounts(
         casInvoiceBatchId,
       ),
     ]);
@@ -162,12 +162,14 @@ export class CASInvoiceBatchAESTController extends BaseController {
           }),
         ),
       },
-      awardAmounts: distributionTotals.map((distributionTotal) => ({
-        awardValueCode: distributionTotal.awardValueCode,
-        offeringIntensity: distributionTotal.offeringIntensity,
-        operationCode: distributionTotal.operationCode,
-        total: distributionTotal.total,
-      })),
+      distributionTypeAmounts: distributionTypeAmounts.map(
+        (distributionTypeAmount) => ({
+          awardValueCode: distributionTypeAmount.awardValueCode,
+          offeringIntensity: distributionTypeAmount.offeringIntensity,
+          operationCode: distributionTypeAmount.operationCode,
+          total: distributionTypeAmount.total,
+        }),
+      ),
     };
   }
 

@@ -7,9 +7,9 @@ export interface CASInvoiceBatchReport {
 }
 
 /**
- * Total amount of a CAS invoice batch for an award.
+ * Total amount in a CAS invoice batch for a distribution type.
  */
-export interface CASInvoiceBatchAwardAmount {
+export interface CASInvoiceBatchDistributionTypeAmount {
   awardValueCode: string;
   offeringIntensity: OfferingIntensity;
   operationCode: string;
@@ -25,7 +25,7 @@ export interface CASInvoiceStatusCount {
 }
 
 /**
- * Count of CAS invoices in a batch for each invoice status.
+ * Total and per-status count of CAS invoices in a batch.
  */
 export interface CASInvoiceBatchProcessingSummary {
   totalInvoices: number;

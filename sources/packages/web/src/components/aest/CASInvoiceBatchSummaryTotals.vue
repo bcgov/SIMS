@@ -31,7 +31,7 @@
       </tbody>
     </v-table>
     <h3 class="category-header-medium secondary-color mt-6">Award Totals</h3>
-    <v-table v-if="summaryTotals.awardAmounts.length" striped="even">
+    <v-table v-if="summaryTotals.distributionTypeAmounts.length" striped="even">
       <thead>
         <tr>
           <th scope="col" class="text-left">Distribution Type</th>
@@ -40,14 +40,14 @@
       </thead>
       <tbody>
         <tr
-          v-for="distributionTotal in summaryTotals.awardAmounts"
-          :key="getDistributionTotalLabel(distributionTotal)"
+          v-for="distributionTypeAmount in summaryTotals.distributionTypeAmounts"
+          :key="getDistributionTypeLabel(distributionTypeAmount)"
         >
           <td>
-            {{ getDistributionTotalLabel(distributionTotal) }}
+            {{ getDistributionTypeLabel(distributionTypeAmount) }}
           </td>
           <td>
-            {{ formatCurrency(distributionTotal.total) }}
+            {{ formatCurrency(distributionTypeAmount.total) }}
           </td>
         </tr>
       </tbody>
@@ -60,7 +60,7 @@
 import { useFormatters, useOffering, useSnackBar } from "@/composables";
 import { CASInvoiceBatchService } from "@/services/CASInvoiceBatchService";
 import {
-  CASInvoiceBatchAwardAmountAPIOutDTO,
+  CASInvoiceBatchDistributionTypeAmountAPIOutDTO,
   CASInvoiceBatchSummaryTotalsAPIOutDTO,
 } from "@/services/http/dto";
 import { CASInvoiceStatus } from "@/types";
@@ -87,7 +87,7 @@ const props = defineProps<Props>();
 const snackBar = useSnackBar();
 const { formatCurrency } = useFormatters();
 const { mapOfferingIntensityAbbreviation } = useOffering();
-const loading = ref(false);
+const loading = ref(true);
 const summaryTotals = ref<CASInvoiceBatchSummaryTotalsAPIOutDTO>();
 
 /**
@@ -129,14 +129,14 @@ const getInvoiceStatusLabel = (invoiceStatus: CASInvoiceStatus): string =>
   InvoiceStatusDisplay[invoiceStatus].label;
 
 /**
- * Gets the distribution account type label, for instance, BCAG-FT DR.
- * @param distributionTotal distribution total to get the label for.
- * @returns distribution account type label.
+ * Gets the distribution type label, for instance, BCAG-FT DR.
+ * @param distributionTypeAmount distribution type amount to get the label for.
+ * @returns distribution type label.
  */
-const getDistributionTotalLabel = (
-  distributionTotal: CASInvoiceBatchAwardAmountAPIOutDTO,
+const getDistributionTypeLabel = (
+  distributionTypeAmount: CASInvoiceBatchDistributionTypeAmountAPIOutDTO,
 ): string =>
-  `${distributionTotal.awardValueCode}-${mapOfferingIntensityAbbreviation(
-    distributionTotal.offeringIntensity,
-  )} ${distributionTotal.operationCode}`;
+  `${distributionTypeAmount.awardValueCode}-${mapOfferingIntensityAbbreviation(
+    distributionTypeAmount.offeringIntensity,
+  )} ${distributionTypeAmount.operationCode}`;
 </script>

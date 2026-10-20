@@ -18,9 +18,9 @@ export interface UpdateCASInvoiceBatchAPIInDTO {
 }
 
 /**
- * Total amount of a CAS invoice batch for an award.
+ * Total amount in a CAS invoice batch for a distribution type.
  */
-export interface CASInvoiceBatchAwardAmountAPIOutDTO {
+export interface CASInvoiceBatchDistributionTypeAmountAPIOutDTO {
   awardValueCode: string;
   offeringIntensity: OfferingIntensity;
   operationCode: string;
@@ -36,7 +36,7 @@ export interface CASInvoiceStatusCountAPIOutDTO {
 }
 
 /**
- * Count of CAS invoices in a batch for each invoice status.
+ * Total and per-status count of CAS invoices in a batch.
  */
 export interface CASInvoiceBatchProcessingSummaryAPIOutDTO {
   totalInvoices: number;
@@ -44,9 +44,9 @@ export interface CASInvoiceBatchProcessingSummaryAPIOutDTO {
 }
 
 /**
- * Summary totals of a CAS invoice batch, including processing summary and award amounts.
+ * Summary totals of a CAS invoice batch, including processing summary and distribution type amounts.
  */
 export interface CASInvoiceBatchSummaryTotalsAPIOutDTO {
   processingSummary: CASInvoiceBatchProcessingSummaryAPIOutDTO;
-  awardAmounts: CASInvoiceBatchAwardAmountAPIOutDTO[];
+  distributionTypeAmounts: CASInvoiceBatchDistributionTypeAmountAPIOutDTO[];
 }

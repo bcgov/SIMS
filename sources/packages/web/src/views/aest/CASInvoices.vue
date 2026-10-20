@@ -58,6 +58,7 @@
             :items-per-page-options="ITEMS_PER_PAGE"
             :loading="invoiceBatchesLoading"
             @update:options="pageSortEvent"
+            v-model:expanded="expandedBatchIds"
           >
             <template #[`item.batchDate`]="{ item }">
               {{ getISODateHourMinuteString(item.batchDate) }}
@@ -230,6 +231,10 @@ export default defineComponent({
     const rejectBatchModal = ref({} as ModalDialog<boolean>);
     const invoiceBatchesLoading = ref(false);
     /**
+     * IDs of the batches with expanded details.
+     */
+    const expandedBatchIds = ref<number[]>([]);
+    /**
      * Pagination with batch invoices and the total available.
      */
     const paginatedBatches = ref(
@@ -253,6 +258,8 @@ export default defineComponent({
     const loadInvoiceBatches = async () => {
       try {
         invoiceBatchesLoading.value = true;
+        // Reset expanded batches when fetching new data.
+        expandedBatchIds.value = [];
         paginatedBatches.value =
           await CASInvoiceBatchService.shared.getInvoiceBatches({
             ...currentPagination,
@@ -349,6 +356,7 @@ export default defineComponent({
       dateOnlyLongString,
       getISODateHourMinuteString,
       invoiceBatchesLoading,
+      expandedBatchIds,
       paginatedBatches,
       downloadBatch,
       pageSortEvent,

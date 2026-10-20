@@ -41,14 +41,14 @@ export class CASInvoiceBatchApi extends HttpBaseClient {
 
   /**
    * Summary totals of a CAS invoice batch, including the count of invoices
-   * for each invoice status and the total amounts for each distribution account type.
+   * for each invoice status and the total amounts for each distribution type.
    * @param casInvoiceBatchId batch ID to have the summary totals retrieved for.
-   * @returns batch processing summary and distribution totals.
+   * @returns batch processing summary and distribution type amounts.
    */
   async getCASInvoiceBatchSummaryTotals(
     casInvoiceBatchId: number,
   ): Promise<CASInvoiceBatchSummaryTotalsAPIOutDTO> {
-    const url = `cas-invoice-batch/${casInvoiceBatchId}/batch-summary-totals`;
+    const url = `cas-invoice-batch/${casInvoiceBatchId}/summary-totals`;
     return this.getCall(this.addClientRoot(url));
   }
 
