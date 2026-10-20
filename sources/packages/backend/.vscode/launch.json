@@ -5,6 +5,7 @@
       "type": "node",
       "name": "vscode-jest-tests.v2.Backend",
       "request": "launch",
+      "runtimeArgs": ["--experimental-vm-modules", "--no-compilation-cache"],
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "args": [
         "--runInBand",
@@ -31,6 +32,7 @@
       "type": "node",
       "name": "vscode-jest-tests.v2.Backend.Unit",
       "request": "launch",
+      "runtimeArgs": ["--experimental-vm-modules", "--no-compilation-cache"],
       "program": "${workspaceFolder}/node_modules/.bin/jest",
       "args": [
         "--runInBand",

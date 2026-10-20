@@ -82,7 +82,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
       supplierSiteCode: "1234",
     };
 
-    const endpoint = "/aest/cas-supplier/student/123456}";
+    const endpoint = "/aest/cas-supplier/student/123456";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -107,7 +107,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
       supplierSiteCode: "12",
     };
 
-    const endpoint = "/aest/cas-supplier/student/123456}";
+    const endpoint = "/aest/cas-supplier/student/123456";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -132,7 +132,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
       supplierSiteCode: "1A3",
     };
 
-    const endpoint = "/aest/cas-supplier/student/123456}";
+    const endpoint = "/aest/cas-supplier/student/123456";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -155,7 +155,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
       supplierSiteCode: "123",
     };
 
-    const endpoint = "/aest/cas-supplier/student/123456}";
+    const endpoint = "/aest/cas-supplier/student/123456";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -180,7 +180,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
       supplierSiteCode: "123",
     };
 
-    const endpoint = "/aest/cas-supplier/student/123456}";
+    const endpoint = "/aest/cas-supplier/student/123456";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -205,7 +205,7 @@ describe("CASSupplierAESTController(e2e)-addCASSupplier", () => {
       supplierSiteCode: "123",
     };
 
-    const endpoint = "/aest/cas-supplier/student/123456}";
+    const endpoint = "/aest/cas-supplier/student/123456";
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
