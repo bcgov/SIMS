@@ -106,9 +106,7 @@ export class CASInvoiceBatchService {
    * @param casInvoiceBatchId ID of the CAS invoice batch.
    * @returns true if the CAS invoice batch exists, false otherwise.
    */
-  async checkCASInvoiceBatchExists(
-    casInvoiceBatchId: number,
-  ): Promise<boolean> {
+  checkCASInvoiceBatchExists(casInvoiceBatchId: number): Promise<boolean> {
     return this.casInvoiceBatchRepo.exists({
       where: { id: casInvoiceBatchId },
     });

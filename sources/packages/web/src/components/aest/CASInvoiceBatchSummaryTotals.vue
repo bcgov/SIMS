@@ -2,26 +2,29 @@
   <v-skeleton-loader v-if="loading" type="table-row@5" />
   <template v-else-if="summaryTotals">
     <h3 class="category-header-medium secondary-color">Processing Summary</h3>
-    <v-table striped="even">
+    <v-table>
       <thead>
         <tr>
-          <th scope="col" class="text-left">Result</th>
-          <th scope="col" class="text-left">Count</th>
+          <th
+            v-for="invoiceStatusCount in sortedInvoiceStatusCounts"
+            :key="invoiceStatusCount.invoiceStatus"
+            scope="col"
+            class="text-left"
+          >
+            {{ getInvoiceStatusLabel(invoiceStatusCount.invoiceStatus) }}
+          </th>
+          <th scope="col" class="text-left">Total</th>
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="invoiceStatusCount in sortedInvoiceStatusCounts"
-          :key="invoiceStatusCount.invoiceStatus"
-        >
-          <td>
-            {{ getInvoiceStatusLabel(invoiceStatusCount.invoiceStatus) }}
+        <tr>
+          <td
+            v-for="invoiceStatusCount in sortedInvoiceStatusCounts"
+            :key="invoiceStatusCount.invoiceStatus"
+          >
+            {{ invoiceStatusCount.count }}
           </td>
-          <td>{{ invoiceStatusCount.count }}</td>
-        </tr>
-        <tr class="font-weight-bold">
-          <td>Total</td>
-          <td>
+          <td class="font-weight-bold">
             {{ summaryTotals.processingSummary.totalInvoices }}
           </td>
         </tr>
@@ -31,7 +34,7 @@
     <v-table v-if="summaryTotals.awardAmounts.length" striped="even">
       <thead>
         <tr>
-          <th scope="col" class="text-left">Distribution</th>
+          <th scope="col" class="text-left">Distribution Type</th>
           <th scope="col" class="text-left">Amount</th>
         </tr>
       </thead>
