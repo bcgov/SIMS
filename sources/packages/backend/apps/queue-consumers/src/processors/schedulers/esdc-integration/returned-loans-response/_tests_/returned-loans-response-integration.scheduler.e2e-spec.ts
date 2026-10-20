@@ -20,7 +20,9 @@ const OTH_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.OTH.D2026222.001";
 const PDD_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.PDD.D2026222.001";
 
 describe(
-  describeQueueProcessorRootTest(QueueNames.ReturnedLoansResponseIntegration),
+  describeQueueProcessorRootTest(
+    QueueNames.ReturnedLoansResponseIntegrationLegacy,
+  ),
   () => {
     let app: INestApplication;
     let processor: ReturnedLoansResponseIntegrationScheduler;

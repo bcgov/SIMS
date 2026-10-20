@@ -56,7 +56,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     sftpClientMock = sshClientMock;
     storageServiceMock = objectStorageServiceMock;
     virusScanQueueMock = app.get(
-      getQueueProviderName(QueueNames.FileVirusScanProcessor),
+      getQueueProviderName(QueueNames.FileVirusScanProcessorLegacy),
     );
     systemUser = app.get(SystemUsersService).systemUser;
     // Processor under test.

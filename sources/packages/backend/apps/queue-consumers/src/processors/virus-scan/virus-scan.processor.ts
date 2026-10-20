@@ -10,7 +10,7 @@ import {
   FILE_NOT_FOUND,
 } from "../../constants/error-code.constants";
 
-@Processor(QueueNames.FileVirusScanProcessor)
+@Processor(QueueNames.FileVirusScanProcessorLegacy)
 export class VirusScanProcessor {
   constructor(
     private readonly studentFileService: StudentFileService,

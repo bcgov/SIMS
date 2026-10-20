@@ -1,10 +1,11 @@
 /**
  *  Queue name from the queue configuration database.
+ *  TODO: After bull mq migration, remove the legacy queue names.
  */
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
   CancelApplicationAssessment = "cancel-application-assessment",
-  FileVirusScanProcessor = "virus-scan",
+  FileVirusScanProcessorLegacy = "virus-scan",
   IER12Integration = "ier12-integration",
   CRAProcessIntegration = "cra-process-integration",
   CRAResponseIntegration = "cra-response-integration",
@@ -37,5 +38,13 @@ export enum QueueNames {
   ECertCancellationResponseIntegration = "e-cert-cancellation-response-integration",
   T4AUploadEnqueuer = "t4a-upload-enqueuer",
   T4AUpload = "t4a-upload",
-  ReturnedLoansResponseIntegration = "returned-loans-response-integration",
+  ReturnedLoansResponseIntegrationLegacy = "returned-loans-response-integration",
+  FileVirusScanProcessor = "virus-scan-v2",
+  ReturnedLoansResponseIntegration = "returned-loans-response-integration-v2",
 }
+
+// TODO: After bull mq migration, remove this constant.
+export const BULL_MQ_MIGRATED_QUEUE_NAMES: string[] = [
+  QueueNames.FileVirusScanProcessor,
+  QueueNames.ReturnedLoansResponseIntegration,
+];

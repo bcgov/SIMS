@@ -17,7 +17,7 @@ export class StudentFileSharedService {
     private readonly objectStorageService: ObjectStorageService,
     @InjectRepository(StudentFile)
     private readonly studentFileRepo: Repository<StudentFile>,
-    @InjectQueue(QueueNames.FileVirusScanProcessor)
+    @InjectQueue(QueueNames.FileVirusScanProcessorLegacy)
     private readonly virusScanQueue: Queue<VirusScanQueueInDTO>,
   ) {}
 

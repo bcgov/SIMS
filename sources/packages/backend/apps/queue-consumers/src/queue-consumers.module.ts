@@ -1,5 +1,9 @@
 import { Module } from "@nestjs/common";
-import { QueueModule, QueueService } from "@sims/services/queue";
+import {
+  QueueModule,
+  QueueModuleLegacy,
+  QueueService,
+} from "@sims/services/queue";
 import {
   StartApplicationAssessmentProcessor,
   CancelApplicationAssessmentProcessor,
@@ -110,6 +114,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     GlobalHttpModule,
     LoggerModule,
     DatabaseModule,
+    QueueModuleLegacy,
     QueueModule,
     BullBoardQueuesModule,
     QueuesMetricsModule,
