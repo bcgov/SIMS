@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import {
-  HealthCheckError,
-  HealthIndicator,
   HealthIndicatorResult,
+  HealthIndicatorService,
 } from "@nestjs/terminus";
 import { Workers } from "@sims/services/constants";
 
@@ -12,8 +11,12 @@ import { Workers } from "@sims/services/constants";
 const EXPECTED_WORKERS = Object.values(Workers);
 
 @Injectable()
-export class ZeebeHealthIndicator extends HealthIndicator {
+export class ZeebeHealthIndicator {
   private readonly workersConnectionStatus: Record<string, boolean> = {};
+
+  constructor(
+    private readonly healthIndicatorService: HealthIndicatorService,
+  ) {}
 
   /**
    * Reports the connection status of a worker.
@@ -27,10 +30,10 @@ export class ZeebeHealthIndicator extends HealthIndicator {
   /**
    * Performs a health check for the Zeebe connection.
    * @param key identifier for the health check.
-   * @throws HealthCheckError if the Zeebe connection check fails.
-   * @returns The result of the Zeebe health check.
+   * @returns The result of the Zeebe health check, marked as down if any worker is not ready.
    */
   async check(key: string): Promise<HealthIndicatorResult> {
+    const indicator = this.healthIndicatorService.check(key);
     const nonReportedWorkers: string[] = [];
     const notReadyWorkers: string[] = [];
     EXPECTED_WORKERS.forEach((workerName) => {
@@ -46,25 +49,19 @@ export class ZeebeHealthIndicator extends HealthIndicator {
       }
     });
     if (nonReportedWorkers.length) {
-      throw new HealthCheckError(
-        `${key} check failed`,
-        this.getStatus(key, false, {
-          message: `Some workers did not report their status: ${nonReportedWorkers.join(
-            ", ",
-          )}`,
-        }),
-      );
+      return indicator.down({
+        message: `Some workers did not report their status: ${nonReportedWorkers.join(
+          ", ",
+        )}`,
+      });
     }
     if (notReadyWorkers.length) {
-      throw new HealthCheckError(
-        `${key} check failed`,
-        this.getStatus(key, false, {
-          message: `Some workers are not ready: ${notReadyWorkers.join(", ")}`,
-        }),
-      );
+      return indicator.down({
+        message: `Some workers are not ready: ${notReadyWorkers.join(", ")}`,
+      });
     }
     // Return a successful health status if Zeebe connection is up.
-    return super.getStatus(key, true, {
+    return indicator.up({
       message: "Zeebe workers connections states are ready.",
     });
   }
