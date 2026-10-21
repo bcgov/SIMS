@@ -22,6 +22,8 @@ import {
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_NOT_FOUND,
+  BC_STUDENT_LOAN_AWARD_CODE,
+  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
   DISBURSEMENT_SCHEDULE_NOT_UPDATED,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
   GRANTS_TYPES,
@@ -580,6 +582,22 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       disbursementSchedules,
       LOAN_TYPES,
     );
+    // Any missing loan types from loan awards must be considered for overawards.
+    const missingLoanTypes = LOAN_TYPES.filter(
+      (loanType) =>
+        !loanAwards.some((loanAward) => loanAward.valueType === loanType),
+    );
+    for (const loanType of missingLoanTypes) {
+      loanAwards.push({
+        valueAmount: 0,
+        valueCode:
+          loanType === DisbursementValueType.BCLoan
+            ? BC_STUDENT_LOAN_AWARD_CODE
+            : CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
+        valueType: loanType,
+      } as DisbursementValue);
+    }
+
     const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
     for (const valueCode of distinctValueCodes) {
       // Checks if the loan is present in multiple disbursements.
