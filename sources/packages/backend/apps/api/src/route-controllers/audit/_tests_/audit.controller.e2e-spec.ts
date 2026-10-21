@@ -13,6 +13,7 @@ import {
 import { getProviderInstanceForModule } from "@sims/test-utils";
 import { AppModule } from "../../../app.module";
 import { AuditEvent, AuditService } from "../../../services";
+import { LoggerService } from "@sims/utilities/logger";
 
 describe("AuditController(e2e)-audit", () => {
   let app: INestApplication;
@@ -120,6 +121,45 @@ describe("AuditController(e2e)-audit", () => {
     expect(loggerLogSpy).toHaveBeenCalledWith(
       "SIMS Audit Event From 127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Browser Reopened, Portal: Ministry.",
     );
+  });
+
+  describe("Authentication failures", () => {
+    let loggerErrorSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+      loggerErrorSpy = jest.spyOn(LoggerService.prototype, "error");
+    });
+
+    afterEach(() => {
+      loggerErrorSpy.mockRestore();
+    });
+
+    it("Should return unauthorized and not log the UnauthorizedException as an error when the token is not provided.", async () => {
+      // Arrange
+      const payload = { event: AuditEvent.LoggedOut };
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .expect(HttpStatus.UNAUTHORIZED);
+
+      expect(loggerErrorSpy).not.toHaveBeenCalled();
+    });
+
+    it("Should return unauthorized and not log the UnauthorizedException as an error when the token is invalid.", async () => {
+      // Arrange
+      const payload = { event: AuditEvent.BrowserClosed };
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send(payload)
+        .auth("invalid-or-expired-token", BEARER_AUTH_TYPE)
+        .expect(HttpStatus.UNAUTHORIZED);
+
+      expect(loggerErrorSpy).not.toHaveBeenCalled();
+    });
   });
 
   afterAll(async () => {

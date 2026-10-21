@@ -1,4 +1,9 @@
-import { Catch, ArgumentsHost, HttpException } from "@nestjs/common";
+import {
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { BaseExceptionFilter } from "@nestjs/core";
 import { Request } from "express";
 import { LoggerService } from "@sims/utilities/logger";
@@ -23,6 +28,14 @@ export class AppAllExceptionsFilter extends BaseExceptionFilter {
         super.catch(exception, host);
         return;
       }
+    }
+    // Authentication failures are expected client responses, not unhandled exceptions.
+    if (exception instanceof UnauthorizedException) {
+      this.logger.warn(
+        `Unauthorized request | Request path: ${request.path} | ${userInfo}`,
+      );
+      super.catch(exception, host);
+      return;
     }
     // Log any exception that is not API process error as an unhandled exception with stack trace.
     this.logger.error(
