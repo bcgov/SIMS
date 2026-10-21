@@ -55,6 +55,12 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
             ),
             createFakeDisbursementValue(
               DisbursementValueType.BCGrant,
+              "BGPD",
+              20,
+              { effectiveAmount: 15 },
+            ),
+            createFakeDisbursementValue(
+              DisbursementValueType.BCGrant,
               "SBSD",
               30,
               { effectiveAmount: 25 },
@@ -62,8 +68,8 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
             createFakeDisbursementValue(
               DisbursementValueType.BCTotalGrant,
               "BCSG",
-              40,
-              { effectiveAmount: 30 },
+              60,
+              { effectiveAmount: 45 },
             ),
           ],
         },
@@ -231,6 +237,18 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchSummaryTotals", (
             offeringIntensity: OfferingIntensity.fullTime,
             operationCode: "DR",
             total: 20,
+          },
+          {
+            awardValueCode: "BGPD",
+            offeringIntensity: OfferingIntensity.fullTime,
+            operationCode: "CR",
+            total: 15,
+          },
+          {
+            awardValueCode: "BGPD",
+            offeringIntensity: OfferingIntensity.fullTime,
+            operationCode: "DR",
+            total: 15,
           },
           {
             awardValueCode: "SBSD",

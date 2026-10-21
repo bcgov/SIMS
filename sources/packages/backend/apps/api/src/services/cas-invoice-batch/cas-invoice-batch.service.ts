@@ -18,7 +18,6 @@ import {
 } from "../../constants";
 import {
   CASInvoiceBatchDistributionTypeAmount,
-  CASInvoiceBatchProcessingSummary,
   CASInvoiceStatusCount,
 } from "./cas-invoice-batch.models";
 
@@ -137,9 +136,7 @@ export class CASInvoiceBatchService {
         "casDistributionAccount",
       )
       .where("casInvoiceBatch.id = :casInvoiceBatchId", { casInvoiceBatchId })
-      .groupBy("casDistributionAccount.awardValueCode")
-      .addGroupBy("casDistributionAccount.offeringIntensity")
-      .addGroupBy("casDistributionAccount.operationCode")
+      .groupBy("casDistributionAccount.id")
       .orderBy("casDistributionAccount.awardValueCode")
       .addOrderBy("casDistributionAccount.offeringIntensity")
       .addOrderBy("casDistributionAccount.operationCode")
@@ -160,11 +157,11 @@ export class CASInvoiceBatchService {
    * Retrieve the count of invoices of a CAS invoice batch for each invoice status.
    * Every invoice status is returned, including the ones without invoices.
    * @param casInvoiceBatchId ID of the CAS invoice batch.
-   * @returns total count of invoices and count for each invoice status.
+   * @returns count of invoices for each invoice status.
    */
   async getCASInvoiceBatchProcessingSummary(
     casInvoiceBatchId: number,
-  ): Promise<CASInvoiceBatchProcessingSummary> {
+  ): Promise<CASInvoiceStatusCount[]> {
     const invoiceStatusCounts = await this.casInvoiceBatchRepo
       .createQueryBuilder("casInvoiceBatch")
       .select("casInvoice.invoiceStatus", "invoiceStatus")
@@ -180,19 +177,10 @@ export class CASInvoiceBatchService {
         count,
       ]),
     );
-    const allInvoiceStatusCounts = Object.values(CASInvoiceStatus).map(
-      (invoiceStatus) => ({
-        invoiceStatus,
-        count: countsByStatus.get(invoiceStatus) ?? 0,
-      }),
-    );
-    return {
-      totalInvoices: allInvoiceStatusCounts.reduce(
-        (total, { count }) => total + count,
-        0,
-      ),
-      invoiceStatusCounts: allInvoiceStatusCounts,
-    };
+    return Object.values(CASInvoiceStatus).map((invoiceStatus) => ({
+      invoiceStatus,
+      count: countsByStatus.get(invoiceStatus) ?? 0,
+    }));
   }
 
   /**

@@ -144,7 +144,7 @@ export class CASInvoiceBatchAESTController extends BaseController {
         `CAS invoice batch with ID ${casInvoiceBatchId} not found.`,
       );
     }
-    const [processingSummary, distributionTypeAmounts] = await Promise.all([
+    const [invoiceStatusCounts, distributionTypeAmounts] = await Promise.all([
       this.casInvoiceBatchService.getCASInvoiceBatchProcessingSummary(
         casInvoiceBatchId,
       ),
@@ -154,13 +154,14 @@ export class CASInvoiceBatchAESTController extends BaseController {
     ]);
     return {
       processingSummary: {
-        totalInvoices: processingSummary.totalInvoices,
-        invoiceStatusCounts: processingSummary.invoiceStatusCounts.map(
-          (invoiceStatusCount) => ({
-            invoiceStatus: invoiceStatusCount.invoiceStatus,
-            count: invoiceStatusCount.count,
-          }),
+        totalInvoices: invoiceStatusCounts.reduce(
+          (total, { count }) => total + count,
+          0,
         ),
+        invoiceStatusCounts: invoiceStatusCounts.map((invoiceStatusCount) => ({
+          invoiceStatus: invoiceStatusCount.invoiceStatus,
+          count: invoiceStatusCount.count,
+        })),
       },
       distributionTypeAmounts: distributionTypeAmounts.map(
         (distributionTypeAmount) => ({

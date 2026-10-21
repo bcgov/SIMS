@@ -47,6 +47,8 @@ export function useOffering() {
         return "PT";
       case OfferingIntensity.fullTime:
         return "FT";
+      default:
+        return offeringIntensity;
     }
   };
 

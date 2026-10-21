@@ -23,11 +23,3 @@ export interface CASInvoiceStatusCount {
   invoiceStatus: CASInvoiceStatus;
   count: number;
 }
-
-/**
- * Total and per-status count of CAS invoices in a batch.
- */
-export interface CASInvoiceBatchProcessingSummary {
-  totalInvoices: number;
-  invoiceStatusCounts: CASInvoiceStatusCount[];
-}

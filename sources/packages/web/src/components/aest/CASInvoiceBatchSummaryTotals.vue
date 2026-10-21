@@ -6,12 +6,12 @@
       <thead>
         <tr>
           <th
-            v-for="invoiceStatusCount in sortedInvoiceStatusCounts"
-            :key="invoiceStatusCount.invoiceStatus"
+            v-for="summaryItem in processingSummaryData"
+            :key="summaryItem.invoiceStatus"
             scope="col"
             class="text-left"
           >
-            {{ getInvoiceStatusLabel(invoiceStatusCount.invoiceStatus) }}
+            {{ summaryItem.label }}
           </th>
           <th scope="col" class="text-left">Total</th>
         </tr>
@@ -19,10 +19,10 @@
       <tbody>
         <tr>
           <td
-            v-for="invoiceStatusCount in sortedInvoiceStatusCounts"
-            :key="invoiceStatusCount.invoiceStatus"
+            v-for="summaryItem in processingSummaryData"
+            :key="summaryItem.invoiceStatus"
           >
-            {{ invoiceStatusCount.count }}
+            {{ summaryItem.count }}
           </td>
           <td class="font-weight-bold">
             {{ summaryTotals.processingSummary.totalInvoices }}
@@ -64,24 +64,11 @@ import {
   CASInvoiceBatchSummaryTotalsAPIOutDTO,
 } from "@/services/http/dto";
 import { CASInvoiceStatus } from "@/types";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 
 interface Props {
   casInvoiceBatchId: number;
 }
-
-/**
- * Label and display order of each invoice status in the processing summary.
- */
-const InvoiceStatusDisplay: Record<
-  CASInvoiceStatus,
-  { label: string; order: number }
-> = {
-  [CASInvoiceStatus.Sent]: { label: "Success", order: 1 },
-  [CASInvoiceStatus.ManualIntervention]: { label: "Error", order: 2 },
-  [CASInvoiceStatus.Resolved]: { label: "Resolved", order: 3 },
-  [CASInvoiceStatus.Pending]: { label: "Pending", order: 4 },
-};
 
 const props = defineProps<Props>();
 const snackBar = useSnackBar();
@@ -91,11 +78,10 @@ const loading = ref(true);
 const summaryTotals = ref<CASInvoiceBatchSummaryTotalsAPIOutDTO>();
 
 /**
- * Loads the batch summary totals every time the component is mounted,
- * which happens every time the batch row is expanded, to ensure the
- * most recent invoice statuses are displayed.
+ * Loads the batch summary totals every time the batch row is expanded,
+ * to ensure the most recent invoice statuses are displayed.
  */
-onMounted(async () => {
+watchEffect(async () => {
   try {
     loading.value = true;
     summaryTotals.value =
@@ -110,23 +96,40 @@ onMounted(async () => {
 });
 
 /**
- * Invoice status counts sorted in the display order.
+ * Gets the count of invoices for an invoice status.
+ * @param invoiceStatus invoice status to get the count for.
+ * @returns count of invoices, or zero when the status is not present.
  */
-const sortedInvoiceStatusCounts = computed(() =>
-  summaryTotals.value?.processingSummary.invoiceStatusCounts.toSorted(
-    (a, b) =>
-      InvoiceStatusDisplay[a.invoiceStatus].order -
-      InvoiceStatusDisplay[b.invoiceStatus].order,
-  ),
-);
+const getCountByInvoiceStatus = (invoiceStatus: CASInvoiceStatus): number =>
+  summaryTotals.value?.processingSummary.invoiceStatusCounts.find(
+    (statusCount) => statusCount.invoiceStatus === invoiceStatus,
+  )?.count ?? 0;
 
 /**
- * Gets the label of an invoice status to be displayed in the processing summary.
- * @param invoiceStatus invoice status to get the label for.
- * @returns invoice status label.
+ * Processing summary items in the display order.
  */
-const getInvoiceStatusLabel = (invoiceStatus: CASInvoiceStatus): string =>
-  InvoiceStatusDisplay[invoiceStatus].label;
+const processingSummaryData = computed(() => [
+  {
+    invoiceStatus: CASInvoiceStatus.Sent,
+    label: "Success",
+    count: getCountByInvoiceStatus(CASInvoiceStatus.Sent),
+  },
+  {
+    invoiceStatus: CASInvoiceStatus.ManualIntervention,
+    label: "Error",
+    count: getCountByInvoiceStatus(CASInvoiceStatus.ManualIntervention),
+  },
+  {
+    invoiceStatus: CASInvoiceStatus.Resolved,
+    label: "Resolved",
+    count: getCountByInvoiceStatus(CASInvoiceStatus.Resolved),
+  },
+  {
+    invoiceStatus: CASInvoiceStatus.Pending,
+    label: "Pending",
+    count: getCountByInvoiceStatus(CASInvoiceStatus.Pending),
+  },
+]);
 
 /**
  * Gets the distribution type label, for instance, BCAG-FT DR.
