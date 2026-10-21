@@ -1,4 +1,9 @@
-import { AnySchemaObject, AsyncSchema, ValidateFunction } from "ajv";
+import {
+  AnySchemaObject,
+  AsyncSchema,
+  AsyncValidateFunction,
+  ValidateFunction,
+} from "ajv";
 import {
   EducationProgramContext,
   EducationProgramData,
@@ -92,8 +97,8 @@ export interface ProgramCompiledValidator {
   /**
    * Schema compiled, kept to remove it from the AJV cache once outdated.
    */
-  schema: AnySchemaObject;
-  validator: ValidateFunction;
+  schema: AsyncSchema;
+  validator: AsyncValidateFunction;
   /**
    * Warning conditions declared in the schema "x-warnings" keyword.
    */
@@ -103,24 +108,7 @@ export interface ProgramCompiledValidator {
 /**
  * AJV custom async keyword ensuring the SABC code is not used by another
  * active program of the same institution for the same program year.
+ * Declared in the configuration validation schema, which is shared with the
+ * client form, where it is ignored since it depends on server-side information.
  */
 export const SABC_CODE_UNIQUE_KEYWORD = "sabcCodeUnique";
-
-/**
- * Validations executed only by the backend, since they depend on server-side
- * information (e.g. DB queries). Kept apart from the configuration validation
- * schema, which is shared with the client form is synchronous for now.
- */
-export const BACKEND_VALIDATION_SCHEMA: AsyncSchema = {
-  $async: true,
-  type: "object",
-  properties: {
-    sabcCode: {
-      [SABC_CODE_UNIQUE_KEYWORD]: true,
-      errorMessage: {
-        [SABC_CODE_UNIQUE_KEYWORD]:
-          "SABC program code is already in use by another active program.",
-      },
-    },
-  },
-};

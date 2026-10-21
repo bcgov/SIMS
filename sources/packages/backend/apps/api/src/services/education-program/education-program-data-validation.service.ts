@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import Ajv, { AnySchemaObject, AsyncValidateFunction, ErrorObject } from "ajv";
+import Ajv, { AnySchemaObject, AsyncSchema, ErrorObject } from "ajv";
 import addErrors from "ajv-errors";
 import addFormats from "ajv-formats";
 import {
@@ -16,7 +16,6 @@ import {
   SABC_CODE_UNIQUE_KEYWORD,
 } from "./education-program-data-validation.models";
 import { EducationProgramService } from "./education-program.service";
-import { BACKEND_VALIDATION_SCHEMA } from "./education-program-data-validation.models";
 
 /**
  * Validates the dynamic education program data against the validation schema
@@ -24,7 +23,9 @@ import { BACKEND_VALIDATION_SCHEMA } from "./education-program-data-validation.m
  * The AJV options and custom formats must be kept aligned with the web
  * programFormAjv (web/src/renderers/jsonforms/ajv.ts), otherwise the client
  * and the server could disagree about the data being valid.
- * Additionally, validates the data against the backend-only validations.
+ * The schema is compiled as async, allowing it to declare backend-only async
+ * keywords (e.g. {@link SABC_CODE_UNIQUE_KEYWORD}), which are ignored by the
+ * client form since its validation must remain synchronous.
  */
 @Injectable()
 export class EducationProgramDataValidationService {
@@ -36,10 +37,6 @@ export class EducationProgramDataValidationService {
    * hence the AJV cache alone would recompile on every call and grow indefinitely.
    */
   private readonly validators = new Map<number, ProgramCompiledValidator>();
-  /**
-   * Compiled validator of the backend-only validations.
-   */
-  private readonly backendValidator: AsyncValidateFunction;
 
   constructor(
     private readonly educationProgramService: EducationProgramService,
@@ -60,14 +57,13 @@ export class EducationProgramDataValidationService {
     addFormats(this.ajv);
     addErrors(this.ajv);
     this.addSABCCodeUniqueKeyword();
-    this.backendValidator = this.ajv.compile(BACKEND_VALIDATION_SCHEMA);
   }
 
   /**
    * Validates the dynamic program data.
    * @param configuration program configuration providing the validation schema.
    * @param programData dynamic program data to be validated.
-   * @param validationContext server-side information required by the backend-only validations.
+   * @param validationContext server-side information required by the backend-only keywords.
    * @returns the program data without the context and the properties not
    * defined by the schema, when valid, otherwise the validation messages.
    */
@@ -84,16 +80,15 @@ export class EducationProgramDataValidationService {
     };
     // Any warnings provided by the client are recalculated by the server.
     delete data.warnings;
-    const errors: Partial<ErrorObject>[] = validator(data)
-      ? []
-      : [...(validator.errors ?? [])];
+    let errors: Partial<ErrorObject>[] = [];
     try {
-      await this.backendValidator.call(validationContext, data);
+      // An async validator throws, instead of returning false, when the data is invalid.
+      await validator.call(validationContext, data);
     } catch (error: unknown) {
       if (!(error instanceof Ajv.ValidationError)) {
         throw error;
       }
-      errors.push(...error.errors);
+      errors = error.errors;
     }
     if (errors.length) {
       return {
@@ -223,7 +218,12 @@ export class EducationProgramDataValidationService {
         this.ajv.removeSchema(warning.condition),
       );
     }
-    const schema = configuration.validationSchema as AnySchemaObject;
+    // The configuration schema is shared with the client form, hence it is not
+    // declared as async, which is required to use async keywords.
+    const schema: AsyncSchema = {
+      ...(configuration.validationSchema as AnySchemaObject),
+      $async: true,
+    };
     const schemaWarnings = (schema["x-warnings"] ??
       []) as ProgramSchemaWarning[];
     const compiledValidator: ProgramCompiledValidator = {

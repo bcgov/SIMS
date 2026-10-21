@@ -1151,8 +1151,10 @@ SELECT
           "type": "string",
           "title": "SABC program code",
           "pattern": "^$|^[A-Z]{3}\\d$",
+          "sabcCodeUnique": true,
           "errorMessage": {
-              "pattern": "SABC program code format is invalid."
+              "pattern": "SABC program code format is invalid.",
+              "sabcCodeUnique": "SABC program code is already in use by another active program."
           }
           },
           "hasTravel": {
