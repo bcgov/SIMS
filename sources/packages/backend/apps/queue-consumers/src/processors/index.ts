@@ -1,4 +1,5 @@
 export * from "./schedulers/base-queue";
+export * from "./schedulers/base-queue-processor";
 export * from "./assessment/start-application-assessment.processor";
 export * from "./assessment/cancel-application-assessment.processor";
 export * from "./t4a/t4a-upload.processor";

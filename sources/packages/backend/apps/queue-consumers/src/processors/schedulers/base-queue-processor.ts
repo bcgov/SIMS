@@ -5,12 +5,14 @@ import {
   getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../utilities";
-import { Job } from "bullmq";
+import { Job, UnrecoverableError } from "bullmq";
 import { MetricsService, QueuesMetricsEvents } from "../../services";
 import { Inject } from "@nestjs/common";
 import { WorkerHost } from "@nestjs/bullmq";
+import { FILE_NOT_FOUND, EMPTY_FILE } from "../../constants";
 
 type JobResult = string | string[];
+const PERMANENT_FAILURE_ERROR_NAMES = [FILE_NOT_FOUND, EMPTY_FILE];
 
 /**
  * Base class for queue processors providing common functionality and error handling.
@@ -67,13 +69,20 @@ export abstract class BaseQueueProcessor<T> extends WorkerHost {
     } catch (error: unknown) {
       // Throw an error to force the queue to retry.
       if (error instanceof CustomNamedError) {
-        throw new Error(error.message);
+        // Throw an UnrecoverableError for permanent failure error names.
+        // The job will not be retried for UnrecoverableError.
+        if (PERMANENT_FAILURE_ERROR_NAMES.includes(error.name)) {
+          throw new UnrecoverableError(error.message);
+        }
+        throw error;
       }
       const errorMessage = `Unexpected error while executing queue ${job.queueName}, job ID ${job.id}.`;
       this.logger.error(errorMessage, error);
       // Throw an error to force the queue to retry. This error will not print the stack trace
       // if using the 'cause' property, hence the stack is added to the message.
-      throw new Error(`${errorMessage}${parseJSONError(error)}`);
+      throw new Error(`${errorMessage}${parseJSONError(error)}`, {
+        cause: error,
+      });
     } finally {
       this.logger.logProcessSummary(processSummary);
       await logProcessSummaryToJobLogger(processSummary, job);

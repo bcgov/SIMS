@@ -100,3 +100,17 @@ export const BULL_BOARD_ROUTE = "admin/queues";
  * Number of days after which acceptance of a student assessment is considered overdue and a notification should be sent to the student.
  */
 export const STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS = 7;
+/**
+ * Duration of the lock for the queue worker job in milliseconds.
+ */
+export const QUEUE_WORKER_LOCK_DURATION = 60000;
+/**
+ * The time in milliseconds before the queue worker job lock is automatically renewed.
+ */
+export const QUEUE_WORKER_LOCK_RENEW_TIME = 30000;
+/**
+ * Amount of times a queue worker job can be recovered from a stalled state
+ * to the `wait` state. If this is exceeded, the job is moved
+ * to `failed`.
+ */
+export const QUEUE_WORKER_MAX_STALLED_COUNT = 0;

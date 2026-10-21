@@ -1,62 +1,48 @@
-import { Process, Processor } from "@nestjs/bull";
-import { CustomNamedError, QueueNames } from "@sims/utilities";
+import { Processor } from "@nestjs/bullmq";
+import { QueueNames } from "@sims/utilities";
 import { StudentFileService } from "../../services";
-import { Job } from "bull";
-import { VirusScanQueueInDTO, VirusScanResult } from "@sims/services/queue";
+import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { logProcessSummaryToJobLogger } from "../../utilities";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "..";
 import {
-  EMPTY_FILE,
-  FILE_NOT_FOUND,
-} from "../../constants/error-code.constants";
+  QUEUE_WORKER_LOCK_DURATION,
+  QUEUE_WORKER_LOCK_RENEW_TIME,
+  QUEUE_WORKER_MAX_STALLED_COUNT,
+} from "@sims/services/constants";
 
-@Processor(QueueNames.FileVirusScanProcessorLegacy)
-export class VirusScanProcessor {
+@Processor(QueueNames.FileVirusScanProcessor, {
+  lockDuration: QUEUE_WORKER_LOCK_DURATION,
+  lockRenewTime: QUEUE_WORKER_LOCK_RENEW_TIME,
+  maxStalledCount: QUEUE_WORKER_MAX_STALLED_COUNT,
+})
+export class VirusScanProcessor extends BaseQueueProcessor<VirusScanQueueInDTO> {
   constructor(
     private readonly studentFileService: StudentFileService,
-    private readonly logger: LoggerService,
-  ) {}
+    protected readonly logger: LoggerService,
+  ) {
+    super(logger);
+  }
 
   /**
    * Perform virus scanning for all the files having pending scan status.
    * @param job information to perform the process.
+   * @param processSummary process summary for logging.
    * @returns VirusScanResult virus scan result log.
    */
-  @Process()
-  async performVirusScan(
+  async processQueue(
     job: Job<VirusScanQueueInDTO>,
-  ): Promise<VirusScanResult> {
-    const processSummary = new ProcessSummary();
-    let isInfected: boolean | null = null;
-    processSummary.info("Starting virus scan.");
-    try {
-      isInfected = await this.studentFileService.scanFile(
-        job.data.uniqueFileName,
-        processSummary,
-      );
-      processSummary.info("Completed virus scanning for the file.");
-    } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        const errorMessage = error.message;
-        if ([FILE_NOT_FOUND, EMPTY_FILE].includes(error.name)) {
-          // If the file is not present in the database, or its content
-          // is empty then remove the file from the virus scan queue.
-          await job.discard();
-        }
-        processSummary.error(errorMessage);
-        throw new Error(errorMessage, { cause: error });
-      }
-      throw new Error(
-        "Unexpected error while executing the job, check logs for further details.",
-        { cause: error },
-      );
-    } finally {
-      this.logger.logProcessSummary(processSummary);
-      await logProcessSummaryToJobLogger(processSummary, job);
-    }
-    return {
-      fileProcessed: job.data.fileName,
-      isInfected,
-    };
+    processSummary: ProcessSummary,
+  ): Promise<string[]> {
+    const uniqueFileName = job.data.uniqueFileName;
+    processSummary.info(`Starting virus scan for file: ${uniqueFileName}.`);
+    const isInfected = await this.studentFileService.scanFile(
+      job.data.uniqueFileName,
+      processSummary,
+    );
+    processSummary.info(
+      `Completed virus scanning for the file: ${uniqueFileName}.`,
+    );
+    return ["Virus scan completed successfully.", `Is infected: ${isInfected}`];
   }
 }
