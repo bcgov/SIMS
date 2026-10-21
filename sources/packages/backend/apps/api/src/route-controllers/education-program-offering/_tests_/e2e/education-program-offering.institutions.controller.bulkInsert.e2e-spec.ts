@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   EducationProgram,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   OfferingStatus,
@@ -15,6 +16,7 @@ import {
   createFakeInstitutionLocation,
   createFakeRestriction,
   saveFakeInstitutionRestriction,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -61,11 +63,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
   let collegeFLocationKSEY: InstitutionLocation;
   let collegeFLocationYESK: InstitutionLocation;
   let collegeFLocationSEYK: InstitutionLocation;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -78,7 +83,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     );
 
     educationProgramSBC1 = createFakeEducationProgram(
-      { institution: collegeF, user: collegeFUser },
+      {
+        institution: collegeF,
+        user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      },
       {
         initialValue: {
           sabcCode: csvProgramSABCCodeSBC1,
@@ -87,7 +96,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     );
 
     educationProgramDeliveredOnSiteSBC2 = createFakeEducationProgram(
-      { institution: collegeF, user: collegeFUser },
+      {
+        institution: collegeF,
+        user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      },
       {
         initialValue: {
           sabcCode: csvProgramSABCCodeSBC2,
@@ -96,7 +109,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
       },
     );
     educationProgramSBC4 = createFakeEducationProgram(
-      { institution: collegeF, user: collegeFUser },
+      {
+        institution: collegeF,
+        user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      },
       {
         initialValue: {
           sabcCode: csvProgramSABCCodeSBC4,
@@ -106,7 +123,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     );
 
     const educationProgramDeliveredOnsiteSBC9 = createFakeEducationProgram(
-      { institution: collegeF, user: collegeFUser },
+      {
+        institution: collegeF,
+        user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      },
       {
         initialValue: {
           sabcCode: csvProgramSABCCodeSBC9,

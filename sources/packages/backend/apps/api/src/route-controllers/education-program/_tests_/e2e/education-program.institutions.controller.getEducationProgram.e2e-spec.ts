@@ -1,10 +1,16 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { Institution, InstitutionLocation, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  InstitutionLocation,
+  User,
+} from "@sims/sims-db";
 import {
   E2EDataSources,
   createE2EDataSources,
   createFakeInstitutionLocation,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -24,11 +30,14 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User, sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -54,6 +63,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
       const program = createFakeEducationProgram({
         institution: collegeF,
         auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       });
       const savedProgram = await db.educationProgram.save(program);
       const endpoint = `/institutions/education-program/${savedProgram.id}`;

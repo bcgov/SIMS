@@ -4,6 +4,7 @@ import {
   createE2EDataSources,
   createFakeInstitution,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -14,18 +15,25 @@ import {
   AESTGroups,
 } from "../../../../testHelpers";
 import request from "supertest";
-import { Institution, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  User,
+} from "@sims/sims-db";
 
 describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let sharedInstitution: Institution;
   let sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     sharedInstitution = createFakeInstitution();
     await db.institution.save(sharedInstitution);
     sharedUser = createFakeUser();
@@ -37,6 +45,7 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
     const program = createFakeEducationProgram({
       institution: sharedInstitution,
       user: sharedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
 
@@ -88,6 +97,7 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
       {
         institution: sharedInstitution,
         user: sharedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValue: { isActive: false },

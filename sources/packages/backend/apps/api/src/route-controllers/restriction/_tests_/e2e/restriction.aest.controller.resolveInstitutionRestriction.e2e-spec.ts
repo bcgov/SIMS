@@ -4,6 +4,7 @@ import {
   createE2EDataSources,
   createFakeEducationProgramOffering,
   saveFakeInstitutionRestriction,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -13,17 +14,25 @@ import {
   getAESTUser,
 } from "../../../../testHelpers";
 import request from "supertest";
-import { NoteType, RestrictionType, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  NoteType,
+  RestrictionType,
+  User,
+} from "@sims/sims-db";
 
 describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let auditUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     auditUser = await getAESTUser(
       db.dataSource,
       AESTGroups.BusinessAdministrators,
@@ -33,7 +42,10 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
   it("Should resolve the institution restriction when the provided institution restriction is active.", async () => {
     // Arrange
     const offering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser }),
+      createFakeEducationProgramOffering({
+        auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const restriction = await db.restriction.findOne({
       select: { id: true },
@@ -95,7 +107,10 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
   it("Should throw an unprocessable entity exception when the provided institution restriction is inactive.", async () => {
     // Arrange
     const offering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser }),
+      createFakeEducationProgramOffering({
+        auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const restriction = await db.restriction.findOne({
       select: { id: true },
@@ -140,7 +155,10 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
   it("Should throw a not found exception when the provided restriction does not belong to the institution.", async () => {
     // Arrange
     const offering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser }),
+      createFakeEducationProgramOffering({
+        auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const restriction = await db.restriction.findOne({
       select: { id: true },
@@ -178,7 +196,10 @@ describe("RestrictionAESTController(e2e)-resolveInstitutionRestriction.", () => 
   it("Should throw an forbidden exception when the user does not have the required permission.", async () => {
     // Arrange
     const offering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser }),
+      createFakeEducationProgramOffering({
+        auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const restriction = await db.restriction.findOne({
       select: { id: true },

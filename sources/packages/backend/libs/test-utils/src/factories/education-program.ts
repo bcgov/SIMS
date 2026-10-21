@@ -5,12 +5,14 @@ import {
   User,
   ProgramStatus,
   ProgramIntensity,
+  EducationProgramConfiguration,
 } from "@sims/sims-db";
 import { createFakeInstitution } from "@sims/test-utils";
 
 export function createFakeEducationProgram(
   relations: {
     auditUser: User;
+    programConfiguration?: EducationProgramConfiguration;
     institution?: Institution;
   },
   options?: { initialValues?: Partial<EducationProgram> },
@@ -47,5 +49,52 @@ export function createFakeEducationProgram(
   program.isActive = options?.initialValues?.isActive ?? true;
   program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
   program.sabcCode = options?.initialValues?.sabcCode ?? null;
+  program.programData =
+    options?.initialValues?.programData ?? createFakeProgramData(program);
+  program.programConfiguration = relations.programConfiguration;
   return program;
+}
+
+/**
+ * Creates the program data based on the program columns values,
+ * following the same mapping used by the migration that backfilled
+ * the program_data column.
+ * @param program program to have its column values mapped.
+ * @returns program data.
+ */
+function createFakeProgramData(
+  program: EducationProgram,
+): Record<string, unknown> {
+  const programDeliveryTypes: string[] = [];
+  if (program.deliveredOnSite) {
+    programDeliveryTypes.push("deliveredOnSite");
+  }
+  if (program.deliveredOnline) {
+    programDeliveryTypes.push("deliveredOnline");
+  }
+  const programData: Record<string, unknown> = {
+    programName: program.name,
+    programDescription: program.description,
+    credentialType: program.credentialType,
+    cipCode: program.cipCode,
+    nocCode: program.nocCode,
+    regulatoryBody: program.regulatoryBody,
+    programDeliveryTypes,
+    courseLoadCalculation: program.courseLoadCalculation,
+    completionYears: program.completionYears,
+    eslEligibility: program.eslEligibility,
+    hasJointInstitution: program.hasJointInstitution,
+    hasJointDesignatedInstitution: program.hasJointDesignatedInstitution,
+    programIntensity: program.programIntensity,
+    isAviationProgram: program.isAviationProgram,
+    hasWILComponent: program.hasWILComponent,
+    hasTravel: program.hasTravel,
+    hasIntlExchange: program.hasIntlExchange,
+    programDeclaration: program.programDeclaration,
+    fieldOfStudyCode: program.fieldOfStudyCode,
+  };
+  if (program.sabcCode) {
+    programData.sabcCode = program.sabcCode;
+  }
+  return programData;
 }

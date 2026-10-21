@@ -1,6 +1,14 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { Institution, User } from "@sims/sims-db";
-import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  User,
+} from "@sims/sims-db";
+import {
+  E2EDataSources,
+  createE2EDataSources,
+  getMostRecentEducationProgramConfiguration,
+} from "@sims/test-utils";
 import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
@@ -16,11 +24,14 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
   let db: E2EDataSources;
   let collegeC: Institution;
   let collegeCUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeCUser,
@@ -34,6 +45,7 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     const program = createFakeEducationProgram({
       institution: collegeC,
       user: collegeCUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
 
@@ -98,6 +110,7 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     const program = createFakeEducationProgram({
       institution: collegeC,
       user: collegeCUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
 
@@ -120,6 +133,7 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
       {
         institution: collegeC,
         user: collegeCUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       { initialValue: { isActive: false } },
     );

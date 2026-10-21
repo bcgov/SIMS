@@ -5,6 +5,7 @@ import {
   User,
   ProgramStatus,
   ProgramIntensity,
+  EducationProgramConfiguration,
 } from "@sims/sims-db";
 import { createFakeInstitution } from "@sims/test-utils";
 
@@ -13,6 +14,7 @@ import { createFakeInstitution } from "@sims/test-utils";
  * @param relations dependencies.
  * - `institution` related institution.
  * - `user` related user.
+ * - `programConfiguration` related program configuration.
  * @param options dependencies.
  * - `initialValues` initial values.
  * @returns returns fake education program.
@@ -21,6 +23,7 @@ export function createFakeEducationProgram(
   relations?: {
     institution?: Institution;
     user?: User;
+    programConfiguration?: EducationProgramConfiguration;
   },
   options?: {
     initialValue?: Partial<EducationProgram>;
@@ -55,5 +58,6 @@ export function createFakeEducationProgram(
   program.fieldOfStudyCode = 1;
   program.isActive = options?.initialValue?.isActive ?? true;
   program.effectiveEndDate = options?.initialValue?.effectiveEndDate ?? null;
+  program.programConfiguration = relations?.programConfiguration;
   return program;
 }

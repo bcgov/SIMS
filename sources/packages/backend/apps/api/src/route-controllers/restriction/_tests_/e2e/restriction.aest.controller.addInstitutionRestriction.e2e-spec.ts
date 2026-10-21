@@ -8,6 +8,7 @@ import {
   createFakeEducationProgram,
   saveFakeInstitutionRestriction,
   createFakeRestriction,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -20,6 +21,7 @@ import {
 import request from "supertest";
 import {
   EducationProgram,
+  EducationProgramConfiguration,
   FieldRequirementType,
   Institution,
   InstitutionLocation,
@@ -39,11 +41,14 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
   let remitRestriction: Restriction;
   // Institution restriction that is applicable institution level.
   let institutionOnlyRestriction: Restriction;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     sharedAuditUser = await db.user.save(createFakeUser());
     institutionOnlyRestriction = createFakeRestriction({
       initialValues: {
@@ -719,6 +724,7 @@ describe("RestrictionAESTController(e2e)-addInstitutionRestriction.", () => {
       program = await db.educationProgram.save(
         createFakeEducationProgram({
           auditUser: sharedAuditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institution,
         }),
       );

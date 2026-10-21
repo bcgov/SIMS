@@ -1,6 +1,14 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { Institution, User } from "@sims/sims-db";
-import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  User,
+} from "@sims/sims-db";
+import {
+  E2EDataSources,
+  createE2EDataSources,
+  getMostRecentEducationProgramConfiguration,
+} from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
   createFakeEducationProgram,
@@ -18,11 +26,14 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -40,6 +51,7 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
     const program = createFakeEducationProgram({
       institution: collegeF,
       user: collegeFUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
     const payload = getPayload();

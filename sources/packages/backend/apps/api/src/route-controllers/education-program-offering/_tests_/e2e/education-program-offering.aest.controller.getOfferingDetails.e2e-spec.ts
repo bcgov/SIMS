@@ -10,8 +10,9 @@ import {
   createE2EDataSources,
   createFakeEducationProgramOffering,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
-import { User } from "@sims/sims-db";
+import { EducationProgramConfiguration, User } from "@sims/sims-db";
 import request from "supertest";
 import { OfferingValidationWarnings } from "../../../../services";
 
@@ -19,11 +20,14 @@ describe("EducationProgramOfferingAESTController(e2e)-getOfferingDetails", () =>
   let app: INestApplication;
   let db: E2EDataSources;
   let savedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     savedUser = await db.user.save(createFakeUser());
   });
 
@@ -32,6 +36,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getOfferingDetails", () =>
     const offering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: { submittedDate: new Date() },

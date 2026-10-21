@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   EducationProgram,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -14,6 +15,7 @@ import {
   createE2EDataSources,
   createFakeInstitutionLocation,
   OfferingDeliveryOptions,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -47,11 +49,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
   let collegeFUser: User;
   let collegeFFullTimeProgram: EducationProgram;
   let collegeFPartTimeProgram: EducationProgram;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -68,6 +73,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       {
         institution: collegeF,
         user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValue: {
@@ -80,6 +86,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
       {
         institution: collegeF,
         user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValue: {
@@ -1222,7 +1229,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           // Use an isolated program that allows blended delivery without changing shared fixtures.
           const program = await db.educationProgram.save(
             createFakeEducationProgram(
-              { institution: collegeF, user: collegeFUser },
+              {
+                institution: collegeF,
+                user: collegeFUser,
+                programConfiguration: mostRecentProgramConfiguration,
+              },
               {
                 initialValue: {
                   sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),

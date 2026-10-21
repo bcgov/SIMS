@@ -4,6 +4,7 @@ import {
   createE2EDataSources,
   createFakeInstitution,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -12,7 +13,11 @@ import {
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
-import { ProgramStatus, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  ProgramStatus,
+  User,
+} from "@sims/sims-db";
 import request from "supertest";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 
@@ -20,11 +25,14 @@ describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", (
   let app: INestApplication;
   let db: E2EDataSources;
   let sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     sharedUser = createFakeUser();
     await db.user.save(sharedUser);
   });
@@ -62,6 +70,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", (
         {
           institution,
           user: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         { initialValue },
       ),

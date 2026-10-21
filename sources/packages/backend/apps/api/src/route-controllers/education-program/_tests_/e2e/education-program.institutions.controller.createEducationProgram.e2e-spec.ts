@@ -1,13 +1,18 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   EducationProgram,
+  EducationProgramConfiguration,
   FormYesNoOptions,
   Institution,
   NotificationMessageType,
   ProgramStatus,
   User,
 } from "@sims/sims-db";
-import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import {
+  E2EDataSources,
+  createE2EDataSources,
+  getMostRecentEducationProgramConfiguration,
+} from "@sims/test-utils";
 import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
@@ -40,6 +45,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
   const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
   const TEST_SABC_CODE = "GGG9";
 
@@ -47,6 +53,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -572,6 +580,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       {
         institution: collegeF,
         user: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValue: {

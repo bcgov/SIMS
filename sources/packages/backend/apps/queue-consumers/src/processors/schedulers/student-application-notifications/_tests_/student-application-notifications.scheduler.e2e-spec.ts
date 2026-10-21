@@ -27,6 +27,7 @@ import {
   saveFakeApplicationRestrictionBypass,
   saveFakeInstitutionRestriction,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   Application,
@@ -37,6 +38,7 @@ import {
   COEStatus,
   DisabilityStatus,
   DisbursementScheduleStatus,
+  EducationProgramConfiguration,
   FormYesNoOptions,
   ModifiedIndependentStatus,
   Notification,
@@ -68,6 +70,7 @@ describe(
     let db: E2EDataSources;
     let systemUsersService: SystemUsersService;
     let susRestriction: Restriction;
+    let mostRecentProgramConfiguration: EducationProgramConfiguration;
     const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
 
     beforeAll(async () => {
@@ -75,6 +78,8 @@ describe(
       const { nestApplication, dataSource } = await createTestingAppModule();
       app = nestApplication;
       db = createE2EDataSources(dataSource);
+      mostRecentProgramConfiguration =
+        await getMostRecentEducationProgramConfiguration({ db });
       systemUsersService = app.get(SystemUsersService);
       // Processor under test.
       processor = app.get(StudentApplicationNotificationsScheduler);
@@ -1259,7 +1264,10 @@ describe(
         // Arrange
         // Create an expired offering
         const offering = createFakeEducationProgramOffering(
-          { auditUser: systemUsersService.systemUser },
+          {
+            auditUser: systemUsersService.systemUser,
+            programConfiguration: mostRecentProgramConfiguration,
+          },
           {
             initialValues: {
               studyStartDate: getISODateOnlyString(addDays(-30)),
