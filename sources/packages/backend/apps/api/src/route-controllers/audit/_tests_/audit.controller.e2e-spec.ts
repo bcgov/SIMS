@@ -48,7 +48,7 @@ describe("AuditController(e2e)-audit", () => {
       .expect(HttpStatus.CREATED);
 
     expect(loggerLogSpy).toHaveBeenCalledWith(
-      "SIMS Audit Event From ::ffff:127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Logged In, Portal: Ministry.",
+      "SIMS Audit Event From 127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Logged In, Portal: Ministry.",
     );
   });
 
@@ -65,7 +65,7 @@ describe("AuditController(e2e)-audit", () => {
       .expect(HttpStatus.CREATED);
 
     expect(loggerLogSpy).toHaveBeenCalledWith(
-      "SIMS Audit Event From ::ffff:127.0.0.1 | User GUID: b225cb76cfd6486d85da90ec5b775f2d@bceidboth, Event: Logged Out, Portal: Institution.",
+      "SIMS Audit Event From 127.0.0.1 | User GUID: b225cb76cfd6486d85da90ec5b775f2d@bceidboth, Event: Logged Out, Portal: Institution.",
     );
   });
 
@@ -84,7 +84,7 @@ describe("AuditController(e2e)-audit", () => {
       .expect(HttpStatus.CREATED);
 
     expect(loggerLogSpy).toHaveBeenCalledWith(
-      "SIMS Audit Event From ::ffff:127.0.0.1 | User GUID: student_e2e_test, Event: Session Timed Out, Portal: Student.",
+      "SIMS Audit Event From 127.0.0.1 | User GUID: student_e2e_test, Event: Session Timed Out, Portal: Student.",
     );
   });
 
@@ -101,7 +101,7 @@ describe("AuditController(e2e)-audit", () => {
       .expect(HttpStatus.CREATED);
 
     expect(loggerLogSpy).toHaveBeenCalledWith(
-      "SIMS Audit Event From ::ffff:127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Browser Closed, Portal: Ministry.",
+      "SIMS Audit Event From 127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Browser Closed, Portal: Ministry.",
     );
   });
 
@@ -118,7 +118,7 @@ describe("AuditController(e2e)-audit", () => {
       .expect(HttpStatus.CREATED);
 
     expect(loggerLogSpy).toHaveBeenCalledWith(
-      "SIMS Audit Event From ::ffff:127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Browser Reopened, Portal: Ministry.",
+      "SIMS Audit Event From 127.0.0.1 | User GUID: ministry-user-aest-operations@e2e-tests, Event: Browser Reopened, Portal: Ministry.",
     );
   });
 

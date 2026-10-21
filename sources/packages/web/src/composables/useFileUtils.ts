@@ -9,6 +9,12 @@ import { ApiProcessError } from "@/types";
 interface StudentDocument {
   uniqueFileName: string;
 }
+
+/**
+ * Interval (ms) used to check whether a file viewer tab has been closed.
+ */
+const VIEWER_CLOSED_CHECK_INTERVAL = 30000;
+
 /**
  * File helper methods.
  */
@@ -80,10 +86,19 @@ export function useFileUtils() {
    * @param response axios response object from http response.
    */
   const viewFileAsBlob = (response: AxiosResponse<any>): void => {
-    const blob = new Blob([response.data], {
-      type: response.headers["content-type"] as string | undefined,
-    });
+    viewBlob(
+      new Blob([response.data], {
+        type: response.headers["content-type"] as string | undefined,
+      }),
+    );
+  };
 
+  /**
+   * Opens a blob in a new browser tab. The object URL is revoked once the
+   * tab is closed, or immediately if the tab could not be opened.
+   * @param blob file content to be viewed.
+   */
+  const viewBlob = (blob: Blob): void => {
     const url = URL.createObjectURL(blob);
     const newTab = window.open(url, "_blank");
     if (!newTab) {
@@ -96,6 +111,14 @@ export function useFileUtils() {
     }
     // Prevent the opened content from accessing the application window.
     newTab.opener = null;
+    // Release the url once the viewer tab is closed. The browser does not
+    // notify the opener when a tab closes, so its state is checked periodically.
+    const intervalId = window.setInterval(() => {
+      if (newTab.closed) {
+        window.clearInterval(intervalId);
+        URL.revokeObjectURL(url);
+      }
+    }, VIEWER_CLOSED_CHECK_INTERVAL);
   };
 
   /**
@@ -156,5 +179,6 @@ export function useFileUtils() {
     handleFileScanProcessError,
     downloadFileAsBlob,
     generateJSONFileFromContent,
+    viewBlob,
   };
 }

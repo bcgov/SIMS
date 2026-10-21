@@ -20,7 +20,7 @@ import {
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
-import { AppealType } from "../../services";
+import { AppealType, BatchReassessmentApplicationResult } from "../../services";
 import { AllowIf, IsDateAfter } from "../../utilities/class-validation";
 /**
  * Common parameters used when an API result
@@ -244,6 +244,18 @@ export class PIRPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsEnum(OfferingIntensity)
   intensityFilter?: OfferingIntensity;
+}
+
+/**
+ * Batch reassessment application specific pagination options.
+ */
+export class BatchReassessmentApplicationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber"])
+  sortField?: string;
+  @IsOptional()
+  @IsEnum(BatchReassessmentApplicationResult)
+  result?: BatchReassessmentApplicationResult;
 }
 
 /**

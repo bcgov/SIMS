@@ -8,6 +8,7 @@
           params: { studentId },
         }"
         sub-title="Assessments"
+        :back-target="backTarget"
       />
       <application-header-title :application-id="versionApplicationId" />
     </template>
@@ -43,8 +44,8 @@
 <script lang="ts">
 import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 import { useRouter } from "vue-router";
-import { defineComponent } from "vue";
-import { AssessmentTriggerType } from "@/types";
+import { defineComponent, PropType } from "vue";
+import { AssessmentTriggerType, BackTarget } from "@/types";
 import RequestAssessment from "@/components/common/students/assessment/Request.vue";
 import HistoryAssessment from "@/components/common/students/assessment/History.vue";
 import ApplicationHeaderTitle from "@/components/aest/students/ApplicationHeaderTitle.vue";
@@ -68,6 +69,11 @@ export default defineComponent({
     versionApplicationId: {
       type: Number,
       required: true,
+    },
+    backTarget: {
+      type: Object as PropType<BackTarget>,
+      required: false,
+      default: undefined,
     },
   },
   setup(props) {

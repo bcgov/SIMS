@@ -123,6 +123,7 @@ export class SupportingUserService extends RecordDataModelService<SupportingUser
         "user.lastName",
         "user.email",
         "application.id",
+        "application.offeringIntensity",
         "programYear.id",
         "programYear.startDate",
       ])

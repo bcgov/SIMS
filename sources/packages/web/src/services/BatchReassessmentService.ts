@@ -1,8 +1,11 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   BatchReassessmentAPIInDTO,
+  BatchReassessmentApplicationAPIOutDTO,
   BatchReassessmentSummaryAPIOutDTO,
+  PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
+import { PaginationOptions } from "@/types";
 
 /**
  * Client service layer for Batch Reassessments.
@@ -31,5 +34,22 @@ export class BatchReassessmentService {
    */
   async getBatchReassessments(): Promise<BatchReassessmentSummaryAPIOutDTO[]> {
     return ApiClient.BatchReassessmentApi.getBatchReassessments();
+  }
+
+  /**
+   * Gets the reassessment outcome of all applications in a batch manual reassessment.
+   * @param batchReassessmentId batch manual reassessment ID.
+   * @param paginationOptions pagination options, with the application number
+   * (`searchCriteria`) and optional `result` filter as search criteria.
+   * @returns paginated application outcomes ordered by application number.
+   */
+  async getBatchReassessmentApplications(
+    batchReassessmentId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
+    return ApiClient.BatchReassessmentApi.getBatchReassessmentApplications(
+      batchReassessmentId,
+      paginationOptions,
+    );
   }
 }

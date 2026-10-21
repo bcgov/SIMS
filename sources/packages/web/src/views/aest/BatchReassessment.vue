@@ -18,7 +18,7 @@
           <v-textarea
             v-model="applicationNumbers"
             :rules="[checkApplicationNumbers]"
-            label="Paste your applications here"
+            label="Enter applications here"
             variant="outlined"
             max-rows="20"
             auto-grow

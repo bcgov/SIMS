@@ -24,5 +24,36 @@ export interface BatchReassessmentSummary {
   totalCount: number;
   successCount: number;
   failureCount: number;
+  pendingCount: number;
   status: BatchReassessmentStatus;
+}
+
+/**
+ * Result of the reassessment of an application in a batch manual reassessment.
+ */
+export enum BatchReassessmentApplicationResult {
+  /**
+   * The application was reassessed and the assessment reached a final status.
+   */
+  Successful = "Successful",
+  /**
+   * The application could not be reassessed.
+   */
+  Failed = "Failed",
+  /**
+   * The application was reassessed and the assessment is still being processed.
+   */
+  Pending = "Pending",
+}
+
+/**
+ * Outcome of a single application included in a batch manual reassessment.
+ */
+export interface BatchReassessmentApplicationOutcome {
+  applicationNumber: string;
+  applicationId?: number;
+  currentApplicationId?: number;
+  studentId?: number;
+  result: BatchReassessmentApplicationResult;
+  failureReason?: string;
 }

@@ -190,19 +190,38 @@ export function createFakeStudentDependentBornAfterStudyEndDate(
 }
 
 /**
- * Creates a student dependent that will be eligible for contribution.
- * The dependent will be 19 years old and attending post secondary school.
- * @param options method options.
- * - `referenceDate` reference date to define the dependent birthday.
- * @returns an eligible dependent.
+ * Creates student dependents at contribution eligibility age boundaries.
+ * @param options Options for constructing the dependent.
+ * - `referenceDate` Reference date used to calculate the dependents' birthdays.
+ * - `age` Age of the dependent.
+ * - `attendingPostSecondarySchool` Whether the dependent is attending post-secondary school.
+ * - `ageOffsetInDays` Optional number of days to offset the dependent's age. Example: -1 makes the dependent one day younger than the specified age.
+ * @returns Dependents eligible for contribution based on their age and school attendance.
  */
-export function createFakeStudentDependentEligibleForContribution(options: {
+export function createFakeStudentDependentForContribution(options: {
   referenceDate: Date | string;
+  age: number;
+  attendingPostSecondarySchool: YesNoOptions;
+  ageOffsetInDays?: number;
 }): StudentDependent {
+  let dateOfBirth = addToDateOnlyString(
+    options.referenceDate,
+    -options.age,
+    "years",
+  );
+  if (options.ageOffsetInDays) {
+    dateOfBirth = addToDateOnlyString(
+      dateOfBirth,
+      -options.ageOffsetInDays,
+      "day",
+    );
+  }
   return {
-    dateOfBirth: addToDateOnlyString(options.referenceDate, -19, "years"),
-    attendingPostSecondarySchool: YesNoOptions.Yes,
+    dateOfBirth,
+    attendingPostSecondarySchool: options.attendingPostSecondarySchool,
+    // Not relevant for the contribution eligibility calculation.
     declaredOnTaxes: YesNoOptions.No,
+    // Not relevant for the contribution eligibility calculation.
     relationship: DependantRelationship.Child,
   };
 }

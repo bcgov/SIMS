@@ -1,5 +1,18 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from "@nestjs/common";
+import {
+  BatchReassessmentApplicationPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
+import { ApiNotFoundResponse, ApiTags } from "@nestjs/swagger";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -13,6 +26,7 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   BatchReassessmentAPIInDTO,
+  BatchReassessmentApplicationAPIOutDTO,
   BatchReassessmentSummaryAPIOutDTO,
 } from "./models/batch-reassessment.dto";
 import { BatchReassessmentService } from "../../services";
@@ -74,7 +88,49 @@ export class BatchReassessmentAESTController extends BaseController {
       totalCount: summary.totalCount,
       successCount: summary.successCount,
       failureCount: summary.failureCount,
+      pendingCount: summary.pendingCount,
       status: summary.status,
     }));
+  }
+
+  /**
+   * Gets the reassessment outcome of all applications in a batch manual reassessment.
+   * @param batchReassessmentId batch manual reassessment ID.
+   * @param paginationOptions pagination options, with optional application number
+   * search criteria and result filter.
+   * @returns paginated application outcomes.
+   */
+  @Get(":batchReassessmentId/applications")
+  @ApiNotFoundResponse({ description: "Batch reassessment not found." })
+  async getBatchReassessmentApplications(
+    @Param("batchReassessmentId", ParseIntPipe) batchReassessmentId: number,
+    @Query()
+    paginationOptions: BatchReassessmentApplicationPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<BatchReassessmentApplicationAPIOutDTO>> {
+    const batchReassessmentExists =
+      await this.batchReassessmentService.batchReassessmentExists(
+        batchReassessmentId,
+      );
+    if (!batchReassessmentExists) {
+      throw new NotFoundException(
+        `Batch reassessment with ID ${batchReassessmentId} not found.`,
+      );
+    }
+    const applications =
+      await this.batchReassessmentService.getBatchReassessmentApplications(
+        batchReassessmentId,
+        paginationOptions,
+      );
+    return {
+      results: applications.results.map((application) => ({
+        applicationNumber: application.applicationNumber,
+        applicationId: application.applicationId,
+        currentApplicationId: application.currentApplicationId,
+        studentId: application.studentId,
+        result: application.result,
+        failureReason: application.failureReason,
+      })),
+      count: applications.count,
+    };
   }
 }

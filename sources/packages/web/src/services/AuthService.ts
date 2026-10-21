@@ -4,12 +4,7 @@ import { ClientIdType } from "../types/contracts/ConfigContract";
 import { AppConfigService } from "./AppConfigService";
 import HttpBaseClient from "./http/common/HttpBaseClient";
 import { UserService } from "./UserService";
-import {
-  ApiProcessError,
-  IdentityProviders,
-  ApplicationToken,
-  Role,
-} from "@/types";
+import { IdentityProviders, ApplicationToken, Role } from "@/types";
 import { RouteHelper } from "@/helpers";
 import { LocationAsRelativeRaw } from "vue-router";
 import {
@@ -25,7 +20,6 @@ import {
   useInstitutionRestrictionState,
 } from "@/composables";
 import { InstitutionUserService } from "@/services/InstitutionUserService";
-import { MISSING_STUDENT_ACCOUNT } from "@/constants";
 import { StudentAccountApplicationService } from "./StudentAccountApplicationService";
 import ApiClient from "@/services/http/ApiClient";
 import { AuditEvent } from "@/types/contracts/AuditEnum";
@@ -165,41 +159,41 @@ export class AuthService {
    */
   private async processStudentLogin(): Promise<void> {
     const studentStore = useStudentStore(store);
-    try {
-      // This method will result in a success call only when the
-      // student account is present. This is the usual flow.
-      await StudentService.shared.synchronizeFromUserToken();
-      // When the above method returns a success result we can also
-      // assume that the student account is present and valid.
-      await studentStore.setHasStudentAccount(true);
-      await studentStore.updateProfileData();
-    } catch (error: unknown) {
-      if (
-        error instanceof ApiProcessError &&
-        error.errorType === MISSING_STUDENT_ACCOUNT
-      ) {
-        if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
-          const hasPendingAccountApplication =
-            await StudentAccountApplicationService.shared.hasPendingAccountApplication();
-          if (hasPendingAccountApplication) {
-            // The BCeID student account application is in progress.
-            // The student must be redirected to the below page and
-            // have access only to the below page.
-            this.priorityRedirect = {
-              name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
-            };
-            return;
-          }
-        }
-        // If the student is not present, redirect to
-        // student profile for account creation.
+    // Synchronize BCSC profile data and determine whether the student account exists.
+    const syncResult = await StudentService.shared.synchronizeFromUserToken();
+    // Redirect to student profile creation if the student account is missing.
+    if (!syncResult.hasStudentAccount) {
+      await this.redirectToStudentProfileCreate();
+      return;
+    }
+    // When the above method returns a success result we can also
+    // assume that the student account is present and valid.
+    await studentStore.setHasStudentAccount(true);
+    await studentStore.updateProfileData();
+  }
+
+  /**
+   * Redirect to student profile creation page based on the student login identity provider.
+   */
+  private async redirectToStudentProfileCreate(): Promise<void> {
+    if (this.userToken?.identityProvider === IdentityProviders.BCeIDBoth) {
+      const hasPendingAccountApplication =
+        await StudentAccountApplicationService.shared.hasPendingAccountApplication();
+      if (hasPendingAccountApplication) {
+        // The BCeID student account application is in progress.
+        // The student must be redirected to the below page and
+        // have access only to the below page.
         this.priorityRedirect = {
-          name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+          name: StudentRoutesConst.STUDENT_ACCOUNT_APPLICATION_IN_PROGRESS,
         };
         return;
       }
-      throw error;
     }
+    // If the student is not present, redirect to
+    // student profile for account creation.
+    this.priorityRedirect = {
+      name: StudentRoutesConst.STUDENT_PROFILE_CREATE,
+    };
   }
 
   /**

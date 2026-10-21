@@ -93,6 +93,7 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
       .expect({
         formName: recentPYParentForm.formDefinitionName,
         isAbleToReport: false,
+        offeringIntensity: application.offeringIntensity,
         programYearStartDate: recentPYParentForm.programYear.startDate,
         fullName: parentFullName,
         supportingData: null,
@@ -161,6 +162,7 @@ describe("SupportingUserAESTController(e2e)-getIdentifiableSupportingUser", () =
       .expect({
         formName: recentPYPartnerForm.formDefinitionName,
         isAbleToReport: false,
+        offeringIntensity: application.offeringIntensity,
         programYearStartDate: recentPYPartnerForm.programYear.startDate,
         fullName: partnerFullName,
         supportingData: {
