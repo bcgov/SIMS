@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import Ajv, { AnySchemaObject, AsyncSchema, ErrorObject } from "ajv";
-import addErrors from "ajv-errors";
 import addFormats from "ajv-formats";
 import {
   EducationProgramData,
@@ -20,9 +19,14 @@ import { EducationProgramService } from "./education-program.service";
 /**
  * Validates the dynamic education program data against the validation schema
  * of its program configuration, the same schema used by the client form.
- * The AJV options and custom formats must be kept aligned with the web
- * programFormAjv (web/src/renderers/jsonforms/ajv.ts), otherwise the client
- * and the server could disagree about the data being valid.
+ * The AJV options affecting the data validity (e.g. strict) and the custom
+ * formats must be kept aligned with the web programFormAjv
+ * (web/src/components/renderers/jsonforms/ajv.ts), otherwise the client and
+ * the server could disagree about the data being valid.
+ * Differently from the client, the server stops at the first error
+ * (allErrors: false) and does not use ajv-errors, since the validation
+ * messages are not displayed to the user, hence the schema "errorMessage"
+ * keyword is ignored and the AJV default messages are reported.
  * The schema is compiled as async, allowing it to declare backend-only async
  * keywords (e.g. {@link SABC_CODE_UNIQUE_KEYWORD}), which are ignored by the
  * client form since its validation must remain synchronous.
@@ -42,8 +46,10 @@ export class EducationProgramDataValidationService {
     private readonly educationProgramService: EducationProgramService,
   ) {
     this.ajv = new Ajv({
-      // Required by ajv-errors to replace every keyword error by its custom message.
-      allErrors: true,
+      // Stops at the first error, avoiding evaluating the remaining keywords,
+      // including the async ones querying the DB, once the data is known to be invalid.
+      // Stops at the first error, following security recommendations to avoid DoS attacks.
+      allErrors: false,
       strict: false,
       addUsedSchema: false,
       // Remove the properties not defined by the schema wherever it sets
@@ -55,7 +61,6 @@ export class EducationProgramDataValidationService {
       passContext: true,
     });
     addFormats(this.ajv);
-    addErrors(this.ajv);
     this.addSABCCodeUniqueKeyword();
   }
 
@@ -135,20 +140,12 @@ export class EducationProgramDataValidationService {
   }
 
   /**
-   * Gets the keywords that failed the validation. An error replaced by a custom
-   * message is reported by ajv-errors as an "errorMessage" error, keeping the
-   * replaced errors in its params, hence the original keywords are read from there.
+   * Gets the keywords that failed the validation.
    * @param errors AJV validation errors.
    * @returns distinct failed keywords.
    */
   private getFailedKeywords(errors: Partial<ErrorObject>[]): string[] {
-    const keywords = errors.flatMap((error) =>
-      error.keyword === "errorMessage"
-        ? (error.params?.errors as Partial<ErrorObject>[]).map(
-            (replacedError) => replacedError.keyword,
-          )
-        : [error.keyword],
-    );
+    const keywords = errors.map((error) => error.keyword);
     return [...new Set(keywords.filter((keyword) => !!keyword))];
   }
 
