@@ -7,8 +7,8 @@ import {
 import {
   EducationProgramService,
   InstitutionUserAuthorizations,
+  EducationProgramSaveService,
 } from "../../services";
-import { EducationProgramSaveService } from "../../services";
 import { EducationProgramAPIOutDTO } from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";

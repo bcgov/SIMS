@@ -28,7 +28,16 @@
 </template>
 <script setup lang="ts">
 import { useSnackBar } from "@/composables";
-import { computed, nextTick, ref, useTemplateRef, watchEffect } from "vue";
+import {
+  defineProps,
+  defineEmits,
+  withDefaults,
+  computed,
+  nextTick,
+  ref,
+  useTemplateRef,
+  watchEffect,
+} from "vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import {
@@ -46,7 +55,6 @@ import {
 } from "@/components/renderers/jsonforms/ajv";
 import { JsonSchema, UISchemaElement, ValidationMode } from "@jsonforms/core";
 import { ErrorMessage } from "@/types";
-import { defineProps, defineEmits, withDefaults } from "vue";
 
 interface ProgramFormProps {
   /**

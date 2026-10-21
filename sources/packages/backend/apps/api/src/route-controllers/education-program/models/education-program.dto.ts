@@ -103,7 +103,6 @@ export class EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIO
   assessedBy?: string;
   effectiveEndDate?: string;
   isExpired: boolean;
-  // TODO: Why these fields are included in the API output?
   institutionId: number;
   institutionName: string;
 }
