@@ -9,9 +9,14 @@ import {
   MonitoredQueue,
   MetricsQueueTypes,
 } from "./metrics.models";
-import { Queue, Job } from "bull";
+import { Queue } from "bull";
 import { register, collectDefaultMetrics, Gauge, Counter } from "prom-client";
 import { LoggerService } from "@sims/utilities/logger";
+
+interface QueueJob {
+  queueName: string;
+  isScheduler: boolean;
+}
 
 @Injectable()
 export class MetricsService {
@@ -63,18 +68,18 @@ export class MetricsService {
    * the counter. Defaults to 1 if not provided.
    */
   incrementJobEventCounter(
-    job: Job<unknown>,
+    job: QueueJob,
     queueEvent: QueuesMetricsEvents,
     options?: {
       incrementValue?: number;
     },
   ): void {
-    const queueType = job.opts?.repeat
+    const queueType = job.isScheduler
       ? MetricsQueueTypes.Scheduler
       : MetricsQueueTypes.Consumer;
     this.jobsEventsCounter.inc(
       {
-        queueName: job.queue.name,
+        queueName: job.queueName,
         queueEvent,
         queueType,
       },

@@ -37,7 +37,6 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
     queues
       .filter((queue) => !BULL_MQ_MIGRATED_QUEUE_NAMES.includes(queue.name))
       .forEach((queue) => {
-        console.log(`Processing queue: ${queue.name}`);
         if (!queue.isActive && queue.isScheduler) {
           this.logger.log(`Queue service '${queue.name}' is inactive.`);
           return;
@@ -63,7 +62,6 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
     queues
       .filter((queue) => BULL_MQ_MIGRATED_QUEUE_NAMES.includes(queue.name))
       .forEach((queue) => {
-        console.log(`Processing queue: ${queue.name}`);
         if (!queue.isActive && queue.isScheduler) {
           this.logger.log(`Queue service '${queue.name}' is inactive.`);
           return;

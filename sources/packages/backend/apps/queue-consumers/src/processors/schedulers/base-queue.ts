@@ -46,7 +46,7 @@ export abstract class BaseQueue<T> {
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.warn) {
         this.metricsService.incrementJobEventCounter(
-          job,
+          { queueName: job.queue.name, isScheduler: !!job.opts?.repeat },
           QueuesMetricsEvents.JobFinalizedWithWarnings,
           { incrementValue: logsSum.warn },
         );

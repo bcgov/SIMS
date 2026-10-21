@@ -49,4 +49,13 @@ export class QueueConfiguration extends RecordDataModel {
     nullable: false,
   })
   isActive: boolean;
+
+  /**
+   * Indicates if the queue is a scheduler based on its configuration.
+   */
+  get isScheduler(): boolean {
+    return (
+      !!this.queueConfiguration.cron || !!this.queueConfiguration.repeatOptions
+    );
+  }
 }
