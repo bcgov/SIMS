@@ -50,7 +50,7 @@ export class MetricsService {
       name: "queue_job_counts_current_total",
       help: "Current total number of job counts for 'active', 'completed', 'failed', 'delayed', 'waiting'.",
       labelNames: ["queueName", "queueEvent", "queueType"] as const,
-      collect: () => this.refreshJobCountsMetrics(),
+      collect: (): Promise<void> => this.refreshJobCountsMetrics(),
     });
     this.jobsEventsCounter = new Counter({
       name: "queue_event_total_count",
