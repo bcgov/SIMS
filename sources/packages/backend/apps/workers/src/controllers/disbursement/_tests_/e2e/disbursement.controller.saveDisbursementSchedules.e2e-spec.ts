@@ -57,7 +57,6 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
 
   it("Should generate overawards for all eligible loan types when a reassessment happens and the student is entitled to less money.", async () => {
     // Arrange
-    // Original application with its only assessment.
     const savedOriginalApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       {
