@@ -5,7 +5,7 @@ import {
   getSuccessMessageWithAttentionCheck,
   logProcessSummaryToJobLogger,
 } from "../../utilities";
-import { Job, UnrecoverableError } from "bullmq";
+import { Job, UnrecoverableError, WorkerOptions } from "bullmq";
 import { MetricsService, QueuesMetricsEvents } from "../../services";
 import { Inject } from "@nestjs/common";
 import { WorkerHost } from "@nestjs/bullmq";
@@ -69,11 +69,14 @@ export abstract class BaseQueueProcessor<T> extends WorkerHost {
     } catch (error: unknown) {
       // Throw an error to force the queue to retry.
       if (error instanceof CustomNamedError) {
+        const errorMessage = error.message;
         // Throw an UnrecoverableError for permanent failure error names.
         // The job will not be retried for UnrecoverableError.
         if (PERMANENT_FAILURE_ERROR_NAMES.includes(error.name)) {
+          this.logger.error(`Permanent failure error: ${errorMessage}`);
           throw new UnrecoverableError(error.message);
         }
+        this.logger.error(error);
         throw error;
       }
       const errorMessage = `Unexpected error while executing queue ${job.queueName}, job ID ${job.id}.`;
@@ -97,8 +100,17 @@ export abstract class BaseQueueProcessor<T> extends WorkerHost {
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  abstract processQueue(
+  protected abstract processQueue(
     job: Job<T, JobResult>,
     processSummary: ProcessSummary,
   ): Promise<JobResult>;
+
+  /**
+   * Default worker options for the queue processor.
+   */
+  static readonly defaultWorkerOptions: Partial<WorkerOptions> = {
+    lockDuration: 6000,
+    lockRenewTime: 5000,
+    maxStalledCount: 0,
+  };
 }

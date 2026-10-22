@@ -14,7 +14,7 @@ import {
 import Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
-import { QueueModuleLegacy } from "@sims/services/queue";
+import { QueueModule, QueueModuleLegacy } from "@sims/services/queue";
 import { ClamAVService, SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { createCASServiceMock } from "../mock-utils/cas-service.mock";
@@ -55,6 +55,8 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     imports: [QueueConsumersModule, DiscoveryModule],
   })
     .overrideModule(QueueModuleLegacy)
+    .useModule(QueueModuleMock)
+    .overrideModule(QueueModule)
     .useModule(QueueModuleMock)
     .overrideModule(BullBoardQueuesModule)
     .useModule(BullBoardQueuesModuleMock)

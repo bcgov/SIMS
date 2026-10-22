@@ -4,7 +4,12 @@ import { ProcessSummary } from "@sims/utilities/logger";
 import { StudentFile, Student, User, VirusScanStatus } from "@sims/sims-db";
 import { CreateFile } from "./models/student-file-shared.models";
 import { InjectQueue } from "@nestjs/bullmq";
-import { CustomNamedError, hashObjectToHex, QueueNames } from "@sims/utilities";
+import {
+  CustomNamedError,
+  hashObjectToHex,
+  QueueJobNames,
+  QueueNames,
+} from "@sims/utilities";
 import { Queue } from "bullmq";
 import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { FILE_HASH_DUPLICATION_ERROR, FILE_SAVE_ERROR } from "../constants";
@@ -114,7 +119,7 @@ export class StudentFileSharedService {
       summary.info(
         `Adding the file: ${newFile.fileName} to the virus scan queue.`,
       );
-      await this.virusScanQueue.add(QueueNames.FileVirusScanProcessor, {
+      await this.virusScanQueue.add(QueueJobNames.FileVirusScanProcessor, {
         uniqueFileName: createFile.uniqueFileName,
         fileName: createFile.fileName,
       });

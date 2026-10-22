@@ -5,17 +5,11 @@ import { VirusScanQueueInDTO } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { Job } from "bullmq";
 import { BaseQueueProcessor } from "..";
-import {
-  QUEUE_WORKER_LOCK_DURATION,
-  QUEUE_WORKER_LOCK_RENEW_TIME,
-  QUEUE_WORKER_MAX_STALLED_COUNT,
-} from "@sims/services/constants";
 
-@Processor(QueueNames.FileVirusScanProcessor, {
-  lockDuration: QUEUE_WORKER_LOCK_DURATION,
-  lockRenewTime: QUEUE_WORKER_LOCK_RENEW_TIME,
-  maxStalledCount: QUEUE_WORKER_MAX_STALLED_COUNT,
-})
+@Processor(
+  QueueNames.FileVirusScanProcessor,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
 export class VirusScanProcessor extends BaseQueueProcessor<VirusScanQueueInDTO> {
   constructor(
     private readonly studentFileService: StudentFileService,

@@ -43,6 +43,18 @@ export enum QueueNames {
   ReturnedLoansResponseIntegration = "returned-loans-response-integration-v2",
 }
 
+/**
+ * Suffix used for naming queue jobs.
+ */
+export const JOB_SUFFIX = "-job";
+
+/**
+ * Job names for the queues.
+ */
+export enum QueueJobNames {
+  FileVirusScanProcessor = `${QueueNames.FileVirusScanProcessor}${JOB_SUFFIX}`,
+}
+
 // TODO: After bull mq migration, remove this constant.
 export const BULL_MQ_MIGRATED_QUEUE_NAMES: string[] = [
   QueueNames.FileVirusScanProcessor,

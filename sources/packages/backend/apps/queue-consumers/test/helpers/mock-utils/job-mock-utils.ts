@@ -1,12 +1,13 @@
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
-import { Job } from "bull";
+import { Job as BullJob } from "bull";
+import { Job } from "bullmq";
 
 /**
  * Result of the Bull Job mock creation.
  */
-export class MockBullJobResult<T> {
+export class MockBullJobResult<J> {
   constructor(
-    public readonly job: DeepMocked<Job<T>>,
+    public readonly job: DeepMocked<J>,
     public readonly logMessages: string[],
   ) {}
 
@@ -39,8 +40,8 @@ export class MockBullJobResult<T> {
  * @param data optional data to start the job.
  * @returns mock creation result.
  */
-export function mockBullJob<T>(data?: T): MockBullJobResult<T> {
-  const job = createMock<Job<T>>({
+export function mockBullJob<T>(data?: T): MockBullJobResult<BullJob<T>> {
+  const job = createMock<BullJob<T>>({
     id: "FakeJobId",
     name: "FakeJobName",
     data: data as any,
@@ -50,5 +51,25 @@ export function mockBullJob<T>(data?: T): MockBullJobResult<T> {
     logMessages.push(message);
     return Promise.resolve();
   });
-  return new MockBullJobResult(job, logMessages);
+  return new MockBullJobResult<BullJob<T>>(job, logMessages);
+}
+
+/**
+ * Creates a mocked BullMQ Job.
+ * @param data optional data to start the job.
+ * @returns mock creation result.
+ */
+export function mockBullMQJob<T>(data?: T): MockBullJobResult<Job<T>> {
+  const job = createMock<Job<T>>({
+    id: "FakeJobId",
+    name: "FakeJobName",
+    data: data as never,
+    queueName: "FakeQueueName",
+  });
+  const logMessages: string[] = [];
+  job.log.mockImplementation((message: string) => {
+    logMessages.push(message);
+    return Promise.resolve(logMessages.length);
+  });
+  return new MockBullJobResult<Job<T>>(job, logMessages);
 }
