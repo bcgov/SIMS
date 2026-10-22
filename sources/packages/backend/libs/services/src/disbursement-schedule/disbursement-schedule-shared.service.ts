@@ -14,6 +14,7 @@ import {
   User,
   AssessmentTriggerType,
   COEStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   DisbursementSaveModel,
@@ -22,12 +23,12 @@ import {
 import { CustomNamedError, MIN_CANADA_LOAN_OVERAWARD } from "@sims/utilities";
 import {
   ASSESSMENT_NOT_FOUND,
-  BC_STUDENT_LOAN_AWARD_CODE,
-  CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
   DISBURSEMENT_SCHEDULE_NOT_UPDATED,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
   GRANTS_TYPES,
   LOAN_TYPES,
+  LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT,
+  OVERAWARD_BALANCE_AWARDS,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { ConfirmationOfEnrollmentService } from "..";
@@ -182,6 +183,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         assessment.application.student.id,
         disbursementSchedules,
         totalAlreadyDisbursedValues,
+        assessment.application.offeringIntensity,
         transactionEntityManager,
       );
       // Persist changes for grants and loans.
@@ -229,6 +231,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         offering: {
           id: true,
           studyStartDate: true,
+          offeringIntensity: true,
         },
       },
       relations: {
@@ -572,6 +575,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     studentId: number,
     disbursementSchedules: DisbursementSchedule[],
     totalAlreadyDisbursedValues: TotalDisbursedAwards,
+    offeringIntensity: OfferingIntensity,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -582,29 +586,22 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       disbursementSchedules,
       LOAN_TYPES,
     );
-    // Any missing loan types from loan awards must be considered for overawards.
-    const missingLoanTypes = LOAN_TYPES.filter(
-      (loanType) =>
-        !loanAwards.some((loanAward) => loanAward.valueType === loanType),
-    );
-    for (const loanType of missingLoanTypes) {
-      loanAwards.push({
-        valueAmount: 0,
-        valueCode:
-          loanType === DisbursementValueType.BCLoan
-            ? BC_STUDENT_LOAN_AWARD_CODE
-            : CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
-        valueType: loanType,
-      } as DisbursementValue);
-    }
-
-    const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
-    for (const valueCode of distinctValueCodes) {
+    const expectedLoanValueCodes = OVERAWARD_BALANCE_AWARDS[offeringIntensity];
+    for (const valueCode of expectedLoanValueCodes) {
       // Checks if the loan is present in multiple disbursements.
       // Find all the values in all the schedules (expected one or two).
-      const loans = loanAwards.filter(
+      const currentLoans = loanAwards.filter(
         (loanAward) => loanAward.valueCode === valueCode,
       );
+      // Loans missing from the current assessment are considered as zero amount
+      // to allow overawards to be generated for amounts already disbursed.
+      const loans = currentLoans.length
+        ? currentLoans
+        : [
+            {
+              ...LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT[valueCode],
+            } as DisbursementValue,
+          ];
       // Total value already received by the student for this loan for this application.
       const alreadyDisbursed =
         totalAlreadyDisbursedValues[valueCode]?.totalDisbursed ?? 0;

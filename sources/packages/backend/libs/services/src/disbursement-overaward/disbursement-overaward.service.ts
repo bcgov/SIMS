@@ -10,7 +10,7 @@ import {
 import { StudentOverawardBalance } from "./disbursement-overaward.models";
 import { InjectRepository } from "@nestjs/typeorm";
 import { NoteSharedService } from "../note/note.shared.service";
-import { OVERAWARD_BALANCE_AWARDS } from "@sims/services/constants";
+import { OVERAWARD_BALANCE_FULL_TIME_AWARDS } from "@sims/services/constants";
 
 /**
  * Service layer for Student Application disbursement schedules.
@@ -144,7 +144,7 @@ export class DisbursementOverawardService {
       },
       where: {
         student: { id: studentId },
-        disbursementValueCode: In(OVERAWARD_BALANCE_AWARDS),
+        disbursementValueCode: In(OVERAWARD_BALANCE_FULL_TIME_AWARDS),
       },
       order: {
         createdAt: "DESC",
