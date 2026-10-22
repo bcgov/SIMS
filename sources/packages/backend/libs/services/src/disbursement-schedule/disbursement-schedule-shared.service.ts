@@ -14,6 +14,7 @@ import {
   User,
   AssessmentTriggerType,
   COEStatus,
+  OfferingIntensity,
 } from "@sims/sims-db";
 import {
   DisbursementSaveModel,
@@ -24,8 +25,11 @@ import {
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULE_NOT_UPDATED,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
+  DisbursementValueOverawardCalculation,
   GRANTS_TYPES,
   LOAN_TYPES,
+  LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT,
+  OVERAWARD_BALANCE_AWARDS,
 } from "../constants";
 import { SystemUsersService } from "@sims/services/system-users";
 import { ConfirmationOfEnrollmentService } from "..";
@@ -180,6 +184,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         assessment.application.student.id,
         disbursementSchedules,
         totalAlreadyDisbursedValues,
+        assessment.application.offeringIntensity,
         transactionEntityManager,
       );
       // Persist changes for grants and loans.
@@ -563,6 +568,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param disbursementSchedules disbursement schedules with the awards to
    * be verified and possibility adjusted.
    * @param totalAlreadyDisbursedValues total disbursed values for this the application.
+   * @param offeringIntensity the intensity of the offering (e.g., full-time, part-time).
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async createLoansOverawards(
@@ -570,6 +576,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
     studentId: number,
     disbursementSchedules: DisbursementSchedule[],
     totalAlreadyDisbursedValues: TotalDisbursedAwards,
+    offeringIntensity: OfferingIntensity,
     entityManager: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
@@ -580,13 +587,18 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       disbursementSchedules,
       LOAN_TYPES,
     );
-    const distinctValueCodes = this.getDistinctValueCodes(loanAwards);
-    for (const valueCode of distinctValueCodes) {
+    const expectedLoanValueCodes = OVERAWARD_BALANCE_AWARDS[offeringIntensity];
+    for (const valueCode of expectedLoanValueCodes) {
       // Checks if the loan is present in multiple disbursements.
       // Find all the values in all the schedules (expected one or two).
-      const loans = loanAwards.filter(
+      const currentLoans = loanAwards.filter(
         (loanAward) => loanAward.valueCode === valueCode,
       );
+      // Loans missing from the current assessment are considered as zero amount
+      // to allow overawards to be generated for amounts already disbursed.
+      const loans = currentLoans.length
+        ? currentLoans
+        : [{ ...LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT[valueCode] }];
       // Total value already received by the student for this loan for this application.
       const alreadyDisbursed =
         totalAlreadyDisbursedValues[valueCode]?.totalDisbursed ?? 0;
@@ -652,7 +664,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @returns the remaining student debit in case the awards were not enough to pay it.
    */
   private subtractPreviousDisbursementDebit(
-    awards: DisbursementValue[],
+    awards: DisbursementValueOverawardCalculation[],
     totalStudentDebit: number,
   ): number {
     let studentDebit = totalStudentDebit;
@@ -697,7 +709,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   private getAwardsByAwardType(
     disbursementSchedules: DisbursementSchedule[],
     valueTypes: DisbursementValueType[],
-  ): DisbursementValue[] {
+  ): DisbursementValueOverawardCalculation[] {
     return disbursementSchedules
       .flatMap((schedule) => schedule.disbursementValues)
       .filter((scheduleValue) => valueTypes.includes(scheduleValue.valueType));
@@ -709,7 +721,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param awards awards to retrieve unique codes.
    * @returns unique awards codes.
    */
-  private getDistinctValueCodes(awards: DisbursementValue[]): string[] {
+  private getDistinctValueCodes(
+    awards: DisbursementValueOverawardCalculation[],
+  ): string[] {
     return [...new Set(awards.map((award) => award.valueCode))];
   }
 
