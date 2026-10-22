@@ -24,6 +24,7 @@ import {
 } from "@sims/test-utils";
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
 import { createFakeDisbursementValue } from "@sims/test-utils/factories/disbursement-value";
+import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { createFakeSaveDisbursementSchedulesPayload } from "./save-disbursement-schedules-payloads";
 import { DisbursementController } from "../../disbursement.controller";
 import {
@@ -134,6 +135,68 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     assertOveraward(overawards, "BCSL", 800);
   });
 
+  it("Should generate an overaward for the part-time loan when the reassessment no longer includes the loan.", async () => {
+    // Arrange
+    const savedOriginalApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+            1300,
+            { effectiveAmount: 1300 },
+          ),
+        ],
+      },
+      {
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+        applicationInitialValues: {
+          offeringIntensity: OfferingIntensity.partTime,
+        },
+      },
+    );
+
+    // Reassessment.
+    const savedUser = await db.user.save(createFakeUser());
+    const savedOffering = await db.educationProgramOffering.save(
+      createFakeEducationProgramOffering({ auditUser: savedUser }),
+    );
+    const fakeReassessment = createFakeStudentAssessment({
+      auditUser: savedUser,
+      offering: savedOffering,
+      applicationEditStatusUpdatedBy: savedUser,
+    });
+    fakeReassessment.triggerType = AssessmentTriggerType.OfferingChange;
+    fakeReassessment.application = savedOriginalApplication;
+    const savedReassessment = await db.studentAssessment.save(fakeReassessment);
+    savedOriginalApplication.currentAssessment = fakeReassessment;
+    savedOriginalApplication.applicationStatus = ApplicationStatus.Completed;
+    await db.application.save(savedOriginalApplication);
+
+    // Act
+    const saveDisbursementSchedulesPayload =
+      createFakeSaveDisbursementSchedulesPayload({
+        assessmentId: savedReassessment.id,
+        firstDisbursementAwards: [],
+      });
+    const saveResult = await disbursementController.saveDisbursementSchedules(
+      saveDisbursementSchedulesPayload,
+    );
+
+    // Assert
+    expect(saveResult).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+    const overawards = await db.disbursementOveraward.find({
+      where: { student: { id: savedOriginalApplication.student.id } },
+    });
+    assertOveraward(overawards, CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE, 1300);
+  });
+
   it("Should generate overawards for all eligible loan types when an application version is created and the student is entitled to less money.", async () => {
     // Arrange
     // Original application with its only assessment.
@@ -179,6 +242,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       {
         applicationStatus: ApplicationStatus.Completed,
         applicationNumber: savedOriginalApplication.applicationNumber,
+        offeringIntensity: OfferingIntensity.fullTime,
       },
     );
     const versionAssessment = savedApplicationVersion.currentAssessment;
