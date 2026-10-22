@@ -66,6 +66,8 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
         programConfiguration: mostRecentProgramConfiguration,
       });
       const savedProgram = await db.educationProgram.save(program);
+      const { isBCPublic, isBCPrivate } =
+        savedProgram.institution.institutionType;
       const endpoint = `/institutions/education-program/${savedProgram.id}`;
 
       // Act/Assert
@@ -75,51 +77,19 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
         .expect(HttpStatus.OK)
         .expect({
           id: savedProgram.id,
-          programStatus: savedProgram.programStatus,
-          name: savedProgram.name,
-          description: savedProgram.description,
-          credentialType: savedProgram.credentialType,
-          credentialTypeToDisplay: savedProgram.credentialType,
-          cipCode: savedProgram.cipCode,
-          nocCode: savedProgram.nocCode,
-          sabcCode: savedProgram.sabcCode,
-          fieldOfStudyCode: 99,
-          regulatoryBody: savedProgram.regulatoryBody,
-          otherRegulatoryBody: savedProgram.otherRegulatoryBody,
-          programDeliveryTypes: {
-            deliveredOnSite: savedProgram.deliveredOnSite,
-            deliveredOnline: savedProgram.deliveredOnline,
+          configurationId: mostRecentProgramConfiguration.id,
+          programData: {
+            ...savedProgram.programData,
+            context: {
+              hasOfferings: false, // No offerings for this program exist.
+              isActive: true,
+              isBCPublic,
+              isBCPrivate,
+              isBCInstitution: isBCPublic || isBCPrivate,
+            },
           },
-          deliveredOnlineAlsoOnsite: null,
-          sameOnlineCreditsEarned: null,
-          earnAcademicCreditsOtherInstitution: null,
-          courseLoadCalculation: savedProgram.courseLoadCalculation,
-          completionYears: savedProgram.completionYears,
-          eslEligibility: savedProgram.eslEligibility,
-          hasJointInstitution: savedProgram.hasJointInstitution,
-          hasJointDesignatedInstitution:
-            savedProgram.hasJointDesignatedInstitution,
-          programIntensity: savedProgram.programIntensity,
-          institutionProgramCode: null,
-          minHoursWeek: null,
-          isAviationProgram: savedProgram.isAviationProgram,
-          credentialTypesAviation: savedProgram.credentialTypesAviation,
-          minHoursWeekAvi: null,
-          entranceRequirements: {
-            hasMinimumAge: null,
-            minHighSchool: null,
-            requirementsByInstitution: null,
-            requirementsByBCITA: null,
-            noneOfTheAboveEntranceRequirements: null,
-          },
-          hasWILComponent: savedProgram.hasWILComponent,
-          isWILApproved: null,
-          wilProgramEligibility: null,
-          hasTravel: savedProgram.hasTravel,
-          travelProgramEligibility: null,
-          hasIntlExchange: savedProgram.hasIntlExchange,
-          intlExchangeProgramEligibility: null,
-          programDeclaration: savedProgram.programDeclaration,
+          visualSchema: mostRecentProgramConfiguration.visualSchema,
+          validationSchema: mostRecentProgramConfiguration.validationSchema,
           institutionId: savedProgram.institution.id,
           institutionName: savedProgram.institution.operatingName,
           submittedDate: savedProgram.createdAt.toISOString(),
@@ -130,9 +100,16 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
           effectiveEndDate: getISODateOnlyString(savedProgram.effectiveEndDate),
           assessedDate: savedProgram.assessedDate,
           assessedBy: "",
-          isBCPublic: savedProgram.institution.institutionType.isBCPublic,
-          isBCPrivate: savedProgram.institution.institutionType.isBCPrivate,
-          hasOfferings: false, // No offerings for this program exist.
+          name: savedProgram.name,
+          description: savedProgram.description,
+          programStatus: savedProgram.programStatus,
+          credentialType: savedProgram.credentialType,
+          credentialTypeToDisplay: savedProgram.credentialType,
+          cipCode: savedProgram.cipCode,
+          nocCode: savedProgram.nocCode,
+          sabcCode: savedProgram.sabcCode,
+          institutionProgramCode: null,
+          programIntensity: savedProgram.programIntensity,
           isActive: savedProgram.isActive,
           isExpired: savedProgram.isExpired,
         });
