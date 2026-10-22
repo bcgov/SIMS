@@ -46,7 +46,7 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     // Location A.
     collegeFLocationA = createFakeInstitutionLocation({
@@ -58,12 +58,12 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     });
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocationA,
     );
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocationB,
     );
     collegeFInstitution = collegeF;
@@ -85,7 +85,9 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     await mockBCeIDAccountUserNotFound(appModule);
 
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = "/institutions/institution-user";
 
     // Act/Assert
@@ -127,7 +129,9 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
       collegeDLocation.institution,
     );
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = "/institutions/institution-user";
 
     // Act/Assert
@@ -170,7 +174,9 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     );
 
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = "/institutions/institution-user";
 
     // Act/Assert
@@ -205,7 +211,9 @@ describe("InstitutionUserInstitutionsController(e2e)-createInstitutionUserWithAu
     // Mock get BCeID account details
     await mockBCeIDAccountUserFound(appModule, user, collegeFInstitution);
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = "/institutions/institution-user";
 
     // Act/Assert

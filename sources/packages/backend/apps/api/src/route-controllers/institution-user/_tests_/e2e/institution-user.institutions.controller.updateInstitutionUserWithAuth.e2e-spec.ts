@@ -45,7 +45,7 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     // Location A.
     collegeFLocationA = createFakeInstitutionLocation({
@@ -57,12 +57,12 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     });
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocationA,
     );
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocationB,
     );
     collegeFInstitution = collegeFLocationA.institution;
@@ -83,7 +83,9 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     };
 
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = "/institutions/institution-user/99999";
 
     // Act/Assert
@@ -125,7 +127,9 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     };
 
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = `/institutions/institution-user/${institutionUser.id}`;
 
     // Act/Assert
@@ -162,7 +166,9 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     };
 
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = `/institutions/institution-user/${institutionUser.id}`;
 
     // Act/Assert
@@ -206,7 +212,9 @@ describe("InstitutionUserInstitutionsController(e2e)-updateInstitutionUserWithAu
     };
 
     // Institution token.
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = `/institutions/institution-user/${institutionUser.id}`;
     // Warms up the authorizations cache with the user's original permissions.
     const originalAuthorizations =
