@@ -74,23 +74,23 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     ({ institution: collegeF, user: institutionUser } =
       await getAuthRelatedEntities(
         db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
+        InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       ));
     collegeFLocation = createFakeInstitutionLocation({ institution: collegeF });
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
       collegeFLocation,
     );
     // College C.
     ({ institution: collegeC } = await getAuthRelatedEntities(
       db.dataSource,
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
     ));
     collegeCLocation = createFakeInstitutionLocation({ institution: collegeC });
     await authorizeUserTokenForLocation(
       db.dataSource,
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
       collegeCLocation,
     );
     // Program Year for the following tests.
@@ -186,7 +186,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     };
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
 
     // Act/Assert
@@ -287,7 +287,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     };
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     // Expected report records.
     const expectedFullTimeRecord =
@@ -319,7 +319,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     // Arrange
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCUser,
+      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
     );
 
     // Act/Assert
@@ -455,7 +455,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
 
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
 
     // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
@@ -593,7 +593,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
 
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
 
     // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
@@ -693,7 +693,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
 
     const endpoint = "/institutions/report";
     const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
 
     // Mock institution user authorization so that the user token will return the fake institution id and mocked roles.
@@ -771,7 +771,8 @@ function buildCOERequestsReportData(
     "Study Start Date": disbursement.studentAssessment.offering.studyStartDate,
     "Study End Date": disbursement.studentAssessment.offering.studyEndDate,
     "Number of Funded Weeks":
-      disbursement.studentAssessment.offering.studyBreaks?.totalFundedWeeks?.toString() ?? "", 
+      disbursement.studentAssessment.offering.studyBreaks?.totalFundedWeeks?.toString() ??
+      "",
     "COE Status": disbursement.coeStatus,
     "COE Actioned": disbursement.coeUpdatedAt
       ? getPSTPDTDateTime(disbursement.coeUpdatedAt)

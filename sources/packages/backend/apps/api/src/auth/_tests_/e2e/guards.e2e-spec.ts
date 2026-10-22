@@ -263,6 +263,72 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
             error: "Forbidden",
           });
       });
+
+      it("Should return a HttpStatus FORBIDDEN(403) when a non-admin institution user tries to access an institution admin route.", async () => {
+        // Arrange
+        const endpoint = "/auth-test/institution-admin-route";
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(collegEInstitutionReadOnlyUserAccessToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.FORBIDDEN);
+      });
+
+      it("Should return a HttpStatus FORBIDDEN(403) when a non-institution user tries to access an institution admin route.", async () => {
+        // Arrange
+        const endpoint = "/auth-test/institution-admin-route";
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(aestAccessToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.FORBIDDEN);
+      });
+
+      it("Should return a HttpStatus OK(200) when an institution admin user accesses an institution admin route.", async () => {
+        // Arrange
+        const institutionAdminToken = await getInstitutionToken(
+          InstitutionTokenTypes.CollegeEAdminNonLegalSigningUser,
+        );
+        const endpoint = "/auth-test/institution-admin-route";
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(institutionAdminToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.OK);
+      });
+
+      it("Should return a HttpStatus FORBIDDEN(403) when an institution admin user without the required role accesses a route that requires the legal signing authority role.", async () => {
+        // Arrange
+        const institutionAdminToken = await getInstitutionToken(
+          InstitutionTokenTypes.CollegeEAdminNonLegalSigningUser,
+        );
+        const endpoint =
+          "/auth-test/institution-admin-legal-signing-authority-route";
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(institutionAdminToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.FORBIDDEN);
+      });
+
+      it("Should return a HttpStatus OK(200) when an institution admin user with the required role accesses a route that requires the legal signing authority role.", async () => {
+        // Arrange
+        const institutionAdminToken = await getInstitutionToken(
+          InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+        );
+        const endpoint =
+          "/auth-test/institution-admin-legal-signing-authority-route";
+
+        // Act/Assert
+        await request(app.getHttpServer())
+          .get(endpoint)
+          .auth(institutionAdminToken, BEARER_AUTH_TYPE)
+          .expect(HttpStatus.OK);
+      });
     });
   });
 

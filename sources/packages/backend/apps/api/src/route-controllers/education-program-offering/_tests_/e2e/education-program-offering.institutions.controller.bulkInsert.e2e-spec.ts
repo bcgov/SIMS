@@ -68,13 +68,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     db = createE2EDataSources(dataSource);
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     collegeF = institution;
     collegeFUser = institutionUser;
 
     institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
 
     educationProgramSBC1 = createFakeEducationProgram(
@@ -161,17 +161,17 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-bulkInsert", () =>
     await Promise.all([
       authorizeUserTokenForLocation(
         db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
+        InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
         collegeFLocationYESK,
       ),
       authorizeUserTokenForLocation(
         db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
+        InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
         collegeFLocationKSEY,
       ),
       authorizeUserTokenForLocation(
         db.dataSource,
-        InstitutionTokenTypes.CollegeFUser,
+        InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
         collegeFLocationSEYK,
       ),
     ]);
