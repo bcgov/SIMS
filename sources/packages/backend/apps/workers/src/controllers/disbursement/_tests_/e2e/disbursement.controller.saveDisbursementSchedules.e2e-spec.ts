@@ -55,41 +55,39 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     MockDate.reset();
   });
 
-  it("Should generate overawards for all eligible loan types when a reassessment happens and the student is entitled to less money", async () => {
+  it("Should generate overawards for all eligible loan types when a reassessment happens and the student is entitled to less money.", async () => {
     // Arrange
-    const savedUser = await db.user.save(createFakeUser());
-    const savedStudent = await db.student.save(createFakeStudent(savedUser));
-    const savedApplication = await saveFakeApplication(db.dataSource, {
-      student: savedStudent,
-    });
-    // Original assessment.
-    const fakeOriginalAssessment = createFakeStudentAssessment({
-      auditUser: savedUser,
-      applicationEditStatusUpdatedBy: savedUser,
-    });
-    fakeOriginalAssessment.application = savedApplication;
-    // Original assessment - first disbursement (Sent).
-    const originalAssessmentFirstSchedule = createFakeDisbursementSchedule({
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1300,
-          { effectiveAmount: 1300 },
-        ),
-        createFakeDisbursementValue(DisbursementValueType.BCLoan, "BCSL", 800, {
-          disbursedAmountSubtracted: 0,
-          effectiveAmount: 800,
-        }),
-      ],
-    });
-    originalAssessmentFirstSchedule.disbursementScheduleStatus =
-      DisbursementScheduleStatus.Sent;
-    fakeOriginalAssessment.disbursementSchedules = [
-      originalAssessmentFirstSchedule,
-    ];
+    // Original application with its only assessment.
+    const savedOriginalApplication = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      {
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1300,
+            { effectiveAmount: 1300 },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCLoan,
+            "BCSL",
+            800,
+            {
+              disbursedAmountSubtracted: 0,
+              effectiveAmount: 800,
+            },
+          ),
+        ],
+      },
+      {
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
+      },
+    );
 
     // Reassessment.
+    const savedUser = await db.user.save(createFakeUser());
     const savedOffering = await db.educationProgramOffering.save(
       createFakeEducationProgramOffering({ auditUser: savedUser }),
     );
@@ -99,14 +97,11 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       applicationEditStatusUpdatedBy: savedUser,
     });
     fakeReassessment.triggerType = AssessmentTriggerType.OfferingChange;
-    fakeReassessment.application = savedApplication;
-    const [, savedReassessment] = await db.studentAssessment.save([
-      fakeOriginalAssessment,
-      fakeReassessment,
-    ]);
-    savedApplication.currentAssessment = fakeReassessment;
-    savedApplication.applicationStatus = ApplicationStatus.Completed;
-    await db.application.save(savedApplication);
+    fakeReassessment.application = savedOriginalApplication;
+    const savedReassessment = await db.studentAssessment.save(fakeReassessment);
+    savedOriginalApplication.currentAssessment = fakeReassessment;
+    savedOriginalApplication.applicationStatus = ApplicationStatus.Completed;
+    await db.application.save(savedOriginalApplication);
 
     // Act
     const saveDisbursementSchedulesPayload =
@@ -130,65 +125,57 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     );
     // Assert that the overawards are correctly generated for the reassessment: CSLF value code.
     const overawards = await db.disbursementOveraward.find({
-      where: { student: { id: savedStudent.id } },
+      where: { student: { id: savedOriginalApplication.student.id } },
     });
     assertOveraward(overawards, "CSLF", 300);
     // Assert overaward creation for the BCSL value code (the value code missing in the reassessment).
     assertOveraward(overawards, "BCSL", 800);
   });
 
-  it("Should generate overawards for all eligible loan types when an application version is created and the student is entitled to less money", async () => {
+  it("Should generate overawards for all eligible loan types when an application version is created and the student is entitled to less money.", async () => {
     // Arrange
-    const savedUser = await db.user.save(createFakeUser());
-    const savedStudent = await db.student.save(createFakeStudent(savedUser));
-    const applicationNumber = "OA_TEST004";
     // Original application with its only assessment.
-    const savedOriginalApplication = await saveFakeApplication(
+    const savedOriginalApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
-      { student: savedStudent },
       {
-        applicationStatus: ApplicationStatus.Edited,
-        applicationNumber,
+        firstDisbursementValues: [
+          createFakeDisbursementValue(
+            DisbursementValueType.CanadaLoan,
+            "CSLF",
+            1300,
+            { effectiveAmount: 1300 },
+          ),
+          createFakeDisbursementValue(
+            DisbursementValueType.BCLoan,
+            "BCSL",
+            1000,
+            {
+              disbursedAmountSubtracted: 0,
+              effectiveAmount: 1000,
+            },
+          ),
+        ],
+      },
+      {
+        applicationInitialValues: {
+          applicationStatus: ApplicationStatus.Edited,
+        },
+        firstDisbursementInitialValues: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+        },
       },
     );
-    const originalAssessment = savedOriginalApplication.currentAssessment;
-    // Original assessment - first disbursement (Sent).
-    const originalAssessmentFirstSchedule = createFakeDisbursementSchedule({
-      disbursementValues: [
-        createFakeDisbursementValue(
-          DisbursementValueType.CanadaLoan,
-          "CSLF",
-          1300,
-          { effectiveAmount: 1300 },
-        ),
-        createFakeDisbursementValue(
-          DisbursementValueType.BCLoan,
-          "BCSL",
-          1000,
-          {
-            disbursedAmountSubtracted: 0,
-            effectiveAmount: 1000,
-          },
-        ),
-      ],
-    });
-    originalAssessmentFirstSchedule.disbursementScheduleStatus =
-      DisbursementScheduleStatus.Sent;
-    originalAssessment.disbursementSchedules = [
-      originalAssessmentFirstSchedule,
-    ];
-    await db.studentAssessment.save(originalAssessment);
     // Application version (same application number) with its only assessment.
     const savedApplicationVersion = await saveFakeApplication(
       db.dataSource,
       {
-        student: savedStudent,
+        student: savedOriginalApplication.student,
         parentApplication: savedOriginalApplication,
         precedingApplication: savedOriginalApplication,
       },
       {
         applicationStatus: ApplicationStatus.Completed,
-        applicationNumber,
+        applicationNumber: savedOriginalApplication.applicationNumber,
       },
     );
     const versionAssessment = savedApplicationVersion.currentAssessment;
@@ -199,9 +186,9 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         assessmentId: versionAssessment.id,
         firstDisbursementAwards: [
           {
-            valueCode: "CSLF",
-            valueType: DisbursementValueType.CanadaLoan,
-            valueAmount: 1000,
+            valueCode: "BCSL",
+            valueType: DisbursementValueType.BCLoan,
+            valueAmount: 500,
           },
         ],
       });
@@ -214,11 +201,11 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       MockedZeebeJobResult.Complete,
     );
     const overawards = await db.disbursementOveraward.find({
-      where: { student: { id: savedStudent.id } },
+      where: { student: { id: savedOriginalApplication.student.id } },
     });
     // Assert overaward creation.
-    assertOveraward(overawards, "CSLF", 300);
-    assertOveraward(overawards, "BCSL", 1000);
+    assertOveraward(overawards, "CSLF", 1300);
+    assertOveraward(overawards, "BCSL", 500);
   });
 
   it("Should generate an overaward when a reassessment happens and the student is entitled to less money", async () => {
