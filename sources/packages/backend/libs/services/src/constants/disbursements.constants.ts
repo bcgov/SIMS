@@ -60,19 +60,32 @@ export const OVERAWARD_BALANCE_AWARDS: Record<OfferingIntensity, string[]> = {
   [OfferingIntensity.partTime]: OVERAWARD_BALANCE_PART_TIME_AWARDS,
 };
 
+export type DisbursementValueCode =
+  | typeof CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE
+  | typeof CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE
+  | typeof BC_STUDENT_LOAN_AWARD_CODE;
+
+export type DisbursementValueOverawardCalculation = Pick<
+  DisbursementValue,
+  "valueCode" | "valueType" | "valueAmount" | "disbursedAmountSubtracted"
+>;
+
 export const LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT: Record<
-  string,
-  Pick<DisbursementValue, "valueType" | "valueAmount">
+  DisbursementValueCode,
+  DisbursementValueOverawardCalculation
 > = {
   [CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE]: {
+    valueCode: CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
     valueType: DisbursementValueType.CanadaLoan,
     valueAmount: 0,
   },
   [CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE]: {
+    valueCode: CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
     valueType: DisbursementValueType.CanadaLoan,
     valueAmount: 0,
   },
   [BC_STUDENT_LOAN_AWARD_CODE]: {
+    valueCode: BC_STUDENT_LOAN_AWARD_CODE,
     valueType: DisbursementValueType.BCLoan,
     valueAmount: 0,
   },

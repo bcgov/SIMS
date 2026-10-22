@@ -25,6 +25,7 @@ import {
   ASSESSMENT_NOT_FOUND,
   DISBURSEMENT_SCHEDULE_NOT_UPDATED,
   DISBURSEMENT_SCHEDULES_ALREADY_CREATED,
+  DisbursementValueOverawardCalculation,
   GRANTS_TYPES,
   LOAN_TYPES,
   LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT,
@@ -598,11 +599,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
       // to allow overawards to be generated for amounts already disbursed.
       const loans = currentLoans.length
         ? currentLoans
-        : [
-            {
-              ...LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT[valueCode],
-            } as DisbursementValue,
-          ];
+        : [{ ...LOAN_TYPES_ZERO_AMOUNT_DISBURSEMENT[valueCode] }];
       // Total value already received by the student for this loan for this application.
       const alreadyDisbursed =
         totalAlreadyDisbursedValues[valueCode]?.totalDisbursed ?? 0;
@@ -668,7 +665,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @returns the remaining student debit in case the awards were not enough to pay it.
    */
   private subtractPreviousDisbursementDebit(
-    awards: DisbursementValue[],
+    awards: DisbursementValueOverawardCalculation[],
     totalStudentDebit: number,
   ): number {
     let studentDebit = totalStudentDebit;
@@ -713,7 +710,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
   private getAwardsByAwardType(
     disbursementSchedules: DisbursementSchedule[],
     valueTypes: DisbursementValueType[],
-  ): DisbursementValue[] {
+  ): DisbursementValueOverawardCalculation[] {
     return disbursementSchedules
       .flatMap((schedule) => schedule.disbursementValues)
       .filter((scheduleValue) => valueTypes.includes(scheduleValue.valueType));
@@ -725,7 +722,9 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param awards awards to retrieve unique codes.
    * @returns unique awards codes.
    */
-  private getDistinctValueCodes(awards: DisbursementValue[]): string[] {
+  private getDistinctValueCodes(
+    awards: DisbursementValueOverawardCalculation[],
+  ): string[] {
     return [...new Set(awards.map((award) => award.valueCode))];
   }
 

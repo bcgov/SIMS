@@ -24,7 +24,6 @@ import {
 } from "@sims/test-utils";
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
 import { createFakeDisbursementValue } from "@sims/test-utils/factories/disbursement-value";
-import { CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE } from "@sims/services/constants";
 import { createFakeSaveDisbursementSchedulesPayload } from "./save-disbursement-schedules-payloads";
 import { DisbursementController } from "../../disbursement.controller";
 import {
@@ -143,7 +142,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         firstDisbursementValues: [
           createFakeDisbursementValue(
             DisbursementValueType.CanadaLoan,
-            CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
+            "CSLP",
             1300,
             { effectiveAmount: 1300 },
           ),
@@ -194,7 +193,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const overawards = await db.disbursementOveraward.find({
       where: { student: { id: savedOriginalApplication.student.id } },
     });
-    assertOveraward(overawards, CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE, 1300);
+    assertOveraward(overawards, "CSLP", 1300);
   });
 
   it("Should generate overawards for all eligible loan types when an application version is created and the student is entitled to less money.", async () => {
