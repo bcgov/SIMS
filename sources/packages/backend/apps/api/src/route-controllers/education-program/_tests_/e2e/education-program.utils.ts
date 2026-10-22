@@ -1,24 +1,36 @@
 import { faker } from "@faker-js/faker";
 import { ProgramIntensity, FormYesNoOptions } from "@sims/sims-db";
 import { OTHER_REGULATORY_BODY } from "../../../../services/education-program/constants";
+import { EducationProgramDynamicData } from "../../../../services/education-program/education-program-save.models";
 import {
   ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
   ProgramESLPercentage,
+  EntranceRequirementValues,
 } from "../../../../services/education-program/education-program.service.models";
-import { CreateEducationProgramAPIInDTO } from "../../models/education-program.dto";
+import {
+  CreateEducationProgramAPIInDTO,
+  UpdateEducationProgramAPIInDTO,
+} from "../../models/education-program.dto";
 
-/**
- * Returns a payload with the passed sabcCode.
- * @param options options to customize the payload
- * - `sabcCode` SABC code.
- */
+export function getPayload(options?: {
+  appendedProgramData?: { [key: string]: unknown };
+}): UpdateEducationProgramAPIInDTO & {
+  programData: EducationProgramDynamicData;
+} {
+  return {
+    programData: getProgramDataPayload(options),
+  };
+}
+
 export function getCreationPayload(
   programConfigurationId: number,
   options?: {
     appendedProgramData?: { [key: string]: unknown };
   },
-): CreateEducationProgramAPIInDTO {
+): CreateEducationProgramAPIInDTO & {
+  programData: EducationProgramDynamicData;
+} {
   return {
     programConfigurationId,
     programData: getProgramDataPayload(options),
@@ -27,9 +39,7 @@ export function getCreationPayload(
 
 export function getProgramDataPayload(options?: {
   appendedProgramData?: { [key: string]: unknown };
-}): {
-  [key: string]: unknown;
-} {
+}): EducationProgramDynamicData {
   return {
     programName: faker.lorem.words(5),
     programDescription: faker.lorem.words(5),
@@ -49,10 +59,10 @@ export function getProgramDataPayload(options?: {
     regulatoryBody: OTHER_REGULATORY_BODY,
     otherRegulatoryBody: "Other RB test",
     entranceRequirements: [
-      "minHighSchool",
-      "hasMinimumAge",
-      "requirementsByInstitution",
-      "requirementsByBCITA",
+      EntranceRequirementValues.MinHighSchool,
+      EntranceRequirementValues.HasMinimumAge,
+      EntranceRequirementValues.RequirementsByInstitution,
+      EntranceRequirementValues.RequirementsByBCITA,
     ],
     isAviationProgram: FormYesNoOptions.No,
     eslEligibility: ProgramESLPercentage.LessThan20,
