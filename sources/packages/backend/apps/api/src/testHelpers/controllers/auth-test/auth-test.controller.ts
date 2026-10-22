@@ -9,11 +9,13 @@ import {
   RequiresUserAccount,
   HasLocationAccess,
   AllowAuthorizedParty,
+  IsInstitutionAdmin,
 } from "../../../auth/decorators";
 import {
   Role,
   UserGroups,
   InstitutionUserTypes,
+  InstitutionUserRoles,
   AuthorizedParties,
 } from "../../../auth";
 
@@ -133,6 +135,24 @@ export class AuthTestController {
   @HasLocationAccess("locationId", [InstitutionUserTypes.user])
   @Get("/institution-location-modifying-route/:locationId")
   institutionLocationModifyingRoute(): void {
+    return;
+  }
+
+  /**
+   * Test route that requires an institution admin user.
+   */
+  @IsInstitutionAdmin()
+  @Get("/institution-admin-route")
+  institutionAdminRoute(): void {
+    return;
+  }
+
+  /**
+   * Test route that requires an institution admin user with the legal signing authority role.
+   */
+  @IsInstitutionAdmin(InstitutionUserRoles.legalSigningAuthority)
+  @Get("/institution-admin-legal-signing-authority-route")
+  institutionAdminLegalSigningAuthorityRoute(): void {
     return;
   }
 
