@@ -568,6 +568,7 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
    * @param disbursementSchedules disbursement schedules with the awards to
    * be verified and possibility adjusted.
    * @param totalAlreadyDisbursedValues total disbursed values for this the application.
+   * @param offeringIntensity the intensity of the offering (e.g., full-time, part-time).
    * @param entityManager used to execute the commands in the same transaction.
    */
   private async createLoansOverawards(
