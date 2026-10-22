@@ -289,7 +289,7 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
       it("Should return a HttpStatus OK(200) when an institution admin user accesses an institution admin route.", async () => {
         // Arrange
         const institutionAdminToken = await getInstitutionToken(
-          InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+          InstitutionTokenTypes.CollegeEAdminNonLegalSigningUser,
         );
         const endpoint = "/auth-test/institution-admin-route";
 
