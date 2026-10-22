@@ -82,6 +82,9 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
         },
+        applicationInitialValues: {
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
       },
     );
 
@@ -158,6 +161,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       {
         applicationInitialValues: {
           applicationStatus: ApplicationStatus.Edited,
+          offeringIntensity: OfferingIntensity.fullTime,
         },
         firstDisbursementInitialValues: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
@@ -216,7 +220,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       {
         student: savedStudent,
       },
-      { applicationNumber: "OA_TEST001" },
+      {
+        applicationNumber: "OA_TEST001",
+        offeringIntensity: OfferingIntensity.fullTime,
+      },
     );
     // Original assessment.
     const fakeOriginalAssessment = createFakeStudentAssessment({
