@@ -127,7 +127,8 @@ export class EducationProgramDataValidationService {
   }
 
   /**
-   * Gets the validation messages from the AJV errors.
+   * Gets the validation messages from the AJV errors, prefixed by the path
+   * of the property that failed the validation (e.g. /cipCode must match pattern ...).
    * @param errors AJV validation errors.
    * @returns validation messages.
    */
@@ -136,7 +137,39 @@ export class EducationProgramDataValidationService {
     // reported by the "then" own error.
     return errors
       .filter((error) => error.keyword !== "if")
-      .map((error) => error.message ?? error.keyword);
+      .map((error) =>
+        this.ajv
+          .errorsText(
+            [{ ...error, message: this.getMessage(error) } as ErrorObject],
+            { dataVar: "" },
+          )
+          // Errors at the root (e.g. required) have an empty path, leaving a leading space.
+          .trim(),
+      );
+  }
+
+  /**
+   * Gets the AJV error message, including the expected values for the
+   * keywords whose default message does not include them.
+   * @param error AJV validation error.
+   * @returns validation message.
+   */
+  private getMessage(error: Partial<ErrorObject>): string {
+    // Custom keywords errors may not have a message.
+    const message = error.message ?? error.keyword;
+    switch (error.keyword) {
+      case "const":
+        return `${message}: ${JSON.stringify(error.params?.allowedValue)}`;
+      // A property set to the false schema is not allowed to be present.
+      case "false schema":
+        return "must not be present";
+      case "enum":
+        return `${message}: ${(error.params?.allowedValues as unknown[])
+          ?.map((value) => JSON.stringify(value))
+          .join(", ")}`;
+      default:
+        return message;
+    }
   }
 
   /**

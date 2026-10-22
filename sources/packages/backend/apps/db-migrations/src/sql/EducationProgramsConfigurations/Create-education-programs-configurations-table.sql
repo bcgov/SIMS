@@ -1064,6 +1064,12 @@ SELECT
               "errorMessage": {
               "required": "Please select at least one credential type and indicate if the program includes a minimum of 15 instructional hours per week."
               }
+          },
+          "else": {
+              "properties": {
+              "credentialTypesAviation": false,
+              "minHoursWeekAvi": false
+              }
           }
           }
       ],

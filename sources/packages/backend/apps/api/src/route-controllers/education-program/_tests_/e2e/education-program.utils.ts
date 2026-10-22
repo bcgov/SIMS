@@ -6,25 +6,38 @@ import {
   ProgramCourseLoadCalculationTypes,
   ProgramESLPercentage,
 } from "../../../../services/education-program/education-program.service.models";
-import { EducationProgramAPIInDTO } from "../../models/education-program.dto";
+import { CreateEducationProgramAPIInDTO } from "../../models/education-program.dto";
 
 /**
  * Returns a payload with the passed sabcCode.
  * @param options options to customize the payload
  * - `sabcCode` SABC code.
  */
-export function getPayload(options?: {
-  sabcCode?: string;
-}): EducationProgramAPIInDTO {
+export function getCreationPayload(
+  programConfigurationId: number,
+  options?: {
+    appendedProgramData?: { [key: string]: unknown };
+  },
+): CreateEducationProgramAPIInDTO {
   return {
-    name: faker.lorem.words(5),
-    description: faker.lorem.words(5),
+    programConfigurationId,
+    programData: getProgramDataPayload(options),
+  };
+}
+
+export function getProgramDataPayload(options?: {
+  appendedProgramData?: { [key: string]: unknown };
+}): {
+  [key: string]: unknown;
+} {
+  return {
+    programName: faker.lorem.words(5),
+    programDescription: faker.lorem.words(5),
     credentialType: "undergraduateCertificate",
     cipCode: "11.1111",
     nocCode: "21740",
-    sabcCode:
-      options?.sabcCode ??
-      `${faker.string.alpha({ length: 3, casing: "upper" })}1`,
+    fieldOfStudyCode: 15,
+    sabcCode: `${faker.string.alpha({ length: 3, casing: "upper" })}1`,
     institutionProgramCode: faker.string.alpha({
       length: 3,
       casing: "upper",
@@ -48,7 +61,6 @@ export function getPayload(options?: {
     hasTravel: FormYesNoOptions.No,
     hasIntlExchange: FormYesNoOptions.No,
     programDeclaration: true,
-    isBCPublic: true,
-    isBCPrivate: false,
+    ...options?.appendedProgramData,
   };
 }

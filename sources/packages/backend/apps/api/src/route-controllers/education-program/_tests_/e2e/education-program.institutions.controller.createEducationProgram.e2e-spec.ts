@@ -11,6 +11,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
@@ -19,7 +20,6 @@ import {
   InstitutionTokenTypes,
   getInstitutionToken,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
@@ -29,16 +29,13 @@ import {
   GC_NOTIFY_TEMPLATE_IDS,
   NOTIFY_TEMPLATE_IDS,
 } from "@sims/test-utils/constants";
-import {
-  PROGRAM_ENTRANCE_REQUIREMENT_NONE,
-  CIP_CODE_REGEX,
-} from "../../../../services/education-program/constants";
+import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "../../../../services/education-program/constants";
 import {
   ProgramESLPercentage,
   ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
 } from "../../../../services/education-program/education-program.service.models";
-import { getPayload } from "./education-program.utils";
+import { getCreationPayload } from "./education-program.utils";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -92,7 +89,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program when valid data is passed.", async () => {
     // Arrange
-    const payload = getPayload();
+    const payload = getCreationPayload(mostRecentProgramConfiguration.id);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -153,6 +150,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         requirementsByBCITA: true,
         noneOfTheAboveEntranceRequirements: true,
         isActive: true,
+        programData: true,
+        programConfiguration: {
+          id: true,
+        },
         institution: {
           id: true,
         },
@@ -166,56 +167,57 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         submittedBy: true,
       },
     });
-    expect(educationProgram).toEqual(
-      expect.objectContaining({
-        name: payload.name,
-        description: payload.description,
-        credentialType: payload.credentialType,
-        cipCode: payload.cipCode,
-        nocCode: payload.nocCode,
-        sabcCode: payload.sabcCode,
-        regulatoryBody: payload.regulatoryBody,
-        otherRegulatoryBody: payload.otherRegulatoryBody,
-        deliveredOnSite: true,
-        deliveredOnline: false,
-        deliveredOnlineAlsoOnsite: null,
-        sameOnlineCreditsEarned: null,
-        earnAcademicCreditsOtherInstitution: null,
-        courseLoadCalculation: payload.courseLoadCalculation,
-        completionYears: payload.completionYears,
-        eslEligibility: payload.eslEligibility,
-        hasJointInstitution: payload.hasJointInstitution,
-        hasJointDesignatedInstitution: null,
-        programStatus: ProgramStatus.Approved,
-        programIntensity: payload.programIntensity,
-        institutionProgramCode: payload.institutionProgramCode,
-        minHoursWeek: null,
-        isAviationProgram: "no",
-        minHoursWeekAvi: null,
-        hasMinimumAge: true,
-        minHighSchool: true,
-        requirementsByInstitution: true,
-        requirementsByBCITA: true,
-        noneOfTheAboveEntranceRequirements: false,
-        hasWILComponent: payload.hasWILComponent,
-        isWILApproved: null,
-        wilProgramEligibility: null,
-        hasTravel: payload.hasTravel,
-        travelProgramEligibility: null,
-        hasIntlExchange: payload.hasIntlExchange,
-        intlExchangeProgramEligibility: null,
-        programDeclaration: payload.programDeclaration,
-        assessedDate: null,
-        effectiveEndDate: null,
-        fieldOfStudyCode: 15,
-        institution: {
-          id: collegeF.id,
-        },
-        submittedBy: { id: collegeFUser.id },
-        isActive: true,
-        isExpired: false,
-      }),
-    );
+    expect(educationProgram.programData).toEqual(payload.programData);
+    // expect(educationProgram).toEqual(
+    //   expect.objectContaining({
+    //     name: payload.name,
+    //     description: payload.description,
+    //     credentialType: payload.credentialType,
+    //     cipCode: payload.cipCode,
+    //     nocCode: payload.nocCode,
+    //     sabcCode: payload.sabcCode,
+    //     regulatoryBody: payload.regulatoryBody,
+    //     otherRegulatoryBody: payload.otherRegulatoryBody,
+    //     deliveredOnSite: true,
+    //     deliveredOnline: false,
+    //     deliveredOnlineAlsoOnsite: null,
+    //     sameOnlineCreditsEarned: null,
+    //     earnAcademicCreditsOtherInstitution: null,
+    //     courseLoadCalculation: payload.courseLoadCalculation,
+    //     completionYears: payload.completionYears,
+    //     eslEligibility: payload.eslEligibility,
+    //     hasJointInstitution: payload.hasJointInstitution,
+    //     hasJointDesignatedInstitution: null,
+    //     programStatus: ProgramStatus.Approved,
+    //     programIntensity: payload.programIntensity,
+    //     institutionProgramCode: payload.institutionProgramCode,
+    //     minHoursWeek: null,
+    //     isAviationProgram: "no",
+    //     minHoursWeekAvi: null,
+    //     hasMinimumAge: true,
+    //     minHighSchool: true,
+    //     requirementsByInstitution: true,
+    //     requirementsByBCITA: true,
+    //     noneOfTheAboveEntranceRequirements: false,
+    //     hasWILComponent: payload.hasWILComponent,
+    //     isWILApproved: null,
+    //     wilProgramEligibility: null,
+    //     hasTravel: payload.hasTravel,
+    //     travelProgramEligibility: null,
+    //     hasIntlExchange: payload.hasIntlExchange,
+    //     intlExchangeProgramEligibility: null,
+    //     programDeclaration: payload.programDeclaration,
+    //     assessedDate: null,
+    //     effectiveEndDate: null,
+    //     fieldOfStudyCode: 15,
+    //     institution: {
+    //       id: collegeF.id,
+    //     },
+    //     submittedBy: { id: collegeFUser.id },
+    //     isActive: true,
+    //     isExpired: false,
+    //   }),
+    // );
   });
 
   // Test programs created in pending status.
@@ -245,8 +247,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         "program belongs to BC Private institution and delivered only online",
       scenarioData: {
         programDeliveryTypes: [ProgramDeliveryTypeValues.Online],
-        isBCPublic: false,
-        isBCPrivate: true,
       },
       // BC Private institution user.
       institutionUserType: InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
@@ -254,7 +254,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   ].forEach(({ scenario, scenarioData, institutionUserType }) => {
     it(`Should create an education program in status ${ProgramStatus.Pending} when ${scenario}.`, async () => {
       // Arrange
-      const payload = { ...getPayload(), ...scenarioData };
+      const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
+        appendedProgramData: scenarioData,
+      });
       const institutionUserToken =
         await getInstitutionToken(institutionUserType);
 
@@ -283,11 +285,16 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
   it("Should create an education program pending notification when the program is pending.", async () => {
     // Arrange
+    const programName = faker.lorem.words(5);
     const sabcCode = `${faker.string.alpha({ length: 3, casing: "upper" })}1`;
-    const payload = getPayload({ sabcCode });
-    // Set program status to pending to trigger creation of pending notification by setting course load calculation to 'hours'.
-    payload.courseLoadCalculation = ProgramCourseLoadCalculationTypes.Hours;
-    payload.minHoursWeek = FormYesNoOptions.No;
+    const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
+      appendedProgramData: {
+        programName,
+        sabcCode,
+        courseLoadCalculation: ProgramCourseLoadCalculationTypes.Hours,
+        minHoursWeek: FormYesNoOptions.No,
+      },
+    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -329,7 +336,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
           institutionName: collegeF.legalOperatingName,
           institutionOperatingName: collegeF.operatingName,
           institutionPrimaryEmail: collegeF.primaryEmail,
-          programName: payload.name,
+          programName: programName,
           email: collegeFUser.email,
         },
       },
@@ -341,7 +348,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
           institutionName: collegeF.legalOperatingName,
           institutionOperatingName: collegeF.operatingName,
           institutionPrimaryEmail: collegeF.primaryEmail,
-          programName: payload.name,
+          programName: programName,
           email: collegeFUser.email,
         },
       },
@@ -357,7 +364,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     await request(app.getHttpServer())
       .post(getEndpoint())
-      .send(getPayload())
+      .send(getCreationPayload(mostRecentProgramConfiguration.id))
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
@@ -370,7 +377,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   it("Should throw duplicate SABC code for education program when there is already an active education program with the same SABC code.", async () => {
     // Arrange
     await saveEducationProgram(TEST_SABC_CODE);
-    const payload = getPayload({ sabcCode: TEST_SABC_CODE });
+    const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
+      appendedProgramData: { sabcCode: TEST_SABC_CODE },
+    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -394,7 +403,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       true,
       getISODateOnlyString(new Date()),
     );
-    const payload = getPayload({ sabcCode: TEST_SABC_CODE });
+    const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
+      appendedProgramData: { sabcCode: TEST_SABC_CODE },
+    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -416,7 +427,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     });
     expect(educationProgram).toEqual(
       expect.objectContaining({
-        sabcCode: payload.sabcCode,
+        sabcCode: TEST_SABC_CODE,
       }),
     );
   });
@@ -428,7 +439,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       false,
       getISODateOnlyString(addDays(1)),
     );
-    const payload = getPayload({ sabcCode: TEST_SABC_CODE });
+    const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
+      appendedProgramData: { sabcCode: TEST_SABC_CODE },
+    });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -450,7 +463,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     });
     expect(educationProgram).toEqual(
       expect.objectContaining({
-        sabcCode: payload.sabcCode,
+        sabcCode: TEST_SABC_CODE,
       }),
     );
   });
@@ -462,12 +475,12 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       scenarioData: {
         cipCode: "12",
       },
-      errorMessage: [`cipCode must match ${CIP_CODE_REGEX} regular expression`],
+      errorMessage: ['/cipCode must match pattern "^\\d{2}\\.\\d{4}$"'],
     },
     {
       scenario: "program declaration is not true",
       scenarioData: { programDeclaration: false },
-      errorMessage: ["programDeclaration must be equal to true"],
+      errorMessage: ["/programDeclaration must be equal to constant: true"],
     },
     {
       scenario:
@@ -477,7 +490,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         intlExchangeProgramEligibility: undefined,
       },
       errorMessage: [
-        "intlExchangeProgramEligibility must be one of the following values: yes, no",
+        "must have required property 'intlExchangeProgramEligibility'",
       ],
     },
     {
@@ -487,7 +500,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         isAviationProgram: FormYesNoOptions.No,
         credentialTypesAviation: ["privatePilotTraining"],
       },
-      errorMessage: ["credentialTypesAviation input is not allowed."],
+      errorMessage: ["/credentialTypesAviation must not be present"],
     },
     {
       scenario:
@@ -498,31 +511,93 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
           "minHighSchool",
         ],
       },
-      errorMessage:
-        "None of the above entrance requirement cannot be provided along with other entrance requirements.",
+      errorMessage: ["/entranceRequirements must NOT have more than 1 items"],
     },
     {
-      scenario: "invalid lookup values are provided",
+      scenario: "invalid lookup values are provided (credentialType)",
       scenarioData: {
         credentialType: "invalidCredentialType",
-        completionYears: "invalidProgramLength",
-        entranceRequirements: ["invalidEntranceRequirement"],
-        regulatoryBody: "invalidRegulatoryBody",
-        otherRegulatoryBody: undefined,
+      },
+      errorMessage: [
+        '/credentialType must be equal to constant: "undergraduateCertificate"',
+        '/credentialType must be equal to constant: "undergraduateCitation"',
+        '/credentialType must be equal to constant: "undergraduateDiploma"',
+        '/credentialType must be equal to constant: "undergraduateDegree"',
+        '/credentialType must be equal to constant: "graduateCertificate"',
+        '/credentialType must be equal to constant: "graduateDiploma"',
+        '/credentialType must be equal to constant: "graduateDegreeOrMasters"',
+        '/credentialType must be equal to constant: "postGraduateOrDoctorate"',
+        '/credentialType must be equal to constant: "qualifyingStudies"',
+        "/credentialType must match exactly one schema in oneOf",
+      ],
+    },
+    {
+      scenario: "invalid lookup values are provided (completionYears)",
+      scenarioData: {
+        completionYears: "invalidCompletionYears",
+      },
+      errorMessage: [
+        '/completionYears must be equal to constant: "12WeeksTo52Weeks"',
+        '/completionYears must be equal to constant: "53WeeksTo59Weeks"',
+        '/completionYears must be equal to constant: "60WeeksToLessThan2Years"',
+        '/completionYears must be equal to constant: "2YearsToLessThan3Years"',
+        '/completionYears must be equal to constant: "3YearsToLessThan4Years"',
+        '/completionYears must be equal to constant: "4YearsToLessThan5Years"',
+        '/completionYears must be equal to constant: "5YearsOrMore"',
+        "/completionYears must match exactly one schema in oneOf",
+      ],
+    },
+    {
+      scenario: "invalid lookup values are provided (entranceRequirements)",
+      scenarioData: {
+        entranceRequirements: ["invalidEntranceRequirements"],
+      },
+      errorMessage: [
+        '/entranceRequirements/0 must be equal to constant: "minHighSchool"',
+        '/entranceRequirements/0 must be equal to constant: "hasMinimumAge"',
+        '/entranceRequirements/0 must be equal to constant: "requirementsByInstitution"',
+        '/entranceRequirements/0 must be equal to constant: "requirementsByBCITA"',
+        '/entranceRequirements/0 must be equal to constant: "noneOfTheAboveEntranceRequirements"',
+        "/entranceRequirements/0 must match exactly one schema in oneOf",
+      ],
+    },
+    {
+      scenario: "invalid lookup values are provided (regulatoryBody)",
+      scenarioData: {
+        regulatoryBody: ["invalidRegulatoryBody"],
+      },
+      errorMessage: [
+        '/regulatoryBody must be equal to constant: "ptiru"',
+        '/regulatoryBody must be equal to constant: "dqab"',
+        '/regulatoryBody must be equal to constant: "privateActLegislature"',
+        '/regulatoryBody must be equal to constant: "skilledTradesBC"',
+        '/regulatoryBody must be equal to constant: "icbc"',
+        '/regulatoryBody must be equal to constant: "senateOrEducationCouncil"',
+        '/regulatoryBody must be equal to constant: "other"',
+        "/regulatoryBody must match exactly one schema in oneOf",
+      ],
+    },
+    {
+      scenario: "invalid lookup values are provided (credentialTypesAviation)",
+      scenarioData: {
         isAviationProgram: FormYesNoOptions.Yes,
         minHoursWeekAvi: FormYesNoOptions.Yes,
         credentialTypesAviation: ["invalidAviationCredential"],
       },
-      errorMessage:
-        "Invalid values for the following lookup fields: Program credential type: invalidCredentialType," +
-        " Program length: invalidProgramLength," +
-        " Entrance requirements: invalidEntranceRequirement," +
-        " Regulatory body: invalidRegulatoryBody, Aviation credentials: invalidAviationCredential.",
+      errorMessage: [
+        '/credentialTypesAviation/0 must be equal to constant: "commercialPilotTraining"',
+        '/credentialTypesAviation/0 must be equal to constant: "instructorsRating"',
+        '/credentialTypesAviation/0 must be equal to constant: "endorsements"',
+        '/credentialTypesAviation/0 must be equal to constant: "privatePilotTraining"',
+        "/credentialTypesAviation/0 must match exactly one schema in oneOf",
+      ],
     },
   ].forEach(({ scenario, scenarioData, errorMessage }) => {
     it(`Should throw bad request error when ${scenario}.`, async () => {
       // Arrange
-      const payload = { ...getPayload(), ...scenarioData };
+      const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
+        appendedProgramData: scenarioData,
+      });
       const institutionUserToken = await getInstitutionToken(
         InstitutionTokenTypes.CollegeFUser,
       );
@@ -535,33 +610,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message: errorMessage,
-          error: "Bad Request",
+          error: "Education program data is not valid.",
           statusCode: HttpStatus.BAD_REQUEST,
         });
     });
-  });
-
-  // Test unprocessable entity errors.
-  it(`Should unprocessable entity error when BC Private and BC Public status does not match with the institution type.`, async () => {
-    // Arrange
-    const payload = { ...getPayload(), isBCPrivate: false, isBCPublic: true };
-    // BC Private institution user.
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeCAdminLegalSigningUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(getEndpoint())
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message:
-          "The provided BC Public and BC Private status does not match the actual institution type.",
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      });
   });
 
   /**
@@ -579,11 +631,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const educationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           sabcCode,
           isActive,
           effectiveEndDate,

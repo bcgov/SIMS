@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
@@ -56,6 +57,7 @@ import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
   DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_NOT_FOUND,
+  EDUCATION_PROGRAM_DATA_INVALID,
 } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -183,6 +185,8 @@ export class EducationProgramInstitutionsController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case EDUCATION_PROGRAM_DATA_INVALID:
+            throw new BadRequestException(error.objectInfo, error.message);
           case EDUCATION_PROGRAM_INVALID_OPERATION:
             throw new UnprocessableEntityException(error.message);
           case DUPLICATE_SABC_CODE:

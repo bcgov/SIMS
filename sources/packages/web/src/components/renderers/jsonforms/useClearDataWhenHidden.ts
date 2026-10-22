@@ -7,7 +7,7 @@ import type { ComputedRef } from "vue";
  * it had before. This clears that value once the control becomes hidden,
  * so a stale answer doesn't get submitted (or fail a schema constraint
  * that assumes the field is absent while hidden, e.g. an "else" branch's
- * `{ not: {} }`).
+ * `false` property schema).
  */
 export function useClearDataWhenHidden(
   visible: ComputedRef<boolean>,
