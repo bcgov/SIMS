@@ -16,6 +16,7 @@ import {
   createFakeInstitutionLocation,
   OfferingDeliveryOptions,
   getMostRecentEducationProgramConfiguration,
+  createFakeEducationProgram,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -24,7 +25,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
@@ -72,11 +72,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     const fakeFullTimeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),
           deliveredOnline: true,
         },
@@ -85,11 +85,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     const fakePartTimeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           programIntensity: ProgramIntensity.fullTimePartTime,
           deliveredOnSite: true,
         },
@@ -1231,11 +1231,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
             createFakeEducationProgram(
               {
                 institution: collegeF,
-                user: collegeFUser,
+                auditUser: collegeFUser,
                 programConfiguration: mostRecentProgramConfiguration,
               },
               {
-                initialValue: {
+                initialValues: {
                   sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),
                   deliveredOnSite: true,
                   deliveredOnline: true,

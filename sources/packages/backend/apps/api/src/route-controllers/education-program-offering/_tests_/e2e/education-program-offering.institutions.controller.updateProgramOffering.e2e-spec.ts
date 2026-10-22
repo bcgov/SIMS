@@ -19,6 +19,7 @@ import {
   createFakeRestriction,
   saveFakeInstitutionRestriction,
   getMostRecentEducationProgramConfiguration,
+  createFakeEducationProgram,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -27,7 +28,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
   createFakeEducationProgramOffering,
   getAuthorizedLocation,
 } from "../../../../testHelpers";
@@ -116,7 +116,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     );
     const fakeEducationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     fakeEducationProgram.sabcCode = faker.string.alpha({
@@ -226,7 +226,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     );
     const fakeEducationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     fakeEducationProgram.sabcCode = faker.string.alpha({
@@ -332,7 +332,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       );
       const fakeEducationProgram = createFakeEducationProgram({
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       fakeEducationProgram.sabcCode = faker.string.alpha({
@@ -413,7 +413,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       );
       const fakeEducationProgram = createFakeEducationProgram({
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const savedFakeEducationProgram =
@@ -542,7 +542,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       );
       const fakeEducationProgram = createFakeEducationProgram({
         institution: institutionCollegeC,
-        user: institutionCollegeCUser,
+        auditUser: institutionCollegeCUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const savedFakeEducationProgram =
@@ -698,11 +698,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     const fakeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           effectiveEndDate: getISODateOnlyString(new Date()),
         },
       },
@@ -772,7 +772,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       );
       const fakeEducationProgram = createFakeEducationProgram({
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       fakeEducationProgram.sabcCode = faker.string.alpha({
@@ -852,7 +852,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       );
       const fakeEducationProgram = createFakeEducationProgram({
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       fakeEducationProgram.sabcCode = faker.string.alpha({
@@ -975,7 +975,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       );
       const fakeEducationProgram = createFakeEducationProgram({
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const savedFakeEducationProgram =
@@ -1074,7 +1074,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     );
     const fakeEducationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     fakeEducationProgram.sabcCode = faker.string.alpha({

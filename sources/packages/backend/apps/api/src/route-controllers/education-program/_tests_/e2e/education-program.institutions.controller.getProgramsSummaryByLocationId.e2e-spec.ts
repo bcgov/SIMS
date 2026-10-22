@@ -9,6 +9,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeInstitutionLocation,
   createFakeUser,
   getMostRecentEducationProgramConfiguration,
@@ -20,7 +21,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
@@ -66,38 +66,38 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const firstProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { name: `Alpha ${searchString}` } },
+      { initialValues: { name: `Alpha ${searchString}` } },
     );
     // Name starting with 'Z' to sort after the one starting with 'A'.
     const secondProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { name: `Zeta ${searchString}` } },
+      { initialValues: { name: `Zeta ${searchString}` } },
     );
     // Inactive program that should not be returned by default.
     const inactiveProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { isActive: false, name: `Inactive ${searchString}` } },
+      { initialValues: { isActive: false, name: `Inactive ${searchString}` } },
     );
     // Expired program (inactive) that should not be returned by default.
     const expiredProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: true,
           effectiveEndDate: getISODateOnlyString(new Date()),
           name: `Expired ${searchString}`,
@@ -162,15 +162,15 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const matchingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { name: `Program ${searchString} match` } },
+      { initialValues: { name: `Program ${searchString} match` } },
     );
     // Program that should not be returned because the name does not match.
     const nonMatchingProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: sharedUser,
+      auditUser: sharedUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     const [savedMatchingProgram] = await db.educationProgram.save([
@@ -215,15 +215,15 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const matchingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { sabcCode: sabcSearchString } },
+      { initialValues: { sabcCode: sabcSearchString } },
     );
     // Program that should not be returned because the SABC code does not match.
     const nonMatchingProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: sharedUser,
+      auditUser: sharedUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     const [savedMatchingProgram] = await db.educationProgram.save([
@@ -267,19 +267,19 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const matchingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { cipCode: cipSearchString } },
+      { initialValues: { cipCode: cipSearchString } },
     );
     // Program with a different CIP code that should not be returned.
     const nonMatchingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { cipCode: "differentCIP" } },
+      { initialValues: { cipCode: "differentCIP" } },
     );
     const [savedMatchingProgram] = await db.educationProgram.save([
       matchingProgram,
@@ -324,19 +324,19 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const approvedProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { name: `Approved ${searchString}` } },
+      { initialValues: { name: `Approved ${searchString}` } },
     );
     const pendingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           programStatus: ProgramStatus.Pending,
           name: `Pending ${searchString}`,
         },
@@ -345,11 +345,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const declinedProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           programStatus: ProgramStatus.Declined,
           name: `Declined ${searchString}`,
         },
@@ -399,18 +399,18 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     // Name starting with 'A' to sort before the one starting with 'Z'.
     const activeProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: sharedUser,
+      auditUser: sharedUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     activeProgram.name = `Active ${searchString}`;
     const inactiveProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: false,
           programStatus: ProgramStatus.Approved,
           name: `Beta inactive ${searchString}`,
@@ -421,11 +421,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const expiredProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: true,
           effectiveEndDate: getISODateOnlyString(new Date()),
           name: `Gamma expired ${searchString}`,
@@ -438,11 +438,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const inactivePendingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: false,
           programStatus: ProgramStatus.Pending,
           name: `Zeta inactive pending ${searchString}`,
@@ -543,29 +543,29 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const firstProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { sabcCode: "AAA0", name: `First ${searchString}` } },
+      { initialValues: { sabcCode: "AAA0", name: `First ${searchString}` } },
     );
     // SABC code starting with 'Z' to sort after the one starting with 'A'.
     const secondProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { sabcCode: "ZZZ0", name: `Second ${searchString}` } },
+      { initialValues: { sabcCode: "ZZZ0", name: `Second ${searchString}` } },
     );
     // Pending program that should be filtered out.
     const pendingProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           programStatus: ProgramStatus.Pending,
           name: `Pending ${searchString}`,
         },
@@ -630,29 +630,29 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const firstProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { name: `First ${searchString}`, cipCode: "01.0101" } },
+      { initialValues: { name: `First ${searchString}`, cipCode: "01.0101" } },
     );
     // CIP code starting with '01' to sort before '99'.
     const secondProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { name: `Second ${searchString}`, cipCode: "99.9999" } },
+      { initialValues: { name: `Second ${searchString}`, cipCode: "99.9999" } },
     );
     // CIP code starting with '99' to sort after '01'.
     // Inactive program that should be filtered out.
     const inactiveProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { isActive: false, name: `Inactive ${searchString}` } },
+      { initialValues: { isActive: false, name: `Inactive ${searchString}` } },
     );
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([

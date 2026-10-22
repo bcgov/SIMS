@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeInstitution,
   createFakeUser,
   getMostRecentEducationProgramConfiguration,
@@ -9,7 +10,6 @@ import {
 import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
-  createFakeEducationProgram,
   getAESTToken,
   getAESTUser,
   AESTGroups,
@@ -44,7 +44,7 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
     // Arrange
     const program = createFakeEducationProgram({
       institution: sharedInstitution,
-      user: sharedUser,
+      auditUser: sharedUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
@@ -96,11 +96,11 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
     const program = createFakeEducationProgram(
       {
         institution: sharedInstitution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: { isActive: false },
+        initialValues: { isActive: false },
       },
     );
     await db.educationProgram.save(program);

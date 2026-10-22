@@ -9,6 +9,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
   getMostRecentEducationProgramConfiguration,
@@ -20,7 +21,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 import MockDate from "mockdate";
@@ -85,7 +85,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     );
     const educationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     const savedEducationProgram =
@@ -256,11 +256,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     const educationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: false,
         },
       },
@@ -334,7 +334,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     );
     const educationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     const savedEducationProgram =

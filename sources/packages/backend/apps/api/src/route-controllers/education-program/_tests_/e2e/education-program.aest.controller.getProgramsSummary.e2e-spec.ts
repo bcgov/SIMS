@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeInstitution,
   createFakeInstitutionLocation,
   createFakeUser,
@@ -10,7 +11,6 @@ import {
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  createFakeEducationProgram,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
@@ -57,17 +57,17 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const inactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Pending,
           },
@@ -94,7 +94,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       // Name starting with 'A' to sort before the inactive program name starting with 'Z'.
@@ -102,11 +102,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const inactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Pending,
           },
@@ -162,25 +162,25 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const pendingProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
-        { initialValue: { programStatus: ProgramStatus.Pending } },
+        { initialValues: { programStatus: ProgramStatus.Pending } },
       );
       const declinedProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             programStatus: ProgramStatus.Declined,
           },
         },
@@ -188,11 +188,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const inactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Pending,
           },
@@ -239,25 +239,25 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       // Arrange
       const approvedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const pendingProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
-        { initialValue: { programStatus: ProgramStatus.Pending } },
+        { initialValues: { programStatus: ProgramStatus.Pending } },
       );
       const declinedProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             programStatus: ProgramStatus.Declined,
           },
         },
@@ -265,11 +265,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const inactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Pending,
           },
@@ -336,7 +336,7 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     // Arrange
     const approvedProgram = createFakeEducationProgram({
       institution: institution,
-      user: sharedUser,
+      auditUser: sharedUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     // Name starting with 'A' to sort before the declined program name starting with 'Z'.
@@ -344,19 +344,19 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     const pendingProgram = createFakeEducationProgram(
       {
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { programStatus: ProgramStatus.Pending } },
+      { initialValues: { programStatus: ProgramStatus.Pending } },
     );
     const declinedProgram = createFakeEducationProgram(
       {
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           programStatus: ProgramStatus.Declined,
         },
       },
@@ -366,11 +366,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
     const inactiveProgram = createFakeEducationProgram(
       {
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: false,
           programStatus: ProgramStatus.Declined,
         },
@@ -428,44 +428,44 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       // Arrange
       const firstApprovedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const programSearchString = faker.string.uuid();
       firstApprovedProgram.name = programSearchString;
       const secondApprovedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       secondApprovedProgram.name = "My second approved program";
       const firstPendingProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
-        { initialValue: { programStatus: ProgramStatus.Pending } },
+        { initialValues: { programStatus: ProgramStatus.Pending } },
       );
       firstPendingProgram.name = "My first pending program";
       const secondPendingProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
-        { initialValue: { programStatus: ProgramStatus.Pending } },
+        { initialValues: { programStatus: ProgramStatus.Pending } },
       );
       secondPendingProgram.name =
         `My second pending program ${programSearchString} dummy`.toUpperCase();
       const declinedProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             programStatus: ProgramStatus.Declined,
           },
         },
@@ -473,11 +473,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const inactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Approved,
           },
@@ -549,11 +549,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const declinedProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             programStatus: ProgramStatus.Declined,
           },
         },
@@ -563,10 +563,10 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const pendingProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
-        { initialValue: { programStatus: ProgramStatus.Pending } },
+        { initialValues: { programStatus: ProgramStatus.Pending } },
       );
       // To show the "and" operation between the different conditions,
       // adding the programSearchString to the name of this program.
@@ -576,17 +576,17 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       pendingProgram.name = `My pending program ${programSearchString} dummy`;
       const approvedProgram = createFakeEducationProgram({
         institution: institution,
-        user: sharedUser,
+        auditUser: sharedUser,
         programConfiguration: mostRecentProgramConfiguration,
       });
       const firstInactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Approved,
           },
@@ -596,11 +596,11 @@ describe("EducationProgramAESTController(e2e)-getProgramsSummary", () => {
       const secondInactiveProgram = createFakeEducationProgram(
         {
           institution: institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
         {
-          initialValue: {
+          initialValues: {
             isActive: false,
             programStatus: ProgramStatus.Pending,
           },

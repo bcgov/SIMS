@@ -21,12 +21,12 @@ export function createFakeEducationProgram(
   program.name = options?.initialValues?.name ?? faker.person.jobArea();
   program.description = "description";
   program.credentialType = "credentialType";
-  program.cipCode = "cipCode";
+  program.cipCode = options?.initialValues?.cipCode ?? "cipCode";
   program.nocCode = "nocCode";
   program.fieldOfStudyCode = 99;
   program.regulatoryBody = "regulatoryBody";
   program.deliveredOnSite = options?.initialValues?.deliveredOnSite ?? false;
-  program.deliveredOnline = false;
+  program.deliveredOnline = options?.initialValues?.deliveredOnline ?? false;
   program.courseLoadCalculation = "courseLoadCalculation";
   program.completionYears = "completionYears";
   program.eslEligibility = "eslEligibility";

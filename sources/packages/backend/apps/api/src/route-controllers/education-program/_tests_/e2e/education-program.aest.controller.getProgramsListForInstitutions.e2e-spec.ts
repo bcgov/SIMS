@@ -2,6 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeInstitution,
   createFakeUser,
   getMostRecentEducationProgramConfiguration,
@@ -9,7 +10,6 @@ import {
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  createFakeEducationProgram,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
@@ -65,14 +65,14 @@ describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", (
       {
         effectiveEndDate: getISODateOnlyString(addDays(-1)),
       },
-    ].map((initialValue) =>
+    ].map((initialValues) =>
       createFakeEducationProgram(
         {
           institution,
-          user: sharedUser,
+          auditUser: sharedUser,
           programConfiguration: mostRecentProgramConfiguration,
         },
-        { initialValue },
+        { initialValues },
       ),
     );
     await db.educationProgram.save(educationPrograms);

@@ -7,6 +7,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
@@ -15,7 +16,6 @@ import {
   InstitutionTokenTypes,
   getInstitutionToken,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 
@@ -44,7 +44,7 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     // Arrange
     const program = createFakeEducationProgram({
       institution: collegeC,
-      user: collegeCUser,
+      auditUser: collegeCUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
@@ -109,7 +109,7 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     // Arrange
     const program = createFakeEducationProgram({
       institution: collegeC,
-      user: collegeCUser,
+      auditUser: collegeCUser,
       programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
@@ -132,10 +132,10 @@ describe("EducationProgramInstitutionsController(e2e)-deactivateProgram", () => 
     const program = createFakeEducationProgram(
       {
         institution: collegeC,
-        user: collegeCUser,
+        auditUser: collegeCUser,
         programConfiguration: mostRecentProgramConfiguration,
       },
-      { initialValue: { isActive: false } },
+      { initialValues: { isActive: false } },
     );
     await db.educationProgram.save(program);
 
