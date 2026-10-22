@@ -129,6 +129,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const overawards = await db.disbursementOveraward.find({
       where: { student: { id: savedOriginalApplication.student.id } },
     });
+    expect(overawards).toHaveLength(2);
     assertOveraward(overawards, "CSLF", 300);
     // Assert overaward creation for the BCSL value code (the value code missing in the reassessment).
     assertOveraward(overawards, "BCSL", 800);
@@ -193,6 +194,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     const overawards = await db.disbursementOveraward.find({
       where: { student: { id: savedOriginalApplication.student.id } },
     });
+    expect(overawards).toHaveLength(1);
     assertOveraward(overawards, "CSLP", 1300);
   });
 
@@ -270,6 +272,7 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
       where: { student: { id: savedOriginalApplication.student.id } },
     });
     // Assert overaward creation.
+    expect(overawards).toHaveLength(2);
     assertOveraward(overawards, "CSLF", 1300);
     assertOveraward(overawards, "BCSL", 500);
   });

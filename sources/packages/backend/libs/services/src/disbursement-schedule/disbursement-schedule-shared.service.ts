@@ -232,7 +232,6 @@ export class DisbursementScheduleSharedService extends RecordDataModelService<Di
         offering: {
           id: true,
           studyStartDate: true,
-          offeringIntensity: true,
         },
       },
       relations: {

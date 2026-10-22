@@ -41,21 +41,27 @@ export const CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE = "CSLF";
 export const CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE = "CSLP";
 
 /**
- * Awards considered for overaward balance calculations.
- * Although CSLP is a loan, part-time loans generates overaward balance, but they are not
- * deducted from the e-Cert, not impacting the student. Therefore, only the full-time loans
- * should be visualized by Ministry and Student at this moment.
+ * Awards considered for overaward balance calculations for full-time students.
+ * These loans are deducted from the e-Cert and visualized by Ministry and Student.
  */
-export const OVERAWARD_BALANCE_FULL_TIME_AWARDS = [
+export const OVERAWARD_BALANCE_FULL_TIME_AWARDS: DisbursementValueCode[] = [
   CANADA_STUDENT_LOAN_FULL_TIME_AWARD_CODE,
   BC_STUDENT_LOAN_AWARD_CODE,
 ];
 
-export const OVERAWARD_BALANCE_PART_TIME_AWARDS = [
+/**
+ * Awards considered for overaward balance calculations for part-time students.
+ * CSLP generates an overaward balance but is not deducted from the e-Cert, so it is not
+ * visualized by Ministry or Student.
+ */
+export const OVERAWARD_BALANCE_PART_TIME_AWARDS: DisbursementValueCode[] = [
   CANADA_STUDENT_LOAN_PART_TIME_AWARD_CODE,
 ];
 
-export const OVERAWARD_BALANCE_AWARDS: Record<OfferingIntensity, string[]> = {
+export const OVERAWARD_BALANCE_AWARDS: Record<
+  OfferingIntensity,
+  DisbursementValueCode[]
+> = {
   [OfferingIntensity.fullTime]: OVERAWARD_BALANCE_FULL_TIME_AWARDS,
   [OfferingIntensity.partTime]: OVERAWARD_BALANCE_PART_TIME_AWARDS,
 };
