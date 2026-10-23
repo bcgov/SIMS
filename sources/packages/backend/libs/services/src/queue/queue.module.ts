@@ -96,6 +96,11 @@ function getQueueModules(): RegisterQueueAsyncOptions[] {
       ): Promise<RegisterQueueOptions> => {
         const queueConfiguration =
           await queueService.queueConfigurationDetails(queue);
+        if (!queueConfiguration.queueConfiguration.defaultJobOptions) {
+          throw new Error(
+            `Default job options not found in queue configuration for queue ${queue}.`,
+          );
+        }
         return {
           prefix: configService.queuePrefix,
           defaultJobOptions:

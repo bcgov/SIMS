@@ -36,10 +36,10 @@ export class QueueConfiguration extends RecordDataModel {
    */
   @Column({
     name: "queue_settings",
-    nullable: false,
+    nullable: true,
     type: "jsonb",
   })
-  queueSetting: QueueSettings;
+  queueSetting?: QueueSettings;
 
   /**
    * Active flag which decides if the Queue is active
@@ -54,6 +54,9 @@ export class QueueConfiguration extends RecordDataModel {
    * Indicates if the queue is a scheduler based on its configuration.
    */
   get isScheduler(): boolean {
+    if (!this.queueConfiguration) {
+      throw new Error("Queue configuration not found.");
+    }
     return (
       !!this.queueConfiguration.cron || !!this.queueConfiguration.repeatOptions
     );

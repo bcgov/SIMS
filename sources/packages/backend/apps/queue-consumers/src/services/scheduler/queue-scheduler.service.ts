@@ -54,17 +54,25 @@ export class QueueSchedulerService implements OnApplicationBootstrap {
         // Skip inactive queues after obliterating the queue.
         continue;
       }
-      await schedulerQueue.upsertJobScheduler(
-        `scheduler-${queueName}`,
-        schedulerQueueConfig.queueConfiguration.repeatOptions,
-        {
-          name: `${queueName}${JOB_SUFFIX}`,
-          data: schedulerQueueConfig.queueConfiguration.jobData,
-        },
-      );
-      this.logger.log(
-        `Upsert job scheduler for queue ${queueName} is complete.`,
-      );
+      try {
+        await schedulerQueue.upsertJobScheduler(
+          `scheduler-${queueName}`,
+          schedulerQueueConfig.queueConfiguration.repeatOptions,
+          {
+            name: `${queueName}${JOB_SUFFIX}`,
+            data: schedulerQueueConfig.queueConfiguration.jobData,
+          },
+        );
+        this.logger.log(
+          `Upsert job scheduler for queue ${queueName} is complete.`,
+        );
+      } catch (error: unknown) {
+        this.logger.error(
+          `Unexpected error occurred while trying to upsert job scheduler for queue ${queueName}.`,
+          error,
+        );
+        throw error;
+      }
     }
   }
 }
