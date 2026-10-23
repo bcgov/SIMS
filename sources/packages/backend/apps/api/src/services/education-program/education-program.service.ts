@@ -575,8 +575,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Check if the given institution has already a program with the given SABC code for an active program.
-   * @param institutionId id of the institution to have the programs retrieved.
+   * Check if the given institution has already a program with the given SABC code
+   * for an active program for a program year.
+   * @param institutionId ID of the institution to have the programs retrieved.
    * @param sabcCode SABC code.
    * @param programId programId in case it is an update. It will be ignored in case of `undefined`.
    * @returns true in case it has already a SABC code for the institution.

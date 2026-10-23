@@ -2,6 +2,11 @@ import { EducationProgramConfiguration } from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 import { DataSource } from "typeorm";
 
+/**
+ * Retrieves the most recent active education program configuration from the specified data source.
+ * @param options Options to specify the data source for retrieving the education program configuration.
+ * @returns The most recent active education program configuration.
+ */
 export function getMostRecentEducationProgramConfiguration(options: {
   db?: E2EDataSources;
   dataSource?: DataSource;

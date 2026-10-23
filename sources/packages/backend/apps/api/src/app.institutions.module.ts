@@ -49,6 +49,7 @@ import {
   FormSubmissionUpdateModifiedIndependentOnCancelAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
   EducationProgramSaveService,
+  EducationProgramDataValidationService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -118,7 +119,6 @@ import {
   EducationProgramEvaluationService,
   EducationProgramFieldOfStudyCodeEvaluator,
 } from "./services/education-program/education-program-evaluator";
-import { EducationProgramDataValidationService } from "./services/education-program/education-program-data-validation.service";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],

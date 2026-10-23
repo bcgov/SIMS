@@ -59,6 +59,7 @@ import {
   FormSubmissionUpdateDisabilityOnCancelAction,
   DisabilityProfileService,
   FormSubmissionCancellationService,
+  EducationProgramDataValidationService,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -154,7 +155,6 @@ import {
   EducationProgramFieldOfStudyCodeEvaluator,
   EducationProgramEvaluationService,
 } from "./services/education-program/education-program-evaluator";
-import { EducationProgramDataValidationService } from "./services/education-program/education-program-data-validation.service";
 
 @Module({
   imports: [AuthModule, ECertIntegrationModule],

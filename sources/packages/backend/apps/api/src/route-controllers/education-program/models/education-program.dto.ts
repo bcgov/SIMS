@@ -59,6 +59,7 @@ export class EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIO
   id: number;
   // Program attributes persisted in dedicated columns, independent
   // of the dynamic program data shape defined by the configuration.
+  // To be reduced in upcoming refactor to rely more on dynamic program data.
   name: string;
   description: string;
   programStatus: ProgramStatus;

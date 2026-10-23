@@ -10,7 +10,7 @@ import {
  * client and server side validations. Never changed by the user
  * and never persisted.
  */
-export class EducationProgramContextAPIOutDTO {
+export interface EducationProgramContextAPIOutDTO {
   hasOfferings: boolean;
   isActive: boolean;
   isBCPrivate: boolean;
@@ -38,13 +38,14 @@ export interface EducationProgramConfigurationAPIOutDTO {
  * Education program complete information.
  * Shared between the Ministry and the Institution.
  */
-export interface EducationProgramAPIOutDTO {
+export interface EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIOutDTO {
   id: number;
+  // Program attributes persisted in dedicated columns, independent
+  // of the dynamic program data shape defined by the configuration.
+  // To be reduced in upcoming refactor to rely more on dynamic program data.
   name: string;
   description: string;
   programStatus: ProgramStatus;
-  visualSchema: unknown;
-  validationSchema: unknown;
   credentialType: string;
   credentialTypeToDisplay: string;
   cipCode: string;
@@ -53,15 +54,14 @@ export interface EducationProgramAPIOutDTO {
   institutionProgramCode?: string;
   programIntensity: ProgramIntensity;
   isActive: boolean;
-  programData: EducationProgramDataAPIOutDTO;
-  institutionId: number;
-  institutionName: string;
   submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate?: string;
   isExpired: boolean;
+  institutionId: number;
+  institutionName: string;
 }
 
 /**
