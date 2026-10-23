@@ -1,3 +1,5 @@
+import { WorkerListener } from "bullmq";
+
 /**
  *  Queue name from the queue configuration database.
  *  TODO: After bull mq migration, remove the legacy queue names.
@@ -54,6 +56,26 @@ export const JOB_SUFFIX = "-job";
 export enum QueueJobNames {
   FileVirusScanProcessor = `${QueueNames.FileVirusScanProcessor}${JOB_SUFFIX}`,
 }
+
+/**
+ * BullMQ queue worker events.
+ */
+export type QueueWorkerEvents = keyof WorkerListener;
+
+export const QUEUE_WORKER_EVENTS: QueueWorkerEvents[] = [
+  "error",
+  "active",
+  "stalled",
+  "completed",
+  "progress",
+  "failed",
+  "closed",
+  "paused",
+  "resumed",
+  "drained",
+  "lockRenewalFailed",
+  "locksRenewed",
+];
 
 // TODO: After bull mq migration, remove this constant.
 export const BULL_MQ_MIGRATED_QUEUE_NAMES: string[] = [

@@ -7,7 +7,7 @@ import {
 } from "../../utilities";
 import { Job } from "bull";
 import { Process } from "@nestjs/bull";
-import { MetricsService, QueuesMetricsEvents } from "../../services";
+import { MetricsCustomQueueEvents, MetricsService } from "../../services";
 import { Inject } from "@nestjs/common";
 
 /**
@@ -46,8 +46,9 @@ export abstract class BaseQueue<T> {
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.warn) {
         this.metricsService.incrementJobEventCounter(
-          { queueName: job.queue.name, isScheduler: !!job.opts?.repeat },
-          QueuesMetricsEvents.JobFinalizedWithWarnings,
+          job.queue.name,
+          !!job.opts?.repeat,
+          MetricsCustomQueueEvents.JobFinalizedWithWarnings,
           { incrementValue: logsSum.warn },
         );
       }
