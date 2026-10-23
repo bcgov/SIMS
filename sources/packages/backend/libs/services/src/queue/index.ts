@@ -1,3 +1,4 @@
+export * from "./queue.module.legacy";
 export * from "./queue.module";
 export * from "./model/queue.model";
 export * from "./dto/assessment.dto";

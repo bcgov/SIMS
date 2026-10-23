@@ -3,7 +3,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../test/helpers";
 import {
   createE2EDataSources,
@@ -21,6 +21,7 @@ import {
   createFakeGetObjectResponse,
   resetObjectStorageServiceMock,
 } from "@sims/test-utils/mocks";
+import { UnrecoverableError } from "bullmq";
 
 describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
   let app: INestApplication;
@@ -49,37 +50,36 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     resetObjectStorageServiceMock(objectStorageService);
   });
 
-  it("Should throw an error when the student file is not found during virus scanning.", async () => {
+  it("Should throw an unrecoverable error when the student file is not found during virus scanning.", async () => {
     // Arrange
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
     const fakeUniqueFileName = "file.random";
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: fakeUniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
     const errorMessage = `File ${fakeUniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`;
-    await expect(
-      processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(new Error(errorMessage));
+    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+      new UnrecoverableError(errorMessage),
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
-        errorMessage,
+        `Starting virus scan for file: ${fakeUniqueFileName}.`,
       ]),
     ).toBe(true);
   });
 
-  it("Should throw an error when the student file has no content.", async () => {
+  it("Should throw an unrecoverable error when the student file has no content.", async () => {
     // Arrange
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
@@ -88,14 +88,13 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
 
     // Act
     const errorMessage = `File ${studentFile.uniqueFileName} has no content to be scanned.`;
-    await expect(
-      processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(new Error(errorMessage));
+    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+      new UnrecoverableError(errorMessage),
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
-        errorMessage,
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
   });
@@ -108,21 +107,20 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Connection refused", "ECONNREFUSED");
     }); // Queued job.
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`;
-    await expect(
-      processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(new Error(errorMessage));
+    await expect(processor.process(mockedJob.job)).rejects.toThrow(
+      errorMessage,
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
-        errorMessage,
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
     const scannedStudentFile = await db.studentFile.findOneBy({
@@ -140,21 +138,20 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Server not found", "ENOTFOUND");
     }); // Queued job.
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`;
-    await expect(
-      processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(new Error(errorMessage));
+    await expect(processor.process(mockedJob.job)).rejects.toThrow(
+      errorMessage,
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
-        errorMessage,
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
     const scannedStudentFile = await db.studentFile.findOneBy({
@@ -172,22 +169,20 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Unknown error", undefined);
     }); // Queued job.
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`;
-    await expect(
-      processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(new Error(errorMessage));
+    await expect(processor.process(mockedJob.job)).rejects.toThrow(
+      errorMessage,
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
-        errorMessage,
-        errorMessage,
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
     const scannedStudentFile = await db.studentFile.findOneBy({
@@ -203,21 +198,20 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(null));
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. File scanning failed due to unknown error.`;
-    await expect(
-      processor.performVirusScan(mockedJob.job),
-    ).rejects.toStrictEqual(new Error(errorMessage));
+    await expect(processor.process(mockedJob.job)).rejects.toThrow(
+      errorMessage,
+    );
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
-        errorMessage,
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
     const scannedStudentFile = await db.studentFile.findOneBy({
@@ -234,24 +228,26 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(true));
     // Queued job.
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
-    const result = await processor.performVirusScan(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
-    expect(result).toStrictEqual({
-      fileProcessed: studentFile.fileName,
-      isInfected: true,
-    });
+    expect(result).toEqual([
+      "Virus scan completed successfully.",
+      "Is infected: true",
+      "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+      "Error(s): 0, Warning(s): 1, Info: 5",
+    ]);
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
         "Virus found.",
-        "Completed virus scanning for the file.",
+        `Completed virus scanning for the file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
     // Assert
@@ -273,24 +269,24 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(false));
     // Queued job.
-    const mockedJob = mockBullJob<VirusScanQueueInDTO>({
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
       uniqueFileName: studentFile.uniqueFileName,
       fileName: studentFile.fileName,
     });
 
     // Act
-    const result = await processor.performVirusScan(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
-    expect(result).toStrictEqual({
-      fileProcessed: studentFile.fileName,
-      isInfected: false,
-    });
+    expect(result).toEqual([
+      "Virus scan completed successfully.",
+      "Is infected: false",
+    ]);
     expect(
       mockedJob.containLogMessages([
         "Log details",
-        "Starting virus scan.",
+        `Starting virus scan for file: ${studentFile.uniqueFileName}.`,
         "No virus found.",
-        "Completed virus scanning for the file.",
+        `Completed virus scanning for the file: ${studentFile.uniqueFileName}.`,
       ]),
     ).toBe(true);
     // Assert

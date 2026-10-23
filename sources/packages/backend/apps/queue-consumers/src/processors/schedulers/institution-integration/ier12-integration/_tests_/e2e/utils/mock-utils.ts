@@ -4,6 +4,7 @@ import {
   mockBullJob,
   MockBullJobResult,
 } from "../../../../../../../../test/helpers";
+import { Job } from "bull";
 
 /**
  * Creates the mocked IER12 job payload for the scheduler.
@@ -15,7 +16,7 @@ import {
 export function createIER12SchedulerJobMock(options?: {
   modifiedSince?: string | Date;
   institutionCode?: string;
-}): MockBullJobResult<IER12IntegrationQueueInDTO> {
+}): MockBullJobResult<Job<IER12IntegrationQueueInDTO>> {
   // Queued job.
   const data = {} as IER12IntegrationQueueInDTO;
   if (options?.modifiedSince) {
@@ -24,5 +25,5 @@ export function createIER12SchedulerJobMock(options?: {
   if (options?.institutionCode) {
     data.institutionCode = options.institutionCode;
   }
-  return mockBullJob<IER12IntegrationQueueInDTO>(data);
+  return mockBullJob(data);
 }

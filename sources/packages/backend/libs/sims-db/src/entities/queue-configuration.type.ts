@@ -1,3 +1,5 @@
+import { DefaultJobOptions, RepeatOptions } from "bullmq";
+
 /**
  * Queue configurations.
  */
@@ -17,7 +19,7 @@ export interface QueueConfigurationDetails {
   /**
    * readonly dashboard parameter for the queues in the bull board.
    */
-  dashboardReadonly?: boolean;
+  dashboardReadonly: boolean;
   /**
    * Maximum number of record to process per schedule.
    */
@@ -47,4 +49,16 @@ export interface QueueConfigurationDetails {
    * Maximum number of file uploads to be processed per batch in a T4A upload process.
    */
   maxFileUploadsPerBatch?: number;
+  /**
+   * Default job options for the queue.
+   */
+  defaultJobOptions: DefaultJobOptions;
+  /**
+   * Job data for the queue.
+   */
+  jobData?: unknown;
+  /**
+   * Repeat options for the queue.
+   */
+  repeatOptions?: Omit<RepeatOptions, "key">;
 }

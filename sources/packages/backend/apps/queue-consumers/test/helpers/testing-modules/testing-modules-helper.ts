@@ -13,14 +13,16 @@ import {
 } from "@sims/test-utils/mocks";
 import Client from "ssh2-sftp-client";
 import { DeepMocked, createMock } from "@golevelup/ts-jest";
-import { DiscoveryModule } from "@golevelup/nestjs-discovery";
-import { QueueModule } from "@sims/services/queue";
+import { DiscoveryModule, DiscoveryService } from "@golevelup/nestjs-discovery";
+import { Worker } from "bullmq";
+import { QueueModule, QueueModuleLegacy } from "@sims/services/queue";
 import { ClamAVService, SystemUsersService, ZeebeModule } from "@sims/services";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { createCASServiceMock } from "../mock-utils/cas-service.mock";
 import { CASService } from "@sims/integrations/cas/cas.service";
 import { ObjectStorageService } from "@sims/integrations/object-storage";
 import { overrideImportsMetadata } from "@sims/test-utils";
+import { BaseQueueProcessor } from "../../../src/processors";
 
 /**
  * Result from a createTestingModule to support E2E tests creation.
@@ -54,6 +56,8 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
   const module: TestingModule = await Test.createTestingModule({
     imports: [QueueConsumersModule, DiscoveryModule],
   })
+    .overrideModule(QueueModuleLegacy)
+    .useModule(QueueModuleMock)
     .overrideModule(QueueModule)
     .useModule(QueueModuleMock)
     .overrideModule(BullBoardQueuesModule)
@@ -67,6 +71,7 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     .overrideProvider(ObjectStorageService)
     .useValue(objectStorageServiceMock)
     .compile();
+  await attachMockedWorkersToProcessors(module);
 
   const nestApplication = module.createNestApplication();
   await nestApplication.init();
@@ -89,6 +94,28 @@ export async function createTestingAppModule(): Promise<CreateTestingModuleResul
     objectStorageServiceMock,
     systemUsersService,
   };
+}
+
+/**
+ * The BullMQ module is replaced by a mock in the E2E tests, hence the
+ * workers are never created for the BullMQ processors. Since the processors
+ * access the worker during the application bootstrap to register the events
+ * listeners, a mocked worker is attached to each processor before the
+ * application is initialized.
+ * @param module testing module with the processors already compiled.
+ */
+async function attachMockedWorkersToProcessors(
+  module: TestingModule,
+): Promise<void> {
+  const discoveryService = module.get(DiscoveryService);
+  const processors = await discoveryService.providers(
+    (provider) => provider.instance instanceof BaseQueueProcessor,
+  );
+  processors.forEach((processor) => {
+    processor.instance["_worker"] = createMock<Worker>({
+      name: processor.instance.constructor.name,
+    });
+  });
 }
 
 /**

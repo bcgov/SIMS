@@ -56,7 +56,7 @@ export class QueueService {
       name: queue.queueName,
       dashboardReadonly: queue.queueConfiguration.dashboardReadonly,
       isActive: queue.isActive,
-      isScheduler: !!queue.queueConfiguration.cron,
+      isScheduler: !!queue.isScheduler,
     }));
   }
 
