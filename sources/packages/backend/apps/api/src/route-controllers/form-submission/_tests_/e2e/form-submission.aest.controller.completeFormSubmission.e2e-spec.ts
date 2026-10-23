@@ -34,7 +34,7 @@ import {
   getEntitiesForMinistryCompleteFormSubmissionAssertion,
 } from "./form-submission-utils";
 import MockDate from "mockdate";
-import { getPSTPDTDateTime } from "@sims/utilities";
+import { getPCTDateTimeWithTimezone } from "@sims/utilities";
 import {
   FORM_SUBMISSION_ITEM_OUTDATED,
   FormSubmissionAuthRoles,
@@ -173,7 +173,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         personalisation: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
@@ -182,7 +182,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
     });
@@ -310,7 +310,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
             personalisation: {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
-              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+              date: getPCTDateTimeWithTimezone(now),
             },
           },
           templateId: NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
@@ -319,7 +319,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
             params: {
               givenNames: student.user.firstName,
               lastName: student.user.lastName,
-              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+              date: getPCTDateTimeWithTimezone(now),
             },
           },
         });
@@ -461,7 +461,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         personalisation: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentFormCompleted,
@@ -470,7 +470,7 @@ describe("FormSubmissionAESTController(e2e)-completeFormSubmission", () => {
         params: {
           givenNames: student.user.firstName,
           lastName: student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
     });

@@ -27,7 +27,7 @@ import {
 } from "@sims/sims-db";
 import { StudentAppealApprovalAPIInDTO } from "../../../../route-controllers";
 import MockDate from "mockdate";
-import { getPSTPDTDateTime } from "@sims/utilities";
+import { getPCTDateTimeWithTimezone } from "@sims/utilities";
 import {
   GC_NOTIFY_TEMPLATE_IDS,
   NOTIFY_TEMPLATE_IDS,
@@ -164,7 +164,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         personalisation: {
           givenNames: application.student.user.firstName ?? "",
           lastName: application.student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
@@ -173,7 +173,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
         params: {
           givenNames: application.student.user.firstName ?? "",
           lastName: application.student.user.lastName,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
     });
@@ -371,7 +371,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
             personalisation: {
               givenNames: student.user.firstName ?? "",
               lastName: student.user.lastName,
-              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+              date: getPCTDateTimeWithTimezone(now),
             },
           },
           templateId: NOTIFY_TEMPLATE_IDS.MinistryAppealCompleted,
@@ -380,7 +380,7 @@ describe("StudentAppealAESTController(e2e)-approveStudentAppealRequests", () => 
             params: {
               givenNames: student.user.firstName ?? "",
               lastName: student.user.lastName,
-              date: `${getPSTPDTDateTime(now)} PST/PDT`,
+              date: getPCTDateTimeWithTimezone(now),
             },
           },
         });

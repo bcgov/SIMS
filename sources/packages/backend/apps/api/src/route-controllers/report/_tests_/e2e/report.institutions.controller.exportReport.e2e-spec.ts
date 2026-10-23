@@ -41,7 +41,7 @@ import { parse } from "papaparse";
 import request from "supertest";
 import { InstitutionUserAuthorizations } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
-import { getISODateOnlyString, getPSTPDTDateTime } from "@sims/utilities";
+import { getISODateOnlyString, getPCTDateTime } from "@sims/utilities";
 import { INSTITUTION_TYPE_BC_PUBLIC } from "@sims/sims-db/constant";
 import {
   buildUnmetNeedReportData,
@@ -756,7 +756,7 @@ function buildCOERequestsReportData(
     "Student Email Address": application.student.user.email,
     "Student Phone Number": application.student.contactInfo.phone,
     "Application Number": application.applicationNumber,
-    "Assessment Date": getPSTPDTDateTime(
+    "Assessment Date": getPCTDateTime(
       disbursement.studentAssessment.assessmentDate,
     ),
     "Program Name":
@@ -775,7 +775,7 @@ function buildCOERequestsReportData(
       "",
     "COE Status": disbursement.coeStatus,
     "COE Actioned": disbursement.coeUpdatedAt
-      ? getPSTPDTDateTime(disbursement.coeUpdatedAt)
+      ? getPCTDateTime(disbursement.coeUpdatedAt)
       : "",
     "Remittance Requested":
       disbursement.tuitionRemittanceRequestedAmount.toFixed(2),

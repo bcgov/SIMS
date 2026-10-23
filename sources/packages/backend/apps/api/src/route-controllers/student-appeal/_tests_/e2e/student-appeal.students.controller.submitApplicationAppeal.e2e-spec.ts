@@ -39,7 +39,7 @@ import { StudentApplicationAppealAPIInDTO } from "../../models/student-appeal.dt
 import { AppStudentsModule } from "../../../../app.students.module";
 import { FormNames, FormService } from "../../../../services";
 import MockDate from "mockdate";
-import { getDateOnlyFormat, getPSTPDTDateTime } from "@sims/utilities";
+import { getDateOnlyFormat, getPCTDateTimeWithTimezone } from "@sims/utilities";
 import {
   APPLICATION_CHANGE_NOT_ELIGIBLE,
   APPLICATION_HAS_PENDING_APPEAL,
@@ -220,7 +220,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
             birthDate: getDateOnlyFormat(student.birthDate),
             studentEmail: student.user.email,
             applicationNumber: application.applicationNumber,
-            dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+            dateTime: getPCTDateTimeWithTimezone(now),
           },
         },
         templateId: NOTIFY_TEMPLATE_IDS.MinistryChangeRequestSubmitted,
@@ -232,7 +232,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
             birthDate: getDateOnlyFormat(student.birthDate),
             studentEmail: student.user.email,
             applicationNumber: application.applicationNumber,
-            dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+            dateTime: getPCTDateTimeWithTimezone(now),
           },
         },
       });
@@ -795,7 +795,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           birthDate: getDateOnlyFormat(student.birthDate),
           studentEmail: student.user.email,
           applicationNumber: application.applicationNumber,
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
@@ -807,7 +807,7 @@ describe("StudentAppealStudentsController(e2e)-submitApplicationAppeal", () => {
           birthDate: getDateOnlyFormat(student.birthDate),
           studentEmail: student.user.email,
           applicationNumber: application.applicationNumber,
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
     });

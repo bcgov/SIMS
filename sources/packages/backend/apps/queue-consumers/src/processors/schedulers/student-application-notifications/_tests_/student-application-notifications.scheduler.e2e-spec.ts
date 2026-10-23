@@ -3,7 +3,8 @@ import {
   addDays,
   getDateOnlyFormat,
   getISODateOnlyString,
-  getPSTPDTDateTime,
+  getPCTDateTime,
+  getPCTDateTimeWithTimezone,
   QueueNames,
 } from "@sims/utilities";
 import {
@@ -851,7 +852,7 @@ describe(
               email_address: MINISTRY_EMAIL_ADDRESS,
               template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
               personalisation: {
-                dateSent: getPSTPDTDateTime(craVerification1.dateSent!),
+                dateSent: getPCTDateTime(craVerification1.dateSent!),
                 fileName: craVerification1.fileSent,
                 type: FileProcessingIssueType.CRA,
               },
@@ -860,7 +861,7 @@ describe(
             recipients: [MINISTRY_EMAIL_ADDRESS],
             messageContent: {
               params: {
-                dateSent: getPSTPDTDateTime(craVerification1.dateSent!),
+                dateSent: getPCTDateTime(craVerification1.dateSent!),
                 fileName: craVerification1.fileSent,
                 type: FileProcessingIssueType.CRA,
               },
@@ -872,7 +873,7 @@ describe(
 
       negativeCRASINNotificationData.forEach(
         ({ daysPastSent, dateReceived }) => {
-          it(`Should not generate a notification for CRA file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
+          it(`Should not generate a notification for CRA file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPCTDateTime(dateReceived) : "never"}.`, async () => {
             // Arrange
 
             // Create an in progress application.
@@ -997,7 +998,7 @@ describe(
               email_address: MINISTRY_EMAIL_ADDRESS,
               template_id: GC_NOTIFY_TEMPLATE_IDS.MinistryFileProcessingIssue,
               personalisation: {
-                dateSent: getPSTPDTDateTime(student1.sinValidation.dateSent!),
+                dateSent: getPCTDateTime(student1.sinValidation.dateSent!),
                 fileName: student1.sinValidation.fileSent,
                 type: FileProcessingIssueType.SIN,
               },
@@ -1006,7 +1007,7 @@ describe(
             recipients: [MINISTRY_EMAIL_ADDRESS],
             messageContent: {
               params: {
-                dateSent: getPSTPDTDateTime(student1.sinValidation.dateSent!),
+                dateSent: getPCTDateTime(student1.sinValidation.dateSent!),
                 fileName: student1.sinValidation.fileSent,
                 type: FileProcessingIssueType.SIN,
               },
@@ -1018,7 +1019,7 @@ describe(
 
       negativeCRASINNotificationData.forEach(
         ({ daysPastSent, dateReceived }) => {
-          it(`Should not generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPSTPDTDateTime(dateReceived) : "never"}.`, async () => {
+          it(`Should not generate a notification for SIN file processing issues when the file was sent ${daysPastSent} days ago with response file received ${dateReceived ? getPCTDateTime(dateReceived) : "never"}.`, async () => {
             // Arrange
 
             // Create a student with a SIN validation
@@ -1400,7 +1401,7 @@ describe(
             email_address: MINISTRY_EMAIL_ADDRESS,
             template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
             personalisation: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               birthDate: getDateOnlyFormat(student.birthDate),
               givenNames: student.user.firstName,
@@ -1414,7 +1415,7 @@ describe(
           recipients: [MINISTRY_EMAIL_ADDRESS],
           messageContent: {
             params: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               birthDate: getDateOnlyFormat(student.birthDate),
               givenNames: student.user.firstName,
