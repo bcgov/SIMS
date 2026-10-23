@@ -19,7 +19,10 @@ import { QueueService } from "@sims/services/queue";
 import { QueueConfiguration } from "@sims/sims-db";
 
 type JobResult = string | string[];
-const PERMANENT_FAILURE_ERROR_NAMES = [FILE_NOT_FOUND, EMPTY_FILE];
+const PERMANENT_FAILURE_ERROR_NAMES = new Set<string>([
+  FILE_NOT_FOUND,
+  EMPTY_FILE,
+]);
 
 /**
  * Base class for queue processors providing common functionality and error handling.
@@ -109,7 +112,7 @@ export abstract class BaseQueueProcessor<T>
         const errorMessage = error.message;
         // Throw an UnrecoverableError for permanent failure error names.
         // The job will not be retried for UnrecoverableError.
-        if (PERMANENT_FAILURE_ERROR_NAMES.includes(error.name)) {
+        if (PERMANENT_FAILURE_ERROR_NAMES.has(error.name)) {
           this.logger.error(`Permanent failure error: ${errorMessage}`);
           throw new UnrecoverableError(error.message);
         }

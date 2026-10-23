@@ -16,7 +16,7 @@ VALUES
                 "attempts": 3,
                 "backoff": 180000,
                 "removeOnComplete": {
-                    "age": 604800000
+                    "age": 604800
                 }
             },
             "dashboardReadonly": false
@@ -36,7 +36,7 @@ VALUES
                 "attempts": 3,
                 "backoff": 180000,
                 "removeOnComplete": {
-                    "age": 2592000000
+                    "age": 2592000
                 }
             },
             "repeatOptions": {"pattern":"0 8 * * *", "tz": "America/Vancouver"},

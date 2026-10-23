@@ -53,9 +53,9 @@ export const JOB_SUFFIX = "-job";
 /**
  * Job names for the queues.
  */
-export enum QueueJobNames {
-  FileVirusScanProcessor = `${QueueNames.FileVirusScanProcessor}${JOB_SUFFIX}`,
-}
+export const QueueJobNames = {
+  FileVirusScanProcessorJob: `${QueueNames.FileVirusScanProcessor}${JOB_SUFFIX}`,
+} as const;
 
 /**
  * BullMQ queue worker events.

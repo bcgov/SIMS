@@ -3,7 +3,7 @@ import { ModuleRef } from "@nestjs/core";
 import { getQueueToken } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
 import { QueueService } from "@sims/services/queue";
-import { BULL_MQ_MIGRATED_QUEUE_NAMES } from "@sims/utilities";
+import { BULL_MQ_MIGRATED_QUEUE_NAMES, JOB_SUFFIX } from "@sims/utilities";
 import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
@@ -58,7 +58,7 @@ export class QueueSchedulerService implements OnApplicationBootstrap {
         `scheduler-${queueName}`,
         schedulerQueueConfig.queueConfiguration.repeatOptions,
         {
-          name: `${queueName}-job`,
+          name: `${queueName}${JOB_SUFFIX}`,
           data: schedulerQueueConfig.queueConfiguration.jobData,
         },
       );

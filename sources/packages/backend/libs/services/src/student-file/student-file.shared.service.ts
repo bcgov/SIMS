@@ -119,7 +119,7 @@ export class StudentFileSharedService {
       summary.info(
         `Adding the file: ${newFile.fileName} to the virus scan queue.`,
       );
-      await this.virusScanQueue.add(QueueJobNames.FileVirusScanProcessor, {
+      await this.virusScanQueue.add(QueueJobNames.FileVirusScanProcessorJob, {
         uniqueFileName: createFile.uniqueFileName,
         fileName: createFile.fileName,
       });

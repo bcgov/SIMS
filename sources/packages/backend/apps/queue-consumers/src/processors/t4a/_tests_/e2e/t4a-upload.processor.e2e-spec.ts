@@ -184,7 +184,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
       });
       // Validate if the virus scan job was queued.
       expect(virusScanQueueMock.add).toHaveBeenCalledWith(
-        QueueJobNames.FileVirusScanProcessor,
+        QueueJobNames.FileVirusScanProcessorJob,
         {
           uniqueFileName: studentFile.uniqueFileName,
           fileName: studentFile.fileName,
