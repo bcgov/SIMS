@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { rendererProps, useJsonFormsControl, useJsonForms } from "@jsonforms/vue";
+import {
+  rendererProps,
+  useJsonFormsControl,
+  useJsonForms,
+} from "@jsonforms/vue";
 import type { ControlElement } from "@jsonforms/core";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { ProgramCalculatedDataKey } from "@/types";
@@ -17,32 +21,52 @@ const jsonforms = useJsonForms();
 const credentialType = computed(
   () => jsonforms.core.data?.credentialType as string | undefined,
 );
-const cipCode = computed(() => jsonforms.core.data?.cipCode as string | undefined);
+const cipCode = computed(
+  () => jsonforms.core.data?.cipCode as string | undefined,
+);
 const calculating = ref(false);
 
-watch([credentialType, cipCode], async ([newCredentialType, newCipCode]) => {
-  if (
-    control.value.readonly ||
-    !newCredentialType ||
-    !newCipCode ||
-    !CIP_CODE_REGEX.test(newCipCode)
-  ) {
-    return;
-  }
-  calculating.value = true;
-  try {
-    const evaluationResult = await EducationProgramService.shared.evaluate({
-      data: jsonforms.core.data,
-      calculatedDataKeys: [ProgramCalculatedDataKey.FieldOfStudyCode],
+watch(
+  [credentialType, cipCode],
+  async ([newCredentialType, newCipCode], _, onCleanup) => {
+    // Invoked before the next watcher run (or on unmount), so a pending
+    // evaluation from previous selections never overwrites the current result
+    // or clears the loading indicator of a newer evaluation.
+    let isStale = false;
+    onCleanup(() => {
+      isStale = true;
+      calculating.value = false;
     });
-    handleChange(
-      control.value.path,
-      evaluationResult.calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode],
-    );
-  } finally {
-    calculating.value = false;
-  }
-});
+    if (
+      control.value.readonly ||
+      !newCredentialType ||
+      !newCipCode ||
+      !CIP_CODE_REGEX.test(newCipCode)
+    ) {
+      return;
+    }
+    calculating.value = true;
+    try {
+      const evaluationResult = await EducationProgramService.shared.evaluate({
+        data: jsonforms.core.data,
+        calculatedDataKeys: [ProgramCalculatedDataKey.FieldOfStudyCode],
+      });
+      if (isStale) {
+        return;
+      }
+      handleChange(
+        control.value.path,
+        evaluationResult.calculatedData[
+          ProgramCalculatedDataKey.FieldOfStudyCode
+        ],
+      );
+    } finally {
+      if (!isStale) {
+        calculating.value = false;
+      }
+    }
+  },
+);
 </script>
 
 <template>

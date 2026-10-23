@@ -199,6 +199,7 @@ export class EducationProgramInstitutionsController extends BaseController {
           case EDUCATION_PROGRAM_DATA_INVALID:
             throw new BadRequestException(error.objectInfo, error.message);
           case EDUCATION_PROGRAM_INVALID_OPERATION:
+          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
           case DUPLICATE_SABC_CODE:
             throw new UnprocessableEntityException(
@@ -248,6 +249,9 @@ export class EducationProgramInstitutionsController extends BaseController {
         switch (error.name) {
           case EDUCATION_PROGRAM_NOT_FOUND:
             throw new NotFoundException(error.message);
+          case EDUCATION_PROGRAM_DATA_INVALID:
+            throw new BadRequestException(error.objectInfo, error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
           case EDUCATION_PROGRAM_INVALID_OPERATION:
             throw new UnprocessableEntityException(error.message);
           case DUPLICATE_SABC_CODE:
