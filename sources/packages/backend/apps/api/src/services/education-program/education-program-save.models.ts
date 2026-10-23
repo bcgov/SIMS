@@ -1,10 +1,4 @@
 import { FormYesNoOptions, ProgramIntensity } from "@sims/sims-db";
-import {
-  EntranceRequirementValues,
-  ProgramCourseLoadCalculationTypes,
-  ProgramDeliveryTypeValues,
-  ProgramESLPercentage,
-} from "./education-program.service.models";
 import { AviationCredentialTypeOptions } from "../education-program-offering/education-program-offering-validation.models";
 
 export interface EducationProgramContext {
@@ -19,6 +13,29 @@ export interface EducationProgramData {
   programName: string;
   programDescription: string;
   [key: string]: unknown;
+}
+
+export enum ProgramDeliveryTypeValues {
+  Onsite = "deliveredOnSite",
+  Online = "deliveredOnline",
+}
+
+export enum EntranceRequirementValues {
+  HasMinimumAge = "hasMinimumAge",
+  MinHighSchool = "minHighSchool",
+  RequirementsByInstitution = "requirementsByInstitution",
+  RequirementsByBCITA = "requirementsByBCITA",
+  NoneOfTheAboveEntranceRequirements = "noneOfTheAboveEntranceRequirements",
+}
+
+export enum ProgramCourseLoadCalculationTypes {
+  Credit = "credit",
+  Hours = "hours",
+}
+
+export enum ProgramESLPercentage {
+  LessThan20 = "lessThan20",
+  GreaterThanEqual20 = "20OrMore",
 }
 
 /**

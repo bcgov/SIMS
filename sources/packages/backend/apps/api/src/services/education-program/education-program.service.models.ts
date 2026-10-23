@@ -4,6 +4,10 @@ import {
   ProgramIntensity,
   ProgramStatus,
 } from "@sims/sims-db";
+import {
+  ProgramCourseLoadCalculationTypes,
+  ProgramESLPercentage,
+} from "./education-program-save.models";
 
 export interface ProgramDeliveryTypes {
   deliveredOnSite: boolean;
@@ -84,29 +88,6 @@ export class PendingEducationProgram {
     operatingName: string;
   };
   selectedLocationId: number;
-}
-
-export enum ProgramDeliveryTypeValues {
-  Onsite = "deliveredOnSite",
-  Online = "deliveredOnline",
-}
-
-export enum EntranceRequirementValues {
-  HasMinimumAge = "hasMinimumAge",
-  MinHighSchool = "minHighSchool",
-  RequirementsByInstitution = "requirementsByInstitution",
-  RequirementsByBCITA = "requirementsByBCITA",
-  NoneOfTheAboveEntranceRequirements = "noneOfTheAboveEntranceRequirements",
-}
-
-export enum ProgramCourseLoadCalculationTypes {
-  Credit = "credit",
-  Hours = "hours",
-}
-
-export enum ProgramESLPercentage {
-  LessThan20 = "lessThan20",
-  GreaterThanEqual20 = "20OrMore",
 }
 
 /**

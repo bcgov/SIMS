@@ -35,6 +35,8 @@ import {
   EducationProgramData,
   EducationProgramDynamicConfiguration,
   EducationProgramDynamicData,
+  EntranceRequirementValues,
+  ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./education-program-data-validation.service";
 import {
@@ -45,10 +47,8 @@ import {
 } from "./education-program-data-validation.models";
 import {
   EntranceRequirements,
-  EntranceRequirementValues,
   ProgramCalculatedDataKey,
   ProgramDeliveryTypes,
-  ProgramDeliveryTypeValues,
 } from "./education-program.service.models";
 import { CustomNamedError } from "@sims/utilities";
 import { OTHER_REGULATORY_BODY } from "./constants";

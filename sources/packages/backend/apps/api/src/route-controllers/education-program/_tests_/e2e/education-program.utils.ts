@@ -1,13 +1,13 @@
 import { faker } from "@faker-js/faker";
 import { ProgramIntensity, FormYesNoOptions } from "@sims/sims-db";
 import { OTHER_REGULATORY_BODY } from "../../../../services/education-program/constants";
-import { EducationProgramDynamicData } from "../../../../services/education-program/education-program-save.models";
 import {
-  ProgramDeliveryTypeValues,
-  ProgramCourseLoadCalculationTypes,
-  ProgramESLPercentage,
+  EducationProgramDynamicData,
   EntranceRequirementValues,
-} from "../../../../services/education-program/education-program.service.models";
+  ProgramCourseLoadCalculationTypes,
+  ProgramDeliveryTypeValues,
+  ProgramESLPercentage,
+} from "../../../../services";
 import {
   CreateEducationProgramAPIInDTO,
   UpdateEducationProgramAPIInDTO,
