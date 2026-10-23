@@ -94,6 +94,7 @@ import {
   CASInvoiceBatchService,
   CASInvoiceService,
   ProgramSuspensionBlockingAssessmentNotification,
+  QueueSchedulerService,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -212,6 +213,7 @@ import { LoggerModule } from "@sims/utilities/logger";
     T4AUploadEnqueuerScheduler,
     T4AUploadProcessor,
     ReturnedLoansResponseIntegrationScheduler,
+    QueueSchedulerService,
   ],
   controllers: [HealthController, MetricsController],
 })
