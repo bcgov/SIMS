@@ -5,7 +5,7 @@ import {
   mockBullJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
-import { getPSTPDTDateTime, QueueNames } from "@sims/utilities";
+import { getPCTDateTimeWithTimezone, QueueNames } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import Client from "ssh2-sftp-client";
 import { join, parse } from "node:path";
@@ -236,7 +236,7 @@ describe(
               template_id: "2b64245f-770c-4493-9d3c-4e0f86773987",
               email_address: student.user.email,
               personalisation: {
-                date: `${getPSTPDTDateTime(now)} PST/PDT`,
+                date: getPCTDateTimeWithTimezone(now),
                 lastName: student.user.lastName,
                 givenNames: student.user.firstName,
               },
@@ -245,7 +245,7 @@ describe(
             recipients: [student.user.email],
             messageContent: {
               params: {
-                date: `${getPSTPDTDateTime(now)} PST/PDT`,
+                date: getPCTDateTimeWithTimezone(now),
                 lastName: student.user.lastName,
                 givenNames: student.user.firstName,
               },

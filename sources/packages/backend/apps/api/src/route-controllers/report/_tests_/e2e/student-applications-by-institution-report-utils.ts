@@ -7,11 +7,7 @@ import {
   DisbursementSchedule,
   DisbursementValueType,
 } from "@sims/sims-db";
-import {
-  addDays,
-  getISODateOnlyString,
-  getPSTPDTDateTime,
-} from "@sims/utilities";
+import { addDays, getISODateOnlyString, getPCTDateTime } from "@sims/utilities";
 import {
   createFakeDisbursementValue,
   E2EDataSources,
@@ -346,10 +342,10 @@ export async function buildApplicationsByInstitutionData(
     "Organization Status": savedInstitution.organizationStatus ?? "",
     "Location Name": savedLocation.name,
     "Application Number": application.applicationNumber,
-    "Original Submission": getPSTPDTDateTime(
+    "Original Submission": getPCTDateTime(
       application.parentApplication.submittedDate,
     ),
-    "Last Submission": getPSTPDTDateTime(application.submittedDate),
+    "Last Submission": getPCTDateTime(application.submittedDate),
     "Assessment Date":
       getISODateOnlyString(application.currentAssessment.assessmentDate) ?? "",
     "Application Status": application.applicationStatus,

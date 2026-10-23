@@ -15,7 +15,7 @@ import {
   processInParallel,
   CustomNamedError,
   getAbbreviatedDateOnlyFormat,
-  getPSTPDTDateFormatted,
+  getPCTDateFormatted,
   ABBREVIATED_MONTH_DATE_FORMAT,
 } from "@sims/utilities";
 import { ProcessSummary } from "@sims/utilities/logger";
@@ -267,7 +267,7 @@ export class CASInvoiceService {
       remittanceMessage1: EMPTY_STRING,
       remittanceMessage2: EMPTY_STRING,
       // The GL date sent to CAS API must be in BC time.
-      glDate: getPSTPDTDateFormatted(invoiceSendDate, {
+      glDate: getPCTDateFormatted(invoiceSendDate, {
         format: ABBREVIATED_MONTH_DATE_FORMAT,
       }),
       invoiceBatchName: pendingInvoice.casInvoiceBatch.batchName,

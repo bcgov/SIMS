@@ -21,9 +21,13 @@ export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_ONLY_FORMAT = "MMM DD YYYY";
 export const DATE_ONLY_FULL_MONTH_FORMAT = "MMMM D, YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+/**
+ * Date and time followed by the PCT (UTC−07:00) time zone acronym.
+ */
+export const DATE_TIME_WITH_TIMEZONE_FORMAT = `${DATE_TIME_FORMAT} [PCT]`;
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
 export const TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT = "YYYYMMDD-HHmmssSSS";
-export const PST_TIMEZONE = "America/Vancouver";
+export const PCT_TIMEZONE = "America/Vancouver";
 export const ABBREVIATED_MONTH_DATE_FORMAT = "DD-MMM-YYYY";
 
 /**
@@ -69,8 +73,8 @@ export const dateDifference = (
 };
 
 /**
- * Convert the date to (PST: UTC−08:00/PDT: UTC−07:00).
- * @param date date to be converted to PST.
+ * Convert the date to (PCT: UTC−07:00).
+ * @param date date to be converted to PCT.
  * @param options date conversion options.
  * - `local` if local is set to true,
  * then the offset will be directly append to the date without
@@ -78,50 +82,43 @@ export const dateDifference = (
  * if set to false, the date will be converted
  * to the actual timezone time with offset.
  * `format` date format to be used for the output.
- * @returns date in  PST/PDT(PST: UTC−08:00, PDT: UTC−07:00).
+ * @returns date in  PCT (UTC−07:00).
  */
-export const getPSTPDTDateFormatted = (
+export const getPCTDateFormatted = (
   date: string | Date,
   options?: { local?: boolean; format?: string },
 ): string => {
   const local = options?.local ?? false;
   const format = options?.format ?? DATE_ONLY_ISO_FORMAT;
-  return dayjs(date).tz(PST_TIMEZONE, local).format(format);
+  return dayjs(date).tz(PCT_TIMEZONE, local).format(format);
 };
 
 /**
- * Convert the date to (PST: UTC−08:00/PDT: UTC−07:00).
- * @param date date to be converted to PST.
+ * Convert the date to (PCT: UTC−07:00).
+ * @param date date to be converted to PCT.
  * @param local, if local is set to true,
  * then the offset will be directly append to the date without
  * converting to the timezone actual date,
  * if set to false, the date will be converted
  * to the actual timezone time with offset.
- * @returns date in YYYY-MM-DD HH:mm:ss format.
+ * @returns date in PCT (UTC−07:00) in YYYY-MM-DD HH:mm:ss format.
  */
-export const getPSTPDTDateTime = (
-  date: string | Date,
-  local = false,
-): string => {
-  return dayjs(new Date(date)).tz(PST_TIMEZONE, local).format(DATE_TIME_FORMAT);
+export const getPCTDateTime = (date: string | Date, local = false): string => {
+  return dayjs(new Date(date)).tz(PCT_TIMEZONE, local).format(DATE_TIME_FORMAT);
 };
 
 /**
- * set date to start of the day with PST/PDT offset,
- * for eg, Aug 24th 2021 will be 2021-08-24T00:00:00-07:00
- * @param date date to be updated.
- * @param local, if local is set to true,
- * then the offset will be directly append to the date without
- * converting to the timezone actual date,
- * if set to false, the date will be converted
- * to the actual timezone time with offset
- * @returns date string
+ * Convert the date to (PCT: UTC−07:00) including the time zone acronym,
+ * for eg, 2027-01-15 12:00:00 PCT.
+ * @param date date to be converted, if not provided, the current date will be used.
+ * @returns date in PCT (UTC−07:00) in YYYY-MM-DD HH:mm:ss PCT format.
  */
-export const setToStartOfTheDayInPSTPDT = (
-  date: string | Date,
-  local = false,
+export const getPCTDateTimeWithTimezone = (
+  date: string | Date = new Date(),
 ): string => {
-  return dayjs(date).tz(PST_TIMEZONE, local).startOf("day").format();
+  return dayjs(new Date(date))
+    .tz(PCT_TIMEZONE)
+    .format(DATE_TIME_WITH_TIMEZONE_FORMAT);
 };
 
 /***
@@ -288,25 +285,25 @@ export function addToDateOnlyString(
 }
 
 /**
- * Return a PST timestamp with date and time in continuous format
+ * Return a PCT timestamp with date and time in continuous format
  * mainly used to append in filename.
  * @param date date to be converted, if not provided, the current date will be used.
  * @returns timestamp.
  */
 export function getFileNameAsCurrentTimestamp(date?: Date): string {
   return dayjs(date ?? new Date())
-    .tz(PST_TIMEZONE)
+    .tz(PCT_TIMEZONE)
     .format(TIMESTAMP_CONTINUOUS_FORMAT);
 }
 
 /**
- * Return a PST timestamp with date and time in customized continuous format
+ * Return a PCT timestamp with date and time in customized continuous format
  * mainly used to append in filename.
  * @returns timestamp.
  */
 export function getFileNameAsExtendedCurrentTimestamp(): string {
   return dayjs(new Date())
-    .tz(PST_TIMEZONE)
+    .tz(PCT_TIMEZONE)
     .format(TIMESTAMP_CONTINUOUS_EXTENDED_FORMAT);
 }
 

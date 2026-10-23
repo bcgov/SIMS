@@ -4,7 +4,8 @@ import {
   base64Encode,
   CustomNamedError,
   getDateOnlyFormat,
-  getPSTPDTDateTime,
+  getPCTDateTime,
+  getPCTDateTimeWithTimezone,
 } from "@sims/utilities";
 import { EntityManager } from "typeorm";
 import { NotificationMessageService } from "../notification-message/notification-message.service";
@@ -97,7 +98,7 @@ export class NotificationActionsService {
           applicationNumber: notification.applicationNumber,
           studentEmail: notification.email,
           documentPurpose: notification.documentPurpose,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
           fileNames: notification.fileNames,
         },
       },
@@ -139,7 +140,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.firstName ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -183,7 +184,7 @@ export class NotificationActionsService {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
           birthDate: getDateOnlyFormat(notification.birthDate),
-          matchTime: this.getDateTimeOnPSTTimeZone(),
+          matchTime: getPCTDateTimeWithTimezone(),
           studentEmail: notification.studentEmail,
           matches: notification.matches,
         },
@@ -339,7 +340,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -384,7 +385,7 @@ export class NotificationActionsService {
             lastName: notification.lastName,
             studentEmail: notification.email,
             birthDate: getDateOnlyFormat(notification.birthDate),
-            dateTime: this.getDateTimeOnPSTTimeZone(),
+            dateTime: getPCTDateTimeWithTimezone(),
           },
         },
       }));
@@ -425,7 +426,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -525,7 +526,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -564,7 +565,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -603,7 +604,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -613,16 +614,6 @@ export class NotificationActionsService {
       auditUserId,
       { entityManager },
     );
-  }
-
-  /**
-   * Get the date and time converted to BC time-zone (PST) format
-   * to be displayed in the messages.
-   * @param date date to be formatted.
-   * @returns Date and time as it should be displayed in the messages.
-   */
-  private getDateTimeOnPSTTimeZone(date = new Date()): string {
-    return `${getPSTPDTDateTime(date)} PST/PDT`;
   }
 
   /**
@@ -652,7 +643,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -689,7 +680,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -722,7 +713,7 @@ export class NotificationActionsService {
         email_address: integrationContact,
         template_id: templateId,
         personalisation: {
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
           institutionCode: notification.institutionCode,
           fileParsingErrors: notification.fileParsingErrors,
           totalRecords: notification.totalRecords,
@@ -830,7 +821,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
       metadata: { disbursementId },
@@ -874,7 +865,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -919,7 +910,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
       metadata: { applicationNumber },
@@ -962,7 +953,7 @@ export class NotificationActionsService {
           lastName: notification.lastName,
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -1005,7 +996,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -1046,7 +1037,7 @@ export class NotificationActionsService {
           institutionName: notification.institutionName,
           institutionOperatingName: notification.institutionOperatingName,
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -1088,7 +1079,7 @@ export class NotificationActionsService {
           institutionOperatingName: notification.institutionOperatingName,
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
           programName: notification.programName,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
           email: notification.email,
         },
       },
@@ -1133,7 +1124,7 @@ export class NotificationActionsService {
           programName: notification.programName,
           offeringName: notification.offeringName,
           institutionPrimaryEmail: notification.institutionPrimaryEmail,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
           email: notification.email,
         },
       },
@@ -1560,7 +1551,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           applicationNumber: notification.applicationNumber ?? "N/A",
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -1598,7 +1589,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -1640,7 +1631,7 @@ export class NotificationActionsService {
           birthDate: getDateOnlyFormat(notification.birthDate),
           studentEmail: notification.email,
           applicationNumber: notification.applicationNumber,
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -1679,7 +1670,7 @@ export class NotificationActionsService {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
           application: notification.applicationNumber,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -1724,7 +1715,7 @@ export class NotificationActionsService {
           formCategory: notification.formCategory,
           formNames: notification.formNames,
           applicationNumber: notification.applicationNumber ?? "N/A",
-          dateTime: this.getDateTimeOnPSTTimeZone(),
+          dateTime: getPCTDateTimeWithTimezone(),
         },
       },
     }));
@@ -1761,7 +1752,7 @@ export class NotificationActionsService {
         personalisation: {
           givenNames: notification.givenNames ?? "",
           lastName: notification.lastName,
-          date: this.getDateTimeOnPSTTimeZone(),
+          date: getPCTDateTimeWithTimezone(),
         },
       },
     };
@@ -1798,7 +1789,7 @@ export class NotificationActionsService {
           template_id: templateId,
           personalisation: {
             fileName: notification.fileName,
-            dateSent: getPSTPDTDateTime(notification.dateSent),
+            dateSent: getPCTDateTime(notification.dateSent),
             type: notification.type.toString(),
           },
         },
@@ -1883,7 +1874,7 @@ export class NotificationActionsService {
               birthDate: getDateOnlyFormat(notification.birthDate),
               studentEmail: notification.studentEmail,
               applicationNumber: notification.applicationNumber,
-              dateTime: this.getDateTimeOnPSTTimeZone(),
+              dateTime: getPCTDateTimeWithTimezone(),
               institutionOperatingName: notification.institutionOperatingName,
               programName: notification.programName,
             },

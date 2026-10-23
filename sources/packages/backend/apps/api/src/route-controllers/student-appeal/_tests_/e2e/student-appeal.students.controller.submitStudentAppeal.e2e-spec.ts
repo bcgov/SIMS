@@ -28,7 +28,7 @@ import {
 import MockDate from "mockdate";
 import {
   getDateOnlyFormat,
-  getPSTPDTDateTime,
+  getPCTDateTimeWithTimezone,
 } from "@sims/utilities/date-utils";
 import { STUDENT_HAS_PENDING_APPEAL } from "../../../../constants";
 import {
@@ -197,7 +197,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           birthDate: getDateOnlyFormat(student.birthDate),
           studentEmail: student.user.email,
           applicationNumber: "N/A",
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentAppealSubmitted,
@@ -209,7 +209,7 @@ describe("StudentAppealStudentsController(e2e)-submitStudentAppeal", () => {
           birthDate: getDateOnlyFormat(student.birthDate),
           studentEmail: student.user.email,
           applicationNumber: "N/A",
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
     });

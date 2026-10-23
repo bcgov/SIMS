@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CASInvoice, CASInvoiceBatch } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { unparse } from "papaparse";
-import { CustomNamedError, getPSTPDTDateTime } from "@sims/utilities";
+import { CustomNamedError, getPCTDateTime } from "@sims/utilities";
 import { CASInvoiceBatchReport } from "./cas-invoice-batch.models";
 import { CAS_INVOICE_BATCH_NOT_FOUND } from "../../constants";
 
@@ -27,9 +27,8 @@ export class CASInvoiceBatchReportService {
   async getCASInvoiceBatchReport(
     invoiceBatchId: number,
   ): Promise<CASInvoiceBatchReport> {
-    const reportData = await this.getCASInvoiceBatchesReportData(
-      invoiceBatchId,
-    );
+    const reportData =
+      await this.getCASInvoiceBatchesReportData(invoiceBatchId);
     if (!reportData) {
       throw new CustomNamedError(
         `CAS invoice batch with ID ${invoiceBatchId} not found.`,
@@ -100,7 +99,7 @@ export class CASInvoiceBatchReportService {
       SIN: student.sinValidation.sin,
       "Supplier Number": invoice.casSupplier.supplierNumber,
       "Document Number": schedule.documentNumber.toString(),
-      "GL Date": invoice.dateSent ? getPSTPDTDateTime(invoice.dateSent) : "n/a",
+      "GL Date": invoice.dateSent ? getPCTDateTime(invoice.dateSent) : "n/a",
     };
   }
 

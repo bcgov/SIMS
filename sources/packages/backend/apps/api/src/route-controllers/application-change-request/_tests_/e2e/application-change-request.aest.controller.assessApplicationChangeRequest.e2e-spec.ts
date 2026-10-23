@@ -30,7 +30,7 @@ import {
   GC_NOTIFY_TEMPLATE_IDS,
   NOTIFY_TEMPLATE_IDS,
 } from "@sims/test-utils/constants";
-import { getPSTPDTDateTime } from "@sims/utilities";
+import { getPCTDateTimeWithTimezone } from "@sims/utilities";
 
 describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeRequest", () => {
   let app: INestApplication;
@@ -276,7 +276,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           givenNames: changeRequest.student.user.firstName ?? "",
           lastName: changeRequest.student.user.lastName,
           application: changeRequest.applicationNumber,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
@@ -286,7 +286,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           givenNames: changeRequest.student.user.firstName ?? "",
           lastName: changeRequest.student.user.lastName,
           application: changeRequest.applicationNumber,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
     });
@@ -417,7 +417,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           givenNames: changeRequest.student.user.firstName ?? "",
           lastName: changeRequest.student.user.lastName,
           application: changeRequest.applicationNumber,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
@@ -427,7 +427,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           givenNames: changeRequest.student.user.firstName ?? "",
           lastName: changeRequest.student.user.lastName,
           application: changeRequest.applicationNumber,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
     });
@@ -538,7 +538,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           givenNames: changeRequest.student.user.firstName ?? "",
           lastName: changeRequest.student.user.lastName,
           application: changeRequest.applicationNumber,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.StudentChangeRequestReviewCompleted,
@@ -548,7 +548,7 @@ describe("ApplicationChangeRequestAESTController(e2e)-assessApplicationChangeReq
           givenNames: changeRequest.student.user.firstName ?? "",
           lastName: changeRequest.student.user.lastName,
           application: changeRequest.applicationNumber,
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
         },
       },
     });

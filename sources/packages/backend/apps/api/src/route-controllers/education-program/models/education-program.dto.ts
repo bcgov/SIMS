@@ -38,7 +38,7 @@ import {
   LOOKUP_KEY_MAX_LENGTH,
 } from "@sims/sims-db";
 import { AllowIf, IsDateAfter } from "../../../utilities/class-validation";
-import { getPSTPDTDateFormatted } from "@sims/utilities";
+import { getPCTDateFormatted } from "@sims/utilities";
 import {
   CIP_CODE_REGEX,
   NOC_REGEX,
@@ -481,7 +481,7 @@ export class EducationProgramAPIInDTO {
 
 export class ApproveProgramAPIInDTO {
   @IsDateString()
-  @IsDateAfter(() => getPSTPDTDateFormatted(new Date()), "Expiry date")
+  @IsDateAfter(() => getPCTDateFormatted(new Date()), "Expiry date")
   effectiveEndDate: string;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)

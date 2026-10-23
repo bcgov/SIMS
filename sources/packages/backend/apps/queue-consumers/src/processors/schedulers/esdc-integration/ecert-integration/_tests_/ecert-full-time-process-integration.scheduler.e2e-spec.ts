@@ -57,7 +57,7 @@ import {
   formatDate,
   getDateOnlyFormat,
   getISODateOnlyString,
-  getPSTPDTDateTime,
+  getPCTDateTimeWithTimezone,
 } from "@sims/utilities";
 import { FullTimeECertProcessIntegrationScheduler } from "../ecert-full-time-process-integration.scheduler";
 import { DeepMocked } from "@golevelup/ts-jest";
@@ -2496,7 +2496,7 @@ describe(
             email_address: MINISTRY_NOTIFICATION_EMAIL,
             template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
             personalisation: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
               birthDate: getDateOnlyFormat(student.birthDate),
@@ -2510,7 +2510,7 @@ describe(
           recipients: [MINISTRY_NOTIFICATION_EMAIL],
           messageContent: {
             params: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
               birthDate: getDateOnlyFormat(student.birthDate),
@@ -2598,7 +2598,7 @@ describe(
             email_address: MINISTRY_NOTIFICATION_EMAIL,
             template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
             personalisation: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
               birthDate: getDateOnlyFormat(student.birthDate),
@@ -2612,7 +2612,7 @@ describe(
           recipients: [MINISTRY_NOTIFICATION_EMAIL],
           messageContent: {
             params: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
               birthDate: getDateOnlyFormat(student.birthDate),

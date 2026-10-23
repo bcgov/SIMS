@@ -39,7 +39,7 @@ import {
 import {
   addDays,
   getISODateOnlyString,
-  getPSTPDTDateFormatted,
+  getPCTDateFormatted,
 } from "@sims/utilities";
 import { DataSource } from "typeorm";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
@@ -1773,12 +1773,12 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       Country: student.contactInfo.address.country,
       "Disability Status": student.disabilityStatus,
       "Profile Type": student.user.identityProviderType ?? "",
-      "Student Updated Date": getPSTPDTDateFormatted(student.updatedAt),
+      "Student Updated Date": getPCTDateFormatted(student.updatedAt),
       Supplier: student.casSupplier.supplierNumber,
       Site: student.casSupplier.supplierAddress.supplierSiteCode,
       "Protected Supplier": student.casSupplier.supplierProtected?.toString(),
       "Protected Site": student.casSupplier.supplierAddress.siteProtected,
-      "Supplier Verified Date": getPSTPDTDateFormatted(
+      "Supplier Verified Date": getPCTDateFormatted(
         student.casSupplier.supplierStatusUpdatedOn,
       ),
       "First Name Updated": options?.firstNameUpdated ? "true" : "false",
