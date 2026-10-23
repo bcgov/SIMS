@@ -6,7 +6,7 @@ ALTER COLUMN
     queue_settings DROP NOT NULL;
 
 INSERT INTO
-    queue_configurations(queue_name, queue_configuration)
+    sims.queue_configurations(queue_name, queue_configuration)
 VALUES
     (
         'virus-scan-v2',
@@ -22,13 +22,9 @@ VALUES
             "dashboardReadonly": false
         }
         $json$ :: json
-    );
-
--- The scheduler is set to run at 8 a.m. PCT every day.
-INSERT INTO
-    sims.queue_configurations(queue_name, queue_configuration)
-VALUES
-    (
+    ),
+	-- The scheduler is set to run at 8 a.m. PCT every day.
+	(
         'returned-loans-response-integration-v2',
         $json$
         {
