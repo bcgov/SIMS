@@ -40,6 +40,7 @@ import { EducationProgramDataValidationService } from "./education-program-data-
 import {
   EducationProgramDataValidationContext,
   EducationProgramDataValidationSuccess,
+  ProgramFlagEffect,
   SABC_CODE_UNIQUE_KEYWORD,
 } from "./education-program-data-validation.models";
 import {
@@ -355,10 +356,11 @@ export class EducationProgramSaveService {
     const fieldOfStudyCode =
       calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
     if (!context.hasOfferings) {
-      program.programStatus =
-        validationResult.warnings.length > 0
-          ? ProgramStatus.Pending
-          : ProgramStatus.Approved;
+      program.programStatus = validationResult.flags.some(
+        (flag) => flag.effect === ProgramFlagEffect.PendingReview,
+      )
+        ? ProgramStatus.Pending
+        : ProgramStatus.Approved;
       this.assignProgramLegacyData(
         program,
         validationResult.programData as EducationProgramDynamicData,

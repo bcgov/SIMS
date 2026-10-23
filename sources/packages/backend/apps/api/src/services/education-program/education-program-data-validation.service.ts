@@ -9,9 +9,10 @@ import {
   EducationProgramDataValidationContext,
   EducationProgramDataValidationResult,
   EducationProgramDataWithContext,
+  ProgramCompiledFlag,
   ProgramCompiledValidator,
-  ProgramCompiledWarning,
-  ProgramSchemaWarning,
+  ProgramSchemaFlag,
+  ProgramTriggeredFlag,
   SABC_CODE_UNIQUE_KEYWORD,
 } from "./education-program-data-validation.models";
 import { EducationProgramService } from "./education-program.service";
@@ -77,14 +78,14 @@ export class EducationProgramDataValidationService {
     programData: EducationProgramData,
     validationContext: EducationProgramDataValidationContext,
   ): Promise<EducationProgramDataValidationResult> {
-    const { validator, warnings } = this.getValidator(configuration);
+    const { validator, flags } = this.getValidator(configuration);
     // Any context provided by the client is replaced by the server one.
     const data: EducationProgramDataWithContext = {
       ...programData,
       context: configuration.context,
     };
-    // Any warnings provided by the client are recalculated by the server.
-    delete data.warnings;
+    // Any flags provided by the client are recalculated by the server.
+    delete data.flags;
     let errors: Partial<ErrorObject>[] = [];
     try {
       // An async validator throws, instead of returning false, when the data is invalid.
@@ -103,27 +104,27 @@ export class EducationProgramDataValidationService {
       };
     }
     // Calculated with the context, the same way the client does.
-    const triggeredWarnings = this.calculateWarnings(warnings, data);
+    const triggeredFlags = this.calculateFlags(flags, data);
     delete data.context;
-    return { isValid: true, programData: data, warnings: triggeredWarnings };
+    return { isValid: true, programData: data, flags: triggeredFlags };
   }
 
   /**
-   * Calculates the warnings, declared in the validation schema "x-warnings"
+   * Calculates the flags, declared in the validation schema "x-flags"
    * keyword, triggered by the program data.
-   * Must be kept aligned with the web createWarningsCalculator
+   * Must be kept aligned with the web createFlagsCalculator
    * (web/src/components/renderers/jsonforms/ajv.ts).
-   * @param warnings compiled warning conditions.
+   * @param flags compiled flag conditions.
    * @param data program data, including its context.
-   * @returns codes of the warnings triggered by the data.
+   * @returns flags triggered by the data.
    */
-  private calculateWarnings(
-    warnings: ProgramCompiledWarning[],
+  private calculateFlags(
+    flags: ProgramCompiledFlag[],
     data: EducationProgramDataWithContext,
-  ): string[] {
-    return warnings
-      .filter((warning) => warning.validate(data))
-      .map((warning) => warning.code);
+  ): ProgramTriggeredFlag[] {
+    return flags
+      .filter((flag) => flag.validate(data))
+      .map(({ code, effect }) => ({ code, effect }));
   }
 
   /**
@@ -226,7 +227,7 @@ export class EducationProgramDataValidationService {
    * The validator of a previous version of the configuration is discarded,
    * also from the AJV cache, to keep only one validator per configuration.
    * @param configuration program configuration providing the validation schema.
-   * @returns compiled validator and warning conditions.
+   * @returns compiled validator and flag conditions.
    */
   private getValidator(
     configuration: EducationProgramDynamicConfiguration,
@@ -244,9 +245,7 @@ export class EducationProgramDataValidationService {
     }
     if (cached) {
       this.ajv.removeSchema(cached.schema);
-      cached.warnings.forEach((warning) =>
-        this.ajv.removeSchema(warning.condition),
-      );
+      cached.flags.forEach((flag) => this.ajv.removeSchema(flag.condition));
     }
     // The configuration schema is shared with the client form, hence it is not
     // declared as async, which is required to use async keywords.
@@ -254,16 +253,16 @@ export class EducationProgramDataValidationService {
       ...(configuration.validationSchema as AnySchemaObject),
       $async: true,
     };
-    const schemaWarnings = (schema["x-warnings"] ??
-      []) as ProgramSchemaWarning[];
+    const schemaFlags = (schema["x-flags"] ?? []) as ProgramSchemaFlag[];
     const compiledValidator: ProgramCompiledValidator = {
       updatedAt,
       schema,
       validator: this.ajv.compile(schema),
-      warnings: schemaWarnings.map((warning) => ({
-        code: warning.code,
-        condition: warning.condition,
-        validate: this.ajv.compile(warning.condition),
+      flags: schemaFlags.map((flag) => ({
+        code: flag.code,
+        effect: flag.effect,
+        condition: flag.condition,
+        validate: this.ajv.compile(flag.condition),
       })),
     };
     this.validators.set(configuration.configurationId, compiledValidator);

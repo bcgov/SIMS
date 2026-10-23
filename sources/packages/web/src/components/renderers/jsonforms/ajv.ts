@@ -32,30 +32,31 @@ addErrors(programFormAjv);
 programFormAjv.addFormat("yesNo", true);
 
 /**
- * Warning declared in the validation schema "x-warnings" keyword. It doesn't
+ * Flag declared in the validation schema "x-flags" keyword. It doesn't
  * make the data invalid, it is only triggered when the data matches its condition.
+ * Its effect (e.g. the program saved as pending) is only applied by the server.
  */
-interface SchemaWarning {
+interface SchemaFlag {
   code: string;
   message: string;
   condition: object;
 }
 
 /**
- * Creates a function to calculate the warnings, declared in the validation
- * schema "x-warnings" keyword, triggered by the form data. Each warning
+ * Creates a function to calculate the flags, declared in the validation
+ * schema "x-flags" keyword, triggered by the form data. Each flag
  * condition is compiled only once per schema, since compiling is expensive.
- * @param schema validation schema declaring the warnings.
- * @returns function returning the codes of the warnings triggered by the data.
+ * @param schema validation schema declaring the flags.
+ * @returns function returning the codes of the flags triggered by the data.
  */
-export function createWarningsCalculator(
+export function createFlagsCalculator(
   schema: JsonSchema,
 ): (data: unknown) => string[] {
-  const warnings = ((schema as Record<string, unknown>)["x-warnings"] ??
-    []) as SchemaWarning[];
-  const conditions = warnings.map((warning) => ({
-    code: warning.code,
-    validate: programFormAjv.compile(warning.condition),
+  const flags = ((schema as Record<string, unknown>)["x-flags"] ??
+    []) as SchemaFlag[];
+  const conditions = flags.map((flag) => ({
+    code: flag.code,
+    validate: programFormAjv.compile(flag.condition),
   }));
   return (data) =>
     conditions

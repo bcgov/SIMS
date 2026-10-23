@@ -17,7 +17,7 @@ COMMENT ON COLUMN sims.education_programs_configurations.id IS 'Auto-generated s
 
 COMMENT ON COLUMN sims.education_programs_configurations.visual_schema IS 'UI schema defining the layout, controls, and visibility rules used to render the education program form.';
 
-COMMENT ON COLUMN sims.education_programs_configurations.validation_schema IS 'JSON schema used to validate the education program data, including the warnings to be generated.';
+COMMENT ON COLUMN sims.education_programs_configurations.validation_schema IS 'JSON schema used to validate the education program data, including the flags to be calculated.';
 
 COMMENT ON COLUMN sims.education_programs_configurations.program_year_id IS 'Program year the configuration applies to.';
 
@@ -155,7 +155,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -255,7 +255,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -303,7 +303,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -360,7 +360,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -399,7 +399,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -451,7 +451,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -472,7 +472,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -521,7 +521,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -569,7 +569,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -618,7 +618,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -667,7 +667,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -719,7 +719,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -753,7 +753,7 @@ SELECT
               "rule": {
                 "effect": "SHOW",
                 "condition": {
-                  "scope": "#/properties/warnings",
+                  "scope": "#/properties/flags",
                   "schema": {
                     "type": "array",
                     "contains": {
@@ -1122,7 +1122,7 @@ SELECT
               }
           }
           },
-          "warnings": {
+          "flags": {
           "type": "array",
           "readOnly": true,
           "items": {
@@ -1589,10 +1589,11 @@ SELECT
           "programDeclaration": "You must confirm to proceed."
           }
       },
-      "x-warnings": [
+      "x-flags": [
           {
           "code": "onlineDeliveryReview",
           "message": "This program requires review by StudentAid BC to determine eligibility.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["context", "programDeliveryTypes"],
               "properties": {
@@ -1610,6 +1611,7 @@ SELECT
           {
           "code": "onlineDeliveryIneligible",
           "message": "This program is ineligible for StudentAid BC funding.",
+          "effect": "pendingReview",
           "condition": {
               "required": [
               "context",
@@ -1633,6 +1635,7 @@ SELECT
           {
           "code": "minHoursWeek",
           "message": "The program needs to be a minimum of 20 instructional hours.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["courseLoadCalculation", "minHoursWeek", "isAviationProgram"],
               "properties": {
@@ -1645,6 +1648,7 @@ SELECT
           {
           "code": "noEntranceRequirements",
           "message": "An entrance requirement is required.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["entranceRequirements"],
               "properties": {
@@ -1655,6 +1659,7 @@ SELECT
           {
           "code": "eslContentExceeded",
           "message": "ESL can't exceed 20% of course content.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["eslEligibility"],
               "properties": { "eslEligibility": { "const": "20OrMore" } }
@@ -1663,6 +1668,7 @@ SELECT
           {
           "code": "partnerProgramReview",
           "message": "This program requires additional review by StudentAid BC.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["hasJointInstitution", "hasJointDesignatedInstitution"],
               "properties": {
@@ -1674,6 +1680,7 @@ SELECT
           {
           "code": "partnerNotDesignated",
           "message": "All partner institutions must be designated by StudentAid BC.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["hasJointInstitution", "hasJointDesignatedInstitution"],
               "properties": {
@@ -1685,6 +1692,7 @@ SELECT
           {
           "code": "wilNotApproved",
           "message": "The work-integrated learning component must be approved by your regulator or oversight body first.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["hasWILComponent", "isWILApproved"],
               "properties": {
@@ -1696,6 +1704,7 @@ SELECT
           {
           "code": "wilIneligible",
           "message": "The work-integrated learning must meet the StudentAid BC policy.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["hasWILComponent", "isWILApproved", "wilProgramEligibility"],
               "properties": {
@@ -1708,6 +1717,7 @@ SELECT
           {
           "code": "travelIneligible",
           "message": "The field trip, field placement, or travel must meet the StudentAid BC policy.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["hasTravel", "travelProgramEligibility"],
               "properties": {
@@ -1719,6 +1729,7 @@ SELECT
           {
           "code": "intlExchangeIneligible",
           "message": "The international exchange must meet the StudentAid BC policy.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["hasIntlExchange", "intlExchangeProgramEligibility"],
               "properties": {
@@ -1730,6 +1741,7 @@ SELECT
           {
           "code": "isAviationProgram",
           "message": "This aviation program requires additional review by StudentAid BC.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["isAviationProgram"],
               "properties": {
@@ -1740,6 +1752,7 @@ SELECT
           {
           "code": "privatePilotTraining",
           "message": "StudentAid BC does not provide any assistance to students for Private Pilot Training.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["isAviationProgram", "credentialTypesAviation"],
               "properties": {
@@ -1751,6 +1764,7 @@ SELECT
           {
           "code": "minHoursWeekAvi",
           "message": "The aviation program needs to be a minimum of 15 instructional hours.",
+          "effect": "pendingReview",
           "condition": {
               "required": ["isAviationProgram", "minHoursWeekAvi"],
               "properties": {

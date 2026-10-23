@@ -49,7 +49,7 @@ import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
 import { programFormRenderers } from "@/components/renderers/jsonforms";
 import {
-  createWarningsCalculator,
+  createFlagsCalculator,
   getRequiredErrorsPerProperty,
   programFormAjv,
 } from "@/components/renderers/jsonforms/ajv";
@@ -104,29 +104,27 @@ const validationMode = ref<ValidationMode>("ValidateAndHide");
 const programFormSchema = ref<JsonSchema>({} as JsonSchema);
 const programFormUiSchema = ref<UISchemaElement>({} as UISchemaElement);
 
-const calculateWarnings = computed(() =>
-  createWarningsCalculator(programFormSchema.value),
+const calculateFlags = computed(() =>
+  createFlagsCalculator(programFormSchema.value),
 );
 
 /**
- * Sets the warnings triggered by the form data, which are used by the
- * UI schema rules to show the warning banners. Like the context, the
- * warnings are never changed by the user and never submitted.
+ * Sets the flags triggered by the form data, which are used by the
+ * UI schema rules to show the banners. Like the context, the
+ * flags are never changed by the user and never submitted.
  * @param data form data.
- * @returns form data with its triggered warnings.
+ * @returns form data with its triggered flags.
  */
-const withWarnings = (
-  data: Record<string, unknown>,
-): Record<string, unknown> => ({
+const withFlags = (data: Record<string, unknown>): Record<string, unknown> => ({
   ...data,
-  warnings: calculateWarnings.value(data),
+  flags: calculateFlags.value(data),
 });
 
 const programFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
 
 const onProgramFormChange = (event: JsonFormsChangeEvent) => {
   programFormErrors.value = event.errors;
-  const data = withWarnings(event.data);
+  const data = withFlags(event.data);
   if (JSON.stringify(data) === JSON.stringify(formModel.value)) {
     return;
   }
@@ -168,10 +166,10 @@ const submit = async () => {
     return;
   }
   const programData = { ...formModel.value };
-  // The context and the warnings are only used by the form and are never submitted.
-  // Context and warnings should be recalculated by the server.
+  // The context and the flags are only used by the form and are never submitted.
+  // Context and flags should be recalculated by the server.
   delete programData.context;
-  delete programData.warnings;
+  delete programData.flags;
   if (props.programId) {
     console.log("Updating program:", formModel.value);
     emit("update", { programData });
@@ -196,8 +194,8 @@ const loadProgram = async (programId: number) => {
       await EducationProgramService.shared.getEducationProgram(programId);
     programFormSchema.value = programDetails.validationSchema as JsonSchema;
     programFormUiSchema.value = programDetails.visualSchema as UISchemaElement;
-    // Set after the schema, since the warnings are declared by it.
-    formModel.value = withWarnings(programDetails.programData);
+    // Set after the schema, since the flags are declared by it.
+    formModel.value = withFlags(programDetails.programData);
     emit("loaded", programDetails);
   } catch {
     snackBar.error("Unexpected error while loading program data.");
