@@ -114,7 +114,6 @@ export enum ProgramESLPercentage {
  */
 export enum ProgramCalculatedDataKey {
   FieldOfStudyCode = "fieldOfStudyCode",
-  ProgramStatus = "programStatus",
 }
 
 /**
@@ -122,30 +121,6 @@ export enum ProgramCalculatedDataKey {
  */
 export interface ProgramEvaluationResult {
   [ProgramCalculatedDataKey.FieldOfStudyCode]?: number;
-  [ProgramCalculatedDataKey.ProgramStatus]?: ProgramStatus;
-}
-
-export interface ProgramEvaluationData {
-  credentialType: string;
-  cipCode: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite: FormYesNoOptions;
-  sameOnlineCreditsEarned: FormYesNoOptions;
-  earnAcademicCreditsOtherInstitution: FormYesNoOptions;
-  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
-  minHoursWeek: FormYesNoOptions;
-  entranceRequirements: EntranceRequirements;
-  eslEligibility: ProgramESLPercentage;
-  hasJointInstitution: FormYesNoOptions;
-  hasJointDesignatedInstitution: FormYesNoOptions;
-  hasWILComponent: FormYesNoOptions;
-  isWILApproved: FormYesNoOptions;
-  wilProgramEligibility: FormYesNoOptions;
-  hasTravel: FormYesNoOptions;
-  travelProgramEligibility: FormYesNoOptions;
-  intlExchangeProgramEligibility: FormYesNoOptions;
-  hasIntlExchange: FormYesNoOptions;
-  isAviationProgram: FormYesNoOptions;
 }
 
 export interface ProgramEvaluationContext {

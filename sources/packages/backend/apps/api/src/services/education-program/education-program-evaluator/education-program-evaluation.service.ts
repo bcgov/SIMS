@@ -2,7 +2,6 @@ import { Institution } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EducationProgramFieldOfStudyCodeEvaluator } from "./education-program-field-of-study-code-evaluator";
-import { EducationProgramStatusEvaluator } from "./education-program-status-evaluator";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
 import {
   ProgramEvaluationContext,
@@ -18,12 +17,8 @@ export class EducationProgramEvaluationService {
     @InjectRepository(Institution)
     private readonly institutionRepo: Repository<Institution>,
     educationProgramFieldOfStudyCodeEvaluator: EducationProgramFieldOfStudyCodeEvaluator,
-    educationProgramStatusEvaluator: EducationProgramStatusEvaluator,
   ) {
-    this.evaluators = [
-      educationProgramFieldOfStudyCodeEvaluator,
-      educationProgramStatusEvaluator,
-    ];
+    this.evaluators = [educationProgramFieldOfStudyCodeEvaluator];
   }
   /**
    * Evaluates the education program based on the provided institution ID, calculated data keys, and evaluation data.

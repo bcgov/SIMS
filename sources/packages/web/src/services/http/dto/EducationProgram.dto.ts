@@ -1,14 +1,9 @@
 import {
-  FormYesNoOptions,
   ProgramCalculatedDataKey,
-  ProgramCourseLoadCalculationTypes,
-  ProgramDeliveryTypeValues,
-  ProgramESLPercentage,
   ProgramEvaluationResult,
   ProgramIntensity,
   ProgramStatus,
 } from "@/types";
-import { Expose } from "class-transformer";
 
 /**
  * Values pre-populated into the program data only to execute the
@@ -86,81 +81,6 @@ export interface EducationProgramsSummaryAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
-}
-
-/**
- * Complete program information used to create or
- * update an education program.
- */
-export class EducationProgramAPIInDTO {
-  @Expose()
-  name: string;
-  @Expose()
-  description?: string;
-  @Expose()
-  credentialType: string;
-  @Expose()
-  cipCode: string;
-  @Expose()
-  nocCode?: string;
-  @Expose()
-  sabcCode?: string;
-  @Expose()
-  regulatoryBody: string;
-  @Expose()
-  otherRegulatoryBody?: string;
-  @Expose()
-  programDeliveryTypes: ProgramDeliveryTypeValues[];
-  @Expose()
-  deliveredOnlineAlsoOnsite?: FormYesNoOptions;
-  @Expose()
-  sameOnlineCreditsEarned?: FormYesNoOptions;
-  @Expose()
-  earnAcademicCreditsOtherInstitution?: FormYesNoOptions;
-  @Expose()
-  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
-  @Expose()
-  completionYears: string;
-  @Expose()
-  eslEligibility: ProgramESLPercentage;
-  @Expose()
-  hasJointInstitution: FormYesNoOptions;
-  @Expose()
-  hasJointDesignatedInstitution?: FormYesNoOptions;
-  @Expose()
-  programIntensity: ProgramIntensity;
-  @Expose()
-  institutionProgramCode?: string;
-  @Expose()
-  minHoursWeek?: FormYesNoOptions;
-  @Expose()
-  isAviationProgram: FormYesNoOptions;
-  @Expose()
-  minHoursWeekAvi?: FormYesNoOptions;
-  @Expose()
-  entranceRequirements: string[];
-  @Expose()
-  hasWILComponent: FormYesNoOptions;
-  @Expose()
-  isWILApproved?: FormYesNoOptions;
-  @Expose()
-  wilProgramEligibility?: FormYesNoOptions;
-  @Expose()
-  hasTravel: FormYesNoOptions;
-  @Expose()
-  travelProgramEligibility?: FormYesNoOptions;
-  @Expose()
-  hasIntlExchange: FormYesNoOptions;
-  @Expose()
-  intlExchangeProgramEligibility?: FormYesNoOptions;
-  @Expose()
-  programDeclaration: boolean;
-  @Expose()
-  credentialTypesAviation?: string[];
-  @Expose()
-  isBCPrivate: boolean;
-  @Expose()
-  isBCPublic: boolean;
 }
 
 /**

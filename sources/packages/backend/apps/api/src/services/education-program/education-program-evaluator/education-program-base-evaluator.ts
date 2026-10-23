@@ -1,6 +1,5 @@
 import {
   ProgramEvaluationContext,
-  ProgramEvaluationData,
   ProgramCalculatedDataKey,
 } from "../education-program.service.models";
 
@@ -17,8 +16,5 @@ export abstract class EducationProgramBaseEvaluator<T> {
    * @param data The education program data to be evaluated.
    * @param context The context in which the evaluation is performed.
    */
-  abstract evaluate(
-    data: Partial<ProgramEvaluationData>,
-    context?: ProgramEvaluationContext,
-  ): T;
+  abstract evaluate(data: unknown, context?: ProgramEvaluationContext): T;
 }
