@@ -28,16 +28,7 @@
 </template>
 <script setup lang="ts">
 import { useSnackBar } from "@/composables";
-import {
-  defineProps,
-  defineEmits,
-  withDefaults,
-  computed,
-  nextTick,
-  ref,
-  useTemplateRef,
-  watchEffect,
-} from "vue";
+import { computed, nextTick, ref, useTemplateRef, watchEffect } from "vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import {

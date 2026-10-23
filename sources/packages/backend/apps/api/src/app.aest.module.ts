@@ -152,7 +152,6 @@ import {
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 import {
   EducationProgramFieldOfStudyCodeEvaluator,
-  EducationProgramStatusEvaluator,
   EducationProgramEvaluationService,
 } from "./services/education-program/education-program-evaluator";
 import { EducationProgramDataValidationService } from "./services/education-program/education-program-data-validation.service";
@@ -305,7 +304,6 @@ import { EducationProgramDataValidationService } from "./services/education-prog
     DisabilityProfileService,
     DisabilityProfileControllerService,
     EducationProgramFieldOfStudyCodeEvaluator,
-    EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
   ],
 })
