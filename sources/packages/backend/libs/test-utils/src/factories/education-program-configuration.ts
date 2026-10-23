@@ -2,7 +2,7 @@ import { EducationProgramConfiguration } from "@sims/sims-db";
 import { E2EDataSources } from "../data-source/e2e-data-source";
 import { DataSource } from "typeorm";
 
-export async function getMostRecentEducationProgramConfiguration(options: {
+export function getMostRecentEducationProgramConfiguration(options: {
   db?: E2EDataSources;
   dataSource?: DataSource;
 }): Promise<EducationProgramConfiguration> {

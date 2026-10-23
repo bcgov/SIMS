@@ -477,7 +477,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       scenarioData: {
         cipCode: "12",
       },
-      errorMessage: ['/cipCode must match pattern "^\\d{2}\\.\\d{4}$"'],
+      errorMessage: [String.raw`/cipCode must match pattern "^\d{2}\.\d{4}$"`],
     },
     {
       scenario: "program declaration is not true",
