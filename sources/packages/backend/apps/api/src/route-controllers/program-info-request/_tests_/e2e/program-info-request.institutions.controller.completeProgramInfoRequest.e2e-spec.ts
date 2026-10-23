@@ -30,7 +30,7 @@ import {
 } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { PROGRAM_INFO_STATUS } from "@sims/services/workflow/variables/assessment-gateway";
-import { getPSTPDTDateTime } from "@sims/utilities";
+import { getPCTDateTimeWithTimezone } from "@sims/utilities";
 import { IsNull } from "typeorm";
 
 describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoRequest", () => {
@@ -189,7 +189,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
         template_id: "6975ee6a-f988-4955-9153-127aa551a2a3",
         email_address: application.student.user.email,
         personalisation: {
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
         },
@@ -198,7 +198,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
       recipients: [application.student.user.email],
       messageContent: {
         params: {
-          date: `${getPSTPDTDateTime(now)} PST/PDT`,
+          date: getPCTDateTimeWithTimezone(now),
           givenNames: application.student.user.firstName,
           lastName: application.student.user.lastName,
         },

@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   CASInvoiceBatch,
   CASInvoiceBatchApprovalStatus,
+  CASInvoiceStatus,
   User,
 } from "@sims/sims-db";
 import { In, Repository } from "typeorm";
@@ -15,6 +16,10 @@ import {
   CAS_INVOICE_BATCH_NOT_FOUND,
   CAS_INVOICE_BATCH_NOT_PENDING,
 } from "../../constants";
+import {
+  CASInvoiceBatchDistributionTypeAmount,
+  CASInvoiceStatusCount,
+} from "./cas-invoice-batch.models";
 
 @Injectable()
 export class CASInvoiceBatchService {
@@ -68,9 +73,8 @@ export class CASInvoiceBatchService {
     approvalStatus: CASInvoiceBatchApprovalStatus,
     auditUserId: number,
   ): Promise<void> {
-    const casInvoiceBatch = await this.getCASInvoiceBatchRecord(
-      casInvoiceBatchId,
-    );
+    const casInvoiceBatch =
+      await this.getCASInvoiceBatchRecord(casInvoiceBatchId);
     if (!casInvoiceBatch) {
       throw new CustomNamedError(
         `CAS invoice batch with ID ${casInvoiceBatchId} not found.`,
@@ -94,6 +98,89 @@ export class CASInvoiceBatchService {
         approvalStatusUpdatedOn: new Date(),
       },
     );
+  }
+
+  /**
+   * Checks if the CAS invoice batch exists.
+   * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * @returns true if the CAS invoice batch exists, false otherwise.
+   */
+  checkCASInvoiceBatchExists(casInvoiceBatchId: number): Promise<boolean> {
+    return this.casInvoiceBatchRepo.exists({
+      where: { id: casInvoiceBatchId },
+    });
+  }
+
+  /**
+   * Retrieve the total amounts of a CAS invoice batch for each
+   * distribution type (award code, offering intensity and operation code).
+   * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * @returns total amounts for each distribution type.
+   */
+  async getCASInvoiceBatchDistributionTypeAmounts(
+    casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchDistributionTypeAmount[]> {
+    const distributionTypeAmounts = await this.casInvoiceBatchRepo
+      .createQueryBuilder("casInvoiceBatch")
+      .select("casDistributionAccount.awardValueCode", "awardValueCode")
+      .addSelect(
+        "casDistributionAccount.offeringIntensity",
+        "offeringIntensity",
+      )
+      .addSelect("casDistributionAccount.operationCode", "operationCode")
+      .addSelect("SUM(casInvoiceDetail.valueAmount)", "total")
+      .innerJoin("casInvoiceBatch.casInvoices", "casInvoice")
+      .innerJoin("casInvoice.casInvoiceDetails", "casInvoiceDetail")
+      .innerJoin(
+        "casInvoiceDetail.casDistributionAccount",
+        "casDistributionAccount",
+      )
+      .where("casInvoiceBatch.id = :casInvoiceBatchId", { casInvoiceBatchId })
+      .groupBy("casDistributionAccount.id")
+      .orderBy("casDistributionAccount.awardValueCode")
+      .addOrderBy("casDistributionAccount.offeringIntensity")
+      .addOrderBy("casDistributionAccount.operationCode")
+      .getRawMany<
+        Omit<CASInvoiceBatchDistributionTypeAmount, "total"> & {
+          total: string;
+        }
+      >();
+    // SUM over the numeric valueAmount column is returned by the DB driver
+    // as a string and must be converted to a number.
+    return distributionTypeAmounts.map((distributionTypeAmount) => ({
+      ...distributionTypeAmount,
+      total: +distributionTypeAmount.total,
+    }));
+  }
+
+  /**
+   * Retrieve the count of invoices of a CAS invoice batch for each invoice status.
+   * Every invoice status is returned, including the ones without invoices.
+   * @param casInvoiceBatchId ID of the CAS invoice batch.
+   * @returns count of invoices for each invoice status.
+   */
+  async getCASInvoiceBatchProcessingSummary(
+    casInvoiceBatchId: number,
+  ): Promise<CASInvoiceStatusCount[]> {
+    const invoiceStatusCounts = await this.casInvoiceBatchRepo
+      .createQueryBuilder("casInvoiceBatch")
+      .select("casInvoice.invoiceStatus", "invoiceStatus")
+      .addSelect("COUNT(casInvoice.id)::int", "count")
+      .innerJoin("casInvoiceBatch.casInvoices", "casInvoice")
+      .where("casInvoiceBatch.id = :casInvoiceBatchId", { casInvoiceBatchId })
+      .groupBy("casInvoice.invoiceStatus")
+      .getRawMany<CASInvoiceStatusCount>();
+    // Statuses without invoices are not returned by the query and must be added with zero.
+    const countsByStatus = new Map(
+      invoiceStatusCounts.map(({ invoiceStatus, count }) => [
+        invoiceStatus,
+        count,
+      ]),
+    );
+    return Object.values(CASInvoiceStatus).map((invoiceStatus) => ({
+      invoiceStatus,
+      count: countsByStatus.get(invoiceStatus) ?? 0,
+    }));
   }
 
   /**

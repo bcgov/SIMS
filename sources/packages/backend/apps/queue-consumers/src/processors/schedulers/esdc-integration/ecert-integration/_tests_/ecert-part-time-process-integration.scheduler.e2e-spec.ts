@@ -50,7 +50,7 @@ import {
   addDays,
   getDateOnlyFormat,
   getISODateOnlyString,
-  getPSTPDTDateTime,
+  getPCTDateTimeWithTimezone,
 } from "@sims/utilities";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { PartTimeECertProcessIntegrationScheduler } from "../ecert-part-time-process-integration.scheduler";
@@ -1938,7 +1938,7 @@ describe(
             email_address: MINISTRY_NOTIFICATION_EMAIL,
             template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
             personalisation: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
               birthDate: getDateOnlyFormat(student.birthDate),
@@ -1952,7 +1952,7 @@ describe(
           recipients: [MINISTRY_NOTIFICATION_EMAIL],
           messageContent: {
             params: {
-              dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+              dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
               givenNames: student.user.firstName,
               birthDate: getDateOnlyFormat(student.birthDate),

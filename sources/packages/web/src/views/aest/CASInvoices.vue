@@ -50,6 +50,7 @@
           :toggled="!paginatedBatches.count && !invoiceBatchesLoading"
         >
           <v-data-table-server
+            :mobile="isMobile"
             :headers="CASInvoicesBatchesHeaders"
             :items="paginatedBatches.results"
             :items-length="paginatedBatches.count"
@@ -57,6 +58,7 @@
             :items-per-page-options="ITEMS_PER_PAGE"
             :loading="invoiceBatchesLoading"
             @update:options="pageSortEvent"
+            v-model:expanded="expandedBatchIds"
           >
             <template #[`item.batchDate`]="{ item }">
               {{ getISODateHourMinuteString(item.batchDate) }}
@@ -122,6 +124,37 @@
                 </template>
               </check-permission-role>
             </template>
+            <template
+              #[`item.data-table-expand`]="{
+                internalItem,
+                isExpanded,
+                toggleExpand,
+              }"
+            >
+              <v-btn
+                :aria-expanded="isExpanded(internalItem)"
+                :append-icon="
+                  isExpanded(internalItem)
+                    ? '$expanderCollapseIcon'
+                    : '$expanderExpandIcon'
+                "
+                text="Details"
+                variant="text"
+                color="primary"
+                @click="toggleExpand(internalItem)"
+              ></v-btn>
+            </template>
+            <template #expanded-row="{ columns, item }">
+              <tr>
+                <td :colspan="columns.length" class="py-4">
+                  <content-group>
+                    <c-a-s-invoice-batch-summary-totals
+                      :cas-invoice-batch-id="item.id"
+                    />
+                  </content-group>
+                </td>
+              </tr>
+            </template>
           </v-data-table-server>
         </toggle-content>
       </content-group>
@@ -165,9 +198,11 @@ import {
   DataTableSortByOrder,
 } from "@/types";
 import { defineComponent, onMounted, ref } from "vue";
+import { useDisplay } from "vuetify";
 import StatusInvoiceBatchApproval from "@/components/generic/StatusInvoiceBatchApproval.vue";
 import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
 import CASManualIntervention from "@/components/aest/CASManualIntervention.vue";
+import CASInvoiceBatchSummaryTotals from "@/components/aest/CASInvoiceBatchSummaryTotals.vue";
 
 const DEFAULT_SORT_FIELD = "batchDate";
 const ApprovalStatusFilter = {
@@ -186,13 +221,19 @@ export default defineComponent({
     StatusInvoiceBatchApproval,
     ConfirmModal,
     CASManualIntervention,
+    CASInvoiceBatchSummaryTotals,
   },
   setup() {
     const snackBar = useSnackBar();
+    const { mobile: isMobile } = useDisplay();
     const { dateOnlyLongString, getISODateHourMinuteString } = useFormatters();
     const approveBatchModal = ref({} as ModalDialog<boolean>);
     const rejectBatchModal = ref({} as ModalDialog<boolean>);
     const invoiceBatchesLoading = ref(false);
+    /**
+     * IDs of the batches with expanded details.
+     */
+    const expandedBatchIds = ref<number[]>([]);
     /**
      * Pagination with batch invoices and the total available.
      */
@@ -217,6 +258,8 @@ export default defineComponent({
     const loadInvoiceBatches = async () => {
       try {
         invoiceBatchesLoading.value = true;
+        // Reset expanded batches when fetching new data.
+        expandedBatchIds.value = [];
         paginatedBatches.value =
           await CASInvoiceBatchService.shared.getInvoiceBatches({
             ...currentPagination,
@@ -305,6 +348,7 @@ export default defineComponent({
     };
 
     return {
+      isMobile,
       DEFAULT_PAGE_LIMIT,
       ITEMS_PER_PAGE,
       Role,
@@ -312,6 +356,7 @@ export default defineComponent({
       dateOnlyLongString,
       getISODateHourMinuteString,
       invoiceBatchesLoading,
+      expandedBatchIds,
       paginatedBatches,
       downloadBatch,
       pageSortEvent,

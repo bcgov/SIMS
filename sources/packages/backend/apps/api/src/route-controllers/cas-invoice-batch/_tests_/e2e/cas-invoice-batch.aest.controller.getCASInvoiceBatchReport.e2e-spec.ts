@@ -21,7 +21,7 @@ import {
   OfferingIntensity,
   SupplierStatus,
 } from "@sims/sims-db";
-import { getPSTPDTDateTime } from "@sims/utilities";
+import { getPCTDateTime } from "@sims/utilities";
 
 describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
   let app: INestApplication;
@@ -146,7 +146,7 @@ describe("CASInvoiceBatchAESTController(e2e)-getCASInvoiceBatchReport", () => {
         .application.student;
     const fullTimeDocumentNumber =
       fullTimeInvoice.disbursementReceipt.disbursementSchedule.documentNumber.toString();
-    const fullTimeGLDate = getPSTPDTDateTime(fullTimeInvoice.dateSent);
+    const fullTimeGLDate = getPCTDateTime(fullTimeInvoice.dateSent);
     // Part-time related variables.
     const partTimeStudent =
       partTimeInvoice.disbursementReceipt.disbursementSchedule.studentAssessment

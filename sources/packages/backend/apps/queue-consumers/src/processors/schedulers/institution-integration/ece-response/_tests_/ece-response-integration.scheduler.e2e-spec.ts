@@ -7,7 +7,7 @@ import {
   addDays,
   formatDate,
   getISODateOnlyString,
-  getPSTPDTDateTime,
+  getPCTDateTimeWithTimezone,
 } from "@sims/utilities";
 import {
   createTestingAppModule,
@@ -1893,7 +1893,7 @@ describe(
       );
       const unknownDisbursementWarning =
         "Disbursement schedule not found for disbursement value ID: 1119353191, record at line 3 skipped.";
-      const expectedNotificationDate = `${getPSTPDTDateTime(mockedDate)} PST/PDT`;
+      const expectedNotificationDate = getPCTDateTimeWithTimezone(mockedDate);
       const expectedMessageContents = [
         createExpectedMessageContent(
           locationCONF.institutionCode,

@@ -31,6 +31,7 @@ import {
 } from "../../services";
 import {
   CASInvoiceBatchAPIOutDTO,
+  CASInvoiceBatchSummaryTotalsAPIOutDTO,
   UpdateCASInvoiceBatchAPIInDTO,
 } from "./models/cas-invoice-batch.dto";
 import { getUserFullName } from "../../utilities";
@@ -120,6 +121,57 @@ export class CASInvoiceBatchAESTController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Summary totals of a CAS invoice batch, including the count of invoices
+   * for each invoice status and the total amounts for each distribution type.
+   * @param casInvoiceBatchId batch ID to have the summary totals retrieved for.
+   * @returns batch processing summary and distribution type amounts.
+   */
+  @Roles(Role.AESTCASInvoicing)
+  @Get(":casInvoiceBatchId/summary-totals")
+  @ApiNotFoundResponse({ description: "CAS invoice batch not found." })
+  async getCASInvoiceBatchSummaryTotals(
+    @Param("casInvoiceBatchId", ParseIntPipe) casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchSummaryTotalsAPIOutDTO> {
+    const casInvoiceBatchExists =
+      await this.casInvoiceBatchService.checkCASInvoiceBatchExists(
+        casInvoiceBatchId,
+      );
+    if (!casInvoiceBatchExists) {
+      throw new NotFoundException(
+        `CAS invoice batch with ID ${casInvoiceBatchId} not found.`,
+      );
+    }
+    const [invoiceStatusCounts, distributionTypeAmounts] = await Promise.all([
+      this.casInvoiceBatchService.getCASInvoiceBatchProcessingSummary(
+        casInvoiceBatchId,
+      ),
+      this.casInvoiceBatchService.getCASInvoiceBatchDistributionTypeAmounts(
+        casInvoiceBatchId,
+      ),
+    ]);
+    return {
+      processingSummary: {
+        totalInvoices: invoiceStatusCounts.reduce(
+          (total, { count }) => total + count,
+          0,
+        ),
+        invoiceStatusCounts: invoiceStatusCounts.map((invoiceStatusCount) => ({
+          invoiceStatus: invoiceStatusCount.invoiceStatus,
+          count: invoiceStatusCount.count,
+        })),
+      },
+      distributionTypeAmounts: distributionTypeAmounts.map(
+        (distributionTypeAmount) => ({
+          awardValueCode: distributionTypeAmount.awardValueCode,
+          offeringIntensity: distributionTypeAmount.offeringIntensity,
+          operationCode: distributionTypeAmount.operationCode,
+          total: distributionTypeAmount.total,
+        }),
+      ),
+    };
   }
 
   /**

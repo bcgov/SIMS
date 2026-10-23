@@ -37,7 +37,7 @@ describe("InstitutionUserInstitutionsController(e2e)-updateUserStatus", () => {
     userService = (module as TestingModule).get(UserService);
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
-      InstitutionTokenTypes.CollegeFUser,
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
     );
     collegeFInstitution = collegeF;
     institutionUserRole = await db.institutionUserTypeAndRole.findOne({
@@ -58,7 +58,9 @@ describe("InstitutionUserInstitutionsController(e2e)-updateUserStatus", () => {
     );
     await db.institutionUserAuth.save(institutionUserAuth);
     const { userName } = institutionUser.user;
-    const token = await getInstitutionToken(InstitutionTokenTypes.CollegeFUser);
+    const token = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFAdminLegalSigningUser,
+    );
     const endpoint = getEndpoint(institutionUser.id);
 
     // Act/Assert
