@@ -17,10 +17,12 @@ import {
   createFakeStudentAppeal,
   createFakeUser,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   InstitutionLocation,
   OfferingStatus,
@@ -37,11 +39,14 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   let savedUser: User;
   let precedingOffering: EducationProgramOffering;
   let requestedOffering: EducationProgramOffering;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -58,9 +63,11 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   beforeEach(async () => {
     precedingOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     requestedOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     precedingOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
     requestedOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
@@ -100,6 +107,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Arrange
     const offeringNoPrecedingOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     offeringNoPrecedingOffering.offeringStatus =
       OfferingStatus.ChangeAwaitingApproval;

@@ -2,6 +2,7 @@ import {
   ApplicationData,
   ApplicationStatus,
   EducationProgram,
+  EducationProgramConfiguration,
   NoteType,
   ProgramInfoStatus,
 } from "@sims/sims-db";
@@ -11,6 +12,7 @@ import {
   createFakeUser,
   E2EDataSources,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import { APPLICATION_NOT_FOUND } from "../../../../constants";
 import {
@@ -36,10 +38,13 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
   let db: E2EDataSources;
   let programInfoRequestController: ProgramInfoRequestController;
   let systemUsersService: SystemUsersService;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     programInfoRequestController = nestApplication.get(
       ProgramInfoRequestController,
     );
@@ -56,6 +61,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
     const fakeApplication = await saveFakeApplication(db.dataSource);
@@ -105,6 +111,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
     // Save a previous application version with an approved PIR.
@@ -235,6 +242,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
     // Create a new version of the previous application to have the PIR approved.
@@ -311,6 +319,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
     // Save a previous application version with an approved PIR and different hash.
@@ -406,6 +415,7 @@ describe("ProgramInfoRequestController(e2e)-programInfoRequestUpdate", () => {
     const savedUser = await db.user.save(createFakeUser());
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const savedOffering = await db.educationProgramOffering.save(fakeOffering);
     const fakeApplication = await saveFakeApplication(db.dataSource);

@@ -16,10 +16,12 @@ import {
   saveFakeApplicationDisbursements,
   createFakeEducationProgramOffering,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   ApplicationOfferingChangeRequestStatus,
   ApplicationStatus,
+  EducationProgramConfiguration,
   InstitutionLocation,
   OfferingIntensity,
 } from "@sims/sims-db";
@@ -35,11 +37,14 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
   let collegeFLocation: InstitutionLocation;
   let institutionUserToken: string;
   let endpoint: string;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -85,6 +90,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with full time intensity.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to the program year.
@@ -217,6 +223,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with full time intensity that overlaps with student existing offering.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that overlaps with student existing application offering.
@@ -280,6 +287,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with part time intensity.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
       institutionLocation: collegeFLocation,
     });
     fakeOffering.offeringIntensity = OfferingIntensity.partTime;
@@ -328,6 +336,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with full time intensity.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to a future(different) program year.
@@ -375,6 +384,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with full time intensity in different location.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
 
     await db.educationProgramOffering.save(fakeOffering);
@@ -413,6 +423,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with full time intensity in different location.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
 
     await db.educationProgramOffering.save(fakeOffering);
@@ -460,6 +471,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     // New offering with full time intensity.
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
       institutionLocation: collegeFLocation,
     });
     // Updating study period, that belongs to the program year.
@@ -515,6 +527,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     const newOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institutionLocation: collegeFLocation,
       },
       { programInitialValues: { isActive: false } },
@@ -566,6 +579,7 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
     const newOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institutionLocation: collegeFLocation,
       },
       {

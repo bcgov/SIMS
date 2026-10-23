@@ -32,6 +32,7 @@ import {
   createFakeInstitutionLocation,
   createFakeStudentAssessment,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "..";
 import { createFakeProgramYear } from "./program-year";
 import { createFakeStudent } from "./student";
@@ -386,10 +387,13 @@ export async function saveFakeApplication(
   // Offering.
   let savedOffering = relations?.offering;
   if (!savedOffering && options?.pirStatus !== ProgramInfoStatus.required) {
+    const programConfiguration =
+      await getMostRecentEducationProgramConfiguration({ dataSource });
     const fakeOffering = createFakeEducationProgramOffering(
       {
         institution: relations?.institution,
         institutionLocation: relations?.institutionLocation,
+        programConfiguration,
         program: relations?.program,
         auditUser: savedUser,
       },

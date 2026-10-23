@@ -13,12 +13,14 @@ import {
   createFakeStudentAssessment,
   E2EDataSources,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   Application,
   ApplicationData,
   ApplicationStatus,
   AssessmentTriggerType,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   OfferingIntensity,
   ProgramInfoStatus,
@@ -29,11 +31,14 @@ import { addDays, getISODateOnlyString } from "@sims/utilities";
 describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
   });
 
   it("Should get the student application details when the optional query parameter to load dynamic data is not passed.", async () => {
@@ -334,6 +339,7 @@ describe("ApplicationAESTController(e2e)-getApplicationDetails", () => {
     // so a subsequent reassessment with a new offering must not affect the PIR summary.
     const differentOffering = createFakeEducationProgramOffering({
       auditUser: application.student.user,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     differentOffering.parentOffering = differentOffering;
     const savedDifferentOffering =

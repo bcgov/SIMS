@@ -48,6 +48,8 @@ import {
   FormSubmissionUpdateModifiedIndependentOnDecisionAction,
   FormSubmissionUpdateModifiedIndependentOnCancelAction,
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
+  EducationProgramSaveService,
+  EducationProgramDataValidationService,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -116,7 +118,6 @@ import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 import {
   EducationProgramEvaluationService,
   EducationProgramFieldOfStudyCodeEvaluator,
-  EducationProgramStatusEvaluator,
 } from "./services/education-program/education-program-evaluator";
 
 @Module({
@@ -178,6 +179,8 @@ import {
     COEDeniedReasonService,
     InstitutionTypeService,
     EducationProgramService,
+    EducationProgramDataValidationService,
+    EducationProgramSaveService,
     EducationProgramOfferingService,
     PIRDeniedReasonService,
     EducationProgramControllerService,
@@ -230,7 +233,6 @@ import {
     FormSubmissionCancellationService,
     FormSubmissionControllerService,
     EducationProgramFieldOfStudyCodeEvaluator,
-    EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
   ],
 })

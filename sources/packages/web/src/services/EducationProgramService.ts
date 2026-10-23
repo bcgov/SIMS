@@ -6,17 +6,20 @@ import {
 import ApiClient from "@/services/http/ApiClient";
 import {
   ApproveProgramAPIInDTO,
+  CreateEducationProgramAPIInDTO,
   DeactivateProgramAPIInDTO,
   DeclineProgramAPIInDTO,
-  EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
+  PrimaryIdentifierAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
   StudentEducationProgramAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "@/services/http/dto";
 import { useFormatters } from "@/composables";
 
@@ -83,6 +86,20 @@ export class EducationProgramService {
   }
 
   /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration. If not provided,
+   * the most recent active configuration is returned.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  async getEducationProgramConfiguration(
+    programConfigurationId?: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramConfiguration(
+      programConfigurationId,
+    );
+  }
+
+  /**
    * Get the education program information.
    * @param programId program id.
    * @returns programs information.
@@ -99,19 +116,19 @@ export class EducationProgramService {
    * @returns id of the created program.
    */
   async createEducationProgram(
-    payload: EducationProgramAPIInDTO,
-  ): Promise<void> {
-    await ApiClient.EducationProgram.createEducationProgram(payload);
+    payload: CreateEducationProgramAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.EducationProgram.createEducationProgram(payload);
   }
 
   /**
-   * Updates the main information for an existing education program.
+   * Updates an existing education program.
    * @param programId program to be updated.
    * @param payload information to be updated.
    */
   async updateEducationProgram(
     programId: number,
-    payload: EducationProgramAPIInDTO,
+    payload: UpdateEducationProgramAPIInDTO,
   ): Promise<void> {
     await ApiClient.EducationProgram.updateEducationProgram(programId, payload);
   }

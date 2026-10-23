@@ -5,6 +5,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   InstitutionType,
@@ -26,6 +27,7 @@ import {
   saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
@@ -59,6 +61,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
   let programYear: ProgramYear;
   let institutionUser: User;
   let sharedStudent: Student;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
   const PROGRAM_YEAR_PREFIX = 2010;
   const bcPublicInstitutionType = {
     id: INSTITUTION_TYPE_BC_PUBLIC,
@@ -70,6 +73,8 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
     app = nestApplication;
     appModule = module;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     // College F.
     ({ institution: collegeF, user: institutionUser } =
       await getAuthRelatedEntities(
@@ -116,6 +121,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         auditUser: institutionUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );
@@ -127,6 +133,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institution: collegeF,
         institutionLocation: collegeFLocation,
         auditUser: institutionUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {
@@ -156,6 +163,7 @@ describe("ReportInstitutionsController(e2e)-exportReport", () => {
         institution: collegeC,
         institutionLocation: collegeCLocation,
         auditUser: institutionUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       { initialValues: { studyStartDate: "2010-09-01" } },
     );

@@ -2,29 +2,52 @@ import { faker } from "@faker-js/faker";
 import { ProgramIntensity, FormYesNoOptions } from "@sims/sims-db";
 import { OTHER_REGULATORY_BODY } from "../../../../services/education-program/constants";
 import {
-  ProgramDeliveryTypeValues,
+  EducationProgramDynamicData,
+  EntranceRequirementValues,
   ProgramCourseLoadCalculationTypes,
+  ProgramDeliveryTypeValues,
   ProgramESLPercentage,
-} from "../../../../services/education-program/education-program.service.models";
-import { EducationProgramAPIInDTO } from "../../models/education-program.dto";
+} from "../../../../services";
+import {
+  CreateEducationProgramAPIInDTO,
+  UpdateEducationProgramAPIInDTO,
+} from "../../models/education-program.dto";
 
-/**
- * Returns a payload with the passed sabcCode.
- * @param options options to customize the payload
- * - `sabcCode` SABC code.
- */
 export function getPayload(options?: {
-  sabcCode?: string;
-}): EducationProgramAPIInDTO {
+  appendedProgramData?: { [key: string]: unknown };
+}): UpdateEducationProgramAPIInDTO & {
+  programData: EducationProgramDynamicData;
+} {
   return {
-    name: faker.lorem.words(5),
-    description: faker.lorem.words(5),
+    programData: getProgramDataPayload(options),
+  };
+}
+
+export function getCreationPayload(
+  programConfigurationId: number,
+  options?: {
+    appendedProgramData?: { [key: string]: unknown };
+  },
+): CreateEducationProgramAPIInDTO & {
+  programData: EducationProgramDynamicData;
+} {
+  return {
+    programConfigurationId,
+    programData: getProgramDataPayload(options),
+  };
+}
+
+export function getProgramDataPayload(options?: {
+  appendedProgramData?: { [key: string]: unknown };
+}): EducationProgramDynamicData {
+  return {
+    programName: faker.lorem.words(5),
+    programDescription: faker.lorem.words(5),
     credentialType: "undergraduateCertificate",
     cipCode: "11.1111",
     nocCode: "21740",
-    sabcCode:
-      options?.sabcCode ??
-      `${faker.string.alpha({ length: 3, casing: "upper" })}1`,
+    fieldOfStudyCode: 15,
+    sabcCode: `${faker.string.alpha({ length: 3, casing: "upper" })}1`,
     institutionProgramCode: faker.string.alpha({
       length: 3,
       casing: "upper",
@@ -36,10 +59,10 @@ export function getPayload(options?: {
     regulatoryBody: OTHER_REGULATORY_BODY,
     otherRegulatoryBody: "Other RB test",
     entranceRequirements: [
-      "minHighSchool",
-      "hasMinimumAge",
-      "requirementsByInstitution",
-      "requirementsByBCITA",
+      EntranceRequirementValues.MinHighSchool,
+      EntranceRequirementValues.HasMinimumAge,
+      EntranceRequirementValues.RequirementsByInstitution,
+      EntranceRequirementValues.RequirementsByBCITA,
     ],
     isAviationProgram: FormYesNoOptions.No,
     eslEligibility: ProgramESLPercentage.LessThan20,
@@ -48,7 +71,6 @@ export function getPayload(options?: {
     hasTravel: FormYesNoOptions.No,
     hasIntlExchange: FormYesNoOptions.No,
     programDeclaration: true,
-    isBCPublic: true,
-    isBCPrivate: false,
+    ...options?.appendedProgramData,
   };
 }

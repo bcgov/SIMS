@@ -1,5 +1,4 @@
 import { EducationProgramFieldOfStudyCodeEvaluator } from "../../education-program-field-of-study-code-evaluator";
-import { ProgramEvaluationData } from "../../../education-program.service.models";
 
 describe("EducationProgramFieldOfStudyCodeEvaluator-evaluate", () => {
   const evaluator = new EducationProgramFieldOfStudyCodeEvaluator();
@@ -47,7 +46,7 @@ describe("EducationProgramFieldOfStudyCodeEvaluator-evaluate", () => {
   testData.forEach(({ data, expectedResult }) => {
     it(`Should return ${expectedResult} when credential type is ${data.credentialType ?? "not provided"} and CIP code is ${data.cipCode ?? "not provided"}.`, () => {
       // Act
-      const result = evaluator.evaluate(data as Partial<ProgramEvaluationData>);
+      const result = evaluator.evaluate(data);
 
       // Assert
       expect(result).toBe(expectedResult);

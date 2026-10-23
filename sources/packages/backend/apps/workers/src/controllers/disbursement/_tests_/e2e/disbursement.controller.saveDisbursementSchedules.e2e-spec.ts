@@ -7,6 +7,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   DisbursementValueType,
+  EducationProgramConfiguration,
   OfferingIntensity,
   User,
 } from "@sims/sims-db";
@@ -21,6 +22,7 @@ import {
   E2EDataSources,
   saveFakeApplication,
   saveFakeApplicationDisbursements,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import { createFakeDisbursementSchedule } from "@sims/test-utils/factories/disbursement-schedule";
 import { createFakeDisbursementValue } from "@sims/test-utils/factories/disbursement-value";
@@ -38,10 +40,13 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
   let db: E2EDataSources;
   let disbursementController: DisbursementController;
   let systemUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     disbursementController = nestApplication.get(DisbursementController);
     systemUser = nestApplication.get(SystemUsersService).systemUser;
   });
@@ -113,7 +118,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     ];
     // Reassessment.
     const savedOffering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: savedUser }),
+      createFakeEducationProgramOffering({
+        auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const fakeReassessment = createFakeStudentAssessment({
       auditUser: savedUser,

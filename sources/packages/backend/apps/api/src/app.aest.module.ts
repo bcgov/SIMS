@@ -9,6 +9,7 @@ import {
   DesignationAgreementLocationService,
   EducationProgramOfferingService,
   EducationProgramService,
+  EducationProgramSaveService,
   InstitutionService,
   BCeIDService,
   UserService,
@@ -58,6 +59,7 @@ import {
   FormSubmissionUpdateDisabilityOnCancelAction,
   DisabilityProfileService,
   FormSubmissionCancellationService,
+  EducationProgramDataValidationService,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -151,7 +153,6 @@ import {
 import { ECertIntegrationModule } from "@sims/integrations/esdc-integration";
 import {
   EducationProgramFieldOfStudyCodeEvaluator,
-  EducationProgramStatusEvaluator,
   EducationProgramEvaluationService,
 } from "./services/education-program/education-program-evaluator";
 
@@ -209,6 +210,8 @@ import {
     DesignationAgreementLocationService,
     EducationProgramOfferingService,
     EducationProgramService,
+    EducationProgramSaveService,
+    EducationProgramDataValidationService,
     InstitutionService,
     BCeIDService,
     UserService,
@@ -301,7 +304,6 @@ import {
     DisabilityProfileService,
     DisabilityProfileControllerService,
     EducationProgramFieldOfStudyCodeEvaluator,
-    EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
   ],
 })

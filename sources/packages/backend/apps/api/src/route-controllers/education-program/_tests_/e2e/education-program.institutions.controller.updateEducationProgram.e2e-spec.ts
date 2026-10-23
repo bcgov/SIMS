@@ -1,9 +1,17 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { Institution, User } from "@sims/sims-db";
-import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  User,
+} from "@sims/sims-db";
+import {
+  E2EDataSources,
+  createE2EDataSources,
+  createFakeEducationProgram,
+  getMostRecentEducationProgramConfiguration,
+} from "@sims/test-utils";
 import {
   BEARER_AUTH_TYPE,
-  createFakeEducationProgram,
   createTestingAppModule,
   getAuthRelatedEntities,
   getInstitutionToken,
@@ -18,11 +26,14 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
   let db: E2EDataSources;
   let collegeF: Institution;
   let collegeFUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -39,7 +50,8 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
     // Arrange
     const program = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
     const payload = getPayload();
@@ -95,35 +107,36 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
       loadEagerRelations: false,
     });
 
+    const { programData } = payload;
     expect(updatedProgram).toEqual({
       id: program.id,
-      name: payload.name,
-      description: payload.description,
-      credentialType: payload.credentialType,
-      cipCode: payload.cipCode,
+      name: programData.programName,
+      description: programData.programDescription,
+      credentialType: programData.credentialType,
+      cipCode: programData.cipCode,
       fieldOfStudyCode: 15,
-      nocCode: payload.nocCode,
-      sabcCode: payload.sabcCode,
-      institutionProgramCode: payload.institutionProgramCode,
-      programIntensity: payload.programIntensity,
+      nocCode: programData.nocCode,
+      sabcCode: programData.sabcCode,
+      institutionProgramCode: programData.institutionProgramCode,
+      programIntensity: programData.programIntensity,
       deliveredOnSite: true,
       deliveredOnline: false,
       deliveredOnlineAlsoOnsite: null,
-      completionYears: payload.completionYears,
-      courseLoadCalculation: payload.courseLoadCalculation,
-      regulatoryBody: payload.regulatoryBody,
-      otherRegulatoryBody: payload.otherRegulatoryBody,
+      completionYears: programData.completionYears,
+      courseLoadCalculation: programData.courseLoadCalculation,
+      regulatoryBody: programData.regulatoryBody,
+      otherRegulatoryBody: programData.otherRegulatoryBody,
       minHighSchool: true,
       hasMinimumAge: true,
       requirementsByInstitution: true,
       requirementsByBCITA: true,
       noneOfTheAboveEntranceRequirements: false,
-      isAviationProgram: payload.isAviationProgram,
-      eslEligibility: payload.eslEligibility,
-      hasJointInstitution: payload.hasJointInstitution,
-      hasWILComponent: payload.hasWILComponent,
-      hasTravel: payload.hasTravel,
-      hasIntlExchange: payload.hasIntlExchange,
+      isAviationProgram: programData.isAviationProgram,
+      eslEligibility: programData.eslEligibility,
+      hasJointInstitution: programData.hasJointInstitution,
+      hasWILComponent: programData.hasWILComponent,
+      hasTravel: programData.hasTravel,
+      hasIntlExchange: programData.hasIntlExchange,
       programDeclaration: true,
       updatedAt: now,
       modifier: { id: collegeFUser.id },

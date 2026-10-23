@@ -1,11 +1,15 @@
 import { Injectable } from "@nestjs/common";
-import {
-  ProgramCalculatedDataKey,
-  ProgramEvaluationData,
-} from "../education-program.service.models";
+import { ProgramCalculatedDataKey } from "../education-program.service.models";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
-
 const DEFAULT_FIELD_OF_STUDY_CODE = 20;
+
+/**
+ * Data required to evaluate the field of study code.
+ */
+interface FieldOfStudyCodeEvaluationData {
+  cipCode: string;
+  credentialType: string;
+}
 
 /**
  * Evaluator for determining the field of study code based on program evaluation data.
@@ -22,17 +26,38 @@ export class EducationProgramFieldOfStudyCodeEvaluator extends EducationProgramB
    * @param data Partial program evaluation data.
    * @returns Field of study code based on the evaluation data.
    */
-  evaluate(data: Partial<ProgramEvaluationData>): number {
-    if (!data.cipCode || !data.credentialType) {
+  evaluate(data: unknown): number {
+    if (!this.hasRequiredData(data)) {
       return DEFAULT_FIELD_OF_STUDY_CODE;
     }
-    const sabcCode = this.getSABCCodes()[data.cipCode.substring(0, 2)];
-    const levelOfStudyCode = this.getLevelOfStudyCodes()[data.credentialType];
+    const { cipCode, credentialType } = data;
+    const sabcCode = this.getSABCCodes()[cipCode.substring(0, 2)];
+    const levelOfStudyCode = this.getLevelOfStudyCodes()[credentialType];
     const fieldOfStudyCode =
       !!sabcCode && !!levelOfStudyCode
         ? this.getFieldOfStudyCodes()[`${sabcCode}${levelOfStudyCode}`]
         : DEFAULT_FIELD_OF_STUDY_CODE;
     return fieldOfStudyCode;
+  }
+
+  /**
+   * Checks if the data contains the information required to evaluate the field of study code.
+   * @param data Dynamic program data.
+   * @returns True if the required data is present and valid, otherwise false.
+   */
+  private hasRequiredData(
+    data: unknown,
+  ): data is FieldOfStudyCodeEvaluationData {
+    if (!data || typeof data !== "object") {
+      return false;
+    }
+    const { cipCode, credentialType } = data as Record<string, unknown>;
+    return (
+      typeof cipCode === "string" &&
+      !!cipCode &&
+      typeof credentialType === "string" &&
+      !!credentialType
+    );
   }
 
   /**

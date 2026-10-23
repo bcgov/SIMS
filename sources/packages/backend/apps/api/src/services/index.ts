@@ -82,3 +82,6 @@ export * from "./student-appeal/student-appeal-assessment";
 export * from "./msfaa-number/msfaa-number.service";
 export * from "./disability-profile/disability-profile.models";
 export * from "./disability-profile/disability-profile.service";
+export * from "./education-program/education-program-save.models";
+export * from "./education-program/education-program-save.service";
+export * from "./education-program/education-program-data-validation.service";

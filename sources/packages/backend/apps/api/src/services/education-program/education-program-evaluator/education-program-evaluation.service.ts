@@ -2,12 +2,10 @@ import { Institution } from "@sims/sims-db";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { EducationProgramFieldOfStudyCodeEvaluator } from "./education-program-field-of-study-code-evaluator";
-import { EducationProgramStatusEvaluator } from "./education-program-status-evaluator";
 import { EducationProgramBaseEvaluator } from "./education-program-base-evaluator";
 import {
   ProgramEvaluationContext,
   ProgramCalculatedDataKey,
-  ProgramEvaluationData,
   ProgramEvaluationResult,
 } from "../education-program.service.models";
 import { Injectable } from "@nestjs/common";
@@ -19,12 +17,8 @@ export class EducationProgramEvaluationService {
     @InjectRepository(Institution)
     private readonly institutionRepo: Repository<Institution>,
     educationProgramFieldOfStudyCodeEvaluator: EducationProgramFieldOfStudyCodeEvaluator,
-    educationProgramStatusEvaluator: EducationProgramStatusEvaluator,
   ) {
-    this.evaluators = [
-      educationProgramFieldOfStudyCodeEvaluator,
-      educationProgramStatusEvaluator,
-    ];
+    this.evaluators = [educationProgramFieldOfStudyCodeEvaluator];
   }
   /**
    * Evaluates the education program based on the provided institution ID, calculated data keys, and evaluation data.
@@ -36,7 +30,7 @@ export class EducationProgramEvaluationService {
   async evaluate(
     institutionId: number,
     calculatedDataKeys: ProgramCalculatedDataKey[],
-    data: Partial<ProgramEvaluationData>,
+    data: unknown,
   ): Promise<ProgramEvaluationResult> {
     const institution = await this.institutionRepo.findOne({
       select: { id: true, institutionType: { id: true } },

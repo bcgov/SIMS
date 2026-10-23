@@ -52,7 +52,6 @@ import { AuthModule } from "./auth/auth.module";
 import {
   EducationProgramEvaluationService,
   EducationProgramFieldOfStudyCodeEvaluator,
-  EducationProgramStatusEvaluator,
 } from "./services/education-program/education-program-evaluator";
 
 @Module({
@@ -100,7 +99,6 @@ import {
     SupportingUserControllerService,
     InstitutionRestrictionService,
     EducationProgramFieldOfStudyCodeEvaluator,
-    EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
   ],
 })

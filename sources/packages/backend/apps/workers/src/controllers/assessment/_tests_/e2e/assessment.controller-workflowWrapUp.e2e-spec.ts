@@ -8,6 +8,7 @@ import {
   saveFakeApplication,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   FakeWorkerJobResult,
@@ -22,6 +23,7 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
+  EducationProgramConfiguration,
   OfferingIntensity,
   StudentAssessment,
   StudentAssessmentStatus,
@@ -46,10 +48,13 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
   let workflowClientService: WorkflowClientService;
   let now: Date;
   let auditUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     assessmentController = nestApplication.get(AssessmentController);
     systemUsersService = nestApplication.get(SystemUsersService);
     studentAssessmentService = nestApplication.get(StudentAssessmentService);
@@ -1072,7 +1077,11 @@ describe("AssessmentController(e2e)-workflowWrapUp", () => {
     },
   ): Promise<StudentAssessment> {
     const updatedOffering = createFakeEducationProgramOffering(
-      { auditUser, institutionLocation: savedApplication.location },
+      {
+        auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
+        institutionLocation: savedApplication.location,
+      },
       {
         initialValues: {
           studyStartDate: options?.studyStartDate,
