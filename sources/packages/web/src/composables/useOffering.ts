@@ -35,6 +35,24 @@ export function useOffering() {
   };
 
   /**
+   * Maps the offering intensity to its abbreviated string representation.
+   * @param offeringIntensity intensity of the offering.
+   * @returns abbreviated string representation of the offering intensity.
+   */
+  const mapOfferingIntensityAbbreviation = (
+    offeringIntensity: OfferingIntensity,
+  ): string => {
+    switch (offeringIntensity) {
+      case OfferingIntensity.partTime:
+        return "PT";
+      case OfferingIntensity.fullTime:
+        return "FT";
+      default:
+        return offeringIntensity;
+    }
+  };
+
+  /**
    * Maps the offering intensities to an user friendly string representation.
    * @param allowFullTime flag to allow full time offering intensity.
    * @param hasFulltimeAccess flag to indicate if the user has full-time access.
@@ -65,5 +83,6 @@ export function useOffering() {
     mapOfferingChipStatus,
     mapOfferingIntensities,
     mapOfferingIntensity,
+    mapOfferingIntensityAbbreviation,
   };
 }

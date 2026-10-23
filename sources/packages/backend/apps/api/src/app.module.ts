@@ -143,8 +143,7 @@ export class AppModule implements NestModule, OnModuleInit {
   configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(AccessLoggerMiddleware)
-      .exclude("health")
-      .exclude("metrics")
+      .exclude("health/{*path}", "metrics")
       .forRoutes("*");
     // Allow the configuration of the body parser for individual routes.
     consumer

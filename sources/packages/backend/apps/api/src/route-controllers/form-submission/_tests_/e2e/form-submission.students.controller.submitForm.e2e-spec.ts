@@ -44,7 +44,7 @@ import {
 import MockDate from "mockdate";
 import {
   getDateOnlyFormat,
-  getPSTPDTDateTime,
+  getPCTDateTimeWithTimezone,
 } from "@sims/utilities/date-utils";
 import { SystemUsersService } from "@sims/services";
 import {
@@ -337,7 +337,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
             formConfigs.studentAppealApplicationB.formType,
           ],
           applicationNumber: application.applicationNumber,
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
@@ -354,7 +354,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
             formConfigs.studentAppealApplicationB.formType,
           ],
           applicationNumber: application.applicationNumber,
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
     });
@@ -515,7 +515,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
           formCategory: FormCategory.StudentForm,
           formNames: [formConfigs.studentFormA.formType],
           applicationNumber: "N/A",
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
       templateId: NOTIFY_TEMPLATE_IDS.MinistryFormSubmitted,
@@ -529,7 +529,7 @@ describe("FormSubmissionStudentsController(e2e)-submitForm", () => {
           formCategory: FormCategory.StudentForm,
           formNames: [formConfigs.studentFormA.formType],
           applicationNumber: "N/A",
-          dateTime: `${getPSTPDTDateTime(now)} PST/PDT`,
+          dateTime: getPCTDateTimeWithTimezone(now),
         },
       },
     });

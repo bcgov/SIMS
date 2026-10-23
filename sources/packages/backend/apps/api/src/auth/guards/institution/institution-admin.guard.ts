@@ -1,7 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { InstitutionUserAuthorizations } from "../../../services/institution-user-auth/institution-user-auth.models";
-import { AuthorizedParties, InstitutionUserRoles } from "../..";
+import { IInstitutionUserToken, InstitutionUserRoles } from "../..";
 import { IS_INSTITUTION_ADMIN_KEY } from "../../decorators/institution/institution-admin.decorator";
 
 /**
@@ -9,9 +8,9 @@ import { IS_INSTITUTION_ADMIN_KEY } from "../../decorators/institution/instituti
  */
 @Injectable()
 export class InstitutionAdminGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const institutionAdminRoles = this.reflector.getAllAndOverride<
       InstitutionUserRoles[]
     >(IS_INSTITUTION_ADMIN_KEY, [context.getHandler(), context.getClass()]);
@@ -20,18 +19,13 @@ export class InstitutionAdminGuard implements CanActivate {
       return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
-    /**
-     * When a controller is shared between more then one client type(e.g Institution and Ministry)
-     * following logic ensures that admin role checked only for Institution user.
-     * For client types except Institution, this decorator will not validate anything.
-     */
-    if (user.authorizedParty !== AuthorizedParties.institution) {
-      return true;
-    }
-    const authorizations = user.authorizations as InstitutionUserAuthorizations;
+    const { user }: { user: IInstitutionUserToken } = context
+      .switchToHttp()
+      .getRequest();
+    // Only institution tokens have authorizations.
+    const authorizations = user?.authorizations;
 
-    if (!authorizations.isAdmin()) {
+    if (!authorizations?.isAdmin()) {
       return false;
     }
 

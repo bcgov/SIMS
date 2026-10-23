@@ -427,6 +427,11 @@ export const CASInvoicesBatchesHeaders = [
     sortable: false,
     key: "actions",
   },
+  {
+    title: "Details",
+    sortable: false,
+    key: "data-table-expand",
+  },
 ];
 
 /**

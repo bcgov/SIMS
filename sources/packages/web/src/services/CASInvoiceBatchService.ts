@@ -2,6 +2,7 @@ import { useFileUtils } from "@/composables";
 import ApiClient from "@/services/http/ApiClient";
 import {
   CASInvoiceBatchAPIOutDTO,
+  CASInvoiceBatchSummaryTotalsAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   UpdateCASInvoiceBatchAPIInDTO,
 } from "@/services/http/dto";
@@ -36,11 +37,26 @@ export class CASInvoiceBatchService {
   async downloadCASInvoiceBatchReport(
     casInvoiceBatchId: number,
   ): Promise<void> {
-    const file = await ApiClient.CASInvoiceBatchApi.getCASInvoiceBatchReport(
-      casInvoiceBatchId,
-    );
+    const file =
+      await ApiClient.CASInvoiceBatchApi.getCASInvoiceBatchReport(
+        casInvoiceBatchId,
+      );
     const { downloadFileAsBlob } = useFileUtils();
     downloadFileAsBlob(file);
+  }
+
+  /**
+   * Summary totals of a CAS invoice batch, including the count of invoices
+   * for each invoice status and the total amounts for each distribution type.
+   * @param casInvoiceBatchId batch ID to have the summary totals retrieved for.
+   * @returns batch processing summary and distribution type amounts.
+   */
+  async getCASInvoiceBatchSummaryTotals(
+    casInvoiceBatchId: number,
+  ): Promise<CASInvoiceBatchSummaryTotalsAPIOutDTO> {
+    return ApiClient.CASInvoiceBatchApi.getCASInvoiceBatchSummaryTotals(
+      casInvoiceBatchId,
+    );
   }
 
   /**
