@@ -20,6 +20,7 @@ import {
   saveFakeInstitutionRestriction,
   getMostRecentEducationProgramConfiguration,
   createFakeEducationProgram,
+  createFakeEducationProgramOffering,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -28,7 +29,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgramOffering,
   getAuthorizedLocation,
 } from "../../../../testHelpers";
 import request from "supertest";
@@ -125,11 +125,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     });
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
-    const newOffering = createFakeEducationProgramOffering(
-      collegeFUser,
-      savedFakeEducationProgram,
-      collegeFLocation,
-    );
+    const newOffering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program: savedFakeEducationProgram,
+      institutionLocation: collegeFLocation,
+    });
     newOffering.parentOffering = newOffering;
     const savedEducationProgramOffering =
       await db.educationProgramOffering.save(newOffering);
@@ -235,11 +235,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     });
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
-    const newOffering = createFakeEducationProgramOffering(
-      collegeFUser,
-      savedFakeEducationProgram,
-      collegeFLocation,
-    );
+    const newOffering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program: savedFakeEducationProgram,
+      institutionLocation: collegeFLocation,
+    });
     newOffering.parentOffering = newOffering;
     const savedEducationProgramOffering =
       await db.educationProgramOffering.save(newOffering);
@@ -341,11 +341,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
-      const newOffering = createFakeEducationProgramOffering(
-        collegeFUser,
-        savedFakeEducationProgram,
-        collegeFLocation,
-      );
+      const newOffering = createFakeEducationProgramOffering({
+        auditUser: collegeFUser,
+        program: savedFakeEducationProgram,
+        institutionLocation: collegeFLocation,
+      });
       newOffering.parentOffering = newOffering;
       const savedEducationProgramOffering =
         await db.educationProgramOffering.save(newOffering);
@@ -418,11 +418,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
-      const newOffering = createFakeEducationProgramOffering(
-        collegeFUser,
-        savedFakeEducationProgram,
-        collegeFLocation,
-      );
+      const newOffering = createFakeEducationProgramOffering({
+        auditUser: collegeFUser,
+        program: savedFakeEducationProgram,
+        institutionLocation: collegeFLocation,
+      });
       newOffering.parentOffering = newOffering;
       const savedEducationProgramOffering =
         await db.educationProgramOffering.save(newOffering);
@@ -547,11 +547,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
-      const newOffering = createFakeEducationProgramOffering(
-        collegeFUser,
-        savedFakeEducationProgram,
-        collegeCLocation,
-      );
+      const newOffering = createFakeEducationProgramOffering({
+        auditUser: collegeFUser,
+        program: savedFakeEducationProgram,
+        institutionLocation: collegeCLocation,
+      });
       newOffering.parentOffering = newOffering;
       const savedEducationProgramOffering =
         await db.educationProgramOffering.save(newOffering);
@@ -709,11 +709,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     );
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
-    const newOffering = createFakeEducationProgramOffering(
-      collegeFUser,
-      savedFakeEducationProgram,
-      collegeFLocation,
-    );
+    const newOffering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program: savedFakeEducationProgram,
+      institutionLocation: collegeFLocation,
+    });
     newOffering.parentOffering = newOffering;
     const savedEducationProgramOffering =
       await db.educationProgramOffering.save(newOffering);
@@ -781,11 +781,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
-      const newOffering = createFakeEducationProgramOffering(
-        collegeFUser,
-        savedFakeEducationProgram,
-        collegeFLocation,
-      );
+      const newOffering = createFakeEducationProgramOffering({
+        auditUser: collegeFUser,
+        program: savedFakeEducationProgram,
+        institutionLocation: collegeFLocation,
+      });
       newOffering.parentOffering = newOffering;
       newOffering.studyStartDate = "2023-11-01";
       newOffering.studyEndDate = "2024-06-01";
@@ -861,11 +861,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
-      const newOffering = createFakeEducationProgramOffering(
-        collegeFUser,
-        savedFakeEducationProgram,
-        collegeFLocation,
-      );
+      const newOffering = createFakeEducationProgramOffering({
+        auditUser: collegeFUser,
+        program: savedFakeEducationProgram,
+        institutionLocation: collegeFLocation,
+      });
 
       newOffering.parentOffering = newOffering;
       const savedEducationProgramOffering =
@@ -980,11 +980,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
       });
       const savedFakeEducationProgram =
         await db.educationProgram.save(fakeEducationProgram);
-      const newOffering = createFakeEducationProgramOffering(
-        collegeFUser,
-        savedFakeEducationProgram,
-        collegeFLocation,
-      );
+      const newOffering = createFakeEducationProgramOffering({
+        auditUser: collegeFUser,
+        program: savedFakeEducationProgram,
+        institutionLocation: collegeFLocation,
+      });
 
       newOffering.parentOffering = newOffering;
       const savedEducationProgramOffering =
@@ -1083,11 +1083,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-updateProgramOffer
     });
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
-    const newOffering = createFakeEducationProgramOffering(
-      collegeFUser,
-      savedFakeEducationProgram,
-      collegeFLocation,
-    );
+    const newOffering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program: savedFakeEducationProgram,
+      institutionLocation: collegeFLocation,
+    });
 
     newOffering.parentOffering = newOffering;
     const savedEducationProgramOffering =

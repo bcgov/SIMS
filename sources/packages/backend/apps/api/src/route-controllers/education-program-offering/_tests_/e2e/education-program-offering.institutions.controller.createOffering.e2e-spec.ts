@@ -22,6 +22,7 @@ import {
   saveFakeInstitutionRestriction,
   getMostRecentEducationProgramConfiguration,
   createFakeEducationProgram,
+  createFakeEducationProgramOffering,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -30,7 +31,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgramOffering,
   getAuthorizedLocation,
 } from "../../../../testHelpers";
 import request from "supertest";
@@ -1334,11 +1334,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-createOffering", (
     });
     const savedFakeEducationProgram =
       await db.educationProgram.save(fakeEducationProgram);
-    const existingOffering = createFakeEducationProgramOffering(
-      collegeFUser,
-      savedFakeEducationProgram,
-      collegeFLocation,
-    );
+    const existingOffering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program: savedFakeEducationProgram,
+      institutionLocation: collegeFLocation,
+    });
     existingOffering.parentOffering = existingOffering;
     existingOffering.studyStartDate = "2023-11-01";
     existingOffering.studyEndDate = "2024-06-01";
