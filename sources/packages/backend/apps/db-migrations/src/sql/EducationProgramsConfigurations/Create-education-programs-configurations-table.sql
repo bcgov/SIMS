@@ -1728,6 +1728,16 @@ SELECT
           }
           },
           {
+          "code": "isAviationProgram",
+          "message": "This aviation program requires additional review by StudentAid BC.",
+          "condition": {
+              "required": ["isAviationProgram"],
+              "properties": {
+              "isAviationProgram": { "const": "yes" }
+              }
+          }
+          },
+          {
           "code": "privatePilotTraining",
           "message": "StudentAid BC does not provide any assistance to students for Private Pilot Training.",
           "condition": {
