@@ -58,6 +58,7 @@ import {
   DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_NOT_FOUND,
   EDUCATION_PROGRAM_DATA_INVALID,
+  EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
 } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -132,25 +133,35 @@ export class EducationProgramInstitutionsController extends BaseController {
     @Param("programConfigurationId", new ParseIntPipe({ optional: true }))
     programConfigurationId?: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    const configuration =
-      await this.educationProgramSaveService.getEducationProgramConfiguration(
-        userToken.authorizations.institutionId,
-        { programConfigurationId },
-      );
-    return {
-      configurationId: configuration.configurationId,
-      programData: {
-        context: {
-          hasOfferings: configuration.context.hasOfferings,
-          isActive: configuration.context.isActive,
-          isBCPublic: configuration.context.isBCPublic,
-          isBCPrivate: configuration.context.isBCPrivate,
-          isBCInstitution: configuration.context.isBCInstitution,
+    try {
+      const configuration =
+        await this.educationProgramSaveService.getEducationProgramConfiguration(
+          userToken.authorizations.institutionId,
+          { programConfigurationId },
+        );
+      return {
+        configurationId: configuration.configurationId,
+        programData: {
+          context: {
+            hasOfferings: configuration.context.hasOfferings,
+            isActive: configuration.context.isActive,
+            isBCPublic: configuration.context.isBCPublic,
+            isBCPrivate: configuration.context.isBCPrivate,
+            isBCInstitution: configuration.context.isBCInstitution,
+          },
         },
-      },
-      visualSchema: configuration.visualSchema,
-      validationSchema: configuration.validationSchema,
-    };
+        visualSchema: configuration.visualSchema,
+        validationSchema: configuration.validationSchema,
+      };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 
   /**

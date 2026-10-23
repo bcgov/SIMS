@@ -89,7 +89,7 @@ export class EducationProgramSaveService {
     const institution =
       await this.institutionService.getInstitutionTypeById(institutionId);
     const programConfiguration =
-      await this.educationProgramConfigurationRepo.findOneOrFail({
+      await this.educationProgramConfigurationRepo.findOne({
         select: {
           id: true,
           visualSchema: true,
@@ -108,6 +108,12 @@ export class EducationProgramSaveService {
           programYear: { startDate: "DESC" },
         },
       });
+    if (!programConfiguration) {
+      throw new CustomNamedError(
+        "Education program configuration not found.",
+        "EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND",
+      );
+    }
     return this.createProgramContext(
       institution.institutionType,
       programConfiguration,
