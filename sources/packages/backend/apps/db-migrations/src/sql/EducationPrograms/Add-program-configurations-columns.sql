@@ -51,7 +51,7 @@ SET
           NULL
         )
       ),
-      'deliveredOnlineAlsoOnSite',
+      'deliveredOnlineAlsoOnsite',
       delivered_online_also_onsite,
       'sameOnlineCreditsEarned',
       same_online_credits_earned,

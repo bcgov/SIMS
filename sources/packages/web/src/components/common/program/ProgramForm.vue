@@ -162,13 +162,8 @@ const submit = async () => {
   delete programData.context;
   delete programData.flags;
   if (props.programId) {
-    console.log("Updating program:", formModel.value);
     emit("update", { programData });
   } else if (programConfigurationIdForCreation) {
-    console.log(
-      "Creating program with configuration ID:",
-      programConfigurationIdForCreation,
-    );
     emit("create", {
       programData,
       programConfigurationId: programConfigurationIdForCreation,
