@@ -143,6 +143,109 @@ describe(
       ).toBe(true);
     });
 
+    it("Should throw an error and not archive the file when the SIN validation response file has an invalid header code.", async () => {
+      // Arrange
+      mockDownloadFiles(
+        sftpClientMock,
+        [SIN_VALIDATION_FILENAME],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          file.header = file.header.replace("001", "999");
+          return createFileFromStructuredRecords(file);
+        },
+      );
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+
+      // Assert
+      const downloadedFile = join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        SIN_VALIDATION_FILENAME,
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Error downloading file ${downloadedFile}.`,
+          "Invalid file header.",
+        ]),
+      ).toBe(true);
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
+    });
+
+    it("Should throw an error and not archive the file when the SIN validation response file has an invalid footer code.", async () => {
+      // Arrange
+      mockDownloadFiles(
+        sftpClientMock,
+        [SIN_VALIDATION_FILENAME],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          file.footer = file.footer.replace("999", "001");
+          return createFileFromStructuredRecords(file);
+        },
+      );
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+
+      // Assert
+      const downloadedFile = join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        SIN_VALIDATION_FILENAME,
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Error downloading file ${downloadedFile}.`,
+          "Invalid file footer.",
+        ]),
+      ).toBe(true);
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
+    });
+
+    it("Should throw an error and not archive the file when the SIN hash in the footer does not match the sum of the SINs in the records.", async () => {
+      // Arrange
+      mockDownloadFiles(
+        sftpClientMock,
+        [SIN_VALIDATION_FILENAME],
+        (fileContent: string) => {
+          const file = getStructuredRecords(fileContent);
+          // Change the SIN (position 12 to 21) of the first record.
+          file.records[0] =
+            file.records[0].substring(0, 12) +
+            "000000001" +
+            file.records[0].substring(21);
+          return createFileFromStructuredRecords(file);
+        },
+      );
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        "One or more errors were reported during the process, please see logs for details.",
+      );
+
+      // Assert
+      const downloadedFile = join(
+        process.env.ESDC_RESPONSE_FOLDER,
+        SIN_VALIDATION_FILENAME,
+      );
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${downloadedFile}.`,
+          `Error downloading file ${downloadedFile}.`,
+          "SIN hash does not match with the expected on footer.",
+        ]),
+      ).toBe(true);
+      expect(sftpClientMock.rename).not.toHaveBeenCalled();
+    });
+
     afterAll(async () => {
       await app?.close();
     });
