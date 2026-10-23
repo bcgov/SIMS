@@ -29,7 +29,10 @@ export abstract class BaseQueueProcessor<T>
   implements OnApplicationBootstrap
 {
   private queueConfiguration: QueueConfiguration;
-  constructor(protected readonly logger: LoggerService) {
+  constructor(
+    protected readonly queueName: QueueNames,
+    protected readonly logger: LoggerService,
+  ) {
     super();
   }
 
@@ -50,7 +53,7 @@ export abstract class BaseQueueProcessor<T>
    */
   async onApplicationBootstrap(): Promise<void> {
     this.queueConfiguration = await this.queueService.queueConfigurationDetails(
-      this.worker.name as QueueNames,
+      this.queueName,
     );
     QUEUE_WORKER_EVENTS.forEach((event) => {
       this.worker.on(event, () =>
