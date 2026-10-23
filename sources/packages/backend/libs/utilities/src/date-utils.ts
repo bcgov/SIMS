@@ -82,7 +82,7 @@ export const dateDifference = (
  * if set to false, the date will be converted
  * to the actual timezone time with offset.
  * `format` date format to be used for the output.
- * @returns date in  PCT (UTC−07:00).
+ * @returns date in PCT (UTC−07:00).
  */
 export const getPCTDateFormatted = (
   date: string | Date,

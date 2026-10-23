@@ -266,7 +266,7 @@ export class CASInvoiceService {
       terms: TERMS,
       remittanceMessage1: EMPTY_STRING,
       remittanceMessage2: EMPTY_STRING,
-      // The GL date sent to CAS API must be in BC time.
+      // The GL date sent to CAS API must be in PCT.
       glDate: getPCTDateFormatted(invoiceSendDate, {
         format: ABBREVIATED_MONTH_DATE_FORMAT,
       }),
