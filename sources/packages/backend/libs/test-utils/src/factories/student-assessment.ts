@@ -6,6 +6,7 @@ import {
   AssessmentTriggerType,
   DisbursementSchedule,
   DisbursementValue,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   StudentAppeal,
   StudentAssessment,
@@ -21,6 +22,8 @@ import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
  * - `auditUser` user that created the record.
  * - `application` application.
  * - `offering` offering.
+ * - `programConfiguration` program configuration for the program generated
+ * along with the offering, when no offering is provided.
  * - `studentAppeal` student appeal.
  * - `previousDateChangedReportedAssessment` previous assessment that was changed.
  * - `applicationEditStatusUpdatedBy` user that updated the application edit status.
@@ -34,6 +37,7 @@ export function createFakeStudentAssessment(
     auditUser: User;
     application?: Application;
     offering?: EducationProgramOffering;
+    programConfiguration?: EducationProgramConfiguration;
     studentAppeal?: StudentAppeal;
     previousDateChangedReportedAssessment?: StudentAssessment;
     applicationEditStatusUpdatedBy?: User;
@@ -60,7 +64,10 @@ export function createFakeStudentAssessment(
   assessment.offering =
     relations?.offering ??
     createFakeEducationProgramOffering(
-      { auditUser: relations?.auditUser },
+      {
+        auditUser: relations?.auditUser,
+        programConfiguration: relations?.programConfiguration,
+      },
       { initialValues: options?.initialValue },
     );
   assessment.studentAppeal = relations?.studentAppeal ?? null;
