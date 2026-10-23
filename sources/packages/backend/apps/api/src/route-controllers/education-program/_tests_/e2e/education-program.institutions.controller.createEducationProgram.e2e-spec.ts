@@ -34,7 +34,7 @@ import {
   ProgramESLPercentage,
   ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
-} from "../../../../services/education-program/education-program.service.models";
+} from "../../../../services";
 import { getCreationPayload } from "./education-program.utils";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
