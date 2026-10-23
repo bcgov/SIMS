@@ -22,7 +22,7 @@ export const DATE_ONLY_FORMAT = "MMM DD YYYY";
 export const DATE_ONLY_FULL_MONTH_FORMAT = "MMMM D, YYYY";
 export const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 /**
- * Date and time followed by the PCT (UTC−07:00) time zone acronym.
+ * Date and time followed by the PCT (UTC-07:00) time zone acronym.
  */
 export const DATE_TIME_WITH_TIMEZONE_FORMAT = `${DATE_TIME_FORMAT} [PCT]`;
 export const TIMESTAMP_CONTINUOUS_FORMAT = "YYYY-MM-DD_HH.mm.ss";
@@ -73,7 +73,7 @@ export const dateDifference = (
 };
 
 /**
- * Convert the date to (PCT: UTC−07:00).
+ * Convert the date to (PCT: UTC-07:00).
  * @param date date to be converted to PCT.
  * @param options date conversion options.
  * - `local` if local is set to true,
@@ -82,7 +82,7 @@ export const dateDifference = (
  * if set to false, the date will be converted
  * to the actual timezone time with offset.
  * `format` date format to be used for the output.
- * @returns date in PCT (UTC−07:00).
+ * @returns date in PCT (UTC-07:00).
  */
 export const getPCTDateFormatted = (
   date: string | Date,
@@ -94,31 +94,29 @@ export const getPCTDateFormatted = (
 };
 
 /**
- * Convert the date to (PCT: UTC−07:00).
+ * Convert the date to (PCT: UTC-07:00).
  * @param date date to be converted to PCT.
  * @param local, if local is set to true,
  * then the offset will be directly append to the date without
  * converting to the timezone actual date,
  * if set to false, the date will be converted
  * to the actual timezone time with offset.
- * @returns date in PCT (UTC−07:00) in YYYY-MM-DD HH:mm:ss format.
+ * @returns date in PCT (UTC-07:00) in YYYY-MM-DD HH:mm:ss format.
  */
 export const getPCTDateTime = (date: string | Date, local = false): string => {
   return dayjs(new Date(date)).tz(PCT_TIMEZONE, local).format(DATE_TIME_FORMAT);
 };
 
 /**
- * Convert the date to (PCT: UTC−07:00) including the time zone acronym,
+ * Convert the date to (PCT: UTC-07:00) including the time zone acronym,
  * for eg, 2027-01-15 12:00:00 PCT.
  * @param date date to be converted, if not provided, the current date will be used.
- * @returns date in PCT (UTC−07:00) in YYYY-MM-DD HH:mm:ss PCT format.
+ * @returns date in PCT (UTC-07:00) in YYYY-MM-DD HH:mm:ss PCT format.
  */
 export const getPCTDateTimeWithTimezone = (
   date: string | Date = new Date(),
 ): string => {
-  return dayjs(new Date(date))
-    .tz(PCT_TIMEZONE)
-    .format(DATE_TIME_WITH_TIMEZONE_FORMAT);
+  return dayjs(date).tz(PCT_TIMEZONE).format(DATE_TIME_WITH_TIMEZONE_FORMAT);
 };
 
 /***
