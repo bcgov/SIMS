@@ -95,7 +95,7 @@ const submit = async (program: UpdateEducationProgramAPIInDTO) => {
 };
 
 const loaded = (program: EducationProgramAPIOutDTO) => {
-  canEditOnlyBasicInfo.value = program.hasOfferings;
+  canEditOnlyBasicInfo.value = program.programData.context.hasOfferings;
 };
 
 const goBack = async (): Promise<void> => {
