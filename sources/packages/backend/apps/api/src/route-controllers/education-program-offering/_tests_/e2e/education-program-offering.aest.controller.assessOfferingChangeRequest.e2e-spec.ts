@@ -101,7 +101,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(999999);
+    const endpoint = getEndpoint(0);
 
     // Act/Assert
     await request(app.getHttpServer())
