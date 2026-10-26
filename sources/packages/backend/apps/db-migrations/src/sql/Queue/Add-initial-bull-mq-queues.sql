@@ -9,7 +9,7 @@ INSERT INTO
     sims.queue_configurations(queue_name, queue_configuration)
 VALUES
     (
-        'virus-scan-v2',
+        'event-queues.virus-scan',
         $json$
         {
             "defaultJobOptions": {
@@ -25,7 +25,7 @@ VALUES
     ),
 	-- The scheduler is set to run at 8 a.m. PCT every day.
 	(
-        'returned-loans-response-integration-v2',
+        'schedulers.esdc.returned-loans-response-integration',
         $json$
         {
             "defaultJobOptions": {

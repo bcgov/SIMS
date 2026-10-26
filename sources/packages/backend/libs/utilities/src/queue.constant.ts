@@ -41,14 +41,19 @@ export enum QueueNames {
   T4AUploadEnqueuer = "t4a-upload-enqueuer",
   T4AUpload = "t4a-upload",
   ReturnedLoansResponseIntegrationLegacy = "returned-loans-response-integration",
-  FileVirusScanProcessor = "virus-scan-v2",
-  ReturnedLoansResponseIntegration = "returned-loans-response-integration-v2",
+  FileVirusScanProcessor = "event-queues.virus-scan",
+  ReturnedLoansResponseIntegration = "schedulers.esdc.returned-loans-response-integration",
 }
 
 /**
  * Suffix used for naming queue jobs.
  */
 export const JOB_SUFFIX = "-job";
+
+/**
+ * Delimiter used for grouping queue names in the bull board.
+ */
+export const BULL_BOARD_QUEUE_DELIMITER = ".";
 
 /**
  * Job names for the queues.

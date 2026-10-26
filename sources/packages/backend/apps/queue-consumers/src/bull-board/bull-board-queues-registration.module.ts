@@ -6,7 +6,10 @@ import { getQueueToken as getQueueTokenLegacy } from "@nestjs/bull";
 import { Queue as QueueLegacy } from "bull";
 import { BullAdapter } from "@bull-board/api/bullAdapter";
 import { LoggerService } from "@sims/utilities/logger";
-import { BULL_MQ_MIGRATED_QUEUE_NAMES } from "@sims/utilities";
+import {
+  BULL_BOARD_QUEUE_DELIMITER,
+  BULL_MQ_MIGRATED_QUEUE_NAMES,
+} from "@sims/utilities";
 import { QueueModel } from "@sims/services/queue";
 import { Queue } from "bullmq";
 import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
@@ -74,6 +77,7 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
         );
         const queueAdapter = new BullMQAdapter(queueProvider, {
           readOnlyMode: queue.dashboardReadonly,
+          delimiter: BULL_BOARD_QUEUE_DELIMITER,
         });
         this.board.addQueue(queueAdapter);
       });

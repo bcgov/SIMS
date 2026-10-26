@@ -42,6 +42,9 @@ async function bullBoardModuleFactory(): Promise<BullBoardModuleOptions> {
           default: "https://sims.studentaidbc.ca/favicon-16x16.png",
           alternative: "https://sims.studentaidbc.ca/favicon-32x32.png",
         },
+        menu: {
+          width: "350px",
+        },
       },
     },
   };

@@ -2,8 +2,8 @@ DELETE FROM
     sims.queue_configurations
 WHERE
     queue_name IN (
-        'virus-scan-v2',
-        'returned-loans-response-integration-v2'
+        'event-queues.virus-scan',
+        'schedulers.esdc.returned-loans-response-integration'
     );
 
 ALTER TABLE
