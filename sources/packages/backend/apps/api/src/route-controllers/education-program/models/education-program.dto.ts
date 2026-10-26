@@ -44,6 +44,10 @@ export class EducationProgramDataAPIOutDTO {
   context: EducationProgramContextAPIOutDTO;
 }
 
+/**
+ * Education program configuration including context,
+ * visual schema, and validation schema.
+ */
 export class EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
   programData: EducationProgramDataAPIOutDTO;

@@ -13,6 +13,12 @@ import {
   UpdateEducationProgramAPIInDTO,
 } from "../../models/education-program.dto";
 
+/**
+ * Get the payload for updating an education program.
+ * @param options Options to customize the update payload.
+ * - `appendedProgramData` Additional program data to append to the payload.
+ * @returns The update payload for the education program.
+ */
 export function getPayload(options?: {
   appendedProgramData?: { [key: string]: unknown };
 }): UpdateEducationProgramAPIInDTO & {
@@ -23,6 +29,13 @@ export function getPayload(options?: {
   };
 }
 
+/**
+ * Dynamic data required to create an education program.
+ * @param programConfigurationId ID of the program configuration for which the education program is being created.
+ * @param options Options to customize the creation payload.
+ * - `appendedProgramData` Additional program data to append to the payload.
+ * @returns The creation payload for the education program.
+ */
 export function getCreationPayload(
   programConfigurationId: number,
   options?: {
@@ -37,7 +50,13 @@ export function getCreationPayload(
   };
 }
 
-export function getProgramDataPayload(options?: {
+/**
+ * Get the dynamic program data payload for creating or updating an education program.
+ * @param options Options to customize the program data payload.
+ * - `appendedProgramData` Additional program data to append to the payload.
+ * @returns The dynamic program data payload for the education program.
+ */
+function getProgramDataPayload(options?: {
   appendedProgramData?: { [key: string]: unknown };
 }): EducationProgramDynamicData {
   return {

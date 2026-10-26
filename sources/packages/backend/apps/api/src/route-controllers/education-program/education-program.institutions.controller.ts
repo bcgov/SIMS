@@ -127,6 +127,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find an active program configuration.",
   })
+  // TODO: The endpoint should required a configuration ID once the client is updated to always provide it.
   @Get(["configuration", "configuration/:programConfigurationId"])
   async getEducationProgramConfiguration(
     @UserToken() userToken: IInstitutionUserToken,
@@ -171,7 +172,8 @@ export class EducationProgramInstitutionsController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Not able to a save the program due to an invalid request or " +
+      "Education program data is not valid or " +
+      "education program configuration not found or not active or " +
       "duplicate SABC code.",
   })
   @ApiForbiddenResponse({
@@ -198,7 +200,6 @@ export class EducationProgramInstitutionsController extends BaseController {
         switch (error.name) {
           case EDUCATION_PROGRAM_DATA_INVALID:
             throw new BadRequestException(error.objectInfo, error.message);
-          case EDUCATION_PROGRAM_INVALID_OPERATION:
           case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
           case DUPLICATE_SABC_CODE:
@@ -218,9 +219,10 @@ export class EducationProgramInstitutionsController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Not able to a save the program due to an invalid request or " +
-      "SABC code is duplicated or " +
-      "program is inactive.",
+      "Education program data is not valid or " +
+      "education program configuration not found or not active or " +
+      "education program cannot be edited when inactive or expired or " +
+      "duplicate SABC code.",
   })
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",
