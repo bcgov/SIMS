@@ -124,7 +124,7 @@ export class EducationProgramDataValidationService {
 
   /**
    * Gets the validation messages from the AJV errors, prefixed by the path
-   * of the property that failed the validation (e.g. /cipCode must match pattern ...).
+   * of the property that failed the validation (e.g. cipCode must match pattern ...).
    * @param errors AJV validation errors.
    * @returns validation messages.
    */
@@ -133,15 +133,12 @@ export class EducationProgramDataValidationService {
     // reported by the "then" own error.
     return errors
       .filter((error) => error.keyword !== "if")
-      .map((error) =>
-        this.ajv
-          .errorsText(
-            [{ ...error, message: this.getMessage(error) } as ErrorObject],
-            { dataVar: "" },
-          )
-          // Errors at the root (e.g. required) have an empty path, leaving a leading space.
-          .trim(),
-      );
+      .map((error) => {
+        const path = error.instancePath?.replace(/^\//, "");
+        const message = this.getMessage(error);
+        // Errors at the root (e.g. required) have no path.
+        return path ? `${path} ${message}` : message;
+      });
   }
 
   /**
