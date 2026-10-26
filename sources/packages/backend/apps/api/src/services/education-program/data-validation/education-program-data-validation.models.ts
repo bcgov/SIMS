@@ -57,11 +57,3 @@ export interface ProgramTriggeredFlag {
   code: string;
   effect?: ProgramFlagEffect;
 }
-
-/**
- * AJV custom async keyword ensuring the SABC code is not used by another
- * active program of the same institution for the same program year.
- * Declared in the configuration validation schema, which is shared with the
- * client form, where it is ignored since it depends on server-side information.
- */
-export const SABC_CODE_UNIQUE_KEYWORD = "sabcCodeUnique";

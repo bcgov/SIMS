@@ -19,17 +19,13 @@ export const programFormAjv = new Ajv({
   verbose: true,
   strict: false,
   addUsedSchema: false,
+  // Not a data format, only a hint consumed by yesNoControlTester to route
+  // the control to RadioOptionsYesNo. Registered as always valid to avoid
+  // Ajv's "unknown format ... ignored" warning.
+  formats: { yesNo: true },
 });
 addFormats(programFormAjv);
 addErrors(programFormAjv);
-
-/**
- * "yesNo" is not a real data format, only a hint consumed by
- * yesNoControlTester to route the control to RadioOptionsYesNo. Registering
- * it as an always-valid format avoids Ajv's "unknown format ... ignored"
- * warning.
- */
-programFormAjv.addFormat("yesNo", true);
 
 /**
  * Flag declared in the validation schema "x-flags" keyword. It doesn't
@@ -46,6 +42,8 @@ interface SchemaFlag {
  * Creates a function to calculate the flags, declared in the validation
  * schema "x-flags" keyword, triggered by the form data. Each flag
  * condition is compiled only once per schema, since compiling is expensive.
+ * Must be kept aligned with the server calculateFlags
+ * (backend EducationProgramDataValidationService), so both produce the same flags.
  * @param schema validation schema declaring the flags.
  * @returns function returning the codes of the flags triggered by the data.
  */

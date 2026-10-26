@@ -81,6 +81,9 @@ export class EducationProgramDataValidationService {
     };
     // Any flags provided by the client are recalculated by the server.
     delete data.flags;
+    // Calculated with the context and without the previous flags, the same way
+    // the client does, and before the validation removes the additional properties.
+    const triggeredFlags = this.calculateFlags(flags, data);
     let errors: Partial<ErrorObject>[] = [];
     try {
       // An async validator throws, instead of returning false, when the data is invalid.
@@ -98,8 +101,6 @@ export class EducationProgramDataValidationService {
         failedKeywords: this.getFailedKeywords(errors),
       };
     }
-    // Calculated with the context, the same way the client does.
-    const triggeredFlags = this.calculateFlags(flags, data);
     delete data.context;
     return { isValid: true, programData: data, flags: triggeredFlags };
   }
@@ -110,7 +111,7 @@ export class EducationProgramDataValidationService {
    * Must be kept aligned with the web createFlagsCalculator
    * (web/src/components/renderers/jsonforms/ajv.ts).
    * @param flags compiled flag conditions.
-   * @param data program data, including its context.
+   * @param data program data, including its context and without its flags.
    * @returns flags triggered by the data.
    */
   private calculateFlags(

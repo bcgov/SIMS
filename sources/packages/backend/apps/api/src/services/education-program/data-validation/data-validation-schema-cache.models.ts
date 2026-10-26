@@ -14,8 +14,7 @@ export interface ProgramSchemaFlag {
   code: string;
   message: string;
   /**
-   * Effect on the program when triggered. Without an effect, the flag
-   * is only used by the UI (e.g. to display a banner).
+   * Effect on the program when triggered.
    */
   effect?: ProgramFlagEffect;
   condition: AnySchemaObject;
@@ -36,19 +35,24 @@ export interface ProgramCompiledFlag {
 
 /**
  * Validator compiled from a specific version of a program configuration.
+ * The updatedAt timestamp of the program configuration the validator was compiled from
+ * is required to ensure that possible outdated validators are not used.
  */
 export interface ProgramCompiledValidator {
-  /**
-   * Version of the configuration the validator was compiled from.
-   */
-  updatedAt: number;
   /**
    * Schema compiled, kept to remove it from the AJV cache once outdated.
    */
   schema: AsyncSchema;
+  /**
+   * Main validator function compiled from the schema.
+   */
   validator: AsyncValidateFunction;
   /**
    * Flag conditions declared in the schema "x-flags" keyword.
    */
   flags: ProgramCompiledFlag[];
+  /**
+   * Version of the configuration the validator was compiled from.
+   */
+  updatedAt: number;
 }

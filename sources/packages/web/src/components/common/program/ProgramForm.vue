@@ -103,13 +103,15 @@ const calculateFlags = computed(() =>
  * Sets the flags triggered by the form data, which are used by the
  * UI schema rules to show the banners. Like the context, the
  * flags are never changed by the user and never submitted.
+ * Calculated without the previous flags, the same way the server does.
  * @param data form data.
  * @returns form data with its triggered flags.
  */
-const withFlags = (data: Record<string, unknown>): Record<string, unknown> => ({
-  ...data,
-  flags: calculateFlags.value(data),
-});
+const withFlags = (data: Record<string, unknown>): Record<string, unknown> => {
+  const dataWithoutFlags = { ...data };
+  delete dataWithoutFlags.flags;
+  return { ...dataWithoutFlags, flags: calculateFlags.value(dataWithoutFlags) };
+};
 
 const programFormErrors = ref<JsonFormsChangeEvent["errors"]>([]);
 

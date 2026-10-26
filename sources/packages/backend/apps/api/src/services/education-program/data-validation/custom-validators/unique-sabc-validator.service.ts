@@ -1,8 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import Ajv from "ajv";
 import { EducationProgramService } from "../../education-program.service";
-import { SABC_CODE_UNIQUE_KEYWORD } from "../education-program-data-validation.models";
 import { EducationProgramDataValidationContext } from "./custom-validators.models";
+
+/**
+ * AJV custom async keyword ensuring the SABC code is not used by another
+ * active program of the same institution for the same program year.
+ * Declared in the configuration validation schema, which is shared with the
+ * client form, where it is ignored since it depends on server-side information.
+ */
+export const SABC_CODE_UNIQUE_KEYWORD = "sabcCodeUnique";
 
 /**
  * AJV custom async keyword validator ensuring the SABC code is not used by

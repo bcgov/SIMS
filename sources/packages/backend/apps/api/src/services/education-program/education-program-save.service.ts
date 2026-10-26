@@ -7,6 +7,7 @@ import {
   AviationCredentialTypeOptions,
   EducationProgramOfferingService,
   EducationProgramService,
+  SABC_CODE_UNIQUE_KEYWORD,
   UserService,
 } from "../../services";
 import { EducationProgramEvaluationService } from "./education-program-evaluator";
@@ -42,7 +43,6 @@ import { EducationProgramDataValidationService } from "./data-validation/educati
 import {
   EducationProgramDataValidationSuccess,
   ProgramFlagEffect,
-  SABC_CODE_UNIQUE_KEYWORD,
 } from "./data-validation/education-program-data-validation.models";
 import { EducationProgramDataValidationContext } from "./data-validation/custom-validators/custom-validators.models";
 import {
