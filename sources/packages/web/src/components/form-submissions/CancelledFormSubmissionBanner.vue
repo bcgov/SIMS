@@ -44,7 +44,7 @@ const applicationScopedBannerDetails = computed<BannerDetails | undefined>(
         return {
           header,
           summary:
-            "Your appeal is no longer active and will not be considered when assessing your application. This is due to you cancelling your application. If you still require an appeal, you must submit a new appeal for your current application.",
+            "Your appeal is no longer active and will not be considered when assessing your application. This is due to the cancellation of your application. If you still require an appeal, you must submit a new appeal for your current application.",
         };
       case FormSubmissionCancellationReason.ApplicationEdited:
         return {
