@@ -50,6 +50,8 @@ import {
   FormSubmissionUpdateNonPunitiveWithdrawalAction,
   EducationProgramSaveService,
   EducationProgramDataValidationService,
+  DataValidationSchemaCache,
+  UniqueSABCValidator,
 } from "./services";
 import {
   ApplicationControllerService,
@@ -180,6 +182,8 @@ import {
     InstitutionTypeService,
     EducationProgramService,
     EducationProgramDataValidationService,
+    DataValidationSchemaCache,
+    UniqueSABCValidator,
     EducationProgramSaveService,
     EducationProgramOfferingService,
     PIRDeniedReasonService,

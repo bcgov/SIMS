@@ -60,6 +60,8 @@ import {
   DisabilityProfileService,
   FormSubmissionCancellationService,
   EducationProgramDataValidationService,
+  DataValidationSchemaCache,
+  UniqueSABCValidator,
 } from "./services";
 import {
   ConfigurationContextValidator,
@@ -212,6 +214,8 @@ import {
     EducationProgramService,
     EducationProgramSaveService,
     EducationProgramDataValidationService,
+    DataValidationSchemaCache,
+    UniqueSABCValidator,
     InstitutionService,
     BCeIDService,
     UserService,

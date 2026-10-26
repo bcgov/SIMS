@@ -38,13 +38,13 @@ import {
   EntranceRequirementValues,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
-import { EducationProgramDataValidationService } from "./education-program-data-validation.service";
+import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
 import {
-  EducationProgramDataValidationContext,
   EducationProgramDataValidationSuccess,
   ProgramFlagEffect,
   SABC_CODE_UNIQUE_KEYWORD,
-} from "./education-program-data-validation.models";
+} from "./data-validation/education-program-data-validation.models";
+import { EducationProgramDataValidationContext } from "./data-validation/custom-validators/custom-validators.models";
 import {
   EntranceRequirements,
   ProgramCalculatedDataKey,
