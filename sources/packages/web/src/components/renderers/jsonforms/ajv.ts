@@ -28,13 +28,37 @@ addFormats(programFormAjv);
 addErrors(programFormAjv);
 
 /**
+ * Effect of a triggered flag on the program, besides any UI banner
+ * displayed for it. Only applied by the server.
+ * Must be kept aligned with the server ProgramFlagEffect.
+ */
+export enum ProgramFlagEffect {
+  /**
+   * The program must be reviewed by the Ministry, hence it is saved as pending.
+   */
+  PendingReview = "pendingReview",
+}
+
+/**
+ * Flag triggered by the program data.
+ * Must be kept aligned with the server ProgramTriggeredFlag.
+ */
+export interface ProgramTriggeredFlag {
+  code: string;
+  effect?: ProgramFlagEffect;
+}
+
+/**
  * Flag declared in the validation schema "x-flags" keyword. It doesn't
  * make the data invalid, it is only triggered when the data matches its condition.
- * Its effect (e.g. the program saved as pending) is only applied by the server.
  */
 interface SchemaFlag {
   code: string;
   message: string;
+  /**
+   * Effect on the program when triggered.
+   */
+  effect?: ProgramFlagEffect;
   condition: object;
 }
 
@@ -45,21 +69,22 @@ interface SchemaFlag {
  * Must be kept aligned with the server calculateFlags
  * (backend EducationProgramDataValidationService), so both produce the same flags.
  * @param schema validation schema declaring the flags.
- * @returns function returning the codes of the flags triggered by the data.
+ * @returns function returning the flags triggered by the data.
  */
 export function createFlagsCalculator(
   schema: JsonSchema,
-): (data: unknown) => string[] {
+): (data: unknown) => ProgramTriggeredFlag[] {
   const flags = ((schema as Record<string, unknown>)["x-flags"] ??
     []) as SchemaFlag[];
   const conditions = flags.map((flag) => ({
     code: flag.code,
+    effect: flag.effect,
     validate: programFormAjv.compile(flag.condition),
   }));
   return (data) =>
     conditions
       .filter((condition) => condition.validate(data))
-      .map((condition) => condition.code);
+      .map(({ code, effect }) => ({ code, effect }));
 }
 
 /**

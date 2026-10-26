@@ -159,7 +159,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "onlineDeliveryReview"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "onlineDeliveryReview"
+                          }
+                        }
                       }
                     }
                   }
@@ -259,7 +266,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "onlineDeliveryIneligible"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "onlineDeliveryIneligible"
+                          }
+                        }
                       }
                     }
                   }
@@ -307,7 +321,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "minHoursWeek"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "minHoursWeek"
+                          }
+                        }
                       }
                     }
                   }
@@ -364,7 +385,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "noEntranceRequirements"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "noEntranceRequirements"
+                          }
+                        }
                       }
                     }
                   }
@@ -403,7 +431,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "eslContentExceeded"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "eslContentExceeded"
+                          }
+                        }
                       }
                     }
                   }
@@ -455,7 +490,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "partnerProgramReview"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "partnerProgramReview"
+                          }
+                        }
                       }
                     }
                   }
@@ -476,7 +518,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "partnerNotDesignated"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "partnerNotDesignated"
+                          }
+                        }
                       }
                     }
                   }
@@ -525,7 +574,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "wilNotApproved"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "wilNotApproved"
+                          }
+                        }
                       }
                     }
                   }
@@ -573,7 +629,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "wilIneligible"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "wilIneligible"
+                          }
+                        }
                       }
                     }
                   }
@@ -622,7 +685,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "travelIneligible"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "travelIneligible"
+                          }
+                        }
                       }
                     }
                   }
@@ -671,7 +741,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "intlExchangeIneligible"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "intlExchangeIneligible"
+                          }
+                        }
                       }
                     }
                   }
@@ -723,7 +800,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "privatePilotTraining"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "privatePilotTraining"
+                          }
+                        }
                       }
                     }
                   }
@@ -757,7 +841,14 @@ SELECT
                     "schema": {
                       "type": "array",
                       "contains": {
-                        "const": "minHoursWeekAvi"
+                        "required": [
+                          "code"
+                        ],
+                        "properties": {
+                          "code": {
+                            "const": "minHoursWeekAvi"
+                          }
+                        }
                       }
                     }
                   }
@@ -1126,7 +1217,21 @@ SELECT
         "type": "array",
         "readOnly": true,
         "items": {
-          "type": "string"
+          "type": "object",
+          "required": [
+            "code"
+          ],
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "effect": {
+              "type": "string",
+              "enum": [
+                "pendingReview"
+              ]
+            }
+          }
         }
       },
       "programName": {

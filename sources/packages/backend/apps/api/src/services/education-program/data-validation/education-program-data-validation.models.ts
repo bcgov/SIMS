@@ -42,6 +42,8 @@ export interface EducationProgramDataWithContext extends EducationProgramData {
 /**
  * Effect of a triggered flag on the program, besides any UI banner
  * displayed for it.
+ * Must be kept aligned with the web ProgramFlagEffect
+ * (web/src/components/renderers/jsonforms/ajv.ts).
  */
 export enum ProgramFlagEffect {
   /**
@@ -52,6 +54,8 @@ export enum ProgramFlagEffect {
 
 /**
  * Flag triggered by the program data.
+ * Must be kept aligned with the web ProgramTriggeredFlag
+ * (web/src/components/renderers/jsonforms/ajv.ts).
  */
 export interface ProgramTriggeredFlag {
   code: string;
