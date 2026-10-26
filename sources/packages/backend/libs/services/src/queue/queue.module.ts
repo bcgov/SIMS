@@ -73,7 +73,12 @@ async function getConnectionFactory(
         port: redisConnectionOptions.port,
       },
     ],
-    { redisOptions: { password: redisConnectionOptions.password } },
+    {
+      redisOptions: {
+        password: redisConnectionOptions.password,
+        maxRetriesPerRequest: null,
+      },
+    },
   );
   return {
     connection: clusterConnection,

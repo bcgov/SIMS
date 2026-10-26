@@ -53,15 +53,12 @@ export abstract class BaseQueueProcessor<T>
    */
   async onApplicationBootstrap(): Promise<void> {
     try {
-      this.queueConfiguration =
-        await this.queueService.queueConfigurationDetails(
-          this.worker.name as QueueNames,
-        );
+      const queueConfiguration = await this.getQueueConfiguration();
       QUEUE_WORKER_EVENTS.forEach((event) => {
         this.worker.on(event, () =>
           this.metricsService.incrementJobEventCounter(
-            this.queueConfiguration.queueName,
-            this.queueConfiguration.isScheduler,
+            queueConfiguration.queueName,
+            queueConfiguration.isScheduler,
             event,
           ),
         );
@@ -101,9 +98,10 @@ export abstract class BaseQueueProcessor<T>
       this.logger.log(endLogMessage);
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.warn) {
+        const queueConfiguration = await this.getQueueConfiguration();
         this.metricsService.incrementJobEventCounter(
           job.queueName,
-          this.queueConfiguration.isScheduler,
+          queueConfiguration.isScheduler,
           MetricsCustomQueueEvents.JobFinalizedWithWarnings,
           { incrementValue: logsSum.warn },
         );
@@ -116,13 +114,13 @@ export abstract class BaseQueueProcessor<T>
       }
       return getSuccessMessageWithAttentionCheck(result, processSummary);
     } catch (error: unknown) {
-      // Throw an error to force the queue to retry.
+      // Throw an error for any failure other than permanent failures to force the queue to retry.
       if (error instanceof CustomNamedError) {
         const errorMessage = error.message;
         // Throw an UnrecoverableError for permanent failure error names.
         // The job will not be retried for UnrecoverableError.
         if (PERMANENT_FAILURE_ERROR_NAMES.has(error.name)) {
-          this.logger.error(`Permanent failure error: ${errorMessage}`);
+          processSummary.error(`Permanent failure error: ${errorMessage}`);
           throw new UnrecoverableError(error.message);
         }
         this.logger.error(error);
@@ -162,4 +160,18 @@ export abstract class BaseQueueProcessor<T>
     lockRenewTime: 5000,
     maxStalledCount: 0,
   };
+
+  /**
+   * Gets the queue configuration details.
+   * @returns Queue configuration details.
+   */
+  private async getQueueConfiguration(): Promise<QueueConfiguration> {
+    if (!this.queueConfiguration) {
+      this.queueConfiguration =
+        await this.queueService.queueConfigurationDetails(
+          this.worker.name as QueueNames,
+        );
+    }
+    return this.queueConfiguration;
+  }
 }

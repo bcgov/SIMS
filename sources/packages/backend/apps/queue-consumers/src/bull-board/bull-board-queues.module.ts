@@ -5,7 +5,10 @@ import { ExpressAdapter } from "@bull-board/express";
 import { BullBoardQueuesRegistrationModule } from "./bull-board-queues-registration.module";
 import { JwtModule } from "@nestjs/jwt";
 import { BullBoardAuthenticationMiddleware } from "./bull-board-authentication.middleware";
-import { BULL_BOARD_ROUTE } from "@sims/services/constants";
+import {
+  BULL_BOARD_MENU_WIDTH,
+  BULL_BOARD_ROUTE,
+} from "@sims/services/constants";
 
 /**
  * Bull board related modules to allow the dashboard to be registered.
@@ -43,7 +46,7 @@ async function bullBoardModuleFactory(): Promise<BullBoardModuleOptions> {
           alternative: "https://sims.studentaidbc.ca/favicon-32x32.png",
         },
         menu: {
-          width: "350px",
+          width: BULL_BOARD_MENU_WIDTH,
         },
       },
     },
