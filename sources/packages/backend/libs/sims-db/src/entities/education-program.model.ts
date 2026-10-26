@@ -464,22 +464,20 @@ export class EducationProgram extends RecordDataModel {
   @Column({
     name: "program_data",
     type: "jsonb",
-    nullable: true,
   })
-  programData?: Record<string, unknown>;
+  programData: Record<string, unknown>;
 
   /**
    * Dynamic form configuration used to create and validate this education program.
    */
   @ManyToOne(() => EducationProgramConfiguration, {
-    eager: false,
-    nullable: true,
+    nullable: false,
   })
   @JoinColumn({
     name: "program_configuration_id",
     referencedColumnName: ColumnNames.ID,
   })
-  programConfiguration?: EducationProgramConfiguration;
+  programConfiguration: EducationProgramConfiguration;
 }
 
 /**
