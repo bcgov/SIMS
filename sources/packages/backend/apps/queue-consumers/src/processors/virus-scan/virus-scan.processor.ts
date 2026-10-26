@@ -7,20 +7,18 @@ import { Job } from "bullmq";
 import { BaseQueueProcessor } from "..";
 
 /**
- * Queue name for the processor.
- */
-const QUEUE_NAME = QueueNames.FileVirusScanProcessor;
-
-/**
  * Processor responsible for handling virus scan jobs.
  */
-@Processor(QUEUE_NAME, BaseQueueProcessor.defaultWorkerOptions)
+@Processor(
+  QueueNames.FileVirusScanProcessor,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
 export class VirusScanProcessor extends BaseQueueProcessor<VirusScanQueueInDTO> {
   constructor(
     private readonly studentFileService: StudentFileService,
     protected readonly logger: LoggerService,
   ) {
-    super(QUEUE_NAME, logger);
+    super(logger);
   }
 
   /**

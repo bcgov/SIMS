@@ -32,10 +32,7 @@ export abstract class BaseQueueProcessor<T>
   implements OnApplicationBootstrap
 {
   private queueConfiguration: QueueConfiguration;
-  constructor(
-    protected readonly queueName: QueueNames,
-    protected readonly logger: LoggerService,
-  ) {
+  constructor(protected readonly logger: LoggerService) {
     super();
   }
 
@@ -55,18 +52,30 @@ export abstract class BaseQueueProcessor<T>
    * Initializes on application bootstrap and sets up event listeners for the queue worker events.
    */
   async onApplicationBootstrap(): Promise<void> {
-    this.queueConfiguration = await this.queueService.queueConfigurationDetails(
-      this.queueName,
-    );
-    QUEUE_WORKER_EVENTS.forEach((event) => {
-      this.worker.on(event, () =>
-        this.metricsService.incrementJobEventCounter(
-          this.queueConfiguration.queueName,
-          this.queueConfiguration.isScheduler,
-          event,
-        ),
+    try {
+      this.queueConfiguration =
+        await this.queueService.queueConfigurationDetails(
+          this.worker.name as QueueNames,
+        );
+      QUEUE_WORKER_EVENTS.forEach((event) => {
+        this.worker.on(event, () =>
+          this.metricsService.incrementJobEventCounter(
+            this.queueConfiguration.queueName,
+            this.queueConfiguration.isScheduler,
+            event,
+          ),
+        );
+        this.logger.log(
+          `Associated metric counter for queue '${this.worker.name}' event '${event}'.`,
+        );
+      });
+    } catch (error: unknown) {
+      this.logger.error(
+        `Unexpected error on queue worker application bootstrap for the queue: ${this.worker.name}.`,
+        error,
       );
-    });
+      throw error;
+    }
   }
 
   /**

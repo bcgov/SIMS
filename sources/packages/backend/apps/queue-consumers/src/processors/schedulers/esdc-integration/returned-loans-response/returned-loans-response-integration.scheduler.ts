@@ -15,7 +15,7 @@ export class ReturnedLoansResponseIntegrationScheduler extends BaseQueueProcesso
     private readonly returnedLoansResponseProcessingService: ReturnedLoansResponseProcessingService,
     logger: LoggerService,
   ) {
-    super(QueueNames.ReturnedLoansResponseIntegration, logger);
+    super(logger);
   }
 
   /**
