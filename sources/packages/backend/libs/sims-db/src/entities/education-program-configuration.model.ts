@@ -27,7 +27,6 @@ export class EducationProgramConfiguration extends BaseModel {
   @Column({
     name: "visual_schema",
     type: "jsonb",
-    nullable: false,
   })
   visualSchema: unknown;
 
@@ -37,7 +36,6 @@ export class EducationProgramConfiguration extends BaseModel {
   @Column({
     name: "validation_schema",
     type: "jsonb",
-    nullable: false,
   })
   validationSchema: unknown;
 
@@ -56,7 +54,6 @@ export class EducationProgramConfiguration extends BaseModel {
    */
   @Column({
     name: "is_active",
-    nullable: false,
   })
   isActive: boolean;
 }
