@@ -52,11 +52,11 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
     const token = request.cookies[QUEUE_DASHBOARD_AUTH_COOKIE];
     if (!token) {
       this.logAccess(request, {
-        forbiddenError: "authentication cookie not found",
+        forbiddenError: "authentication cookie not found.",
       });
-      response
-        .status(HttpStatusCode.Forbidden)
-        .send(`Not possible to authenticate: authentication cookie not found.`);
+      response.status(HttpStatusCode.Forbidden).json({
+        error: "Not possible to authenticate: authentication cookie not found.",
+      });
       return;
     }
     let user: QueueDashboardToken;
@@ -81,17 +81,17 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
       next();
     } catch (error: unknown) {
       if (error instanceof TokenExpiredError) {
-        forbiddenError = "token expired";
+        forbiddenError = "token expired.";
       } else if (error instanceof JsonWebTokenError) {
-        forbiddenError = "invalid token";
+        forbiddenError = "invalid token.";
       } else {
-        forbiddenError = "authentication failed";
+        forbiddenError = "authentication failed.";
         // Only add an error log if the error in unknown.
         this.logger.error("Queues dashboard authentication error.", error);
       }
       response
         .status(HttpStatusCode.Forbidden)
-        .send(`Not possible to authenticate: ${forbiddenError}.`);
+        .json({ error: `Not possible to authenticate: ${forbiddenError}` });
     } finally {
       this.logAccess(request, { userGuid: user?.sub, forbiddenError });
     }
@@ -122,7 +122,7 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
       userAccessLogs.push(`User GUID: ${options?.userGuid}`);
     }
     if (options?.forbiddenError) {
-      userAccessLogs.push(`Forbidden error: ${options.forbiddenError}.`);
+      userAccessLogs.push(`Forbidden error: ${options.forbiddenError}`);
     }
     const logMessage = userAccessLogs.join(" | ");
     if (options?.forbiddenError) {
