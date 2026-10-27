@@ -78,7 +78,7 @@ SET
       'minHoursWeekAvi',
       min_hours_week_avi,
       'entranceRequirements',
-      -- Array of the selected entrance requirements, removed when none is selected.
+      -- Array of the selected entrance requirements.
       NULLIF(
         TO_JSONB(
           ARRAY_REMOVE(

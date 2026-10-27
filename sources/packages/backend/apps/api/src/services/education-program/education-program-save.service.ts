@@ -39,10 +39,8 @@ import {
   EntranceRequirementValues,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
-import {
-  EducationProgramDataValidationService,
-  EducationProgramDataValidationContext,
-} from "..";
+import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
+import { EducationProgramDataValidationContext } from "./data-validation/custom-validators/custom-validators.models";
 import {
   EducationProgramDataValidationSuccess,
   ProgramFlagEffect,
