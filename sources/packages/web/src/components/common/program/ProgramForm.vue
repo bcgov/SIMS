@@ -7,7 +7,7 @@
           :data="formModel"
           :schema="programFormSchema"
           :uischema="programFormUiSchema"
-          :renderers="programFormRenderers"
+          :renderers="PROGRAM_FORM_RENDERERS"
           :validation-mode="validationMode"
           :additional-errors="requiredErrorsPerProperty"
           :ajv="programFormAjv"
@@ -38,7 +38,7 @@ import {
 } from "@/services/http/dto";
 import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
-import { programFormRenderers } from "@/components/renderers/jsonforms";
+import { PROGRAM_FORM_RENDERERS } from "@/components/renderers/jsonforms/formRenders";
 import {
   createFlagsCalculator,
   getRequiredErrorsPerProperty,

@@ -28,19 +28,13 @@ import {
 } from "./testers.js";
 
 /**
- * Renderer set for the Program form, built on @jsonforms/core + @jsonforms/vue
- * directly - intentionally does NOT depend on @jsonforms/vue-vuetify, so
- * every renderer below wraps this project's own components directly and
- * targets its Vuetify version without a third-party renderer's version lag.
- *
- * Each component is wrapped in markRaw(): @jsonforms/vue stores this array
- * inside its internal reactive JsonForms state, and without markRaw, Vue's
- * reactivity system would deep-proxy the component definition objects
- * themselves - triggering "Vue received a Component that was made a
- * reactive object" and adding needless reactivity overhead, since a
- * component definition is static and never needs to be observed.
+ * Renderer set to be shared by the across the project.
+ * Built on @jsonforms/core + @jsonforms/vue directly - intentionally does
+ * NOT depend on @jsonforms/vue-vuetify, so every renderer below wraps this
+ * project's own components directly and targets its Vuetify version without
+ * a third-party renderer's version lag.
  */
-export const programFormRenderers: JsonFormsRendererRegistryEntry[] = [
+export const COMMON_FORM_RENDERERS: JsonFormsRendererRegistryEntry[] = [
   { renderer: markRaw(TextControlRenderer), tester: textControlTester },
   { renderer: markRaw(YesNoControlRenderer), tester: yesNoControlTester },
   {
@@ -48,10 +42,7 @@ export const programFormRenderers: JsonFormsRendererRegistryEntry[] = [
     tester: verticalLayoutTester,
   },
   { renderer: markRaw(GroupLayoutRenderer), tester: groupLayoutTester },
-  {
-    renderer: markRaw(FieldOfStudyCodeRenderer),
-    tester: fieldOfStudyCodeTester,
-  },
+
   {
     renderer: markRaw(CheckboxOptionsGroupRenderer),
     tester: checkboxOptionsGroupTester,
@@ -64,8 +55,19 @@ export const programFormRenderers: JsonFormsRendererRegistryEntry[] = [
     renderer: markRaw(BooleanCheckboxRenderer),
     tester: booleanCheckboxTester,
   },
+];
+
+/**
+ * Education program specific renderers.
+ */
+export const PROGRAM_FORM_RENDERERS: JsonFormsRendererRegistryEntry[] = [
+  ...COMMON_FORM_RENDERERS,
   {
     renderer: markRaw(EntranceRequirementsRenderer),
     tester: entranceRequirementsTester,
+  },
+  {
+    renderer: markRaw(FieldOfStudyCodeRenderer),
+    tester: fieldOfStudyCodeTester,
   },
 ];
