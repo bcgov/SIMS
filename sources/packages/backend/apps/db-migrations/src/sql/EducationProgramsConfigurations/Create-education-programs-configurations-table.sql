@@ -105,7 +105,10 @@ SELECT
               },
               {
                 "type": "Control",
-                "scope": "#/properties/fieldOfStudyCode"
+                "scope": "#/properties/fieldOfStudyCode",
+                "options": {
+                  "component": "fieldOfStudyCode"
+                }
               },
               {
                 "type": "Control",
@@ -375,7 +378,10 @@ SELECT
             "elements": [
               {
                 "type": "Control",
-                "scope": "#/properties/entranceRequirements"
+                "scope": "#/properties/entranceRequirements",
+                "options": {
+                  "component": "entranceRequirements"
+                }
               },
               {
                 "rule": {
