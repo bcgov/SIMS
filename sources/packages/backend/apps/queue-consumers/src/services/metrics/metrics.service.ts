@@ -87,7 +87,7 @@ export class MetricsService {
       : MetricsQueueTypes.Consumer;
     this.jobsEventsCounter.inc(
       {
-        queueName: queueName,
+        queueName,
         queueEvent,
         queueType,
       },

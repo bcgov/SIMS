@@ -34,6 +34,11 @@ export class BullBoardQueuesRegistrationModule implements OnModuleInit {
     this.addQueuesToBoard(queues);
   }
 
+  /**
+   * Add the legacy queues to bull dashboard.
+   * @param queues queues to be added to the bull dashboard.
+   * @deprecated This method is for legacy queues and will be removed after migration to BullMQ.
+   */
   private addLegacyQueuesToBoard(queues: QueueModel[]): void {
     queues
       .filter((queue) => !BULL_MQ_MIGRATED_QUEUE_NAMES.includes(queue.name))

@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common";
+import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { ModuleRef } from "@nestjs/core";
 import { getQueueToken } from "@nestjs/bullmq";
 import { Queue } from "bullmq";
@@ -8,25 +8,11 @@ import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class QueueSchedulerService implements OnApplicationBootstrap {
-  /**
-   * Queue service to allow access to queue configuration details.
-   */
-  @Inject(QueueService)
-  private readonly queueService: QueueService;
-
-  /**
-   * Module ref to get queue providers dynamically.
-   */
-  @Inject(ModuleRef)
-  private readonly moduleRef: ModuleRef;
-
-  /**
-   * Logger service to log.
-   */
-  @Inject(LoggerService)
-  private readonly logger: LoggerService;
-
-  constructor() {}
+  constructor(
+    private readonly queueService: QueueService,
+    private readonly moduleRef: ModuleRef,
+    private readonly logger: LoggerService,
+  ) {}
 
   /**
    * Configure and upsert job schedulers for all queues marked as schedulers.
