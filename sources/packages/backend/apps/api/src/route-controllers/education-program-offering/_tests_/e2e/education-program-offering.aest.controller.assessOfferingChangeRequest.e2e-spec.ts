@@ -3,11 +3,8 @@ import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  DynamicConfigurationTestData,
   InstitutionTokenTypes,
-  assertCancelledApplicationScopedFormSubmissions,
   authorizeUserTokenForLocation,
-  createFakeFormConfigurations,
   createTestingAppModule,
   getAESTToken,
   getAESTUser,
@@ -39,6 +36,11 @@ import {
 import { OfferingChangeAssessmentAPIInDTO } from "../../models/education-program-offering.dto";
 import { In } from "typeorm";
 import MockDate from "mockdate";
+import {
+  DynamicConfigurationTestData,
+  createFakeFormConfigurations,
+} from "../../../form-submission/_tests_/e2e/form-submission-utils";
+import { assertCancelledApplicationScopedFormSubmissions } from "../../../application/_tests_/e2e/application-form-submission-utils";
 
 describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeRequest", () => {
   let app: INestApplication;
@@ -99,7 +101,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint({ offeringId: 0 });
+    const endpoint = getEndpoint(0);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -130,9 +132,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint({
-      offeringId: offeringNoPrecedingOffering.id,
-    });
+    const endpoint = getEndpoint(offeringNoPrecedingOffering.id);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -157,7 +157,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+    const endpoint = getEndpoint(requestedOffering.id);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -200,7 +200,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+    const endpoint = getEndpoint(requestedOffering.id);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -287,7 +287,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+    const endpoint = getEndpoint(requestedOffering.id);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -353,7 +353,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+    const endpoint = getEndpoint(requestedOffering.id);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -480,7 +480,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
         };
         // Ministry token.
         const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-        const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+        const endpoint = getEndpoint(requestedOffering.id);
         const now = new Date();
         MockDate.set(now);
 
@@ -545,7 +545,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       };
       // Ministry token.
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-      const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+      const endpoint = getEndpoint(requestedOffering.id);
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -608,7 +608,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       };
       // Ministry token.
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-      const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+      const endpoint = getEndpoint(requestedOffering.id);
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -645,10 +645,9 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
 
 /**
  * Get the endpoint for assessing an offering change request.
- * @param options method options.
- * - `offeringId` ID of the offering requested for change.
+ * @param offeringId ID of the offering requested for change.
  * @returns endpoint for assessing an offering change request.
  */
-function getEndpoint(options: { offeringId: number }): string {
-  return `/aest/education-program-offering/${options.offeringId}/assess-change-request`;
+function getEndpoint(offeringId: number): string {
+  return `/aest/education-program-offering/${offeringId}/assess-change-request`;
 }

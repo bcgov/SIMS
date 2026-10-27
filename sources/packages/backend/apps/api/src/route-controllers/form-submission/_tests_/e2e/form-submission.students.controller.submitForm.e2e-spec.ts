@@ -2,9 +2,7 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
 import {
   BEARER_AUTH_TYPE,
-  createFakeFormConfigurations,
   createTestingAppModule,
-  DynamicConfigurationTestData,
   FakeStudentUsersTypes,
   getStudentToken,
   mockJWTUserInfo,
@@ -20,7 +18,11 @@ import {
   saveFakeStudent,
   saveFakeStudentFileUpload,
 } from "@sims/test-utils";
-import { getEntitiesForStudentFormSubmissionAssertion } from "./form-submission-utils";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+  getEntitiesForStudentFormSubmissionAssertion,
+} from "./form-submission-utils";
 import { TestingModule } from "@nestjs/testing";
 import {
   ApplicationStatus,

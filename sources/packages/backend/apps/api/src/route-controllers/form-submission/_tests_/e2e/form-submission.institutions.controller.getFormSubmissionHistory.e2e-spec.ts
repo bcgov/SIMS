@@ -4,9 +4,7 @@ import {
   AESTGroups,
   authorizeUserTokenForLocation,
   BEARER_AUTH_TYPE,
-  createFakeFormConfigurations,
   createTestingAppModule,
-  DynamicConfigurationTestData,
   getAESTUser,
   getAuthRelatedEntities,
   getInstitutionToken,
@@ -30,6 +28,10 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "./form-submission-utils";
 
 describe("FormSubmissionInstitutionsController(e2e)-getFormSubmissionHistory", () => {
   let app: INestApplication;

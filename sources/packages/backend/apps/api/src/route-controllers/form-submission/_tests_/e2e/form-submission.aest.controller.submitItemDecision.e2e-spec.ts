@@ -4,9 +4,7 @@ import {
   AESTGroups,
   authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
-  createFakeFormConfigurations,
   createTestingAppModule,
-  DynamicConfigurationTestData,
   getAESTToken,
   getAESTUser,
 } from "../../../../testHelpers";
@@ -24,6 +22,10 @@ import {
   NoteType,
   User,
 } from "@sims/sims-db";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "./form-submission-utils";
 import MockDate from "mockdate";
 import { addDays } from "@sims/utilities";
 import {

@@ -4,12 +4,8 @@ import request from "supertest";
 import { DataSource, Not } from "typeorm";
 import {
   AESTGroups,
-  assertCancelledApplicationScopedFormSubmissions,
-  assertFormSubmissionNotUpdated,
   BEARER_AUTH_TYPE,
-  createFakeFormConfigurations,
   createTestingAppModule,
-  DynamicConfigurationTestData,
   FakeStudentUsersTypes,
   getAESTUser,
   getStudentToken,
@@ -57,6 +53,14 @@ import { createFakeSFASPartTimeApplication } from "@sims/test-utils/factories/sf
 import { createFakeSFASApplication } from "@sims/test-utils/factories/sfas-application";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 import { ACTIVE_INSTITUTION_RESTRICTION } from "../../../../constants";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "../../../form-submission/_tests_/e2e/form-submission-utils";
+import {
+  assertCancelledApplicationScopedFormSubmissions,
+  assertFormSubmissionNotUpdated,
+} from "./application-form-submission-utils";
 
 describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let app: INestApplication;

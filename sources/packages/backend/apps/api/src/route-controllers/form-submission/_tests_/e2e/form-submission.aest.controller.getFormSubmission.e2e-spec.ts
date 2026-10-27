@@ -5,9 +5,7 @@ import {
   authorizeDynamicFormConfigurations,
   authorizeMultipleDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
-  createFakeFormConfigurations,
   createTestingAppModule,
-  DynamicConfigurationTestData,
   getAESTToken,
   getAESTUser,
 } from "../../../../testHelpers";
@@ -24,6 +22,10 @@ import {
   FormSubmissionStatus,
   User,
 } from "@sims/sims-db";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "./form-submission-utils";
 import { TestingModule } from "@nestjs/testing";
 import { FormSubmissionAuthRoles } from "../../../../services";
 

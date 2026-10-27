@@ -3,9 +3,7 @@ import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  createFakeFormConfigurations,
   createTestingAppModule,
-  DynamicConfigurationTestData,
   FakeStudentUsersTypes,
   getAESTUser,
   getStudentToken,
@@ -26,6 +24,10 @@ import {
   FormSubmissionStatus,
   User,
 } from "@sims/sims-db";
+import {
+  createFakeFormConfigurations,
+  DynamicConfigurationTestData,
+} from "./form-submission-utils";
 
 describe("FormSubmissionStudentsController(e2e)-getFormSubmission", () => {
   let app: INestApplication;
