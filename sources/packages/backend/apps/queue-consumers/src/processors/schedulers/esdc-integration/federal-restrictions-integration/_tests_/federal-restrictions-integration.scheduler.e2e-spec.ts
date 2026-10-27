@@ -43,6 +43,13 @@ const FEDERAL_RESTRICTIONS_FILE_OLD = "DCSLS.PBC.RESTR.LIST.D20260405.001.zip";
 const FEDERAL_RESTRICTIONS_FILE_NEW_NAME =
   "DEDU.PBC.RESTR.LIST.D2026096.001.ZIP";
 /**
+ * Federal Restrictions file with five records where only the first one is valid. The invalid records have, in the order
+ * they appear in the file, an invalid SIN, an invalid date of birth, a missing restriction code, and both an invalid SIN
+ * and an invalid date of birth.
+ */
+const FEDERAL_RESTRICTIONS_FILE_INVALID_RECORDS =
+  "DCSLS.PBC.RESTR.LIST.D20260407.001.zip";
+/**
  * Federal Restrictions files that is missing the .zip extension.
  */
 const FEDERAL_RESTRICTIONS_FILE_MISSING_EXTENSION =
@@ -314,6 +321,50 @@ describe(
       // Assert the total federal restrictions were imported.
       const importedRestrictions = await db.federalRestriction.count();
       expect(importedRestrictions).toBe(10);
+    });
+
+    it("Should skip the records with invalid data and log a warning for each one when the federal restrictions file has records with invalid SIN, date of birth, or restriction code.", async () => {
+      // Arrange
+      const mockResponseFolder = process.env.ESDC_RESPONSE_FOLDER as string;
+      const invalidRecordsFile = join(
+        mockResponseFolder,
+        FEDERAL_RESTRICTIONS_FILE_INVALID_RECORDS,
+      );
+      mockDownloadFiles(
+        sftpClientMock,
+        [FEDERAL_RESTRICTIONS_FILE_INVALID_RECORDS],
+        undefined,
+        { applyListFilter: true },
+      );
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      expect(result).toEqual([
+        "Federal restrictions import process finished.",
+        `Processed file: ${invalidRecordsFile}`,
+        `Files found: ${invalidRecordsFile}.`,
+        "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+        expect.stringContaining("Error(s): 0, Warning(s): 4"),
+      ]);
+      expect(
+        mockedJob.containLogMessages([
+          `Processing file ${invalidRecordsFile}.`,
+          "WARN: Found record with invalid data at line number 2: invalid SIN number",
+          "WARN: Found record with invalid data at line number 3: invalid date of birth",
+          "WARN: Found record with invalid data at line number 4: invalid restriction code",
+          "WARN: Found record with invalid data at line number 5: invalid SIN number, invalid date of birth",
+        ]),
+      ).toBe(true);
+      // Only the valid record is imported.
+      const importedRestrictions = await db.federalRestriction.count();
+      expect(importedRestrictions).toBe(1);
+      const studentRestrictions = await db.studentRestriction.count({
+        where: { student: { id: student.id }, isActive: true },
+      });
+      expect(studentRestrictions).toBe(1);
     });
 
     it(`Should not process the federal restrictions file when the file name is not a match.`, async () => {
