@@ -37,15 +37,15 @@ const { control, handleChange } = useJsonFormsControl(props);
 const onUpdate = (value: string) =>
   handleChange(control.value.path, value === "" ? undefined : value);
 
-useClearDataWhenHidden(
-  computed(() => control.value.visible),
-  computed(() => control.value.path),
-  handleChange,
-);
-
 const multiline = computed(() => !!control.value.uischema.options?.multiline);
 const hint = computed(
   () => control.value.uischema.options?.hint as string | undefined,
 );
 const counter = computed(() => control.value.schema.maxLength);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
+);
 </script>

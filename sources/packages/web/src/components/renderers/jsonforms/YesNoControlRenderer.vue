@@ -29,17 +29,17 @@ const { control, handleChange } = useJsonFormsControl(props);
 const onUpdate = (value: string | number | boolean | undefined) =>
   handleChange(control.value.path, value);
 
-useClearDataWhenHidden(
-  computed(() => control.value.visible),
-  computed(() => control.value.path),
-  handleChange,
-);
-
 const tooltip = computed(
   () => control.value.uischema.options?.tooltip as string | undefined,
 );
 
 const tooltipHtml = computed(
   () => control.value.uischema.options?.tooltipHtml as string | undefined,
+);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
 );
 </script>

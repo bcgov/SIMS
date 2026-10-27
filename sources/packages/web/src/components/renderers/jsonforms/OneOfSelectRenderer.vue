@@ -29,16 +29,16 @@ const { control, handleChange } = useJsonFormsOneOfEnumControl(props);
 
 const onUpdate = (value: string) => handleChange(control.value.path, value);
 
-useClearDataWhenHidden(
-  computed(() => control.value.visible),
-  computed(() => control.value.path),
-  handleChange,
-);
-
 // Optional hint text, set via the UI Schema's "options.hint" - matches the
 // hint/persistent-hint usage already elsewhere on this project's v-select
 // lookup fields.
 const hint = computed(
   () => control.value.uischema.options?.hint as string | undefined,
+);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
 );
 </script>

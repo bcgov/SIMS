@@ -36,16 +36,16 @@ const items = computed(() =>
 const onUpdate = (value: string | number | boolean | undefined) =>
   handleChange(control.value.path, value);
 
-useClearDataWhenHidden(
-  computed(() => control.value.visible),
-  computed(() => control.value.path),
-  handleChange,
-);
-
 // Optional tooltip text next to the label, set via the UI Schema's
 // "options.tooltip" - matches the tooltip-icon usage already elsewhere in
 // this project's hand-written radio-options-group fields.
 const tooltip = computed(
   () => control.value.uischema.options?.tooltip as string | undefined,
+);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
 );
 </script>

@@ -33,16 +33,6 @@ const items = computed(() =>
   })),
 );
 
-// useJsonFormsMultiEnumControl only exposes addItem/removeItem (single-value
-// dispatches), not a whole-array handleChange, so build one the same way
-// mapDispatchToControlProps does to clear the full selection when hidden.
-const dispatch = useDispatch();
-useClearDataWhenHidden(
-  computed(() => control.value.visible),
-  computed(() => control.value.path),
-  (path, value) => dispatch(update(path, () => value)),
-);
-
 // CheckboxOptionsGroup's v-model manages the whole selected array natively
 // (each checkbox toggling adds/removes just its own value), so the update
 // is translated into the addItem/removeItem dispatch pair JSONForms expects
@@ -56,4 +46,14 @@ const onUpdate = (newValue: (string | number)[]) => {
     .filter((value) => !newValue.includes(value))
     .forEach((value) => removeItem?.(control.value.path, value));
 };
+
+// useJsonFormsMultiEnumControl only exposes addItem/removeItem (single-value
+// dispatches), not a whole-array handleChange, so build one the same way
+// mapDispatchToControlProps does to clear the full selection when hidden.
+const dispatch = useDispatch();
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  (path, value) => dispatch(update(path, () => value)),
+);
 </script>
