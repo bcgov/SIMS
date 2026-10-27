@@ -87,3 +87,4 @@ export * from "./education-program/education-program-save.service";
 export * from "./education-program/data-validation/education-program-data-validation.service";
 export * from "./education-program/data-validation/data-validation-schema-cache.service";
 export * from "./education-program/data-validation/custom-validators/unique-sabc-validator.service";
+export * from "./education-program/data-validation/custom-validators/custom-validators.models";

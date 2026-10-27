@@ -39,12 +39,14 @@ import {
   EntranceRequirementValues,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
-import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
+import {
+  EducationProgramDataValidationService,
+  EducationProgramDataValidationContext,
+} from "..";
 import {
   EducationProgramDataValidationSuccess,
   ProgramFlagEffect,
 } from "./data-validation/education-program-data-validation.models";
-import { EducationProgramDataValidationContext } from "./data-validation/custom-validators/custom-validators.models";
 import {
   EntranceRequirements,
   ProgramCalculatedDataKey,
@@ -115,7 +117,7 @@ export class EducationProgramSaveService {
       );
     }
     return this.createProgramContext(
-      institution.institutionType,
+      institution?.institutionType,
       programConfiguration,
       {
         hasOfferings: false,
@@ -124,6 +126,12 @@ export class EducationProgramSaveService {
     );
   }
 
+  /**
+   * Get the program configuration including context, visual schema, and validation schema,
+   * when a program ID is provided.
+   * @param programId ID of the program to retrieve the configuration for.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
   async getEducationProgramConfigurationFromProgram(
     programId: number,
   ): Promise<EducationProgramDynamicConfiguration> {
@@ -169,11 +177,39 @@ export class EducationProgramSaveService {
     });
   }
 
+  /**
+   * Creates the program context including flags and visual/validation schema,
+   * used for program creation and validation.
+   * @param institutionType the type of the institution.
+   * @param programConfiguration the program configuration.
+   * @param options additional options.
+   * - `hasOfferings` indicates if the program has offerings.
+   * - `isActive` indicates if the program is active.
+   * @returns the dynamic program configuration including context, visual schema, and validation schema.
+   */
   private createProgramContext(
     institutionType: InstitutionType,
     programConfiguration: EducationProgramConfiguration,
     options: { hasOfferings: boolean; isActive: boolean },
   ): EducationProgramDynamicConfiguration {
+    if (!institutionType) {
+      throw new Error(
+        `Institution type not loaded for the program configuration ID ${programConfiguration.id}.`,
+      );
+    }
+    if (!programConfiguration.programYear) {
+      throw new Error(
+        `Program year not loaded for the program configuration ID ${programConfiguration.id}.`,
+      );
+    }
+    if (
+      !programConfiguration.visualSchema ||
+      !programConfiguration.validationSchema
+    ) {
+      throw new Error(
+        `Visual or validation schema not loaded for the program configuration ID ${programConfiguration.id}.`,
+      );
+    }
     return {
       configurationId: programConfiguration.id,
       programYearId: programConfiguration.programYear.id,
@@ -191,6 +227,14 @@ export class EducationProgramSaveService {
     };
   }
 
+  /**
+   * Create a new education program.
+   * @param programData the data for the new education program.
+   * @param programConfigurationId the ID of the program configuration.
+   * @param institutionId the ID of the institution.
+   * @param auditUserId the ID of the user performing the action.
+   * @returns the created education program.
+   */
   async createProgram(
     programData: EducationProgramData,
     programConfigurationId: number,
@@ -232,6 +276,14 @@ export class EducationProgramSaveService {
     );
   }
 
+  /**
+   * Update an existing and active education program.
+   * @param programId the ID of the program to update.
+   * @param programData the updated data for the education program.
+   * @param institutionId the ID of the institution.
+   * @param auditUserId the ID of the user performing the action.
+   * @returns the updated education program.
+   */
   async updateProgram(
     programId: number,
     programData: EducationProgramData,
@@ -332,6 +384,15 @@ export class EducationProgramSaveService {
     );
   }
 
+  /**
+   * Creates or updates an education program based on the provided validation result and options.
+   * @param institutionId the ID of the institution.
+   * @param auditUserId the ID of the user performing the action.
+   * @param validationResult the result of the program data validation.
+   * @param context the context of the education program.
+   * @param options optional parameters including program ID and program configuration ID.
+   * @returns the created or updated education program.
+   */
   private async saveEducationProgram(
     institutionId: number,
     auditUserId: number,
