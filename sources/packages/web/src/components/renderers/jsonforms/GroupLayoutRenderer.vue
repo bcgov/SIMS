@@ -41,9 +41,7 @@ const groupTitle = computed(() => {
   const label = (layout.value.uischema as GroupLayout).label;
   return typeof label === "string" ? label : undefined;
 });
-// Static, developer-authored rich subtitle (e.g. a link) - never user
-// input, so v-html is safe here. Needs its own #header override since
-// body-header-container's default header doesn't expose a subtitle slot.
+
 const subtitleHtml = computed(
   () => layout.value.uischema.options?.subtitleHtml as string | undefined,
 );
