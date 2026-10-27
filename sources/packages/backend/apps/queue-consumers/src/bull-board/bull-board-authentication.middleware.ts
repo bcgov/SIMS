@@ -9,8 +9,11 @@ import {
   QUEUE_DASHBOARD_AUDIENCE,
   QUEUE_DASHBOARD_AUTH_COOKIE,
   QUEUE_DASHBOARD_ISSUER,
+  QUEUE_DASHBOARD_PROMOTE_API_PATTERN,
+  QUEUE_DASHBOARD_PROMOTE_FORBIDDEN_MESSAGE,
 } from "@sims/auth/constants";
 import { QueueDashboardToken } from "@sims/auth/services";
+import { BULL_MQ_MIGRATED_QUEUE_NAMES } from "@sims/utilities";
 import { ConfigService } from "@sims/utilities/config";
 import { LoggerService } from "@sims/utilities/logger";
 import { HttpStatusCode } from "axios";
@@ -64,6 +67,16 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
         token,
         this.jwtVerifyOptions,
       );
+      const isPromoteOperation = this.isPromoteOperation(request);
+      if (isPromoteOperation) {
+        this.logAccess(request, {
+          forbiddenError: QUEUE_DASHBOARD_PROMOTE_FORBIDDEN_MESSAGE,
+        });
+        response.status(HttpStatusCode.Forbidden).json({
+          error: QUEUE_DASHBOARD_PROMOTE_FORBIDDEN_MESSAGE,
+        });
+        return;
+      }
       // Proceed if the validation was successful.
       next();
     } catch (error: unknown) {
@@ -117,5 +130,20 @@ export class BullBoardAuthenticationMiddleware implements NestMiddleware {
     } else {
       this.logger.log(logMessage);
     }
+  }
+
+  /**
+   * Identifies if the request is a promote operation for a Bull MQ migrated queue.
+   * @param request HTTP request object.
+   * @returns true if the request is a promote operation for a Bull MQ migrated queue, false otherwise.
+   */
+  private isPromoteOperation(request: Request): boolean {
+    // Expected format: /api/queues/{queueName}/{jobId}/promote.
+    const match = QUEUE_DASHBOARD_PROMOTE_API_PATTERN.exec(request.url);
+    if (!match) {
+      return false;
+    }
+    const queueName = decodeURIComponent(match[1]);
+    return BULL_MQ_MIGRATED_QUEUE_NAMES.includes(queueName);
   }
 }
