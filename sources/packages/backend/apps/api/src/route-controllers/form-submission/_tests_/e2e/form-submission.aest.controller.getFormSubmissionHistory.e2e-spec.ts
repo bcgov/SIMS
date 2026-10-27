@@ -4,7 +4,9 @@ import {
   AESTGroups,
   authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
+  createFakeFormConfigurations,
   createTestingAppModule,
+  DynamicConfigurationTestData,
   getAESTToken,
 } from "../../../../testHelpers";
 import {
@@ -22,10 +24,6 @@ import {
   User,
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
-import {
-  createFakeFormConfigurations,
-  DynamicConfigurationTestData,
-} from "./form-submission-utils";
 import { FormSubmissionAuthRoles } from "../../../../services";
 import { TestingModule } from "@nestjs/testing";
 

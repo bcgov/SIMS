@@ -3,7 +3,9 @@ import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
+  createFakeFormConfigurations,
   createTestingAppModule,
+  DynamicConfigurationTestData,
   FakeStudentUsersTypes,
   getAESTUser,
   getStudentToken,
@@ -26,10 +28,6 @@ import {
 } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 import { TestingModule } from "@nestjs/testing";
-import {
-  createFakeFormConfigurations,
-  DynamicConfigurationTestData,
-} from "./form-submission-utils";
 
 describe("FormSubmissionStudentsController(e2e)-getFormSubmissionHistory", () => {
   let app: INestApplication;

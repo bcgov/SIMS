@@ -3,7 +3,9 @@ import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
+  createFakeFormConfigurations,
   createTestingAppModule,
+  DynamicConfigurationTestData,
   FakeStudentUsersTypes,
   getAESTUser,
   getStudentToken,
@@ -29,10 +31,6 @@ import {
   ModifiedIndependentStatus,
   User,
 } from "@sims/sims-db";
-import {
-  createFakeFormConfigurations,
-  DynamicConfigurationTestData,
-} from "./form-submission-utils";
 import {
   FORM_SUBMISSION_NOT_PENDING,
   FORM_SUBMISSION_WITH_MINISTRY_DECISION,

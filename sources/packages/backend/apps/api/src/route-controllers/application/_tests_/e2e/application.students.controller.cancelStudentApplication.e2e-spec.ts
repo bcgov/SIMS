@@ -3,8 +3,12 @@ import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import {
   AESTGroups,
+  assertCancelledApplicationScopedFormSubmissions,
+  assertFormSubmissionNotUpdated,
   BEARER_AUTH_TYPE,
+  createFakeFormConfigurations,
   createTestingAppModule,
+  DynamicConfigurationTestData,
   FakeStudentUsersTypes,
   getAESTUser,
   getStudentToken,
@@ -28,14 +32,6 @@ import {
   User,
 } from "@sims/sims-db";
 import MockDate from "mockdate";
-import {
-  DynamicConfigurationTestData,
-  createFakeFormConfigurations,
-} from "../../../form-submission/_tests_/e2e/form-submission-utils";
-import {
-  assertCancelledApplicationScopedFormSubmissions,
-  assertFormSubmissionNotUpdated,
-} from "./application-form-submission-utils";
 
 describe("ApplicationStudentsController(e2e)-cancelStudentApplication", () => {
   let app: INestApplication;

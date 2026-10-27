@@ -4,7 +4,9 @@ import {
   AESTGroups,
   authorizeDynamicFormConfigurations,
   BEARER_AUTH_TYPE,
+  createFakeFormConfigurations,
   createTestingAppModule,
+  DynamicConfigurationTestData,
   getAESTToken,
   getAESTUser,
 } from "../../../../testHelpers";
@@ -28,11 +30,7 @@ import {
   StudentScholasticStandingChangeType,
   User,
 } from "@sims/sims-db";
-import {
-  createFakeFormConfigurations,
-  DynamicConfigurationTestData,
-  getEntitiesForMinistryCompleteFormSubmissionAssertion,
-} from "./form-submission-utils";
+import { getEntitiesForMinistryCompleteFormSubmissionAssertion } from "./form-submission-utils";
 import MockDate from "mockdate";
 import { getPCTDateTimeWithTimezone } from "@sims/utilities";
 import {
