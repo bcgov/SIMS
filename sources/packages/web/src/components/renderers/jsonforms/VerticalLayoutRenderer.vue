@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import { DispatchRenderer, rendererProps, useJsonFormsLayout } from "@jsonforms/vue";
-import type { Layout } from "@jsonforms/core";
-
-const props = defineProps(rendererProps<Layout>());
-const { layout } = useJsonFormsLayout(props);
-</script>
-
 <template>
   <div v-if="layout.visible">
     <dispatch-renderer
@@ -20,3 +12,14 @@ const { layout } = useJsonFormsLayout(props);
     />
   </div>
 </template>
+<script setup lang="ts">
+import {
+  DispatchRenderer,
+  rendererProps,
+  useJsonFormsLayout,
+} from "@jsonforms/vue";
+import type { Layout } from "@jsonforms/core";
+
+const props = defineProps(rendererProps<Layout>());
+const { layout } = useJsonFormsLayout(props);
+</script>

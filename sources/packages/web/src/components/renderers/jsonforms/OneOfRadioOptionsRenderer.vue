@@ -1,3 +1,19 @@
+<template>
+  <radio-options-group
+    v-if="control.visible"
+    :model-value="control.data"
+    @update:model-value="onUpdate"
+    :items="items"
+    :label="control.label"
+    :readonly="control.readonly || !control.enabled"
+    :error-messages="control.errors ? [control.errors] : []"
+  >
+    <template v-if="tooltip" #label>
+      <span>{{ control.label }}</span
+      ><tooltip-icon :max-width="670">{{ tooltip }}</tooltip-icon>
+    </template>
+  </radio-options-group>
+</template>
 <script setup lang="ts">
 import { computed } from "vue";
 import { rendererProps, useJsonFormsOneOfEnumControl } from "@jsonforms/vue";
@@ -17,7 +33,8 @@ const items = computed(() =>
   })),
 );
 
-const onUpdate = (value: string) => handleChange(control.value.path, value);
+const onUpdate = (value: string | number | boolean | undefined) =>
+  handleChange(control.value.path, value);
 
 useClearDataWhenHidden(
   computed(() => control.value.visible),
@@ -32,20 +49,3 @@ const tooltip = computed(
   () => control.value.uischema.options?.tooltip as string | undefined,
 );
 </script>
-
-<template>
-  <radio-options-group
-    v-if="control.visible"
-    :model-value="control.data"
-    @update:model-value="onUpdate"
-    :items="items"
-    :label="control.label"
-    :readonly="control.readonly || !control.enabled"
-    :error-messages="control.errors ? [control.errors] : []"
-  >
-    <template v-if="tooltip" #label>
-      <span>{{ control.label }}</span
-      ><tooltip-icon :max-width="670">{{ tooltip }}</tooltip-icon>
-    </template>
-  </radio-options-group>
-</template>

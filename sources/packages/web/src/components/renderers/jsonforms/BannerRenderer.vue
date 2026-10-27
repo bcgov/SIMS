@@ -1,3 +1,16 @@
+<template>
+  <banner
+    v-if="label.visible"
+    :type="type"
+    :header="header"
+    density="compact"
+    class="my-3"
+  >
+    <template v-if="content" #content>
+      <span v-html="content"></span>
+    </template>
+  </banner>
+</template>
 <script setup lang="ts">
 import { computed } from "vue";
 import { rendererProps, useJsonFormsLabel } from "@jsonforms/vue";
@@ -24,17 +37,3 @@ const content = computed(
   () => label.value.uischema.options?.content as string | undefined,
 );
 </script>
-
-<template>
-  <banner
-    v-if="label.visible"
-    :type="type"
-    :header="header"
-    density="compact"
-    class="my-3"
-  >
-    <template v-if="content" #content>
-      <span v-html="content"></span>
-    </template>
-  </banner>
-</template>

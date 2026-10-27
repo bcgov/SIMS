@@ -1,3 +1,15 @@
+<template>
+  <checkbox-options-group
+    v-if="control.visible"
+    :model-value="control.data"
+    @update:model-value="onUpdate"
+    :items="items"
+    :label="control.label"
+    :readonly="control.readonly || !control.enabled"
+    :error-messages="control.errors ? [control.errors] : []"
+    color="primary"
+  ></checkbox-options-group>
+</template>
 <script setup lang="ts">
 import { computed } from "vue";
 import {
@@ -45,16 +57,3 @@ const onUpdate = (newValue: (string | number)[]) => {
     .forEach((value) => removeItem?.(control.value.path, value));
 };
 </script>
-
-<template>
-  <checkbox-options-group
-    v-if="control.visible"
-    :model-value="control.data"
-    @update:model-value="onUpdate"
-    :items="items"
-    :label="control.label"
-    :readonly="control.readonly || !control.enabled"
-    :error-messages="control.errors ? [control.errors] : []"
-    color="primary"
-  ></checkbox-options-group>
-</template>

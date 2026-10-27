@@ -1,27 +1,3 @@
-<script setup lang="ts">
-import { computed } from "vue";
-import {
-  DispatchRenderer,
-  rendererProps,
-  useJsonFormsLayout,
-} from "@jsonforms/vue";
-import type { GroupLayout } from "@jsonforms/core";
-
-const props = defineProps(rendererProps<GroupLayout>());
-const { layout } = useJsonFormsLayout(props);
-
-const groupTitle = computed(() => {
-  const label = (layout.value.uischema as GroupLayout).label;
-  return typeof label === "string" ? label : undefined;
-});
-// Static, developer-authored rich subtitle (e.g. a link) - never user
-// input, so v-html is safe here. Needs its own #header override since
-// body-header-container's default header doesn't expose a subtitle slot.
-const subtitleHtml = computed(
-  () => layout.value.uischema.options?.subtitleHtml as string | undefined,
-);
-</script>
-
 <template>
   <body-header-container
     v-if="layout.visible"
@@ -49,3 +25,26 @@ const subtitleHtml = computed(
     </content-group>
   </body-header-container>
 </template>
+<script setup lang="ts">
+import { computed } from "vue";
+import {
+  DispatchRenderer,
+  rendererProps,
+  useJsonFormsLayout,
+} from "@jsonforms/vue";
+import type { GroupLayout } from "@jsonforms/core";
+
+const props = defineProps(rendererProps<GroupLayout>());
+const { layout } = useJsonFormsLayout(props);
+
+const groupTitle = computed(() => {
+  const label = (layout.value.uischema as GroupLayout).label;
+  return typeof label === "string" ? label : undefined;
+});
+// Static, developer-authored rich subtitle (e.g. a link) - never user
+// input, so v-html is safe here. Needs its own #header override since
+// body-header-container's default header doesn't expose a subtitle slot.
+const subtitleHtml = computed(
+  () => layout.value.uischema.options?.subtitleHtml as string | undefined,
+);
+</script>

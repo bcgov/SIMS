@@ -1,3 +1,15 @@
+<template>
+  <v-text-field
+    v-if="control.visible"
+    :model-value="control.data"
+    density="compact"
+    variant="outlined"
+    :label="control.label"
+    :loading="calculating"
+    readonly
+    :error-messages="control.errors ? [control.errors] : []"
+  />
+</template>
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import {
@@ -81,16 +93,3 @@ useClearDataWhenHidden(
   handleChange,
 );
 </script>
-
-<template>
-  <v-text-field
-    v-if="control.visible"
-    :model-value="control.data"
-    density="compact"
-    variant="outlined"
-    :label="control.label"
-    :loading="calculating"
-    readonly
-    :error-messages="control.errors ? [control.errors] : []"
-  />
-</template>

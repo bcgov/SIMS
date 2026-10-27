@@ -1,3 +1,15 @@
+<template>
+  <checkbox-options-group
+    v-if="control.visible"
+    color="primary"
+    :model-value="selected"
+    @update:model-value="onUpdate"
+    :items="items"
+    :label="control.label"
+    :readonly="control.readonly || !control.enabled"
+    :error-messages="control.errors ? [control.errors] : []"
+  ></checkbox-options-group>
+</template>
 <script setup lang="ts">
 import { computed } from "vue";
 import {
@@ -57,16 +69,3 @@ useClearDataWhenHidden(
   (path, value) => dispatch(update(path, () => value)),
 );
 </script>
-
-<template>
-  <checkbox-options-group
-    v-if="control.visible"
-    color="primary"
-    :model-value="selected"
-    @update:model-value="onUpdate"
-    :items="items"
-    :label="control.label"
-    :readonly="control.readonly || !control.enabled"
-    :error-messages="control.errors ? [control.errors] : []"
-  ></checkbox-options-group>
-</template>

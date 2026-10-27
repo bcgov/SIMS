@@ -1,32 +1,3 @@
-<script setup lang="ts">
-import { computed } from "vue";
-import { rendererProps, useJsonFormsControl } from "@jsonforms/vue";
-import type { ControlElement } from "@jsonforms/core";
-import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
-
-const props = defineProps(rendererProps<ControlElement>());
-const { control, handleChange } = useJsonFormsControl(props);
-
-// A cleared field is removed from the data rather than kept as "", which
-// would satisfy "required" (e.g. programName has no minLength).
-const onUpdate = (value: string) =>
-  handleChange(control.value.path, value === "" ? undefined : value);
-
-useClearDataWhenHidden(
-  computed(() => control.value.visible),
-  computed(() => control.value.path),
-  handleChange,
-);
-
-const multiline = computed(
-  () => !!control.value.uischema.options?.multiline,
-);
-const hint = computed(
-  () => control.value.uischema.options?.hint as string | undefined,
-);
-const counter = computed(() => control.value.schema.maxLength);
-</script>
-
 <template>
   <v-textarea
     v-if="control.visible && multiline"
@@ -52,3 +23,29 @@ const counter = computed(() => control.value.schema.maxLength);
     :error-messages="control.errors ? [control.errors] : []"
   />
 </template>
+<script setup lang="ts">
+import { computed } from "vue";
+import { rendererProps, useJsonFormsControl } from "@jsonforms/vue";
+import type { ControlElement } from "@jsonforms/core";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
+
+const props = defineProps(rendererProps<ControlElement>());
+const { control, handleChange } = useJsonFormsControl(props);
+
+// A cleared field is removed from the data rather than kept as "", which
+// would satisfy "required" (e.g. programName has no minLength).
+const onUpdate = (value: string) =>
+  handleChange(control.value.path, value === "" ? undefined : value);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
+);
+
+const multiline = computed(() => !!control.value.uischema.options?.multiline);
+const hint = computed(
+  () => control.value.uischema.options?.hint as string | undefined,
+);
+const counter = computed(() => control.value.schema.maxLength);
+</script>

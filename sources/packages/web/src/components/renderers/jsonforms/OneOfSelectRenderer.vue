@@ -1,3 +1,20 @@
+<template>
+  <v-select
+    v-if="control.visible"
+    :model-value="control.data"
+    @update:model-value="onUpdate"
+    :items="control.options"
+    item-title="label"
+    item-value="value"
+    density="compact"
+    variant="outlined"
+    :label="control.label"
+    :readonly="control.readonly || !control.enabled"
+    :error-messages="control.errors ? [control.errors] : []"
+    :hint="hint"
+    :persistent-hint="!!hint"
+  />
+</template>
 <script setup lang="ts">
 import { computed } from "vue";
 import { rendererProps, useJsonFormsOneOfEnumControl } from "@jsonforms/vue";
@@ -25,21 +42,3 @@ const hint = computed(
   () => control.value.uischema.options?.hint as string | undefined,
 );
 </script>
-
-<template>
-  <v-select
-    v-if="control.visible"
-    :model-value="control.data"
-    @update:model-value="onUpdate"
-    :items="control.options"
-    item-title="label"
-    item-value="value"
-    density="compact"
-    variant="outlined"
-    :label="control.label"
-    :readonly="control.readonly || !control.enabled"
-    :error-messages="control.errors ? [control.errors] : []"
-    :hint="hint"
-    :persistent-hint="!!hint"
-  />
-</template>
