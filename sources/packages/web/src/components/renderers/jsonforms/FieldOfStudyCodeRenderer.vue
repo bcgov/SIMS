@@ -9,6 +9,7 @@ import type { ControlElement } from "@jsonforms/core";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { ProgramCalculatedDataKey } from "@/types";
 import { CIP_CODE_REGEX } from "@/constants/program-constants";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 const { control, handleChange } = useJsonFormsControl(props);
@@ -19,16 +20,19 @@ const { control, handleChange } = useJsonFormsControl(props);
 const jsonforms = useJsonForms();
 
 const credentialType = computed(
-  () => jsonforms.core.data?.credentialType as string | undefined,
+  () => jsonforms.core?.data?.credentialType as string | undefined,
 );
 const cipCode = computed(
-  () => jsonforms.core.data?.cipCode as string | undefined,
+  () => jsonforms.core?.data?.cipCode as string | undefined,
 );
+const visible = computed(() => control.value.visible);
 const calculating = ref(false);
 
+// Visibility is also watched so the value cleared while hidden is
+// calculated again once the field is shown.
 watch(
-  [credentialType, cipCode],
-  async ([newCredentialType, newCipCode], _, onCleanup) => {
+  [credentialType, cipCode, visible],
+  async ([newCredentialType, newCipCode, isVisible], _, onCleanup) => {
     // Invoked before the next watcher run (or on unmount), so a pending
     // evaluation from previous selections never overwrites the current result
     // or clears the loading indicator of a newer evaluation.
@@ -37,8 +41,11 @@ watch(
       isStale = true;
       calculating.value = false;
     });
+    // Not calculated while hidden, otherwise the result would bring back
+    // the value cleared by useClearDataWhenHidden.
     if (
       control.value.readonly ||
+      !isVisible ||
       !newCredentialType ||
       !newCipCode ||
       !CIP_CODE_REGEX.test(newCipCode)
@@ -48,7 +55,7 @@ watch(
     calculating.value = true;
     try {
       const evaluationResult = await EducationProgramService.shared.evaluate({
-        data: jsonforms.core.data,
+        data: jsonforms.core?.data,
         calculatedDataKeys: [ProgramCalculatedDataKey.FieldOfStudyCode],
       });
       if (isStale) {
@@ -66,6 +73,12 @@ watch(
       }
     }
   },
+);
+
+useClearDataWhenHidden(
+  visible,
+  computed(() => control.value.path),
+  handleChange,
 );
 </script>
 

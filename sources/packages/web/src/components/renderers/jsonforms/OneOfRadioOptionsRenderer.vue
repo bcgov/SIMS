@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { rendererProps, useJsonFormsOneOfEnumControl } from "@jsonforms/vue";
 import type { ControlElement } from "@jsonforms/core";
 import RadioOptionsGroup from "@/components/generic/RadioOptionsGroup.vue";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 const { control, handleChange } = useJsonFormsOneOfEnumControl(props);
@@ -17,6 +18,12 @@ const items = computed(() =>
 );
 
 const onUpdate = (value: string) => handleChange(control.value.path, value);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
+);
 
 // Optional tooltip text next to the label, set via the UI Schema's
 // "options.tooltip" - matches the tooltip-icon usage already elsewhere in

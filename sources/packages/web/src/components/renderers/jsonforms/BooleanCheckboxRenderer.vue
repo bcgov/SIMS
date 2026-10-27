@@ -1,11 +1,19 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { rendererProps, useJsonFormsControl } from "@jsonforms/vue";
 import type { ControlElement } from "@jsonforms/core";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 const { control, handleChange } = useJsonFormsControl(props);
 
 const onUpdate = (value: boolean) => handleChange(control.value.path, value);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
+);
 </script>
 
 <template>

@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { rendererProps, useJsonFormsOneOfEnumControl } from "@jsonforms/vue";
 import type { ControlElement } from "@jsonforms/core";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 // "oneOf" (const/title pairs) rather than a plain "enum" - matches the
@@ -10,6 +11,12 @@ const props = defineProps(rendererProps<ControlElement>());
 const { control, handleChange } = useJsonFormsOneOfEnumControl(props);
 
 const onUpdate = (value: string) => handleChange(control.value.path, value);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
+);
 
 // Optional hint text, set via the UI Schema's "options.hint" - matches the
 // hint/persistent-hint usage already elsewhere on this project's v-select

@@ -8,6 +8,7 @@ import {
 import { update, type ControlElement } from "@jsonforms/core";
 import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue";
 import { PROGRAM_ENTRANCE_REQUIREMENT_NONE } from "@/constants/program-constants";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 const { control } = useJsonFormsMultiEnumControl(props);
@@ -49,6 +50,12 @@ const onUpdate = (newValue: Array<string | number>) => {
   // so the whole array is replaced in one dispatch.
   dispatch(update(control.value.path, () => data));
 };
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  (path, value) => dispatch(update(path, () => value)),
+);
 </script>
 
 <template>
