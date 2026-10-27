@@ -43,6 +43,7 @@ import {
   createFlagsCalculator,
   getRequiredErrorsPerProperty,
   programFormAjv,
+  sortErrorsByUISchema,
 } from "@/components/renderers/jsonforms/ajv";
 import { JsonSchema, UISchemaElement, ValidationMode } from "@jsonforms/core";
 import { ErrorMessage } from "@/types";
@@ -139,9 +140,13 @@ const errorSummaryMessages = computed<ErrorMessage[]>(() => {
   }
   // "if" errors only state that a "then" schema failed, which is already
   // reported by the "then" schema's own error.
-  const messages = (programFormErrors.value ?? [])
-    .filter((error) => error.keyword !== "if")
-    .map((error) => error.message ?? "");
+  const errors = (programFormErrors.value ?? []).filter(
+    (error) => error.keyword !== "if",
+  );
+  // Displayed in the same order as the controls on the screen.
+  const messages = sortErrorsByUISchema(errors, programFormUiSchema.value).map(
+    (error) => error.message ?? "",
+  );
   return [...new Set(messages)].map((message) => ({
     errorMessages: [message],
   }));
