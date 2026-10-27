@@ -17,45 +17,50 @@ import {
   createFakeInstitutionLocation,
   createFakeStudentAppeal,
   createFakeUser,
+  getProviderInstanceForModule,
   saveFakeApplication,
-  saveFakeFormSubmissionFromInputTestData,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
   EducationProgramOffering,
-  FormCategory,
   FormSubmissionCancellationReason,
-  FormSubmissionDecisionStatus,
-  FormSubmissionStatus,
   InstitutionLocation,
   OfferingStatus,
   StudentAssessmentStatus,
   User,
 } from "@sims/sims-db";
 import { OfferingChangeAssessmentAPIInDTO } from "../../models/education-program-offering.dto";
-import { In } from "typeorm";
+import { EntityManager, In } from "typeorm";
 import MockDate from "mockdate";
-import {
-  DynamicConfigurationTestData,
-  createFakeFormConfigurations,
-} from "../../../form-submission/_tests_/e2e/form-submission-utils";
-import { assertCancelledApplicationScopedFormSubmissions } from "../../../application/_tests_/e2e/application-form-submission-utils";
+import { AppAESTModule } from "../../../../app.aest.module";
+import { FormSubmissionCancellationService } from "../../../../services";
 
 describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeRequest", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let cancelApplicationScopedFormSubmissionsSpy: jest.SpyInstance;
   let collegeFLocation: InstitutionLocation;
   let savedUser: User;
   let ministryUser: User;
-  let formConfigs: DynamicConfigurationTestData;
   let precedingOffering: EducationProgramOffering;
   let requestedOffering: EducationProgramOffering;
 
   beforeAll(async () => {
-    const { nestApplication, dataSource } = await createTestingAppModule();
+    const { nestApplication, module, dataSource } =
+      await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    const formSubmissionCancellationService =
+      await getProviderInstanceForModule(
+        module,
+        AppAESTModule,
+        FormSubmissionCancellationService,
+      );
+    cancelApplicationScopedFormSubmissionsSpy = jest.spyOn(
+      formSubmissionCancellationService,
+      "cancelApplicationScopedFormSubmissions",
+    );
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -72,10 +77,10 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       AESTGroups.BusinessAdministrators,
     );
     ministryUser = { id: auditUser.id } as User;
-    formConfigs = await createFakeFormConfigurations(app, db);
   });
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     MockDate.reset();
     precedingOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
@@ -101,7 +106,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(0);
+    const endpoint = getEndpoint({ offeringId: 0 });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -132,7 +137,9 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(offeringNoPrecedingOffering.id);
+    const endpoint = getEndpoint({
+      offeringId: offeringNoPrecedingOffering.id,
+    });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -157,7 +164,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(requestedOffering.id);
+    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -200,7 +207,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(requestedOffering.id);
+    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -287,7 +294,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(requestedOffering.id);
+    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -353,7 +360,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Ministry token.
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
-    const endpoint = getEndpoint(requestedOffering.id);
+    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -429,91 +436,57 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     expect(notes[0].description).toBe(payload.assessmentNotes);
   });
 
-  [
-    {
-      submissionStatus: FormSubmissionStatus.Pending,
-      decisions: [],
-    },
-    {
-      submissionStatus: FormSubmissionStatus.Completed,
-      decisions: [{ decisionStatus: FormSubmissionDecisionStatus.Approved }],
-    },
-    {
-      submissionStatus: FormSubmissionStatus.Declined,
-      decisions: [{ decisionStatus: FormSubmissionDecisionStatus.Declined }],
-    },
-  ].forEach(({ submissionStatus, decisions }) => {
-    it(
-      "Should cancel the application scoped form submission when the offering change is approved and the application is cancelled" +
-        ` and the application has a form submission with submission status ${submissionStatus}.`,
-      async () => {
-        // Arrange
-        const application = await saveFakeApplication(
-          db.dataSource,
-          {
-            institution: collegeFLocation.institution,
-            institutionLocation: collegeFLocation,
-            offering: precedingOffering,
-          },
-          {
-            applicationStatus: ApplicationStatus.Assessment,
-          },
-        );
-        const formSubmission = await saveFakeFormSubmissionFromInputTestData(
-          db,
-          {
-            application,
-            formCategory: FormCategory.StudentAppeal,
-            submissionStatus,
-            ministryAuditUser: ministryUser,
-            formSubmissionItems: [
-              {
-                dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-                decisions,
-              },
-            ],
-          },
-        );
-        const payload: OfferingChangeAssessmentAPIInDTO = {
-          offeringStatus: OfferingStatus.Approved,
-          assessmentNotes: "offering change approved",
-        };
-        // Ministry token.
-        const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-        const endpoint = getEndpoint(requestedOffering.id);
-        const now = new Date();
-        MockDate.set(now);
-
-        // Act/Assert
-        await request(app.getHttpServer())
-          .patch(endpoint)
-          .send(payload)
-          .auth(token, BEARER_AUTH_TYPE)
-          .expect(HttpStatus.OK);
-
-        // Verify if the application is cancelled.
-        const updatedApplication = await db.application.findOne({
-          select: { id: true, applicationStatus: true },
-          where: { id: application.id },
-        });
-        expect(updatedApplication.applicationStatus).toBe(
-          ApplicationStatus.Cancelled,
-        );
-        // Verify if all the application scoped form submissions are cancelled.
-        await assertCancelledApplicationScopedFormSubmissions(
-          db,
-          application.id,
-          FormSubmissionCancellationReason.ApplicationCancelled,
-          [formSubmission.id],
-          ministryUser.id,
-          now,
-        );
+  it("Should request the cancellation of the application scoped form submissions when the offering change is approved and the application is cancelled.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(
+      db.dataSource,
+      {
+        institution: collegeFLocation.institution,
+        institutionLocation: collegeFLocation,
+        offering: precedingOffering,
       },
+      {
+        applicationStatus: ApplicationStatus.Assessment,
+      },
+    );
+    const payload: OfferingChangeAssessmentAPIInDTO = {
+      offeringStatus: OfferingStatus.Approved,
+      assessmentNotes: "offering change approved",
+    };
+    // Ministry token.
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = getEndpoint({ offeringId: requestedOffering.id });
+    const now = new Date();
+    MockDate.set(now);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .send(payload)
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    // Verify if the application is cancelled.
+    const updatedApplication = await db.application.findOne({
+      select: { id: true, applicationStatus: true },
+      where: { id: application.id },
+    });
+    expect(updatedApplication.applicationStatus).toBe(
+      ApplicationStatus.Cancelled,
+    );
+    // Verify if the cancellation of the application scoped form submissions was requested.
+    expect(cancelApplicationScopedFormSubmissionsSpy).toHaveBeenCalledTimes(1);
+    expect(cancelApplicationScopedFormSubmissionsSpy).toHaveBeenCalledWith(
+      application.id,
+      FormSubmissionCancellationReason.ApplicationCancelled,
+      ministryUser.id,
+      now,
+      expect.any(EntityManager),
     );
   });
 
   it(
-    "Should not cancel the application scoped form submission when the offering change is approved" +
+    "Should not request the cancellation of the application scoped form submissions when the offering change is approved" +
       ` and the application is in ${ApplicationStatus.Completed} status.`,
     async () => {
       // Arrange
@@ -528,24 +501,13 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
           applicationStatus: ApplicationStatus.Completed,
         },
       );
-      const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-        application,
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-        formSubmissionItems: [
-          {
-            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-            decisions: [],
-          },
-        ],
-      });
       const payload: OfferingChangeAssessmentAPIInDTO = {
         offeringStatus: OfferingStatus.Approved,
         assessmentNotes: "offering change approved",
       };
       // Ministry token.
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-      const endpoint = getEndpoint(requestedOffering.id);
+      const endpoint = getEndpoint({ offeringId: requestedOffering.id });
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -562,21 +524,13 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       expect(updatedApplication.applicationStatus).toBe(
         ApplicationStatus.Completed,
       );
-      // Verify if the form submission was not cancelled.
-      const queryFormSubmission = await db.formSubmission.findOne({
-        select: { id: true, submissionStatus: true, cancellationReason: true },
-        where: { id: formSubmission.id },
-      });
-      expect(queryFormSubmission).toEqual({
-        id: formSubmission.id,
-        submissionStatus: FormSubmissionStatus.Pending,
-        cancellationReason: null,
-      });
+      // Verify if the cancellation of the application scoped form submissions was not requested.
+      expect(cancelApplicationScopedFormSubmissionsSpy).not.toHaveBeenCalled();
     },
   );
 
   it(
-    "Should not cancel the application or its application scoped form submission when the offering change is declined" +
+    "Should not cancel the application or request the cancellation of its application scoped form submissions when the offering change is declined" +
       ` and the application is in ${ApplicationStatus.Assessment} status.`,
     async () => {
       // Arrange
@@ -591,24 +545,13 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
           applicationStatus: ApplicationStatus.Assessment,
         },
       );
-      const formSubmission = await saveFakeFormSubmissionFromInputTestData(db, {
-        application,
-        formCategory: FormCategory.StudentAppeal,
-        submissionStatus: FormSubmissionStatus.Pending,
-        formSubmissionItems: [
-          {
-            dynamicFormConfiguration: formConfigs.studentAppealApplicationA,
-            decisions: [],
-          },
-        ],
-      });
       const payload: OfferingChangeAssessmentAPIInDTO = {
         offeringStatus: OfferingStatus.ChangeDeclined,
         assessmentNotes: "offering change declined",
       };
       // Ministry token.
       const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-      const endpoint = getEndpoint(requestedOffering.id);
+      const endpoint = getEndpoint({ offeringId: requestedOffering.id });
 
       // Act/Assert
       await request(app.getHttpServer())
@@ -625,16 +568,8 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       expect(updatedApplication.applicationStatus).toBe(
         ApplicationStatus.Assessment,
       );
-      // Verify if the form submission was not cancelled.
-      const queryFormSubmission = await db.formSubmission.findOne({
-        select: { id: true, submissionStatus: true, cancellationReason: true },
-        where: { id: formSubmission.id },
-      });
-      expect(queryFormSubmission).toEqual({
-        id: formSubmission.id,
-        submissionStatus: FormSubmissionStatus.Pending,
-        cancellationReason: null,
-      });
+      // Verify if the cancellation of the application scoped form submissions was not requested.
+      expect(cancelApplicationScopedFormSubmissionsSpy).not.toHaveBeenCalled();
     },
   );
 
@@ -645,9 +580,10 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
 
 /**
  * Get the endpoint for assessing an offering change request.
- * @param offeringId ID of the offering requested for change.
+ * @param options method options.
+ * - `offeringId` ID of the offering requested for change.
  * @returns endpoint for assessing an offering change request.
  */
-function getEndpoint(offeringId: number): string {
-  return `/aest/education-program-offering/${offeringId}/assess-change-request`;
+function getEndpoint(options: { offeringId: number }): string {
+  return `/aest/education-program-offering/${options.offeringId}/assess-change-request`;
 }
