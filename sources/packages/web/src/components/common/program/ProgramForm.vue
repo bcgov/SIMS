@@ -11,7 +11,7 @@
           :validation-mode="validationMode"
           :additional-errors="requiredErrorsPerProperty"
           :ajv="programFormAjv"
-          :readonly="readOnly"
+          :readonly="isReadonly"
           @change="onProgramFormChange"
         />
       </v-skeleton-loader>
@@ -22,7 +22,7 @@
       @primary-click="submit"
       :disable-primary-button="isProcessing"
       :processing="isProcessing"
-      v-if="!readOnly && !loading"
+      v-if="!isReadonly && !loading"
     />
   </body-header-container>
 </template>
@@ -35,6 +35,7 @@ import {
   CreateEducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   UpdateEducationProgramAPIInDTO,
+  EducationProgramDataAPIOutDTO,
 } from "@/services/http/dto";
 import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
@@ -89,7 +90,12 @@ const errorSummary =
  */
 let programConfigurationIdForCreation: number | undefined;
 
-const formModel = ref<Record<string, unknown>>({});
+const formModel = ref({} as EducationProgramDataAPIOutDTO);
+
+const isReadonly = computed(
+  () =>
+    props.readOnly || (!!props.programId && !formModel.value.context?.isActive),
+);
 
 // Errors are always computed; only shown once the user tries to submit.
 const validationMode = ref<ValidationMode>("ValidateAndHide");
@@ -105,10 +111,12 @@ const calculateFlags = computed(() =>
  * UI schema rules to show the banners. Like the context, the
  * flags are never changed by the user and never submitted.
  * Calculated without the previous flags, the same way the server does.
- * @param data form data.
+ * @param data form data of type EducationProgramDataAPIOutDTO.
  * @returns form data with its triggered flags.
  */
-const withFlags = (data: Record<string, unknown>): Record<string, unknown> => {
+const withFlags = (
+  data: EducationProgramDataAPIOutDTO,
+): EducationProgramDataAPIOutDTO => {
   const dataWithoutFlags = { ...data };
   delete dataWithoutFlags.flags;
   return { ...dataWithoutFlags, flags: calculateFlags.value(dataWithoutFlags) };
@@ -163,7 +171,7 @@ const submit = async () => {
     });
     return;
   }
-  const programData = { ...formModel.value };
+  const programData = { ...formModel.value } as Record<string, unknown>;
   // The context and the flags are only used by the form and are never submitted.
   // Context and flags should be recalculated by the server.
   delete programData.context;
