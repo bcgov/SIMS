@@ -506,6 +506,15 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     },
     {
       scenario:
+        "online delivery follow-up answer is provided for a program not delivered online",
+      scenarioData: {
+        programDeliveryTypes: [ProgramDeliveryTypeValues.Onsite],
+        deliveredOnlineAlsoOnsite: FormYesNoOptions.Yes,
+      },
+      errorMessage: ["deliveredOnlineAlsoOnsite must not be present"],
+    },
+    {
+      scenario:
         "none of the entrance requirements is provided along with other entrance requirements",
       scenarioData: {
         entranceRequirements: [

@@ -930,6 +930,11 @@ SELECT
           "errorMessage": {
             "required": "Please indicate if the program will also be offered and delivered at 100% course load on site."
           }
+        },
+        "else": {
+          "properties": {
+            "deliveredOnlineAlsoOnsite": false
+          }
         }
       },
       {
@@ -960,6 +965,11 @@ SELECT
           ],
           "errorMessage": {
             "required": "Please indicate if students will earn the same number of credits in the same time period."
+          }
+        },
+        "else": {
+          "properties": {
+            "sameOnlineCreditsEarned": false
           }
         }
       },
@@ -995,6 +1005,11 @@ SELECT
           ],
           "errorMessage": {
             "required": "Please indicate if students will earn academic credits recognized at another designated institution."
+          }
+        },
+        "else": {
+          "properties": {
+            "earnAcademicCreditsOtherInstitution": false
           }
         }
       },
