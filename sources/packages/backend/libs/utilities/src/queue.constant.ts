@@ -1,10 +1,13 @@
+import { WorkerListener } from "bullmq";
+
 /**
  *  Queue name from the queue configuration database.
+ *  TODO: After bull mq migration, remove the legacy queue names.
  */
 export enum QueueNames {
   StartApplicationAssessment = "start-application-assessment",
   CancelApplicationAssessment = "cancel-application-assessment",
-  FileVirusScanProcessor = "virus-scan",
+  FileVirusScanProcessorLegacy = "virus-scan",
   IER12Integration = "ier12-integration",
   CRAProcessIntegration = "cra-process-integration",
   CRAResponseIntegration = "cra-response-integration",
@@ -37,5 +40,45 @@ export enum QueueNames {
   ECertCancellationResponseIntegration = "e-cert-cancellation-response-integration",
   T4AUploadEnqueuer = "t4a-upload-enqueuer",
   T4AUpload = "t4a-upload",
-  ReturnedLoansResponseIntegration = "returned-loans-response-integration",
+  ReturnedLoansResponseIntegrationLegacy = "returned-loans-response-integration",
+  FileVirusScanProcessor = "security.virus-scan",
+  ReturnedLoansResponseIntegration = "esdc.returned-loans-response-integration",
 }
+
+/**
+ * Suffix used for naming queue jobs.
+ */
+export const JOB_SUFFIX = "-job";
+
+/**
+ * Job names for the queues.
+ */
+export const QueueJobNames = {
+  FileVirusScanProcessorJob: `${QueueNames.FileVirusScanProcessor}${JOB_SUFFIX}`,
+} as const;
+
+/**
+ * BullMQ queue worker events.
+ */
+export type QueueWorkerEvents = keyof WorkerListener;
+
+export const QUEUE_WORKER_EVENTS: QueueWorkerEvents[] = [
+  "error",
+  "active",
+  "stalled",
+  "completed",
+  "progress",
+  "failed",
+  "closed",
+  "paused",
+  "resumed",
+  "drained",
+  "lockRenewalFailed",
+  "locksRenewed",
+];
+
+// TODO: After bull mq migration, remove this constant.
+export const BULL_MQ_MIGRATED_QUEUE_NAMES: string[] = [
+  QueueNames.FileVirusScanProcessor,
+  QueueNames.ReturnedLoansResponseIntegration,
+];

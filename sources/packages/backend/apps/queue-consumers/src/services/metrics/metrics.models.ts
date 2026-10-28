@@ -1,11 +1,11 @@
-import { QueueModel } from "@sims/services/queue";
-import { Queue } from "bull";
+import { QueueWorkerEvents } from "@sims/utilities";
 
 /**
  * Bull queues event names to have metrics associated (@see https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#events)
  * and others that are useful for monitoring.
+ * @deprecated TODO: After bull mq migration, this enum will be removed.
  */
-export enum QueuesMetricsEvents {
+export enum QueuesMetricsEventsLegacy {
   /**
    * An error occurred, for instance, Redis connectivity issue.
    */
@@ -62,6 +62,13 @@ export enum QueuesMetricsEvents {
    * are not able to extend locks.
    */
   LockExtensionFailed = "lock-extension-failed",
+}
+
+/**
+ * Custom metrics event, not emitted by queue, used to count the warnings
+ * reported by a job that was finalized with success.
+ */
+export enum MetricsCustomQueueEvents {
   /**
    * A job was finished with success but contains at least one warning.
    */
@@ -69,11 +76,16 @@ export enum QueuesMetricsEvents {
 }
 
 /**
+ * Metrics events for a queue, including both worker events and custom events.
+ */
+export type QueueMetricsEvents = QueueWorkerEvents | MetricsCustomQueueEvents;
+
+/**
  * Information to provide metrics to a queue.
  */
-export interface MonitoredQueue {
-  provider: Queue;
-  queueModel: QueueModel;
+export interface MonitoredQueue<T> {
+  provider: T;
+  queueType: MetricsQueueTypes;
 }
 
 /**

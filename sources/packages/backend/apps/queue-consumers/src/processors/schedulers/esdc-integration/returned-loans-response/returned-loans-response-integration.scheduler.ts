@@ -1,25 +1,24 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { ReturnedLoansResponseProcessingService } from "@sims/integrations/esdc-integration";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 
 /**
  * Scheduler to process Return to Government(RTG) files.
  ** Both OTH (270 days file) and PDD (Death, Permanent Disability file) RTG files are processed by this scheduler.
  */
-@Processor(QueueNames.ReturnedLoansResponseIntegration)
-export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.ReturnedLoansResponseIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class ReturnedLoansResponseIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.ReturnedLoansResponseIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly returnedLoansResponseProcessingService: ReturnedLoansResponseProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -28,7 +27,7 @@ export class ReturnedLoansResponseIntegrationScheduler extends BaseScheduler<voi
    * @param processSummary process summary for logging.
    * @returns process summary.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {

@@ -1,6 +1,10 @@
 import { INestApplication } from "@nestjs/common";
 import { T4AUploadQueueInDTO, VirusScanQueueInDTO } from "@sims/services/queue";
-import { getISODateOnlyString, QueueNames } from "@sims/utilities";
+import {
+  getISODateOnlyString,
+  QueueJobNames,
+  QueueNames,
+} from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -19,7 +23,7 @@ import { v4 as uuid } from "uuid";
 import Client from "ssh2-sftp-client";
 import { DeepMocked } from "@golevelup/ts-jest";
 import { getQueueProviderName } from "@sims/test-utils/mocks";
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import { SystemUsersService } from "@sims/services";
 import {
   FileOriginType,
@@ -179,10 +183,13 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
         body: fileContentBuffer,
       });
       // Validate if the virus scan job was queued.
-      expect(virusScanQueueMock.add).toHaveBeenCalledWith({
-        uniqueFileName: studentFile.uniqueFileName,
-        fileName: studentFile.fileName,
-      });
+      expect(virusScanQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.FileVirusScanProcessorJob,
+        {
+          uniqueFileName: studentFile.uniqueFileName,
+          fileName: studentFile.fileName,
+        },
+      );
       // Assert expected logs.
       expect(
         mockedJob.containLogMessages([

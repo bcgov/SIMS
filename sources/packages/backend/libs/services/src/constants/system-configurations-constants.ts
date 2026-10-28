@@ -97,6 +97,16 @@ export const BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND = 3;
 export const BULL_BOARD_ROUTE = "admin/queues";
 
 /**
+ * Delimiter used for grouping queue names in the bull board.
+ */
+export const BULL_BOARD_QUEUE_DELIMITER = ".";
+
+/**
+ * Width of the bull board menu.
+ */
+export const BULL_BOARD_MENU_WIDTH = "350px";
+
+/**
  * Number of days after which acceptance of a student assessment is considered overdue and a notification should be sent to the student.
  */
 export const STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS = 7;
