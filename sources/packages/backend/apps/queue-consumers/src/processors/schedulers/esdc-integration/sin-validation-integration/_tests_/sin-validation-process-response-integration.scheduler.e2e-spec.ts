@@ -216,11 +216,11 @@ describe(
         [SIN_VALIDATION_FILENAME],
         (fileContent: string) => {
           const file = getStructuredRecords(fileContent);
-          // Change the SIN (position 12 to 21) of the first record.
+          // Change only the SIN (offsets 14 to 22) of the first record, preserving the status fields.
           file.records[0] =
-            file.records[0].substring(0, 12) +
+            file.records[0].substring(0, 14) +
             "000000001" +
-            file.records[0].substring(21);
+            file.records[0].substring(23);
           return createFileFromStructuredRecords(file);
         },
       );
