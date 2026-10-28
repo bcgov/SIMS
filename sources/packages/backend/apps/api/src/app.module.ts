@@ -145,8 +145,6 @@ export class AppModule implements NestModule, OnModuleInit {
       .apply(AccessLoggerMiddleware)
       .exclude(
         { path: "metrics", method: RequestMethod.ALL },
-        { path: "metrics/{*path}", method: RequestMethod.ALL },
-        { path: "health", method: RequestMethod.ALL },
         { path: "health/{*path}", method: RequestMethod.ALL },
       )
       .forRoutes("*");
