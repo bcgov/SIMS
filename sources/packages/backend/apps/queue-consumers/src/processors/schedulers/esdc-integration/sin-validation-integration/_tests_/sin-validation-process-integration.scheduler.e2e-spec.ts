@@ -9,20 +9,23 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeUser,
   saveFakeStudent,
 } from "@sims/test-utils";
 import Client from "ssh2-sftp-client";
 import { In, IsNull } from "typeorm";
 import MockDate from "mockdate";
-import dayjs from "dayjs";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "@sims/services/constants";
-import { Student, User } from "@sims/sims-db";
+import { User } from "@sims/sims-db";
 import { SINValidationProcessIntegrationScheduler } from "../sin-validation-process-integration.scheduler";
+import { saveStudentWithPendingSINValidation } from "./sin-validation-factory";
+import {
+  createExpectedFooter,
+  createExpectedHeader,
+  createExpectedRecord,
+} from "./sin-validation-helper";
 
 const SIN_REQUEST_FOLDER = "SIN-Request";
-const FILE_DATE_FORMAT = "YYYYMMDD";
 
 describe(
   describeProcessorRootTest(QueueNames.SINValidationProcessIntegration),
@@ -254,87 +257,3 @@ describe(
     });
   },
 );
-
-/**
- * Saves a student with a SIN validation that is pending to be sent to ESDC.
- * @param db E2E data sources.
- * @param options student options.
- * - `firstName` student first name, null for students with a single name.
- * - `lastName` student last name.
- * - `gender` student gender.
- * - `birthDate` student birth date in the format YYYY-MM-DD.
- * @returns saved student with the pending SIN validation.
- */
-async function saveStudentWithPendingSINValidation(
-  db: E2EDataSources,
-  options?: {
-    firstName?: string | null;
-    lastName?: string;
-    gender?: string;
-    birthDate?: string;
-  },
-): Promise<Student> {
-  const user = createFakeUser();
-  if (options && "firstName" in options) {
-    user.firstName = options.firstName;
-  }
-  if (options?.lastName) {
-    user.lastName = options.lastName;
-  }
-  const student = await saveFakeStudent(
-    db.dataSource,
-    { user },
-    {
-      initialValue: { gender: options?.gender, birthDate: options?.birthDate },
-    },
-  );
-  // The factory does not allow a null value for the validation result.
-  await db.sinValidation.update(
-    { id: student.sinValidation.id },
-    { isValidSIN: null },
-  );
-  return student;
-}
-
-/**
- * Creates the expected SIN validation request file header.
- * @param fileDate date when the file was created.
- * @param batchNumber file sequence number.
- * @returns expected header line.
- */
-function createExpectedHeader(fileDate: Date, batchNumber: number): string {
-  const batch = batchNumber.toString().padStart(6, "0");
-  return `001${batch}${dayjs(fileDate).format(FILE_DATE_FORMAT)}BC${" ".repeat(71)}`;
-}
-
-/**
- * Creates the expected SIN validation request file record.
- * @param student student with the SIN validation.
- * @param options record options.
- * - `genderCode` expected gender code in the file.
- * @returns expected record line.
- */
-function createExpectedRecord(
-  student: Student,
-  options: { genderCode: string },
-): string {
-  const referenceIndex = student.sinValidation.id.toString().padStart(9, "0");
-  const firstName = (student.user.firstName ?? "").padEnd(30, " ");
-  const lastName = student.user.lastName.padEnd(30, " ");
-  const birthDate = student.birthDate.replaceAll("-", "");
-  return `002${referenceIndex}${student.sinValidation.sin}${firstName}${lastName}${options.genderCode}${birthDate}`;
-}
-
-/**
- * Creates the expected SIN validation request file footer.
- * @param students students included in the file.
- * @returns expected footer line.
- */
-function createExpectedFooter(students: Student[]): string {
-  const recordCount = students.length.toString().padStart(6, "0");
-  const totalSINHash = students
-    .reduce((hash, student) => hash + +student.sinValidation.sin, 0)
-    .toString()
-    .padStart(15, "0");
-  return `999${recordCount}${totalSINHash}${" ".repeat(66)}`;
-}
