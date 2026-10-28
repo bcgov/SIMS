@@ -270,6 +270,7 @@
       "vuetify",
       "WTHD",
       "Zeebe",
+      "bullmq",
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features",

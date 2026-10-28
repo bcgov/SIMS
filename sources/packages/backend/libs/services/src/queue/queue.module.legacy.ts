@@ -1,0 +1,109 @@
+import { Global, Logger, Module, OnApplicationShutdown } from "@nestjs/common";
+import {
+  BullModule,
+  BullRootModuleOptions,
+  BullModuleOptions,
+  BullModuleAsyncOptions,
+} from "@nestjs/bull";
+import Redis, { Cluster, RedisOptions } from "ioredis";
+import { ConfigModule, ConfigService } from "@sims/utilities/config";
+import { BULL_MQ_MIGRATED_QUEUE_NAMES, QueueNames } from "@sims/utilities";
+import { QueueService } from "./queue.service";
+import { DatabaseModule } from "@sims/sims-db";
+
+// TODO: After bull mq migration, remove this legacy queue module.
+/**
+ * Creates root connection to redis standalone or redis cluster
+ * based on environment variable.
+ */
+@Global()
+@Module({
+  imports: [
+    DatabaseModule,
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: getConnectionFactory,
+      inject: [ConfigService],
+    }),
+    BullModule.registerQueueAsync(...getQueueModules()),
+  ],
+  providers: [QueueService],
+  exports: [BullModule, QueueService],
+})
+export class QueueModuleLegacy implements OnApplicationShutdown {
+  private readonly logger = new Logger(QueueModuleLegacy.name);
+
+  /**
+   * Logs the shutdown signal. Each Bull queue closes itself automatically
+   * during shutdown through its own hook registered by `@nestjs/bull`.
+   * @param signal signal that triggered the shutdown.
+   */
+  onApplicationShutdown(signal?: string): void {
+    this.logger.log(
+      `Signal (${signal}) received: Closing Queue connections...`,
+    );
+  }
+}
+
+/**
+ * Connection factory which returns connection properties
+ * to connect redis.
+ * Depending upon the environment variable it uses standalone
+ * or cluster connection.
+ ** While running in local env make sure to set REDIS_STANDALONE_MODE as true.
+ * @param configService
+ * @returns redis connection factory
+ */
+async function getConnectionFactory(
+  configService: ConfigService,
+): Promise<BullRootModuleOptions> {
+  const redisConnectionOptions: RedisOptions = {
+    host: configService.redis.redisHost,
+    port: configService.redis.redisPort,
+    password: configService.redis.redisPassword,
+  };
+  if (configService.redis.redisStandaloneMode) {
+    return {
+      redis: redisConnectionOptions,
+    };
+  }
+  return {
+    createClient: (): Redis | Cluster => {
+      return new Redis.Cluster(
+        [
+          {
+            host: redisConnectionOptions.host,
+            port: redisConnectionOptions.port,
+          },
+        ],
+        { redisOptions: { password: redisConnectionOptions.password } },
+      );
+    },
+  };
+}
+
+/**
+ * Builds the bull module options to register queues in a dynamic way.
+ * @returns bull module options with all existing queues.
+ */
+function getQueueModules(): BullModuleAsyncOptions[] {
+  return Object.values(QueueNames)
+    .filter((queue) => !BULL_MQ_MIGRATED_QUEUE_NAMES.includes(queue))
+    .map<BullModuleAsyncOptions>((queue) => ({
+      name: queue,
+      imports: [ConfigModule],
+      useFactory: async (
+        configService: ConfigService,
+        queueService: QueueService,
+      ): Promise<BullModuleOptions> => {
+        const queueConfig = await queueService.getQueueConfiguration(queue);
+        const settings = await queueService.getQueueSetting(queue);
+        return {
+          prefix: configService.queuePrefix,
+          defaultJobOptions: queueConfig,
+          settings,
+        };
+      },
+      inject: [ConfigService, QueueService],
+    }));
+}

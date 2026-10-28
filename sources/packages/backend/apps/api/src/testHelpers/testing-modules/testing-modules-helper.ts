@@ -9,7 +9,7 @@ import {
   createZeebeModuleMock,
   QueueModuleMock,
 } from "@sims/test-utils/mocks";
-import { QueueModule } from "@sims/services/queue";
+import { QueueModule, QueueModuleLegacy } from "@sims/services/queue";
 import { SystemUsersService, ZeebeModule } from "@sims/services";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { KeycloakConfig } from "@sims/auth/config";
@@ -32,6 +32,10 @@ export class CreateTestingModuleResult {
 export async function createTestingAppModule(): Promise<CreateTestingModuleResult> {
   overrideImportsMetadata(
     AppModule,
+    {
+      replace: QueueModuleLegacy,
+      by: QueueModuleMock,
+    },
     {
       replace: QueueModule,
       by: QueueModuleMock,

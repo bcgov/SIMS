@@ -14,7 +14,7 @@ export const PROCESS_SUMMARY_CONTAINS_ERROR = "PROCESS_SUMMARY_CONTAINS_ERROR";
  * Log capability provided by a queue job.
  */
 export interface JobLogger {
-  log(message: string): Promise<void>;
+  log(message: string): Promise<void | number>;
 }
 
 /**

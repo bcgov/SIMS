@@ -7,12 +7,12 @@ import {
   SshService,
   StudentService,
 } from "@sims/integrations/services";
-import { QueueModule } from "@sims/services/queue";
+import { QueueModuleLegacy } from "@sims/services/queue";
 import { StudentFileSharedService } from "@sims/services";
 import { ObjectStorageModule } from "@sims/integrations/object-storage";
 
 @Module({
-  imports: [ConfigModule, QueueModule, ObjectStorageModule],
+  imports: [ConfigModule, QueueModuleLegacy, ObjectStorageModule],
   providers: [
     SshService,
     StudentFileSharedService,
