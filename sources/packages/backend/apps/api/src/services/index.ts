@@ -15,8 +15,6 @@ export * from "./institution-user-auth/institution-user-auth.service";
 export * from "./restriction/restriction.service";
 export * from "./restriction/student-restriction.service";
 export * from "./restriction/institution-restriction.service";
-export * from "./education-program-offering/education-program-offering.service";
-export * from "./education-program/education-program.service";
 export * from "./student-appeal/student-appeal.service";
 export * from "./student-appeal-request/student-appeal-request.service";
 export * from "./dynamic-form-configuration/dynamic-form-configuration.service";
@@ -37,6 +35,8 @@ export * from "./form-submission/form-submission-actions/form-submission-update-
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-submission-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-decision-action";
 export * from "./form-submission/form-submission-actions/form-submission-update-disability-on-cancel-action";
+export * from "./education-program-offering/education-program-offering.service";
+export * from "./education-program/education-program.service";
 export * from "./application/application.service";
 export * from "./student-file/student-file.service";
 export * from "./program-year/program-year.service";

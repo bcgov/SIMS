@@ -22,6 +22,7 @@ import {
   StudyBreaksAndWeeks,
   isDatabaseConstraintError,
   OfferingIntensity,
+  FormSubmissionCancellationReason,
 } from "@sims/sims-db";
 import {
   Brackets,
@@ -78,7 +79,11 @@ import {
   InstitutionAddsPendingOfferingNotification,
   NotificationActionsService,
 } from "@sims/services";
-import { InstitutionRestrictionService, UserService } from "../../services";
+import {
+  FormSubmissionCancellationService,
+  InstitutionRestrictionService,
+  UserService,
+} from "../../services";
 
 @Injectable()
 export class EducationProgramOfferingService extends RecordDataModelService<EducationProgramOffering> {
@@ -88,6 +93,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     private readonly notificationActionsService: NotificationActionsService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly userService: UserService,
+    private readonly formSubmissionCancellationService: FormSubmissionCancellationService,
     private readonly logger: LoggerService,
   ) {
     super(dataSource.getRepository(EducationProgramOffering));
@@ -1364,6 +1370,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
     precedingOffering.assessedBy = auditUser;
     precedingOffering.assessedDate = currentDate;
     let applications: Application[] = [];
+    const cancelledApplicationIds: number[] = [];
 
     // Populate the status accordingly and get impacted applications
     // when the offering change is approved.
@@ -1392,6 +1399,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         else {
           application.applicationStatus = ApplicationStatus.Cancelled;
           application.applicationStatusUpdatedOn = currentDate;
+          cancelledApplicationIds.push(application.id);
 
           // Updates the current assessment status to cancellation required.
           application.currentAssessment.studentAssessmentStatus =
@@ -1436,6 +1444,18 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         await transactionalEntityManager
           .getRepository(EducationProgramOffering)
           .save([precedingOffering, requestedOffering]);
+        // Cancel the form submissions of the applications cancelled due to the offering change.
+        await processInParallel(
+          (applicationId) =>
+            this.formSubmissionCancellationService.cancelApplicationScopedFormSubmissions(
+              applicationId,
+              FormSubmissionCancellationReason.ApplicationCancelled,
+              userId,
+              currentDate,
+              transactionalEntityManager,
+            ),
+          cancelledApplicationIds,
+        );
         // Save applications with new current assessment or set application status as cancelled on approval.
         if (applications?.length > 0) {
           await transactionalEntityManager
