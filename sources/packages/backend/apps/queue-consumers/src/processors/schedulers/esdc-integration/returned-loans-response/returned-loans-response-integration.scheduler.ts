@@ -9,7 +9,10 @@ import { BaseQueueProcessor } from "../../base-queue-processor";
  * Scheduler to process Return to Government(RTG) files.
  ** Both OTH (270 days file) and PDD (Death, Permanent Disability file) RTG files are processed by this scheduler.
  */
-@Processor(QueueNames.ReturnedLoansResponseIntegration)
+@Processor(
+  QueueNames.ReturnedLoansResponseIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
 export class ReturnedLoansResponseIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
     private readonly returnedLoansResponseProcessingService: ReturnedLoansResponseProcessingService,
