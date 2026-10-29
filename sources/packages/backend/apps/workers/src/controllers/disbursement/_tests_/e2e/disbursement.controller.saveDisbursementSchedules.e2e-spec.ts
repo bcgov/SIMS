@@ -96,7 +96,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Reassessment.
     const savedUser = await db.user.save(createFakeUser());
     const savedOffering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: savedUser }),
+      createFakeEducationProgramOffering({
+        auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const fakeReassessment = createFakeStudentAssessment({
       auditUser: savedUser,
@@ -167,7 +170,10 @@ describe("DisbursementController(e2e)-saveDisbursementSchedules", () => {
     // Reassessment.
     const savedUser = await db.user.save(createFakeUser());
     const savedOffering = await db.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: savedUser }),
+      createFakeEducationProgramOffering({
+        auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     const fakeReassessment = createFakeStudentAssessment({
       auditUser: savedUser,
