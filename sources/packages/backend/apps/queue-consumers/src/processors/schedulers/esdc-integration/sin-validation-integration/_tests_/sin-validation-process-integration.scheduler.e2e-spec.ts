@@ -9,6 +9,7 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeUser,
   saveFakeStudent,
 } from "@sims/test-utils";
 import Client from "ssh2-sftp-client";
@@ -18,7 +19,6 @@ import { getUploadedFile } from "@sims/test-utils/mocks";
 import { ESDC_SIN_VALIDATION_SEQUENCE_GROUP_NAME } from "@sims/services/constants";
 import { User } from "@sims/sims-db";
 import { SINValidationProcessIntegrationScheduler } from "../sin-validation-process-integration.scheduler";
-import { saveStudentWithPendingSINValidation } from "./sin-validation-factory";
 import {
   createExpectedFooter,
   createExpectedHeader,
@@ -26,6 +26,10 @@ import {
 } from "./sin-validation-helper";
 
 const SIN_REQUEST_FOLDER = "SIN-Request";
+/**
+ * SIN validation that was not sent to ESDC and does not have a validation result yet.
+ */
+const PENDING_SIN_VALIDATION = { isValidSIN: null };
 
 describe(
   describeProcessorRootTest(QueueNames.SINValidationProcessIntegration),
@@ -62,17 +66,13 @@ describe(
 
     it("Should generate a SIN validation request file and update the SIN validation records when there are students with pending SIN validation.", async () => {
       // Arrange
-      const studentMan = await saveStudentWithPendingSINValidation(db, {
-        firstName: "John",
-        lastName: "Doe",
-        gender: "man",
-        birthDate: "1995-06-30",
+      const studentMan = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { gender: "man", birthDate: "1995-06-30" },
+        sinValidationInitialValue: PENDING_SIN_VALIDATION,
       });
-      const studentWoman = await saveStudentWithPendingSINValidation(db, {
-        firstName: "Jane",
-        lastName: "Smith Jones",
-        gender: "woman",
-        birthDate: "2001-12-01",
+      const studentWoman = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { gender: "woman", birthDate: "2001-12-01" },
+        sinValidationInitialValue: PENDING_SIN_VALIDATION,
       });
       const now = new Date();
       MockDate.set(now);
@@ -126,8 +126,8 @@ describe(
           id: studentMan.sinValidation.id,
           dateSent: now,
           fileSent: "BC0001.OS",
-          givenNameSent: "John",
-          surnameSent: "Doe",
+          givenNameSent: studentMan.user.firstName,
+          surnameSent: studentMan.user.lastName,
           dobSent: "1995-06-30",
           genderSent: "man",
           modifier: { id: systemUser.id },
@@ -136,8 +136,8 @@ describe(
           id: studentWoman.sinValidation.id,
           dateSent: now,
           fileSent: "BC0001.OS",
-          givenNameSent: "Jane",
-          surnameSent: "Smith Jones",
+          givenNameSent: studentWoman.user.firstName,
+          surnameSent: studentWoman.user.lastName,
           dobSent: "2001-12-01",
           genderSent: "woman",
           modifier: { id: systemUser.id },
@@ -147,25 +147,32 @@ describe(
 
     it("Should generate the gender codes and the empty first name accordingly when the students are non-binary, prefer not to answer, and have a single name.", async () => {
       // Arrange
-      const studentNonBinary = await saveStudentWithPendingSINValidation(db, {
-        firstName: "Alex",
-        lastName: "Taylor",
-        gender: "nonBinary",
-        birthDate: "1990-01-15",
+      const studentNonBinary = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { gender: "nonBinary", birthDate: "1990-01-15" },
+        sinValidationInitialValue: PENDING_SIN_VALIDATION,
       });
-      const studentPreferNotToAnswer =
-        await saveStudentWithPendingSINValidation(db, {
-          firstName: "Sam",
-          lastName: "Brown",
-          gender: "preferNotToAnswer",
-          birthDate: "1988-11-20",
-        });
-      const studentMononymous = await saveStudentWithPendingSINValidation(db, {
-        firstName: null,
-        lastName: "Madonna",
-        gender: "woman",
-        birthDate: "1958-08-16",
-      });
+      const studentPreferNotToAnswer = await saveFakeStudent(
+        db.dataSource,
+        undefined,
+        {
+          initialValue: {
+            gender: "preferNotToAnswer",
+            birthDate: "1988-11-20",
+          },
+          sinValidationInitialValue: PENDING_SIN_VALIDATION,
+        },
+      );
+      // Student with a single name.
+      const mononymousUser = createFakeUser();
+      mononymousUser.firstName = null;
+      const studentMononymous = await saveFakeStudent(
+        db.dataSource,
+        { user: mononymousUser },
+        {
+          initialValue: { gender: "woman", birthDate: "1958-08-16" },
+          sinValidationInitialValue: PENDING_SIN_VALIDATION,
+        },
+      );
       const now = new Date();
       MockDate.set(now);
       const mockedJob = mockBullJob<void>();
@@ -203,17 +210,17 @@ describe(
 
     it("Should not include in the file the students whose SIN validation was already sent or already has a validation result.", async () => {
       // Arrange
-      const pendingStudent = await saveStudentWithPendingSINValidation(db, {
-        firstName: "Pending",
-        lastName: "Student",
-        gender: "man",
-        birthDate: "1999-09-09",
+      const pendingStudent = await saveFakeStudent(db.dataSource, undefined, {
+        initialValue: { gender: "man", birthDate: "1999-09-09" },
+        sinValidationInitialValue: PENDING_SIN_VALIDATION,
       });
-      const alreadySentStudent = await saveStudentWithPendingSINValidation(db);
-      await db.sinValidation.update(
-        { id: alreadySentStudent.sinValidation.id },
-        { dateSent: new Date() },
-      );
+      // SIN validation already sent to ESDC.
+      await saveFakeStudent(db.dataSource, undefined, {
+        sinValidationInitialValue: {
+          ...PENDING_SIN_VALIDATION,
+          dateSent: new Date(),
+        },
+      });
       // Student created by the factory with a valid SIN by default.
       await saveFakeStudent(db.dataSource);
       const now = new Date();
@@ -252,7 +259,6 @@ describe(
     });
 
     afterAll(async () => {
-      MockDate.reset();
       await app?.close();
     });
   },

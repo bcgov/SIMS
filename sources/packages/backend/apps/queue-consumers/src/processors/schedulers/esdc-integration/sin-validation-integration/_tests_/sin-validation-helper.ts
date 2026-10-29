@@ -29,8 +29,9 @@ export function createExpectedRecord(
   options: { genderCode: string },
 ): string {
   const referenceIndex = student.sinValidation.id.toString().padStart(9, "0");
-  const firstName = (student.user.firstName ?? "").padEnd(30, " ");
-  const lastName = student.user.lastName.padEnd(30, " ");
+  // Names have a fixed width of 30 characters in the file.
+  const firstName = (student.user.firstName ?? "").slice(0, 30).padEnd(30, " ");
+  const lastName = student.user.lastName.slice(0, 30).padEnd(30, " ");
   const birthDate = student.birthDate.replaceAll("-", "");
   return `002${referenceIndex}${student.sinValidation.sin}${firstName}${lastName}${options.genderCode}${birthDate}`;
 }

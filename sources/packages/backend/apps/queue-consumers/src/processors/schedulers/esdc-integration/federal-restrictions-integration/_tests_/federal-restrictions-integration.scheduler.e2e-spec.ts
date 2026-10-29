@@ -81,6 +81,7 @@ describe(
     let archivedNonDownloadedOldFile: string;
     let downloadedNewFile: string;
     let archivedDownloadedNewFile: string;
+    let downloadedInvalidRecordsFile: string;
 
     beforeAll(async () => {
       // Set the ESDC response folder to the mock folder.
@@ -90,10 +91,16 @@ describe(
         "federal-restrictions-response-files",
       );
       process.env.ESDC_RESPONSE_FOLDER = mockResponseFolder;
-      [downloadedFile, nonDownloadedOldFile, downloadedNewFile] = [
+      [
+        downloadedFile,
+        nonDownloadedOldFile,
+        downloadedNewFile,
+        downloadedInvalidRecordsFile,
+      ] = [
         FEDERAL_RESTRICTIONS_FILE,
         FEDERAL_RESTRICTIONS_FILE_OLD,
         FEDERAL_RESTRICTIONS_FILE_NEW_NAME,
+        FEDERAL_RESTRICTIONS_FILE_INVALID_RECORDS,
       ].map((file) => join(mockResponseFolder, file));
       [
         archivedDownloadedFile,
@@ -325,11 +332,6 @@ describe(
 
     it("Should skip the records with invalid data and log a warning for each one when the federal restrictions file has records with invalid SIN, date of birth, or restriction code.", async () => {
       // Arrange
-      const mockResponseFolder = process.env.ESDC_RESPONSE_FOLDER as string;
-      const invalidRecordsFile = join(
-        mockResponseFolder,
-        FEDERAL_RESTRICTIONS_FILE_INVALID_RECORDS,
-      );
       mockDownloadFiles(
         sftpClientMock,
         [FEDERAL_RESTRICTIONS_FILE_INVALID_RECORDS],
@@ -344,14 +346,14 @@ describe(
       // Assert
       expect(result).toEqual([
         "Federal restrictions import process finished.",
-        `Processed file: ${invalidRecordsFile}`,
-        `Files found: ${invalidRecordsFile}.`,
+        `Processed file: ${downloadedInvalidRecordsFile}`,
+        `Files found: ${downloadedInvalidRecordsFile}.`,
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
         expect.stringContaining("Error(s): 0, Warning(s): 4"),
       ]);
       expect(
         mockedJob.containLogMessages([
-          `Processing file ${invalidRecordsFile}.`,
+          `Processing file ${downloadedInvalidRecordsFile}.`,
           "WARN: Found record with invalid data at line number 2: invalid SIN number",
           "WARN: Found record with invalid data at line number 3: invalid date of birth",
           "WARN: Found record with invalid data at line number 4: invalid restriction code",
