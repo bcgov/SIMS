@@ -1211,19 +1211,11 @@ SELECT
         "readOnly": true,
         "required": [
           "hasOfferings",
-          "isActive",
-          "isBCPublic",
           "isBCPrivate",
           "isBCInstitution"
         ],
         "properties": {
           "hasOfferings": {
-            "type": "boolean"
-          },
-          "isActive": {
-            "type": "boolean"
-          },
-          "isBCPublic": {
             "type": "boolean"
           },
           "isBCPrivate": {

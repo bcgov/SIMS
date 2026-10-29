@@ -92,10 +92,13 @@ let programConfigurationIdForCreation: number | undefined;
 
 const formModel = ref({} as EducationProgramDataAPIOutDTO);
 
-const isReadonly = computed(
-  () =>
-    props.readOnly || (!!props.programId && !formModel.value.context?.isActive),
-);
+/**
+ * Indicates whether the loaded program can no longer be edited
+ * because it is inactive or expired. Always false for creation.
+ */
+const isProgramInactive = ref(false);
+
+const isReadonly = computed(() => props.readOnly || isProgramInactive.value);
 
 // Errors are always computed; only shown once the user tries to submit.
 const validationMode = ref<ValidationMode>("ValidateAndHide");
@@ -195,6 +198,8 @@ const loadProgram = async (programId: number) => {
       await EducationProgramService.shared.getEducationProgram(programId);
     programFormSchema.value = programDetails.validationSchema as JsonSchema;
     programFormUiSchema.value = programDetails.visualSchema as UISchemaElement;
+    isProgramInactive.value =
+      !programDetails.isActive || programDetails.isExpired;
     // Set after the schema, since the flags are declared by it.
     formModel.value = withFlags(programDetails.programData);
     emit("loaded", programDetails);

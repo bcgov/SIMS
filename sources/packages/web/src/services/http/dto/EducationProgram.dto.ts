@@ -12,9 +12,7 @@ import {
  */
 export interface EducationProgramContextAPIOutDTO {
   hasOfferings: boolean;
-  isActive: boolean;
   isBCPrivate: boolean;
-  isBCPublic: boolean;
   isBCInstitution: boolean;
 }
 

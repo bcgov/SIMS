@@ -3,9 +3,7 @@ import { AviationCredentialTypeOptions } from "../education-program-offering/edu
 
 export interface EducationProgramContext {
   hasOfferings: boolean;
-  isActive: boolean;
   isBCPrivate: boolean;
-  isBCPublic: boolean;
   isBCInstitution: boolean;
 }
 

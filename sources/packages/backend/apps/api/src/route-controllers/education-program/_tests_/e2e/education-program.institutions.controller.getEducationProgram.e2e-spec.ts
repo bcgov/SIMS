@@ -82,8 +82,6 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
             ...savedProgram.programData,
             context: {
               hasOfferings: false, // No offerings for this program exist.
-              isActive: true,
-              isBCPublic,
               isBCPrivate,
               isBCInstitution: isBCPublic || isBCPrivate,
             },

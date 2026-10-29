@@ -29,9 +29,7 @@ import { JSON_20KB } from "../../../constants";
  */
 export class EducationProgramContextAPIOutDTO {
   hasOfferings: boolean;
-  isActive: boolean;
   isBCPrivate: boolean;
-  isBCPublic: boolean;
   isBCInstitution: boolean;
 }
 

@@ -119,7 +119,6 @@ export class EducationProgramSaveService {
       programConfiguration,
       {
         hasOfferings: false,
-        isActive: true,
       },
     );
   }
@@ -138,8 +137,6 @@ export class EducationProgramSaveService {
     const programPromise = this.educationProgramRepo.findOne({
       select: {
         id: true,
-        isActive: true,
-        effectiveEndDate: true,
         programConfiguration: {
           id: true,
           visualSchema: true,
@@ -171,7 +168,6 @@ export class EducationProgramSaveService {
     const programConfiguration = program.programConfiguration;
     return this.createProgramContext(institutionType, programConfiguration, {
       hasOfferings,
-      isActive: program.isActive && !program.isExpired,
     });
   }
 
@@ -182,13 +178,12 @@ export class EducationProgramSaveService {
    * @param programConfiguration the program configuration.
    * @param options additional options.
    * - `hasOfferings` indicates if the program has offerings.
-   * - `isActive` indicates if the program is active.
    * @returns the dynamic program configuration including context, visual schema, and validation schema.
    */
   private createProgramContext(
     institutionType: InstitutionType,
     programConfiguration: EducationProgramConfiguration,
-    options: { hasOfferings: boolean; isActive: boolean },
+    options: { hasOfferings: boolean },
   ): EducationProgramDynamicConfiguration {
     if (!institutionType) {
       throw new Error(
@@ -214,8 +209,6 @@ export class EducationProgramSaveService {
       updatedAt: programConfiguration.updatedAt,
       context: {
         hasOfferings: options.hasOfferings,
-        isActive: options.isActive,
-        isBCPublic: institutionType.isBCPublic,
         isBCPrivate: institutionType.isBCPrivate,
         isBCInstitution:
           institutionType.isBCPrivate || institutionType.isBCPublic,
