@@ -14,6 +14,11 @@ import addErrors from "ajv-errors";
  * ajv-errors requires allErrors: true to reliably override every keyword's
  * message, which JSONForms' own default instance already sets - kept here
  * for parity.
+ *
+ * The options affecting the data validity (e.g. strict), the custom formats
+ * and the ajv/ajv-formats versions must be kept aligned with the backend
+ * EducationProgramDataValidationService, otherwise the client and the server
+ * could disagree about the data being valid.
  */
 export const programFormAjv = new Ajv({
   allErrors: true,
