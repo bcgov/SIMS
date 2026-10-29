@@ -21,10 +21,12 @@ import type { ControlElement } from "@jsonforms/core";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { ProgramCalculatedDataKey } from "@/types";
 import { CIP_CODE_REGEX } from "@/constants/program-constants";
+import { useSnackBar } from "@/composables";
 import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
 const { control, handleChange } = useJsonFormsControl(props);
+const snackBar = useSnackBar();
 // Gives access to the whole form's data, not just this field - needed to
 // read the sibling values this calculation depends on (mirrors
 // calculateFieldOfStudyCode's original dependency on formModel.credentialType
@@ -79,6 +81,13 @@ watch(
           ProgramCalculatedDataKey.FieldOfStudyCode
         ],
       );
+    } catch {
+      if (isStale) {
+        return;
+      }
+      // Avoid showing a code calculated from previous selections.
+      handleChange(control.value.path, undefined);
+      snackBar.error("Unable to calculate the field of study code.");
     } finally {
       if (!isStale) {
         calculating.value = false;
