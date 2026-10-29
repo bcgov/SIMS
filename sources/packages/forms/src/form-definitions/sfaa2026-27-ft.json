@@ -4730,7 +4730,7 @@
                                   "value": ""
                                 }
                               ],
-                              "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\nA letter of explanation and one of the following:\n<ul>\n<li>Child custody agreement;</li>\n<li>Court Order;</li>\n<li>A notarized statement from the children's other parent detailing the custody agreement</li>\n</ul>",
+                              "content": "<h4 class=\"category-header-medium-small\">Documents Accepted</h4>\nA letter of explanation and one of the following:\n<ul>\n<li>Child custody agreement;</li>\n<li>Court Order;</li>\n<li>A statement from the children's other parent detailing the custody agreement</li>\n</ul>",
                               "refreshOnChange": false,
                               "customClass": "align-bullets",
                               "key": "html18",

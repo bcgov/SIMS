@@ -3,6 +3,7 @@ import {
   Module,
   NestModule,
   OnModuleInit,
+  RequestMethod,
 } from "@nestjs/common";
 import { collectDefaultMetrics, register } from "prom-client";
 import { AppService } from "./app.service";
@@ -143,7 +144,10 @@ export class AppModule implements NestModule, OnModuleInit {
   configure(consumer: MiddlewareConsumer): void {
     consumer
       .apply(AccessLoggerMiddleware)
-      .exclude("health/{*path}", "metrics")
+      .exclude(
+        { path: "metrics", method: RequestMethod.ALL },
+        { path: "health/{*path}", method: RequestMethod.ALL },
+      )
       .forRoutes("*");
     // Allow the configuration of the body parser for individual routes.
     consumer
