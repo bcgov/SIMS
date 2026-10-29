@@ -580,7 +580,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     {
       scenario: "invalid lookup values are provided (regulatoryBody)",
       scenarioData: {
-        regulatoryBody: ["invalidRegulatoryBody"],
+        regulatoryBody: "invalidRegulatoryBody",
       },
       errorMessage: [
         'regulatoryBody must be equal to constant: "ptiru"',

@@ -6,16 +6,16 @@ import {
 /**
  * Successful validation result for the program data.
  */
-export type EducationProgramDataValidationSuccess = {
+export interface EducationProgramDataValidationSuccess {
   isValid: true;
   programData: EducationProgramData;
   flags: ProgramTriggeredFlag[];
-};
+}
 
 /**
  * Failed validation result for the program data.
  */
-export type EducationProgramDataValidationError = {
+export interface EducationProgramDataValidationError {
   isValid: false;
   errors: string[];
   /**
@@ -24,7 +24,7 @@ export type EducationProgramDataValidationError = {
    * of its custom message.
    */
   failedKeywords: string[];
-};
+}
 
 /**
  * Result of the dynamic program data validation.

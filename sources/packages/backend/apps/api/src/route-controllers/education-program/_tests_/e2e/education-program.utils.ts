@@ -19,7 +19,7 @@ import {
  * - `appendedProgramData` Additional program data to append to the payload.
  * @returns The update payload for the education program.
  */
-export function getPayload(options?: {
+export function getUpdatePayload(options?: {
   appendedProgramData?: { [key: string]: unknown };
 }): UpdateEducationProgramAPIInDTO & {
   programData: EducationProgramDynamicData;

@@ -103,7 +103,7 @@ export class CreateEducationProgramAPIInDTO {
 }
 
 /**
- * Dynamic program data used to create an education program,
+ * Dynamic program data used to update an education program,
  * and the configuration it was filled in against.
  */
 export class UpdateEducationProgramAPIInDTO {

@@ -19,7 +19,7 @@ import {
 } from "../../../../testHelpers";
 import request from "supertest";
 import MockDate from "mockdate";
-import { getPayload } from "./education-program.utils";
+import { getUpdatePayload } from "./education-program.utils";
 
 describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", () => {
   let app: INestApplication;
@@ -54,7 +54,7 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
       programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
-    const payload = getPayload();
+    const payload = getUpdatePayload();
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -152,7 +152,7 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
     // Act/Assert
     await request(app.getHttpServer())
       .patch(getEndpoint(999999))
-      .send(getPayload())
+      .send(getUpdatePayload())
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({

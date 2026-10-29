@@ -62,6 +62,7 @@ export function createFakeInstitutionRestriction(
  * - `restriction` Restriction associated with the institution. If not provided, one will be created.
  * - `institution` Related institution.
  * - `program` Program associated with the institution.
+ * - `programConfiguration` Program configuration associated with the program. If not provided, the most recent configuration will be used.
  * - `location` Location associated with the institution.
  * - `restrictionNote` Note for restriction. If not provided, one will be created.
  * - `creator` Record creator.
