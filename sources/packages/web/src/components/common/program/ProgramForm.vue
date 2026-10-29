@@ -39,7 +39,7 @@ import {
 } from "@/services/http/dto";
 import { JsonForms } from "@jsonforms/vue";
 import type { JsonFormsChangeEvent } from "@jsonforms/vue";
-import { PROGRAM_FORM_RENDERERS } from "@/components/renderers/jsonforms/formRenders";
+import { PROGRAM_FORM_RENDERERS } from "@/components/renderers/jsonforms/formRenderers";
 import {
   createFlagsCalculator,
   getRequiredErrorsPerProperty,

@@ -25,7 +25,7 @@ import {
   bannerTester,
   booleanCheckboxTester,
   entranceRequirementsTester,
-} from "./testers";
+} from "./testers.js";
 
 /**
  * Renderer set to be shared across the project.
