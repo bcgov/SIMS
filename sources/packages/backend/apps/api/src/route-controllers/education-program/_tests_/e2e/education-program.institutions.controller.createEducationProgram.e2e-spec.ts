@@ -171,7 +171,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     });
     const { programData } = payload;
     // Field of study code is calculated and added to the persisted program data.
-    expect(educationProgram.programData).toEqual(programData);
+    expect(educationProgram.programData).toEqual({
+      ...programData,
+      fieldOfStudyCode: 15,
+    });
     expect(educationProgram).toEqual(
       expect.objectContaining({
         name: programData.programName,
