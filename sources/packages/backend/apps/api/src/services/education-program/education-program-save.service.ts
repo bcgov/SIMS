@@ -252,7 +252,7 @@ export class EducationProgramSaveService {
       validationResult,
       configuration.context,
       {
-        programConfigurationId: programConfigurationId,
+        programConfigurationId,
       },
     );
   }

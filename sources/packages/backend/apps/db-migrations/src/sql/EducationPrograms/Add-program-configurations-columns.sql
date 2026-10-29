@@ -17,7 +17,7 @@ COMMENT ON COLUMN sims.education_programs_history.program_data IS 'Historical da
 
 COMMENT ON COLUMN sims.education_programs_history.program_configuration_id IS 'Historical data from the original table. See original table comments for details.';
 
--- Backfill program_data with every existing program that are not system related.
+-- Backfill program_data.
 UPDATE sims.education_programs
 SET
   program_data = JSONB_STRIP_NULLS(
