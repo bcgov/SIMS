@@ -93,6 +93,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    // Removing fieldOfStudyCode to ensure it will be calculated on the server.
+    delete payload.programData.fieldOfStudyCode;
 
     // Act/Assert
     let educationProgramId: number;

@@ -2018,7 +2018,9 @@ SELECT
   TRUE AS is_active
 FROM
   sims.program_years
+WHERE
+  is_active = TRUE
 ORDER BY
-  id DESC
+  start_date DESC
 LIMIT
   1;

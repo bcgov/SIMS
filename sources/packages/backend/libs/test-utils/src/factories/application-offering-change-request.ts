@@ -10,7 +10,7 @@ import { createFakeEducationProgramOffering } from "./education-program-offering
 import { createFakeUser } from "./user";
 import { faker } from "@faker-js/faker";
 import { E2EDataSources } from "../data-source/e2e-data-source";
-import { getMostRecentEducationProgramConfiguration } from "@sims/test-utils/factories/education-program-configuration";
+import { getMostRecentEducationProgramConfiguration } from "@sims/test-utils";
 
 /**
  * Create and save a fake application offering request change record.
