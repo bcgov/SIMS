@@ -25,6 +25,10 @@ export interface EducationProgramDataAPIOutDTO {
   context: EducationProgramContextAPIOutDTO;
 }
 
+/**
+ * Education program configuration including context,
+ * visual schema, and validation schema.
+ */
 export interface EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
   programData: EducationProgramDataAPIOutDTO;

@@ -25,10 +25,10 @@ import {
   bannerTester,
   booleanCheckboxTester,
   entranceRequirementsTester,
-} from "./testers.js";
+} from "./testers";
 
 /**
- * Renderer set to be shared by the across the project.
+ * Renderer set to be shared across the project.
  * Built on @jsonforms/core + @jsonforms/vue directly - intentionally does
  * NOT depend on @jsonforms/vue-vuetify, so every renderer below wraps this
  * project's own components directly and targets its Vuetify version without

@@ -61,7 +61,7 @@ interface ProgramFormProps {
   readOnly?: boolean;
   /**
    * Indicates whether the form is currently processing a submission.
-   * Allow controls of the loading from the consumer that is submitting the form.
+   * Allows control of the loading from the consumer that is submitting the form.
    */
   isProcessing?: boolean;
 }

@@ -8,6 +8,9 @@ import type { ComputedRef } from "vue";
  * so a stale answer doesn't get submitted (or fail a schema constraint
  * that assumes the field is absent while hidden, e.g. an "else" branch's
  * `false` property schema).
+ * @param visible Computed reference indicating whether the control is visible.
+ * @param path Computed reference to the data path of the control.
+ * @param handleChange Function to update the value at the specified path.
  */
 export function useClearDataWhenHidden(
   visible: ComputedRef<boolean>,

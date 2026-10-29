@@ -9,8 +9,6 @@
     </template>
     <program-form
       :read-only="false"
-      :is-b-c-public="institutionState.isBCPublic"
-      :is-b-c-private="institutionState.isBCPrivate"
       :is-processing="processing"
       @create="submit"
       @cancel="goBack"

@@ -54,10 +54,9 @@ const onUpdate = (newValue: Array<string | number>) => {
     nextValue = [PROGRAM_ENTRANCE_REQUIREMENT_NONE];
   }
   // Keep the selected values in the same order as the options.
-  const data =
-    items.value
-      ?.map(({ value }) => value)
-      .filter((value) => nextValue.includes(value)) ?? [];
+  const data = items.value
+    .map(({ value }) => value)
+    .filter((value) => nextValue.includes(value));
   // useJsonFormsMultiEnumControl only exposes single-value addItem/removeItem,
   // so the whole array is replaced in one dispatch.
   dispatch(update(control.value.path, () => data));
