@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import {
   AviationCredentialTypeOptions,
   EducationProgramOfferingService,
@@ -27,7 +23,6 @@ import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
   EDUCATION_PROGRAM_NOT_FOUND,
 } from "../../constants";
-import { ApiProcessError } from "../../types";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, EntityManager, Repository } from "typeorm";
@@ -111,7 +106,7 @@ export class EducationProgramSaveService {
     if (!programConfiguration) {
       throw new CustomNamedError(
         "Education program configuration not found.",
-        "EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND",
+        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
       );
     }
     return this.createProgramContext(
@@ -162,7 +157,10 @@ export class EducationProgramSaveService {
       hasOfferingsPromise,
     ]);
     if (!program) {
-      throw new NotFoundException("Not able to find the requested program.");
+      throw new CustomNamedError(
+        "Not able to find the requested program.",
+        EDUCATION_PROGRAM_NOT_FOUND,
+      );
     }
     const institutionType = program.institution.institutionType;
     const programConfiguration = program.programConfiguration;
@@ -236,14 +234,6 @@ export class EducationProgramSaveService {
       institutionId,
       { programConfigurationId },
     );
-    if (!configuration) {
-      throw new UnprocessableEntityException(
-        new ApiProcessError(
-          "Education program configuration not found or not active.",
-          EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
-        ),
-      );
-    }
     const programDataToValidate = {
       ...programData,
       context: configuration.context,

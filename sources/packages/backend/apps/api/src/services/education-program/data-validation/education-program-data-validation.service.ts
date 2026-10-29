@@ -40,8 +40,7 @@ export class EducationProgramDataValidationService {
   ) {
     this.ajv = new Ajv({
       // Stops at the first error, avoiding evaluating the remaining keywords,
-      // including the async ones querying the DB, once the data is known to be invalid.
-      // Stops at the first error, following security recommendations to avoid DoS attacks.
+      // also following security recommendations to avoid DoS attacks.
       allErrors: false,
       strict: false,
       addUsedSchema: false,

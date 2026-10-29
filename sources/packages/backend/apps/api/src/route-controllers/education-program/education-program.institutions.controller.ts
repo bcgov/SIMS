@@ -127,7 +127,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiNotFoundResponse({
     description: "Not able to find an active program configuration.",
   })
-  // TODO: The endpoint should required a configuration ID once the client is updated to always provide it.
+  // TODO: The endpoint should require a configuration ID once the client is updated to always provide it.
   @Get(["configuration", "configuration/:programConfigurationId"])
   async getEducationProgramConfiguration(
     @UserToken() userToken: IInstitutionUserToken,
