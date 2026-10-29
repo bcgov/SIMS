@@ -1348,6 +1348,52 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     expect(studentRestrictionExists).toBe(false);
   });
 
+  it("Should throw an error and not archive the file when the SFAS file has an invalid header code.", async () => {
+    // Arrange
+    mockDownloadFiles(
+      sftpClientMock,
+      [INVALID_RECORD_TYPE_FILENAME],
+      (fileContent: string) => {
+        const file = getStructuredRecords(fileContent);
+        file.header = file.header.replace("100", "999");
+        return createFileFromStructuredRecords(file);
+      },
+    );
+    const mockedJob = mockBullJob<void>();
+
+    // Act/Assert
+    await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      `Error downloading file ${join(sfasDownloadFolder, INVALID_RECORD_TYPE_FILENAME)}.`,
+    );
+    expect(sftpClientMock.rename).not.toHaveBeenCalled();
+    // No records from the file are imported.
+    const importedApplications = await db.sfasApplication.count();
+    expect(importedApplications).toBe(0);
+  });
+
+  it("Should only execute the post file import operations when there are no SFAS files to be processed.", async () => {
+    // Arrange
+    mockDownloadFiles(sftpClientMock, []);
+    const mockedJob = mockBullJob<void>();
+
+    // Act
+    const result = await processor.processQueue(mockedJob.job);
+
+    // Assert
+    expect(result).toStrictEqual([
+      "Completed processing SFAS integration files.",
+    ]);
+    expect(
+      mockedJob.containLogMessages([
+        "There are no files to be processed, but post-file import operations will be executed.",
+        "Updating student ids for SFAS individuals.",
+        "Inserted student restrictions from SFAS restrictions data.",
+      ]),
+    ).toBe(true);
+    expect(sftpClientMock.get).not.toHaveBeenCalled();
+    expect(sftpClientMock.rename).not.toHaveBeenCalled();
+  });
+
   /**
    * Delete all the legacy data for clean data execution.
    * @param db data source.

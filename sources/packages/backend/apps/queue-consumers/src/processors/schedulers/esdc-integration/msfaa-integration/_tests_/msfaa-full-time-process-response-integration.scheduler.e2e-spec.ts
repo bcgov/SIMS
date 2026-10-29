@@ -18,6 +18,8 @@ import {
 import {
   MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
   MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
+  createFileFromStructuredRecords,
+  getStructuredRecords,
   mockDownloadFiles,
 } from "@sims/test-utils/mocks";
 import { THROW_AWAY_MSFAA_NUMBER } from "./msfaa-helper";
@@ -334,6 +336,78 @@ describe(
         },
       });
     });
+
+    it.each([
+      {
+        scenario: "an invalid header code",
+        expectedError:
+          "The MSFAA file has an invalid transaction code on header",
+        changeFile: (fileContent: string): string =>
+          fileContent.replace("100", "999"),
+      },
+      {
+        scenario: "an invalid footer code",
+        expectedError:
+          "The MSFAA file has an invalid transaction code on trailer",
+        changeFile: (fileContent: string): string => {
+          const file = getStructuredRecords(fileContent);
+          file.footer = file.footer.replace("999", "001");
+          return createFileFromStructuredRecords(file);
+        },
+      },
+      {
+        scenario: "an invalid record count",
+        expectedError: "The MSFAA file has invalid number of records",
+        changeFile: (fileContent: string): string => {
+          const file = getStructuredRecords(fileContent);
+          // Record count (1) and SIN hash (222222222) in the footer.
+          file.footer = file.footer.replace(
+            "000000001000000222222222",
+            "000000002000000222222222",
+          );
+          return createFileFromStructuredRecords(file);
+        },
+      },
+      {
+        scenario: "an invalid SIN hash total",
+        expectedError:
+          "The MSFAA file has TotalSINHash inconsistent with the total sum of sin in the records",
+        changeFile: (fileContent: string): string => {
+          const file = getStructuredRecords(fileContent);
+          file.footer = file.footer.replace(
+            "000000001000000222222222",
+            "000000001000000222222223",
+          );
+          return createFileFromStructuredRecords(file);
+        },
+      },
+    ])(
+      "Should throw an error and not archive the file when the MSFAA file contains $scenario.",
+      async ({ expectedError, changeFile }) => {
+        // Arrange
+        mockDownloadFiles(
+          sftpClientMock,
+          [MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD],
+          changeFile,
+        );
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+          "One or more errors were reported during the process, please see logs for details.",
+        );
+
+        // Assert
+        expect(
+          mockedJob.containLogMessages([
+            `Processing file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD}.`,
+            `Error downloading file ${MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD}.`,
+            expectedError,
+          ]),
+        ).toBe(true);
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      },
+    );
 
     afterAll(async () => {
       await app?.close();

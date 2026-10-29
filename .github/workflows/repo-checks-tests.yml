@@ -82,8 +82,8 @@ jobs:
           status_context: "E2E SIMS API Coverage Report"
           comment_context: "E2E SIMS API Coverage Report"
           coverage_path: "sources/tests/coverage/api/clover.xml"
-          threshold_alert: 1
-          threshold_warning: 50
+          threshold_alert: 70
+          threshold_warning: 80
           threshold_metric: "lines"
           comment_footer: false
   workers-e2e-tests:
@@ -114,8 +114,8 @@ jobs:
           status_context: "E2E Workflow Workers Coverage Report"
           comment_context: "E2E Workflow Workers Coverage Report"
           coverage_path: "sources/tests/coverage/workers/clover.xml"
-          threshold_alert: 1
-          threshold_warning: 50
+          threshold_alert: 50
+          threshold_warning: 80
           threshold_metric: "lines"
           comment_footer: false
   workflow-e2e-tests:
@@ -164,8 +164,8 @@ jobs:
           status_context: "E2E Queue Consumers Coverage Report"
           comment_context: "E2E Queue Consumers Coverage Report"
           coverage_path: "sources/tests/coverage/queue-consumers/clover.xml"
-          threshold_alert: 1
-          threshold_warning: 50
+          threshold_alert: 80
+          threshold_warning: 85
           threshold_metric: "lines"
           comment_footer: false
   backend-unit-tests:
@@ -197,7 +197,7 @@ jobs:
           status_context: "Backend Unit Tests Coverage Report"
           comment_context: "Backend Unit Tests Coverage Report"
           coverage_path: "sources/tests/coverage/unit-tests/clover.xml"
-          threshold_alert: 1
-          threshold_warning: 50
+          threshold_alert: 20
+          threshold_warning: 24
           threshold_metric: "lines"
           comment_footer: false

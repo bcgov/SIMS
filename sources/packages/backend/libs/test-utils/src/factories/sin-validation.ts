@@ -29,7 +29,9 @@ export function createFakeSINValidation(
   sinValidation.surnameSent = null;
   sinValidation.dobSent = null;
   sinValidation.genderSent = null;
-  sinValidation.isValidSIN = options?.initialValue?.isValidSIN ?? true;
+  // The default is applied only for undefined, allowing null (SIN pending validation).
+  const { isValidSIN = true } = options?.initialValue ?? {};
+  sinValidation.isValidSIN = isValidSIN;
   sinValidation.sinStatus = "1";
   sinValidation.validSINCheck = "Y";
   sinValidation.validBirthdateCheck = "Y";
