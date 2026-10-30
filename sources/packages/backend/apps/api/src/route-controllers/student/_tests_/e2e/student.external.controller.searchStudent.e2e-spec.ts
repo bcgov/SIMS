@@ -34,7 +34,7 @@ import {
   getExternalUserToken,
 } from "../../../../testHelpers";
 import {
-  StudentSearchAPIInDTO,
+  StudentExternalSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
 } from "../../models/student-external-search.dto";
 import { In } from "typeorm";
@@ -49,7 +49,7 @@ describe("StudentExternalController(e2e)-searchStudents", () => {
   let oldLegacyProgramYearId: number;
   const endpoint = "/external/student";
   const VALID_SIN = "656173713";
-  const searchPayload: StudentSearchAPIInDTO = {
+  const searchPayload: StudentExternalSearchAPIInDTO = {
     sin: VALID_SIN,
   };
 
