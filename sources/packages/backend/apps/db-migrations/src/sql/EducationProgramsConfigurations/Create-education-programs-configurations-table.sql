@@ -49,7 +49,7 @@ SELECT
     "rule": {
       "effect": "DISABLE",
       "condition": {
-        "scope": "#/properties/context/properties/hasOfferings",
+        "scope": "#/properties/context/properties/isFullUpdateRestricted",
         "schema": {
           "const": true
         }
@@ -68,7 +68,7 @@ SELECT
                 "rule": {
                   "effect": "ENABLE",
                   "condition": {
-                    "scope": "#/properties/context/properties/hasOfferings",
+                    "scope": "#/properties/context/properties/isFullUpdateRestricted",
                     "schema": {}
                   }
                 },
@@ -79,7 +79,7 @@ SELECT
                 "rule": {
                   "effect": "ENABLE",
                   "condition": {
-                    "scope": "#/properties/context/properties/hasOfferings",
+                    "scope": "#/properties/context/properties/isFullUpdateRestricted",
                     "schema": {}
                   }
                 },
@@ -1210,12 +1210,12 @@ SELECT
         "type": "object",
         "readOnly": true,
         "required": [
-          "hasOfferings",
+          "isFullUpdateRestricted",
           "isBCPrivate",
           "isBCInstitution"
         ],
         "properties": {
-          "hasOfferings": {
+          "isFullUpdateRestricted": {
             "type": "boolean"
           },
           "isBCPrivate": {

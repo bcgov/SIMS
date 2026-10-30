@@ -144,7 +144,8 @@ export class EducationProgramInstitutionsController extends BaseController {
         configurationId: configuration.configurationId,
         programData: {
           context: {
-            hasOfferings: configuration.context.hasOfferings,
+            isFullUpdateRestricted:
+              configuration.context.isFullUpdateRestricted,
             isBCPrivate: configuration.context.isBCPrivate,
             isBCInstitution: configuration.context.isBCInstitution,
           },

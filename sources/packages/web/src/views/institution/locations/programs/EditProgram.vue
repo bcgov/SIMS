@@ -9,7 +9,7 @@
     </template>
     <template #alerts>
       <banner
-        v-if="canEditOnlyBasicInfo"
+        v-if="isFullUpdateRestricted"
         :type="BannerTypes.Success"
         header="Program details no longer editable"
         summary="This program has study period offerings attached to it, and the program details can no longer be edited. If revisions are required other than to program name or program description, you must create a new program with the correct details."
@@ -69,7 +69,7 @@ interface EditProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const canEditOnlyBasicInfo = ref(false);
+const isFullUpdateRestricted = ref(false);
 const { isReadOnlyUser } = useInstitutionAuth();
 const readOnly = computed(() => isReadOnlyUser(props.locationId));
 const processing = ref(false);
@@ -95,7 +95,8 @@ const submit = async (program: UpdateEducationProgramAPIInDTO) => {
 };
 
 const loaded = (program: EducationProgramAPIOutDTO) => {
-  canEditOnlyBasicInfo.value = program.programData.context.hasOfferings;
+  isFullUpdateRestricted.value =
+    program.programData.context.isFullUpdateRestricted;
 };
 
 const goBack = async (): Promise<void> => {

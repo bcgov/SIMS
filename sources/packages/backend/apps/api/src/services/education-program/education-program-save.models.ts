@@ -1,9 +1,26 @@
 import { FormYesNoOptions, ProgramIntensity } from "@sims/sims-db";
 import { AviationCredentialTypeOptions } from "../education-program-offering/education-program-offering-validation.models";
 
+/**
+ * Values pre-populated into the program data only to execute the
+ * client and server side validations. Never changed by the user
+ * and never persisted.
+ */
 export interface EducationProgramContext {
-  hasOfferings: boolean;
+  /**
+   * Indicates if full update of the program is restricted.
+   * When true, only partial updates to the program are allowed.
+   * For instance, if the program has offerings, only certain fields may be updated.
+   */
+  isFullUpdateRestricted: boolean;
+  /**
+   * Is considered a private institution in British Columbia.
+   */
   isBCPrivate: boolean;
+  /**
+   * Is considered an Institution in British Columbia,
+   * for instance a public or private institution in British Columbia.
+   */
   isBCInstitution: boolean;
 }
 

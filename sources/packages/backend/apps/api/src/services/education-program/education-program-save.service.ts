@@ -121,7 +121,7 @@ export class EducationProgramSaveService {
       programYearId: programConfiguration.programYear.id,
       updatedAt: programConfiguration.updatedAt,
       context: {
-        hasOfferings: hasOfferings,
+        isFullUpdateRestricted: hasOfferings,
         isBCPrivate: institution.institutionType.isBCPrivate,
         isBCInstitution:
           institution.institutionType.isBCPrivate ||
@@ -218,7 +218,7 @@ export class EducationProgramSaveService {
       },
     );
     let programDataToUpdate: EducationProgramData;
-    if (configuration.context.hasOfferings) {
+    if (configuration.context.isFullUpdateRestricted) {
       // Only the name and description can be changed once the program has
       // offerings, so the persisted data is the one to be validated.
       programDataToUpdate = {
@@ -324,7 +324,8 @@ export class EducationProgramSaveService {
       );
     const fieldOfStudyCode =
       calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
-    if (!context.hasOfferings) {
+    if (!context.isFullUpdateRestricted) {
+      // When full update is not restricted, the program status and legacy data can be updated.
       program.programStatus = validationResult.flags.some(
         (flag) => flag.effect === ProgramFlagEffect.PendingReview,
       )
@@ -343,7 +344,8 @@ export class EducationProgramSaveService {
     // Depending on the current program context, only a partial update may happen to the dynamic program data.
     // When a partial update occurs, the dynamic data will be the current saved DB values merged with the
     // partial updated allowed by the current program context.
-    // For instance, if program has offerings, only fields like programName and programDescription may be updated.
+    // For instance, if program has offerings (isFullUpdateRestricted is true), only fields like programName
+    // and programDescription may be updated.
     program.programData = { ...validationResult.programData, fieldOfStudyCode };
     const auditUser = { id: auditUserId } as User;
     const now = new Date();

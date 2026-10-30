@@ -81,7 +81,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
           programData: {
             ...savedProgram.programData,
             context: {
-              hasOfferings: false, // No offerings for this program exist.
+              isFullUpdateRestricted: false, // No offerings for this program exist.
               isBCPrivate,
               isBCInstitution: isBCPublic || isBCPrivate,
             },
