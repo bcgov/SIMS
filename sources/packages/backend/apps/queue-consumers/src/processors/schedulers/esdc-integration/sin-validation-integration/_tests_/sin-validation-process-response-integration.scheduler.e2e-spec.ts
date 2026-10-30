@@ -143,6 +143,70 @@ describe(
       ).toBe(true);
     });
 
+    it.each([
+      {
+        scenario: "an invalid header code",
+        expectedError: "Invalid file header.",
+        changeFile: (fileContent: string): string => {
+          const file = getStructuredRecords(fileContent);
+          file.header = file.header.replace("001", "999");
+          return createFileFromStructuredRecords(file);
+        },
+      },
+      {
+        scenario: "an invalid footer code",
+        expectedError: "Invalid file footer.",
+        changeFile: (fileContent: string): string => {
+          const file = getStructuredRecords(fileContent);
+          file.footer = file.footer.replace("999", "001");
+          return createFileFromStructuredRecords(file);
+        },
+      },
+      {
+        scenario: "a SIN hash that does not match the sum of the SINs",
+        expectedError: "SIN hash does not match with the expected on footer.",
+        changeFile: (fileContent: string): string => {
+          const file = getStructuredRecords(fileContent);
+          // Change only the SIN (offsets 14 to 22) of the first record, preserving the status fields.
+          file.records[0] =
+            file.records[0].substring(0, 14) +
+            "000000001" +
+            file.records[0].substring(23);
+          return createFileFromStructuredRecords(file);
+        },
+      },
+    ])(
+      "Should throw an error and not archive the file when the SIN validation response file has $scenario.",
+      async ({ expectedError, changeFile }) => {
+        // Arrange
+        mockDownloadFiles(
+          sftpClientMock,
+          [SIN_VALIDATION_FILENAME],
+          changeFile,
+        );
+        const mockedJob = mockBullJob<void>();
+
+        // Act
+        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+          "One or more errors were reported during the process, please see logs for details.",
+        );
+
+        // Assert
+        const downloadedFile = join(
+          process.env.ESDC_RESPONSE_FOLDER,
+          SIN_VALIDATION_FILENAME,
+        );
+        expect(
+          mockedJob.containLogMessages([
+            `Processing file ${downloadedFile}.`,
+            `Error downloading file ${downloadedFile}.`,
+            expectedError,
+          ]),
+        ).toBe(true);
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      },
+    );
+
     afterAll(async () => {
       await app?.close();
     });
