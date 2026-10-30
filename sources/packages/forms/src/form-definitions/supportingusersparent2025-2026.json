@@ -197,17 +197,17 @@
                       "hideOnChildrenHidden": false
                     },
                     {
-                      "label": "Verified email",
-                      "applyMaskOn": "change",
-                      "disabled": true,
+                      "label": "Email address",
                       "tableView": true,
-                      "persistent": false,
-                      "calculateValue": "value = data.email;",
-                      "validateWhenHidden": false,
-                      "key": "readOnlyEmail",
-                      "type": "textfield",
-                      "input": true,
-                      "hideOnChildrenHidden": false
+                      "validate": {
+                        "required": true
+                      },
+                      "kickbox": {
+                        "enabled": true
+                      },
+                      "key": "email",
+                      "type": "email",
+                      "input": true
                     }
                   ],
                   "width": 6,
@@ -226,25 +226,6 @@
             },
             {
               "label": "HTML",
-              "tag": "p",
-              "className": "alert alert-danger fa fa-ban w-100",
-              "attrs": [
-                {
-                  "attr": "",
-                  "value": ""
-                }
-              ],
-              "content": "<strong class=\"pl-5\">Missing Information</strong>\n<br />\n<span>\n  The information collected from your BC Services Card account is incomplete.\n  Please go to your\n  <a\n    class=\"formio-href\"\n    href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\"\n    target=\"_blank\"\n    rel=\"noopener noreferrer\"\n  >\n    BC Services Card account</a\n  >\n  to update your Email Address.\n</span>",
-              "refreshOnChange": true,
-              "customClass": "banner-alert",
-              "key": "emailRequiredBanner",
-              "customConditional": "show = !(data.email || \"\").trim();",
-              "type": "htmlelement",
-              "input": false,
-              "tableView": false
-            },
-            {
-              "label": "HTML",
               "className": "alert alert-info fa fa-info-circle ",
               "attrs": [
                 {
@@ -252,7 +233,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong class=\"pl-5\">How to update your information</strong><br />\nYour information above is taken from your B.C. Services Card. \nIf the information is incorrect, please update your information with \n<a class=\"formio-href\" href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\" target=\"_blank\">\n    B.C. Services Card\n</a> first.\n",
+              "content": "<strong class=\"pl-5\">How to update your information</strong><br />\nYour information above, except for your email address, is taken from your B.C. Services Card. \nIf the information is incorrect, please update your information with \n<a class=\"formio-href\" href=\"https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/change-personal-information\" target=\"_blank\">\n    B.C. Services Card\n</a> first.\n",
               "refreshOnChange": false,
               "customClass": "banner-info",
               "key": "html",

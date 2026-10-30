@@ -80,9 +80,17 @@ describe("Validation of user token required information", () => {
     expect(result).toBe(false);
   });
 
+  it("Should return false when the user token is missing the user's email.", () => {
+    // Act
+    const result = isUserTokenMissingRequiredInfo({
+      ...VALID_USER_TOKEN,
+      email: undefined,
+    });
+    // Assert
+    expect(result).toBe(false);
+  });
+
   it.each([
-    ["email", { ...VALID_USER_TOKEN, email: undefined }],
-    ["email", { ...VALID_USER_TOKEN, email: "   " }],
     ["last name", { ...VALID_USER_TOKEN, lastName: undefined }],
     ["last name", { ...VALID_USER_TOKEN, lastName: "   " }],
     ["date of birth", { ...VALID_USER_TOKEN, birthdate: undefined }],

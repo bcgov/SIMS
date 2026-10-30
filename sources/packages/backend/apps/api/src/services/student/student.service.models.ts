@@ -18,7 +18,10 @@ export interface StudentUserData {
   birthdate: string;
   lastName: string;
   givenNames?: string;
-  email: string;
+  /**
+   * When not provided the user e-mail is not updated.
+   */
+  email?: string;
   noteDescription: string;
 }
 

@@ -56,6 +56,7 @@ describe("StudentStudentsController(e2e)-update", () => {
       const payload: UpdateStudentAPIInDTO = {
         mode: "student-edit",
         identityProvider,
+        email: "updated.email@example.com",
         phone: "2505551234",
         gender: "nonBinary",
         ...address,
@@ -70,9 +71,17 @@ describe("StudentStudentsController(e2e)-update", () => {
         .expect(HttpStatus.OK);
 
       const updatedStudent = await db.student.findOneOrFail({
-        select: { id: true, gender: true, contactInfo: true },
+        select: {
+          id: true,
+          gender: true,
+          contactInfo: true,
+          user: { id: true, email: true },
+        },
+        relations: { user: true },
         where: { id: student.id },
+        loadEagerRelations: false,
       });
+      expect(updatedStudent.user.email).toBe(payload.email);
       expect(updatedStudent.gender).toBe(payload.gender);
       expect(updatedStudent.contactInfo.phone).toBe(payload.phone);
       expect(updatedStudent.contactInfo.address).toEqual(address);
@@ -95,6 +104,7 @@ describe("StudentStudentsController(e2e)-update", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message: [
+          "email must be an email",
           "phone must be longer than or equal to 10 characters",
           "addressLine1 should not be empty",
           "city should not be empty",
@@ -117,6 +127,7 @@ describe("StudentStudentsController(e2e)-update", () => {
     const payload: UpdateStudentAPIInDTO = {
       mode: "student-edit",
       identityProvider: IdentityProviders.BCSC,
+      email: "updated.email@example.com",
       phone: "2505551234",
       gender: "invalid-gender",
       addressLine1: "123 Some Street",

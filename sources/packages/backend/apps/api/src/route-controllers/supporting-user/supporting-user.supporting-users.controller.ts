@@ -162,7 +162,7 @@ export class SupportingUserSupportingUsersController extends BaseController {
     // the user being used to execute the request.
     const userQuery = this.userService.syncUser(
       userToken.userName,
-      userToken.email,
+      payload.email,
       userToken.givenNames,
       userToken.lastName,
     );

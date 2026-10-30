@@ -157,7 +157,8 @@ export class StudentStudentsController extends BaseController {
 
     try {
       const createdStudent = await this.studentService.createStudent(
-        studentUserToken,
+        // The e-mail is provided by the student and can differ from the one in the token.
+        { ...studentUserToken, email: payload.email },
         submissionResult.data.data,
       );
       return { id: createdStudent.id };
@@ -213,7 +214,6 @@ export class StudentStudentsController extends BaseController {
           lastName: studentUserToken.lastName,
           givenNames: studentUserToken.givenNames,
           birthdate: studentUserToken.birthdate,
-          email: studentUserToken.email,
           noteDescription: BCSC_STUDENT_PROFILE_UPDATE_NOTE,
         },
         studentUserToken.userId,
@@ -413,6 +413,7 @@ export class StudentStudentsController extends BaseController {
     await this.studentService.updateStudentInfo(
       studentUserToken.studentId,
       submissionResult.data.data,
+      payload.email,
       studentUserToken.userId,
     );
   }

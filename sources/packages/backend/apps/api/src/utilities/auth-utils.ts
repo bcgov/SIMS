@@ -71,16 +71,14 @@ export function getUserFullName(user?: {
 }
 
 /**
- * Checks if the user token is missing any of the required information (e-mail, last
- * name, and birthdate). This is a pure check, callers (controllers) are responsible
+ * Checks if the user token is missing any of the required information (last name
+ * and birthdate). The e-mail is not checked because it is provided by the user
+ * during the profile creation, since BCSC does not guarantee its availability.
+ * This is a pure check, callers (controllers) are responsible
  * for throwing the proper `HttpException` when the required information is missing.
  * @param userToken user token to have the required fields validated.
  * @returns true if the token is missing any of the required fields, otherwise, false.
  */
 export function isUserTokenMissingRequiredInfo(userToken: IUserToken): boolean {
-  return (
-    !userToken.email?.trim() ||
-    !userToken.lastName?.trim() ||
-    !userToken.birthdate?.trim()
-  );
+  return !userToken.lastName?.trim() || !userToken.birthdate?.trim();
 }

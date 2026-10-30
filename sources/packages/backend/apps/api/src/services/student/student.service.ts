@@ -522,16 +522,24 @@ export class StudentService extends RecordDataModelService<Student> {
    * Updates student information.
    * @param studentId student to be updated.
    * @param studentInfo student information to be updated.
+   * @param email student e-mail, which is editable by the student at any time.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
   async updateStudentInfo(
     studentId: number,
     studentInfo: StudentInfo,
+    email: string,
     auditUserId: number,
   ): Promise<Student> {
     const student = new Student();
     student.id = studentId;
+    // The student is the user updating their own profile, hence the audit user is the student user.
+    student.user = {
+      id: auditUserId,
+      email: email.trim(),
+      modifier: { id: auditUserId },
+    } as User;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
       phone: studentInfo.phone,
@@ -554,7 +562,7 @@ export class StudentService extends RecordDataModelService<Student> {
     // TODO: Remove the trim function below once the DTO sanitization is done.
     studentUserData.givenNames = studentUserData.givenNames?.trim();
     studentUserData.lastName = studentUserData.lastName.trim();
-    studentUserData.email = studentUserData.email.trim();
+    studentUserData.email = studentUserData.email?.trim();
     const studentToSync = await this.getStudentById(studentUserData.studentId);
     let mustSave = false;
     if (!studentUserData.givenNames) {
@@ -578,8 +586,9 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     // This condition is not added above, as email does not trigger SIN validation request.
     if (
+      studentUserData.email &&
       studentUserData.email.toLowerCase() !==
-      studentToSync.user.email.toLowerCase()
+        studentToSync.user.email.toLowerCase()
     ) {
       studentToSync.user.email = studentUserData.email;
       mustSave = true;
