@@ -7,6 +7,7 @@ export enum Role {
    */
   AESTManualTriggerReassessment = "aest-manual-trigger-reassessment",
   AESTBatchReassessment = "aest-batch-reassessment",
+  AESTBatchStudentRestrictions = "aest-batch-student-restrictions",
   AESTReports = "aest-reports",
   AESTCreateInstitution = "aest-create-institution",
   AESTEditCASSupplierInfo = "aest-edit-cas-supplier-info",

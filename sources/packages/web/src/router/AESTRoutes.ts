@@ -31,6 +31,7 @@ import InstitutionLocationEdit from "@/views/aest/institution/InstitutionLocatio
 import Reports from "@/views/aest/Reports.vue";
 import BatchReassessment from "@/views/aest/BatchReassessment.vue";
 import BatchReassessmentOutcome from "@/views/aest/BatchReassessmentOutcome.vue";
+import BatchStudentRestrictions from "@/views/aest/BatchStudentRestrictions.vue";
 import FormioEditor from "@/views/aest/FormioEditor.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import CASInvoices from "@/views/aest/CASInvoices.vue";
@@ -832,6 +833,17 @@ export const aestRoutes: Array<RouteRecordRaw> = [
               route.params.batchReassessmentId as string,
             ),
           }),
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.BatchStudentRestrictions,
+        name: AESTRoutesConst.BATCH_STUDENT_RESTRICTIONS,
+        components: {
+          default: BatchStudentRestrictions,
+          sidebar: AESTHomeSideBar,
         },
         meta: {
           clientType: ClientIdType.AEST,

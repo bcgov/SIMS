@@ -17,7 +17,9 @@
         <v-form ref="batchReassessmentForm">
           <v-textarea
             v-model="applicationNumbers"
-            :rules="[checkApplicationNumbers]"
+            :rules="[
+              (v) => checkApplicationNumbersRule(v, MAX_APPLICATION_NUMBERS),
+            ]"
             label="Enter applications here"
             variant="outlined"
             max-rows="20"
@@ -63,15 +65,19 @@ import BatchReassessmentHistory from "@/components/aest/BatchReassessmentHistory
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
-import { ModalDialog, useSnackBar } from "@/composables";
+import {
+  ModalDialog,
+  useFormatters,
+  useRules,
+  useSnackBar,
+} from "@/composables";
 import { BatchReassessmentService } from "@/services/BatchReassessmentService";
-
-const APPLICATION_NUMBER_SIZE = 10;
-const APPLICATION_NUMBER_REGEX = /[\s,]+/;
 
 const MAX_APPLICATION_NUMBERS = 20000;
 
 const snackBar = useSnackBar();
+const { checkApplicationNumbersRule } = useRules();
+const { parseApplicationNumbers } = useFormatters();
 
 const applicationNumbers = ref("");
 const batchReassessmentHistory = ref(
@@ -81,35 +87,6 @@ const batchReassessmentForm = ref({} as VForm);
 const confirmBatchReassessmentModal = ref(
   {} as ModalDialog<UserNoteModal<void>>,
 );
-
-const checkApplicationNumbers = (value: string) => {
-  if (!value?.trim()) {
-    return "Application numbers are required.";
-  }
-
-  const entries = value.split(APPLICATION_NUMBER_REGEX).filter(Boolean);
-
-  if (!entries.length) {
-    return "Application numbers are required.";
-  }
-
-  if (entries.length > MAX_APPLICATION_NUMBERS) {
-    return `A maximum of ${MAX_APPLICATION_NUMBERS} application numbers can be submitted at once.`;
-  }
-
-  const hasInvalidEntry = entries.some(
-    (entry) =>
-      !new RegExp(String.raw`^\d{${APPLICATION_NUMBER_SIZE}}$`).test(entry),
-  );
-  if (hasInvalidEntry) {
-    return `Each application number must be exactly ${APPLICATION_NUMBER_SIZE} digits and be separated by spaces, line breaks, or commas.`;
-  }
-
-  return true;
-};
-
-const parseApplicationNumbers = () =>
-  applicationNumbers.value.split(APPLICATION_NUMBER_REGEX).filter(Boolean);
 
 const openConfirmSubmitModal = async () => {
   const { valid } = await batchReassessmentForm.value.validate();
@@ -128,7 +105,7 @@ const submitReassessment = async (
 ): Promise<boolean> => {
   try {
     await BatchReassessmentService.shared.createBatchReassessment({
-      applicationNumbers: parseApplicationNumbers(),
+      applicationNumbers: parseApplicationNumbers(applicationNumbers.value),
       note: userNoteModalResult.note,
     });
     snackBar.success("Batch reassessment triggered successfully.");

@@ -1,6 +1,8 @@
 import HttpBaseClient from "@/services/http/common/HttpBaseClient";
 import {
   AssignInstitutionRestrictionAPIInDTO,
+  BatchStudentRestrictionsAPIInDTO,
+  BatchStudentRestrictionsSummaryAPIOutDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
   InstitutionActiveRestrictionsAPIOutDTO,
@@ -202,5 +204,29 @@ export class RestrictionApi extends HttpBaseClient {
       ? `restriction/institution/${options.institutionId}/active`
       : `restriction/active`;
     return this.getCall(this.addClientRoot(url));
+  }
+
+  /**
+   * Adds a restriction to the students of the given application numbers.
+   * @param payload restriction and application numbers of the students
+   * that will receive the restriction.
+   */
+  async createBatchStudentRestrictions(
+    payload: BatchStudentRestrictionsAPIInDTO,
+  ): Promise<void> {
+    await this.postCall(
+      this.addClientRoot("restriction/student/batch"),
+      payload,
+    );
+  }
+
+  /**
+   * Gets the batch student restriction submissions.
+   * @returns batch student restriction submissions.
+   */
+  async getBatchStudentRestrictions(): Promise<
+    BatchStudentRestrictionsSummaryAPIOutDTO[]
+  > {
+    return this.getCall(this.addClientRoot("restriction/student/batch"));
   }
 }

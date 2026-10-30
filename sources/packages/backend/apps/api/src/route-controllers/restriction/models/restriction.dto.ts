@@ -1,13 +1,18 @@
 import {
   ArrayMaxSize,
   ArrayMinSize,
+  ArrayNotEmpty,
+  IsArray,
   IsIn,
   IsNotEmpty,
   IsOptional,
   IsPositive,
+  IsString,
+  Length,
   MaxLength,
 } from "class-validator";
 import {
+  APPLICATION_NUMBER_LENGTH,
   RestrictionNotificationType,
   NOTE_DESCRIPTION_MAX_LENGTH,
   RestrictionType,
@@ -23,6 +28,11 @@ import {
  * receive a very large payloads.
  */
 const MAX_ALLOWED_LOCATIONS = 100;
+
+/**
+ * Maximum number of application numbers accepted in a single batch student restrictions submission.
+ */
+const BATCH_STUDENT_RESTRICTIONS_MAX_APPLICATION_NUMBERS = 50000;
 
 /**
  * Base DTO for restriction.
@@ -213,4 +223,37 @@ export class RestrictionAPIOutDTO {
   id: number;
   description: string;
   fieldRequirements?: Record<string, FieldRequirementType>;
+}
+
+/**
+ * Payload used to add a restriction to the students of a list of application numbers.
+ */
+export class BatchStudentRestrictionsAPIInDTO {
+  @IsPositive()
+  restrictionId: number;
+  @IsArray()
+  @ArrayNotEmpty()
+  @ArrayMaxSize(BATCH_STUDENT_RESTRICTIONS_MAX_APPLICATION_NUMBERS)
+  @IsString({ each: true })
+  @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH, { each: true })
+  applicationNumbers: string[];
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  note: string;
+}
+
+/**
+ * Summary of a batch student restrictions submission, including how many
+ * restrictions were successfully added and how many failed.
+ */
+export class BatchStudentRestrictionsSummaryAPIOutDTO {
+  id: number;
+  batchNumber: number;
+  createdAt: Date;
+  creatorName: string;
+  restrictionCode: string;
+  restrictionDescription: string;
+  totalCount: number;
+  successCount: number;
+  failureCount: number;
 }

@@ -180,6 +180,7 @@ export enum AppRoutes {
   Reports = "reports",
   BatchReassessment = "batch-reassessment",
   BatchReassessmentOutcome = "batch-reassessment/:batchReassessmentId",
+  BatchStudentRestrictions = "batch-student-restrictions",
   CASInvoices = "invoices",
   DynamicFormEditor = "dynamic-form-editor",
   ApplicationRestrictionsManagement = "application-restrictions-management",

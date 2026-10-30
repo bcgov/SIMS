@@ -460,6 +460,19 @@ export const BatchReassessmentApplicationHeaders = [
 ];
 
 /**
+ * Batch restriction history headers.
+ */
+export const BatchStudentRestrictionsHistoryHeaders = [
+  { title: "Batch ID", sortable: false, key: "batchNumber" },
+  { title: "Submitted Date", sortable: false, key: "submittedDate" },
+  { title: "Submitted By", sortable: false, key: "submittedBy" },
+  { title: "Restriction", sortable: false, key: "restriction" },
+  { title: "Count", sortable: false, key: "totalCount" },
+  { title: "Successful", sortable: false, key: "successCount" },
+  { title: "Failed", sortable: false, key: "failureCount" },
+];
+
+/**
  * CAS invoice headers.
  */
 export const CASInvoiceHeaders = [

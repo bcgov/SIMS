@@ -40,6 +40,8 @@ import {
   InstitutionRestrictionSummaryAPIOutDTO,
   InstitutionActiveRestrictionsAPIOutDTO,
   RestrictionAPIOutDTO,
+  BatchStudentRestrictionsAPIInDTO,
+  BatchStudentRestrictionsSummaryAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -67,6 +69,34 @@ import {
 } from "../../constants";
 import { RestrictionType } from "@sims/sims-db";
 
+// Stubbed data used until the batch student restrictions persistence is available.
+// Replace the stubs with the batch student restrictions service calls.
+const STUB_BATCH_STUDENT_RESTRICTIONS: BatchStudentRestrictionsSummaryAPIOutDTO[] =
+  [
+    {
+      id: 2,
+      batchNumber: 2,
+      createdAt: new Date("2026-10-29T14:32:00"),
+      creatorName: "Ministry User",
+      restrictionCode: "B6A",
+      restrictionDescription: "Student overawarded",
+      totalCount: 1250,
+      successCount: 1248,
+      failureCount: 2,
+    },
+    {
+      id: 1,
+      batchNumber: 1,
+      createdAt: new Date("2026-10-28T09:15:00"),
+      creatorName: "Ministry User",
+      restrictionCode: "SSR",
+      restrictionDescription: "Suspended student restriction",
+      totalCount: 3,
+      successCount: 3,
+      failureCount: 0,
+    },
+  ];
+
 /**
  * Controller for AEST Restrictions.
  * This consists of all Rest APIs for AEST restrictions.
@@ -84,6 +114,69 @@ export class RestrictionAESTController extends BaseController {
     private readonly institutionService: InstitutionService,
   ) {
     super();
+  }
+
+  // The batch student restrictions routes must be declared before the
+  // student/:studentId routes, otherwise "batch" is captured as a student ID.
+
+  /**
+   * Adds a provincial restriction to the students of the given application numbers.
+   * The same note is applied to all restrictions added through the batch.
+   * @param payload restriction, application numbers, and note for the batch.
+   * @returns the primary identifier of the created batch.
+   */
+  @Roles(Role.AESTBatchStudentRestrictions)
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The given restriction type is not Provincial. Only provincial restrictions can be added.",
+  })
+  @Post("student/batch")
+  async createBatchStudentRestrictions(
+    @Body() payload: BatchStudentRestrictionsAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    const restrictionExists = await this.restrictionService.restrictionExists(
+      payload.restrictionId,
+      RestrictionType.Provincial,
+    );
+    if (!restrictionExists) {
+      throw new UnprocessableEntityException(
+        "The given restriction type is not Provincial. Only provincial restrictions can be added.",
+      );
+    }
+    const uniqueApplicationNumbers = new Set(payload.applicationNumbers);
+    const nextId = STUB_BATCH_STUDENT_RESTRICTIONS.length + 1;
+    STUB_BATCH_STUDENT_RESTRICTIONS.unshift({
+      id: nextId,
+      batchNumber: nextId,
+      createdAt: new Date(),
+      creatorName: "Ministry User",
+      restrictionCode: "STUB",
+      restrictionDescription: `Restriction ${payload.restrictionId}`,
+      totalCount: uniqueApplicationNumbers.size,
+      successCount: uniqueApplicationNumbers.size,
+      failureCount: 0,
+    });
+    return { id: nextId };
+  }
+
+  /**
+   * Gets the batch student restriction submissions.
+   * @returns batch student restriction submissions.
+   */
+  @Roles(Role.AESTBatchStudentRestrictions)
+  @Get("student/batch")
+  getBatchStudentRestrictions(): BatchStudentRestrictionsSummaryAPIOutDTO[] {
+    return STUB_BATCH_STUDENT_RESTRICTIONS.map((summary) => ({
+      id: summary.id,
+      batchNumber: summary.batchNumber,
+      createdAt: summary.createdAt,
+      creatorName: summary.creatorName,
+      restrictionCode: summary.restrictionCode,
+      restrictionDescription: summary.restrictionDescription,
+      totalCount: summary.totalCount,
+      successCount: summary.successCount,
+      failureCount: summary.failureCount,
+    }));
   }
 
   /**
