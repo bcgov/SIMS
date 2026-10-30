@@ -82,24 +82,23 @@ const loading = ref(true);
 const snackBar = useSnackBar();
 const errorSummary =
   useTemplateRef<InstanceType<typeof ErrorSummary>>("errorSummary");
-
 /**
  * Program configuration ID used when creating a new program.
  * Currently the most recent program configuration is used for creation,
  * later, the configuration must be explicitly selected by the user.
  */
 let programConfigurationIdForCreation: number | undefined;
-
+/**
+ * Form model holding the current state of the program data.
+ * This includes both the user-entered data and the calculated flags.
+ */
 const formModel = ref({} as EducationProgramDataAPIOutDTO);
-
 /**
  * Indicates whether the loaded program can no longer be edited
  * because it is inactive or expired. Always false for creation.
  */
 const isProgramInactive = ref(false);
-
 const isReadonly = computed(() => props.readOnly || isProgramInactive.value);
-
 // Errors are always computed; only shown once the user tries to submit.
 const validationMode = ref<ValidationMode>("ValidateAndHide");
 const programFormSchema = ref<JsonSchema>({} as JsonSchema);

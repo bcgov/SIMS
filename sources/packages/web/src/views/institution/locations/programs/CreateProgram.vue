@@ -16,7 +16,7 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useInstitutionState, useSnackBar } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { ref } from "vue";
 import type { BackTarget } from "@/types";
 import { ApiProcessError } from "@/types";
@@ -33,7 +33,6 @@ interface CreateProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<CreateProgramProps>();
 const router = useRouter();
-const { institutionState } = useInstitutionState();
 const processing = ref(false);
 
 const submit = async (program: CreateEducationProgramAPIInDTO) => {
