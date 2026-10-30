@@ -19,7 +19,7 @@ import BaseController from "../BaseController";
 import { StudentInformationService } from "../../services";
 import {
   ActiveSINsAPIOutDTO,
-  StudentSearchAPIInDTO,
+  StudentExternalSearchAPIInDTO,
   StudentSearchResultAPIOutDTO,
 } from "./models/student-external-search.dto";
 import { StudentExternalControllerService } from "./student.external.controller.service";
@@ -55,7 +55,7 @@ export class StudentExternalController extends BaseController {
   @ApiNotFoundResponse({ description: "Student not found." })
   @HttpCode(HttpStatus.OK)
   async searchStudentDetails(
-    @Body() payload: StudentSearchAPIInDTO,
+    @Body() payload: StudentExternalSearchAPIInDTO,
   ): Promise<StudentSearchResultAPIOutDTO> {
     // Get student from SIMS.
     const student = await this.studentInformationService.getStudentBySIN(
