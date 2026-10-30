@@ -12,7 +12,6 @@ import {
   EducationProgram,
   EducationProgramConfiguration,
   Institution,
-  InstitutionType,
   ProgramStatus,
   User,
 } from "@sims/sims-db";
@@ -56,8 +55,6 @@ import {
 export class EducationProgramSaveService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(EducationProgram)
-    private readonly educationProgramRepo: Repository<EducationProgram>,
     @InjectRepository(EducationProgramConfiguration)
     private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
     private readonly educationProgramService: EducationProgramService,
@@ -70,21 +67,28 @@ export class EducationProgramSaveService {
   ) {}
 
   /**
-   * Get the program configuration including context, visual schema, and validation schema.
+   * Get the program configuration including visual schema, validation schema, and context.
    * @param institutionId ID of the institution requesting the configuration.
    * @param options method options.
    * - `programConfigurationId` ID of the program configuration. If not provided,
    * the most recent active configuration is returned.
+   * - `programId` ID of the program. Used to check if the program has existing offerings.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
+  // TODO: make the programConfigurationId required once the web is updated to always provide it.
   async getEducationProgramConfiguration(
     institutionId: number,
-    options?: { programConfigurationId?: number },
+    options?: { programConfigurationId?: number; programId?: number },
   ): Promise<EducationProgramDynamicConfiguration> {
-    const institution =
-      await this.institutionService.getInstitutionTypeById(institutionId);
-    const programConfiguration =
-      await this.educationProgramConfigurationRepo.findOne({
+    const institutionPromise =
+      this.institutionService.getInstitutionTypeById(institutionId);
+    const hasOfferingsPromise = options?.programId
+      ? this.educationProgramOfferingService.hasExistingOffering(
+          options.programId,
+        )
+      : Promise.resolve(false);
+    const programConfigurationPromise =
+      this.educationProgramConfigurationRepo.findOne({
         select: {
           id: true,
           visualSchema: true,
@@ -103,102 +107,13 @@ export class EducationProgramSaveService {
           programYear: { startDate: "DESC" },
         },
       });
+    const [institution, hasOfferings, programConfiguration] = await Promise.all(
+      [institutionPromise, hasOfferingsPromise, programConfigurationPromise],
+    );
     if (!programConfiguration) {
       throw new CustomNamedError(
         "Education program configuration not found.",
         EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
-      );
-    }
-    return this.createProgramContext(
-      institution?.institutionType,
-      programConfiguration,
-      {
-        hasOfferings: false,
-      },
-    );
-  }
-
-  /**
-   * Get the program configuration including context, visual schema, and validation schema,
-   * when a program ID is provided.
-   * @param programId ID of the program to retrieve the configuration for.
-   * @returns the program configuration including context, visual schema, and validation schema.
-   */
-  async getEducationProgramConfigurationFromProgram(
-    programId: number,
-  ): Promise<EducationProgramDynamicConfiguration> {
-    const hasOfferingsPromise =
-      this.educationProgramOfferingService.hasExistingOffering(programId);
-    const programPromise = this.educationProgramRepo.findOne({
-      select: {
-        id: true,
-        programConfiguration: {
-          id: true,
-          visualSchema: true,
-          validationSchema: true,
-          updatedAt: true,
-          programYear: {
-            id: true,
-          },
-        },
-        institution: {
-          id: true,
-          institutionType: { id: true },
-        },
-      },
-      relations: {
-        programConfiguration: { programYear: true },
-        institution: { institutionType: true },
-      },
-      where: { id: programId },
-    });
-    const [program, hasOfferings] = await Promise.all([
-      programPromise,
-      hasOfferingsPromise,
-    ]);
-    if (!program) {
-      throw new CustomNamedError(
-        "Not able to find the requested program.",
-        EDUCATION_PROGRAM_NOT_FOUND,
-      );
-    }
-    const institutionType = program.institution.institutionType;
-    const programConfiguration = program.programConfiguration;
-    return this.createProgramContext(institutionType, programConfiguration, {
-      hasOfferings,
-    });
-  }
-
-  /**
-   * Creates the program context including flags and visual/validation schema,
-   * used for program creation and validation.
-   * @param institutionType the type of the institution.
-   * @param programConfiguration the program configuration.
-   * @param options additional options.
-   * - `hasOfferings` indicates if the program has offerings.
-   * @returns the dynamic program configuration including context, visual schema, and validation schema.
-   */
-  private createProgramContext(
-    institutionType: InstitutionType,
-    programConfiguration: EducationProgramConfiguration,
-    options: { hasOfferings: boolean },
-  ): EducationProgramDynamicConfiguration {
-    if (!institutionType) {
-      throw new Error(
-        `Institution type not loaded for the program configuration ID ${programConfiguration.id}.`,
-      );
-    }
-    if (!programConfiguration.programYear) {
-      throw new Error(
-        `Program year not loaded for the program configuration ID ${programConfiguration.id}.`,
-      );
-    }
-    if (
-      !programConfiguration.visualSchema ||
-      !programConfiguration.validationSchema
-    ) {
-      throw new Error(
-        `Visual or validation schema not loaded for the program configuration ID ${programConfiguration.id}.`,
       );
     }
     return {
@@ -206,10 +121,11 @@ export class EducationProgramSaveService {
       programYearId: programConfiguration.programYear.id,
       updatedAt: programConfiguration.updatedAt,
       context: {
-        hasOfferings: options.hasOfferings,
-        isBCPrivate: institutionType.isBCPrivate,
+        hasOfferings: hasOfferings,
+        isBCPrivate: institution.institutionType.isBCPrivate,
         isBCInstitution:
-          institutionType.isBCPrivate || institutionType.isBCPublic,
+          institution.institutionType.isBCPrivate ||
+          institution.institutionType.isBCPublic,
       },
       visualSchema: programConfiguration.visualSchema,
       validationSchema: programConfiguration.validationSchema,
@@ -294,8 +210,13 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_INVALID_OPERATION,
       );
     }
-    const configuration =
-      await this.getEducationProgramConfigurationFromProgram(program.id);
+    const configuration = await this.getEducationProgramConfiguration(
+      program.institution.id,
+      {
+        programConfigurationId: program.programConfiguration.id,
+        programId: program.id,
+      },
+    );
     let programDataToUpdate: EducationProgramData;
     if (configuration.context.hasOfferings) {
       // Only the name and description can be changed once the program has
@@ -418,6 +339,11 @@ export class EducationProgramSaveService {
     program.id = options?.programId;
     program.name = validationResult.programData.programName;
     program.description = validationResult.programData.programDescription;
+    // The persisted dynamic program saved at this point varies depending of the update type.
+    // Depending on the current program context, only a partial update may happen to the dynamic program data.
+    // When a partial update occurs, the dynamic data will be the current saved DB values merged with the
+    // partial updated allowed by the current program context.
+    // For instance, if program has offerings, only fields like programName and programDescription may be updated.
     program.programData = { ...validationResult.programData, fieldOfStudyCode };
     const auditUser = { id: auditUserId } as User;
     const now = new Date();

@@ -39,22 +39,24 @@ export class EducationProgramControllerService {
     programId: number,
     institutionId?: number,
   ): Promise<EducationProgramAPIOutDTO> {
-    const programPromise = this.programService.getEducationProgramDetails(
+    const program = await this.programService.getEducationProgramDetails(
       programId,
       institutionId,
     );
-    const programConfigurationPromise =
-      this.educationProgramSaveService.getEducationProgramConfigurationFromProgram(
-        programId,
-      );
-    // Wait for the program and for the offering check to be retrieved.
-    const [program, programConfiguration] = await Promise.all([
-      programPromise,
-      programConfigurationPromise,
-    ]);
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
     }
+    if (!program.programConfiguration?.id) {
+      throw new Error("Program configuration not found.");
+    }
+    const programConfiguration =
+      await this.educationProgramSaveService.getEducationProgramConfiguration(
+        program.institution.id,
+        {
+          programConfigurationId: program.programConfiguration.id,
+          programId: program.id,
+        },
+      );
     return {
       id: program.id,
       configurationId: programConfiguration.configurationId,
