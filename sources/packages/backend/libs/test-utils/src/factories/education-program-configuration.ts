@@ -11,10 +11,10 @@ export function getMostRecentEducationProgramConfiguration(options: {
   db?: E2EDataSources;
   dataSource?: DataSource;
 }): Promise<EducationProgramConfiguration> {
-  const dataSource =
+  const educationProgramConfigurationRepo =
     options?.db?.educationProgramConfiguration ??
     options?.dataSource?.getRepository?.(EducationProgramConfiguration);
-  return dataSource.findOneOrFail({
+  return educationProgramConfigurationRepo.findOneOrFail({
     select: {
       id: true,
       visualSchema: true,
