@@ -11,7 +11,6 @@ import OneOfSelectRenderer from "./OneOfSelectRenderer.vue";
 import LabelRenderer from "./LabelRenderer.vue";
 import BannerRenderer from "./BannerRenderer.vue";
 import BooleanCheckboxRenderer from "./BooleanCheckboxRenderer.vue";
-import EntranceRequirementsRenderer from "./EntranceRequirementsRenderer.vue";
 import {
   textControlTester,
   yesNoControlTester,
@@ -24,7 +23,6 @@ import {
   labelTester,
   bannerTester,
   booleanCheckboxTester,
-  entranceRequirementsTester,
 } from "./testers";
 
 /**
@@ -62,10 +60,6 @@ export const COMMON_FORM_RENDERERS: JsonFormsRendererRegistryEntry[] = [
  */
 export const PROGRAM_FORM_RENDERERS: JsonFormsRendererRegistryEntry[] = [
   ...COMMON_FORM_RENDERERS,
-  {
-    renderer: markRaw(EntranceRequirementsRenderer),
-    tester: entranceRequirementsTester,
-  },
   {
     renderer: markRaw(FieldOfStudyCodeRenderer),
     tester: fieldOfStudyCodeTester,

@@ -72,6 +72,8 @@ export const booleanCheckboxTester = rankWith(RANK.Schema, isBooleanControl);
 /**
  * Matches array controls backed by an enum/oneOf list of options, routing
  * them to the project's existing CheckboxOptionsGroup component.
+ * Options listed in the UI Schema "options.exclusiveOptions" (e.g. "None of
+ * the above") clear every other selection when checked, and vice versa.
  */
 export const checkboxOptionsGroupTester = rankWith(
   RANK.UiOption,
@@ -114,15 +116,4 @@ export const bannerTester = rankWith(
 export const fieldOfStudyCodeTester = rankWith(
   RANK.UiOption,
   and(uiTypeIs("Control"), optionIs("component", "fieldOfStudyCode")),
-);
-
-/**
- * Matches a Control explicitly flagged, via UI Schema options, to render as
- * the entrance requirements checkbox group, which has its own
- * mutual-exclusivity behavior ("none of the above" clears every other
- * selection, and vice versa) beyond what a plain checkbox group supports.
- */
-export const entranceRequirementsTester = rankWith(
-  RANK.UiOption,
-  and(uiTypeIs("Control"), optionIs("component", "entranceRequirements")),
 );

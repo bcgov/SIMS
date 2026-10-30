@@ -380,7 +380,10 @@ SELECT
                 "type": "Control",
                 "scope": "#/properties/entranceRequirements",
                 "options": {
-                  "component": "entranceRequirements"
+                  "component": "checkboxOptionsGroup",
+                  "exclusiveOptions": [
+                    "noneOfTheAboveEntranceRequirements"
+                  ]
                 }
               },
               {

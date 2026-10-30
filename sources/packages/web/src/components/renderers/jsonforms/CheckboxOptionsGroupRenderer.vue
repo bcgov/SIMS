@@ -22,7 +22,8 @@ import CheckboxOptionsGroup from "@/components/generic/CheckboxOptionsGroup.vue"
 import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
 
 const props = defineProps(rendererProps<ControlElement>());
-const { control, addItem, removeItem } = useJsonFormsMultiEnumControl(props);
+const { control } = useJsonFormsMultiEnumControl(props);
+const dispatch = useDispatch();
 
 // CheckboxOptionsGroup expects { title, value } items; JSONForms derives
 // { label, value } EnumOptions from the schema's items.enum (or items.oneOf).
@@ -33,24 +34,37 @@ const items = computed(() =>
   })),
 );
 
-// CheckboxOptionsGroup's v-model manages the whole selected array natively
-// (each checkbox toggling adds/removes just its own value), so the update
-// is translated into the addItem/removeItem dispatch pair JSONForms expects
-// for multi-enum controls.
+// Options that, once selected, must be the only selection
+// (e.g. "None of the above"), declared via UI Schema options.
+const exclusiveOptions = computed<(string | number)[]>(
+  () => control.value.uischema.options?.exclusiveOptions ?? [],
+);
+
 const onUpdate = (newValue: (string | number)[]) => {
   const oldValue = (control.value.data ?? []) as (string | number)[];
-  newValue
-    .filter((value) => !oldValue.includes(value))
-    .forEach((value) => addItem(control.value.path, value));
-  oldValue
-    .filter((value) => !newValue.includes(value))
-    .forEach((value) => removeItem?.(control.value.path, value));
+  const added = newValue.filter((value) => !oldValue.includes(value));
+  const addedExclusive = added.find((value) =>
+    exclusiveOptions.value.includes(value),
+  );
+  let nextValue = newValue;
+  if (addedExclusive !== undefined) {
+    // An exclusive option was just checked - collapse down to it alone.
+    nextValue = [addedExclusive];
+  } else if (added.length) {
+    // Something else was just checked - exclusive options no longer apply.
+    nextValue = newValue.filter(
+      (value) => !exclusiveOptions.value.includes(value),
+    );
+  }
+  // Keep the selected values in the same order as the options.
+  const data = items.value
+    .map(({ value }) => value)
+    .filter((value) => nextValue.includes(value));
+  // useJsonFormsMultiEnumControl only exposes single-value addItem/removeItem,
+  // so the whole array is replaced in one dispatch.
+  dispatch(update(control.value.path, () => data));
 };
 
-// useJsonFormsMultiEnumControl only exposes addItem/removeItem (single-value
-// dispatches), not a whole-array handleChange, so build one the same way
-// mapDispatchToControlProps does to clear the full selection when hidden.
-const dispatch = useDispatch();
 useClearDataWhenHidden(
   computed(() => control.value.visible),
   computed(() => control.value.path),
