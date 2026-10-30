@@ -19,10 +19,12 @@ import {
   createFakeUser,
   getProviderInstanceForModule,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   FormSubmissionCancellationReason,
   InstitutionLocation,
@@ -45,6 +47,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
   let ministryUser: User;
   let precedingOffering: EducationProgramOffering;
   let requestedOffering: EducationProgramOffering;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, module, dataSource } =
@@ -61,6 +64,8 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
       formSubmissionCancellationService,
       "cancelApplicationScopedFormSubmissions",
     );
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -84,9 +89,11 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     MockDate.reset();
     precedingOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     requestedOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     precedingOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
     requestedOffering.offeringStatus = OfferingStatus.ChangeAwaitingApproval;
@@ -126,6 +133,7 @@ describe("EducationProgramOfferingAESTController(e2e)-assessOfferingChangeReques
     // Arrange
     const offeringNoPrecedingOffering = createFakeEducationProgramOffering({
       auditUser: savedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     offeringNoPrecedingOffering.offeringStatus =
       OfferingStatus.ChangeAwaitingApproval;

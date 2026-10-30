@@ -1,6 +1,7 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   EducationProgram,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   OfferingIntensity,
@@ -14,6 +15,8 @@ import {
   createE2EDataSources,
   createFakeInstitutionLocation,
   OfferingDeliveryOptions,
+  getMostRecentEducationProgramConfiguration,
+  createFakeEducationProgram,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -22,7 +25,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
@@ -47,11 +49,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
   let collegeFUser: User;
   let collegeFFullTimeProgram: EducationProgram;
   let collegeFPartTimeProgram: EducationProgram;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -67,10 +72,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     const fakeFullTimeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),
           deliveredOnline: true,
         },
@@ -79,10 +85,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
     const fakePartTimeEducationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           programIntensity: ProgramIntensity.fullTimePartTime,
           deliveredOnSite: true,
         },
@@ -1222,9 +1229,13 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-validateOffering",
           // Use an isolated program that allows blended delivery without changing shared fixtures.
           const program = await db.educationProgram.save(
             createFakeEducationProgram(
-              { institution: collegeF, user: collegeFUser },
               {
-                initialValue: {
+                institution: collegeF,
+                auditUser: collegeFUser,
+                programConfiguration: mostRecentProgramConfiguration,
+              },
+              {
+                initialValues: {
                   sabcCode: faker.string.alpha({ length: 4, casing: "upper" }),
                   deliveredOnSite: true,
                   deliveredOnline: true,

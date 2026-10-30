@@ -1,71 +1,81 @@
 import {
-  AviationProgramCredentialTypes,
-  EntranceRequirements,
-  FormYesNoOptions,
   ProgramCalculatedDataKey,
-  ProgramCourseLoadCalculationTypes,
-  ProgramDeliveryTypes,
-  ProgramDeliveryTypeValues,
-  ProgramESLPercentage,
   ProgramEvaluationResult,
   ProgramIntensity,
   ProgramStatus,
 } from "@/types";
-import { Expose } from "class-transformer";
 
 /**
- * Complete education program information needed for the institution.
+ * Values pre-populated into the program data only to execute the
+ * client and server side validations. Never changed by the user
+ * and never persisted.
+ */
+export interface EducationProgramContextAPIOutDTO {
+  /**
+   * Indicates if full update of the program is restricted.
+   * When true, only partial updates to the program are allowed.
+   * For instance, if the program has offerings, only certain fields may be updated.
+   */
+  isFullUpdateRestricted: boolean;
+  /**
+   * Is considered a private institution in British Columbia.
+   */
+  isBCPrivate: boolean;
+  /**
+   * Is considered an Institution in British Columbia,
+   * for instance a public or private institution in British Columbia.
+   */
+  isBCInstitution: boolean;
+}
+
+/**
+ * Dynamic program data, whose shape is defined by the program
+ * configuration schemas, plus the pre-populated context.
+ */
+export interface EducationProgramDataAPIOutDTO {
+  [key: string]: unknown;
+  context: EducationProgramContextAPIOutDTO;
+}
+
+/**
+ * Education program configuration including context,
+ * visual schema, and validation schema.
+ */
+export interface EducationProgramConfigurationAPIOutDTO {
+  configurationId: number;
+  programData: EducationProgramDataAPIOutDTO;
+  visualSchema: unknown;
+  validationSchema: unknown;
+}
+
+/**
+ * Education program complete information.
  * Shared between the Ministry and the Institution.
  */
-export interface EducationProgramAPIOutDTO {
+export interface EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIOutDTO {
   id: number;
+  // Program attributes persisted in dedicated columns, independent
+  // of the dynamic program data shape defined by the configuration.
+  // To be reduced in upcoming refactor to rely more on dynamic program data.
   name: string;
   description: string;
+  programStatus: ProgramStatus;
   credentialType: string;
   credentialTypeToDisplay: string;
   cipCode: string;
-  nocCode: string;
-  sabcCode: string;
-  programStatus: ProgramStatus;
-  regulatoryBody: string;
-  otherRegulatoryBody?: string;
-  programDeliveryTypes: ProgramDeliveryTypes;
-  deliveredOnlineAlsoOnsite?: string;
-  sameOnlineCreditsEarned?: string;
-  earnAcademicCreditsOtherInstitution?: string;
-  courseLoadCalculation: string;
-  completionYears: string;
-  eslEligibility: string;
-  hasJointInstitution: string;
-  hasJointDesignatedInstitution: string;
-  programIntensity: ProgramIntensity;
+  nocCode?: string;
+  sabcCode?: string;
   institutionProgramCode?: string;
-  minHoursWeek?: string;
-  isAviationProgram?: string;
-  credentialTypesAviation?: AviationProgramCredentialTypes;
-  minHoursWeekAvi?: string;
-  entranceRequirements: EntranceRequirements;
-  hasWILComponent: string;
-  isWILApproved?: string;
-  wilProgramEligibility?: string;
-  hasTravel: string;
-  travelProgramEligibility?: string;
-  hasIntlExchange?: string;
-  intlExchangeProgramEligibility?: string;
-  programDeclaration: boolean;
-  hasOfferings: boolean;
-  institutionId: number;
-  institutionName: string;
-  isBCPublic: boolean;
-  isBCPrivate: boolean;
+  programIntensity: ProgramIntensity;
+  isActive: boolean;
   submittedDate: Date;
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
   effectiveEndDate?: string;
-  fieldOfStudyCode: number;
-  isActive: boolean;
   isExpired: boolean;
+  institutionId: number;
+  institutionName: string;
 }
 
 /**
@@ -88,78 +98,30 @@ export interface EducationProgramsSummaryAPIOutDTO {
 }
 
 /**
- * Complete program information used to create or
- * update an education program.
+ * Dynamic program data used to create an education program,
+ * and the configuration it was filled in against.
  */
-export class EducationProgramAPIInDTO {
-  @Expose()
-  name: string;
-  @Expose()
-  description?: string;
-  @Expose()
-  credentialType: string;
-  @Expose()
-  cipCode: string;
-  @Expose()
-  nocCode?: string;
-  @Expose()
-  sabcCode?: string;
-  @Expose()
-  regulatoryBody: string;
-  @Expose()
-  otherRegulatoryBody?: string;
-  @Expose()
-  programDeliveryTypes: ProgramDeliveryTypeValues[];
-  @Expose()
-  deliveredOnlineAlsoOnsite?: FormYesNoOptions;
-  @Expose()
-  sameOnlineCreditsEarned?: FormYesNoOptions;
-  @Expose()
-  earnAcademicCreditsOtherInstitution?: FormYesNoOptions;
-  @Expose()
-  courseLoadCalculation: ProgramCourseLoadCalculationTypes;
-  @Expose()
-  completionYears: string;
-  @Expose()
-  eslEligibility: ProgramESLPercentage;
-  @Expose()
-  hasJointInstitution: FormYesNoOptions;
-  @Expose()
-  hasJointDesignatedInstitution?: FormYesNoOptions;
-  @Expose()
-  programIntensity: ProgramIntensity;
-  @Expose()
-  institutionProgramCode?: string;
-  @Expose()
-  minHoursWeek?: FormYesNoOptions;
-  @Expose()
-  isAviationProgram: FormYesNoOptions;
-  @Expose()
-  minHoursWeekAvi?: FormYesNoOptions;
-  @Expose()
-  entranceRequirements: string[];
-  @Expose()
-  hasWILComponent: FormYesNoOptions;
-  @Expose()
-  isWILApproved?: FormYesNoOptions;
-  @Expose()
-  wilProgramEligibility?: FormYesNoOptions;
-  @Expose()
-  hasTravel: FormYesNoOptions;
-  @Expose()
-  travelProgramEligibility?: FormYesNoOptions;
-  @Expose()
-  hasIntlExchange: FormYesNoOptions;
-  @Expose()
-  intlExchangeProgramEligibility?: FormYesNoOptions;
-  @Expose()
-  programDeclaration: boolean;
-  @Expose()
-  credentialTypesAviation?: string[];
-  @Expose()
-  isBCPrivate: boolean;
-  @Expose()
-  isBCPublic: boolean;
+export interface CreateEducationProgramAPIInDTO {
+  /**
+   * Program configuration ID against which the program is being created.
+   */
+  programConfigurationId: number;
+  /**
+   * Dynamic program data, whose shape is defined by the program
+   * configuration schemas.
+   */
+  programData: Record<string, unknown>;
+}
+
+/**
+ * Dynamic program data used to update an education program.
+ */
+export interface UpdateEducationProgramAPIInDTO {
+  /**
+   * Dynamic program data, whose shape is defined by the program
+   * configuration schemas.
+   */
+  programData: Record<string, unknown>;
 }
 
 export interface StudentEducationProgramAPIOutDTO {

@@ -22,7 +22,6 @@ import {
   Not,
   Equal,
   UpdateResult,
-  EntityManager,
   MoreThan,
   IsNull,
   Brackets,
@@ -30,10 +29,8 @@ import {
   SelectQueryBuilder,
 } from "typeorm";
 import {
-  SaveEducationProgram,
   PendingEducationProgram,
   EducationProgramSummary,
-  ProgramCalculatedDataKey,
 } from "./education-program.service.models";
 import {
   sortProgramsColumnMap,
@@ -50,24 +47,10 @@ import {
 } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
-  DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_INVALID_OPERATION,
 } from "../../constants";
-import {
-  InstitutionService,
-  EducationProgramOfferingService,
-  UserService,
-} from "../../services";
-import {
-  InstitutionAddsPendingProgramNotification,
-  NoteSharedService,
-  NotificationActionsService,
-} from "@sims/services";
-import {
-  INACTIVE_PROGRAM,
-  OTHER_REGULATORY_BODY,
-} from "../education-program/constants";
-import { EducationProgramEvaluationService } from "./education-program-evaluator";
+import { NoteSharedService } from "@sims/services";
+import { INACTIVE_PROGRAM } from "../education-program/constants";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -75,11 +58,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   constructor(
     private readonly dataSource: DataSource,
     private readonly noteSharedService: NoteSharedService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService,
-    private readonly institutionService: InstitutionService,
-    private readonly userService: UserService,
-    private readonly notificationActionsService: NotificationActionsService,
-    private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
   ) {
     super(dataSource.getRepository(EducationProgram));
     this.offeringsRepo = dataSource.getRepository(EducationProgramOffering);
@@ -139,164 +117,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         programStatus: ProgramStatus.Approved,
       })
       .getOne();
-  }
-
-  /**
-   * Inserts/updates an education program at institution level that will be available for all
-   * locations and saves a notification to the ministry as a part of the same transaction.
-   * @param programId if provided will update the record, otherwise will insert a new one.
-   * @param auditUserId user that should be considered the one that is causing the changes.
-   * @param educationProgram Information used to save the program.
-   * @returns Education program created/updated.
-   */
-  async saveEducationProgram(
-    institutionId: number,
-    auditUserId: number,
-    educationProgram: SaveEducationProgram,
-    programId?: number,
-  ): Promise<EducationProgram> {
-    let hasExistingOffering = false;
-    let program = new EducationProgram();
-    if (programId) {
-      // Ensures that the user has access to the institution associated with the program id being updated.
-      program = await this.getInstitutionProgram(programId, institutionId);
-      if (!program) {
-        throw new CustomNamedError(
-          "Not able to find the education program.",
-          EDUCATION_PROGRAM_NOT_FOUND,
-        );
-      }
-      if (!program.isActive) {
-        throw new CustomNamedError(
-          "Education program cannot be edited when inactive.",
-          EDUCATION_PROGRAM_INVALID_OPERATION,
-        );
-      }
-      if (program.isExpired) {
-        throw new CustomNamedError(
-          "Education program cannot be edited when expired.",
-          EDUCATION_PROGRAM_INVALID_OPERATION,
-        );
-      }
-      // Check if education program has offering(s). This check is required to
-      // prevent a user from updating fields that are not supposed
-      // to be updated if the education program has 1 or more offerings.
-      hasExistingOffering =
-        await this.educationProgramOfferingService.hasExistingOffering(
-          programId,
-        );
-    }
-
-    if (educationProgram.sabcCode) {
-      const isSABCCodeDuplicate = await this.hasExistingProgramWithSameSABCCode(
-        institutionId,
-        educationProgram.sabcCode,
-        programId,
-      );
-      if (isSABCCodeDuplicate) {
-        throw new CustomNamedError("Duplicate SABC code.", DUPLICATE_SABC_CODE);
-      }
-    }
-
-    // Assign attributes for update from payload only if existing program has no offering(s).
-    if (!hasExistingOffering) {
-      const calculatedData =
-        await this.educationProgramEvaluationService.evaluate(
-          institutionId,
-          [
-            ProgramCalculatedDataKey.FieldOfStudyCode,
-            ProgramCalculatedDataKey.ProgramStatus,
-          ],
-          educationProgram,
-        );
-      program.fieldOfStudyCode =
-        calculatedData[ProgramCalculatedDataKey.FieldOfStudyCode];
-      program.credentialType = educationProgram.credentialType;
-      program.cipCode = educationProgram.cipCode;
-      program.nocCode = educationProgram.nocCode || null;
-      // Save SABC code as null in case of not answered in the form.
-      // This way it can be saved when multiple programs does not have a SABC code.
-      program.sabcCode = educationProgram.sabcCode?.trim() || null;
-      program.regulatoryBody = educationProgram.regulatoryBody;
-      program.otherRegulatoryBody =
-        educationProgram.regulatoryBody === OTHER_REGULATORY_BODY
-          ? educationProgram.otherRegulatoryBody
-          : null;
-      program.deliveredOnSite =
-        educationProgram.programDeliveryTypes.deliveredOnSite ?? false;
-      program.deliveredOnline =
-        educationProgram.programDeliveryTypes.deliveredOnline ?? false;
-      program.deliveredOnlineAlsoOnsite =
-        educationProgram.deliveredOnlineAlsoOnsite || null;
-      program.sameOnlineCreditsEarned =
-        educationProgram.sameOnlineCreditsEarned || null;
-      program.earnAcademicCreditsOtherInstitution =
-        educationProgram.earnAcademicCreditsOtherInstitution || null;
-      program.courseLoadCalculation = educationProgram.courseLoadCalculation;
-      program.completionYears = educationProgram.completionYears;
-      program.hasMinimumAge =
-        educationProgram.entranceRequirements.hasMinimumAge;
-      program.eslEligibility = educationProgram.eslEligibility;
-      program.hasJointInstitution = educationProgram.hasJointInstitution;
-      program.hasJointDesignatedInstitution =
-        educationProgram.hasJointDesignatedInstitution || null;
-      program.programStatus =
-        calculatedData[ProgramCalculatedDataKey.ProgramStatus];
-      program.programIntensity = educationProgram.programIntensity;
-      program.institutionProgramCode =
-        educationProgram.institutionProgramCode || null;
-      program.minHoursWeek = educationProgram.minHoursWeek || null;
-      program.isAviationProgram = educationProgram.isAviationProgram;
-      program.credentialTypesAviation =
-        educationProgram.credentialTypesAviation || null;
-      program.minHoursWeekAvi = educationProgram.minHoursWeekAvi || null;
-      program.minHighSchool =
-        educationProgram.entranceRequirements.minHighSchool;
-      program.requirementsByInstitution =
-        educationProgram.entranceRequirements.requirementsByInstitution;
-      program.requirementsByBCITA =
-        educationProgram.entranceRequirements.requirementsByBCITA;
-      program.noneOfTheAboveEntranceRequirements =
-        educationProgram.entranceRequirements.noneOfTheAboveEntranceRequirements;
-      program.hasWILComponent = educationProgram.hasWILComponent;
-      program.isWILApproved = educationProgram.isWILApproved || null;
-      program.wilProgramEligibility =
-        educationProgram.wilProgramEligibility || null;
-      program.hasTravel = educationProgram.hasTravel;
-      program.travelProgramEligibility =
-        educationProgram.travelProgramEligibility || null;
-      program.hasIntlExchange = educationProgram.hasIntlExchange;
-      program.intlExchangeProgramEligibility =
-        educationProgram.intlExchangeProgramEligibility || null;
-      program.programDeclaration = educationProgram.programDeclaration;
-    }
-    program.id = programId;
-    program.name = educationProgram.name;
-    program.description = educationProgram.description;
-    const auditUser = { id: auditUserId } as User;
-    const now = new Date();
-    if (!programId) {
-      // Institution should never be updated after creation.
-      program.institution = { id: institutionId } as Institution;
-      program.submittedBy = auditUser;
-      program.submittedDate = now;
-      program.creator = auditUser;
-      program.createdAt = now;
-    } else {
-      program.modifier = auditUser;
-      program.updatedAt = now;
-    }
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      await this.saveInstitutionAddsPendingProgramNotification(
-        { name: program.name, programStatus: program.programStatus },
-        institutionId,
-        auditUserId,
-        transactionalEntityManager,
-      );
-      return transactionalEntityManager
-        .getRepository(EducationProgram)
-        .save(program);
-    });
   }
 
   /**
@@ -556,6 +376,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.hasIntlExchange",
         "programs.intlExchangeProgramEligibility",
         "programs.programDeclaration",
+        "programs.programData",
         "institution.id",
         "institution.legalOperatingName",
         "institution.operatingName",
@@ -568,11 +389,15 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.assessedDate",
         "programs.effectiveEndDate",
         "programs.isActive",
+        "programConfiguration.id",
+        "programConfiguration.visualSchema",
+        "programConfiguration.validationSchema",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
+      .innerJoin("programs.programConfiguration", "programConfiguration")
       .where("programs.id = :id", { id: programId });
     if (institutionId) {
       query.andWhere("institution.id = :institutionId", { institutionId });
@@ -750,8 +575,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   }
 
   /**
-   * Check if the given institution has already a program with the given SABC code for an active program.
-   * @param institutionId id of the institution to have the programs retrieved.
+   * Check if the given institution has already a program with the given SABC code
+   * for an active program for a program year.
+   * @param institutionId ID of the institution to have the programs retrieved.
    * @param sabcCode SABC code.
    * @param programId programId in case it is an update. It will be ignored in case of `undefined`.
    * @returns true in case it has already a SABC code for the institution.
@@ -759,6 +585,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
   async hasExistingProgramWithSameSABCCode(
     institutionId: number,
     sabcCode: string,
+    programYearId: number,
     programId?: number,
   ): Promise<boolean> {
     return this.repo.exists({
@@ -767,6 +594,11 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         sabcCode: sabcCode,
         institution: {
           id: institutionId,
+        },
+        programConfiguration: {
+          programYear: {
+            id: programYearId,
+          },
         },
         isActive: true,
         effectiveEndDate: Or(
@@ -1115,41 +947,5 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     const sortColumn =
       sortColumnMap[sortField] || sortColumnMap[defaultSortField];
     programsQuery.orderBy(sortColumn, sortOrder);
-  }
-
-  /**
-   * Saves institution adds pending program notification for the ministry.
-   * @param program program
-   * @param institutionId related institution id.
-   * @param entityManager
-   */
-  private async saveInstitutionAddsPendingProgramNotification(
-    program: Pick<EducationProgram, "name" | "programStatus">,
-    institutionId: number,
-    userId: number,
-    entityManager: EntityManager,
-  ): Promise<void> {
-    if (program.programStatus !== ProgramStatus.Pending) {
-      return;
-    }
-    const institution = await this.institutionService.getInstitutionDetailById(
-      institutionId,
-      { entityManager },
-    );
-
-    const userEmail = await this.userService.getUserEmail(userId, {
-      entityManager,
-    });
-    const ministryNotification: InstitutionAddsPendingProgramNotification = {
-      institutionName: institution.legalOperatingName,
-      institutionOperatingName: institution.operatingName,
-      programName: program.name,
-      institutionPrimaryEmail: institution.primaryEmail,
-      email: userEmail,
-    };
-    await this.notificationActionsService.saveInstitutionAddsPendingProgramNotification(
-      ministryNotification,
-      entityManager,
-    );
   }
 }

@@ -10,6 +10,7 @@ import { createFakeEducationProgramOffering } from "./education-program-offering
 import { createFakeUser } from "./user";
 import { faker } from "@faker-js/faker";
 import { E2EDataSources } from "../data-source/e2e-data-source";
+import { getMostRecentEducationProgramConfiguration } from "@sims/test-utils";
 
 /**
  * Create and save a fake application offering request change record.
@@ -31,10 +32,14 @@ export async function saveFakeApplicationOfferingRequestChange(
     initialValues: Partial<ApplicationOfferingChangeRequest>;
   },
 ): Promise<ApplicationOfferingChangeRequest> {
-  const savedUser = await db.user.save(createFakeUser());
+  const [savedUser, programConfiguration] = await Promise.all([
+    db.user.save(createFakeUser()),
+    getMostRecentEducationProgramConfiguration({ db }),
+  ]);
   const requestedOffering = await db.educationProgramOffering.save(
     createFakeEducationProgramOffering({
       ...relations,
+      programConfiguration,
       auditUser: savedUser,
     }),
   );

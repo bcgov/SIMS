@@ -11,8 +11,10 @@ import {
   createFakeEducationProgram,
   createFakeEducationProgramOffering,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
+  EducationProgramConfiguration,
   EducationProgramOffering,
   OfferingIntensity,
   OfferingStatus,
@@ -28,11 +30,14 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
   let app: INestApplication;
   let db: E2EDataSources;
   let savedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     savedUser = await db.user.save(createFakeUser());
   });
 
@@ -46,6 +51,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const oldOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -59,6 +65,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const olderOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -72,6 +79,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const oldestOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -121,6 +129,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const newerOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -134,6 +143,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const olderOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -181,6 +191,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const publicOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -195,6 +206,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const privateOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -209,6 +221,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const scholasticStandingOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -263,6 +276,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const partTimeOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -277,6 +291,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       const fullTimeOffering = createFakeEducationProgramOffering(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -327,6 +342,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     const fortranOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {
@@ -340,6 +356,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     const algorithmsOffering = createFakeEducationProgramOffering(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {
@@ -377,6 +394,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     const inactiveProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       { initialValues: { isActive: false } },
     );
@@ -422,6 +440,7 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
     const expiredProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {

@@ -5,6 +5,7 @@ import {
   Application,
   ApplicationData,
   ApplicationStatus,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   ProgramInfoStatus,
@@ -24,6 +25,7 @@ import {
   createFakeInstitutionLocation,
   E2EDataSources,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import { PIR_DENIED_REASON_OTHER_ID } from "../../../../utilities";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
@@ -36,11 +38,14 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-denyProgramInfoRequest",
   let collegeFLocation: InstitutionLocation;
   let zeebeClient: ZeebeGrpcClient;
   let collegeFUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     zeebeClient = app.get(ZeebeGrpcClient);
     let collegeF: Institution;
     ({ institution: collegeF, user: collegeFUser } =
@@ -71,7 +76,10 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-denyProgramInfoRequest",
       studyendDate: getISODateOnlyString(addDays(30)),
     } as ApplicationData;
     const pirProgram = await db.educationProgram.save(
-      createFakeEducationProgram({ auditUser: collegeFUser }),
+      createFakeEducationProgram({
+        auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
+      }),
     );
     // Application with PIR required.
     const application = await saveFakeApplication(
@@ -157,7 +165,10 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-denyProgramInfoRequest",
           studyendDate: getISODateOnlyString(addDays(30)),
         } as ApplicationData;
         const pirProgram = await db.educationProgram.save(
-          createFakeEducationProgram({ auditUser: collegeFUser }),
+          createFakeEducationProgram({
+            auditUser: collegeFUser,
+            programConfiguration: mostRecentProgramConfiguration,
+          }),
         );
         // Application with PIR required.
         const application = await saveFakeApplication(

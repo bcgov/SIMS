@@ -1,14 +1,17 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   DefaultValuePipe,
   Get,
+  NotFoundException,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
   Query,
+  UnprocessableEntityException,
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -18,13 +21,15 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import {
-  EducationProgramAPIInDTO,
+  CreateEducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "./models/education-program.dto";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -42,8 +47,19 @@ import { EducationProgramService } from "../../services/education-program/educat
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
-import { isSameOrAfterDate } from "@sims/utilities";
+import { CustomNamedError, isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
+import {
+  EducationProgramData,
+  EducationProgramSaveService,
+} from "../../services";
+import {
+  EDUCATION_PROGRAM_INVALID_OPERATION,
+  DUPLICATE_SABC_CODE,
+  EDUCATION_PROGRAM_NOT_FOUND,
+  EDUCATION_PROGRAM_DATA_INVALID,
+  EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+} from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
 @Controller("education-program")
@@ -51,6 +67,7 @@ import { EducationProgramEvaluationService } from "../../services/education-prog
 export class EducationProgramInstitutionsController extends BaseController {
   constructor(
     private readonly educationProgramService: EducationProgramService,
+    private readonly educationProgramSaveService: EducationProgramSaveService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
   ) {
@@ -102,13 +119,60 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
+   * Get the program configuration including context, visual schema, and validation schema.
+   * @param programConfigurationId ID of the program configuration. If not provided,
+   * the most recent active configuration is returned.
+   * @returns the program configuration including context, visual schema, and validation schema.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find an active program configuration.",
+  })
+  // TODO: The endpoint should require a configuration ID once the client is updated to always provide it.
+  @Get(["configuration", "configuration/:programConfigurationId"])
+  async getEducationProgramConfiguration(
+    @UserToken() userToken: IInstitutionUserToken,
+    @Param("programConfigurationId", new ParseIntPipe({ optional: true }))
+    programConfigurationId?: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    try {
+      const configuration =
+        await this.educationProgramSaveService.getEducationProgramConfiguration(
+          userToken.authorizations.institutionId,
+          { programConfigurationId },
+        );
+      return {
+        configurationId: configuration.configurationId,
+        programData: {
+          context: {
+            isFullUpdateRestricted:
+              configuration.context.isFullUpdateRestricted,
+            isBCPrivate: configuration.context.isBCPrivate,
+            isBCInstitution: configuration.context.isBCInstitution,
+          },
+        },
+        visualSchema: configuration.visualSchema,
+        validationSchema: configuration.validationSchema,
+      };
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND
+      ) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  /**
    * Creates a new education program.
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Not able to a save the program due to an invalid request or " +
+      "Education program data is not valid or " +
+      "education program configuration not found or not active or " +
       "duplicate SABC code.",
   })
   @ApiForbiddenResponse({
@@ -116,18 +180,35 @@ export class EducationProgramInstitutionsController extends BaseController {
   })
   @Post()
   async createEducationProgram(
-    @Body() payload: EducationProgramAPIInDTO,
+    @Body() payload: CreateEducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     this.educationProgramControllerService.checkInstitutionAuthorization(
       userToken.authorizations,
     );
-    const newProgram = await this.educationProgramControllerService.saveProgram(
-      payload,
-      userToken.authorizations.institutionId,
-      userToken.userId,
-    );
-    return { id: newProgram.id };
+    try {
+      const newProgram = await this.educationProgramSaveService.createProgram(
+        payload.programData as EducationProgramData,
+        payload.programConfigurationId,
+        userToken.authorizations.institutionId,
+        userToken.userId,
+      );
+      return { id: newProgram.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case EDUCATION_PROGRAM_DATA_INVALID:
+            throw new BadRequestException(error.objectInfo, error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
+            throw new UnprocessableEntityException(error.message);
+          case DUPLICATE_SABC_CODE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   /**
@@ -137,9 +218,10 @@ export class EducationProgramInstitutionsController extends BaseController {
    */
   @ApiUnprocessableEntityResponse({
     description:
-      "Not able to a save the program due to an invalid request or " +
-      "SABC code is duplicated or " +
-      "program is inactive.",
+      "Education program data is not valid or " +
+      "education program configuration not found or not active or " +
+      "education program cannot be edited when inactive or expired or " +
+      "duplicate SABC code.",
   })
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",
@@ -150,18 +232,37 @@ export class EducationProgramInstitutionsController extends BaseController {
   @Patch(":programId")
   async updateEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
-    @Body() payload: EducationProgramAPIInDTO,
+    @Body() payload: UpdateEducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<void> {
     this.educationProgramControllerService.checkInstitutionAuthorization(
       userToken.authorizations,
     );
-    await this.educationProgramControllerService.saveProgram(
-      payload,
-      userToken.authorizations.institutionId,
-      userToken.userId,
-      programId,
-    );
+    try {
+      await this.educationProgramSaveService.updateProgram(
+        programId,
+        payload.programData as EducationProgramData,
+        userToken.authorizations.institutionId,
+        userToken.userId,
+      );
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case EDUCATION_PROGRAM_NOT_FOUND:
+            throw new NotFoundException(error.message);
+          case EDUCATION_PROGRAM_DATA_INVALID:
+            throw new BadRequestException(error.objectInfo, error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
+          case EDUCATION_PROGRAM_INVALID_OPERATION:
+            throw new UnprocessableEntityException(error.message);
+          case DUPLICATE_SABC_CODE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
   }
 
   /**

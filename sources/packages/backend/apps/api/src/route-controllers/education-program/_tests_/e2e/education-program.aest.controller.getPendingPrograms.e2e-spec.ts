@@ -12,8 +12,13 @@ import {
   createFakeEducationProgram,
   createFakeInstitution,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
-import { ProgramStatus, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  ProgramStatus,
+  User,
+} from "@sims/sims-db";
 import request from "supertest";
 import { addDays } from "@sims/utilities";
 import { faker } from "@faker-js/faker/locale/zu_ZA";
@@ -24,11 +29,14 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let savedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     savedUser = await db.user.save(createFakeUser());
   });
 
@@ -47,6 +55,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const approvedProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institution,
       },
       {
@@ -64,6 +73,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
       return createFakeEducationProgram(
         {
           auditUser: savedUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institution,
         },
         {
@@ -135,6 +145,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
         return createFakeEducationProgram(
           {
             auditUser: savedUser,
+            programConfiguration: mostRecentProgramConfiguration,
             institution,
           },
           {
@@ -203,6 +214,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const activeProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institution,
       },
       {
@@ -218,6 +230,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const inactiveProgram = createFakeEducationProgram(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institution,
       },
       {
@@ -271,6 +284,7 @@ describe("EducationProgramAESTController(e2e)-getPendingPrograms", () => {
     const program = createFakeEducationProgram(
       {
         auditUser: savedUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institution,
       },
       {

@@ -9,7 +9,7 @@
     </template>
     <template #alerts>
       <banner
-        v-if="canEditOnlyBasicInfo"
+        v-if="isFullUpdateRestricted"
         :type="BannerTypes.Success"
         header="Program details no longer editable"
         summary="This program has study period offerings attached to it, and the program details can no longer be edited. If revisions are required other than to program name or program description, you must create a new program with the correct details."
@@ -36,13 +36,13 @@
       :program-id="programId"
       :is-processing="processing"
       @loaded="loaded"
-      @submitted="submit"
+      @update="submit"
       @cancel="goBack"
     />
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useFormioUtils, useInstitutionAuth, useSnackBar } from "@/composables";
+import { useInstitutionAuth, useSnackBar } from "@/composables";
 import { computed, ref } from "vue";
 import type { BackTarget } from "@/types";
 import {
@@ -54,8 +54,8 @@ import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import {
-  EducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
+  UpdateEducationProgramAPIInDTO,
 } from "@/services/http/dto";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -69,22 +69,17 @@ interface EditProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const canEditOnlyBasicInfo = ref(false);
+const isFullUpdateRestricted = ref(false);
 const { isReadOnlyUser } = useInstitutionAuth();
 const readOnly = computed(() => isReadOnlyUser(props.locationId));
-const { excludeExtraneousValues } = useFormioUtils();
 const processing = ref(false);
 
-const submit = async (program: EducationProgramAPIInDTO) => {
+const submit = async (program: UpdateEducationProgramAPIInDTO) => {
   processing.value = true;
   try {
-    const typedData = excludeExtraneousValues(
-      EducationProgramAPIInDTO,
-      program,
-    );
     await EducationProgramService.shared.updateEducationProgram(
       props.programId,
-      typedData,
+      program,
     );
     snackBar.success("Education Program updated successfully!");
     await goBack();
@@ -100,7 +95,8 @@ const submit = async (program: EducationProgramAPIInDTO) => {
 };
 
 const loaded = (program: EducationProgramAPIOutDTO) => {
-  canEditOnlyBasicInfo.value = program.hasOfferings;
+  isFullUpdateRestricted.value =
+    program.programData.context.isFullUpdateRestricted;
 };
 
 const goBack = async (): Promise<void> => {
