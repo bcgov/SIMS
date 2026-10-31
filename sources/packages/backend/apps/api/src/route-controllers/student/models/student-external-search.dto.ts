@@ -103,7 +103,7 @@ export class StudentSearchResultAPIOutDTO {
 /**
  * Student external search parameters.
  */
-export class StudentSearchAPIInDTO {
+export class StudentExternalSearchAPIInDTO {
   @IsValidSIN()
   sin: string;
 }
