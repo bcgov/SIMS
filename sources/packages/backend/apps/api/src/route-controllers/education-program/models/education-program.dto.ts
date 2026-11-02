@@ -149,6 +149,18 @@ export class EducationProgramsSummaryAPIOutDTO {
   isExpired: boolean;
 }
 
+export class EducationProgramManagerDetailsAPIOutDTO {
+  id: number;
+  name: string;
+  credentialTypeToDisplay: string;
+  cipCode: string;
+  sabcCode?: string;
+  programStatus: ProgramStatus;
+  isActive: boolean;
+  isExpired: boolean;
+  canBeRenewed: boolean;
+}
+
 export class EducationProgramsSummaryLocationAPIOutDTO {
   programId: number;
   programName: string;

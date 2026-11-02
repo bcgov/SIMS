@@ -11,6 +11,7 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
   OptionItemAPIOutDTO,
@@ -100,6 +101,14 @@ export class EducationProgramService {
   }
 
   /**
+   * Get the list of active education program configurations.
+   * @returns an array of option items representing the active configurations.
+   */
+  async getEducationProgramConfigurations(): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.EducationProgram.getEducationProgramConfigurations();
+  }
+
+  /**
    * Get the education program information.
    * @param programId program id.
    * @returns programs information.
@@ -178,6 +187,24 @@ export class EducationProgramService {
     isIncludeInActiveProgram?: boolean;
   }): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions(options);
+  }
+
+  /**
+   * Get the list of education programs for a specific program year.
+   * @param educationProgramConfigurationId ID of the education program configuration.
+   * @param paginationOptions Pagination options for the results.
+   * @returns Paginated list of education programs for the specified program year.
+   */
+  async getProgramsForProgramYear(
+    educationProgramConfigurationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
+  > {
+    return ApiClient.EducationProgram.getProgramsForProgramYear(
+      educationProgramConfigurationId,
+      paginationOptions,
+    );
   }
 
   /**

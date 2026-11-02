@@ -103,6 +103,39 @@ export const ProgramSummaryHeaders = [
   },
 ];
 
+export const ManageProgramSummaryHeaders = [
+  {
+    title: "Program name",
+    sortable: true,
+    key: "programName",
+  },
+  {
+    title: "Credential",
+    sortable: true,
+    key: "credentialType",
+  },
+  {
+    title: "CIP",
+    sortable: true,
+    key: "cipCode",
+  },
+  {
+    title: "SABC program code",
+    sortable: true,
+    key: "sabcCode",
+  },
+  {
+    title: "Status",
+    sortable: true,
+    key: "programStatus",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "programId",
+  },
+];
+
 /**
  * Pagination Query param constants
  */

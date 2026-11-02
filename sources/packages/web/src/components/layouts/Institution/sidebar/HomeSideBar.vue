@@ -52,6 +52,15 @@ export default defineComponent({
         },
       });
     }
+    items.value.push({
+      title: "Manage Programs",
+      props: {
+        prependIcon: "mdi-folder-open-outline",
+        to: {
+          name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+        },
+      },
+    });
     const locationsMenu = ref<any[]>([]);
 
     const getUserLocationList = () => {

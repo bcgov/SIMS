@@ -166,6 +166,18 @@ export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptions
   inactiveProgramSearch?: boolean;
 }
 
+export class ProgramsManagementPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn([
+    "programName",
+    "credentialType",
+    "cipCode",
+    "sabcCode",
+    "programStatus",
+  ])
+  sortField?: string;
+}
+
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsEnum(OfferingIntensity)

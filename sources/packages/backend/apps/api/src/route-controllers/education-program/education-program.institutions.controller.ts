@@ -24,6 +24,7 @@ import {
   CreateEducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
@@ -40,17 +41,19 @@ import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
   ProgramsLocationPaginationOptionsAPIInDTO,
+  ProgramsManagementPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramService } from "../../services/education-program/education-program.service";
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
-import { credentialTypeToDisplay } from "../../utilities";
+import { credentialTypeToDisplay, PaginatedResults } from "../../utilities";
 import { CustomNamedError, isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
 import {
   EducationProgramData,
+  EducationProgramManagerService,
   EducationProgramSaveService,
 } from "../../services";
 import {
@@ -70,6 +73,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly educationProgramSaveService: EducationProgramSaveService,
     private readonly educationProgramControllerService: EducationProgramControllerService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
+    private readonly educationProgramManagerService: EducationProgramManagerService,
   ) {
     super();
   }
@@ -162,6 +166,20 @@ export class EducationProgramInstitutionsController extends BaseController {
       }
       throw error;
     }
+  }
+
+  /**
+   * Get the list of active education program configurations.
+   * @returns an array of option items representing the active configurations.
+   */
+  @Get("configurations-list")
+  async getEducationProgramConfigurations(): Promise<OptionItemAPIOutDTO[]> {
+    const configurations =
+      await this.educationProgramManagerService.getProgramConfigurations();
+    return configurations.map((configuration) => ({
+      id: configuration.id,
+      description: configuration.programYear.programYear,
+    }));
   }
 
   /**
@@ -313,6 +331,57 @@ export class EducationProgramInstitutionsController extends BaseController {
       userToken.authorizations.institutionId,
       { isIncludeInActiveProgram },
     );
+  }
+
+  /**
+   * Get the list of education programs for a specific program year.
+   * @param educationProgramConfigurationId ID of the education program configuration.
+   * @param pagination Pagination options for the results.
+   * @param userToken User token containing authorization information.
+   * @returns Paginated list of education programs for the specified program year.
+   */
+  @Get("programs/configuration/:educationProgramConfigurationId")
+  async getProgramsForProgramYear(
+    @Param("educationProgramConfigurationId", ParseIntPipe)
+    educationProgramConfigurationId: number,
+    @Query() pagination: ProgramsManagementPaginationOptionsAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<PaginatedResults<EducationProgramManagerDetailsAPIOutDTO>> {
+    const activeConfiguration =
+      await this.educationProgramManagerService.getActiveConfiguration(
+        educationProgramConfigurationId,
+      );
+    if (!activeConfiguration) {
+      throw new NotFoundException(
+        `Active configuration not found for ID ${educationProgramConfigurationId}.`,
+      );
+    }
+    const [canBeRenewed, paginatedPrograms] = await Promise.all([
+      this.educationProgramManagerService.canRenewForNextProgramConfiguration(
+        activeConfiguration.programYear.startDate,
+      ),
+      this.educationProgramManagerService.getEducationProgramsManagerDetails(
+        userToken.authorizations.institutionId,
+        educationProgramConfigurationId,
+        pagination,
+      ),
+    ]);
+    return {
+      count: paginatedPrograms.count,
+      results: paginatedPrograms.results.map((program) => ({
+        id: program.id,
+        name: program.name,
+        credentialTypeToDisplay: credentialTypeToDisplay(
+          program.credentialType,
+        ),
+        cipCode: program.cipCode,
+        sabcCode: program.sabcCode,
+        programStatus: program.programStatus,
+        isActive: program.isActive,
+        isExpired: program.isExpired,
+        canBeRenewed,
+      })),
+    };
   }
 
   /**

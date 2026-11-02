@@ -100,6 +100,7 @@ export const InstitutionRoutesConst = {
   WITHDRAWAL_UPLOAD: Symbol(),
   REPORTS: Symbol(),
   INSTITUTION_STUDENT_SEARCH: Symbol(),
+  MANAGE_PROGRAMS: Symbol(),
   STUDENT_PROFILE: Symbol(),
   STUDENT_DETAILS: Symbol(),
   STUDENT_APPLICATIONS: Symbol(),

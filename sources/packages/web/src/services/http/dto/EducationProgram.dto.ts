@@ -98,6 +98,22 @@ export interface EducationProgramsSummaryAPIOutDTO {
 }
 
 /**
+ * Education program details to be displayed in the programs management list.
+ */
+export interface EducationProgramManagerDetailsAPIOutDTO {
+  id: number;
+  name: string;
+  description: string;
+  credentialTypeToDisplay: string;
+  cipCode: string;
+  sabcCode?: string;
+  programStatus: ProgramStatus;
+  isActive: boolean;
+  isExpired: boolean;
+  canBeRenewed: boolean;
+}
+
+/**
  * Dynamic program data used to create an education program,
  * and the configuration it was filled in against.
  */

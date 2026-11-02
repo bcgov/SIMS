@@ -42,6 +42,7 @@ import OfferingRequestChange from "@/views/institution/locations/offerings/Offer
 import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
 import WithdrawalUpload from "@/views/institution/WithdrawalUpload.vue";
 import InstitutionSearchStudents from "@/views/institution/student/InstitutionSearchStudents.vue";
+import ManagePrograms from "@/views/institution/ManagePrograms.vue";
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
@@ -130,6 +131,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Institution,
           allowOnlyBCPublic: true,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManagePrograms,
+        name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+        components: {
+          default: ManagePrograms,
+          sidebar: InstitutionHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,

@@ -67,6 +67,7 @@ export enum AppRoutes {
   InstitutionRoot = "/institution",
   InstitutionDashboard = "dashboard",
   InstitutionStudentSearch = "student-search",
+  InstitutionManagePrograms = "manage-programs",
   InstitutionProfile = "institution-profile",
   InstitutionCreate = "institution-create",
   InstitutionUserProfile = "institution-user-profile",

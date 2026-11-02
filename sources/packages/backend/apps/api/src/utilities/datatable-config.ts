@@ -35,6 +35,10 @@ export interface ProgramPaginationOptions extends BasePaginationOptions {
   inactiveProgramSearch?: boolean;
 }
 
+export interface ProgramsManagementPaginationOptions extends BasePaginationOptions {
+  sortField?: string;
+}
+
 /**
  * Program pagination option allowing for multiple criteria search.
  */
