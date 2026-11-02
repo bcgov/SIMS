@@ -26,11 +26,13 @@ import {
   saveFakeInstitutionRestriction,
   saveFakeFormSubmissionFromInputTestData,
   createFakeSupportingUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   Application,
   ApplicationData,
   ApplicationStatus,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   FormCategory,
   FormSubmissionCancellationReason,
@@ -72,6 +74,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
   let configServiceMockHelper: ConfigServiceMockHelper;
   let formConfigs: DynamicConfigurationTestData;
   let ministryUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
   // All tests in this describe mock the Form.io dryRunSubmission because the application
   // form has too many required fields. The minimal stub payloads are intentionally
   // incomplete to test specific application submission business logic (e.g., study date
@@ -84,6 +87,8 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     appModule = module;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     configServiceMockHelper = new ConfigServiceMockHelper(app);
     // Program Year for the following tests.
     formService = await getProviderInstanceForModule(
@@ -157,6 +162,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation: secondDraftApplication.location,
         },
         {
@@ -240,6 +246,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const fakeOffering = createFakeEducationProgramOffering(
       {
         auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: secondApplicationOfferingInitialValues,
@@ -331,6 +338,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
     const fakeOffering = createFakeEducationProgramOffering(
       {
         auditUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: simsApplicationOfferingInitialValues,
@@ -429,6 +437,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation: secondDraftApplication.location,
         },
         {
@@ -521,6 +530,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         createFakeEducationProgramOffering(
           {
             auditUser,
+            programConfiguration: mostRecentProgramConfiguration,
             institutionLocation: simsDraftApplication.location,
           },
           {
@@ -614,6 +624,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         createFakeEducationProgramOffering(
           {
             auditUser,
+            programConfiguration: mostRecentProgramConfiguration,
             institutionLocation: simsDraftApplication.location,
           },
           {
@@ -679,6 +690,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       createFakeEducationProgramOffering(
         {
           auditUser: student.user,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation: draftApplication.location,
         },
         {
@@ -747,6 +759,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
         createFakeEducationProgramOffering(
           {
             auditUser: student.user,
+            programConfiguration: mostRecentProgramConfiguration,
             institutionLocation: draftApplication.location,
           },
           {
@@ -1459,6 +1472,7 @@ describe("ApplicationStudentsController(e2e)-submitApplication", () => {
       createFakeEducationProgramOffering(
         {
           auditUser: student.user,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation: draftApplication.location,
         },
         {

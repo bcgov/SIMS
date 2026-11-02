@@ -11,6 +11,7 @@ import {
   createFakeStudentScholasticStanding,
   createFakeUser,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -23,6 +24,7 @@ import request from "supertest";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  EducationProgramConfiguration,
   NoteType,
   OfferingStatus,
   OfferingTypes,
@@ -37,11 +39,14 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
   let db: E2EDataSources;
   const payload = { note: "Reversal note" };
   let sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     sharedUser = await db.user.save(createFakeUser());
   });
 
@@ -191,6 +196,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       const withdrawalOffering = createFakeEducationProgramOffering(
         {
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -340,6 +346,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       const withdrawalOffering = createFakeEducationProgramOffering(
         {
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -505,6 +512,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       const withdrawalOffering = createFakeEducationProgramOffering(
         {
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -661,6 +669,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       const withdrawalOffering = createFakeEducationProgramOffering(
         {
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -817,6 +826,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       const withdrawalOffering = createFakeEducationProgramOffering(
         {
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -971,6 +981,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
       const withdrawalOffering = createFakeEducationProgramOffering(
         {
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         },
         {
           initialValues: {
@@ -1073,6 +1084,7 @@ describe("StudentScholasticStandingsAESTController(e2e)-reverseScholasticStandin
     const withdrawalOffering = createFakeEducationProgramOffering(
       {
         auditUser: sharedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {

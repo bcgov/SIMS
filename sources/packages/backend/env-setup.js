@@ -11,7 +11,7 @@ const ignoreEnvs = new Set(["production", "docker"]);
  */
 function envConfigLoad() {
   if (!ignoreEnvs.has(process.env.NODE_ENV)) {
-    dotenv.config({ path: findConfig(".env") });
+    dotenv.config({ path: findConfig(".env"), quiet: true });
   }
 }
 envConfigLoad();

@@ -15,8 +15,10 @@ import {
   createFakeUser,
   E2EDataSources,
   saveFakeInstitutionRestriction,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
+  EducationProgramConfiguration,
   InstitutionRestriction,
   Restriction,
   RestrictionActionType,
@@ -29,11 +31,14 @@ describe("RestrictionStudentsController(e2e)-getLocationProgramInstitutionRestri
   let db: E2EDataSources;
   let noEffectProgramLocationRestriction: Restriction;
   let errorProgramLocationRestriction: Restriction;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     noEffectProgramLocationRestriction = await db.restriction.save(
       createFakeRestriction({
         initialValues: {
@@ -138,6 +143,7 @@ describe("RestrictionStudentsController(e2e)-getLocationProgramInstitutionRestri
         db.educationProgram.save(
           createFakeEducationProgram({
             auditUser: user,
+            programConfiguration: mostRecentProgramConfiguration,
             institution,
           }),
         ),

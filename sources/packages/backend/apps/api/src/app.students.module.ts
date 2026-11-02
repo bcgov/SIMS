@@ -110,7 +110,6 @@ import {
 } from "./services/form-submission/form-supplementary-data";
 import {
   EducationProgramFieldOfStudyCodeEvaluator,
-  EducationProgramStatusEvaluator,
   EducationProgramEvaluationService,
 } from "./services/education-program/education-program-evaluator";
 
@@ -222,7 +221,6 @@ import {
     FormSubmissionActionProcessor,
     FormSubmissionService,
     EducationProgramFieldOfStudyCodeEvaluator,
-    EducationProgramStatusEvaluator,
     EducationProgramEvaluationService,
   ],
 })

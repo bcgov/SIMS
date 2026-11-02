@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpStatus,
   Post,
   Put,
@@ -100,11 +101,12 @@ export class UserAESTController extends BaseController {
    * for an already authorized users with a role that allow the access.
    */
   @Post("queue-admin-token-exchange")
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Roles(Role.AESTQueueDashboardAdmin)
-  async queueAdminTokenExchange(
+  queueAdminTokenExchange(
     @UserToken() userToken: IUserToken,
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
+  ): void {
     // Exchange token creation.
     const queueDashboardToken = {
       iss: QUEUE_DASHBOARD_ISSUER,
@@ -130,7 +132,6 @@ export class UserAESTController extends BaseController {
     }
     // Save the exchange token in a cookie to sent and stored in the client.
     response.cookie(QUEUE_DASHBOARD_AUTH_COOKIE, signedToken, cookieOptions);
-    response.status(HttpStatus.NO_CONTENT).send();
   }
 
   /**
@@ -138,11 +139,11 @@ export class UserAESTController extends BaseController {
    * Useful to remove the access to the queues admin when the user is no longer authorized.
    */
   @Delete("queue-admin-token-exchange")
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Roles(Role.AESTQueueDashboardAdmin)
-  async removeAdminTokenExchange(
+  removeAdminTokenExchange(
     @Res({ passthrough: true }) response: Response,
-  ): Promise<void> {
+  ): void {
     response.clearCookie(QUEUE_DASHBOARD_AUTH_COOKIE);
-    response.status(HttpStatus.NO_CONTENT).send();
   }
 }

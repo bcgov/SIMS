@@ -7,6 +7,7 @@ import {
   createFakeEducationProgram,
   saveFakeInstitutionRestriction,
   RestrictionCode,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   RestrictionNotificationType,
@@ -16,6 +17,7 @@ import {
   Institution,
   User,
   EducationProgram,
+  EducationProgramConfiguration,
   InstitutionLocation,
   InstitutionRestriction,
 } from "@sims/sims-db";
@@ -38,11 +40,14 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
   const endpoint = "/institutions/restriction/active";
   let restriction: Restriction;
   let restrictionWithNoEffect: Restriction;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     restriction = await db.restriction.save(
       createFakeRestriction({
         initialValues: {
@@ -279,7 +284,11 @@ describe("RestrictionInstitutionsController(e2e)-getActiveInstitutionRestriction
       createFakeInstitutionLocation({ institution }),
     );
     const program = await db.educationProgram.save(
-      createFakeEducationProgram({ auditUser: user, institution }),
+      createFakeEducationProgram({
+        auditUser: user,
+        programConfiguration: mostRecentProgramConfiguration,
+        institution,
+      }),
     );
     const institutionRestrictionPromises = restrictionInputs.map(
       (restrictionInput) =>

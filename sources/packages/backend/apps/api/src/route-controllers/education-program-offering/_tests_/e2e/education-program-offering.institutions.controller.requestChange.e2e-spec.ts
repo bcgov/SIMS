@@ -1,5 +1,6 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   OfferingStatus,
@@ -8,8 +9,10 @@ import {
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -18,7 +21,6 @@ import {
   getInstitutionToken,
   authorizeUserTokenForLocation,
   getAuthRelatedEntities,
-  createFakeEducationProgram,
 } from "../../../../testHelpers";
 import request from "supertest";
 import MockDate from "mockdate";
@@ -36,11 +38,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
   let collegeFUser: User;
   let studyBreak: StudyBreakAPIOutDTO;
   let studyPeriodBreakdown: Omit<StudyBreaksAndWeeksOutDTO, "studyBreaks">;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -80,7 +85,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     );
     const educationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const savedEducationProgram =
       await db.educationProgram.save(educationProgram);
@@ -250,10 +256,11 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     const educationProgram = createFakeEducationProgram(
       {
         institution: collegeF,
-        user: collegeFUser,
+        auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: {
+        initialValues: {
           isActive: false,
         },
       },
@@ -327,7 +334,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-requestChange", ()
     );
     const educationProgram = createFakeEducationProgram({
       institution: collegeF,
-      user: collegeFUser,
+      auditUser: collegeFUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const savedEducationProgram =
       await db.educationProgram.save(educationProgram);

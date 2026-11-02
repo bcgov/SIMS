@@ -3,6 +3,7 @@ import request from "supertest";
 import MockDate from "mockdate";
 import {
   ApplicationStatus,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   NotificationMessageType,
@@ -25,6 +26,7 @@ import {
   E2EDataSources,
   saveFakeApplication,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { PROGRAM_INFO_STATUS } from "@sims/services/workflow/variables/assessment-gateway";
@@ -37,11 +39,14 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
   let zeebeClient: ZeebeGrpcClient;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     zeebeClient = app.get(ZeebeGrpcClient);
     let collegeF: Institution;
     ({ institution: collegeF, user: collegeFUser } =
@@ -90,6 +95,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
       createFakeEducationProgramOffering(
         {
           auditUser: collegeFUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation: collegeFLocation,
         },
         {
@@ -233,6 +239,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-completeProgramInfoReque
         createFakeEducationProgramOffering(
           {
             auditUser: collegeFUser,
+            programConfiguration: mostRecentProgramConfiguration,
             institutionLocation: collegeFLocation,
           },
           {

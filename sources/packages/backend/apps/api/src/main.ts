@@ -36,7 +36,7 @@ async function bootstrap(): Promise<void> {
 
   // Setting global prefix.
   app.setGlobalPrefix("api", {
-    exclude: ["health/(.*)", "metrics", "metrics/(.*)"],
+    exclude: ["health/{*path}", "metrics", "metrics/{*path}"],
   });
 
   // Using helmet.

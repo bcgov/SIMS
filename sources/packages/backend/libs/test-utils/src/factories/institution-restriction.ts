@@ -1,5 +1,6 @@
 import {
   EducationProgram,
+  EducationProgramConfiguration,
   Institution,
   InstitutionLocation,
   InstitutionRestriction,
@@ -15,6 +16,7 @@ import {
   createFakeInstitutionLocation,
   createFakeUser,
   E2EDataSources,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 
 /**
@@ -60,6 +62,7 @@ export function createFakeInstitutionRestriction(
  * - `restriction` Restriction associated with the institution. If not provided, one will be created.
  * - `institution` Related institution.
  * - `program` Program associated with the institution.
+ * - `programConfiguration` Program configuration associated with the program. If not provided, the most recent configuration will be used.
  * - `location` Location associated with the institution.
  * - `restrictionNote` Note for restriction. If not provided, one will be created.
  * - `creator` Record creator.
@@ -75,6 +78,7 @@ export async function saveFakeInstitutionRestriction(
     restriction: Restriction;
     institution?: Institution;
     program?: EducationProgram;
+    programConfiguration?: EducationProgramConfiguration;
     location?: InstitutionLocation;
     restrictionNote?: Note;
     creator?: User;
@@ -98,9 +102,16 @@ export async function saveFakeInstitutionRestriction(
   let program = relations.program;
   let location = relations.location;
   if (!program && options?.createProgram) {
+    let programConfiguration = relations?.programConfiguration;
+    if (!programConfiguration) {
+      programConfiguration = await getMostRecentEducationProgramConfiguration({
+        db,
+      });
+    }
     program = await db.educationProgram.save(
       createFakeEducationProgram({
         auditUser: creator,
+        programConfiguration,
         institution,
       }),
     );

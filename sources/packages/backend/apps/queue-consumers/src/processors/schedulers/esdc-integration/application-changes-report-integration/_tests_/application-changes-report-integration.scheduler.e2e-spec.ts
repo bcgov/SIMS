@@ -20,6 +20,7 @@ import {
   createFakeUser,
   saveFakeApplicationDisbursements,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import { getUploadedFile } from "@sims/test-utils/mocks";
 import Client from "ssh2-sftp-client";
@@ -29,6 +30,7 @@ import {
   AssessmentTriggerType,
   COEStatus,
   DisbursementScheduleStatus,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   OfferingIntensity,
   Student,
@@ -52,12 +54,15 @@ describe(
     let auditUser: User;
     let sharedStudent: Student;
     let expectedFileName: string;
+    let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
     beforeAll(async () => {
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
       db = createE2EDataSources(dataSource);
+      mostRecentProgramConfiguration =
+        await getMostRecentEducationProgramConfiguration({ db });
       sftpClientMock = sshClientMock;
       auditUser = await db.user.save(createFakeUser());
       sharedStudent = await saveFakeStudent(db.dataSource);
@@ -353,6 +358,7 @@ describe(
         createFakeEducationProgramOffering(
           {
             auditUser,
+            programConfiguration: mostRecentProgramConfiguration,
             institutionLocation: originalOffering.institutionLocation,
           },
           {

@@ -2,30 +2,38 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
+  createFakeEducationProgram,
   createFakeInstitution,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
   BEARER_AUTH_TYPE,
-  createFakeEducationProgram,
   getAESTToken,
   getAESTUser,
   AESTGroups,
 } from "../../../../testHelpers";
 import request from "supertest";
-import { Institution, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  User,
+} from "@sims/sims-db";
 
 describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let sharedInstitution: Institution;
   let sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     sharedInstitution = createFakeInstitution();
     await db.institution.save(sharedInstitution);
     sharedUser = createFakeUser();
@@ -36,7 +44,8 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
     // Arrange
     const program = createFakeEducationProgram({
       institution: sharedInstitution,
-      user: sharedUser,
+      auditUser: sharedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
 
@@ -87,10 +96,11 @@ describe("EducationProgramAESTController(e2e)-deactivateProgram", () => {
     const program = createFakeEducationProgram(
       {
         institution: sharedInstitution,
-        user: sharedUser,
+        auditUser: sharedUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
-        initialValue: { isActive: false },
+        initialValues: { isActive: false },
       },
     );
     await db.educationProgram.save(program);

@@ -11,6 +11,7 @@ import {
   OfferingStatus,
   Institution,
   StudyBreaksAndWeeks,
+  EducationProgramConfiguration,
 } from "@sims/sims-db";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { E2EDataSources } from "@sims/test-utils/data-source/e2e-data-source";
@@ -27,6 +28,7 @@ export function createFakeEducationProgramOffering(
   relations: {
     auditUser: User;
     program?: EducationProgram;
+    programConfiguration?: EducationProgramConfiguration;
     institution?: Institution;
     institutionLocation?: InstitutionLocation;
   },
@@ -53,6 +55,7 @@ export function createFakeEducationProgramOffering(
     createFakeEducationProgram(
       {
         institution,
+        programConfiguration: relations?.programConfiguration,
         auditUser: relations.auditUser,
       },
       {

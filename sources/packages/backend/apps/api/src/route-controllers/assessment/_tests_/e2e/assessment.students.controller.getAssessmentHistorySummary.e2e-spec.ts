@@ -15,10 +15,12 @@ import {
   createFakeStudentScholasticStanding,
   createFakeUser,
   saveFakeApplication,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   ApplicationStatus,
   AssessmentTriggerType,
+  EducationProgramConfiguration,
   OfferingTypes,
   StudentAssessmentStatus,
   StudentScholasticStandingChangeType,
@@ -32,12 +34,15 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
   let appModule: TestingModule;
   let db: E2EDataSources;
   let institutionUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource, module } =
       await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     appModule = module;
     institutionUser = await db.user.save(createFakeUser());
   });
@@ -139,6 +144,7 @@ describe("AssessmentStudentsController(e2e)-getAssessmentHistorySummary", () => 
     const withdrawalOffering = createFakeEducationProgramOffering(
       {
         auditUser: institutionUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {
