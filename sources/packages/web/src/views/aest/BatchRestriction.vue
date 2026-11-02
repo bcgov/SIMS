@@ -138,15 +138,19 @@ watchEffect(loadRestrictionCategories);
 const loadRestrictionReasons = async () => {
   restrictionId.value = null;
   restrictionReasons.value = [];
-  if (!selectedCategory.value) {
+  const requestedCategory = selectedCategory.value;
+  if (!requestedCategory) {
     return;
   }
   try {
-    restrictionReasons.value =
-      await RestrictionService.shared.getRestrictionReasons(
-        RestrictionType.Provincial,
-        selectedCategory.value,
-      );
+    const reasons = await RestrictionService.shared.getRestrictionReasons(
+      RestrictionType.Provincial,
+      requestedCategory,
+    );
+    // Ignore responses for a category that is no longer selected.
+    if (requestedCategory === selectedCategory.value) {
+      restrictionReasons.value = reasons;
+    }
   } catch {
     snackBar.error("Unexpected error while loading the restriction reasons.");
   }

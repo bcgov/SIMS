@@ -48,7 +48,7 @@ import { AccessLoggerMiddleware } from "./middlewares";
 import { TerminusModule } from "@nestjs/terminus";
 import { DynamicFormConfigurationModule } from "./dynamic-form-configuration.module";
 import { json } from "express";
-import { JSON_300KB } from "./constants";
+import { JSON_1MB, JSON_300KB } from "./constants";
 import { AppAllExceptionsFilter } from "./app.exception.filter";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { SystemLookupConfigurationModule } from "@sims/services/system-lookup-configuration";
@@ -153,6 +153,10 @@ export class AppModule implements NestModule, OnModuleInit {
     consumer
       .apply(json({ limit: JSON_300KB }))
       .forRoutes(DynamicFormAESTController, BatchReassessmentAESTController);
+    consumer.apply(json({ limit: JSON_1MB })).forRoutes({
+      path: `${ClientTypeBaseRoute.AEST}/restriction/student/batch`,
+      method: RequestMethod.POST,
+    });
     // Apply the body parser global configuration after the specific ones to allow the proper evaluation of the routes.
     consumer.apply(json()).forRoutes("{*path}");
   }
