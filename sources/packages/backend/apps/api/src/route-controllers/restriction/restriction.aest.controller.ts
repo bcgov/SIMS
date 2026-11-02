@@ -90,9 +90,6 @@ export class RestrictionAESTController extends BaseController {
     super();
   }
 
-  // The batch restriction routes must be declared before the
-  // student/:studentId routes, otherwise "batch" is captured as a student ID.
-
   /**
    * Adds a provincial restriction to the students of the given application numbers.
    * The same note is applied to all restrictions added through the batch.
