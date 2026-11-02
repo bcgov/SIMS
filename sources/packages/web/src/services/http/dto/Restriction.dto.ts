@@ -141,17 +141,17 @@ export interface RestrictionAPIOutDTO {
 /**
  * Payload used to add a restriction to the students of a list of application numbers.
  */
-export interface BatchStudentRestrictionsAPIInDTO {
+export interface BatchRestrictionAPIInDTO {
   restrictionId: number;
   applicationNumbers: string[];
   note: string;
 }
 
 /**
- * Summary of a batch student restrictions submission, including how many
+ * Summary of a batch restriction submission, including how many
  * restrictions were successfully added and how many failed.
  */
-export interface BatchStudentRestrictionsSummaryAPIOutDTO {
+export interface BatchRestrictionSummaryAPIOutDTO {
   id: number;
   batchNumber: number;
   createdAt: Date;

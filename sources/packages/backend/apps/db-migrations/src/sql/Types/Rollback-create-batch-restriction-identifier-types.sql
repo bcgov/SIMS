@@ -1,0 +1,1 @@
+DROP TYPE sims.batch_restriction_identifier_types;

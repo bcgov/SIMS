@@ -1,8 +1,8 @@
 import ApiClient from "@/services/http/ApiClient";
 import {
   AssignInstitutionRestrictionAPIInDTO,
-  BatchStudentRestrictionsAPIInDTO,
-  BatchStudentRestrictionsSummaryAPIOutDTO,
+  BatchRestrictionAPIInDTO,
+  BatchRestrictionSummaryAPIOutDTO,
   AssignRestrictionAPIInDTO,
   DeleteRestrictionAPIInDTO,
   InstitutionActiveRestrictionsAPIOutDTO,
@@ -198,19 +198,17 @@ export class RestrictionService {
    * @param payload restriction and application numbers of the students
    * that will receive the restriction.
    */
-  async createBatchStudentRestrictions(
-    payload: BatchStudentRestrictionsAPIInDTO,
+  async createBatchRestriction(
+    payload: BatchRestrictionAPIInDTO,
   ): Promise<void> {
-    await ApiClient.RestrictionApi.createBatchStudentRestrictions(payload);
+    await ApiClient.RestrictionApi.createBatchRestriction(payload);
   }
 
   /**
-   * Gets the batch student restriction submissions.
-   * @returns batch student restriction submissions.
+   * Gets the batch restriction submissions.
+   * @returns batch restriction submissions.
    */
-  async getBatchStudentRestrictions(): Promise<
-    BatchStudentRestrictionsSummaryAPIOutDTO[]
-  > {
-    return ApiClient.RestrictionApi.getBatchStudentRestrictions();
+  async getBatchRestrictions(): Promise<BatchRestrictionSummaryAPIOutDTO[]> {
+    return ApiClient.RestrictionApi.getBatchRestrictions();
   }
 }

@@ -14,7 +14,7 @@
         />
       </template>
       <content-group>
-        <v-form ref="batchStudentRestrictionsForm">
+        <v-form ref="batchRestrictionForm">
           <v-select
             v-model="selectedCategory"
             :items="restrictionCategories"
@@ -62,7 +62,7 @@
 
     <user-note-confirm-modal
       title="Batch restrictions"
-      ref="confirmBatchStudentRestrictionsModal"
+      ref="confirmBatchRestrictionModal"
       ok-label="Submit"
     >
       <template #content="{ showParameter }">
@@ -74,7 +74,7 @@
       </template>
     </user-note-confirm-modal>
 
-    <batch-student-restrictions-history ref="batchStudentRestrictionsHistory" />
+    <batch-restriction-history ref="batchRestrictionHistory" />
   </full-page-container>
 </template>
 
@@ -82,7 +82,7 @@
 import { ref, watchEffect } from "vue";
 import { ApiProcessError, LayoutTemplates, RestrictionType } from "@/types";
 import type { ComponentItemType, VForm } from "@/types";
-import BatchStudentRestrictionsHistory from "@/components/aest/BatchStudentRestrictionsHistory.vue";
+import BatchRestrictionHistory from "@/components/aest/BatchRestrictionHistory.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
@@ -106,11 +106,11 @@ const restrictionReasons = ref<RestrictionAPIOutDTO[]>([]);
 const selectedCategory = ref<string | null>(null);
 const restrictionId = ref<number | null>(null);
 const applicationNumbers = ref("");
-const batchStudentRestrictionsHistory = ref(
-  {} as InstanceType<typeof BatchStudentRestrictionsHistory>,
+const batchRestrictionHistory = ref(
+  {} as InstanceType<typeof BatchRestrictionHistory>,
 );
-const batchStudentRestrictionsForm = ref({} as VForm);
-const confirmBatchStudentRestrictionsModal = ref(
+const batchRestrictionForm = ref({} as VForm);
+const confirmBatchRestrictionModal = ref(
   {} as ModalDialog<UserNoteModal<string>>,
 );
 
@@ -153,7 +153,7 @@ const loadRestrictionReasons = async () => {
 };
 
 const openConfirmSubmitModal = async () => {
-  const { valid } = await batchStudentRestrictionsForm.value.validate();
+  const { valid } = await batchRestrictionForm.value.validate();
   if (!valid) {
     return;
   }
@@ -161,7 +161,7 @@ const openConfirmSubmitModal = async () => {
   const selectedRestriction = restrictionReasons.value.find(
     (restriction) => restriction.id === restrictionId.value,
   );
-  await confirmBatchStudentRestrictionsModal.value.showModal(
+  await confirmBatchRestrictionModal.value.showModal(
     selectedRestriction?.description,
     submitRestriction,
   );
@@ -171,23 +171,21 @@ const submitRestriction = async (
   userNoteModalResult: UserNoteModal<string>,
 ): Promise<boolean> => {
   try {
-    await RestrictionService.shared.createBatchStudentRestrictions({
+    await RestrictionService.shared.createBatchRestriction({
       restrictionId: restrictionId.value as number,
       applicationNumbers: parseApplicationNumbers(applicationNumbers.value),
       note: userNoteModalResult.note,
     });
     snackBar.success("Batch restriction submitted successfully.");
-    batchStudentRestrictionsForm.value.reset();
-    await batchStudentRestrictionsHistory.value.reload();
+    batchRestrictionForm.value.reset();
+    await batchRestrictionHistory.value.reload();
     return true;
   } catch (error) {
     if (error instanceof ApiProcessError) {
       snackBar.error(error.message);
       return false;
     }
-    snackBar.error(
-      "Unexpected error while submitting batch student restrictions.",
-    );
+    snackBar.error("Unexpected error while submitting the batch restriction.");
     return false;
   }
 };

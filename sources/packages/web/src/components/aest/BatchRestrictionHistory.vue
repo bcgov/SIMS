@@ -10,14 +10,13 @@
     <content-group>
       <toggle-content
         :toggled="
-          !batchStudentRestrictionsHistory.length &&
-          !batchStudentRestrictionsHistoryLoading
+          !batchRestrictionHistory.length && !batchRestrictionHistoryLoading
         "
       >
         <v-data-table
-          :headers="BatchStudentRestrictionsHistoryHeaders"
-          :items="batchStudentRestrictionsHistory"
-          :loading="batchStudentRestrictionsHistoryLoading"
+          :headers="BatchRestrictionHistoryHeaders"
+          :items="batchRestrictionHistory"
+          :loading="batchRestrictionHistoryLoading"
           :mobile="isMobile"
         >
           <template #[`item.batchNumber`]="{ item }">
@@ -50,8 +49,8 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
-import { BatchStudentRestrictionsHistoryHeaders } from "@/types/contracts/DataTableContract";
-import { BatchStudentRestrictionsSummaryAPIOutDTO } from "@/services/http/dto";
+import { BatchRestrictionHistoryHeaders } from "@/types/contracts/DataTableContract";
+import { BatchRestrictionSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
 import { RestrictionService } from "@/services/RestrictionService";
 
@@ -59,28 +58,26 @@ const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();
 const { mobile: isMobile } = useDisplay();
 
-const batchStudentRestrictionsHistory = ref<
-  BatchStudentRestrictionsSummaryAPIOutDTO[]
->([]);
-const batchStudentRestrictionsHistoryLoading = ref(false);
+const batchRestrictionHistory = ref<BatchRestrictionSummaryAPIOutDTO[]>([]);
+const batchRestrictionHistoryLoading = ref(false);
 
-const loadBatchStudentRestrictionsHistory = async () => {
-  batchStudentRestrictionsHistoryLoading.value = true;
+const loadBatchRestrictionHistory = async () => {
+  batchRestrictionHistoryLoading.value = true;
   try {
-    batchStudentRestrictionsHistory.value =
-      await RestrictionService.shared.getBatchStudentRestrictions();
+    batchRestrictionHistory.value =
+      await RestrictionService.shared.getBatchRestrictions();
   } catch {
     snackBar.error(
-      "Unexpected error while loading the batch student restrictions history.",
+      "Unexpected error while loading the batch restriction history.",
     );
   } finally {
-    batchStudentRestrictionsHistoryLoading.value = false;
+    batchRestrictionHistoryLoading.value = false;
   }
 };
 
-watchEffect(loadBatchStudentRestrictionsHistory);
+watchEffect(loadBatchRestrictionHistory);
 
 defineExpose({
-  reload: loadBatchStudentRestrictionsHistory,
+  reload: loadBatchRestrictionHistory,
 });
 </script>

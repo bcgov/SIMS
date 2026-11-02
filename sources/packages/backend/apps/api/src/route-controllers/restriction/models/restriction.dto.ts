@@ -30,9 +30,9 @@ import {
 const MAX_ALLOWED_LOCATIONS = 100;
 
 /**
- * Maximum number of application numbers accepted in a single batch student restrictions submission.
+ * Maximum number of application numbers accepted in a single batch restriction submission.
  */
-const BATCH_STUDENT_RESTRICTIONS_MAX_APPLICATION_NUMBERS = 50000;
+const BATCH_RESTRICTION_MAX_APPLICATION_NUMBERS = 50000;
 
 /**
  * Base DTO for restriction.
@@ -228,12 +228,12 @@ export class RestrictionAPIOutDTO {
 /**
  * Payload used to add a restriction to the students of a list of application numbers.
  */
-export class BatchStudentRestrictionsAPIInDTO {
+export class BatchRestrictionAPIInDTO {
   @IsPositive()
   restrictionId: number;
   @IsArray()
   @ArrayNotEmpty()
-  @ArrayMaxSize(BATCH_STUDENT_RESTRICTIONS_MAX_APPLICATION_NUMBERS)
+  @ArrayMaxSize(BATCH_RESTRICTION_MAX_APPLICATION_NUMBERS)
   @IsString({ each: true })
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH, { each: true })
   applicationNumbers: string[];
@@ -243,10 +243,10 @@ export class BatchStudentRestrictionsAPIInDTO {
 }
 
 /**
- * Summary of a batch student restrictions submission, including how many
+ * Summary of a batch restriction submission, including how many
  * restrictions were successfully added and how many failed.
  */
-export class BatchStudentRestrictionsSummaryAPIOutDTO {
+export class BatchRestrictionSummaryAPIOutDTO {
   id: number;
   batchNumber: number;
   createdAt: Date;

@@ -81,6 +81,8 @@ export const TableNames = {
   FormSubmissionItemDecisions: "form_submission_item_decisions",
   BatchReassessments: "batch_reassessments",
   BatchReassessmentApplications: "batch_reassessment_applications",
+  BatchRestrictions: "batch_restrictions",
+  BatchRestrictionStudents: "batch_restriction_students",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;

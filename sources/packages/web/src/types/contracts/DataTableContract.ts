@@ -462,7 +462,7 @@ export const BatchReassessmentApplicationHeaders = [
 /**
  * Batch restriction history headers.
  */
-export const BatchStudentRestrictionsHistoryHeaders = [
+export const BatchRestrictionHistoryHeaders = [
   { title: "Batch ID", sortable: false, key: "batchNumber" },
   { title: "Submitted Date", sortable: false, key: "submittedDate" },
   { title: "Submitted By", sortable: false, key: "submittedBy" },

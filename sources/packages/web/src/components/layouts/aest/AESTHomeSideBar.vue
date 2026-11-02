@@ -47,10 +47,10 @@
             />
           </template>
         </check-permission-role>
-        <check-permission-role :role="Role.AESTBatchStudentRestrictions">
+        <check-permission-role :role="Role.AESTBatchRestriction">
           <template #="{ notAllowed }">
             <v-list-item
-              :to="{ name: AESTRoutesConst.BATCH_STUDENT_RESTRICTIONS }"
+              :to="{ name: AESTRoutesConst.BATCH_RESTRICTION }"
               prepend-icon="mdi-account-lock-outline"
               title="Batch Restrictions"
               :disabled="notAllowed"
