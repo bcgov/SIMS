@@ -16,12 +16,22 @@
       <content-group>
         <v-form ref="batchStudentRestrictionsForm">
           <v-select
+            v-model="selectedCategory"
+            :items="restrictionCategories"
+            @update:model-value="loadRestrictionReasons"
+            :rules="[(v) => !!v || 'Category is required.']"
+            label="Category"
+            variant="outlined"
+            class="mb-4"
+            hide-details="auto"
+          />
+          <v-select
             v-model="restrictionId"
-            :items="restrictions"
+            :items="restrictionReasons"
             item-title="description"
             item-value="id"
-            :rules="[(v) => !!v || 'Restriction is required.']"
-            label="Restriction"
+            :rules="[(v) => !!v || 'Reason is required.']"
+            label="Reason"
             variant="outlined"
             class="mb-4"
             hide-details="auto"
@@ -71,7 +81,7 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import { ApiProcessError, LayoutTemplates, RestrictionType } from "@/types";
-import type { VForm } from "@/types";
+import type { ComponentItemType, VForm } from "@/types";
 import BatchStudentRestrictionsHistory from "@/components/aest/BatchStudentRestrictionsHistory.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
@@ -91,7 +101,9 @@ const snackBar = useSnackBar();
 const { checkApplicationNumbersRule } = useRules();
 const { parseApplicationNumbers } = useFormatters();
 
-const restrictions = ref<RestrictionAPIOutDTO[]>([]);
+const restrictionCategories = ref<ComponentItemType[]>([]);
+const restrictionReasons = ref<RestrictionAPIOutDTO[]>([]);
+const selectedCategory = ref<string | null>(null);
 const restrictionId = ref<number | null>(null);
 const applicationNumbers = ref("");
 const batchStudentRestrictionsHistory = ref(
@@ -102,17 +114,43 @@ const confirmBatchStudentRestrictionsModal = ref(
   {} as ModalDialog<UserNoteModal<string>>,
 );
 
-const loadRestrictions = async () => {
+const loadRestrictionCategories = async () => {
   try {
-    restrictions.value = await RestrictionService.shared.getRestrictionReasons(
-      RestrictionType.Provincial,
-    );
+    const categories =
+      await RestrictionService.shared.getRestrictionCategories();
+    restrictionCategories.value = categories.map((category) => ({
+      title: category.description,
+      value: category.description,
+    }));
   } catch {
-    snackBar.error("Unexpected error while loading the restrictions.");
+    snackBar.error(
+      "Unexpected error while loading the restriction categories.",
+    );
   }
 };
 
-watchEffect(loadRestrictions);
+watchEffect(loadRestrictionCategories);
+
+/**
+ * Loads the provincial restriction reasons for the selected category.
+ * The previously selected reason is cleared since it may not belong to the new category.
+ */
+const loadRestrictionReasons = async () => {
+  restrictionId.value = null;
+  restrictionReasons.value = [];
+  if (!selectedCategory.value) {
+    return;
+  }
+  try {
+    restrictionReasons.value =
+      await RestrictionService.shared.getRestrictionReasons(
+        RestrictionType.Provincial,
+        selectedCategory.value,
+      );
+  } catch {
+    snackBar.error("Unexpected error while loading the restriction reasons.");
+  }
+};
 
 const openConfirmSubmitModal = async () => {
   const { valid } = await batchStudentRestrictionsForm.value.validate();
@@ -120,7 +158,7 @@ const openConfirmSubmitModal = async () => {
     return;
   }
 
-  const selectedRestriction = restrictions.value.find(
+  const selectedRestriction = restrictionReasons.value.find(
     (restriction) => restriction.id === restrictionId.value,
   );
   await confirmBatchStudentRestrictionsModal.value.showModal(
