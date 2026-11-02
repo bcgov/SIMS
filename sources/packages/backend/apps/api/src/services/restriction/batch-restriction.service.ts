@@ -29,7 +29,7 @@ const APPLICATION_NUMBER_NOT_FOUND_REASON =
   "The application number does not exist.";
 
 /**
- * Provides batch restrictions operations.
+ * Provides batch restriction operations.
  */
 @Injectable()
 export class BatchRestrictionService {
