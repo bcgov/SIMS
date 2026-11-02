@@ -5,8 +5,14 @@ import {
   createFakeEducationProgramOffering,
   createFakeInstitutionLocation,
   E2EDataSources,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
-import { Institution, InstitutionLocation, User } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  Institution,
+  InstitutionLocation,
+  User,
+} from "@sims/sims-db";
 import {
   createTestingAppModule,
   getAuthRelatedEntities,
@@ -28,11 +34,14 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
   let collegeF: Institution;
   let collegeFLocation: InstitutionLocation;
   let collegeFUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     const { institution, user } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -53,6 +62,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
     const offering = createFakeEducationProgramOffering(
       {
         auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institution: collegeF,
         institutionLocation: collegeFLocation,
       },
@@ -126,6 +136,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
     const offering = createFakeEducationProgramOffering(
       {
         auditUser: collegeFUser,
+        programConfiguration: mostRecentProgramConfiguration,
         institution: collegeF,
         institutionLocation: collegeFLocation,
       },
@@ -205,6 +216,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingDetails
   it("Should throw a HttpStatus Not Found (404) error when the offering doesn't exist.", async () => {
     const educationProgram = createFakeEducationProgram({
       auditUser: collegeFUser,
+      programConfiguration: mostRecentProgramConfiguration,
       institution: collegeF,
     });
     const savedEducationProgram =

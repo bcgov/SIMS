@@ -72,6 +72,7 @@ import {
   StudentDisabilityProfile,
   BatchReassessment,
   BatchReassessmentApplication,
+  EducationProgramConfiguration,
   BatchRestriction,
   BatchRestrictionStudent,
 } from "@sims/sims-db";
@@ -124,6 +125,9 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     disbursementSchedule: dataSource.getRepository(DisbursementSchedule),
     disbursementValue: dataSource.getRepository(DisbursementValue),
     educationProgram: dataSource.getRepository(EducationProgram),
+    educationProgramConfiguration: dataSource.getRepository(
+      EducationProgramConfiguration,
+    ),
     educationProgramOffering: dataSource.getRepository(
       EducationProgramOffering,
     ),
@@ -233,6 +237,7 @@ export interface E2EDataSources {
   disbursementSchedule: Repository<DisbursementSchedule>;
   disbursementValue: Repository<DisbursementValue>;
   educationProgram: Repository<EducationProgram>;
+  educationProgramConfiguration: Repository<EducationProgramConfiguration>;
   educationProgramOffering: Repository<EducationProgramOffering>;
   federalRestriction: Repository<FederalRestriction>;
   institution: Repository<Institution>;

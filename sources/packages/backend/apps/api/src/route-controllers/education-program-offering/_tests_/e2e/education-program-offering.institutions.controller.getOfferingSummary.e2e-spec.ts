@@ -14,8 +14,10 @@ import {
   createFakeEducationProgramOffering,
   createFakeUser,
   createFakeEducationProgram,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
+  EducationProgramConfiguration,
   OfferingIntensity,
   InstitutionUserTypes,
   EducationProgram,
@@ -33,6 +35,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
   let institution: Institution;
   let institutionLocation: InstitutionLocation;
   let sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
   /**
    * Creates a fake full-time education program offering with an optional custom name.
    * @param offeringCustomName Optional custom name for the offering.
@@ -47,6 +50,7 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
         createFakeEducationProgram({
           institution: institution,
           auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
         }),
       );
     }
@@ -71,6 +75,8 @@ describe("EducationProgramOfferingInstitutionsController(e2e)-getOfferingSummary
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
 
     sharedUser = createFakeUser();
     await db.user.save(sharedUser);

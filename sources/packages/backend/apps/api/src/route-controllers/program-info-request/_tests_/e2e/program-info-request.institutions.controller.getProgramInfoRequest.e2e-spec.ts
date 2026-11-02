@@ -17,11 +17,13 @@ import {
   createFakeUser,
   saveFakeApplication,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   ApplicationData,
   ApplicationExceptionStatus,
   ApplicationStatus,
+  EducationProgramConfiguration,
   InstitutionLocation,
   ProgramInfoStatus,
   User,
@@ -34,11 +36,14 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
   let db: E2EDataSources;
   let collegeFLocation: InstitutionLocation;
   let sharedUser: User;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     // College F.
     const { institution: collegeF } = await getAuthRelatedEntities(
       db.dataSource,
@@ -134,7 +139,10 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
         studyendDate: getISODateOnlyString(addDays(30)),
       } as ApplicationData;
       const pirProgram = await db.educationProgram.save(
-        createFakeEducationProgram({ auditUser: sharedUser }),
+        createFakeEducationProgram({
+          auditUser: sharedUser,
+          programConfiguration: mostRecentProgramConfiguration,
+        }),
       );
       // Application with PIR required.
       const applicationRequiredPIR = await saveFakeApplication(
@@ -193,6 +201,7 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
     const student = await saveFakeStudent(db.dataSource);
     const fakeOffering = createFakeEducationProgramOffering({
       auditUser: sharedUser,
+      programConfiguration: mostRecentProgramConfiguration,
     });
     const pirOffering = await db.educationProgramOffering.save(fakeOffering);
     const pirProgram = pirOffering.educationProgram;
@@ -274,7 +283,10 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
           studyendDate: getISODateOnlyString(addDays(30)),
         } as ApplicationData;
         const pirProgram = await db.educationProgram.save(
-          createFakeEducationProgram({ auditUser: sharedUser }),
+          createFakeEducationProgram({
+            auditUser: sharedUser,
+            programConfiguration: mostRecentProgramConfiguration,
+          }),
         );
         // Application with PIR required.
         const applicationRequiredPIR = await saveFakeApplication(

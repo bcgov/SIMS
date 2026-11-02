@@ -19,6 +19,7 @@ import {
   createFakeEducationProgramOffering,
   createFakeStudentAssessment,
   createFakeUser,
+  getMostRecentEducationProgramConfiguration,
   saveFakeStudent,
 } from "@sims/test-utils";
 import { addDays, getISODateOnlyString } from "@sims/utilities";
@@ -126,6 +127,10 @@ export class ApplicationSubmissionService {
   ): Promise<ApplicationSubmissionSetupResponse> {
     const student = await this.getOrCreateStudentByUserName(studentUserName);
     const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
+    const programConfiguration =
+      await getMostRecentEducationProgramConfiguration({
+        db: this.dataSources,
+      });
     const setupItems: ApplicationSetupData[] = [];
     const offerings: EducationProgramOffering[] = [];
     for (let i = 0; i < batchSize; i++) {
@@ -141,7 +146,7 @@ export class ApplicationSubmissionService {
       );
       offerings.push(
         createFakeEducationProgramOffering(
-          { auditUser: student.user },
+          { auditUser: student.user, programConfiguration },
           { initialValues: { studyStartDate, studyEndDate } },
         ),
       );
@@ -214,6 +219,10 @@ export class ApplicationSubmissionService {
     numberOfStudents: number,
   ): Promise<WorkersSetupResponse> {
     const programYear = await this.getProgramYear(LOAD_TEST_PROGRAM_YEAR);
+    const programConfiguration =
+      await getMostRecentEducationProgramConfiguration({
+        db: this.dataSources,
+      });
     const appsPerStudent = Math.ceil(batchSize / numberOfStudents);
     let totalCreated = 0;
     for (
@@ -243,7 +252,7 @@ export class ApplicationSubmissionService {
         );
         offerings.push(
           createFakeEducationProgramOffering(
-            { auditUser: student.user },
+            { auditUser: student.user, programConfiguration },
             { initialValues: { studyStartDate, studyEndDate } },
           ),
         );

@@ -1,0 +1,45 @@
+<template>
+  <radio-options-yes-no
+    v-if="control.visible"
+    :model-value="control.data"
+    @update:model-value="onUpdate"
+    :label="control.label"
+    :readonly="control.readonly || !control.enabled"
+    :error-messages="control.errors ? [control.errors] : []"
+  >
+    <template v-if="tooltip || tooltipHtml" #label>
+      <span>{{ control.label }}</span
+      ><tooltip-icon :max-width="670"
+        ><span v-if="tooltipHtml" v-html="tooltipHtml"></span
+        ><template v-else>{{ tooltip }}</template></tooltip-icon
+      >
+    </template>
+  </radio-options-yes-no>
+</template>
+<script setup lang="ts">
+import { rendererProps, useJsonFormsControl } from "@jsonforms/vue";
+import { useClearDataWhenHidden } from "./useClearDataWhenHidden";
+import type { ControlElement } from "@jsonforms/core";
+import RadioOptionsYesNo from "@/components/generic/RadioOptionsYesNo.vue";
+import { computed } from "vue";
+
+const props = defineProps(rendererProps<ControlElement>());
+const { control, handleChange } = useJsonFormsControl(props);
+
+const onUpdate = (value: string | number | boolean | undefined) =>
+  handleChange(control.value.path, value);
+
+const tooltip = computed(
+  () => control.value.uischema.options?.tooltip as string | undefined,
+);
+
+const tooltipHtml = computed(
+  () => control.value.uischema.options?.tooltipHtml as string | undefined,
+);
+
+useClearDataWhenHidden(
+  computed(() => control.value.visible),
+  computed(() => control.value.path),
+  handleChange,
+);
+</script>

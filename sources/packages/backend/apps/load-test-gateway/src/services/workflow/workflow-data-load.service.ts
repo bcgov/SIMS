@@ -12,6 +12,7 @@ import {
   createFakeApplication,
   createFakeEducationProgramOffering,
   createFakeStudentAssessment,
+  getMostRecentEducationProgramConfiguration,
   saveFakeApplication,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -71,9 +72,15 @@ export class WorkflowDataLoadService {
    * @returns preliminary data.
    */
   private async createApplicationPreliminaryData(): Promise<ApplicationPreliminaryData> {
-    const student = await saveFakeStudent(this.dataSource);
+    const [student, programConfiguration] = await Promise.all([
+      saveFakeStudent(this.dataSource),
+      getMostRecentEducationProgramConfiguration({ db: this.dataSources }),
+    ]);
     const offering = await this.dataSources.educationProgramOffering.save(
-      createFakeEducationProgramOffering({ auditUser: student.user }),
+      createFakeEducationProgramOffering({
+        auditUser: student.user,
+        programConfiguration,
+      }),
     );
     return { offering, student };
   }

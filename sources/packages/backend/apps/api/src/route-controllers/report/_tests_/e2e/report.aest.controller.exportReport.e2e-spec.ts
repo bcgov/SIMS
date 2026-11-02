@@ -13,6 +13,7 @@ import {
   saveFakeDesignationAgreementLocation,
   saveFakeDisbursementReceiptsFromDisbursementSchedule,
   saveFakeStudent,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -28,6 +29,7 @@ import {
   DisbursementScheduleStatus,
   DisbursementValueType,
   EducationProgram,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   IdentityProviders,
   InstitutionLocation,
@@ -59,12 +61,15 @@ describe("ReportAESTController(e2e)-exportReport", () => {
   let appDataSource: DataSource;
   let sharedCASSupplierUpdatedStudent: Student;
   let casSupplierMaintenanceUpdatesPayload: MinistryReportsFilterAPIInDTO;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     appDataSource = dataSource;
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     // Shared student used for CAS Supplier maintenance updates report.
     sharedCASSupplierUpdatedStudent = await saveFakeStudent(db.dataSource);
     // Build payload for CAS Supplier maintenance updates report to use across tests.
@@ -325,7 +330,11 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       // Create an education program with full time program intensity
       // and one full time offering associated with the program.
       const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
-        { auditUser, institutionLocation },
+        {
+          auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
+          institutionLocation,
+        },
         {
           initialValues: { offeringIntensity: OfferingIntensity.fullTime },
           programInitialValues: {
@@ -341,6 +350,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -384,6 +394,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -407,6 +418,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeProgram = createFakeEducationProgram(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institution: institutionLocation.institution,
         },
         {
@@ -477,7 +489,11 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       // Create an education program with full time program intensity
       // and one full time offering associated with the program.
       const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
-        { auditUser, institutionLocation },
+        {
+          auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
+          institutionLocation,
+        },
         {
           initialValues: { offeringIntensity: OfferingIntensity.fullTime },
           programInitialValues: {
@@ -493,6 +509,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -536,6 +553,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -559,6 +577,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeProgram = createFakeEducationProgram(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institution: institutionLocation.institution,
         },
         {
@@ -633,7 +652,11 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       // Create an education program with full time program intensity
       // and one full time offering associated with the program.
       const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
-        { auditUser, institutionLocation },
+        {
+          auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
+          institutionLocation,
+        },
         {
           initialValues: { offeringIntensity: OfferingIntensity.fullTime },
           programInitialValues: {
@@ -649,6 +672,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -691,6 +715,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -715,6 +740,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -738,6 +764,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeProgram = createFakeEducationProgram(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institution: institutionLocation.institution,
         },
         {
@@ -817,7 +844,11 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       // Create an education program with full time program intensity
       // and one full time offering associated with the program.
       const fakeOfferingFullTime1 = createFakeEducationProgramOffering(
-        { auditUser, institutionLocation },
+        {
+          auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
+          institutionLocation,
+        },
         {
           initialValues: { offeringIntensity: OfferingIntensity.fullTime },
           programInitialValues: {
@@ -834,6 +865,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingFullTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -878,6 +910,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime2 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -903,6 +936,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime3 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -929,6 +963,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeOfferingPartTime4 = createFakeEducationProgramOffering(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institutionLocation,
         },
         {
@@ -953,6 +988,7 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       const fakeProgram = createFakeEducationProgram(
         {
           auditUser,
+          programConfiguration: mostRecentProgramConfiguration,
           institution: institutionLocation.institution,
         },
         {

@@ -9,6 +9,7 @@ export * from "./factories/application";
 export * from "./factories/student";
 export * from "./factories/program-year";
 export * from "./factories/student-assessment";
+export * from "./factories/education-program-configuration";
 export * from "./factories/education-program";
 export * from "./factories/education-program-offering";
 export * from "./factories/disbursement-schedule";

@@ -6,6 +6,7 @@ import {
   ApplicationData,
   ApplicationExceptionRequestStatus,
   ApplicationExceptionStatus,
+  EducationProgramConfiguration,
   EducationProgramOffering,
   ProgramInfoStatus,
 } from "@sims/sims-db";
@@ -19,6 +20,7 @@ import {
   saveFakeApplication,
   saveFakeStudent,
   saveFakeStudentFileUpload,
+  getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
   FAKE_WORKER_JOB_ERROR_CODE_PROPERTY,
@@ -42,6 +44,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
   let systemUsersService: SystemUsersService;
   // Offering with end date more than required weeks from now to apply within deadline.
   let sharedOffering: EducationProgramOffering;
+  let mostRecentProgramConfiguration: EducationProgramConfiguration;
   const APPLICATION_SUBMISSION_DEADLINE_WEEKS = "6";
 
   beforeAll(async () => {
@@ -50,11 +53,14 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
       APPLICATION_SUBMISSION_DEADLINE_WEEKS;
     const { nestApplication, dataSource } = await createTestingAppModule();
     db = createE2EDataSources(dataSource);
+    mostRecentProgramConfiguration =
+      await getMostRecentEducationProgramConfiguration({ db });
     applicationController = nestApplication.get(ApplicationController);
     systemUsersService = nestApplication.get(SystemUsersService);
     sharedOffering = createFakeEducationProgramOffering(
       {
         auditUser: systemUsersService.systemUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {
@@ -787,6 +793,7 @@ describe("ApplicationController(e2e)-verifyUniqueApplicationExceptions", () => {
     const offeringPastDeadline = createFakeEducationProgramOffering(
       {
         auditUser: systemUsersService.systemUser,
+        programConfiguration: mostRecentProgramConfiguration,
       },
       {
         initialValues: {

@@ -71,6 +71,8 @@
     "@nestjs/throttler": "^6.7.1",
     "@nestjs/typeorm": "^12.0.2",
     "@types/ssh2-sftp-client": "^9.0.6",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "axios": "^1.21.0",
     "bull": "^4.16.5",
     "bullmq": "^6.5.1",
