@@ -159,6 +159,7 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
+  isRenewed: boolean;
   nextProgramConfigurationIdForRenewal?: number;
 }
 

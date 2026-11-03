@@ -23,10 +23,10 @@
               placeholder="Select year"
               persistent-placeholder
               density="compact"
-              :items="programConfigurations"
+              :items="programYears"
               item-title="description"
               item-value="id"
-              v-model="educationProgramConfigurationId"
+              v-model="selectedProgramYearId"
               @update:model-value="programConfigurationChanged"
               variant="outlined"
               hide-details="auto"
@@ -128,8 +128,8 @@ import type {
 import { useFormatters, useSnackBar } from "@/composables";
 
 interface ManageProgramsProps {
-  // Program configuration to be selected by default, when provided.
-  programConfigurationId?: number;
+  // Program year to be selected by default, when provided.
+  programYearId?: number;
 }
 
 const props = defineProps<ManageProgramsProps>();
@@ -153,17 +153,16 @@ const sortBy = ref([
 const currentPage = ref();
 const currentPageLimit = ref();
 // Active education program configurations available to be selected.
-const programConfigurations = ref<OptionItemAPIOutDTO[]>([]);
+const programYears = ref<OptionItemAPIOutDTO[]>([]);
 // Education program configuration the programs are listed for.
-const educationProgramConfigurationId = ref<number | null>();
+const selectedProgramYearId = ref<number | null>();
 
 /**
  * Message displayed when there are no programs to be listed.
  */
 const noProgramsMessage = computed(() => {
-  const programConfiguration = programConfigurations.value.find(
-    (configuration) =>
-      configuration.id === educationProgramConfigurationId.value,
+  const programConfiguration = programYears.value.find(
+    (configuration) => configuration.id === selectedProgramYearId.value,
   );
   if (!programConfiguration) {
     return "Select a program year to view its programs.";
@@ -184,7 +183,7 @@ const loadPrograms = async (
   sortField?: string,
   sortOrder?: DataTableSortByOrder,
 ) => {
-  if (!educationProgramConfigurationId.value) {
+  if (!selectedProgramYearId.value) {
     snackBar.warn("Please select a program year to load programs.");
     return;
   }
@@ -192,7 +191,7 @@ const loadPrograms = async (
   try {
     programAndCount.value =
       await EducationProgramService.shared.getProgramsForProgramYear(
-        educationProgramConfigurationId.value,
+        selectedProgramYearId.value,
         {
           searchCriteria: searchBox.value,
           sortField,
@@ -246,7 +245,7 @@ const goToRenewProgram = (programId: number, configurationId: number) => {
     },
     // Allows the renew page to navigate back keeping the current program year selected.
     query: {
-      programConfigurationId: educationProgramConfigurationId.value,
+      programYearId: selectedProgramYearId.value,
     },
   });
 };
@@ -257,21 +256,21 @@ const programConfigurationChanged = async () => {
   // Keep the route in sync with the selected program configuration.
   await router.replace({
     name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-    params: { programConfigurationId: educationProgramConfigurationId.value },
+    params: { programYearId: selectedProgramYearId.value },
   });
   await searchProgramTable();
 };
 
 onMounted(async () => {
-  programConfigurations.value =
-    await EducationProgramService.shared.getEducationProgramConfigurations();
+  programYears.value =
+    await EducationProgramService.shared.getProgramYearsList();
   // No program year is selected by default, unless provided in the route,
   // otherwise the user must select one to list the programs.
-  const isValidConfiguration = programConfigurations.value.some(
-    (configuration) => configuration.id === props.programConfigurationId,
+  const isValidProgramYear = programYears.value.some(
+    (programYear) => programYear.id === props.programYearId,
   );
-  if (isValidConfiguration) {
-    educationProgramConfigurationId.value = props.programConfigurationId;
+  if (isValidProgramYear) {
+    selectedProgramYearId.value = props.programYearId;
     await searchProgramTable();
   }
 });

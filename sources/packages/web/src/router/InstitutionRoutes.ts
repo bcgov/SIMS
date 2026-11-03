@@ -148,8 +148,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         props: {
           default: (route) => ({
-            programConfigurationId: route.params.programConfigurationId
-              ? Number.parseInt(route.params.programConfigurationId as string)
+            programYearId: route.params.programYearId
+              ? Number.parseInt(route.params.programYearId as string)
               : undefined,
           }),
         },
@@ -176,10 +176,9 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             name: "Manage Programs",
             to: {
               name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-              params: route.query.programConfigurationId
+              params: route.query.programYearId
                 ? {
-                    programConfigurationId: route.query
-                      .programConfigurationId as string,
+                    programYearId: route.query.programYearId as string,
                   }
                 : undefined,
             },

@@ -1,5 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { EducationProgram, EducationProgramConfiguration } from "@sims/sims-db";
+import {
+  EducationProgram,
+  EducationProgramConfiguration,
+  ProgramYear,
+} from "@sims/sims-db";
 import { MoreThan, Repository } from "typeorm";
 import {
   PaginatedResults,
@@ -28,6 +32,8 @@ export class EducationProgramManagerService {
     private readonly educationProgramRepo: Repository<EducationProgram>,
     @InjectRepository(EducationProgramConfiguration)
     private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
+    @InjectRepository(ProgramYear)
+    private readonly programYearRepo: Repository<ProgramYear>,
   ) {}
 
   async getActiveConfiguration(
@@ -76,6 +82,25 @@ export class EducationProgramManagerService {
     });
   }
 
+  /**
+   * Gets the program years that have at least one education program
+   * configuration associated with them.
+   * @returns program years with at least one program configuration.
+   */
+  async getProgramYears(): Promise<ProgramYear[]> {
+    const configurationExistsQuery = this.educationProgramConfigurationRepo
+      .createQueryBuilder("configuration")
+      .select("1")
+      .where("configuration.programYear.id = programYear.id")
+      .getQuery();
+    return this.programYearRepo
+      .createQueryBuilder("programYear")
+      .select(["programYear.id", "programYear.programYear"])
+      .where(`EXISTS(${configurationExistsQuery})`)
+      .orderBy("programYear.startDate", "DESC")
+      .getMany();
+  }
+
   async getNextProgramConfigurationForRenewal(
     currentStartDateReference: string,
   ): Promise<EducationProgramConfiguration | null> {
@@ -108,7 +133,7 @@ export class EducationProgramManagerService {
 
   async getEducationProgramsManagerDetails(
     institutionId: number,
-    educationProgramConfigurationId: number,
+    programYearId: number,
     paginationOptions: ProgramsManagementPaginationOptions,
   ): Promise<PaginatedResults<EducationProgram>> {
     const sortField =
@@ -135,7 +160,9 @@ export class EducationProgramManagerService {
           id: institutionId,
         },
         programConfiguration: {
-          id: educationProgramConfigurationId,
+          programYear: {
+            id: programYearId,
+          },
         },
       },
       skip: paginationOptions.pageLimit * paginationOptions.page,

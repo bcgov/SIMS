@@ -35,17 +35,23 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
   }
 
   /**
-   * Get an active program year.
+   * Get a program year.
    * @param programYearId program year id.
-   * @returns active program year.
+   * @param options options.
+   * - `active` when provided, filters the program year by its active status.
+   * @returns program year.
    */
-  async getActiveProgramYear(programYearId: number): Promise<ProgramYear> {
+  async getProgramYear(
+    programYearId: number,
+    options?: { active?: boolean },
+  ): Promise<ProgramYear> {
     return this.repo.findOne({
       select: {
         id: true,
         offeringIntensity: true,
+        startDate: true,
       },
-      where: { id: programYearId, active: true },
+      where: { id: programYearId, active: options?.active },
     });
   }
 }

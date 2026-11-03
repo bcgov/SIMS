@@ -55,6 +55,7 @@ import {
   EducationProgramData,
   EducationProgramManagerService,
   EducationProgramSaveService,
+  ProgramYearService,
 } from "../../services";
 import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
@@ -74,6 +75,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly educationProgramControllerService: EducationProgramControllerService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
     private readonly educationProgramManagerService: EducationProgramManagerService,
+    private readonly programYearService: ProgramYearService,
   ) {
     super();
   }
@@ -155,16 +157,16 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Get the list of active education program configurations.
+   * Get the list of program years with at least one education program configuration.
    * @returns an array of option items representing the active configurations.
    */
-  @Get("configurations-list")
-  async getEducationProgramConfigurations(): Promise<OptionItemAPIOutDTO[]> {
-    const configurations =
-      await this.educationProgramManagerService.getProgramConfigurations();
-    return configurations.map((configuration) => ({
-      id: configuration.id,
-      description: configuration.programYear.programYear,
+  @Get("program-years-list")
+  async getProgramYearsList(): Promise<OptionItemAPIOutDTO[]> {
+    const programYears =
+      await this.educationProgramManagerService.getProgramYears();
+    return programYears.map((programYear) => ({
+      id: programYear.id,
+      description: programYear.programYear,
     }));
   }
 
@@ -361,30 +363,26 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param userToken User token containing authorization information.
    * @returns Paginated list of education programs for the specified program year.
    */
-  @Get("programs/configuration/:educationProgramConfigurationId")
+  @Get("programs/program-year/:programYearId")
   async getProgramsForProgramYear(
-    @Param("educationProgramConfigurationId", ParseIntPipe)
-    educationProgramConfigurationId: number,
+    @Param("programYearId", ParseIntPipe)
+    programYearId: number,
     @Query() pagination: ProgramsManagementPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PaginatedResults<EducationProgramManagerDetailsAPIOutDTO>> {
-    const activeConfiguration =
-      await this.educationProgramManagerService.getActiveConfiguration(
-        educationProgramConfigurationId,
-      );
-    if (!activeConfiguration) {
-      throw new NotFoundException(
-        `Active configuration not found for ID ${educationProgramConfigurationId}.`,
-      );
+    const programYear =
+      await this.programYearService.getProgramYear(programYearId);
+    if (!programYear) {
+      throw new NotFoundException("Program year not found.");
     }
     const [nextProgramConfigurationForRenewal, paginatedPrograms] =
       await Promise.all([
         this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
-          activeConfiguration.programYear.startDate,
+          programYear.startDate,
         ),
         this.educationProgramManagerService.getEducationProgramsManagerDetails(
           userToken.authorizations.institutionId,
-          educationProgramConfigurationId,
+          programYearId,
           pagination,
         ),
       ]);

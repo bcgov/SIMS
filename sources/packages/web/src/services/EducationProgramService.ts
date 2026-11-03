@@ -104,8 +104,8 @@ export class EducationProgramService {
    * Get the list of active education program configurations.
    * @returns an array of option items representing the active configurations.
    */
-  async getEducationProgramConfigurations(): Promise<OptionItemAPIOutDTO[]> {
-    return ApiClient.EducationProgram.getEducationProgramConfigurations();
+  async getProgramYearsList(): Promise<OptionItemAPIOutDTO[]> {
+    return ApiClient.EducationProgram.getProgramYearsList();
   }
 
   /**

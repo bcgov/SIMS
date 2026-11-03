@@ -78,9 +78,9 @@ export class EducationProgramApi extends HttpBaseClient {
    * Get the list of active education program configurations.
    * @returns an array of option items representing the active configurations.
    */
-  async getEducationProgramConfigurations(): Promise<OptionItemAPIOutDTO[]> {
+  async getProgramYearsList(): Promise<OptionItemAPIOutDTO[]> {
     return this.getCall<OptionItemAPIOutDTO[]>(
-      this.addClientRoot("education-program/configurations-list"),
+      this.addClientRoot("education-program/program-years-list"),
     );
   }
 
@@ -209,22 +209,20 @@ export class EducationProgramApi extends HttpBaseClient {
 
   /**
    * Get the list of education programs for a specific program year.
-   * @param educationProgramConfigurationId ID of the education program configuration.
+   * @param programYearId ID of the program year.
    * @param paginationOptions Pagination options for the results.
    * @returns Paginated list of education programs for the specified program year.
    */
   async getProgramsForProgramYear(
-    educationProgramConfigurationId: number,
+    programYearId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
   > {
-    const url = `education-program/programs/configuration/${educationProgramConfigurationId}?${getPaginationQueryString(
+    const url = `education-program/programs/program-year/${programYearId}?${getPaginationQueryString(
       paginationOptions,
     )}`;
-    return this.getCall<
-      PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
-    >(this.addClientRoot(url));
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**
