@@ -198,7 +198,19 @@ const submit = async () => {
   // Context and flags should be recalculated by the server.
   delete programData.context;
   delete programData.flags;
-
+  if (props.isRenewal) {
+    if (!selectedProgramConfiguration.value?.configurationId) {
+      snackBar.error(
+        "Unable to create program: missing program configuration.",
+      );
+      return;
+    }
+    emit("create", {
+      programData,
+      programConfigurationId:
+        selectedProgramConfiguration.value.configurationId,
+    });
+  }
   if (props.configurationId) {
     emit("create", {
       programData,

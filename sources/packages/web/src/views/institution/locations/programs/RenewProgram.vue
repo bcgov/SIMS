@@ -48,7 +48,7 @@ const submit = async (program: CreateEducationProgramAPIInDTO) => {
     if (error instanceof ApiProcessError) {
       snackBar.error(error.message);
     } else {
-      snackBar.error("An error happened during the saving process.");
+      snackBar.error("An error happened during the renewal process.");
     }
   } finally {
     processing.value = false;

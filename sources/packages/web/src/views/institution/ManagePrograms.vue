@@ -83,7 +83,9 @@
             </template>
             <template #[`item.programId`]="{ item }">
               <v-btn
-                v-if="item.nextProgramConfigurationIdForRenewal"
+                v-if="
+                  !item.isRenewed && item.nextProgramConfigurationIdForRenewal
+                "
                 color="primary"
                 @click="
                   goToRenewProgram(

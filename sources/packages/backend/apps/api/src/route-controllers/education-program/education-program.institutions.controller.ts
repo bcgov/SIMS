@@ -366,6 +366,7 @@ export class EducationProgramInstitutionsController extends BaseController {
         programStatus: program.programStatus,
         isActive: program.isActive,
         isExpired: program.isExpired,
+        isRenewed: !!program.renewedProgram,
         nextProgramConfigurationIdForRenewal:
           nextProgramConfigurationForRenewal?.id,
       })),
