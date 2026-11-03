@@ -8,9 +8,9 @@ import {
 /**
  * Creates a fake batch restriction student for a batch restriction.
  * @param relations required and optional relations for the batch restriction student.
- * - `batchRestriction` batch that includes the student.
- * - `identifier` identifier submitted to find the student.
- * - `student` student found using the identifier, when available.
+ * - `batchRestriction` batch that includes the application number.
+ * - `applicationNumber` application number submitted for the batch.
+ * - `student` student of the application number, when available.
  * - `creator` user that created the batch restriction student.
  * @param options initial values for the batch restriction student.
  * - `initialValues` values that override the default values.
@@ -19,7 +19,7 @@ import {
 export function createFakeBatchRestrictionStudent(
   relations: {
     batchRestriction: BatchRestriction;
-    identifier: string;
+    applicationNumber: string;
     student?: Student;
     creator?: User;
   },
@@ -29,7 +29,7 @@ export function createFakeBatchRestrictionStudent(
 ): BatchRestrictionStudent {
   const batchRestrictionStudent = new BatchRestrictionStudent();
   batchRestrictionStudent.batchRestriction = relations.batchRestriction;
-  batchRestrictionStudent.identifier = relations.identifier;
+  batchRestrictionStudent.applicationNumber = relations.applicationNumber;
   batchRestrictionStudent.student = relations.student;
   batchRestrictionStudent.creator = relations.creator;
   batchRestrictionStudent.failureReason = options?.initialValues?.failureReason;

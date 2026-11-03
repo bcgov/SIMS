@@ -9,11 +9,10 @@ import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { BatchRestriction, Student } from ".";
 
-export const BATCH_RESTRICTION_IDENTIFIER_MAX_LENGTH = 50;
 export const BATCH_RESTRICTION_FAILURE_REASON_MAX_LENGTH = 250;
 
 /**
- * Student included in a batch restriction submission, identified by the submitted identifier.
+ * Application number included in a batch restriction submission and the student it belongs to.
  */
 @Entity({ name: TableNames.BatchRestrictionStudents })
 export class BatchRestrictionStudent extends RecordDataModel {
@@ -23,7 +22,7 @@ export class BatchRestrictionStudent extends RecordDataModel {
   @PrimaryGeneratedColumn()
   id: number;
   /**
-   * Batch restriction submission that included this student.
+   * Batch restriction submission that included this application number.
    */
   @ManyToOne(() => BatchRestriction, {
     nullable: false,
@@ -34,15 +33,14 @@ export class BatchRestrictionStudent extends RecordDataModel {
   })
   batchRestriction: BatchRestriction;
   /**
-   * Identifier submitted to find the student, of the type defined by the batch.
+   * Application number submitted to find the student.
    */
   @Column({
-    name: "identifier",
-    length: BATCH_RESTRICTION_IDENTIFIER_MAX_LENGTH,
+    name: "application_number",
   })
-  identifier: string;
+  applicationNumber: string;
   /**
-   * Student found using the identifier. Null when no student was found.
+   * Student of the application number. Null when the application number does not exist.
    */
   @ManyToOne(() => Student, { nullable: true })
   @JoinColumn({

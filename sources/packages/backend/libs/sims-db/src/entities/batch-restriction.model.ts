@@ -9,7 +9,6 @@ import {
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 import { BatchRestrictionStudent, Restriction } from ".";
-import { BatchRestrictionIdentifierType } from "./batch-restriction-identifier-type.type";
 
 /**
  * Batch restrictions submitted by a ministry user.
@@ -39,16 +38,6 @@ export class BatchRestriction extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   restriction: Restriction;
-  /**
-   * Type of the identifier used to find the students in the batch.
-   */
-  @Column({
-    name: "identifier_type",
-    type: "enum",
-    enum: BatchRestrictionIdentifierType,
-    enumName: "BatchRestrictionIdentifierType",
-  })
-  identifierType: BatchRestrictionIdentifierType;
   /**
    * Students included in the batch.
    */

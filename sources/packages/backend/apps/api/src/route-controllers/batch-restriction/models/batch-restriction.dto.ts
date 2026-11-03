@@ -16,7 +16,7 @@ import {
 /**
  * Maximum number of application numbers accepted in a single batch restriction submission.
  */
-const BATCH_RESTRICTION_MAX_APPLICATION_NUMBERS = 50000;
+const BATCH_RESTRICTION_MAX_APPLICATION_NUMBERS = 20000;
 
 /**
  * Payload used to add a restriction to the students of a list of application numbers.

@@ -1,7 +1,7 @@
 CREATE TABLE sims.batch_restriction_students (
     id SERIAL PRIMARY KEY,
     batch_restriction_id INT NOT NULL REFERENCES sims.batch_restrictions(id),
-    identifier VARCHAR(50) NOT NULL,
+    application_number CHAR(10) NOT NULL,
     student_id INT REFERENCES sims.students(id),
     failure_reason VARCHAR(250),
     -- Audit columns
@@ -14,15 +14,15 @@ CREATE TABLE sims.batch_restriction_students (
 CREATE INDEX batch_restriction_students_batch_restriction_id ON sims.batch_restriction_students(batch_restriction_id);
 
 -- ## Comments
-COMMENT ON TABLE sims.batch_restriction_students IS 'Student included in a batch restriction submission, identified by the submitted identifier.';
+COMMENT ON TABLE sims.batch_restriction_students IS 'Application number included in a batch restriction submission and the student it belongs to.';
 
 COMMENT ON COLUMN sims.batch_restriction_students.id IS 'Auto-generated sequential primary key column.';
 
-COMMENT ON COLUMN sims.batch_restriction_students.batch_restriction_id IS 'Batch restriction submission that included this student.';
+COMMENT ON COLUMN sims.batch_restriction_students.batch_restriction_id IS 'Batch restriction submission that included this application number.';
 
-COMMENT ON COLUMN sims.batch_restriction_students.identifier IS 'Identifier submitted to find the student, of the type defined by the batch.';
+COMMENT ON COLUMN sims.batch_restriction_students.application_number IS 'Application number submitted to find the student.';
 
-COMMENT ON COLUMN sims.batch_restriction_students.student_id IS 'Student found using the identifier. Null when no student was found.';
+COMMENT ON COLUMN sims.batch_restriction_students.student_id IS 'Student of the application number. Null when the application number does not exist.';
 
 COMMENT ON COLUMN sims.batch_restriction_students.failure_reason IS 'Reason the restriction could not be added to the student. Null when the student has the restriction active.';
 

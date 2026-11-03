@@ -48,14 +48,14 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictions", () => {
 
     const successfulBatchStudent = createFakeBatchRestrictionStudent({
       batchRestriction: batch,
-      identifier: "1234567891",
+      applicationNumber: "1234567891",
       student,
       creator: auditUser,
     });
     const failedBatchStudent = createFakeBatchRestrictionStudent(
       {
         batchRestriction: batch,
-        identifier: "1234567890",
+        applicationNumber: "1234567890",
         creator: auditUser,
       },
       {
@@ -112,7 +112,7 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictions", () => {
       createFakeBatchRestrictionStudent(
         {
           batchRestriction: batch,
-          identifier: "1234567890",
+          applicationNumber: "1234567890",
           creator: auditUser,
         },
         {

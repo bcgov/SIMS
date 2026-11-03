@@ -1,9 +1,4 @@
-import {
-  BatchRestriction,
-  BatchRestrictionIdentifierType,
-  Restriction,
-  User,
-} from "@sims/sims-db";
+import { BatchRestriction, Restriction, User } from "@sims/sims-db";
 import { faker } from "@faker-js/faker";
 
 /**
@@ -29,9 +24,6 @@ export function createFakeBatchRestriction(
     options?.initialValues?.batchNumber ??
     faker.number.int({ min: 100000, max: 999999 });
   batchRestriction.restriction = relations.restriction;
-  batchRestriction.identifierType =
-    options?.initialValues?.identifierType ??
-    BatchRestrictionIdentifierType.ApplicationNumber;
   batchRestriction.creator = relations.creator;
   batchRestriction.createdAt = options?.initialValues?.createdAt ?? new Date();
   return batchRestriction;

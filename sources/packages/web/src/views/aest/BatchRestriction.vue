@@ -95,7 +95,7 @@ import { RestrictionService } from "@/services/RestrictionService";
 import { BatchRestrictionService } from "@/services/BatchRestrictionService";
 import { RestrictionAPIOutDTO } from "@/services/http/dto";
 
-const MAX_APPLICATION_NUMBERS = 50000;
+const MAX_APPLICATION_NUMBERS = 20000;
 
 const snackBar = useSnackBar();
 const { checkApplicationNumbersRule } = useRules();

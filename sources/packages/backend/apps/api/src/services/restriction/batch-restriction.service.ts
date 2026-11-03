@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import {
   Application,
   BatchRestriction,
-  BatchRestrictionIdentifierType,
   BatchRestrictionStudent,
   NoteType,
   Restriction,
@@ -133,8 +132,6 @@ export class BatchRestrictionService {
           batchRestriction.restriction = {
             id: restrictionId,
           } as Restriction;
-          batchRestriction.identifierType =
-            BatchRestrictionIdentifierType.ApplicationNumber;
           batchRestriction.creator = creator;
           batchRestriction.createdAt = now;
           batchRestriction.updatedAt = now;
@@ -171,7 +168,7 @@ export class BatchRestrictionService {
             for (const applicationNumber of applicationNumberChunk) {
               const batchStudent = new BatchRestrictionStudent();
               batchStudent.batchRestriction = savedBatchRestriction;
-              batchStudent.identifier = applicationNumber;
+              batchStudent.applicationNumber = applicationNumber;
               batchStudent.creator = creator;
               batchStudent.createdAt = now;
               batchStudent.updatedAt = now;

@@ -15,7 +15,6 @@ import {
 } from "@sims/test-utils";
 import {
   BatchRestriction,
-  BatchRestrictionIdentifierType,
   NoteType,
   Restriction,
   RestrictionNotificationType,
@@ -88,14 +87,13 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
       id: batchRestrictionId,
       batchNumber: expect.any(Number),
       restriction: { id: provincialRestriction.id },
-      identifierType: BatchRestrictionIdentifierType.ApplicationNumber,
       creator: ministryUser,
       createdAt: now,
       updatedAt: now,
       batchRestrictionStudents: [
         {
           id: expect.any(Number),
-          identifier: application.applicationNumber,
+          applicationNumber: application.applicationNumber,
           student: { id: application.student.id },
           failureReason: null,
           createdAt: now,
@@ -166,7 +164,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     expect(batchRestriction.batchRestrictionStudents).toEqual([
       {
         id: expect.any(Number),
-        identifier: application.applicationNumber,
+        applicationNumber: application.applicationNumber,
         student: { id: application.student.id },
         failureReason: null,
         createdAt: now,
@@ -175,7 +173,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
       },
       {
         id: expect.any(Number),
-        identifier: otherApplication.applicationNumber,
+        applicationNumber: otherApplication.applicationNumber,
         student: { id: application.student.id },
         failureReason: null,
         createdAt: now,
@@ -225,7 +223,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     expect(batchRestriction.batchRestrictionStudents).toEqual([
       {
         id: expect.any(Number),
-        identifier: application.applicationNumber,
+        applicationNumber: application.applicationNumber,
         student: { id: application.student.id },
         failureReason: null,
         createdAt: now,
@@ -332,7 +330,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     expect(batchRestriction.batchRestrictionStudents).toEqual([
       {
         id: expect.any(Number),
-        identifier: invalidApplicationNumber,
+        applicationNumber: invalidApplicationNumber,
         student: null,
         failureReason: "The application number does not exist.",
         createdAt: now,
@@ -341,7 +339,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
       },
       {
         id: expect.any(Number),
-        identifier: application.applicationNumber,
+        applicationNumber: application.applicationNumber,
         student: { id: application.student.id },
         failureReason: null,
         createdAt: now,
@@ -463,13 +461,12 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
         id: true,
         batchNumber: true,
         restriction: { id: true },
-        identifierType: true,
         creator: { id: true },
         createdAt: true,
         updatedAt: true,
         batchRestrictionStudents: {
           id: true,
-          identifier: true,
+          applicationNumber: true,
           student: { id: true },
           failureReason: true,
           createdAt: true,
