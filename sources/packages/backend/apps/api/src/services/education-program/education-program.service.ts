@@ -389,6 +389,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.assessedDate",
         "programs.effectiveEndDate",
         "programs.isActive",
+        "parentProgram.id",
+        "precedingProgram.id",
+        "renewedProgram.id",
         "programConfiguration.id",
         "programConfiguration.visualSchema",
         "programConfiguration.validationSchema",
@@ -401,6 +404,9 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .innerJoin("institution.institutionType", "institutionType")
       .innerJoin("programs.programConfiguration", "programConfiguration")
       .innerJoin("programConfiguration.programYear", "programYear")
+      .leftJoin("programs.parentProgram", "parentProgram")
+      .leftJoin("programs.precedingProgram", "precedingProgram")
+      .leftJoin("programs.renewedProgram", "renewedProgram")
       .where("programs.id = :id", { id: programId });
     if (institutionId) {
       query.andWhere("institution.id = :institutionId", { institutionId });

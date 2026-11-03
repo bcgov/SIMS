@@ -21,3 +21,8 @@ ADD COLUMN parent_program_id INT;
 COMMENT ON COLUMN sims.education_programs_history.preceding_program_id IS 'Historical data from the original table. See original table comments for details.';
 
 COMMENT ON COLUMN sims.education_programs_history.parent_program_id IS 'Historical data from the original table. See original table comments for details.';
+
+-- Backfill parent_program_id, making each existing program the parent of its own renewal chain.
+UPDATE sims.education_programs
+SET
+  parent_program_id = id;

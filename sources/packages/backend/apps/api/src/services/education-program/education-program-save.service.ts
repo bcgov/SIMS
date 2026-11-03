@@ -7,6 +7,7 @@ import {
   UserService,
 } from "../../services";
 import { EducationProgramEvaluationService } from "./education-program-evaluator";
+import { EducationProgramManagerService } from "./education-program.manager.service";
 import {
   AviationProgramCredentialTypes,
   EducationProgram,
@@ -64,6 +65,7 @@ export class EducationProgramSaveService {
     private readonly educationProgramDataValidationService: EducationProgramDataValidationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly userService: UserService,
+    private readonly educationProgramManagerService: EducationProgramManagerService,
   ) {}
 
   /**
@@ -171,6 +173,69 @@ export class EducationProgramSaveService {
       configuration.context,
       {
         programConfigurationId,
+      },
+    );
+  }
+
+  async renewProgram(
+    renewFromProgramId: number,
+    updatedProgramData: EducationProgramData,
+    programConfigurationId: number,
+    institutionId: number,
+    auditUserId: number,
+  ): Promise<EducationProgram> {
+    const programToRenew =
+      await this.educationProgramService.getEducationProgramDetails(
+        renewFromProgramId,
+        institutionId,
+      );
+    if (!programToRenew) {
+      throw new CustomNamedError(
+        "Not able to find the education program to renew from.",
+        EDUCATION_PROGRAM_NOT_FOUND,
+      );
+    }
+    const expectedNextConfiguration =
+      await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
+        programToRenew.programConfiguration.programYear.startDate,
+      );
+    if (!expectedNextConfiguration) {
+      throw new CustomNamedError(
+        `No next program configuration found for renewal for the program ID ${renewFromProgramId}.`,
+        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+      );
+    }
+    if (expectedNextConfiguration.id !== programConfigurationId) {
+      throw new CustomNamedError(
+        `The configuration ID ${programConfigurationId} for the renewal is not the expected one for program ID ${renewFromProgramId}.`,
+        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+      );
+    }
+    const configuration = await this.getEducationProgramConfiguration(
+      institutionId,
+      { programConfigurationId },
+    );
+    const programDataToValidate = {
+      ...updatedProgramData,
+      context: configuration.context,
+    };
+    const validationResult = await this.getValidatedResult(
+      configuration,
+      programDataToValidate,
+      {
+        institutionId,
+        programYearId: configuration.programYearId,
+      },
+    );
+    return this.saveEducationProgram(
+      institutionId,
+      auditUserId,
+      validationResult,
+      configuration.context,
+      {
+        programConfigurationId,
+        parentProgramId: programToRenew.parentProgram.id,
+        precedingProgramId: programToRenew.id,
       },
     );
   }
@@ -302,7 +367,12 @@ export class EducationProgramSaveService {
     auditUserId: number,
     validationResult: EducationProgramDataValidationSuccess,
     context: EducationProgramContext,
-    options?: { programId?: number; programConfigurationId?: number },
+    options?: {
+      programId?: number;
+      programConfigurationId?: number;
+      parentProgramId?: number;
+      precedingProgramId?: number;
+    },
   ): Promise<EducationProgram> {
     if (!options?.programId && !options?.programConfigurationId) {
       throw new CustomNamedError(
@@ -310,13 +380,30 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
       );
     }
-    let program = new EducationProgram();
+    const program = new EducationProgram();
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
     if (options?.programId) {
-      // Ensures that the user has access to the institution associated with the program id being updated.
-      program = await this.educationProgramService.getInstitutionProgram(
-        options.programId,
-        institutionId,
-      );
+      // Update an existing program.
+      program.id = options.programId;
+      program.modifier = auditUser;
+      program.updatedAt = now;
+    } else {
+      // Create or renew a program.
+      program.institution = { id: institutionId } as Institution;
+      program.programConfiguration = {
+        id: options.programConfigurationId,
+      } as EducationProgramConfiguration;
+      program.submittedBy = auditUser;
+      program.submittedDate = now;
+      program.creator = auditUser;
+      program.createdAt = now;
+      program.parentProgram = options?.parentProgramId
+        ? ({ id: options.parentProgramId } as EducationProgram)
+        : undefined;
+      program.precedingProgram = options?.precedingProgramId
+        ? ({ id: options.precedingProgramId } as EducationProgram)
+        : undefined;
     }
     const calculatedData =
       await this.educationProgramEvaluationService.evaluate(
@@ -339,7 +426,6 @@ export class EducationProgramSaveService {
         fieldOfStudyCode,
       );
     }
-    program.id = options?.programId;
     program.name = validationResult.programData.programName;
     program.description = validationResult.programData.programDescription;
     // The persisted dynamic program saved at this point varies depending of the update type.
@@ -349,21 +435,6 @@ export class EducationProgramSaveService {
     // For instance, if program has offerings (isFullUpdateRestricted is true), only fields like programName
     // and programDescription may be updated.
     program.programData = { ...validationResult.programData, fieldOfStudyCode };
-    const auditUser = { id: auditUserId } as User;
-    const now = new Date();
-    if (!options?.programId) {
-      program.institution = { id: institutionId } as Institution;
-      program.programConfiguration = {
-        id: options.programConfigurationId,
-      } as EducationProgramConfiguration;
-      program.submittedBy = auditUser;
-      program.submittedDate = now;
-      program.creator = auditUser;
-      program.createdAt = now;
-    } else {
-      program.modifier = auditUser;
-      program.updatedAt = now;
-    }
     return this.dataSource.transaction(async (entityManager) => {
       await this.saveInstitutionAddsPendingProgramNotification(
         { name: program.name, programStatus: program.programStatus },

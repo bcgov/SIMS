@@ -215,6 +215,41 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
   }
 
+  @Post("program/:programId/renew")
+  async renewEducationProgram(
+    @Param("programId", ParseIntPipe) programId: number,
+    @Body() payload: CreateEducationProgramAPIInDTO,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
+    try {
+      const newProgram = await this.educationProgramSaveService.renewProgram(
+        programId,
+        payload.programData as EducationProgramData,
+        payload.programConfigurationId,
+        userToken.authorizations.institutionId,
+        userToken.userId,
+      );
+      return { id: newProgram.id };
+    } catch (error: unknown) {
+      if (error instanceof CustomNamedError) {
+        switch (error.name) {
+          case EDUCATION_PROGRAM_DATA_INVALID:
+            throw new BadRequestException(error.objectInfo, error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
+            throw new UnprocessableEntityException(error.message);
+          case DUPLICATE_SABC_CODE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
+        }
+      }
+      throw error;
+    }
+  }
+
   /**
    * Updates the main information for an existing education program.
    * @param programId program to be updated.

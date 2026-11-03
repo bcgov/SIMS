@@ -41,7 +41,10 @@ const processing = ref(false);
 const submit = async (program: CreateEducationProgramAPIInDTO) => {
   processing.value = true;
   try {
-    await EducationProgramService.shared.createEducationProgram(program);
+    await EducationProgramService.shared.renewEducationProgram(
+      props.programId,
+      program,
+    );
     snackBar.success("Education Program created successfully!");
     await goBack();
   } catch (error: unknown) {

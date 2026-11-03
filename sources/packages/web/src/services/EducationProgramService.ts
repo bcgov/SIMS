@@ -143,6 +143,20 @@ export class EducationProgramService {
   }
 
   /**
+   * Renews an existing education program, creating a new program
+   * for the next program configuration.
+   * @param programId ID of the education program to be renewed.
+   * @param payload information to create the renewed program.
+   * @returns id of the created program.
+   */
+  async renewEducationProgram(
+    programId: number,
+    payload: CreateEducationProgramAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.EducationProgram.renewEducationProgram(programId, payload);
+  }
+
+  /**
    * Updates an existing education program.
    * @param programId program to be updated.
    * @param payload information to be updated.

@@ -120,7 +120,7 @@ export const ManageProgramSummaryHeaders = [
     key: "cipCode",
   },
   {
-    title: "SABC program code",
+    title: "SABC code",
     sortable: true,
     key: "sabcCode",
   },
