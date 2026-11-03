@@ -297,19 +297,6 @@
           "hideOnChildrenHidden": false
         },
         {
-          "label": "Email address",
-          "tableView": true,
-          "validate": {
-            "required": true
-          },
-          "kickbox": {
-            "enabled": true
-          },
-          "key": "email",
-          "type": "email",
-          "input": true
-        },
-        {
           "key": "studentInformationContent",
           "label": "Content",
           "input": false,
@@ -324,6 +311,19 @@
           "hideLabel": true,
           "lockKey": true,
           "tableView": false
+        },
+        {
+          "label": "Email address",
+          "tableView": true,
+          "validate": {
+            "required": true
+          },
+          "kickbox": {
+            "enabled": true
+          },
+          "key": "email",
+          "type": "email",
+          "input": true
         },
         {
           "label": "Gender",

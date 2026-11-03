@@ -138,19 +138,6 @@
               "tableView": false
             },
             {
-              "label": "Email address",
-              "tableView": true,
-              "validate": {
-                "required": true
-              },
-              "kickbox": {
-                "enabled": true
-              },
-              "key": "email",
-              "type": "email",
-              "input": true
-            },
-            {
               "label": "HTML",
               "tag": "hr",
               "attrs": [
@@ -164,6 +151,19 @@
               "type": "htmlelement",
               "input": false,
               "tableView": false
+            },
+            {
+              "label": "Email address",
+              "tableView": true,
+              "validate": {
+                "required": true
+              },
+              "kickbox": {
+                "enabled": true
+              },
+              "key": "email",
+              "type": "email",
+              "input": true
             },
             {
               "label": "Columns",
