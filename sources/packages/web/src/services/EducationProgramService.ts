@@ -88,16 +88,16 @@ export class EducationProgramService {
   }
 
   /**
-   * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration. If not provided,
-   * the most recent active configuration is returned.
+   * Get the active program configuration including context, visual schema, and validation schema,
+   * for the provided program year.
+   * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(
-    programConfigurationId?: number,
+    programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     return ApiClient.EducationProgram.getEducationProgramConfiguration(
-      programConfigurationId,
+      programYearId,
     );
   }
 

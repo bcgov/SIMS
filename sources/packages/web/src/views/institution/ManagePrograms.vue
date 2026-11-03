@@ -117,7 +117,7 @@
                 :is-active="item.isActive && !item.isExpired"
               ></status-chip-program>
             </template>
-            <template #[`item.programId`]="{ item }">
+            <template #[`item.renewal`]="{ item }">
               <v-btn
                 v-if="
                   !item.isRenewed && item.nextProgramConfigurationIdForRenewal
@@ -130,6 +130,22 @@
                   )
                 "
                 >Renew</v-btn
+              >
+              <span v-else class="text-body-2 text-medium-emphasis text-no-wrap">
+                <v-icon
+                  :icon="item.isRenewed ? 'fa:fas fa-check' : 'fa:fas fa-clock'"
+                  size="14"
+                  class="mr-1"
+                />
+                {{ item.isRenewed ? "Renewed" : "Not available" }}
+              </span>
+            </template>
+            <template #[`item.programId`]="{ item }">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="goToViewProgram(item.id)"
+                >View</v-btn
               >
             </template>
           </v-data-table-server>
@@ -289,6 +305,21 @@ const goToRenewProgram = (programId: number, configurationId: number) => {
       configurationId,
     },
     // Allows the renew page to navigate back keeping the current program year selected.
+    query: {
+      programYearId: selectedProgramYearId.value,
+    },
+  });
+};
+
+/**
+ * Navigate to the view program page.
+ * @param programId program to be viewed.
+ */
+const goToViewProgram = (programId: number) => {
+  router.push({
+    name: InstitutionRoutesConst.VIEW_PROGRAM,
+    params: { programId },
+    // Allows the view page to navigate back keeping the current program year selected.
     query: {
       programYearId: selectedProgramYearId.value,
     },

@@ -80,7 +80,11 @@ export class EducationProgramSaveService {
   // TODO: make the programConfigurationId required once the web is updated to always provide it.
   async getEducationProgramConfiguration(
     institutionId: number,
-    options?: { programConfigurationId?: number; programId?: number },
+    options?: {
+      programConfigurationId?: number;
+      programYearId?: number;
+      programId?: number;
+    },
   ): Promise<EducationProgramDynamicConfiguration> {
     const institutionPromise =
       this.institutionService.getInstitutionTypeById(institutionId);
@@ -105,7 +109,11 @@ export class EducationProgramSaveService {
         relations: {
           programYear: true,
         },
-        where: { id: options?.programConfigurationId, isActive: true },
+        where: {
+          id: options?.programConfigurationId,
+          programYear: { id: options?.programYearId },
+          isActive: true,
+        },
         order: {
           programYear: { startDate: "DESC" },
         },
@@ -443,7 +451,9 @@ export class EducationProgramSaveService {
         auditUserId,
         entityManager,
       );
-      const savedProgram = await entityManager.getRepository(EducationProgram).save(program);
+      const savedProgram = await entityManager
+        .getRepository(EducationProgram)
+        .save(program);
       return savedProgram;
     });
   }

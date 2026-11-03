@@ -8,23 +8,24 @@
       />
     </template>
     <program-form
-      :program-id="programId"
-      :is-renewal="true"
+      :title="formTitle"
+      :program-configuration="programConfiguration"
+      :loading="loading"
       :read-only="false"
       :is-processing="processing"
-      @create="submit"
+      @submit="submit"
       @cancel="goBack"
     />
   </full-page-container>
 </template>
 <script setup lang="ts">
 import { useSnackBar } from "@/composables";
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import type { BackTarget } from "@/types";
 import { ApiProcessError } from "@/types";
 import { useRouter } from "vue-router";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
-import { CreateEducationProgramAPIInDTO } from "@/services/http/dto";
+import { EducationProgramConfigurationAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface CreateProgramProps {
@@ -37,13 +38,45 @@ const snackBar = useSnackBar();
 const props = defineProps<CreateProgramProps>();
 const router = useRouter();
 const processing = ref(false);
+const loading = ref(true);
+const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
+const formTitle = computed(() =>
+  programConfiguration.value
+    ? `Program Renewal for ${programConfiguration.value.programYearName}`
+    : undefined,
+);
 
-const submit = async (program: CreateEducationProgramAPIInDTO) => {
+watch(
+  () => props.programId,
+  async (programId) => {
+    try {
+      loading.value = true;
+      programConfiguration.value =
+        await EducationProgramService.shared.getEducationProgramForRenew(
+          programId,
+        );
+    } catch {
+      snackBar.error("Unexpected error while loading program data.");
+    } finally {
+      loading.value = false;
+    }
+  },
+  { immediate: true },
+);
+
+const submit = async (programData: Record<string, unknown>) => {
+  if (!programConfiguration.value) {
+    snackBar.error("Unable to create program: missing program configuration.");
+    return;
+  }
   processing.value = true;
   try {
     await EducationProgramService.shared.renewEducationProgram(
       props.programId,
-      program,
+      {
+        programData,
+        programConfigurationId: programConfiguration.value.configurationId,
+      },
     );
     snackBar.success("Education Program created successfully!");
     await goBack();

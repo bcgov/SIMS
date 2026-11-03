@@ -130,6 +130,12 @@ export const ManageProgramSummaryHeaders = [
     key: "programStatus",
   },
   {
+    title: "Renewal",
+    sortable: false,
+    key: "renewal",
+    width: "160px",
+  },
+  {
     title: "Action",
     sortable: false,
     key: "programId",

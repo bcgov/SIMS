@@ -97,19 +97,25 @@ export class EducationProgramControllerService {
 
   async getEducationProgramConfiguration(
     institutionId: number,
-    programConfigurationId?: number,
-    overrideProgramData?: Record<string, unknown>,
+    options: {
+      programConfigurationId?: number;
+      programYearId?: number;
+      overrideProgramData?: Record<string, unknown>;
+    },
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     const configuration =
       await this.educationProgramSaveService.getEducationProgramConfiguration(
         institutionId,
-        { programConfigurationId },
+        {
+          programConfigurationId: options.programConfigurationId,
+          programYearId: options.programYearId,
+        },
       );
     return {
       configurationId: configuration.configurationId,
       programYearName: configuration.programYearName,
       programData: {
-        ...overrideProgramData,
+        ...options.overrideProgramData,
         context: {
           isFullUpdateRestricted: configuration.context.isFullUpdateRestricted,
           isBCPrivate: configuration.context.isBCPrivate,

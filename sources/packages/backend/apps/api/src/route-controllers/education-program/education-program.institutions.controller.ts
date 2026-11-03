@@ -126,25 +126,26 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration. If not provided,
-   * the most recent active configuration is returned.
+   * Get the active program configuration including context, visual schema, and validation schema,
+   * for the provided program year.
+   * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   @ApiNotFoundResponse({
     description: "Not able to find an active program configuration.",
   })
-  // TODO: The endpoint should require a configuration ID once the client is updated to always provide it.
-  @Get(["configuration", "configuration/:programConfigurationId"])
+  @Get("program-year/:programYearId/configuration")
   async getEducationProgramConfiguration(
     @UserToken() userToken: IInstitutionUserToken,
-    @Param("programConfigurationId", new ParseIntPipe({ optional: true }))
-    programConfigurationId?: number,
+    @Param("programYearId", new ParseIntPipe({ optional: true }))
+    programYearId?: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     try {
       return this.educationProgramControllerService.getEducationProgramConfiguration(
         userToken.authorizations.institutionId,
-        programConfigurationId,
+        {
+          programYearId: programYearId,
+        },
       );
     } catch (error: unknown) {
       if (
@@ -465,8 +466,10 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
     return this.educationProgramControllerService.getEducationProgramConfiguration(
       userToken.authorizations.institutionId,
-      nextProgramConfigurationForRenewal.id,
-      program.programData,
+      {
+        programConfigurationId: nextProgramConfigurationForRenewal.id,
+        overrideProgramData: program.programData,
+      },
     );
   }
 
