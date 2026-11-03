@@ -43,6 +43,7 @@ export interface EducationProgramDataAPIOutDTO {
  */
 export interface EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  programYearName: string;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -110,7 +111,11 @@ export interface EducationProgramManagerDetailsAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
-  canBeRenewed: boolean;
+  /**
+   * Next program configuration ID the program can be renewed for.
+   * Not present when the program cannot be renewed.
+   */
+  nextProgramConfigurationIdForRenewal?: number;
 }
 
 /**

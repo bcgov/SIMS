@@ -120,6 +120,18 @@ export class EducationProgramService {
   }
 
   /**
+   * Get the program configuration for renewal.
+   * It includes a new program context and the data from the previous program.
+   * @param programId the ID of the education program to be renewed.
+   * @returns the next program configuration for renewal.
+   */
+  async getEducationProgramForRenew(
+    programId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramForRenew(programId);
+  }
+
+  /**
    * Creates a new education program.
    * @param payload information to create the new program.
    * @returns id of the created program.

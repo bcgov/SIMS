@@ -9,7 +9,10 @@ import {
   InstitutionUserAuthorizations,
   EducationProgramSaveService,
 } from "../../services";
-import { EducationProgramAPIOutDTO } from "./models/education-program.dto";
+import {
+  EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
+} from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
@@ -60,6 +63,7 @@ export class EducationProgramControllerService {
     return {
       id: program.id,
       configurationId: programConfiguration.configurationId,
+      programYearName: programConfiguration.programYearName,
       programData: {
         ...program.programData,
         context: programConfiguration.context,
@@ -88,6 +92,32 @@ export class EducationProgramControllerService {
       programIntensity: program.programIntensity,
       isActive: program.isActive,
       isExpired: program.isExpired,
+    };
+  }
+
+  async getEducationProgramConfiguration(
+    institutionId: number,
+    programConfigurationId?: number,
+    overrideProgramData?: Record<string, unknown>,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    const configuration =
+      await this.educationProgramSaveService.getEducationProgramConfiguration(
+        institutionId,
+        { programConfigurationId },
+      );
+    return {
+      configurationId: configuration.configurationId,
+      programYearName: configuration.programYearName,
+      programData: {
+        ...overrideProgramData,
+        context: {
+          isFullUpdateRestricted: configuration.context.isFullUpdateRestricted,
+          isBCPrivate: configuration.context.isBCPrivate,
+          isBCInstitution: configuration.context.isBCInstitution,
+        },
+      },
+      visualSchema: configuration.visualSchema,
+      validationSchema: configuration.validationSchema,
     };
   }
 

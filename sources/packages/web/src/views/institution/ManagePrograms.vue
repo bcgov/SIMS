@@ -81,7 +81,20 @@
                 :is-active="item.isActive && !item.isExpired"
               ></status-chip-program>
             </template>
-            <template #[`item.programId`]></template>
+            <template #[`item.programId`]="{ item }">
+              <v-btn
+                v-if="item.nextProgramConfigurationIdForRenewal"
+                color="primary"
+                @click="
+                  goToRenewProgram(
+                    item.id,
+                    item.nextProgramConfigurationIdForRenewal,
+                  )
+                "
+                data-cy="renewProgram"
+                >Renew</v-btn
+              >
+            </template>
           </v-data-table-server>
         </toggle-content>
       </search-table>
@@ -91,6 +104,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useDisplay } from "vuetify";
+import { useRouter } from "vue-router";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -110,8 +125,15 @@ import type {
 } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
 
+interface ManageProgramsProps {
+  // Program configuration to be selected by default, when provided.
+  programConfigurationId?: number;
+}
+
+const props = defineProps<ManageProgramsProps>();
 const { emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
+const router = useRouter();
 const { mobile: isMobile } = useDisplay();
 const programAndCount = ref(
   {} as
@@ -208,15 +230,47 @@ const searchProgramTable = async () => {
   );
 };
 
+/**
+ * Navigate to the renew program page for the next program year.
+ * @param programId program to be renewed.
+ * @param configurationId program configuration the program will be renewed for.
+ */
+const goToRenewProgram = (programId: number, configurationId: number) => {
+  router.push({
+    name: InstitutionRoutesConst.RENEW_PROGRAM,
+    params: {
+      programId,
+      configurationId,
+    },
+    // Allows the renew page to navigate back keeping the current program year selected.
+    query: {
+      programConfigurationId: educationProgramConfigurationId.value,
+    },
+  });
+};
+
 // Reload the programs from the first page when the program configuration changes.
 const programConfigurationChanged = async () => {
   currentPage.value = undefined;
+  // Keep the route in sync with the selected program configuration.
+  await router.replace({
+    name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+    params: { programConfigurationId: educationProgramConfigurationId.value },
+  });
   await searchProgramTable();
 };
 
 onMounted(async () => {
-  // No program year is selected by default, the user must select one to list the programs.
   programConfigurations.value =
     await EducationProgramService.shared.getEducationProgramConfigurations();
+  // No program year is selected by default, unless provided in the route,
+  // otherwise the user must select one to list the programs.
+  const isValidConfiguration = programConfigurations.value.some(
+    (configuration) => configuration.id === props.programConfigurationId,
+  );
+  if (isValidConfiguration) {
+    educationProgramConfigurationId.value = props.programConfigurationId;
+    await searchProgramTable();
+  }
 });
 </script>

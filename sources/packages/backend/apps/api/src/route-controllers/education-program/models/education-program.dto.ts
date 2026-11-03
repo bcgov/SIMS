@@ -60,6 +60,7 @@ export class EducationProgramDataAPIOutDTO {
  */
 export class EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  programYearName: string;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -158,7 +159,7 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
-  canBeRenewed: boolean;
+  nextProgramConfigurationIdForRenewal?: number;
 }
 
 export class EducationProgramsSummaryLocationAPIOutDTO {

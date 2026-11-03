@@ -101,6 +101,7 @@ export const InstitutionRoutesConst = {
   REPORTS: Symbol(),
   INSTITUTION_STUDENT_SEARCH: Symbol(),
   MANAGE_PROGRAMS: Symbol(),
+  RENEW_PROGRAM: Symbol(),
   STUDENT_PROFILE: Symbol(),
   STUDENT_DETAILS: Symbol(),
   STUDENT_APPLICATIONS: Symbol(),

@@ -139,24 +139,10 @@ export class EducationProgramInstitutionsController extends BaseController {
     programConfigurationId?: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     try {
-      const configuration =
-        await this.educationProgramSaveService.getEducationProgramConfiguration(
-          userToken.authorizations.institutionId,
-          { programConfigurationId },
-        );
-      return {
-        configurationId: configuration.configurationId,
-        programData: {
-          context: {
-            isFullUpdateRestricted:
-              configuration.context.isFullUpdateRestricted,
-            isBCPrivate: configuration.context.isBCPrivate,
-            isBCInstitution: configuration.context.isBCInstitution,
-          },
-        },
-        visualSchema: configuration.visualSchema,
-        validationSchema: configuration.validationSchema,
-      };
+      return this.educationProgramControllerService.getEducationProgramConfiguration(
+        userToken.authorizations.institutionId,
+        programConfigurationId,
+      );
     } catch (error: unknown) {
       if (
         error instanceof CustomNamedError &&
@@ -356,16 +342,17 @@ export class EducationProgramInstitutionsController extends BaseController {
         `Active configuration not found for ID ${educationProgramConfigurationId}.`,
       );
     }
-    const [canBeRenewed, paginatedPrograms] = await Promise.all([
-      this.educationProgramManagerService.canRenewForNextProgramConfiguration(
-        activeConfiguration.programYear.startDate,
-      ),
-      this.educationProgramManagerService.getEducationProgramsManagerDetails(
-        userToken.authorizations.institutionId,
-        educationProgramConfigurationId,
-        pagination,
-      ),
-    ]);
+    const [nextProgramConfigurationForRenewal, paginatedPrograms] =
+      await Promise.all([
+        this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
+          activeConfiguration.programYear.startDate,
+        ),
+        this.educationProgramManagerService.getEducationProgramsManagerDetails(
+          userToken.authorizations.institutionId,
+          educationProgramConfigurationId,
+          pagination,
+        ),
+      ]);
     return {
       count: paginatedPrograms.count,
       results: paginatedPrograms.results.map((program) => ({
@@ -379,7 +366,8 @@ export class EducationProgramInstitutionsController extends BaseController {
         programStatus: program.programStatus,
         isActive: program.isActive,
         isExpired: program.isExpired,
-        canBeRenewed,
+        nextProgramConfigurationIdForRenewal:
+          nextProgramConfigurationForRenewal?.id,
       })),
     };
   }
@@ -400,6 +388,49 @@ export class EducationProgramInstitutionsController extends BaseController {
     return this.educationProgramControllerService.getEducationProgram(
       programId,
       userToken.authorizations.institutionId,
+    );
+  }
+
+  /**
+   * Get the program configuration for renewal.
+   * It includes a new program context and the data from the previous program.
+   * @param programId the ID of the education program to be renewed.
+   * @param userToken the token of the user making the request.
+   * @returns the next program configuration for renewal.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find the requested program.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "The next program configuration for renewal could not be found.",
+  })
+  @Get(":programId/renew")
+  async getEducationProgramForRenew(
+    @Param("programId", ParseIntPipe) programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    const program =
+      await this.educationProgramService.getEducationProgramDetails(
+        programId,
+        userToken.authorizations.institutionId,
+      );
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+    const nextProgramConfigurationForRenewal =
+      await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
+        program.programConfiguration.programYear.startDate,
+      );
+    if (!nextProgramConfigurationForRenewal) {
+      throw new UnprocessableEntityException(
+        "The next program configuration for renewal could not be found.",
+      );
+    }
+    return this.educationProgramControllerService.getEducationProgramConfiguration(
+      userToken.authorizations.institutionId,
+      nextProgramConfigurationForRenewal.id,
+      program.programData,
     );
   }
 

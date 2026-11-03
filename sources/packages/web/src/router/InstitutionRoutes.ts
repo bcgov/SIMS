@@ -43,6 +43,7 @@ import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
 import WithdrawalUpload from "@/views/institution/WithdrawalUpload.vue";
 import InstitutionSearchStudents from "@/views/institution/student/InstitutionSearchStudents.vue";
 import ManagePrograms from "@/views/institution/ManagePrograms.vue";
+import RenewProgram from "@/views/institution/locations/programs/RenewProgram.vue";
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
@@ -145,12 +146,50 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           default: ManagePrograms,
           sidebar: InstitutionHomeSideBar,
         },
+        props: {
+          default: (route) => ({
+            programConfigurationId: route.params.programConfigurationId
+              ? Number.parseInt(route.params.programConfigurationId as string)
+              : undefined,
+          }),
+        },
         meta: {
           clientType: ClientIdType.Institution,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
             InstitutionUserTypes.readOnlyUser,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageProgramsRenew,
+        name: InstitutionRoutesConst.RENEW_PROGRAM,
+        component: RenewProgram,
+        props: (route) => ({
+          programId: Number.parseInt(route.params.programId as string),
+          configurationId: Number.parseInt(
+            route.params.configurationId as string,
+          ),
+          // Keep the program year selected when navigating back to the manage programs.
+          backTarget: {
+            name: "Manage Programs",
+            to: {
+              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+              params: route.query.programConfigurationId
+                ? {
+                    programConfigurationId: route.query
+                      .programConfigurationId as string,
+                  }
+                : undefined,
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
           ],
         },
       },

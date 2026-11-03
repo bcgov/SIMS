@@ -76,9 +76,9 @@ export class EducationProgramManagerService {
     });
   }
 
-  async canRenewForNextProgramConfiguration(
+  async getNextProgramConfigurationForRenewal(
     currentStartDateReference: string,
-  ): Promise<boolean> {
+  ): Promise<EducationProgramConfiguration | null> {
     const nextConfiguration =
       await this.educationProgramConfigurationRepo.findOne({
         select: {
@@ -103,7 +103,7 @@ export class EducationProgramManagerService {
           },
         },
       });
-    return !!nextConfiguration?.isActive;
+    return nextConfiguration?.isActive ? nextConfiguration : null;
   }
 
   async getEducationProgramsManagerDetails(

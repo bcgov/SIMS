@@ -97,6 +97,7 @@ export class EducationProgramSaveService {
           programYear: {
             id: true,
             startDate: true,
+            programYear: true,
           },
         },
         relations: {
@@ -119,6 +120,7 @@ export class EducationProgramSaveService {
     return {
       configurationId: programConfiguration.id,
       programYearId: programConfiguration.programYear.id,
+      programYearName: programConfiguration.programYear.programYear,
       updatedAt: programConfiguration.updatedAt,
       context: {
         isFullUpdateRestricted: hasOfferings,
