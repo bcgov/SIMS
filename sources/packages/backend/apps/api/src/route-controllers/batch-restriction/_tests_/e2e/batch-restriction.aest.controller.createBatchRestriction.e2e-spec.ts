@@ -26,7 +26,7 @@ import {
 import { Role } from "../../../../auth";
 import MockDate from "mockdate";
 
-describe("RestrictionAESTController(e2e)-createBatchRestriction", () => {
+describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let ministryUser: User;
@@ -530,5 +530,5 @@ describe("RestrictionAESTController(e2e)-createBatchRestriction", () => {
  * @returns The endpoint URL for the batch restriction API.
  */
 function getEndpoint(): string {
-  return "/aest/restriction/student/batch";
+  return "/aest/batch-restriction";
 }

@@ -52,7 +52,7 @@ import { useDisplay } from "vuetify";
 import { BatchRestrictionHistoryHeaders } from "@/types/contracts/DataTableContract";
 import { BatchRestrictionSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
-import { RestrictionService } from "@/services/RestrictionService";
+import { BatchRestrictionService } from "@/services/BatchRestrictionService";
 
 const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();
@@ -65,7 +65,7 @@ const loadBatchRestrictionHistory = async () => {
   batchRestrictionHistoryLoading.value = true;
   try {
     batchRestrictionHistory.value =
-      await RestrictionService.shared.getBatchRestrictions();
+      await BatchRestrictionService.shared.getBatchRestrictions();
   } catch {
     snackBar.error(
       "Unexpected error while loading the batch restriction history.",

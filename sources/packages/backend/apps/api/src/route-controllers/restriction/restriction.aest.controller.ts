@@ -17,7 +17,6 @@ import {
   InstitutionRestrictionService,
   RestrictionService,
   InstitutionService,
-  BatchRestrictionService,
 } from "../../services";
 import BaseController from "../BaseController";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
@@ -41,8 +40,6 @@ import {
   InstitutionRestrictionSummaryAPIOutDTO,
   InstitutionActiveRestrictionsAPIOutDTO,
   RestrictionAPIOutDTO,
-  BatchRestrictionAPIInDTO,
-  BatchRestrictionSummaryAPIOutDTO,
 } from "./models/restriction.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import { getUserFullName } from "../../utilities";
@@ -85,70 +82,8 @@ export class RestrictionAESTController extends BaseController {
     private readonly restrictionService: RestrictionService,
     private readonly institutionRestrictionService: InstitutionRestrictionService,
     private readonly institutionService: InstitutionService,
-    private readonly batchRestrictionService: BatchRestrictionService,
   ) {
     super();
-  }
-
-  /**
-   * Adds a provincial restriction to the students of the given application numbers.
-   * The same note is applied to all restrictions added through the batch.
-   * @param payload restriction, application numbers, and note for the batch.
-   * @param userToken authenticated AEST user token.
-   * @returns the primary identifier of the created batch.
-   */
-  @Roles(Role.AESTBatchRestriction)
-  @ApiUnprocessableEntityResponse({
-    description:
-      "The given restriction type is not Provincial. Only provincial restrictions can be added.",
-  })
-  @Post("student/batch")
-  async createBatchRestriction(
-    @Body() payload: BatchRestrictionAPIInDTO,
-    @UserToken() userToken: IUserToken,
-  ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const restrictionExists = await this.restrictionService.restrictionExists(
-      payload.restrictionId,
-      RestrictionType.Provincial,
-    );
-    if (!restrictionExists) {
-      throw new UnprocessableEntityException(
-        "The given restriction type is not Provincial. Only provincial restrictions can be added.",
-      );
-    }
-    const batchRestriction =
-      await this.batchRestrictionService.createBatchRestriction(
-        payload.restrictionId,
-        payload.applicationNumbers,
-        payload.note,
-        userToken.userId,
-      );
-    return { id: batchRestriction.id };
-  }
-
-  /**
-   * Gets the batch restriction submissions.
-   * @returns batch restriction submissions.
-   */
-  @Roles(Role.AESTBatchRestriction)
-  @Get("student/batch")
-  async getBatchRestrictions(): Promise<BatchRestrictionSummaryAPIOutDTO[]> {
-    const summaries =
-      await this.batchRestrictionService.getBatchRestrictionSummaries();
-    return summaries.map((summary) => ({
-      id: summary.id,
-      batchNumber: summary.batchNumber,
-      createdAt: summary.createdAt,
-      creatorName: getUserFullName({
-        firstName: summary.creatorFirstName,
-        lastName: summary.creatorLastName,
-      }),
-      restrictionCode: summary.restrictionCode,
-      restrictionDescription: summary.restrictionDescription,
-      totalCount: summary.totalCount,
-      successCount: summary.successCount,
-      failureCount: summary.failureCount,
-    }));
   }
 
   /**

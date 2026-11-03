@@ -20,7 +20,7 @@ import { Restriction, User } from "@sims/sims-db";
 import { getUserFullName } from "../../../../utilities";
 import { addDays } from "@sims/utilities/date-utils";
 
-describe("RestrictionAESTController(e2e)-getBatchRestrictions", () => {
+describe("BatchRestrictionAESTController(e2e)-getBatchRestrictions", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let auditUser: User;
@@ -166,5 +166,5 @@ describe("RestrictionAESTController(e2e)-getBatchRestrictions", () => {
  * @returns the endpoint for batch restrictions for AEST users.
  */
 function getEndpoint(): string {
-  return "/aest/restriction/student/batch";
+  return "/aest/batch-restriction";
 }

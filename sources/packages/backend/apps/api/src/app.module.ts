@@ -24,6 +24,7 @@ import {
   MetricsController,
   SystemLookupConfigurationController,
   BatchReassessmentAESTController,
+  BatchRestrictionAESTController,
 } from "./route-controllers";
 import { AuthModule } from "./auth/auth.module";
 import { ClientRouteThrottlerGuard } from "./auth/guards";
@@ -153,10 +154,9 @@ export class AppModule implements NestModule, OnModuleInit {
     consumer
       .apply(json({ limit: JSON_300KB }))
       .forRoutes(DynamicFormAESTController, BatchReassessmentAESTController);
-    consumer.apply(json({ limit: JSON_1MB })).forRoutes({
-      path: `${ClientTypeBaseRoute.AEST}/restriction/student/batch`,
-      method: RequestMethod.POST,
-    });
+    consumer
+      .apply(json({ limit: JSON_1MB }))
+      .forRoutes(BatchRestrictionAESTController);
     // Apply the body parser global configuration after the specific ones to allow the proper evaluation of the routes.
     consumer.apply(json()).forRoutes("{*path}");
   }

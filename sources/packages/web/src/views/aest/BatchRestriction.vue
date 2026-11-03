@@ -21,6 +21,7 @@
             @update:model-value="loadRestrictionReasons"
             :rules="[(v) => !!v || 'Category is required.']"
             label="Category"
+            density="compact"
             variant="outlined"
             class="mb-4"
             hide-details="auto"
@@ -32,6 +33,7 @@
             item-value="id"
             :rules="[(v) => !!v || 'Reason is required.']"
             label="Reason"
+            density="compact"
             variant="outlined"
             class="mb-4"
             hide-details="auto"
@@ -51,9 +53,6 @@
             primary-label="Submit"
             justify="end"
             @primary-click="openConfirmSubmitModal"
-            :disable-primary-button="
-              !restrictionId || !applicationNumbers?.trim()
-            "
             :show-secondary-button="false"
           />
         </v-form>
@@ -93,6 +92,7 @@ import {
   useSnackBar,
 } from "@/composables";
 import { RestrictionService } from "@/services/RestrictionService";
+import { BatchRestrictionService } from "@/services/BatchRestrictionService";
 import { RestrictionAPIOutDTO } from "@/services/http/dto";
 
 const MAX_APPLICATION_NUMBERS = 50000;
@@ -175,7 +175,7 @@ const submitRestriction = async (
   userNoteModalResult: UserNoteModal<string>,
 ): Promise<boolean> => {
   try {
-    await RestrictionService.shared.createBatchRestriction({
+    await BatchRestrictionService.shared.createBatchRestriction({
       restrictionId: restrictionId.value as number,
       applicationNumbers: parseApplicationNumbers(applicationNumbers.value),
       note: userNoteModalResult.note,
