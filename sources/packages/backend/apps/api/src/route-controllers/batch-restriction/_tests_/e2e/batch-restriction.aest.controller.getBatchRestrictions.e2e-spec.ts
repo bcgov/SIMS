@@ -6,6 +6,7 @@ import {
   createFakeBatchRestriction,
   createFakeBatchRestrictionStudent,
   createFakeRestriction,
+  createFakeStudentRestriction,
   createFakeUser,
   saveFakeStudent,
 } from "@sims/test-utils";
@@ -38,8 +39,15 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictions", () => {
     // Arrange
     const now = new Date();
 
-    // Batch has 1 success (student found) and 1 failure (application number not found).
+    // Batch has 1 success (student restriction active) and 1 failure (application number not found).
     const student = await saveFakeStudent(db.dataSource);
+    const studentRestriction = await db.studentRestriction.save(
+      createFakeStudentRestriction({
+        student,
+        restriction: provincialRestriction,
+        creator: auditUser,
+      }),
+    );
     const batch = createFakeBatchRestriction(
       { restriction: provincialRestriction, creator: auditUser },
       { initialValues: { createdAt: now } },
@@ -49,7 +57,7 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictions", () => {
     const successfulBatchStudent = createFakeBatchRestrictionStudent({
       batchRestriction: batch,
       applicationNumber: "1234567891",
-      student,
+      studentRestriction,
       creator: auditUser,
     });
     const failedBatchStudent = createFakeBatchRestrictionStudent(

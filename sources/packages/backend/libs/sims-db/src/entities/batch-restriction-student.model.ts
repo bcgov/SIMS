@@ -7,12 +7,12 @@ import {
 } from "typeorm";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
-import { BatchRestriction, Student } from ".";
+import { BatchRestriction, StudentRestriction } from ".";
 
 export const BATCH_RESTRICTION_FAILURE_REASON_MAX_LENGTH = 250;
 
 /**
- * Application number included in a batch restriction submission and the student it belongs to.
+ * Application number included in a batch restriction submission and the student restriction it resulted in.
  */
 @Entity({ name: TableNames.BatchRestrictionStudents })
 export class BatchRestrictionStudent extends RecordDataModel {
@@ -40,14 +40,15 @@ export class BatchRestrictionStudent extends RecordDataModel {
   })
   applicationNumber: string;
   /**
-   * Student of the application number. Null when the application number does not exist.
+   * Active student restriction of the student of the application number, either
+   * added by the batch or already active. Null when the application number does not exist.
    */
-  @ManyToOne(() => Student, { nullable: true })
+  @ManyToOne(() => StudentRestriction, { nullable: true })
   @JoinColumn({
-    name: "student_id",
+    name: "student_restriction_id",
     referencedColumnName: ColumnNames.ID,
   })
-  student?: Student;
+  studentRestriction?: StudentRestriction;
   /**
    * Reason the restriction could not be added to the student.
    * Null when the student has the restriction active.

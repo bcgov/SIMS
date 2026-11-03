@@ -6,7 +6,6 @@ import {
   BatchRestrictionStudent,
   NoteType,
   Restriction,
-  Student,
   StudentRestriction,
   User,
 } from "@sims/sims-db";
@@ -146,15 +145,14 @@ export class BatchRestrictionService {
               distinctApplicationNumbers,
               entityManager,
             );
-          // Students known to have the restriction active, either before the batch
+          // Active student restriction IDs by student, either before the batch
           // or added by it, to add the restriction only once per student.
-          const studentsWithActiveRestriction = new Set(
-            await this.getStudentIdsWithActiveRestriction(
+          const activeStudentRestrictionIds =
+            await this.getActiveStudentRestrictionIds(
               restrictionId,
               [...new Set(studentIdsByApplicationNumber.values())],
               entityManager,
-            ),
-          );
+            );
           const applicationNumbersToChunk = [...distinctApplicationNumbers];
 
           while (applicationNumbersToChunk.length > 0) {
@@ -164,7 +162,7 @@ export class BatchRestrictionService {
               BATCH_RESTRICTION_CHUNK_SIZE,
             );
             const batchStudentsToSave: BatchRestrictionStudent[] = [];
-            const studentIdsToAddRestriction: number[] = [];
+            const studentIdsToAddRestriction = new Set<number>();
             for (const applicationNumber of applicationNumberChunk) {
               const batchStudent = new BatchRestrictionStudent();
               batchStudent.batchRestriction = savedBatchRestriction;
@@ -181,23 +179,39 @@ export class BatchRestrictionService {
                   APPLICATION_NUMBER_NOT_FOUND_REASON;
                 continue;
               }
-              batchStudent.student = { id: studentId } as Student;
-              if (studentsWithActiveRestriction.has(studentId)) {
-                // The student already has the restriction active.
-                continue;
+              if (!activeStudentRestrictionIds.has(studentId)) {
+                studentIdsToAddRestriction.add(studentId);
               }
-              studentsWithActiveRestriction.add(studentId);
-              studentIdsToAddRestriction.push(studentId);
             }
 
-            await this.addStudentRestrictions(
-              restrictionId,
-              studentIdsToAddRestriction,
-              note,
-              userId,
-              now,
-              entityManager,
+            const addedStudentRestrictionIds =
+              await this.addStudentRestrictions(
+                restrictionId,
+                [...studentIdsToAddRestriction],
+                note,
+                userId,
+                now,
+                entityManager,
+              );
+            addedStudentRestrictionIds.forEach(
+              (studentRestrictionId, studentId) =>
+                activeStudentRestrictionIds.set(
+                  studentId,
+                  studentRestrictionId,
+                ),
             );
+            // The added student restriction IDs are only known after they are inserted,
+            // hence the batch students are associated with their student restrictions afterwards.
+            for (const batchStudent of batchStudentsToSave) {
+              const studentId = studentIdsByApplicationNumber.get(
+                batchStudent.applicationNumber,
+              );
+              if (studentId) {
+                batchStudent.studentRestriction = {
+                  id: activeStudentRestrictionIds.get(studentId),
+                } as StudentRestriction;
+              }
+            }
             // Single bulk insert for all the batch students of the chunk.
             await entityManager
               .getRepository(BatchRestrictionStudent)
@@ -244,37 +258,45 @@ export class BatchRestrictionService {
   }
 
   /**
-   * Gets the students, among the given ones, that have the restriction active.
+   * Gets the active student restriction of the students, among the given ones,
+   * that have the restriction active. When a student has the restriction active
+   * more than once, the most recent student restriction is returned.
    * The student IDs are sent as a single array parameter, which is hashed by the
    * database instead of compared one by one, and supports the maximum batch size
    * without hitting the query parameters limit.
    * @param restrictionId restriction to be checked.
    * @param studentIds students to be checked.
    * @param entityManager transactional entity manager.
-   * @returns IDs of the students that have the restriction active.
+   * @returns active student restriction IDs by student ID. Students that
+   * do not have the restriction active are not included.
    */
-  private async getStudentIdsWithActiveRestriction(
+  private async getActiveStudentRestrictionIds(
     restrictionId: number,
     studentIds: number[],
     entityManager: EntityManager,
-  ): Promise<number[]> {
+  ): Promise<Map<number, number>> {
     if (!studentIds.length) {
-      return [];
+      return new Map();
     }
     const studentRestrictions = await entityManager
       .getRepository(StudentRestriction)
       .createQueryBuilder("studentRestriction")
-      .select("student.id", "studentId")
-      .distinct(true)
-      .innerJoin("studentRestriction.student", "student")
+      .select("studentRestriction.student.id", "studentId")
+      .addSelect("MAX(studentRestriction.id)", "studentRestrictionId")
       .where("studentRestriction.restriction.id = :restrictionId", {
         restrictionId,
       })
       .andWhere("studentRestriction.isActive = true")
-      .andWhere("student.id = ANY(:studentIds)", { studentIds })
-      .getRawMany<{ studentId: number }>();
-    return studentRestrictions.map(
-      (studentRestriction) => studentRestriction.studentId,
+      .andWhere("studentRestriction.student.id = ANY(:studentIds)", {
+        studentIds,
+      })
+      .groupBy("studentRestriction.student.id")
+      .getRawMany<{ studentId: number; studentRestrictionId: number }>();
+    return new Map(
+      studentRestrictions.map((studentRestriction) => [
+        studentRestriction.studentId,
+        studentRestriction.studentRestrictionId,
+      ]),
     );
   }
 
@@ -287,6 +309,7 @@ export class BatchRestrictionService {
    * @param userId user adding the restrictions.
    * @param createdAt creation date of the batch, shared by the student restrictions.
    * @param entityManager transactional entity manager.
+   * @returns added student restriction IDs by student ID.
    */
   private async addStudentRestrictions(
     restrictionId: number,
@@ -295,9 +318,9 @@ export class BatchRestrictionService {
     userId: number,
     createdAt: Date,
     entityManager: EntityManager,
-  ): Promise<void> {
+  ): Promise<Map<number, number>> {
     if (!studentIds.length) {
-      return;
+      return new Map();
     }
     // Single bulk insert for all the notes, returned in the same order as the students.
     const notes = await this.noteSharedService.createStudentNotes(
@@ -321,7 +344,7 @@ export class BatchRestrictionService {
       studentRestriction.updatedAt = createdAt;
       return studentRestriction;
     });
-    // Single bulk insert for all the student restrictions.
+    // Single bulk insert for all the student restrictions, returned in the same order as the students.
     const insertResult = await entityManager
       .getRepository(StudentRestriction)
       .insert(studentRestrictions);
@@ -332,6 +355,12 @@ export class BatchRestrictionService {
       studentRestrictionIds,
       userId,
       entityManager,
+    );
+    return new Map(
+      studentIds.map((studentId, index) => [
+        studentId,
+        studentRestrictionIds[index],
+      ]),
     );
   }
 }
