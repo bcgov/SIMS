@@ -46,7 +46,7 @@ export class BatchRestrictionService {
    * either added by the batch or already active, and failed when it has a failure reason.
    * @returns batch restriction submissions.
    */
-  async getBatchRestrictionSummaries(): Promise<BatchRestrictionSummary[]> {
+  getBatchRestrictionSummaries(): Promise<BatchRestrictionSummary[]> {
     return (
       this.batchRestrictionRepo
         .createQueryBuilder("batchRestriction")
@@ -104,7 +104,7 @@ export class BatchRestrictionService {
    * @param userId user who submitted the batch.
    * @returns the created batch restriction submission.
    */
-  async createBatchRestriction(
+  createBatchRestriction(
     restrictionId: number,
     applicationNumbers: string[],
     note: string,

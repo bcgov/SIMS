@@ -22,7 +22,7 @@ export class BatchRestrictionApi extends HttpBaseClient {
    * Gets the batch restriction submissions.
    * @returns batch restriction submissions.
    */
-  async getBatchRestrictions(): Promise<BatchRestrictionSummaryAPIOutDTO[]> {
+  getBatchRestrictions(): Promise<BatchRestrictionSummaryAPIOutDTO[]> {
     return this.getCall(this.addClientRoot("batch-restriction"));
   }
 }

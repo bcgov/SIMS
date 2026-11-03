@@ -19,9 +19,7 @@ export class BatchRestrictionService {
    * Adds a restriction to the students of the given application numbers.
    * @param payload restriction, application numbers, and note for the batch.
    */
-  async createBatchRestriction(
-    payload: BatchRestrictionAPIInDTO,
-  ): Promise<void> {
+  createBatchRestriction(payload: BatchRestrictionAPIInDTO): Promise<void> {
     return ApiClient.BatchRestrictionApi.createBatchRestriction(payload);
   }
 
@@ -29,7 +27,7 @@ export class BatchRestrictionService {
    * Gets the batch restriction submissions.
    * @returns batch restriction submissions.
    */
-  async getBatchRestrictions(): Promise<BatchRestrictionSummaryAPIOutDTO[]> {
+  getBatchRestrictions(): Promise<BatchRestrictionSummaryAPIOutDTO[]> {
     return ApiClient.BatchRestrictionApi.getBatchRestrictions();
   }
 }
