@@ -193,6 +193,31 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.InstitutionManageProgramsCreate,
+        name: InstitutionRoutesConst.CREATE_PROGRAM,
+        component: CreateProgram,
+        props: (route) => ({
+          programYearId: Number.parseInt(route.params.programYearId as string),
+          // Keep the program year selected when navigating back to the manage programs.
+          backTarget: {
+            name: "Manage Programs",
+            to: {
+              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+              params: {
+                programYearId: route.params.programYearId as string,
+              },
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
         path: AppRoutes.LocationPrograms,
         name: InstitutionRoutesConst.LOCATION_PROGRAMS,
         components: {

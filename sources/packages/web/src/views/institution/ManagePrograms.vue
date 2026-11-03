@@ -11,7 +11,44 @@
         <body-header
           title="Education Programs"
           :records-count="programAndCount?.count"
-        />
+        >
+          <template #actions>
+            <div class="d-flex justify-end">
+              <v-menu>
+                <template #activator="{ props: menuProps }">
+                  <v-btn
+                    color="primary"
+                    v-bind="menuProps"
+                    :disabled="!activeProgramYears.length"
+                    prepend-icon="fa:fa fa-plus-circle"
+                    append-icon="mdi-menu-down"
+                  >
+                    Create program
+                  </v-btn>
+                </template>
+                <v-list
+                  active-class="active-list-item"
+                  density="compact"
+                  bg-color="default"
+                  color="primary"
+                >
+                  <v-list-item
+                    v-for="programYear in activeProgramYears"
+                    :key="programYear.id"
+                    :value="programYear.id"
+                    @click="goToCreateProgram(programYear.id)"
+                  >
+                    <v-list-item-title>
+                      <span class="label-bold">{{
+                        programYear.description
+                      }}</span>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+          </template>
+        </body-header>
       </template>
       <search-table :loading="loading" @search="searchProgramTable">
         <template #prepend-search>
@@ -76,7 +113,6 @@
             </template>
             <template #[`item.programStatus`]="{ item }">
               <status-chip-program
-                data-cy="programStatus"
                 :status="item.programStatus"
                 :is-active="item.isActive && !item.isExpired"
               ></status-chip-program>
@@ -93,7 +129,6 @@
                     item.nextProgramConfigurationIdForRenewal,
                   )
                 "
-                data-cy="renewProgram"
                 >Renew</v-btn
               >
             </template>
@@ -122,7 +157,7 @@ import {
 } from "@/types";
 import type {
   EducationProgramManagerDetailsAPIOutDTO,
-  OptionItemAPIOutDTO,
+  EducationProgramYearAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
@@ -152,10 +187,20 @@ const sortBy = ref([
 ]);
 const currentPage = ref();
 const currentPageLimit = ref();
-// Active education program configurations available to be selected.
-const programYears = ref<OptionItemAPIOutDTO[]>([]);
+// Program years with education program configurations available to be selected.
+const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 // Education program configuration the programs are listed for.
 const selectedProgramYearId = ref<number | null>();
+
+/**
+ * Program years with at least one active education program configuration,
+ * available to have new programs created for.
+ */
+const activeProgramYears = computed(() =>
+  programYears.value.filter(
+    (programYear) => programYear.hasActiveProgramConfiguration,
+  ),
+);
 
 /**
  * Message displayed when there are no programs to be listed.
@@ -247,6 +292,17 @@ const goToRenewProgram = (programId: number, configurationId: number) => {
     query: {
       programYearId: selectedProgramYearId.value,
     },
+  });
+};
+
+/**
+ * Navigate to the create program page for the program year.
+ * @param programYearId program year the program will be created for.
+ */
+const goToCreateProgram = (programYearId: number) => {
+  router.push({
+    name: InstitutionRoutesConst.CREATE_PROGRAM,
+    params: { programYearId },
   });
 };
 

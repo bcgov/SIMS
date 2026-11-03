@@ -150,6 +150,12 @@ export class EducationProgramsSummaryAPIOutDTO {
   isExpired: boolean;
 }
 
+export class EducationProgramYearAPIOutDTO {
+  id: number;
+  description: string;
+  hasActiveProgramConfiguration: boolean;
+}
+
 export class EducationProgramManagerDetailsAPIOutDTO {
   id: number;
   name: string;

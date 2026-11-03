@@ -99,6 +99,19 @@ export interface EducationProgramsSummaryAPIOutDTO {
 }
 
 /**
+ * Program year with at least one education program configuration.
+ */
+export interface EducationProgramYearAPIOutDTO {
+  id: number;
+  description: string;
+  /**
+   * Indicates if the program year has at least
+   * one active education program configuration.
+   */
+  hasActiveProgramConfiguration: boolean;
+}
+
+/**
  * Education program details to be displayed in the programs management list.
  */
 export interface EducationProgramManagerDetailsAPIOutDTO {

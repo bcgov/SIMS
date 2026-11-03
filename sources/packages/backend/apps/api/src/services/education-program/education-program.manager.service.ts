@@ -11,19 +11,10 @@ import {
 } from "../../utilities";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FieldSortOrder } from "@sims/utilities";
-
-/**
- * Maps the sort fields received from the API to the
- * {@link EducationProgram} entity properties.
- */
-const PROGRAMS_MANAGEMENT_SORT_FIELDS: Record<string, keyof EducationProgram> =
-  {
-    programName: "name",
-    credentialType: "credentialType",
-    cipCode: "cipCode",
-    sabcCode: "sabcCode",
-    programStatus: "programStatus",
-  };
+import {
+  PROGRAMS_MANAGEMENT_SORT_FIELDS,
+  ProgramYearWithConfiguration,
+} from "./education-program.manager.models";
 
 @Injectable()
 export class EducationProgramManagerService {
@@ -36,9 +27,48 @@ export class EducationProgramManagerService {
     private readonly programYearRepo: Repository<ProgramYear>,
   ) {}
 
-  async getActiveConfiguration(
-    educationProgramConfigurationId: number,
-  ): Promise<EducationProgramConfiguration> {
+  /**
+   * Gets the program years that have at least one education program
+   * configuration associated with them, independently of whether the
+   * configuration is active or not.
+   * An active configuration is required for renewal purposes only. If a
+   * program year had a configuration, there is a potential to education
+   * programs being offered in that year.
+   * @returns program years with at least one program configuration, including
+   * whether at least one of the configurations is active.
+   */
+  async getProgramYears(): Promise<ProgramYearWithConfiguration[]> {
+    return this.programYearRepo
+      .createQueryBuilder("programYear")
+      .select("programYear.id", "id")
+      .addSelect("programYear.programYear", "programYear")
+      .addSelect("BOOL_OR(configuration.isActive)", "hasActiveConfiguration")
+      .innerJoin(
+        EducationProgramConfiguration,
+        "configuration",
+        "configuration.programYear.id = programYear.id",
+      )
+      .groupBy("programYear.id")
+      .orderBy("programYear.startDate", "DESC")
+      .getRawMany<ProgramYearWithConfiguration>();
+  }
+
+  /**
+   * Get the next active education program configuration for renewal based
+   * on the current program year's start date.
+   * @param startDateReference the start date of the current program
+   * year to find the next education program configuration.
+   * @returns the next active education program configuration after the current
+   * program year's start date, or null if none exists.
+   */
+  async getNextProgramConfigurationForRenewal(
+    startDateReference: string,
+  ): Promise<EducationProgramConfiguration | null> {
+    if (!startDateReference) {
+      throw new Error(
+        "Current program year start date reference is required to find the next program configuration.",
+      );
+    }
     return this.educationProgramConfigurationRepo.findOne({
       select: {
         id: true,
@@ -52,83 +82,17 @@ export class EducationProgramManagerService {
         programYear: true,
       },
       where: {
-        id: educationProgramConfigurationId,
-        isActive: true,
-      },
-    });
-  }
-
-  async getProgramConfigurations(): Promise<EducationProgramConfiguration[]> {
-    return this.educationProgramConfigurationRepo.find({
-      select: {
-        id: true,
         isActive: true,
         programYear: {
-          id: true,
-          programYear: true,
+          startDate: MoreThan(startDateReference),
         },
-      },
-      relations: {
-        programYear: true,
-      },
-      where: {
-        isActive: true,
       },
       order: {
         programYear: {
-          startDate: "DESC",
+          startDate: "ASC",
         },
       },
     });
-  }
-
-  /**
-   * Gets the program years that have at least one education program
-   * configuration associated with them.
-   * @returns program years with at least one program configuration.
-   */
-  async getProgramYears(): Promise<ProgramYear[]> {
-    const configurationExistsQuery = this.educationProgramConfigurationRepo
-      .createQueryBuilder("configuration")
-      .select("1")
-      .where("configuration.programYear.id = programYear.id")
-      .getQuery();
-    return this.programYearRepo
-      .createQueryBuilder("programYear")
-      .select(["programYear.id", "programYear.programYear"])
-      .where(`EXISTS(${configurationExistsQuery})`)
-      .orderBy("programYear.startDate", "DESC")
-      .getMany();
-  }
-
-  async getNextProgramConfigurationForRenewal(
-    currentStartDateReference: string,
-  ): Promise<EducationProgramConfiguration | null> {
-    const nextConfiguration =
-      await this.educationProgramConfigurationRepo.findOne({
-        select: {
-          id: true,
-          isActive: true,
-          programYear: {
-            id: true,
-            startDate: true,
-          },
-        },
-        relations: {
-          programYear: true,
-        },
-        where: {
-          programYear: {
-            startDate: MoreThan(currentStartDateReference),
-          },
-        },
-        order: {
-          programYear: {
-            startDate: "ASC",
-          },
-        },
-      });
-    return nextConfiguration?.isActive ? nextConfiguration : null;
   }
 
   async getEducationProgramsManagerDetails(

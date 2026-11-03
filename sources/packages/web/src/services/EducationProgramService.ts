@@ -14,6 +14,7 @@ import {
   EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
+  EducationProgramYearAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
@@ -101,10 +102,10 @@ export class EducationProgramService {
   }
 
   /**
-   * Get the list of active education program configurations.
-   * @returns an array of option items representing the active configurations.
+   * Get the list of program years with at least one education program configuration.
+   * @returns program years and whether they have an active program configuration.
    */
-  async getProgramYearsList(): Promise<OptionItemAPIOutDTO[]> {
+  async getProgramYearsList(): Promise<EducationProgramYearAPIOutDTO[]> {
     return ApiClient.EducationProgram.getProgramYearsList();
   }
 

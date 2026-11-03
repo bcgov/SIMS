@@ -166,14 +166,17 @@ export class EducationProgramSaveService {
         programYearId: configuration.programYearId,
       },
     );
+    const program = this.createNewProgramEntity(
+      institutionId,
+      programConfigurationId,
+      auditUserId,
+    );
     return this.saveEducationProgram(
+      program,
       institutionId,
       auditUserId,
       validationResult,
       configuration.context,
-      {
-        programConfigurationId,
-      },
     );
   }
 
@@ -227,16 +230,21 @@ export class EducationProgramSaveService {
         programYearId: configuration.programYearId,
       },
     );
+    const program = this.createNewProgramEntity(
+      institutionId,
+      programConfigurationId,
+      auditUserId,
+    );
+    program.parentProgram = {
+      id: programToRenew.parentProgram.id,
+    } as EducationProgram;
+    program.precedingProgram = { id: programToRenew.id } as EducationProgram;
     return this.saveEducationProgram(
+      program,
       institutionId,
       auditUserId,
       validationResult,
       configuration.context,
-      {
-        programConfigurationId,
-        parentProgramId: programToRenew.parentProgram.id,
-        precedingProgramId: programToRenew.id,
-      },
     );
   }
 
@@ -309,15 +317,16 @@ export class EducationProgramSaveService {
         programId: programId,
       },
     );
+    const programToUpdate = new EducationProgram();
+    programToUpdate.id = programId;
+    programToUpdate.modifier = { id: auditUserId } as User;
+    programToUpdate.updatedAt = new Date();
     return this.saveEducationProgram(
+      programToUpdate,
       institutionId,
       auditUserId,
       validationResult,
       configuration.context,
-      {
-        programId: programId,
-        programConfigurationId: program.programConfiguration.id,
-      },
     );
   }
 
@@ -354,57 +363,49 @@ export class EducationProgramSaveService {
   }
 
   /**
-   * Creates or updates an education program based on the provided validation result and options.
+   * Creates a new education program entity with the properties required
+   * for a new program (created from scratch or renewed).
+   * @param institutionId the ID of the institution.
+   * @param programConfigurationId the ID of the program configuration.
+   * @param auditUserId the ID of the user performing the action.
+   * @returns the new education program entity.
+   */
+  private createNewProgramEntity(
+    institutionId: number,
+    programConfigurationId: number,
+    auditUserId: number,
+  ): EducationProgram {
+    const program = new EducationProgram();
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
+    program.institution = { id: institutionId } as Institution;
+    program.programConfiguration = {
+      id: programConfigurationId,
+    } as EducationProgramConfiguration;
+    program.submittedBy = auditUser;
+    program.submittedDate = now;
+    program.creator = auditUser;
+    program.createdAt = now;
+    return program;
+  }
+
+  /**
+   * Saves an education program, assigning the data based on the provided validation result.
+   * @param program the education program entity to be saved, already populated with
+   * the properties specific to the operation (create, renew, or update).
    * @param institutionId the ID of the institution.
    * @param auditUserId the ID of the user performing the action.
    * @param validationResult the result of the program data validation.
    * @param context the context of the education program.
-   * @param options optional parameters including program ID and program configuration ID.
    * @returns the created or updated education program.
    */
   private async saveEducationProgram(
+    program: EducationProgram,
     institutionId: number,
     auditUserId: number,
     validationResult: EducationProgramDataValidationSuccess,
     context: EducationProgramContext,
-    options?: {
-      programId?: number;
-      programConfigurationId?: number;
-      parentProgramId?: number;
-      precedingProgramId?: number;
-    },
   ): Promise<EducationProgram> {
-    if (!options?.programId && !options?.programConfigurationId) {
-      throw new CustomNamedError(
-        "Program configuration ID is required when creating a new program.",
-        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
-      );
-    }
-    const program = new EducationProgram();
-    const auditUser = { id: auditUserId } as User;
-    const now = new Date();
-    if (options?.programId) {
-      // Update an existing program.
-      program.id = options.programId;
-      program.modifier = auditUser;
-      program.updatedAt = now;
-    } else {
-      // Create or renew a program.
-      program.institution = { id: institutionId } as Institution;
-      program.programConfiguration = {
-        id: options.programConfigurationId,
-      } as EducationProgramConfiguration;
-      program.submittedBy = auditUser;
-      program.submittedDate = now;
-      program.creator = auditUser;
-      program.createdAt = now;
-      program.parentProgram = options?.parentProgramId
-        ? ({ id: options.parentProgramId } as EducationProgram)
-        : undefined;
-      program.precedingProgram = options?.precedingProgramId
-        ? ({ id: options.precedingProgramId } as EducationProgram)
-        : undefined;
-    }
     const calculatedData =
       await this.educationProgramEvaluationService.evaluate(
         institutionId,
@@ -442,7 +443,8 @@ export class EducationProgramSaveService {
         auditUserId,
         entityManager,
       );
-      return entityManager.getRepository(EducationProgram).save(program);
+      const savedProgram = await entityManager.getRepository(EducationProgram).save(program);
+      return savedProgram;
     });
   }
 

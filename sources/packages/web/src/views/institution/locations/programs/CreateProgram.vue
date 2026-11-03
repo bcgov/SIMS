@@ -26,7 +26,7 @@ import { CreateEducationProgramAPIInDTO } from "@/services/http/dto";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface CreateProgramProps {
-  locationId: number;
+  programYearId?: number;
   backTarget: BackTarget;
 }
 

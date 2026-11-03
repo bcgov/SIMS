@@ -26,6 +26,7 @@ import {
   EducationProgramConfigurationAPIOutDTO,
   EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramsSummaryLocationAPIOutDTO,
+  EducationProgramYearAPIOutDTO,
   ProgramEvaluationAPIInDTO,
   ProgramEvaluationAPIOutDTO,
   UpdateEducationProgramAPIInDTO,
@@ -158,15 +159,16 @@ export class EducationProgramInstitutionsController extends BaseController {
 
   /**
    * Get the list of program years with at least one education program configuration.
-   * @returns an array of option items representing the active configurations.
+   * @returns program years and whether they have an active program configuration.
    */
   @Get("program-years-list")
-  async getProgramYearsList(): Promise<OptionItemAPIOutDTO[]> {
+  async getProgramYearsList(): Promise<EducationProgramYearAPIOutDTO[]> {
     const programYears =
       await this.educationProgramManagerService.getProgramYears();
     return programYears.map((programYear) => ({
       id: programYear.id,
       description: programYear.programYear,
+      hasActiveProgramConfiguration: programYear.hasActiveConfiguration,
     }));
   }
 
