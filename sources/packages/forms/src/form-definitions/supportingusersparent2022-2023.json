@@ -158,9 +158,6 @@
               "validate": {
                 "required": true
               },
-              "kickbox": {
-                "enabled": true
-              },
               "key": "email",
               "type": "email",
               "input": true
