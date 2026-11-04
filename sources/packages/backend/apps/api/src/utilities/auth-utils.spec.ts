@@ -74,35 +74,39 @@ describe("Extract user real user name when Keycloak changed it (e.g. realUserNam
 
 describe("Validation of user token required information", () => {
   it.each([
-    ["has all the required information", VALID_USER_TOKEN, false],
-    [
-      "is missing the user's email",
-      { ...VALID_USER_TOKEN, email: undefined },
-      false,
-    ],
-    [
-      "is missing the user's last name",
-      { ...VALID_USER_TOKEN, lastName: undefined },
-      true,
-    ],
-    [
-      "has an empty user's last name",
-      { ...VALID_USER_TOKEN, lastName: "   " },
-      true,
-    ],
-    [
-      "is missing the user's date of birth",
-      { ...VALID_USER_TOKEN, birthdate: undefined },
-      true,
-    ],
-    [
-      "has an empty user's date of birth",
-      { ...VALID_USER_TOKEN, birthdate: "   " },
-      true,
-    ],
+    {
+      description: "has all the required information",
+      userToken: VALID_USER_TOKEN,
+      expectedResult: false,
+    },
+    {
+      description: "is missing the user's email",
+      userToken: { ...VALID_USER_TOKEN, email: undefined },
+      expectedResult: false,
+    },
+    {
+      description: "is missing the user's last name",
+      userToken: { ...VALID_USER_TOKEN, lastName: undefined },
+      expectedResult: true,
+    },
+    {
+      description: "has an empty user's last name",
+      userToken: { ...VALID_USER_TOKEN, lastName: "   " },
+      expectedResult: true,
+    },
+    {
+      description: "is missing the user's date of birth",
+      userToken: { ...VALID_USER_TOKEN, birthdate: undefined },
+      expectedResult: true,
+    },
+    {
+      description: "has an empty user's date of birth",
+      userToken: { ...VALID_USER_TOKEN, birthdate: "   " },
+      expectedResult: true,
+    },
   ])(
-    "Should return the expected result when the user token %s.",
-    (_: string, userToken: IUserToken, expectedResult: boolean) => {
+    "Should return $expectedResult when the user token $description.",
+    ({ userToken, expectedResult }) => {
       // Act
       const result = isUserTokenMissingRequiredInfo(userToken);
       // Assert
