@@ -171,7 +171,7 @@ export class UserService extends DataModelService<User> {
   /**
    * Creates or updates user information.
    * @param userName user name as it is on KeyCloak.
-   * @param email email received from profile form.
+   * @param email email received from user input.
    * @param givenNames givenNames received from identity provider.
    * @param lastName lastName received from identity provider.
    * @returns created/updated user.
