@@ -9,8 +9,8 @@ import {
  */
 export class BatchRestrictionApi extends HttpBaseClient {
   /**
-   * Adds a restriction to the students of the given application numbers.
-   * @param payload restriction, application numbers, and note for the batch.
+   * Creates a batch restriction for the given application numbers.
+   * @param payload restriction to be added, application numbers, and restriction note.
    */
   async createBatchRestriction(
     payload: BatchRestrictionAPIInDTO,

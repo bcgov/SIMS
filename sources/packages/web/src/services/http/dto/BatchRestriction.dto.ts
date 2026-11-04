@@ -1,5 +1,6 @@
 /**
- * Payload used to add a restriction to the students of a list of application numbers.
+ * Payload to add a restriction, in a single batch, to the students
+ * associated with the provided application numbers.
  */
 export interface BatchRestrictionAPIInDTO {
   restrictionId: number;

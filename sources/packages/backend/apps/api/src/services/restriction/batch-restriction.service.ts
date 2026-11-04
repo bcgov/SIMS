@@ -47,43 +47,40 @@ export class BatchRestrictionService {
    * @returns batch restriction submissions.
    */
   getBatchRestrictionSummaries(): Promise<BatchRestrictionSummary[]> {
-    return (
-      this.batchRestrictionRepo
-        .createQueryBuilder("batchRestriction")
-        .select("batchRestriction.id", "id")
-        .addSelect("batchRestriction.batchNumber", "batchNumber")
-        .addSelect("batchRestriction.createdAt", "createdAt")
-        .addSelect("creator.firstName", "creatorFirstName")
-        .addSelect("creator.lastName", "creatorLastName")
-        .addSelect("restriction.restrictionCode", "restrictionCode")
-        .addSelect("restriction.description", "restrictionDescription")
-        .addSelect('counts."totalCount"', "totalCount")
-        .addSelect('counts."successCount"', "successCount")
-        .addSelect('counts."failureCount"', "failureCount")
-        // Student counts aggregated per batch.
-        .innerJoin(
-          (subQuery) =>
-            subQuery
-              .select("batchStudent.batchRestriction.id", "batchId")
-              .addSelect("COUNT(*)::int", "totalCount")
-              .addSelect(
-                "COUNT(*) FILTER (WHERE batchStudent.failureReason IS NULL)::int",
-                "successCount",
-              )
-              .addSelect(
-                "COUNT(*) FILTER (WHERE batchStudent.failureReason IS NOT NULL)::int",
-                "failureCount",
-              )
-              .from(BatchRestrictionStudent, "batchStudent")
-              .groupBy("batchStudent.batchRestriction.id"),
-          "counts",
-          'counts."batchId" = batchRestriction.id',
-        )
-        .innerJoin("batchRestriction.restriction", "restriction")
-        .leftJoin("batchRestriction.creator", "creator")
-        .orderBy("batchRestriction.createdAt", "DESC")
-        .getRawMany<BatchRestrictionSummary>()
-    );
+    return this.batchRestrictionRepo
+      .createQueryBuilder("batchRestriction")
+      .select("batchRestriction.id", "id")
+      .addSelect("batchRestriction.batchNumber", "batchNumber")
+      .addSelect("batchRestriction.createdAt", "createdAt")
+      .addSelect("creator.firstName", "creatorFirstName")
+      .addSelect("creator.lastName", "creatorLastName")
+      .addSelect("restriction.restrictionCode", "restrictionCode")
+      .addSelect("restriction.description", "restrictionDescription")
+      .addSelect('counts."totalCount"', "totalCount")
+      .addSelect('counts."successCount"', "successCount")
+      .addSelect('counts."failureCount"', "failureCount")
+      .innerJoin(
+        (subQuery) =>
+          subQuery
+            .select("batchRestrictionStudent.batchRestriction.id", "batchId")
+            .addSelect("COUNT(*)::int", "totalCount")
+            .addSelect(
+              "COUNT(*) FILTER (WHERE batchRestrictionStudent.failureReason IS NULL)::int",
+              "successCount",
+            )
+            .addSelect(
+              "COUNT(*) FILTER (WHERE batchRestrictionStudent.failureReason IS NOT NULL)::int",
+              "failureCount",
+            )
+            .from(BatchRestrictionStudent, "batchRestrictionStudent")
+            .groupBy("batchRestrictionStudent.batchRestriction.id"),
+        "counts",
+        'counts."batchId" = batchRestriction.id',
+      )
+      .innerJoin("batchRestriction.restriction", "restriction")
+      .leftJoin("batchRestriction.creator", "creator")
+      .orderBy("batchRestriction.createdAt", "DESC")
+      .getRawMany<BatchRestrictionSummary>();
   }
 
   /**
@@ -94,10 +91,7 @@ export class BatchRestrictionService {
    * already has it active. Both cases are considered successful.
    * - Application numbers that do not exist are recorded as failures and do not stop
    * the remaining application numbers from being processed.
-   * The batch, its students, and the student restrictions it adds share the same creation
-   * date and creator, which allows the restrictions added by a batch to be identified.
-   * Multiple invocations are prevented from running concurrently via the sequence
-   * control mechanism, so a new batch cannot start until the previous one is persisted.
+   * Multiple invocations are prevented from running concurrently via the sequence control mechanism.
    * @param restrictionId provincial restriction to be added to the students.
    * @param applicationNumbers application numbers used to find the students.
    * @param note note added to each student restriction created by the batch.
@@ -139,7 +133,8 @@ export class BatchRestrictionService {
             .save(batchRestriction);
 
           // The lookups are executed once for the whole batch, instead of once per chunk,
-          // to scan the applications and student restrictions only once.
+          // since the array parameters are not subject to the query parameters limit and
+          // the applications and student restrictions are then scanned only once.
           const studentIdsByApplicationNumber =
             await this.getStudentIdsByApplicationNumbers(
               distinctApplicationNumbers,
@@ -161,21 +156,22 @@ export class BatchRestrictionService {
               0,
               BATCH_RESTRICTION_CHUNK_SIZE,
             );
-            const batchStudentsToSave: BatchRestrictionStudent[] = [];
+            const batchRestrictionStudentsToSave: BatchRestrictionStudent[] =
+              [];
             const studentIdsToAddRestriction = new Set<number>();
             for (const applicationNumber of applicationNumberChunk) {
-              const batchStudent = new BatchRestrictionStudent();
-              batchStudent.batchRestriction = savedBatchRestriction;
-              batchStudent.applicationNumber = applicationNumber;
-              batchStudent.creator = creator;
-              batchStudent.createdAt = now;
-              batchStudent.updatedAt = now;
-              batchStudentsToSave.push(batchStudent);
+              const batchRestrictionStudent = new BatchRestrictionStudent();
+              batchRestrictionStudent.batchRestriction = savedBatchRestriction;
+              batchRestrictionStudent.applicationNumber = applicationNumber;
+              batchRestrictionStudent.creator = creator;
+              batchRestrictionStudent.createdAt = now;
+              batchRestrictionStudent.updatedAt = now;
+              batchRestrictionStudentsToSave.push(batchRestrictionStudent);
 
               const studentId =
                 studentIdsByApplicationNumber.get(applicationNumber);
               if (!studentId) {
-                batchStudent.failureReason =
+                batchRestrictionStudent.failureReason =
                   APPLICATION_NUMBER_NOT_FOUND_REASON;
                 continue;
               }
@@ -200,22 +196,22 @@ export class BatchRestrictionService {
                   studentRestrictionId,
                 ),
             );
-            // The added student restriction IDs are only known after they are inserted,
-            // hence the batch students are associated with their student restrictions afterwards.
-            for (const batchStudent of batchStudentsToSave) {
+            // The added student restriction IDs are only known after they are inserted, hence
+            // the batch restriction students are associated with their student restrictions afterwards.
+            for (const batchRestrictionStudent of batchRestrictionStudentsToSave) {
               const studentId = studentIdsByApplicationNumber.get(
-                batchStudent.applicationNumber,
+                batchRestrictionStudent.applicationNumber,
               );
               if (studentId) {
-                batchStudent.studentRestriction = {
+                batchRestrictionStudent.studentRestriction = {
                   id: activeStudentRestrictionIds.get(studentId),
                 } as StudentRestriction;
               }
             }
-            // Single bulk insert for all the batch students of the chunk.
+            // Single bulk insert for all the batch restriction students of the chunk.
             await entityManager
               .getRepository(BatchRestrictionStudent)
-              .insert(batchStudentsToSave);
+              .insert(batchRestrictionStudentsToSave);
           }
         },
       );
@@ -224,11 +220,9 @@ export class BatchRestrictionService {
   }
 
   /**
-   * Gets the student of each application number.
-   * All versions of an application belong to the same student.
-   * The application numbers are sent as a single array parameter, which is hashed
-   * by the database instead of compared one by one, and supports the maximum batch
-   * size without hitting the query parameters limit.
+   * Gets the student for each application number.
+   * The application numbers are sent as a single array parameter to support
+   * the maximum batch size without hitting the query parameters limit.
    * @param applicationNumbers application numbers to be searched.
    * @param entityManager transactional entity manager.
    * @returns student IDs by application number. Application numbers that
@@ -242,9 +236,8 @@ export class BatchRestrictionService {
       .getRepository(Application)
       .createQueryBuilder("application")
       .select("application.applicationNumber", "applicationNumber")
-      .addSelect("student.id", "studentId")
+      .addSelect("application.student.id", "studentId")
       .distinct(true)
-      .innerJoin("application.student", "student")
       .where("application.applicationNumber = ANY(:applicationNumbers)", {
         applicationNumbers,
       })
@@ -258,12 +251,10 @@ export class BatchRestrictionService {
   }
 
   /**
-   * Gets the active student restriction of the students, among the given ones,
-   * that have the restriction active. When a student has the restriction active
-   * more than once, the most recent student restriction is returned.
-   * The student IDs are sent as a single array parameter, which is hashed by the
-   * database instead of compared one by one, and supports the maximum batch size
-   * without hitting the query parameters limit.
+   * Gets the active student restriction of each student that has the restriction active.
+   * When a student has the restriction active more than once, the most recent one is returned.
+   * The student IDs are sent as a single array parameter to support the maximum batch
+   * size without hitting the query parameters limit.
    * @param restrictionId restriction to be checked.
    * @param studentIds students to be checked.
    * @param entityManager transactional entity manager.
@@ -322,7 +313,7 @@ export class BatchRestrictionService {
     if (!studentIds.length) {
       return new Map();
     }
-    // Single bulk insert for all the notes, returned in the same order as the students.
+    // Bulk insert for all the notes, returned in the same order as the students.
     const notes = await this.noteSharedService.createStudentNotes(
       studentIds.map((studentId) => ({
         studentId,
@@ -344,7 +335,8 @@ export class BatchRestrictionService {
       studentRestriction.updatedAt = createdAt;
       return studentRestriction;
     });
-    // Single bulk insert for all the student restrictions, returned in the same order as the students.
+    // Single bulk insert for all the student restrictions,
+    // returned in the same order as the students.
     const insertResult = await entityManager
       .getRepository(StudentRestriction)
       .insert(studentRestrictions);
