@@ -99,3 +99,7 @@ export interface EducationProgramDynamicConfiguration {
   context: EducationProgramContext;
   updatedAt: Date;
 }
+
+export type ProgramConfigurationLookup =
+  | { programConfigurationId: number; programYearId?: never }
+  | { programYearId: number; programConfigurationId?: never };

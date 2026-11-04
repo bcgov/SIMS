@@ -143,9 +143,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     try {
       return this.educationProgramControllerService.getEducationProgramConfiguration(
         userToken.authorizations.institutionId,
-        {
-          programYearId: programYearId,
-        },
+        { programYearId },
       );
     } catch (error: unknown) {
       if (
@@ -466,10 +464,8 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
     return this.educationProgramControllerService.getEducationProgramConfiguration(
       userToken.authorizations.institutionId,
-      {
-        programConfigurationId: nextProgramConfigurationForRenewal.id,
-        overrideProgramData: program.programData,
-      },
+      { programConfigurationId: nextProgramConfigurationForRenewal.id },
+      { overrideProgramData: program.programData },
     );
   }
 

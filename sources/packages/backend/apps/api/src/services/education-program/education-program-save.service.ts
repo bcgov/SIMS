@@ -32,6 +32,7 @@ import {
   EducationProgramDynamicConfiguration,
   EducationProgramDynamicData,
   EntranceRequirementValues,
+  ProgramConfigurationLookup,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
@@ -72,17 +73,18 @@ export class EducationProgramSaveService {
    * Get the program configuration including visual schema, validation schema, and context.
    * @param institutionId ID of the institution requesting the configuration.
    * @param options method options.
-   * - `programConfigurationId` ID of the program configuration. If not provided,
+   * - `programConfigurationId` ID of the program configuration. When provided, the
+   * configuration is returned regardless of its active status. If not provided,
    * the most recent active configuration is returned.
+   * - `programYearId` ID of the program year. When provided, only an active
+   * configuration for the program year is returned.
    * - `programId` ID of the program. Used to check if the program has existing offerings.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  // TODO: make the programConfigurationId required once the web is updated to always provide it.
   async getEducationProgramConfiguration(
     institutionId: number,
+    programConfigurationLookup: ProgramConfigurationLookup,
     options?: {
-      programConfigurationId?: number;
-      programYearId?: number;
       programId?: number;
     },
   ): Promise<EducationProgramDynamicConfiguration> {
@@ -110,9 +112,14 @@ export class EducationProgramSaveService {
           programYear: true,
         },
         where: {
-          id: options?.programConfigurationId,
-          programYear: { id: options?.programYearId },
-          isActive: true,
+          id: programConfigurationLookup?.programConfigurationId,
+          programYear: { id: programConfigurationLookup?.programYearId },
+          // When a specific configuration is requested, it must be returned regardless of
+          // its active status (e.g. an existing program associated with an inactive configuration).
+          // Otherwise, only active configurations should be considered.
+          isActive: programConfigurationLookup?.programConfigurationId
+            ? undefined
+            : true,
         },
         order: {
           programYear: { startDate: "DESC" },
@@ -295,10 +302,8 @@ export class EducationProgramSaveService {
     }
     const configuration = await this.getEducationProgramConfiguration(
       program.institution.id,
-      {
-        programConfigurationId: program.programConfiguration.id,
-        programId: program.id,
-      },
+      { programConfigurationId: program.programConfiguration.id },
+      { programId: program.id },
     );
     let programDataToUpdate: EducationProgramData;
     if (configuration.context.isFullUpdateRestricted) {

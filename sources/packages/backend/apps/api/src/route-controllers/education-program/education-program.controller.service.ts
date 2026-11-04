@@ -8,6 +8,7 @@ import {
   EducationProgramService,
   InstitutionUserAuthorizations,
   EducationProgramSaveService,
+  ProgramConfigurationLookup,
 } from "../../services";
 import {
   EducationProgramAPIOutDTO,
@@ -55,10 +56,8 @@ export class EducationProgramControllerService {
     const programConfiguration =
       await this.educationProgramSaveService.getEducationProgramConfiguration(
         program.institution.id,
-        {
-          programConfigurationId: program.programConfiguration.id,
-          programId: program.id,
-        },
+        { programConfigurationId: program.programConfiguration.id },
+        { programId: program.id },
       );
     return {
       id: program.id,
@@ -97,25 +96,21 @@ export class EducationProgramControllerService {
 
   async getEducationProgramConfiguration(
     institutionId: number,
-    options: {
-      programConfigurationId?: number;
-      programYearId?: number;
+    programConfigurationLookup: ProgramConfigurationLookup,
+    options?: {
       overrideProgramData?: Record<string, unknown>;
     },
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     const configuration =
       await this.educationProgramSaveService.getEducationProgramConfiguration(
         institutionId,
-        {
-          programConfigurationId: options.programConfigurationId,
-          programYearId: options.programYearId,
-        },
+        programConfigurationLookup,
       );
     return {
       configurationId: configuration.configurationId,
       programYearName: configuration.programYearName,
       programData: {
-        ...options.overrideProgramData,
+        ...options?.overrideProgramData,
         context: {
           isFullUpdateRestricted: configuration.context.isFullUpdateRestricted,
           isBCPrivate: configuration.context.isBCPrivate,
