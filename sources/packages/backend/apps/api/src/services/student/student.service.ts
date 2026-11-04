@@ -173,7 +173,7 @@ export class StudentService extends RecordDataModelService<Student> {
     // If a user id was provided, use it as the audit user. It means that
     // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
-    user.email = userInfo.email.trim();
+    user.email = studentInfo.email.trim();
     user.firstName = userInfo.givenNames?.trim();
     user.lastName = userInfo.lastName.trim();
     if (userInfo.userId) {
@@ -521,7 +521,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Updates student information.
    * @param studentId student to be updated.
-   * @param studentInfo student information to be updated.
+   * @param studentInfo student information to be updated, including the e-mail.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
@@ -530,8 +530,19 @@ export class StudentService extends RecordDataModelService<Student> {
     studentInfo: StudentInfo,
     auditUserId: number,
   ): Promise<Student> {
+    const studentUser = await this.repo.findOneOrFail({
+      select: { id: true, user: { id: true } },
+      relations: { user: true },
+      where: { id: studentId },
+      loadEagerRelations: false,
+    });
     const student = new Student();
     student.id = studentId;
+    student.user = {
+      id: studentUser.user.id,
+      email: studentInfo.email.trim(),
+      modifier: { id: auditUserId },
+    } as User;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
       phone: studentInfo.phone,
@@ -554,7 +565,7 @@ export class StudentService extends RecordDataModelService<Student> {
     // TODO: Remove the trim function below once the DTO sanitization is done.
     studentUserData.givenNames = studentUserData.givenNames?.trim();
     studentUserData.lastName = studentUserData.lastName.trim();
-    studentUserData.email = studentUserData.email.trim();
+    studentUserData.email = studentUserData.email?.trim();
     const studentToSync = await this.getStudentById(studentUserData.studentId);
     let mustSave = false;
     if (!studentUserData.givenNames) {
@@ -578,8 +589,9 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     // This condition is not added above, as email does not trigger SIN validation request.
     if (
+      studentUserData.email &&
       studentUserData.email.toLowerCase() !==
-      studentToSync.user.email.toLowerCase()
+        studentToSync.user.email.toLowerCase()
     ) {
       studentToSync.user.email = studentUserData.email;
       mustSave = true;

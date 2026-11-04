@@ -66,6 +66,8 @@ export class CreateStudentAPIInDTO
   extends AddressDetailsAPIInDTO
   implements StudentProfileFormLogicalFields
 {
+  @IsEmail()
+  email: string;
   @Length(10, 20)
   phone: string;
   @Allow()
@@ -88,6 +90,8 @@ export class UpdateStudentAPIInDTO
   extends AddressDetailsAPIInDTO
   implements StudentProfileFormLogicalFields
 {
+  @IsEmail()
+  email: string;
   @Length(10, 20)
   phone: string;
   @Allow()

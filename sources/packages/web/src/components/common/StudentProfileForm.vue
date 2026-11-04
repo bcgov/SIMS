@@ -11,7 +11,6 @@
       <footer-buttons
         v-if="showActionButtons"
         :processing="processing"
-        :disable-primary-button="isEmailMissing"
         @primary-click="submit"
         :primary-label="saveLabel"
         :show-secondary-button="false"
@@ -43,7 +42,4 @@ const saveLabel = computed(() =>
 const showActionButtons = computed(
   () => props.formModel.mode !== StudentProfileFormModes.AESTAccountApproval,
 );
-
-// Email is mandatory for all users, the profile cannot be saved without it.
-const isEmailMissing = computed(() => !props.formModel.email?.trim());
 </script>

@@ -213,7 +213,6 @@ export class StudentStudentsController extends BaseController {
           lastName: studentUserToken.lastName,
           givenNames: studentUserToken.givenNames,
           birthdate: studentUserToken.birthdate,
-          email: studentUserToken.email,
           noteDescription: BCSC_STUDENT_PROFILE_UPDATE_NOTE,
         },
         studentUserToken.userId,

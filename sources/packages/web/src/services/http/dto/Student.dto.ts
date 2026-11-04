@@ -17,6 +17,8 @@ import { Expose } from "class-transformer";
  */
 export class CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
   @Expose()
+  email: string;
+  @Expose()
   phone: string;
   @Expose()
   sinNumber: string;
@@ -31,6 +33,8 @@ export class CreateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
  * in the solution. Other data must be edited externally (e.g. BCSC).
  */
 export class UpdateStudentAPIInDTO extends AddressDetailsFormAPIDTO {
+  @Expose()
+  email: string;
   @Expose()
   phone: string;
   @Expose()

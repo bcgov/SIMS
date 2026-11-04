@@ -39,7 +39,5 @@ export class StudentAccountApplicationApprovalAPIInDTO extends CreateStudentAPII
   @Allow()
   lastName: string;
   @Allow()
-  email: string;
-  @Allow()
   dateOfBirth: string;
 }
