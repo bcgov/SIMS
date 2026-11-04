@@ -96,6 +96,53 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
     },
   );
 
+  it.each([
+    ["not provided", undefined],
+    ["invalid", "invalid-email"],
+  ])(
+    "Should return a bad request error when the e-mail is %s.",
+    async (_: string, email: string) => {
+      // Arrange
+      const payload: UpdateSupportingUserAPIInDTO = {
+        email,
+        applicationNumber: "1234567890",
+        addressLine1: "123 Some Street",
+        addressLine2: undefined,
+        city: "Victoria",
+        country: "Canada",
+        phone: "1234567890",
+        postalCode: "V1V1V1",
+        provinceState: "BC",
+        studentsLastName: "Doe",
+        supportingUserType: SupportingUserType.Parent,
+        fullName: "Jane Doe",
+        supportingData: { someKey: "someValue" },
+        offeringIntensity: OfferingIntensity.fullTime,
+      };
+      await mockJWTToken(appModule, (jwtPayload) => {
+        jwtPayload.azp = AuthorizedParties.supportingUsers;
+        jwtPayload.identityProvider = IdentityProviders.BCSC;
+        jwtPayload.lastName = "Doe";
+        jwtPayload.birthdate = "2000-01-01";
+      });
+      const supportingUserToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(getEndpoint())
+        .send(payload)
+        .auth(supportingUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: ["email must be an email"],
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    },
+  );
+
   it.each(["2025-2026", "2026-2027"])(
     "Should save supporting information when a parent submits valid data with all required authentication information for program year %s.",
     async (programYear: string) => {

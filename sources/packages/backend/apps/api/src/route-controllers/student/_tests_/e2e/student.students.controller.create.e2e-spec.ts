@@ -162,27 +162,33 @@ describe("StudentStudentsController(e2e)-create", () => {
     expect(createdStudent.user.email).toBe(payload.email);
   });
 
-  it("Should return a bad request error when the e-mail is not provided or is invalid.", async () => {
-    // Arrange
-    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
-    const user = createFakeUser();
-    await mockJWTUserInfo(appModule, { ...user, birthDate: "2000-01-01" });
-    const studentToken = await getStudentToken(
-      FakeStudentUsersTypes.FakeStudentUserType1,
-    );
+  it.each([
+    ["not provided", undefined],
+    ["invalid", "invalid-email"],
+  ])(
+    "Should return a bad request error when the e-mail is %s.",
+    async (_: string, email: string) => {
+      // Arrange
+      const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+      const user = createFakeUser();
+      await mockJWTUserInfo(appModule, { ...user, birthDate: "2000-01-01" });
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send({ ...payload, email: "invalid-email" })
-      .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.BAD_REQUEST)
-      .expect({
-        message: ["email must be an email"],
-        error: "Bad Request",
-        statusCode: HttpStatus.BAD_REQUEST,
-      });
-  });
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send({ ...payload, email })
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: ["email must be an email"],
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    },
+  );
 
   it("Should refresh the cached login information after creating a student account.", async () => {
     // Arrange

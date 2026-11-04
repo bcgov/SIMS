@@ -73,35 +73,40 @@ describe("Extract user real user name when Keycloak changed it (e.g. realUserNam
 });
 
 describe("Validation of user token required information", () => {
-  it("Should return false when the user token has all the required information.", () => {
-    // Act
-    const result = isUserTokenMissingRequiredInfo(VALID_USER_TOKEN);
-    // Assert
-    expect(result).toBe(false);
-  });
-
-  it("Should return false when the user token is missing the user's email.", () => {
-    // Act
-    const result = isUserTokenMissingRequiredInfo({
-      ...VALID_USER_TOKEN,
-      email: undefined,
-    });
-    // Assert
-    expect(result).toBe(false);
-  });
-
   it.each([
-    ["last name", { ...VALID_USER_TOKEN, lastName: undefined }],
-    ["last name", { ...VALID_USER_TOKEN, lastName: "   " }],
-    ["date of birth", { ...VALID_USER_TOKEN, birthdate: undefined }],
-    ["date of birth", { ...VALID_USER_TOKEN, birthdate: "   " }],
+    ["has all the required information", VALID_USER_TOKEN, false],
+    [
+      "is missing the user's email",
+      { ...VALID_USER_TOKEN, email: undefined },
+      false,
+    ],
+    [
+      "is missing the user's last name",
+      { ...VALID_USER_TOKEN, lastName: undefined },
+      true,
+    ],
+    [
+      "has an empty user's last name",
+      { ...VALID_USER_TOKEN, lastName: "   " },
+      true,
+    ],
+    [
+      "is missing the user's date of birth",
+      { ...VALID_USER_TOKEN, birthdate: undefined },
+      true,
+    ],
+    [
+      "has an empty user's date of birth",
+      { ...VALID_USER_TOKEN, birthdate: "   " },
+      true,
+    ],
   ])(
-    "Should return true when the user token is missing the user's %s.",
-    (_: string, userToken: IUserToken) => {
+    "Should return the expected result when the user token %s.",
+    (_: string, userToken: IUserToken, expectedResult: boolean) => {
       // Act
       const result = isUserTokenMissingRequiredInfo(userToken);
       // Assert
-      expect(result).toBe(true);
+      expect(result).toBe(expectedResult);
     },
   );
 });
