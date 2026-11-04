@@ -388,7 +388,7 @@ VALUES
                 "tz": "America/Vancouver"
             },
             "jobData": {
-                "pollingRecordLimit": 100,
+                "pollingRecordsLimit": 100
                 "externalRateLimit": 490,
                 "externalRateLimitSeconds": 60
             },
