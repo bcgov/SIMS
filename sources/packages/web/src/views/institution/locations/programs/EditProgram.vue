@@ -34,8 +34,8 @@
     <program-form
       :title="formTitle"
       :program-configuration="educationProgram"
-      :loading="loading"
-      :read-only="isFormReadOnly"
+      :is-loading="loading"
+      :is-read-only="isFormReadOnly"
       :is-processing="processing"
       @submit="submit"
       @cancel="goBack"

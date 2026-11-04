@@ -170,16 +170,9 @@
             </template>
             <template #[`item.renewal`]="{ item }">
               <v-btn
-                v-if="
-                  !item.isRenewed && item.nextProgramConfigurationIdForRenewal
-                "
+                v-if="item.canBeRenewed"
                 color="primary"
-                @click="
-                  goToRenewProgram(
-                    item.id,
-                    item.nextProgramConfigurationIdForRenewal,
-                  )
-                "
+                @click="goToRenewProgram(item.id)"
                 >Renew</v-btn
               >
               <span
@@ -409,14 +402,12 @@ const handleStatusChange = async (newVal: string[]) => {
 /**
  * Navigate to the renew program page for the next program year.
  * @param programId program to be renewed.
- * @param configurationId program configuration the program will be renewed for.
  */
-const goToRenewProgram = (programId: number, configurationId: number) => {
+const goToRenewProgram = (programId: number) => {
   router.push({
     name: InstitutionRoutesConst.RENEW_PROGRAM,
     params: {
       programId,
-      configurationId,
     },
     // Allows the renew page to navigate back keeping the current program year selected.
     query: {

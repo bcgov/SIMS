@@ -136,7 +136,7 @@ export class EducationProgramApi extends HttpBaseClient {
     payload: CreateEducationProgramAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     return this.postCall(
-      this.addClientRoot(`education-program/program/${programId}/renew`),
+      this.addClientRoot(`education-program/${programId}/renew`),
       payload,
     );
   }
@@ -221,7 +221,7 @@ export class EducationProgramApi extends HttpBaseClient {
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
   > {
-    const url = `education-program/programs/program-year/${programYearId}?${getPaginationQueryString(
+    const url = `education-program/program-year/${programYearId}/summary?${getPaginationQueryString(
       paginationOptions,
     )}`;
     return this.getCall(this.addClientRoot(url));

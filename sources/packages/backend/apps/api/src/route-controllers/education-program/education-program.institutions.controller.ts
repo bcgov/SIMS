@@ -218,7 +218,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
   }
 
-  @Post("program/:programId/renew")
+  @Post(":programId/renew")
   async renewEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
     @Body() payload: CreateEducationProgramAPIInDTO,
@@ -359,12 +359,12 @@ export class EducationProgramInstitutionsController extends BaseController {
 
   /**
    * Get the list of education programs for a specific program year.
-   * @param educationProgramConfigurationId ID of the education program configuration.
+   * @param programYearId ID of the program year.
    * @param pagination Pagination options for the results.
    * @param userToken User token containing authorization information.
    * @returns Paginated list of education programs for the specified program year.
    */
-  @Get("programs/program-year/:programYearId")
+  @Get("program-year/:programYearId")
   async getProgramsForProgramYear(
     @Param("programYearId", ParseIntPipe)
     programYearId: number,
@@ -401,8 +401,8 @@ export class EducationProgramInstitutionsController extends BaseController {
         isActive: program.isActive,
         isExpired: program.isExpired,
         isRenewed: !!program.renewedProgram,
-        nextProgramConfigurationIdForRenewal:
-          nextProgramConfigurationForRenewal?.id,
+        canBeRenewed:
+          !program.renewedProgram && !!nextProgramConfigurationForRenewal,
       })),
     };
   }

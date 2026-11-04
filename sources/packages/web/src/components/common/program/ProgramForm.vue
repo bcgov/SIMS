@@ -2,7 +2,7 @@
   <body-header-container :title="title"
     ><content-group>
       <error-summary ref="errorSummary" :errors="errorSummaryMessages" />
-      <v-skeleton-loader :loading="loading" type="article, text@5">
+      <v-skeleton-loader :loading="isLoading" type="article, text@5">
         <json-forms
           :data="formModel"
           :schema="programFormSchema"
@@ -11,7 +11,7 @@
           :validation-mode="validationMode"
           :additional-errors="requiredErrorsPerProperty"
           :ajv="programFormAjv"
-          :readonly="readOnly"
+          :readonly="isReadOnly"
           @change="onProgramFormChange"
         />
       </v-skeleton-loader>
@@ -22,7 +22,7 @@
       @primary-click="submit"
       :disable-primary-button="isProcessing"
       :processing="isProcessing"
-      v-if="!readOnly && !loading"
+      v-if="!isReadOnly && !isLoading"
     />
   </body-header-container>
 </template>
@@ -58,25 +58,26 @@ interface ProgramFormProps {
   /**
    * Indicates whether the consumer is still loading the form data.
    */
-  loading?: boolean;
-  /**
-   * Indicates whether the form is read-only.
-   */
-  readOnly?: boolean;
+  isLoading?: boolean;
   /**
    * Indicates whether the form is currently processing a submission.
    * Allows control of the loading from the consumer that is submitting the form.
    */
   isProcessing?: boolean;
+  /**
+   * Indicates whether the form is read-only.
+   */
+  isReadOnly?: boolean;
 }
 
 const props = withDefaults(defineProps<ProgramFormProps>(), {
   title: "Program",
   programConfiguration: undefined,
-  loading: false,
-  readOnly: true,
+  isLoading: false,
   isProcessing: false,
+  isReadOnly: true,
 });
+
 const emit = defineEmits<{
   cancel: [];
   submit: [programData: Record<string, unknown>];

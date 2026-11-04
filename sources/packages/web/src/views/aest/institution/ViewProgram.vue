@@ -19,8 +19,8 @@
     <program-form
       :title="formTitle"
       :program-configuration="educationProgram"
-      :loading="loading"
-      :read-only="true"
+      :is-loading="loading"
+      :is-read-only="true"
     />
   </full-page-container>
 </template>

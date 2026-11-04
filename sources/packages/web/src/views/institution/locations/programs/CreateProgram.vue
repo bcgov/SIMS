@@ -10,8 +10,8 @@
     <program-form
       :title="formTitle"
       :program-configuration="programConfiguration"
-      :loading="loading"
-      :read-only="false"
+      :is-loading="loading"
+      :is-read-only="false"
       :is-processing="processing"
       @submit="submit"
       @cancel="goBack"
@@ -20,7 +20,7 @@
 </template>
 <script setup lang="ts">
 import { useSnackBar } from "@/composables";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import type { BackTarget } from "@/types";
 import { ApiProcessError } from "@/types";
 import { useRouter } from "vue-router";
@@ -44,34 +44,6 @@ const formTitle = computed(() =>
     ? `Program Creation for ${programConfiguration.value.programYearName}`
     : undefined,
 );
-
-onMounted(async () => {
-  try {
-    let programYearId = props.programYearId;
-    if (!programYearId) {
-      const currentProgramYears =
-        await EducationProgramService.shared.getProgramYearsList();
-      const activeProgramYear = currentProgramYears.find(
-        (year) => year.hasActiveProgramConfiguration,
-      );
-      if (!activeProgramYear) {
-        snackBar.error(
-          "Programs cannot be created at this time because there is no program year currently open.",
-        );
-        return;
-      }
-      programYearId = activeProgramYear.id;
-    }
-    programConfiguration.value =
-      await EducationProgramService.shared.getEducationProgramConfiguration(
-        programYearId,
-      );
-  } catch {
-    snackBar.error("Unexpected error while loading program data.");
-  } finally {
-    loading.value = false;
-  }
-});
 
 const submit = async (programData: Record<string, unknown>) => {
   if (!programConfiguration.value) {
@@ -100,4 +72,46 @@ const submit = async (programData: Record<string, unknown>) => {
 const goBack = async (): Promise<void> => {
   router.push(props.backTarget.to);
 };
+
+/**
+ * Loads the program configuration for the given program year,
+ * falling back to the currently active program year when none is provided.
+ * @param programYearId program year to load the configuration for.
+ */
+const loadProgramConfiguration = async (
+  programYearId?: number,
+): Promise<void> => {
+  loading.value = true;
+  programConfiguration.value = undefined;
+  try {
+    if (!programYearId) {
+      // Temporarily fall back to the active program year if none is provided to
+      // allow the current program creation path to continue to work.
+      const currentProgramYears =
+        await EducationProgramService.shared.getProgramYearsList();
+      const activeProgramYear = currentProgramYears.find(
+        (year) => year.hasActiveProgramConfiguration,
+      );
+      if (!activeProgramYear) {
+        snackBar.error(
+          "Programs cannot be created at this time because no program year is currently active.",
+        );
+        return;
+      }
+      programYearId = activeProgramYear.id;
+    }
+    programConfiguration.value =
+      await EducationProgramService.shared.getEducationProgramConfiguration(
+        programYearId,
+      );
+  } catch {
+    snackBar.error("Unexpected error while loading program data.");
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(() => props.programYearId, loadProgramConfiguration, {
+  immediate: true,
+});
 </script>

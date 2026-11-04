@@ -10,8 +10,8 @@
     <program-form
       :title="formTitle"
       :program-configuration="programConfiguration"
-      :loading="loading"
-      :read-only="false"
+      :is-loading="loading"
+      :is-read-only="false"
       :is-processing="processing"
       @submit="submit"
       @cancel="goBack"
@@ -30,7 +30,6 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface CreateProgramProps {
   programId: number;
-  configurationId: number;
   backTarget: BackTarget;
 }
 
@@ -44,24 +43,6 @@ const formTitle = computed(() =>
   programConfiguration.value
     ? `Program Renewal for ${programConfiguration.value.programYearName}`
     : undefined,
-);
-
-watch(
-  () => props.programId,
-  async (programId) => {
-    try {
-      loading.value = true;
-      programConfiguration.value =
-        await EducationProgramService.shared.getEducationProgramForRenew(
-          programId,
-        );
-    } catch {
-      snackBar.error("Unexpected error while loading program data.");
-    } finally {
-      loading.value = false;
-    }
-  },
-  { immediate: true },
 );
 
 const submit = async (programData: Record<string, unknown>) => {
@@ -94,4 +75,22 @@ const submit = async (programData: Record<string, unknown>) => {
 const goBack = async (): Promise<void> => {
   router.push(props.backTarget.to);
 };
+
+watch(
+  () => props.programId,
+  async (programId) => {
+    try {
+      loading.value = true;
+      programConfiguration.value =
+        await EducationProgramService.shared.getEducationProgramForRenew(
+          programId,
+        );
+    } catch {
+      snackBar.error("Unexpected error while loading program data.");
+    } finally {
+      loading.value = false;
+    }
+  },
+  { immediate: true },
+);
 </script>

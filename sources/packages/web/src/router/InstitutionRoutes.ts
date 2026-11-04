@@ -169,9 +169,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: RenewProgram,
         props: (route) => ({
           programId: Number.parseInt(route.params.programId as string),
-          configurationId: Number.parseInt(
-            route.params.configurationId as string,
-          ),
           // Keep the program year selected when navigating back to the manage programs.
           backTarget: {
             name: "Manage Programs",

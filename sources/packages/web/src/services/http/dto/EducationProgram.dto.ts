@@ -125,7 +125,7 @@ export interface EducationProgramManagerDetailsAPIOutDTO {
   isActive: boolean;
   isExpired: boolean;
   isRenewed: boolean;
-  nextProgramConfigurationIdForRenewal?: number;
+  canBeRenewed: boolean;
 }
 
 /**

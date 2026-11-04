@@ -166,7 +166,7 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   isActive: boolean;
   isExpired: boolean;
   isRenewed: boolean;
-  nextProgramConfigurationIdForRenewal?: number;
+  canBeRenewed: boolean;
 }
 
 export class EducationProgramsSummaryLocationAPIOutDTO {
