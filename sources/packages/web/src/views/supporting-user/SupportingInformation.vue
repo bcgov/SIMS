@@ -119,7 +119,7 @@ import {
 import { SupportingUsersService } from "@/services/SupportingUserService";
 import { SupportingUserRoutesConst } from "@/constants/routes/RouteConstants";
 import { MISSING_USER_INFO } from "@/constants";
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 import {
   STUDENT_APPLICATION_NOT_FOUND,
   SUPPORTING_USER_ALREADY_PROVIDED_DATA,
