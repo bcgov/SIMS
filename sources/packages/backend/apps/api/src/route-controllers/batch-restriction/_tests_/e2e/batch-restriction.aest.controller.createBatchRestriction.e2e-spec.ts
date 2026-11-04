@@ -149,7 +149,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     expect(notificationsExist).toEqual([true, true]);
   });
 
-  it("Should add the restriction only once and mark all the application numbers as successful when multiple application numbers belong to the same student.", async () => {
+  it("Should add the restriction only once per student when application numbers belong to the same student or are repeated.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -163,6 +163,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     const payload = {
       restrictionId: provincialRestriction.id,
       applicationNumbers: [
+        application.applicationNumber,
         application.applicationNumber,
         otherApplication.applicationNumber,
       ],
@@ -208,66 +209,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     ]);
   });
 
-  it("Should mark the application number as successful and not add the restriction again when the student already has the restriction active.", async () => {
-    // Arrange
-    const now = new Date();
-    MockDate.set(now);
-
-    const application = await saveFakeApplication(db.dataSource);
-    const existingStudentRestriction = await db.studentRestriction.save(
-      createFakeStudentRestriction({
-        student: application.student,
-        restriction: provincialRestriction,
-        creator: ministryUser,
-      }),
-    );
-
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    const payload = {
-      restrictionId: provincialRestriction.id,
-      applicationNumbers: [application.applicationNumber],
-      note: "Batch restriction test.",
-    };
-
-    // Act/Assert
-    let batchRestrictionId: number;
-    await request(app.getHttpServer())
-      .post(getEndpoint())
-      .auth(token, BEARER_AUTH_TYPE)
-      .send(payload)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        batchRestrictionId = response.body.id;
-      });
-
-    const batchRestriction = await findBatchRestriction(batchRestrictionId);
-    expect(batchRestriction.batchRestrictionStudents).toEqual([
-      {
-        id: expect.any(Number),
-        applicationNumber: application.applicationNumber,
-        studentRestriction: { id: existingStudentRestriction.id },
-        failureReason: null,
-        createdAt: now,
-        creator: ministryUser,
-        updatedAt: now,
-      },
-    ]);
-    const studentRestrictions = await findActiveStudentRestrictions(
-      application.student.id,
-    );
-    expect(studentRestrictions).toEqual([
-      {
-        id: existingStudentRestriction.id,
-        isActive: true,
-        restrictionNote: null,
-        creator: ministryUser,
-        createdAt: existingStudentRestriction.createdAt,
-        updatedAt: existingStudentRestriction.updatedAt,
-      },
-    ]);
-  });
-
-  it("Should link the application number to the most recent active restriction and not add the restriction again when the student has the restriction active more than once.", async () => {
+  it("Should link the application number to the most recent active restriction without adding it again when the student already has the restriction active.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
@@ -378,29 +320,35 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
         updatedAt: now,
       },
     ]);
-    // Assert the batch student is associated with the added student restriction.
+    const [studentRestriction] = studentRestrictions;
+    // Assert the batch restriction student is associated with the added student restriction.
     const batchRestriction = await findBatchRestriction(batchRestrictionId);
     expect(batchRestriction.batchRestrictionStudents).toEqual([
-      expect.objectContaining({
-        studentRestriction: { id: studentRestrictions[0].id },
-      }),
+      {
+        id: expect.any(Number),
+        applicationNumber: application.applicationNumber,
+        studentRestriction: { id: studentRestriction.id },
+        failureReason: null,
+        createdAt: now,
+        creator: ministryUser,
+        updatedAt: now,
+      },
     ]);
   });
 
-  it("Should add the restriction to the found students and record a single failure for each not existing application number when valid, not existing, and duplicate application numbers are provided.", async () => {
+  it("Should record a failure for the application number and still add the restriction to the other students when an application number does not exist.", async () => {
     // Arrange
     const now = new Date();
     MockDate.set(now);
 
     const application = await saveFakeApplication(db.dataSource);
-    const invalidApplicationNumber = "1212343456";
+    const notExistingApplicationNumber = "9999999999";
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
       restrictionId: provincialRestriction.id,
       applicationNumbers: [
-        invalidApplicationNumber,
-        invalidApplicationNumber,
+        notExistingApplicationNumber,
         application.applicationNumber,
       ],
       note: "Batch restriction test.",
@@ -417,15 +365,14 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
         batchRestrictionId = response.body.id;
       });
 
-    const studentRestrictions = await findActiveStudentRestrictions(
+    const [studentRestriction] = await findActiveStudentRestrictions(
       application.student.id,
     );
-    expect(studentRestrictions).toHaveLength(1);
     const batchRestriction = await findBatchRestriction(batchRestrictionId);
     expect(batchRestriction.batchRestrictionStudents).toEqual([
       {
         id: expect.any(Number),
-        applicationNumber: invalidApplicationNumber,
+        applicationNumber: notExistingApplicationNumber,
         studentRestriction: null,
         failureReason: "The application number does not exist.",
         createdAt: now,
@@ -435,7 +382,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
       {
         id: expect.any(Number),
         applicationNumber: application.applicationNumber,
-        studentRestriction: { id: studentRestrictions[0].id },
+        studentRestriction: { id: studentRestriction.id },
         failureReason: null,
         createdAt: now,
         creator: ministryUser,
@@ -574,7 +521,7 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
         },
       },
       where: { id: batchRestrictionId },
-      // Batch students are inserted in the order the application numbers were submitted.
+      // Batch restriction students are inserted in the order the application numbers were submitted.
       order: { batchRestrictionStudents: { id: "ASC" } },
     });
   }

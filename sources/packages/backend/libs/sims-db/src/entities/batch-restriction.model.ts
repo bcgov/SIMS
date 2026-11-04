@@ -43,11 +43,7 @@ export class BatchRestriction extends RecordDataModel {
    */
   @OneToMany(
     () => BatchRestrictionStudent,
-    (batchStudent) => batchStudent.batchRestriction,
-    {
-      cascade: ["insert", "update"],
-      nullable: false,
-    },
+    (batchRestrictionStudent) => batchRestrictionStudent.batchRestriction,
   )
   batchRestrictionStudents: BatchRestrictionStudent[];
 }
