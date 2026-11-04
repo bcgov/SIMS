@@ -168,14 +168,31 @@ export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptions
 
 export class ProgramsManagementPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn([
-    "programName",
-    "credentialType",
-    "cipCode",
-    "sabcCode",
-    "programStatus",
-  ])
+  @IsIn(["programName", "credentialType", "cipCode", "sabcCode"])
   sortField?: string;
+  @IsArray()
+  @IsOptional()
+  @Transform(({ value }) => value.split(","))
+  @IsEnum(ProgramStatus, { each: true })
+  statusSearch?: ProgramStatus[];
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  inactiveProgramSearch?: boolean;
+  /**
+   * Include programs already renewed into the next program year.
+   */
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  renewedProgramSearch?: boolean;
+  /**
+   * Include programs not yet renewed into the next program year.
+   */
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  notRenewedProgramSearch?: boolean;
 }
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

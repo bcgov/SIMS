@@ -12,7 +12,6 @@ export const PROGRAMS_MANAGEMENT_SORT_FIELDS: Record<
   credentialType: "credentialType",
   cipCode: "cipCode",
   sabcCode: "sabcCode",
-  programStatus: "programStatus",
 };
 
 /**

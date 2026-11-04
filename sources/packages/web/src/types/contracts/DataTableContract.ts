@@ -126,7 +126,7 @@ export const ManageProgramSummaryHeaders = [
   },
   {
     title: "Status",
-    sortable: true,
+    sortable: false,
     key: "programStatus",
   },
   {

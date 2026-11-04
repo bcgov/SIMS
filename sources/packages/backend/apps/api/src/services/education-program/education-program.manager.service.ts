@@ -1,10 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import {
+  combineWhereConditions,
   EducationProgram,
   EducationProgramConfiguration,
   ProgramYear,
 } from "@sims/sims-db";
-import { MoreThan, Repository } from "typeorm";
+import {
+  FindOptionsWhere,
+  ILike,
+  In,
+  IsNull,
+  Like,
+  MoreThan,
+  Not,
+  Or,
+  Raw,
+  Repository,
+} from "typeorm";
 import {
   PaginatedResults,
   ProgramsManagementPaginationOptions,
@@ -95,6 +107,13 @@ export class EducationProgramManagerService {
     });
   }
 
+  /**
+   * Gets the education programs of an institution for a program year.
+   * @param institutionId institution the programs belong to.
+   * @param programYearId program year the programs are associated with.
+   * @param paginationOptions pagination, sort, and status filter options.
+   * @returns paginated education programs.
+   */
   async getEducationProgramsManagerDetails(
     institutionId: number,
     programYearId: number,
@@ -102,6 +121,16 @@ export class EducationProgramManagerService {
   ): Promise<PaginatedResults<EducationProgram>> {
     const sortField =
       PROGRAMS_MANAGEMENT_SORT_FIELDS[paginationOptions.sortField] ?? "name";
+    const baseWhere: FindOptionsWhere<EducationProgram> = {
+      institution: {
+        id: institutionId,
+      },
+      programConfiguration: {
+        programYear: {
+          id: programYearId,
+        },
+      },
+    };
     const [results, count] = await this.educationProgramRepo.findAndCount({
       select: {
         id: true,
@@ -119,16 +148,12 @@ export class EducationProgramManagerService {
       relations: {
         renewedProgram: true,
       },
-      where: {
-        institution: {
-          id: institutionId,
-        },
-        programConfiguration: {
-          programYear: {
-            id: programYearId,
-          },
-        },
-      },
+      where: combineWhereConditions(
+        baseWhere,
+        this.getProgramStatusWhereConditions(paginationOptions),
+        this.getRenewalWhereConditions(paginationOptions),
+        this.getSearchWhereConditions(paginationOptions),
+      ),
       skip: paginationOptions.pageLimit * paginationOptions.page,
       take: paginationOptions.pageLimit,
       order: {
@@ -136,5 +161,91 @@ export class EducationProgramManagerService {
       },
     });
     return { results, count };
+  }
+
+  /**
+   * Builds the where conditions to filter the programs by renewal.
+   * A renewed program is a program already renewed into the next program year
+   * (another program has it as its preceding program), while a not renewed
+   * program is everything else.
+   * - No filter or both filters: all programs are returned.
+   * - Renewed filter only: programs with a renewed program.
+   * - Not renewed filter only: programs without a renewed program.
+   * @param paginationOptions options containing the renewal filters.
+   * @returns where conditions, where each array item is combined using OR.
+   */
+  private getRenewalWhereConditions(
+    paginationOptions: ProgramsManagementPaginationOptions,
+  ): FindOptionsWhere<EducationProgram>[] {
+    const renewedProgramSearch = !!paginationOptions.renewedProgramSearch;
+    const notRenewedProgramSearch = !!paginationOptions.notRenewedProgramSearch;
+    if (renewedProgramSearch === notRenewedProgramSearch) {
+      return [{}];
+    }
+    // The renewed program is the inverse side of the relationship, hence the
+    // condition is applied to its ID, which is left joined.
+    return [
+      {
+        renewedProgram: {
+          id: renewedProgramSearch ? Not(IsNull()) : IsNull(),
+        },
+      },
+    ];
+  }
+
+  /**
+   * Builds the where conditions to filter the programs by status.
+   * - No filter: all programs are returned.
+   * - Status filter only: active and non-expired programs with one of the statuses.
+   * - Inactive filter only: inactive or expired programs.
+   * - Both filters: programs matching any of the above conditions.
+   * @param paginationOptions options containing the status filters.
+   * @returns where conditions, where each array item is combined using OR.
+   */
+  private getProgramStatusWhereConditions(
+    paginationOptions: ProgramsManagementPaginationOptions,
+  ): FindOptionsWhere<EducationProgram>[] {
+    const { statusSearch, inactiveProgramSearch } = paginationOptions;
+    if (!statusSearch?.length && !inactiveProgramSearch) {
+      return [{}];
+    }
+    const conditions: FindOptionsWhere<EducationProgram>[] = [];
+    if (statusSearch?.length) {
+      conditions.push({
+        programStatus: In(statusSearch),
+        isActive: true,
+        effectiveEndDate: Or(
+          IsNull(),
+          Raw((alias) => `${alias} > CURRENT_DATE`),
+        ),
+      });
+    }
+    if (inactiveProgramSearch) {
+      conditions.push(
+        { isActive: false },
+        { effectiveEndDate: Raw((alias) => `${alias} <= CURRENT_DATE`) },
+      );
+    }
+    return conditions;
+  }
+
+  /**
+   * Builds the where conditions to filter the programs by the search criteria,
+   * matching the program name, CIP code, or SABC code.
+   * @param paginationOptions options containing the search criteria.
+   * @returns where conditions, where each array item is combined using OR.
+   */
+  private getSearchWhereConditions(
+    paginationOptions: ProgramsManagementPaginationOptions,
+  ): FindOptionsWhere<EducationProgram>[] {
+    const searchCriteria = paginationOptions.searchCriteria?.trim();
+    if (!searchCriteria) {
+      return [{}];
+    }
+    return [
+      { name: ILike(`%${searchCriteria}%`) },
+      { cipCode: Like(`%${searchCriteria}%`) },
+      { sabcCode: Like(`%${searchCriteria.toUpperCase()}%`) },
+    ];
   }
 }

@@ -2,14 +2,14 @@
   <full-page-container :full-width="true">
     <template #header>
       <header-navigator
-        title="Manage Programs"
-        sub-title="Manage programs for a program year"
+        :title="institutionState?.operatingName"
+        sub-title="Manage programs"
       />
     </template>
     <body-header-container>
       <template #header>
         <body-header
-          title="Education Programs"
+          title="Programs by Program Year"
           :records-count="programAndCount?.count"
         >
           <template #actions>
@@ -50,14 +50,20 @@
           </template>
         </body-header>
       </template>
-      <search-table :loading="loading" @search="searchProgramTable">
+      <search-table
+        v-model="searchBox"
+        search-label="Search Program name or SABC program code or CIP"
+        :loading="loading"
+        @search="searchProgramTable"
+      >
         <template #prepend-search>
           <div class="d-flex ga-2">
             <v-select
-              class="flex-grow-0"
-              min-width="200"
+              class="flex-grow-0 flex-shrink-0"
+              width="280"
+              clearable
               label="Program year"
-              placeholder="Select year"
+              placeholder="Select a program year"
               persistent-placeholder
               density="compact"
               :items="programYears"
@@ -72,15 +78,60 @@
               autofocus
             />
             <v-divider vertical />
-            <v-text-field
+            <v-btn-toggle
+              :model-value="selectedStatuses"
+              @update:model-value="handleStatusChange"
+              multiple
               density="compact"
-              label="Search Program name or SABC program code or CIP"
-              variant="outlined"
-              v-model="searchBox"
-              @keyup.enter="searchProgramTable"
-              prepend-inner-icon="mdi-magnify"
-              hide-details="auto"
-            />
+              class="flex-grow-1 flex-wrap align-self-center btn-toggle"
+              selected-class="selected-btn-toggle"
+            >
+              <v-btn
+                rounded="xl"
+                :value="ALL_STATUS"
+                color="primary"
+                class="mr-2"
+                >All</v-btn
+              >
+              <v-btn
+                rounded="xl"
+                :value="ProgramStatus.Approved"
+                color="primary"
+                class="mr-2"
+                >Approved</v-btn
+              >
+              <v-btn
+                rounded="xl"
+                :value="ProgramStatus.Pending"
+                color="primary"
+                class="mr-2"
+                >Pending</v-btn
+              >
+              <v-btn
+                rounded="xl"
+                :value="ProgramStatus.Declined"
+                color="primary"
+                class="mr-2"
+                >Declined</v-btn
+              >
+              <v-btn
+                rounded="xl"
+                :value="INACTIVE_PROGRAM"
+                color="primary"
+                class="mr-2"
+                >Inactive</v-btn
+              >
+              <v-btn
+                rounded="xl"
+                :value="RENEWED_PROGRAM"
+                color="primary"
+                class="mr-2"
+                >Renewed</v-btn
+              >
+              <v-btn rounded="xl" :value="NOT_RENEWED_PROGRAM" color="primary"
+                >Not Renewed</v-btn
+              >
+            </v-btn-toggle>
           </div>
         </template>
         <toggle-content
@@ -131,7 +182,10 @@
                 "
                 >Renew</v-btn
               >
-              <span v-else class="text-body-2 text-medium-emphasis text-no-wrap">
+              <span
+                v-else
+                class="text-body-2 text-medium-emphasis text-no-wrap"
+              >
                 <v-icon
                   :icon="item.isRenewed ? 'fa:fas fa-check' : 'fa:fas fa-clock'"
                   size="14"
@@ -170,13 +224,15 @@ import {
   ProgramSummaryFields,
   ManageProgramSummaryHeaders,
   DataTableSortByOrder,
+  ProgramStatus,
 } from "@/types";
+import { INACTIVE_PROGRAM } from "@/constants";
 import type {
   EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramYearAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { useFormatters, useSnackBar } from "@/composables";
+import { useFormatters, useInstitutionState, useSnackBar } from "@/composables";
 
 interface ManageProgramsProps {
   // Program year to be selected by default, when provided.
@@ -186,6 +242,7 @@ interface ManageProgramsProps {
 const props = defineProps<ManageProgramsProps>();
 const { emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
+const { institutionState } = useInstitutionState();
 const router = useRouter();
 const { mobile: isMobile } = useDisplay();
 const programAndCount = ref(
@@ -201,6 +258,14 @@ const sortBy = ref([
     order: DataTableSortByOrder.ASC,
   },
 ]);
+// Sentinel value used to represent the "All" filter state.
+const ALL_STATUS = "All";
+// Renewal filter values, listed along with the program statuses.
+// Renewed programs are the ones already renewed into the next program year.
+// When combined with statuses, the programs must match both filters.
+const RENEWED_PROGRAM = "renewed";
+const NOT_RENEWED_PROGRAM = "notRenewed";
+const selectedStatuses = ref([ALL_STATUS]);
 const currentPage = ref();
 const currentPageLimit = ref();
 // Program years with education program configurations available to be selected.
@@ -232,6 +297,32 @@ const noProgramsMessage = computed(() => {
 });
 
 /**
+ * Builds the search criteria object from the current search box and status
+ * filter values, used consistently across search and pagination/sort events.
+ * @returns The search criteria object reflecting the current filter state.
+ */
+const getSearchCriteria = () => {
+  // Only actual program statuses are sent as the status search.
+  const statusSearch = selectedStatuses.value.filter(
+    (s) =>
+      ![
+        ALL_STATUS,
+        INACTIVE_PROGRAM,
+        RENEWED_PROGRAM,
+        NOT_RENEWED_PROGRAM,
+      ].includes(s),
+  );
+  return {
+    searchCriteria: searchBox.value,
+    inactiveProgramSearch: selectedStatuses.value.includes(INACTIVE_PROGRAM),
+    renewedProgramSearch: selectedStatuses.value.includes(RENEWED_PROGRAM),
+    notRenewedProgramSearch:
+      selectedStatuses.value.includes(NOT_RENEWED_PROGRAM),
+    ...(statusSearch.length ? { statusSearch } : {}),
+  };
+};
+
+/**
  * Function to load program list and count for the program configuration.
  * @param page page number, if nothing passed then DEFAULT_DATATABLE_PAGE_NUMBER.
  * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
@@ -254,7 +345,7 @@ const loadPrograms = async (
       await EducationProgramService.shared.getProgramsForProgramYear(
         selectedProgramYearId.value,
         {
-          searchCriteria: searchBox.value,
+          searchCriteria: getSearchCriteria(),
           sortField,
           sortOrder,
           page,
@@ -290,6 +381,29 @@ const searchProgramTable = async () => {
     currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
     currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
   );
+};
+
+/**
+ * Handles status filter changes from the toggle group, enforcing mutual
+ * exclusivity between "All" and specific statuses, and reloading the table
+ * when the effective selection changes.
+ * @param newVal The new array of selected status values emitted by the toggle.
+ */
+const handleStatusChange = async (newVal: string[]) => {
+  const oldVal = selectedStatuses.value;
+  if (newVal.includes(ALL_STATUS) && newVal.length > 1) {
+    // Clicking "All" while others are active clears them.
+    // Clicking a status while "All" is active removes "All".
+    selectedStatuses.value = oldVal.includes(ALL_STATUS)
+      ? newVal.filter((s) => s !== ALL_STATUS)
+      : [ALL_STATUS];
+  } else if (newVal.length === 0) {
+    // Nothing selected, fall back to "All".
+    selectedStatuses.value = [ALL_STATUS];
+  } else {
+    selectedStatuses.value = newVal;
+  }
+  await searchProgramTable();
 };
 
 /**
