@@ -7,6 +7,7 @@ import { AddressInfo, NoteType } from "@sims/sims-db";
  * while creating a new student.
  */
 export interface StudentInfo extends AddressInfo {
+  email: string;
   phone: string;
   sinNumber: string;
   sinConsent: boolean;
@@ -19,7 +20,8 @@ export interface StudentUserData {
   lastName: string;
   givenNames?: string;
   /**
-   * When not provided the user e-mail is not updated.
+   * User e-mail. When not provided, the e-mail is not updated
+   * (e.g. BCSC token sync, since the e-mail is maintained by the student).
    */
   email?: string;
   noteDescription: string;
@@ -32,7 +34,7 @@ export interface StudentUserData {
  */
 export type CreateStudentUserInfo = Pick<
   UserInfo,
-  "userId" | "lastName" | "givenNames" | "email" | "birthdate"
+  "userId" | "lastName" | "givenNames" | "birthdate"
 > & {
   /**
    * Optional userName that must be provided to alow the user creation.

@@ -173,7 +173,7 @@ export class StudentService extends RecordDataModelService<Student> {
     // If a user id was provided, use it as the audit user. It means that
     // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
-    user.email = userInfo.email.trim();
+    user.email = studentInfo.email.trim();
     user.firstName = userInfo.givenNames?.trim();
     user.lastName = userInfo.lastName.trim();
     if (userInfo.userId) {
@@ -521,23 +521,26 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Updates student information.
    * @param studentId student to be updated.
-   * @param studentInfo student information to be updated.
-   * @param email student e-mail, which is editable by the student at any time.
+   * @param studentInfo student information to be updated, including the e-mail.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
   async updateStudentInfo(
     studentId: number,
     studentInfo: StudentInfo,
-    email: string,
     auditUserId: number,
   ): Promise<Student> {
+    const studentUser = await this.repo.findOneOrFail({
+      select: { id: true, user: { id: true } },
+      relations: { user: true },
+      where: { id: studentId },
+      loadEagerRelations: false,
+    });
     const student = new Student();
     student.id = studentId;
-    // The student is the user updating their own profile, hence the audit user is the student user.
     student.user = {
-      id: auditUserId,
-      email: email.trim(),
+      id: studentUser.user.id,
+      email: studentInfo.email.trim(),
       modifier: { id: auditUserId },
     } as User;
     student.contactInfo = {
