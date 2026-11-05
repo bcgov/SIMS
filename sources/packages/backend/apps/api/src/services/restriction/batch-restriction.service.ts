@@ -313,8 +313,8 @@ export class BatchRestrictionService {
     if (!studentIds.length) {
       return new Map();
     }
-    // Bulk insert for all the notes, returned in the same order as the students.
-    const notes = await this.noteSharedService.createStudentNotes(
+    // Bulk creates the notes and associates each one with its student.
+    const createdStudentNotes = await this.noteSharedService.createStudentNotes(
       studentIds.map((studentId) => ({
         studentId,
         noteType: NoteType.Restriction,
@@ -323,35 +323,34 @@ export class BatchRestrictionService {
       userId,
       entityManager,
     );
-    const studentRestrictions = studentIds.map((studentId, index) => {
-      const studentRestriction =
-        this.studentRestrictionSharedService.buildStudentRestriction(
-          studentId,
-          restrictionId,
-          userId,
-          { restrictionNoteId: notes[index].id },
-        );
-      studentRestriction.createdAt = createdAt;
-      studentRestriction.updatedAt = createdAt;
-      return studentRestriction;
-    });
-    // Single bulk insert for all the student restrictions,
-    // returned in the same order as the students.
-    const insertResult = await entityManager
+    // Create the restrictions for each student and link the note.
+    const studentRestrictions = createdStudentNotes.map(
+      ({ studentId, note: restrictionNote }) => {
+        const studentRestriction =
+          this.studentRestrictionSharedService.buildStudentRestriction(
+            studentId,
+            restrictionId,
+            userId,
+            { restrictionNoteId: restrictionNote.id },
+          );
+        studentRestriction.createdAt = createdAt;
+        studentRestriction.updatedAt = createdAt;
+        return studentRestriction;
+      },
+    );
+    // Single bulk insert for all the student restrictions.
+    await entityManager
       .getRepository(StudentRestriction)
       .insert(studentRestrictions);
-    const studentRestrictionIds = insertResult.identifiers.map(
-      (identifier) => identifier.id as number,
-    );
     await this.studentRestrictionSharedService.createNotifications(
-      studentRestrictionIds,
+      studentRestrictions.map((studentRestriction) => studentRestriction.id),
       userId,
       entityManager,
     );
     return new Map(
-      studentIds.map((studentId, index) => [
-        studentId,
-        studentRestrictionIds[index],
+      studentRestrictions.map((studentRestriction) => [
+        studentRestriction.student.id,
+        studentRestriction.id,
       ]),
     );
   }

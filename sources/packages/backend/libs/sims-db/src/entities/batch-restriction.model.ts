@@ -25,8 +25,6 @@ export class BatchRestriction extends RecordDataModel {
    */
   @Column({
     name: "batch_number",
-    type: "integer",
-    nullable: false,
   })
   batchNumber: number;
   /**

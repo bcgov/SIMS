@@ -43,7 +43,7 @@ export class BatchRestrictionStudent extends RecordDataModel {
    * Active student restriction of the student of the application number, either
    * added by the batch or already active. Null when the application number does not exist.
    */
-  @ManyToOne(() => StudentRestriction, { nullable: true })
+  @ManyToOne(() => StudentRestriction)
   @JoinColumn({
     name: "student_restriction_id",
     referencedColumnName: ColumnNames.ID,

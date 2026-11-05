@@ -15,29 +15,7 @@
       </template>
       <content-group>
         <v-form ref="batchRestrictionForm">
-          <v-select
-            v-model="selectedCategory"
-            :items="restrictionCategories"
-            @update:model-value="loadRestrictionReasons"
-            :rules="[(v) => !!v || 'Category is required.']"
-            label="Category"
-            density="compact"
-            variant="outlined"
-            class="mb-4"
-            hide-details="auto"
-          />
-          <v-select
-            v-model="restrictionId"
-            :items="restrictionReasons"
-            item-title="description"
-            item-value="id"
-            :rules="[(v) => !!v || 'Reason is required.']"
-            label="Reason"
-            density="compact"
-            variant="outlined"
-            class="mb-4"
-            hide-details="auto"
-          />
+          <provincial-restriction-select v-model="restriction" />
           <v-textarea
             v-model="applicationNumbers"
             :rules="[
@@ -78,10 +56,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
-import { ApiProcessError, LayoutTemplates, RestrictionType } from "@/types";
-import type { ComponentItemType, VForm } from "@/types";
+import { ref } from "vue";
+import { ApiProcessError, LayoutTemplates } from "@/types";
+import type { VForm } from "@/types";
 import BatchRestrictionHistory from "@/components/aest/BatchRestrictionHistory.vue";
+import ProvincialRestrictionSelect from "@/components/common/restriction/ProvincialRestrictionSelect.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
@@ -91,7 +70,6 @@ import {
   useRules,
   useSnackBar,
 } from "@/composables";
-import { RestrictionService } from "@/services/RestrictionService";
 import { BatchRestrictionService } from "@/services/BatchRestrictionService";
 import { RestrictionAPIOutDTO } from "@/services/http/dto";
 
@@ -101,10 +79,7 @@ const snackBar = useSnackBar();
 const { checkApplicationNumbersRule } = useRules();
 const { parseApplicationNumbers } = useFormatters();
 
-const restrictionCategories = ref<ComponentItemType[]>([]);
-const restrictionReasons = ref<RestrictionAPIOutDTO[]>([]);
-const selectedCategory = ref<string | null>(null);
-const restrictionId = ref<number | null>(null);
+const restriction = ref<RestrictionAPIOutDTO | null>(null);
 const applicationNumbers = ref("");
 const batchRestrictionHistory = ref(
   {} as InstanceType<typeof BatchRestrictionHistory>,
@@ -114,59 +89,14 @@ const confirmBatchRestrictionModal = ref(
   {} as ModalDialog<UserNoteModal<string>>,
 );
 
-const loadRestrictionCategories = async () => {
-  try {
-    const categories =
-      await RestrictionService.shared.getRestrictionCategories();
-    restrictionCategories.value = categories.map((category) => ({
-      title: category.description,
-      value: category.description,
-    }));
-  } catch {
-    snackBar.error(
-      "Unexpected error while loading the restriction categories.",
-    );
-  }
-};
-
-watchEffect(loadRestrictionCategories);
-
-/**
- * Loads the provincial restriction reasons for the selected category.
- * The previously selected reason is cleared since it may not belong to the new category.
- */
-const loadRestrictionReasons = async () => {
-  restrictionId.value = null;
-  restrictionReasons.value = [];
-  const requestedCategory = selectedCategory.value;
-  if (!requestedCategory) {
-    return;
-  }
-  try {
-    const reasons = await RestrictionService.shared.getRestrictionReasons(
-      RestrictionType.Provincial,
-      requestedCategory,
-    );
-    // Ignore responses for a category that is no longer selected.
-    if (requestedCategory === selectedCategory.value) {
-      restrictionReasons.value = reasons;
-    }
-  } catch {
-    snackBar.error("Unexpected error while loading the restriction reasons.");
-  }
-};
-
 const openConfirmSubmitModal = async () => {
   const { valid } = await batchRestrictionForm.value.validate();
   if (!valid) {
     return;
   }
 
-  const selectedRestriction = restrictionReasons.value.find(
-    (restriction) => restriction.id === restrictionId.value,
-  );
   await confirmBatchRestrictionModal.value.showModal(
-    selectedRestriction?.description,
+    restriction.value?.description,
     submitRestriction,
   );
 };
@@ -176,7 +106,7 @@ const submitRestriction = async (
 ): Promise<boolean> => {
   try {
     await BatchRestrictionService.shared.createBatchRestriction({
-      restrictionId: restrictionId.value as number,
+      restrictionId: restriction.value?.id as number,
       applicationNumbers: parseApplicationNumbers(applicationNumbers.value),
       note: userNoteModalResult.note,
     });

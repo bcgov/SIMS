@@ -59,8 +59,10 @@ describe("BatchRestrictionAESTController(e2e)-createBatchRestriction", () => {
     const now = new Date();
     MockDate.set(now);
 
-    const application = await saveFakeApplication(db.dataSource);
-    const otherApplication = await saveFakeApplication(db.dataSource);
+    const [application, otherApplication] = await Promise.all([
+      saveFakeApplication(db.dataSource),
+      saveFakeApplication(db.dataSource),
+    ]);
 
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     const payload = {
