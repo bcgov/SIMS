@@ -39,6 +39,9 @@ const router = useRouter();
 const processing = ref(false);
 const loading = ref(true);
 const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
+// Program year used to load the program configuration, either the one
+// provided or the active program year used as a fallback.
+const resolvedProgramYearId = ref<number>();
 const formTitle = computed(() =>
   programConfiguration.value
     ? `Program Creation for ${programConfiguration.value.programYearName}`
@@ -46,16 +49,19 @@ const formTitle = computed(() =>
 );
 
 const submit = async (programData: Record<string, unknown>) => {
-  if (!programConfiguration.value) {
+  if (!programConfiguration.value || !resolvedProgramYearId.value) {
     snackBar.error("Unable to create program: missing program configuration.");
     return;
   }
   processing.value = true;
   try {
-    await EducationProgramService.shared.createEducationProgram({
-      programData,
-      programConfigurationId: programConfiguration.value.configurationId,
-    });
+    await EducationProgramService.shared.createEducationProgram(
+      resolvedProgramYearId.value,
+      {
+        programData,
+        programConfigurationId: programConfiguration.value.configurationId,
+      },
+    );
     snackBar.success("Education Program created successfully!");
     await goBack();
   } catch (error: unknown) {
@@ -83,6 +89,7 @@ const loadProgramConfiguration = async (
 ): Promise<void> => {
   loading.value = true;
   programConfiguration.value = undefined;
+  resolvedProgramYearId.value = undefined;
   try {
     if (!programYearId) {
       // Temporarily fall back to the active program year if none is provided to
@@ -101,9 +108,10 @@ const loadProgramConfiguration = async (
       programYearId = activeProgramYear.id;
     }
     programConfiguration.value =
-      await EducationProgramService.shared.getEducationProgramConfiguration(
+      await EducationProgramService.shared.getEducationProgramForCreate(
         programYearId,
       );
+    resolvedProgramYearId.value = programYearId;
   } catch {
     snackBar.error("Unexpected error while loading program data.");
   } finally {

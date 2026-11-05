@@ -19,6 +19,7 @@ import {
 import {
   DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+  EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_INVALID_OPERATION,
   EDUCATION_PROGRAM_NOT_FOUND,
@@ -153,22 +154,32 @@ export class EducationProgramSaveService {
 
   /**
    * Create a new education program.
+   * @param programYearId the ID of the program year the program is being created for.
    * @param programData the data for the new education program.
-   * @param programConfigurationId the ID of the program configuration.
+   * @param programConfigurationId the ID of the program configuration used to fill the
+   * program data. It must be the active configuration for the program year.
    * @param institutionId the ID of the institution.
    * @param auditUserId the ID of the user performing the action.
    * @returns the created education program.
    */
   async createProgram(
+    programYearId: number,
     programData: EducationProgramData,
     programConfigurationId: number,
     institutionId: number,
     auditUserId: number,
   ): Promise<EducationProgram> {
+    // Only the active configuration for the program year can be used to create a program.
     const configuration = await this.getEducationProgramConfiguration(
       institutionId,
-      { programConfigurationId },
+      { programYearId },
     );
+    if (configuration.configurationId !== programConfigurationId) {
+      throw new CustomNamedError(
+        "The program configuration has changed since the program data was retrieved.",
+        EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
+      );
+    }
     const programDataToValidate = {
       ...programData,
       context: configuration.context,
@@ -225,8 +236,8 @@ export class EducationProgramSaveService {
     }
     if (expectedNextConfiguration.id !== programConfigurationId) {
       throw new CustomNamedError(
-        `The configuration ID ${programConfigurationId} for the renewal is not the expected one for program ID ${renewFromProgramId}.`,
-        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+        "The program configuration has changed since the program data was retrieved.",
+        EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
       );
     }
     const configuration = await this.getEducationProgramConfiguration(

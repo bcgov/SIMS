@@ -88,15 +88,15 @@ export class EducationProgramService {
   }
 
   /**
-   * Get the active program configuration including context, visual schema, and validation schema,
-   * for the provided program year.
+   * Get the program configuration for creation, including context, visual schema,
+   * and validation schema, using the active configuration for the provided program year.
    * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  async getEducationProgramConfiguration(
+  async getEducationProgramForCreate(
     programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return ApiClient.EducationProgram.getEducationProgramConfiguration(
+    return ApiClient.EducationProgram.getEducationProgramForCreate(
       programYearId,
     );
   }
@@ -133,14 +133,19 @@ export class EducationProgramService {
   }
 
   /**
-   * Creates a new education program.
+   * Creates a new education program for the provided program year.
+   * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
   async createEducationProgram(
+    programYearId: number,
     payload: CreateEducationProgramAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return ApiClient.EducationProgram.createEducationProgram(payload);
+    return ApiClient.EducationProgram.createEducationProgram(
+      programYearId,
+      payload,
+    );
   }
 
   /**

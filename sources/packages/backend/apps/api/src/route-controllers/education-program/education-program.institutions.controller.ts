@@ -64,6 +64,7 @@ import {
   EDUCATION_PROGRAM_NOT_FOUND,
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+  EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
 } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -126,22 +127,23 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Get the active program configuration including context, visual schema, and validation schema,
-   * for the provided program year.
+   * Get the program configuration for creation, including context, visual schema,
+   * and validation schema, using the active configuration for the provided program year.
+   * Paired with the creation endpoint ({@link createEducationProgram}).
    * @param programYearId ID of the program year.
+   * @param userToken the token of the user making the request.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   @ApiNotFoundResponse({
     description: "Not able to find an active program configuration.",
   })
-  @Get("program-year/:programYearId/configuration")
-  async getEducationProgramConfiguration(
+  @Get("program-year/:programYearId/create")
+  async getEducationProgramForCreate(
+    @Param("programYearId", ParseIntPipe) programYearId: number,
     @UserToken() userToken: IInstitutionUserToken,
-    @Param("programYearId", new ParseIntPipe({ optional: true }))
-    programYearId?: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     try {
-      return this.educationProgramControllerService.getEducationProgramConfiguration(
+      return await this.educationProgramControllerService.getEducationProgramConfiguration(
         userToken.authorizations.institutionId,
         { programYearId },
       );
@@ -172,21 +174,27 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Creates a new education program.
+   * Creates a new education program for the provided program year.
+   * Paired with the endpoint that provides the creation configuration
+   * ({@link getEducationProgramForCreate}).
+   * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
+   * @param userToken the token of the user making the request.
    * @returns id of the created program.
    */
   @ApiUnprocessableEntityResponse({
     description:
       "Education program data is not valid or " +
-      "education program configuration not found or not active or " +
+      "education program configuration not found or " +
+      "education program configuration outdated (not the active one for the program year) or " +
       "duplicate SABC code.",
   })
   @ApiForbiddenResponse({
     description: "You are not authorized to create or modify a program.",
   })
-  @Post()
+  @Post("program-year/:programYearId/create")
   async createEducationProgram(
+    @Param("programYearId", ParseIntPipe) programYearId: number,
     @Body() payload: CreateEducationProgramAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
@@ -195,6 +203,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     );
     try {
       const newProgram = await this.educationProgramSaveService.createProgram(
+        programYearId,
         payload.programData as EducationProgramData,
         payload.programConfigurationId,
         userToken.authorizations.institutionId,
@@ -208,6 +217,7 @@ export class EducationProgramInstitutionsController extends BaseController {
             throw new BadRequestException(error.objectInfo, error.message);
           case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_OUTDATED:
           case DUPLICATE_SABC_CODE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
@@ -243,6 +253,7 @@ export class EducationProgramInstitutionsController extends BaseController {
             throw new BadRequestException(error.objectInfo, error.message);
           case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_OUTDATED:
           case DUPLICATE_SABC_CODE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
@@ -364,7 +375,7 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param userToken User token containing authorization information.
    * @returns Paginated list of education programs for the specified program year.
    */
-  @Get("program-year/:programYearId")
+  @Get("program-year/:programYearId/summary")
   async getProgramsForProgramYear(
     @Param("programYearId", ParseIntPipe)
     programYearId: number,

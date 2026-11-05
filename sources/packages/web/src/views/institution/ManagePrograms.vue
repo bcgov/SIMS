@@ -13,39 +13,8 @@
           :records-count="programAndCount?.count"
         >
           <template #actions>
-            <div class="d-flex justify-end">
-              <v-menu>
-                <template #activator="{ props: menuProps }">
-                  <v-btn
-                    color="primary"
-                    v-bind="menuProps"
-                    :disabled="!activeProgramYears.length"
-                    prepend-icon="fa:fa fa-plus-circle"
-                    append-icon="mdi-menu-down"
-                  >
-                    Create program
-                  </v-btn>
-                </template>
-                <v-list
-                  active-class="active-list-item"
-                  density="compact"
-                  bg-color="default"
-                  color="primary"
-                >
-                  <v-list-item
-                    v-for="programYear in activeProgramYears"
-                    :key="programYear.id"
-                    :value="programYear.id"
-                    @click="goToCreateProgram(programYear.id)"
-                  >
-                    <v-list-item-title>
-                      <span class="label-bold">{{
-                        programYear.description
-                      }}</span>
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+            <div class="text-end">
+              <create-program-menu />
             </div>
           </template>
         </body-header>
@@ -57,82 +26,13 @@
         @search="searchProgramTable"
       >
         <template #prepend-search>
-          <div class="d-flex ga-2">
-            <v-select
-              class="flex-grow-0 flex-shrink-0"
-              width="280"
-              clearable
-              label="Program year"
-              placeholder="Select a program year"
-              persistent-placeholder
-              density="compact"
-              :items="programYears"
-              item-title="description"
-              item-value="id"
-              v-model="selectedProgramYearId"
-              @update:model-value="programConfigurationChanged"
-              variant="outlined"
-              hide-details="auto"
-              prepend-inner-icon="mdi-calendar-range"
-              :loading="loading"
-              autofocus
-            />
-            <v-divider vertical />
-            <v-btn-toggle
-              :model-value="selectedStatuses"
-              @update:model-value="handleStatusChange"
-              multiple
-              density="compact"
-              class="flex-grow-1 flex-wrap align-self-center btn-toggle"
-              selected-class="selected-btn-toggle"
-            >
-              <v-btn
-                rounded="xl"
-                :value="ALL_STATUS"
-                color="primary"
-                class="mr-2"
-                >All</v-btn
-              >
-              <v-btn
-                rounded="xl"
-                :value="ProgramStatus.Approved"
-                color="primary"
-                class="mr-2"
-                >Approved</v-btn
-              >
-              <v-btn
-                rounded="xl"
-                :value="ProgramStatus.Pending"
-                color="primary"
-                class="mr-2"
-                >Pending</v-btn
-              >
-              <v-btn
-                rounded="xl"
-                :value="ProgramStatus.Declined"
-                color="primary"
-                class="mr-2"
-                >Declined</v-btn
-              >
-              <v-btn
-                rounded="xl"
-                :value="INACTIVE_PROGRAM"
-                color="primary"
-                class="mr-2"
-                >Inactive</v-btn
-              >
-              <v-btn
-                rounded="xl"
-                :value="RENEWED_PROGRAM"
-                color="primary"
-                class="mr-2"
-                >Renewed</v-btn
-              >
-              <v-btn rounded="xl" :value="NOT_RENEWED_PROGRAM" color="primary"
-                >Not Renewed</v-btn
-              >
-            </v-btn-toggle>
-          </div>
+          <program-year-status-filters
+            v-model:program-year-id="selectedProgramYearId"
+            v-model:status-filters="statusFilters"
+            :loading="loading"
+            @initialized="programYearFiltersInitialized"
+            @filters-changed="filtersChanged"
+          />
         </template>
         <toggle-content
           :toggled="!programAndCount?.count"
@@ -172,7 +72,7 @@
               <v-btn
                 v-if="item.canBeRenewed"
                 color="primary"
-                @click="goToRenewProgram(item.id)"
+                :to="getRenewProgramRoute(item.id)"
                 >Renew</v-btn
               >
               <span
@@ -191,7 +91,7 @@
               <v-btn
                 color="primary"
                 variant="outlined"
-                @click="goToViewProgram(item.id)"
+                :to="getViewProgramRoute(item.id)"
                 >View</v-btn
               >
             </template>
@@ -202,14 +102,16 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
-import { useRouter } from "vue-router";
+import { useRouter, type RouteLocationRaw } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import BodyHeaderContainer from "@/components/layouts/BodyHeaderContainer.vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
+import ProgramYearStatusFilters from "@/components/institutions/education-programs/ProgramYearStatusFilters.vue";
+import CreateProgramMenu from "@/components/institutions/education-programs/CreateProgramMenu.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
-import type { DataTableOptions } from "@/types";
+import type { DataTableOptions, ProgramStatusFilters } from "@/types";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
@@ -217,9 +119,7 @@ import {
   ProgramSummaryFields,
   ManageProgramSummaryHeaders,
   DataTableSortByOrder,
-  ProgramStatus,
 } from "@/types";
-import { INACTIVE_PROGRAM } from "@/constants";
 import type {
   EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramYearAPIOutDTO,
@@ -251,42 +151,30 @@ const sortBy = ref([
     order: DataTableSortByOrder.ASC,
   },
 ]);
-// Sentinel value used to represent the "All" filter state.
-const ALL_STATUS = "All";
-// Renewal filter values, listed along with the program statuses.
-// Renewed programs are the ones already renewed into the next program year.
-// When combined with statuses, the programs must match both filters.
-const RENEWED_PROGRAM = "renewed";
-const NOT_RENEWED_PROGRAM = "notRenewed";
-const selectedStatuses = ref([ALL_STATUS]);
+// Status and renewal filters selected in the filters component.
+const statusFilters = ref<ProgramStatusFilters>({
+  inactiveProgramSearch: false,
+  renewedProgramSearch: false,
+  notRenewedProgramSearch: false,
+});
 const currentPage = ref();
 const currentPageLimit = ref();
-// Program years with education program configurations available to be selected.
-const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 // Education program configuration the programs are listed for.
-const selectedProgramYearId = ref<number | null>();
-
-/**
- * Program years with at least one active education program configuration,
- * available to have new programs created for.
- */
-const activeProgramYears = computed(() =>
-  programYears.value.filter(
-    (programYear) => programYear.hasActiveProgramConfiguration,
-  ),
+// Initially set from the route, when provided, and validated by the filters component.
+const selectedProgramYearId = ref<number | null | undefined>(
+  props.programYearId,
 );
+// Program year selected in the filters component.
+const selectedProgramYear = ref<EducationProgramYearAPIOutDTO>();
 
 /**
  * Message displayed when there are no programs to be listed.
  */
 const noProgramsMessage = computed(() => {
-  const programConfiguration = programYears.value.find(
-    (configuration) => configuration.id === selectedProgramYearId.value,
-  );
-  if (!programConfiguration) {
+  if (!selectedProgramYear.value) {
     return "Select a program year to view its programs.";
   }
-  return `Program year ${programConfiguration.description} does not have any programs yet`;
+  return `Program year ${selectedProgramYear.value.description} does not have any programs yet`;
 });
 
 /**
@@ -294,26 +182,10 @@ const noProgramsMessage = computed(() => {
  * filter values, used consistently across search and pagination/sort events.
  * @returns The search criteria object reflecting the current filter state.
  */
-const getSearchCriteria = () => {
-  // Only actual program statuses are sent as the status search.
-  const statusSearch = selectedStatuses.value.filter(
-    (s) =>
-      ![
-        ALL_STATUS,
-        INACTIVE_PROGRAM,
-        RENEWED_PROGRAM,
-        NOT_RENEWED_PROGRAM,
-      ].includes(s),
-  );
-  return {
-    searchCriteria: searchBox.value,
-    inactiveProgramSearch: selectedStatuses.value.includes(INACTIVE_PROGRAM),
-    renewedProgramSearch: selectedStatuses.value.includes(RENEWED_PROGRAM),
-    notRenewedProgramSearch:
-      selectedStatuses.value.includes(NOT_RENEWED_PROGRAM),
-    ...(statusSearch.length ? { statusSearch } : {}),
-  };
-};
+const getSearchCriteria = () => ({
+  searchCriteria: searchBox.value,
+  ...statusFilters.value,
+});
 
 /**
  * Function to load program list and count for the program configuration.
@@ -377,73 +249,43 @@ const searchProgramTable = async () => {
 };
 
 /**
- * Handles status filter changes from the toggle group, enforcing mutual
- * exclusivity between "All" and specific statuses, and reloading the table
- * when the effective selection changes.
- * @param newVal The new array of selected status values emitted by the toggle.
- */
-const handleStatusChange = async (newVal: string[]) => {
-  const oldVal = selectedStatuses.value;
-  if (newVal.includes(ALL_STATUS) && newVal.length > 1) {
-    // Clicking "All" while others are active clears them.
-    // Clicking a status while "All" is active removes "All".
-    selectedStatuses.value = oldVal.includes(ALL_STATUS)
-      ? newVal.filter((s) => s !== ALL_STATUS)
-      : [ALL_STATUS];
-  } else if (newVal.length === 0) {
-    // Nothing selected, fall back to "All".
-    selectedStatuses.value = [ALL_STATUS];
-  } else {
-    selectedStatuses.value = newVal;
-  }
-  await searchProgramTable();
-};
-
-/**
- * Navigate to the renew program page for the next program year.
+ * Route to the renew program page for the next program year.
+ * Used as a link target to allow the page to be opened in a new tab.
  * @param programId program to be renewed.
+ * @returns renew program route location.
  */
-const goToRenewProgram = (programId: number) => {
-  router.push({
-    name: InstitutionRoutesConst.RENEW_PROGRAM,
-    params: {
-      programId,
-    },
-    // Allows the renew page to navigate back keeping the current program year selected.
-    query: {
-      programYearId: selectedProgramYearId.value,
-    },
-  });
-};
+const getRenewProgramRoute = (programId: number): RouteLocationRaw => ({
+  name: InstitutionRoutesConst.RENEW_PROGRAM,
+  params: {
+    programId,
+  },
+  // Allows the renew page to navigate back keeping the current program year selected.
+  query: {
+    programYearId: selectedProgramYearId.value,
+  },
+});
 
 /**
- * Navigate to the view program page.
+ * Route to the view program page.
+ * Used as a link target to allow the page to be opened in a new tab.
  * @param programId program to be viewed.
+ * @returns view program route location.
  */
-const goToViewProgram = (programId: number) => {
-  router.push({
-    name: InstitutionRoutesConst.VIEW_PROGRAM,
-    params: { programId },
-    // Allows the view page to navigate back keeping the current program year selected.
-    query: {
-      programYearId: selectedProgramYearId.value,
-    },
-  });
-};
+const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
+  name: InstitutionRoutesConst.VIEW_PROGRAM,
+  params: { programId },
+  // Allows the view page to navigate back keeping the current program year selected.
+  query: {
+    programYearId: selectedProgramYearId.value,
+  },
+});
 
 /**
- * Navigate to the create program page for the program year.
- * @param programYearId program year the program will be created for.
+ * Reload the programs from the first page when the program year or status filters change.
+ * @param programYear currently selected program year, if any.
  */
-const goToCreateProgram = (programYearId: number) => {
-  router.push({
-    name: InstitutionRoutesConst.CREATE_PROGRAM,
-    params: { programYearId },
-  });
-};
-
-// Reload the programs from the first page when the program configuration changes.
-const programConfigurationChanged = async () => {
+const filtersChanged = async (programYear?: EducationProgramYearAPIOutDTO) => {
+  selectedProgramYear.value = programYear;
   currentPage.value = undefined;
   // Keep the route in sync with the selected program configuration.
   await router.replace({
@@ -453,17 +295,17 @@ const programConfigurationChanged = async () => {
   await searchProgramTable();
 };
 
-onMounted(async () => {
-  programYears.value =
-    await EducationProgramService.shared.getProgramYearsList();
-  // No program year is selected by default, unless provided in the route,
-  // otherwise the user must select one to list the programs.
-  const isValidProgramYear = programYears.value.some(
-    (programYear) => programYear.id === props.programYearId,
-  );
-  if (isValidProgramYear) {
-    selectedProgramYearId.value = props.programYearId;
+/**
+ * Loads the programs once the filters component is initialized, when a
+ * valid program year was provided in the route.
+ * @param programYear initially selected program year, if any.
+ */
+const programYearFiltersInitialized = async (
+  programYear?: EducationProgramYearAPIOutDTO,
+) => {
+  selectedProgramYear.value = programYear;
+  if (programYear) {
     await searchProgramTable();
   }
-});
+};
 </script>

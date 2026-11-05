@@ -61,17 +61,17 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Get the active program configuration including context, visual schema, and validation schema,
-   * for the provided program year.
+   * Get the program configuration for creation, including context, visual schema,
+   * and validation schema, using the active configuration for the provided program year.
    * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  async getEducationProgramConfiguration(
+  async getEducationProgramForCreate(
     programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.getCall(
+    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
       this.addClientRoot(
-        `education-program/program-year/${programYearId}/configuration`,
+        `education-program/program-year/${programYearId}/create`,
       ),
     );
   }
@@ -114,14 +114,21 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Creates a new education program.
+   * Creates a new education program for the provided program year.
+   * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
   async createEducationProgram(
+    programYearId: number,
     payload: CreateEducationProgramAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return this.postCall(this.addClientRoot("education-program"), payload);
+    return this.postCall(
+      this.addClientRoot(
+        `education-program/program-year/${programYearId}/create`,
+      ),
+      payload,
+    );
   }
 
   /**

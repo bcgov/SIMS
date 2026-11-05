@@ -49,6 +49,32 @@ export interface ProgramOfferingApprovalLabels {
 }
 
 /**
+ * Status and renewal filters applied when listing the
+ * programs of a program year.
+ */
+export interface ProgramStatusFilters {
+  /**
+   * Program statuses to be searched. When not provided,
+   * programs are not filtered by status.
+   */
+  statusSearch?: ProgramStatus[];
+  /**
+   * Indicates that only inactive programs must be listed.
+   */
+  inactiveProgramSearch: boolean;
+  /**
+   * Indicates that only programs already renewed into the
+   * next program year must be listed.
+   */
+  renewedProgramSearch: boolean;
+  /**
+   * Indicates that only programs not yet renewed into the
+   * next program year must be listed.
+   */
+  notRenewedProgramSearch: boolean;
+}
+
+/**
  * Summary list view of programs shared between
  * the Ministry and the institutions.
  */
