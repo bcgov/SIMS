@@ -11,7 +11,6 @@ import {
   In,
   IsNull,
   Like,
-  MoreThan,
   Not,
   Or,
   Raw,
@@ -68,10 +67,14 @@ export class EducationProgramManagerService {
   /**
    * Get the next active education program configuration for renewal based
    * on the current program year's start date.
+   * The next program year is the one immediately after the current program
+   * year, and its active configuration is the one expected to be used for
+   * renewals.
    * @param startDateReference the start date of the current program
    * year to find the next education program configuration.
-   * @returns the next active education program configuration after the current
-   * program year's start date, or null if none exists.
+   * @returns the active education program configuration of the next program
+   * year, or null if there is no next program year or it has no active
+   * configuration.
    */
   async getNextProgramConfigurationForRenewal(
     startDateReference: string,
@@ -81,31 +84,35 @@ export class EducationProgramManagerService {
         "Current program year start date reference is required to find the next program configuration.",
       );
     }
-    const nextConfiguration =
-      await this.educationProgramConfigurationRepo.findOne({
-        select: {
+    // Subquery to find the program year immediately after the reference date.
+    const nextProgramYearQuery = this.programYearRepo
+      .createQueryBuilder("nextProgramYear")
+      .select("nextProgramYear.id")
+      .where("nextProgramYear.startDate > :startDateReference")
+      .orderBy("nextProgramYear.startDate", "ASC")
+      .limit(1);
+    return this.educationProgramConfigurationRepo.findOne({
+      select: {
+        id: true,
+        isActive: true,
+        programYear: {
           id: true,
-          isActive: true,
-          programYear: {
-            id: true,
-            startDate: true,
-          },
+          startDate: true,
         },
-        relations: {
-          programYear: true,
+      },
+      relations: {
+        programYear: true,
+      },
+      where: {
+        isActive: true,
+        programYear: {
+          id: Raw(
+            (alias) => `${alias} = (${nextProgramYearQuery.getQuery()})`,
+            { startDateReference },
+          ),
         },
-        where: {
-          programYear: {
-            startDate: MoreThan(startDateReference),
-          },
-        },
-        order: {
-          programYear: {
-            startDate: "ASC",
-          },
-        },
-      });
-    return nextConfiguration?.isActive ? nextConfiguration : null;
+      },
+    });
   }
 
   /**

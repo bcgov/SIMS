@@ -203,9 +203,22 @@ export class EducationProgramSaveService {
       auditUserId,
       validationResult,
       configuration.context,
+      { associateParentProgram: true },
     );
   }
 
+  /**
+   * Renew an existing education program into the next program year.
+   * Renewals are possible only between sequential program years.
+   * @param renewFromProgramId the ID of the program to renew from. Used to enforce sequential renewal
+   * and to create a relationship between the old and new programs.
+   * @param updatedProgramData the updated data for the new program.
+   * @param programConfigurationId the ID of the program configuration used to fill the
+   * program data. It must be the active configuration for the next program year.
+   * @param institutionId the ID of the institution.
+   * @param auditUserId the ID of the user performing the action.
+   * @returns the renewed education program.
+   */
   async renewProgram(
     renewFromProgramId: number,
     updatedProgramData: EducationProgramData,
@@ -421,6 +434,9 @@ export class EducationProgramSaveService {
    * @param auditUserId the ID of the user performing the action.
    * @param validationResult the result of the program data validation.
    * @param context the context of the education program.
+   * @param options optional settings for the save operation.
+   * - `associateParentProgram`: if true, the saved program will be associated as its own parent program.
+   * Used only during the first time the program is saved.
    * @returns the created or updated education program.
    */
   private async saveEducationProgram(
@@ -429,6 +445,7 @@ export class EducationProgramSaveService {
     auditUserId: number,
     validationResult: EducationProgramDataValidationSuccess,
     context: EducationProgramContext,
+    options?: { associateParentProgram: boolean },
   ): Promise<EducationProgram> {
     const calculatedData =
       await this.educationProgramEvaluationService.evaluate(
@@ -467,9 +484,16 @@ export class EducationProgramSaveService {
         auditUserId,
         entityManager,
       );
-      const savedProgram = await entityManager
-        .getRepository(EducationProgram)
-        .save(program);
+      const educationProgramRepo =
+        entityManager.getRepository(EducationProgram);
+      const savedProgram = await educationProgramRepo.save(program);
+      if (options?.associateParentProgram) {
+        // Associate the saved program as its own parent program.
+        await educationProgramRepo.update(
+          { id: savedProgram.id },
+          { parentProgram: { id: savedProgram.id } },
+        );
+      }
       return savedProgram;
     });
   }
