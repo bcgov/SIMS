@@ -1,23 +1,19 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
 import { IER12ProcessingService } from "@sims/integrations/institution-integration/ier12-integration";
-import { QueueService } from "@sims/services/queue";
 import { addDays, getISODateOnlyString, QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { IER12IntegrationQueueInDTO } from "./models/ier.model";
 import { INSTITUTION_LOCATION_CODE_MAX_LENGTH } from "@sims/sims-db";
 
-@Processor(QueueNames.IER12Integration)
-export class IER12IntegrationScheduler extends BaseScheduler<IER12IntegrationQueueInDTO> {
+@Processor(QueueNames.IER12Integration, BaseQueueProcessor.defaultWorkerOptions)
+export class IER12IntegrationScheduler extends BaseQueueProcessor<IER12IntegrationQueueInDTO> {
   constructor(
-    @InjectQueue(QueueNames.IER12Integration)
-    schedulerQueue: Queue<IER12IntegrationQueueInDTO>,
     private readonly ierRequest: IER12ProcessingService,
-    queueService: QueueService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -27,7 +23,7 @@ export class IER12IntegrationScheduler extends BaseScheduler<IER12IntegrationQue
    * @param processSummary process summary for logging.
    * @returns processing result log.
    */
-  protected async process(
+  protected async processQueue(
     job: Job<IER12IntegrationQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {

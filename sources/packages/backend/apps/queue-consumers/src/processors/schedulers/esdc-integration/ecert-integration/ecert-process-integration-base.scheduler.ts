@@ -1,19 +1,16 @@
 import { ECertFileHandler } from "@sims/integrations/esdc-integration";
-import { QueueService } from "@sims/services/queue";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { ECertCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
-export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler<void> {
+export abstract class ECertProcessIntegrationBaseScheduler extends BaseQueueProcessor<void> {
   constructor(
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly eCertCalculationProcess: ECertCalculationProcess,
     private readonly eCertFileHandler: ECertFileHandler,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -24,7 +21,7 @@ export abstract class ECertProcessIntegrationBaseScheduler extends BaseScheduler
    * @returns result of the file upload with the file generated and the
    * amount of records added to the file.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {

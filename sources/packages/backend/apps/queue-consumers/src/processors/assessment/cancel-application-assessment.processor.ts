@@ -1,5 +1,5 @@
-import { Processor } from "@nestjs/bull";
-import { Job } from "bull";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
 import { CancelAssessmentQueueInDTO } from "@sims/services/queue";
 import {
   AssessmentSequentialProcessingService,
@@ -18,7 +18,7 @@ import {
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
-import { BaseQueue } from "../../processors";
+import { BaseQueueProcessor } from "../../processors";
 import {
   ASSESSMENT_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
@@ -27,8 +27,11 @@ import {
 /**
  * Process the workflow cancellation.
  */
-@Processor(QueueNames.CancelApplicationAssessment)
-export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssessmentQueueInDTO> {
+@Processor(
+  QueueNames.CancelApplicationAssessment,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class CancelApplicationAssessmentProcessor extends BaseQueueProcessor<CancelAssessmentQueueInDTO> {
   constructor(
     private readonly dataSource: DataSource,
     private readonly workflowClientService: WorkflowClientService,
@@ -46,7 +49,7 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
    * @param job information to perform the process.
    * @param processSummary process summary for logging.
    * @returns processing result.   */
-  protected async process(
+  protected async processQueue(
     job: Job<CancelAssessmentQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
@@ -57,7 +60,6 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
       job.data.assessmentId,
     );
     if (!assessment) {
-      await job.discard();
       throw new CustomNamedError(
         `Assessment id ${job.data.assessmentId} was not found.`,
         ASSESSMENT_NOT_FOUND,
@@ -68,7 +70,6 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
       assessment.studentAssessmentStatus !==
       StudentAssessmentStatus.CancellationQueued
     ) {
-      await job.discard();
       const warnMessage = `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.CancellationQueued} status.`;
       processSummary.warn(warnMessage);
       return "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.";
@@ -79,7 +80,6 @@ export class CancelApplicationAssessmentProcessor extends BaseQueue<CancelAssess
         assessment.application.applicationStatus,
       )
     ) {
-      await job.discard();
       const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Edited} state to have the assessment cancelled.`;
       throw new CustomNamedError(
         errorMessage,

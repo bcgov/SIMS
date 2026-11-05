@@ -1,8 +1,7 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { QueueNames } from "@sims/utilities";
-import { QueueService } from "@sims/services/queue";
 import { ApplicationService } from "../../../services";
 import { SystemUsersService } from "@sims/services/system-users";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
@@ -10,17 +9,17 @@ import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 /**
  * Process applications archiving.
  */
-@Processor(QueueNames.ProcessArchiveApplications)
-export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.ProcessArchiveApplications,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class ProcessArchiveApplicationsScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.ProcessArchiveApplications)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly applicationService: ApplicationService,
     private readonly systemUsersService: SystemUsersService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -29,7 +28,7 @@ export class ProcessArchiveApplicationsScheduler extends BaseScheduler<void> {
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string | string[]> {
