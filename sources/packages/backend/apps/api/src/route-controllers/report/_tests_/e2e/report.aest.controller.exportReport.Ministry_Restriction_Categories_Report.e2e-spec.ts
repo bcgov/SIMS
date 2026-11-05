@@ -2,7 +2,6 @@ import { HttpStatus, INestApplication } from "@nestjs/common";
 import {
   E2EDataSources,
   createE2EDataSources,
-  createFakeInstitution,
   createFakeRestriction,
   saveFakeInstitutionRestriction,
   saveFakeStudent,
@@ -63,11 +62,20 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
       .expect(HttpStatus.CREATED)
       .then((response) => {
         const fileContent = response.request.res["text"];
-        const parsedResult = parse(fileContent, {
+        const parsedResult = parse<Record<string, string>>(fileContent, {
           header: true,
         });
+        // Other tests running in parallel can create restrictions between the restrictions
+        // query and the report request. Only the report records for the queried restrictions
+        // are asserted, which still validates their content and order.
+        const restrictionCodes = new Set(
+          restrictions.map((restriction) => restriction.restrictionCode),
+        );
+        const reportRecords = parsedResult.data.filter((record) =>
+          restrictionCodes.has(record.Code),
+        );
         // Active counts depend on data created by other tests, hence only the numeric format is asserted.
-        expect(parsedResult.data).toEqual(
+        expect(reportRecords).toEqual(
           restrictions.map((restriction) => ({
             Code: restriction.restrictionCode,
             Description: restriction.description,
@@ -116,16 +124,14 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
       { student, restriction: studentRestriction },
       { isActive: false },
     );
-    const institution = await db.institution.save(createFakeInstitution());
     // Active institution restriction that must be counted.
     await saveFakeInstitutionRestriction(db, {
       restriction: institutionRestriction,
-      institution,
     });
     // Inactive institution restriction that must not be counted.
     await saveFakeInstitutionRestriction(
       db,
-      { restriction: institutionRestriction, institution },
+      { restriction: institutionRestriction },
       { initialValues: { isActive: false } },
     );
 
