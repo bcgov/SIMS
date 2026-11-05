@@ -1,11 +1,17 @@
 <template>
-  <div class="d-flex ga-2">
+  <div class="d-flex flex-wrap ga-2">
+    <!--
+      When the status filters are inline, the program year keeps a fixed width.
+      Otherwise, the filters are in a second row and the program year takes the
+      full width of the first row.
+    -->
     <v-select
-      class="flex-grow-0 flex-shrink-0"
-      width="280"
-      clearable
+      class="flex-shrink-0"
+      :class="showInlineFilters ? 'flex-grow-0' : 'flex-grow-1'"
+      width="180
+      "
       label="Program year"
-      placeholder="Select a program year"
+      placeholder="Select year"
       persistent-placeholder
       density="compact"
       :items="programYears"
@@ -19,67 +25,39 @@
       :loading="loading || loadingProgramYears"
       autofocus
     />
-    <v-divider vertical />
+    <v-divider v-if="showInlineFilters" vertical />
     <!--
-      On large screens the status filters are shown inline. On smaller screens
-      they collapse into a dropdown menu to avoid compressing the buttons.
+      On large screens the status filters are shown inline, next to the program
+      year. On smaller screens they move to a second row, taking the full width,
+      to avoid compressing the buttons.
+      The toggle group height is not fixed (h-auto) and the buttons have an
+      explicit height, so when the buttons wrap into multiple lines they keep
+      their height instead of sharing the group height.
     -->
-    <!-- Inline status filters for lg+ screens. -->
     <v-btn-toggle
       :model-value="selectedStatuses"
       @update:model-value="handleStatusChange"
       multiple
       density="compact"
-      class="d-none d-lg-flex flex-grow-1 flex-wrap align-self-center btn-toggle"
+      class="flex-wrap h-auto ga-2 align-self-center btn-toggle"
+      :class="showInlineFilters ? 'flex-grow-1' : 'w-100'"
       selected-class="selected-btn-toggle"
     >
       <v-btn
-        v-for="(filter, index) in STATUS_FILTERS"
+        v-for="filter in STATUS_FILTERS"
         :key="filter.value"
         rounded="xl"
+        height="36"
         :value="filter.value"
         color="primary"
-        :class="{ 'mr-2': index < STATUS_FILTERS.length - 1 }"
         >{{ filter.label }}</v-btn
       >
     </v-btn-toggle>
-    <!-- Dropdown status filters menu for smaller screens. -->
-    <v-menu v-model="filterMenuOpen" :close-on-content-click="false">
-      <template #activator="{ props: menuProps }">
-        <v-btn
-          v-bind="menuProps"
-          class="d-flex d-lg-none align-self-center"
-          density="comfortable"
-          color="primary"
-          icon="mdi-filter-variant"
-          aria-label="Filter program status options"
-          title="Filter program status options"
-        />
-      </template>
-      <v-card class="pa-3">
-        <v-btn-toggle
-          :model-value="selectedStatuses"
-          @update:model-value="handleStatusChange"
-          multiple
-          density="compact"
-          class="flex-column h-auto ga-2 btn-toggle"
-          selected-class="selected-btn-toggle"
-        >
-          <v-btn
-            v-for="filter in STATUS_FILTERS"
-            :key="filter.value"
-            rounded="xl"
-            :value="filter.value"
-            color="primary"
-            >{{ filter.label }}</v-btn
-          >
-        </v-btn-toggle>
-      </v-card>
-    </v-menu>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
+import { useDisplay } from "vuetify";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { ProgramStatus, type ProgramStatusFilters } from "@/types";
 import { INACTIVE_PROGRAM } from "@/constants";
@@ -117,6 +95,15 @@ const statusFilters = defineModel<ProgramStatusFilters>("statusFilters", {
 });
 
 const snackBar = useSnackBar();
+const { width } = useDisplay();
+// Minimum screen width, in pixels, to show the status filters inline.
+// Below it, the filters move to a second row. A custom value is
+// used since the Vuetify lg breakpoint (1280px) is too narrow to fit all
+// the buttons and the xl one (1920px) is too wide.
+const INLINE_FILTERS_MIN_WIDTH = 1200;
+const showInlineFilters = computed(
+  () => width.value >= INLINE_FILTERS_MIN_WIDTH,
+);
 // Sentinel value used to represent the "All" filter state.
 const ALL_STATUS = "All";
 // Renewal filter values, listed along with the program statuses.
@@ -137,8 +124,6 @@ const STATUS_FILTERS = [
 const PROGRAM_STATUSES = Object.values(ProgramStatus) as string[];
 const selectedStatuses = ref([ALL_STATUS]);
 const loadingProgramYears = ref(false);
-// Indicates the status filters menu is open on smaller screens.
-const filterMenuOpen = ref(false);
 // Program years with education program configurations available to be selected.
 const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 

@@ -81,30 +81,31 @@ export class EducationProgramManagerService {
         "Current program year start date reference is required to find the next program configuration.",
       );
     }
-    return this.educationProgramConfigurationRepo.findOne({
-      select: {
-        id: true,
-        isActive: true,
-        programYear: {
+    const nextConfiguration =
+      await this.educationProgramConfigurationRepo.findOne({
+        select: {
           id: true,
-          startDate: true,
+          isActive: true,
+          programYear: {
+            id: true,
+            startDate: true,
+          },
         },
-      },
-      relations: {
-        programYear: true,
-      },
-      where: {
-        isActive: true,
-        programYear: {
-          startDate: MoreThan(startDateReference),
+        relations: {
+          programYear: true,
         },
-      },
-      order: {
-        programYear: {
-          startDate: "ASC",
+        where: {
+          programYear: {
+            startDate: MoreThan(startDateReference),
+          },
         },
-      },
-    });
+        order: {
+          programYear: {
+            startDate: "ASC",
+          },
+        },
+      });
+    return nextConfiguration?.isActive ? nextConfiguration : null;
   }
 
   /**
