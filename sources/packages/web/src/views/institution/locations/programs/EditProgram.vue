@@ -43,7 +43,11 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useInstitutionAuth, useSnackBar } from "@/composables";
+import {
+  useFeatureToggles,
+  useInstitutionAuth,
+  useSnackBar,
+} from "@/composables";
 import { computed, ref, watch } from "vue";
 import type { BackTarget } from "@/types";
 import {
@@ -68,15 +72,19 @@ const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
 const { isReadOnlyUser } = useInstitutionAuth();
+const { isManageProgramsEnabled } = useFeatureToggles();
 const readOnly = computed(() => isReadOnlyUser(props.locationId));
 const processing = ref(false);
 const loading = ref(true);
 const educationProgram = ref<EducationProgramAPIOutDTO>();
-const formTitle = computed(() =>
-  educationProgram.value
+const formTitle = computed(() => {
+  if (!isManageProgramsEnabled.value) {
+    return "Program";
+  }
+  return educationProgram.value
     ? `Program Edit for ${educationProgram.value.programYearName}`
-    : undefined,
-);
+    : undefined;
+});
 
 const isFullUpdateRestricted = computed(
   () => !!educationProgram.value?.programData.context.isFullUpdateRestricted,

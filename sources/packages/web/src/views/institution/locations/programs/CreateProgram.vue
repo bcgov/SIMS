@@ -19,7 +19,7 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useSnackBar } from "@/composables";
+import { useFeatureToggles, useSnackBar } from "@/composables";
 import { computed, ref, watch } from "vue";
 import type { BackTarget } from "@/types";
 import { ApiProcessError } from "@/types";
@@ -36,17 +36,21 @@ interface CreateProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<CreateProgramProps>();
 const router = useRouter();
+const { isManageProgramsEnabled } = useFeatureToggles();
 const processing = ref(false);
 const loading = ref(true);
 const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
 // Program year used to load the program configuration, either the one
 // provided or the active program year used as a fallback.
 const resolvedProgramYearId = ref<number>();
-const formTitle = computed(() =>
-  programConfiguration.value
+const formTitle = computed(() => {
+  if (!isManageProgramsEnabled.value) {
+    return "Program";
+  }
+  return programConfiguration.value
     ? `Program Creation for ${programConfiguration.value.programYearName}`
-    : undefined,
-);
+    : undefined;
+});
 
 const submit = async (programData: Record<string, unknown>) => {
   if (!programConfiguration.value || !resolvedProgramYearId.value) {
