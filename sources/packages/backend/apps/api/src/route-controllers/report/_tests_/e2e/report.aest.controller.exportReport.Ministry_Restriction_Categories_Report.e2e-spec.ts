@@ -113,27 +113,27 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
         }),
       ]);
     const student = await saveFakeStudent(db.dataSource);
-    // Active student restriction that must be counted.
-    await saveFakeStudentRestriction(db.dataSource, {
-      student,
-      restriction: studentRestriction,
-    });
-    // Inactive student restriction that must not be counted.
-    await saveFakeStudentRestriction(
-      db.dataSource,
-      { student, restriction: studentRestriction },
-      { isActive: false },
-    );
-    // Active institution restriction that must be counted.
-    await saveFakeInstitutionRestriction(db, {
-      restriction: institutionRestriction,
-    });
-    // Inactive institution restriction that must not be counted.
-    await saveFakeInstitutionRestriction(
-      db,
-      { restriction: institutionRestriction },
-      { initialValues: { isActive: false } },
-    );
+    // Each restriction has one active record that must be counted
+    // and one inactive record that must not be counted.
+    await Promise.all([
+      saveFakeStudentRestriction(db.dataSource, {
+        student,
+        restriction: studentRestriction,
+      }),
+      saveFakeStudentRestriction(
+        db.dataSource,
+        { student, restriction: studentRestriction },
+        { isActive: false },
+      ),
+      saveFakeInstitutionRestriction(db, {
+        restriction: institutionRestriction,
+      }),
+      saveFakeInstitutionRestriction(
+        db,
+        { restriction: institutionRestriction },
+        { initialValues: { isActive: false } },
+      ),
+    ]);
 
     // Act/Assert
     await request(app.getHttpServer())
