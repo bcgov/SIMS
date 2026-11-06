@@ -50,18 +50,22 @@
         </template>
         <template #[`item.renewal`]="{ item }">
           <v-btn
-            v-if="item.canBeRenewed"
+            v-if="item.renewalStatus === ProgramRenewalStatus.Available"
             color="primary"
             :to="getRenewProgramRoute(item.id)"
             >Renew</v-btn
           >
           <span v-else class="text-body-2 text-medium-emphasis text-no-wrap">
             <v-icon
-              :icon="item.isRenewed ? 'fa:fas fa-check' : 'fa:fas fa-clock'"
+              :icon="
+                item.renewalStatus === ProgramRenewalStatus.Renewed
+                  ? 'fa:fas fa-check'
+                  : 'fa:fas fa-clock'
+              "
               size="14"
               class="mr-1"
             />
-            {{ item.isRenewed ? "Renewed" : "Not available" }}
+            {{ item.renewalStatus }}
           </span>
         </template>
         <template #[`item.programId`]="{ item }">
@@ -92,6 +96,7 @@ import {
   ProgramSummaryFields,
   ManageProgramSummaryHeaders,
   DataTableSortByOrder,
+  ProgramRenewalStatus,
 } from "@/types";
 import type {
   EducationProgramManagerDetailsAPIOutDTO,

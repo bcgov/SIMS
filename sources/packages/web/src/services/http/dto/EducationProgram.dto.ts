@@ -2,6 +2,7 @@ import {
   ProgramCalculatedDataKey,
   ProgramEvaluationResult,
   ProgramIntensity,
+  ProgramRenewalStatus,
   ProgramStatus,
 } from "@/types";
 
@@ -124,8 +125,7 @@ export interface EducationProgramManagerDetailsAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
-  isRenewed: boolean;
-  canBeRenewed: boolean;
+  renewalStatus: ProgramRenewalStatus;
 }
 
 /**

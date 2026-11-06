@@ -6,10 +6,9 @@
       full width of the first row.
     -->
     <v-select
-      class="flex-shrink-0"
+      class="flex-shrink-0 program-year-select"
       :class="showInlineFilters ? 'flex-grow-0' : 'flex-grow-1'"
-      width="180
-      "
+      width="255"
       label="Program year"
       placeholder="Select year"
       persistent-placeholder
@@ -24,7 +23,22 @@
       prepend-inner-icon="mdi-calendar-range"
       :loading="loading || loadingProgramYears"
       autofocus
-    />
+    >
+      <template #item="{ props, internalItem }">
+        <v-list-item v-bind="props">
+          <template #append>
+            <chip-tag v-bind="getProgramYearChipProps(internalItem.raw)" />
+          </template>
+        </v-list-item>
+      </template>
+      <template #selection="{ internalItem }">
+        <span class="text-truncate">{{ internalItem.title }}</span>
+        <chip-tag
+          class="flex-shrink-0 ms-auto my-0 me-0"
+          v-bind="getProgramYearChipProps(internalItem.raw)"
+        />
+      </template>
+    </v-select>
     <v-divider v-if="showInlineFilters" vertical />
     <!--
       On large screens the status filters are shown inline, next to the program
@@ -137,6 +151,17 @@ const getSelectedProgramYear = (): EducationProgramYearAPIOutDTO | undefined =>
   );
 
 /**
+ * Gets the chip tag properties indicating if the program year has an active
+ * program configuration.
+ * @param programYear program year to be displayed.
+ * @returns chip tag color and label.
+ */
+const getProgramYearChipProps = (programYear: EducationProgramYearAPIOutDTO) =>
+  programYear.hasActiveProgramConfiguration
+    ? { color: "success", label: "Active" }
+    : { color: "grey-darken-1", label: "Inactive" };
+
+/**
  * Notifies that the filters were changed by the user.
  */
 const emitFiltersChanged = () => {
@@ -203,3 +228,9 @@ onMounted(async () => {
   emit("initialized", selectedProgramYear);
 });
 </script>
+<style scoped>
+/* Allows the selected program year chip to be aligned to the right. */
+.program-year-select :deep(.v-select__selection) {
+  flex-grow: 1;
+}
+</style>

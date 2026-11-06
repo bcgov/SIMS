@@ -150,12 +150,49 @@ export class EducationProgramsSummaryAPIOutDTO {
   isExpired: boolean;
 }
 
+/**
+ * Education program configuration for a specific program year.
+ * Allow retrieving the list of program years where at least one program configuration exists.
+ */
 export class EducationProgramYearAPIOutDTO {
+  /**
+   * ID of the program year.
+   */
   id: number;
+  /**
+   * Description of the program year.
+   */
   description: string;
+  /**
+   * Indicates if there is at least one active program configuration for this program year.
+   * This would be an indication that and eduction program can potentially be changed in this program year.
+   */
   hasActiveProgramConfiguration: boolean;
 }
 
+/**
+ * Renewal status of an education program into the next program year.
+ */
+export enum ProgramRenewalStatus {
+  /**
+   * Program was already renewed into the next program year.
+   */
+  Renewed = "Renewed",
+  /**
+   * Program is not renewed yet and a next program configuration is available for the renewal.
+   */
+  Available = "Available",
+  /**
+   * Program is not renewed yet and there is no next program configuration available for the renewal.
+   * It can happen for a newly created program year that has not yet been configured for the next program year
+   * or for a program that has reached the end of its lifecycle and it was marked as inactive.
+   */
+  NotAvailable = "Not available",
+}
+
+/**
+ * Education program details for management purposes.
+ */
 export class EducationProgramManagerDetailsAPIOutDTO {
   id: number;
   name: string;
@@ -165,8 +202,7 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
-  isRenewed: boolean;
-  canBeRenewed: boolean;
+  renewalStatus: ProgramRenewalStatus;
 }
 
 export class EducationProgramsSummaryLocationAPIOutDTO {

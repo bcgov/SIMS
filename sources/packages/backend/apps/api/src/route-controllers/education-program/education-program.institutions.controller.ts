@@ -28,6 +28,7 @@ import {
   EducationProgramsSummaryLocationAPIOutDTO,
   EducationProgramYearAPIOutDTO,
   ProgramEvaluationAPIInDTO,
+  ProgramRenewalStatus,
   ProgramEvaluationAPIOutDTO,
   UpdateEducationProgramAPIInDTO,
 } from "./models/education-program.dto";
@@ -411,9 +412,11 @@ export class EducationProgramInstitutionsController extends BaseController {
         programStatus: program.programStatus,
         isActive: program.isActive,
         isExpired: program.isExpired,
-        isRenewed: !!program.renewedProgram,
-        canBeRenewed:
-          !program.renewedProgram && !!nextProgramConfigurationForRenewal,
+        renewalStatus: program.renewedProgram
+          ? ProgramRenewalStatus.Renewed
+          : nextProgramConfigurationForRenewal
+            ? ProgramRenewalStatus.Available
+            : ProgramRenewalStatus.NotAvailable,
       })),
     };
   }
