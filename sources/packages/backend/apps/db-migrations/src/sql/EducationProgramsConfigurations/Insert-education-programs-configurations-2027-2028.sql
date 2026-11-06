@@ -1981,7 +1981,7 @@ SELECT
   }
   $$::jsonb AS validation_schema,
   id AS program_year_id,
-  TRUE AS is_active
+  FALSE AS is_active
 FROM
   sims.program_years
 WHERE

@@ -280,6 +280,11 @@ export class EducationProgramSaveService {
       programConfigurationId,
       auditUserId,
     );
+    if (!programToRenew.parentProgram?.id) {
+      throw new Error(
+        `Program ID ${renewFromProgramId} cannot be renewed because it is not associated with a parent program.`,
+      );
+    }
     program.parentProgram = {
       id: programToRenew.parentProgram.id,
     } as EducationProgram;

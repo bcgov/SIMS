@@ -16,8 +16,9 @@
       :items="programYears"
       item-title="description"
       item-value="id"
-      v-model="programYearId"
-      @update:model-value="emitFiltersChanged"
+      return-object
+      :model-value="selectedProgramYear"
+      @update:model-value="programYearChanged"
       variant="outlined"
       hide-details="auto"
       prepend-inner-icon="mdi-calendar-range"
@@ -126,20 +127,29 @@ const loadingProgramYears = ref(false);
 // Program years with education program configurations available to be selected.
 const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 
-/**
- * Gets the program year currently selected.
- * @returns selected program year, if any.
- */
-const getSelectedProgramYear = (): EducationProgramYearAPIOutDTO | undefined =>
-  programYears.value.find(
-    (programYear) => programYear.id === programYearId.value,
-  );
+// Program year currently selected, kept locally as the full object to be
+// provided in the emitted events. The programYearId model is not used for it
+// since, when bound by the parent, its value is only updated once the parent
+// re-renders.
+const selectedProgramYear = ref<EducationProgramYearAPIOutDTO | null>();
 
 /**
  * Notifies that the filters were changed by the user.
  */
 const emitFiltersChanged = () => {
-  emit("filtersChanged", getSelectedProgramYear());
+  emit("filtersChanged", selectedProgramYear.value ?? undefined);
+};
+
+/**
+ * Handles the program year selection changed by the user.
+ * @param programYear program year selected.
+ */
+const programYearChanged = (
+  programYear: EducationProgramYearAPIOutDTO | null,
+) => {
+  selectedProgramYear.value = programYear;
+  programYearId.value = programYear?.id;
+  emitFiltersChanged();
 };
 
 /**
@@ -195,10 +205,12 @@ onMounted(async () => {
   }
   // No program year is selected by default, unless a valid one was provided,
   // otherwise the user must select one to list the programs.
-  const selectedProgramYear = getSelectedProgramYear();
-  if (!selectedProgramYear) {
+  selectedProgramYear.value = programYears.value.find(
+    (programYear) => programYear.id === programYearId.value,
+  );
+  if (!selectedProgramYear.value) {
     programYearId.value = undefined;
   }
-  emit("initialized", selectedProgramYear);
+  emit("initialized", selectedProgramYear.value ?? undefined);
 });
 </script>
