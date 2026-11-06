@@ -7,6 +7,7 @@ Use this checklist to guide Copilot PR Reviews and human reviewers. For full rul
 - API controllers: [controllers.instructions.md](./instructions/api/controllers.instructions.md)
 - API DTOs: [dto.instructions.md](./instructions/api/dto.instructions.md)
 - API e2e tests: [e2e.instructions.md](./instructions/api/e2e.instructions.md)
+- TypeORM: [typeorm.instructions.md](./instructions/typeorm.instructions.md)
 
 ## Quick Checks
 
