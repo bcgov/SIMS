@@ -42,14 +42,16 @@ describe(
           Reflect.get(processor, "queueService"),
           "queueConfigurationDetails",
         )
-        .mockImplementation(async (queueName) =>
-          Object.assign(new QueueConfiguration(), {
-            queueName,
-            queueConfiguration: {
-              dashboardReadonly: false,
-              defaultJobOptions: {},
-            },
-          }),
+        .mockImplementation((queueName) =>
+          Promise.resolve(
+            Object.assign(new QueueConfiguration(), {
+              queueName,
+              queueConfiguration: {
+                dashboardReadonly: false,
+                defaultJobOptions: {},
+              },
+            }),
+          ),
         );
       resetZeebeModuleMock(zbClientMock);
       // Ensure that all assessments will be cancelled.
