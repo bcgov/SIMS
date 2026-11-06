@@ -163,12 +163,22 @@ watch(
 
 /**
  * Message displayed when there are no programs to be listed.
+ * Distinguishes a program year without programs from a program year
+ * whose programs do not match the search or status filters.
  */
 const noProgramsMessage = computed(() => {
   if (!selectedProgramYear.value) {
     return "Select a program year to view its programs.";
   }
-  return `Program year ${selectedProgramYear.value.description} does not have any programs yet`;
+  const programYear = selectedProgramYear.value.description;
+  // Any status selection other than "All" narrows the programs listed.
+  const hasAdditionalFilters =
+    !!searchBox.value ||
+    Object.values(statusFilters.value).some((filter) => filter);
+  if (hasAdditionalFilters) {
+    return `No programs match your search or filters for the ${programYear} program year.`;
+  }
+  return `There are no programs for the ${programYear} program year.`;
 });
 
 /**

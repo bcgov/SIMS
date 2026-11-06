@@ -48,7 +48,7 @@ export class EducationProgramManagerService {
    * @returns program years with at least one program configuration, including
    * whether at least one of the configurations is active.
    */
-  async getProgramYears(): Promise<ProgramYearWithConfiguration[]> {
+  getProgramYears(): Promise<ProgramYearWithConfiguration[]> {
     return this.programYearRepo
       .createQueryBuilder("programYear")
       .select("programYear.id", "id")
@@ -76,7 +76,7 @@ export class EducationProgramManagerService {
    * year, or null if there is no next program year or it has no active
    * configuration.
    */
-  async getNextProgramConfigurationForRenewal(
+  getNextProgramConfigurationForRenewal(
     startDateReference: string,
   ): Promise<EducationProgramConfiguration | null> {
     if (!startDateReference) {

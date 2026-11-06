@@ -72,7 +72,7 @@ const submit = async (programData: Record<string, unknown>) => {
   }
 };
 
-const goBack = async (): Promise<void> => {
+const goBack = (): void => {
   router.push(props.backTarget.to);
 };
 

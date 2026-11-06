@@ -41,7 +41,7 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
    * - `active` when provided, filters the program year by its active status.
    * @returns program year.
    */
-  async getProgramYear(
+  getProgramYear(
     programYearId: number,
     options?: { active?: boolean },
   ): Promise<ProgramYear> {
