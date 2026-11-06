@@ -11,18 +11,12 @@ import {
 import {
   getFileNameAsCurrentTimestamp,
   CustomNamedError,
-  addDays,
-  getISODateOnlyString,
 } from "@sims/utilities";
 import { Response } from "express";
 import { FormService, ProgramYearService } from "../../services";
-import {
-  ReportFilterParamAPIInDTO,
-  ReportsFilterAPIInDTO,
-} from "./models/report.dto";
+import { ReportsFilterAPIInDTO } from "./models/report.dto";
 import { FormNames } from "../../services/form/constants";
 import { streamFile } from "../utils";
-import { ConfigService } from "@sims/utilities/config";
 import { LoggerService } from "@sims/utilities/logger";
 
 /**
@@ -34,7 +28,6 @@ export class ReportControllerService {
     private readonly reportService: ReportService,
     private readonly formService: FormService,
     private readonly programYearService: ProgramYearService,
-    private readonly configService: ConfigService,
     private readonly logger: LoggerService,
   ) {}
 
@@ -70,7 +63,6 @@ export class ReportControllerService {
     if (submissionResult.data.data.params.program === "") {
       submissionResult.data.data.params.program = 0;
     }
-    this.applyApplicationArchiveDays(submissionResult.data.data.params);
     if (payload.params.programYear) {
       const programYearExists = await this.programYearService.programYearExists(
         payload.params.programYear as number,
@@ -101,23 +93,5 @@ export class ReportControllerService {
       }
       throw error;
     }
-  }
-
-  /**
-   * Creates an offering end date limit for an offering when the report
-   * should not include archived offerings.
-   * @param params report params to be used to generate the report.
-   */
-  private applyApplicationArchiveDays(params: ReportFilterParamAPIInDTO): void {
-    const isLimitedByArchiveDate = params.isLimitedByArchiveDate;
-    // Should be removed from the params to avoid the report query to fail due to an unknown parameter.
-    delete params.isLimitedByArchiveDate;
-    if (isLimitedByArchiveDate !== true) {
-      return;
-    }
-    params.offeringEndDateMinDate = addDays(
-      -this.configService.applicationArchiveDays,
-      getISODateOnlyString(new Date()),
-    );
   }
 }

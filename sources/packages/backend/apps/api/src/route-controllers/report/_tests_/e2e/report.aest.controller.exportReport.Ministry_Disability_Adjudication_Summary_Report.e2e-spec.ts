@@ -42,7 +42,6 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Disability_Adjudicatio
     params: {
       startDate,
       endDate,
-      isLimitedByArchiveDate: false,
     },
   };
 

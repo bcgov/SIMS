@@ -88,8 +88,6 @@ describe(
     const MINISTRY_NOTIFICATION_EMAIL = "dummy@some.domain";
 
     beforeAll(async () => {
-      // Env variable required for querying the eligible e-Cert records.
-      process.env.APPLICATION_ARCHIVE_DAYS = "365";
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
@@ -503,6 +501,50 @@ describe(
       expect(header).toContain("01BC  NEW PT ENTITLEMENT");
       // Validate footer.
       expect(footer.substring(0, 2)).toBe("99");
+    });
+
+    it("Should not include a disbursement in the e-Cert when the application is archived.", async () => {
+      // Arrange
+      const [eligibleApplication, archivedApplication] = await Promise.all([
+        createEligibleECertApplication(db, OFFERING_INTENSITY),
+        createEligibleECertApplication(db, OFFERING_INTENSITY, {
+          applicationInitialValues: { isArchived: true },
+        }),
+      ]);
+      const [archivedDisbursement] =
+        archivedApplication.currentAssessment.disbursementSchedules;
+      // Queued job.
+      const { job } = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(job);
+
+      // Assert
+      const uploadedFileName = getUploadedFileName();
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      // Assert that only the eligible application disbursement was sent.
+      const [eligibleDisbursement] =
+        eligibleApplication.currentAssessment.disbursementSchedules;
+      const [sentDisbursement, archivedPendingDisbursement] =
+        await Promise.all([
+          db.disbursementSchedule.findOne({
+            select: { id: true, disbursementScheduleStatus: true },
+            where: { id: eligibleDisbursement.id },
+          }),
+          db.disbursementSchedule.findOne({
+            select: { id: true, disbursementScheduleStatus: true },
+            where: { id: archivedDisbursement.id },
+          }),
+        ]);
+      expect(sentDisbursement.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Sent,
+      );
+      expect(archivedPendingDisbursement.disbursementScheduleStatus).toBe(
+        DisbursementScheduleStatus.Pending,
+      );
     });
 
     it("Should create an e-Cert with valid student profile data when the student has necessary profile data and gender defined as 'Prefer not to answer'.", async () => {
