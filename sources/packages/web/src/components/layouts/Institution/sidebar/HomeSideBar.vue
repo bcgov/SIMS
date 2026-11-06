@@ -75,6 +75,8 @@ export default defineComponent({
     const locationsMenu = ref<any[]>([]);
 
     const getUserLocationList = () => {
+      // Rebuild the list from scratch, since the watcher can run more than once.
+      locationItems.value = [];
       if (userLocationList.value) {
         locationItems.value.push({ type: "subheader", title: "Locations" });
       }

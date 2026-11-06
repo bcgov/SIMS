@@ -219,6 +219,7 @@ export class EducationProgramSaveService {
    * @param auditUserId the ID of the user performing the action.
    * @returns the renewed education program.
    */
+
   async renewProgram(
     renewFromProgramId: number,
     updatedProgramData: EducationProgramData,
@@ -235,6 +236,12 @@ export class EducationProgramSaveService {
       throw new CustomNamedError(
         "Not able to find the education program to renew from.",
         EDUCATION_PROGRAM_NOT_FOUND,
+      );
+    }
+    if (programToRenew.precedingProgram) {
+      throw new CustomNamedError(
+        "The education program has already been renewed.",
+        EDUCATION_PROGRAM_INVALID_OPERATION,
       );
     }
     const expectedNextConfiguration =

@@ -229,6 +229,9 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
   }
 
+  @ApiNotFoundResponse({
+    description: "Not able to find the education program.",
+  })
   @Post(":programId/renew")
   async renewEducationProgram(
     @Param("programId", ParseIntPipe) programId: number,
@@ -250,8 +253,11 @@ export class EducationProgramInstitutionsController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case EDUCATION_PROGRAM_NOT_FOUND:
+            throw new NotFoundException(error.message);
           case EDUCATION_PROGRAM_DATA_INVALID:
             throw new BadRequestException(error.objectInfo, error.message);
+          case EDUCATION_PROGRAM_INVALID_OPERATION:
           case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
             throw new UnprocessableEntityException(error.message);
           case EDUCATION_PROGRAM_CONFIGURATION_OUTDATED:
