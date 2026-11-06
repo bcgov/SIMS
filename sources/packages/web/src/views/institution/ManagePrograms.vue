@@ -3,7 +3,7 @@
     <template #header>
       <header-navigator
         :title="institutionState?.operatingName"
-        sub-title="Manage programs"
+        sub-title="Manage Programs"
       />
     </template>
     <body-header-container>

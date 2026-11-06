@@ -18,18 +18,19 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { MenuItemModel } from "@/types";
-import { useInstitutionState } from "@/composables";
+import { useFeatureToggles, useInstitutionState } from "@/composables";
 
 export default defineComponent({
   setup() {
     const store = useStore();
     const { isAdmin, userAuth } = useInstitutionAuth();
     const { institutionState } = useInstitutionState();
+    const { isManageProgramsEnabled } = useFeatureToggles();
     const userLocationList = computed(
       () => store.state.institution.locationState,
     );
 
-    const items = ref<MenuItemModel[]>([
+    const topItems = computed<MenuItemModel[]>(() => [
       {
         title: "Home",
         props: {
@@ -39,33 +40,43 @@ export default defineComponent({
           },
         },
       },
+      ...(institutionState.value.isBCPublic
+        ? [
+            {
+              title: "Search Student",
+              props: {
+                prependIcon: "mdi-magnify",
+                to: {
+                  name: InstitutionRoutesConst.INSTITUTION_STUDENT_SEARCH,
+                },
+              },
+            },
+          ]
+        : []),
+      ...(isManageProgramsEnabled.value
+        ? [
+            {
+              title: "Manage Programs",
+              props: {
+                prependIcon: "mdi-folder-open-outline",
+                to: {
+                  name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+                },
+              },
+            },
+          ]
+        : []),
     ]);
-
-    if (institutionState.value.isBCPublic) {
-      items.value.push({
-        title: "Search Student",
-        props: {
-          prependIcon: "mdi-magnify",
-          to: {
-            name: InstitutionRoutesConst.INSTITUTION_STUDENT_SEARCH,
-          },
-        },
-      });
-    }
-    items.value.push({
-      title: "Manage Programs",
-      props: {
-        prependIcon: "mdi-folder-open-outline",
-        to: {
-          name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-        },
-      },
-    });
+    const locationItems = ref<MenuItemModel[]>([]);
+    const items = computed<MenuItemModel[]>(() => [
+      ...topItems.value,
+      ...locationItems.value,
+    ]);
     const locationsMenu = ref<any[]>([]);
 
     const getUserLocationList = () => {
       if (userLocationList.value) {
-        items.value.push({ type: "subheader", title: "Locations" });
+        locationItems.value.push({ type: "subheader", title: "Locations" });
       }
       for (const data of userLocationList.value) {
         if (
@@ -75,7 +86,7 @@ export default defineComponent({
               el?.locationId === data?.id,
           )
         ) {
-          items.value.push({
+          locationItems.value.push({
             title: data.name as string,
             props: {
               prependIcon: "mdi-map-marker-outline",
