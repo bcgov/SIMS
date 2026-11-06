@@ -237,7 +237,7 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_NOT_FOUND,
       );
     }
-    if (programToRenew.precedingProgram) {
+    if (programToRenew.renewedProgram) {
       throw new CustomNamedError(
         "The education program has already been renewed.",
         EDUCATION_PROGRAM_INVALID_OPERATION,

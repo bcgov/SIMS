@@ -202,6 +202,11 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
+  /**
+   * Renewal status of the education program into the next program year.
+   * All programs are available for renewal into the next program year,
+   * independently of their current status or being active.
+   */
   renewalStatus: ProgramRenewalStatus;
 }
 

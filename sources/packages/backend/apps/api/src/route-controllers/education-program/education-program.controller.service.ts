@@ -56,7 +56,7 @@ export class EducationProgramControllerService {
     const programConfiguration = await this.getEducationProgramConfiguration(
       program.institution.id,
       { programConfigurationId: program.programConfiguration.id },
-      { overrideProgramData: program.programData },
+      { overrideProgramData: program.programData, programId },
     );
     return {
       id: program.id,
