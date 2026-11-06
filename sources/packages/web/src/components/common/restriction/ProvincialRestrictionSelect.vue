@@ -4,6 +4,7 @@
     :items="restrictionCategories"
     @update:model-value="loadRestrictionReasons"
     :rules="[(v) => !!v || 'Category is required.']"
+    :loading="loadingCategories"
     label="Category"
     density="compact"
     variant="outlined"
@@ -17,6 +18,7 @@
     item-value="id"
     return-object
     :rules="[(v) => !!v || 'Reason is required.']"
+    :loading="loadingReasons"
     label="Reason"
     density="compact"
     variant="outlined"
@@ -43,9 +45,12 @@ const snackBar = useSnackBar();
 const restrictionCategories = ref<ComponentItemType[]>([]);
 const restrictionReasons = ref<RestrictionAPIOutDTO[]>([]);
 const selectedCategory = ref<string | null>(null);
+const loadingCategories = ref(false);
+const loadingReasons = ref(false);
 
 const loadRestrictionCategories = async () => {
   try {
+    loadingCategories.value = true;
     const categories =
       await RestrictionService.shared.getRestrictionCategories();
     restrictionCategories.value = categories.map((category) => ({
@@ -56,6 +61,8 @@ const loadRestrictionCategories = async () => {
     snackBar.error(
       "Unexpected error while loading the restriction categories.",
     );
+  } finally {
+    loadingCategories.value = false;
   }
 };
 
@@ -71,6 +78,7 @@ const loadRestrictionReasons = async () => {
     return;
   }
   try {
+    loadingReasons.value = true;
     const reasons = await RestrictionService.shared.getRestrictionReasons(
       RestrictionType.Provincial,
       requestedCategory,
@@ -81,6 +89,11 @@ const loadRestrictionReasons = async () => {
     }
   } catch {
     snackBar.error("Unexpected error while loading the restriction reasons.");
+  } finally {
+    // Keep loading while the request for the newly selected category is still in progress.
+    if (requestedCategory === selectedCategory.value) {
+      loadingReasons.value = false;
+    }
   }
 };
 
