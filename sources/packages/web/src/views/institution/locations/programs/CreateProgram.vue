@@ -67,7 +67,7 @@ const submit = async (programData: Record<string, unknown>) => {
       },
     );
     snackBar.success("Education Program created successfully!");
-    await goBack();
+    goBack();
   } catch (error: unknown) {
     if (error instanceof ApiProcessError) {
       snackBar.error(error.message);

@@ -173,8 +173,7 @@ const noProgramsMessage = computed(() => {
   const programYear = selectedProgramYear.value.description;
   // Any status selection other than "All" narrows the programs listed.
   const hasAdditionalFilters =
-    !!searchBox.value ||
-    Object.values(statusFilters.value).some((filter) => filter);
+    !!searchBox.value || Object.values(statusFilters.value).some(Boolean);
   if (hasAdditionalFilters) {
     return `No programs match your search or filters for the ${programYear} program year.`;
   }
