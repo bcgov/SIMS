@@ -4,7 +4,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -76,7 +76,10 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CRAResponseIntegration,
+    );
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
       replaceCRAIncomeVerificationId(file, studentCRAIncomeVerification.id);
@@ -84,7 +87,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
 
     // Act
-    const processResult = await processor.processQueue(mockedJob.job);
+    const processResult = await processor.process(mockedJob.job);
 
     // Assert
     const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);
@@ -132,7 +135,10 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CRAResponseIntegration,
+    );
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
       replaceCRAIncomeVerificationId(file, studentCRAIncomeVerification.id);
@@ -144,7 +150,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
 
     // Act
-    const processResult = await processor.processQueue(mockedJob.job);
+    const processResult = await processor.process(mockedJob.job);
 
     // Assert
     const downloadedFile = join(process.env.CRA_RESPONSE_FOLDER, CRA_FILENAME);

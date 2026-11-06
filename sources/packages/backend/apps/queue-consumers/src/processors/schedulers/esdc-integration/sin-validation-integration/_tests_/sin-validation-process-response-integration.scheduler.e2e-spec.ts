@@ -4,7 +4,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -73,10 +73,13 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SINValidationResponseIntegration,
+      );
 
       // Act
-      const processResult = await processor.processQueue(mockedJob.job);
+      const processResult = await processor.process(mockedJob.job);
 
       // Assert
       const downloadedFile = join(
@@ -121,10 +124,13 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SINValidationResponseIntegration,
+      );
 
       // Act
-      const processResult = await processor.processQueue(mockedJob.job);
+      const processResult = await processor.process(mockedJob.job);
       // Assert
       const downloadedFile = join(
         process.env.ESDC_RESPONSE_FOLDER,
@@ -184,10 +190,13 @@ describe(
           [SIN_VALIDATION_FILENAME],
           changeFile,
         );
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>(
+          undefined,
+          QueueNames.SINValidationResponseIntegration,
+        );
 
         // Act
-        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        await expect(processor.process(mockedJob.job)).rejects.toThrow(
           "One or more errors were reported during the process, please see logs for details.",
         );
 

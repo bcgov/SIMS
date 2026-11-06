@@ -1,23 +1,22 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
 import { MSFAARequestProcessingService } from "@sims/integrations/esdc-integration";
 import { MSFAA_FULL_TIME_FILE_CODE } from "@sims/services/constants";
-import { QueueService } from "@sims/services/queue";
 import { OfferingIntensity } from "@sims/sims-db";
 import { QueueNames } from "@sims/utilities";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
-@Processor(QueueNames.FullTimeMSFAAIntegration)
-export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.FullTimeMSFAAIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class FullTimeMSFAAProcessIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.FullTimeMSFAAIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly msfaaRequestService: MSFAARequestProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -29,7 +28,7 @@ export class FullTimeMSFAAProcessIntegrationScheduler extends BaseScheduler<void
    * @param processSummary process summary for logging.
    * @returns upload result.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {

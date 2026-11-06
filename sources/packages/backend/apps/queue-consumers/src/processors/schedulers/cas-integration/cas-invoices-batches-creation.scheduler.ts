@@ -1,25 +1,24 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
+import { Processor } from "@nestjs/bullmq";
 import { CustomNamedError, QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { CASInvoiceBatchService } from "../../../services";
 import { DATABASE_TRANSACTION_CANCELLATION } from "@sims/services/constants";
 
 /**
  * Scheduler to generate batches for CAS invoices for e-Cert receipts.
  */
-@Processor(QueueNames.CASInvoicesBatchesCreation)
-export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.CASInvoicesBatchesCreation,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class CASInvoicesBatchesCreationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.CASInvoicesBatchesCreation)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly casInvoiceBatchService: CASInvoiceBatchService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -29,7 +28,7 @@ export class CASInvoicesBatchesCreationScheduler extends BaseScheduler<void> {
    * @param processSummary process summary for logging.
    * @returns process summary.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {

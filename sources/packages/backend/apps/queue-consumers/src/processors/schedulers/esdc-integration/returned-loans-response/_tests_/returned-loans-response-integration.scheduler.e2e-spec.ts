@@ -63,7 +63,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.ReturnedLoansResponseIntegration,
+      );
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -103,7 +106,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.ReturnedLoansResponseIntegration,
+      );
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -141,7 +147,10 @@ describe(
           },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>();
+        const mockedJob = mockBullMQJob<void>(
+          undefined,
+          QueueNames.ReturnedLoansResponseIntegration,
+        );
 
         // Act/Assert
         await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -185,7 +194,10 @@ describe(
           },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>();
+        const mockedJob = mockBullMQJob<void>(
+          undefined,
+          QueueNames.ReturnedLoansResponseIntegration,
+        );
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -220,7 +232,10 @@ describe(
       // Arrange
       mockDownloadFiles(sftpClientMock, [OTH_RETURNED_LOANS_RESPONSE_FILE]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.ReturnedLoansResponseIntegration,
+      );
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -260,7 +275,10 @@ describe(
       // Arrange
       mockDownloadFiles(sftpClientMock, [PDD_RETURNED_LOANS_RESPONSE_FILE]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.ReturnedLoansResponseIntegration,
+      );
 
       // Act
       const result = await processor.process(mockedJob.job);

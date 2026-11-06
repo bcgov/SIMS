@@ -3,7 +3,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { T4AUploadEnqueuerScheduler } from "../../../../";
 import {
@@ -48,10 +48,13 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   it("Should enqueue 3 batches when the batch size is 100, and there are 2 folders, one with 100 files and the other with 101 files.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
-      // Ensure the default batch size defined on DB configuration is used.
-      maxFileUploadsPerBatch: 100,
-    });
+    const mockedJob = mockBullMQJob<T4AUploadEnqueuerQueueInDTO>(
+      {
+        // Ensure the default batch size defined on DB configuration is used.
+        maxFileUploadsPerBatch: 100,
+      },
+      QueueNames.T4AUploadEnqueuer,
+    );
     // Mock directories and a file on SFTP where the file must be ignored.
     // Directories must be returned ordered by name.
     sftpClientMock.list.mockResolvedValueOnce([
@@ -68,7 +71,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     const FOLDER_B_FULL_PATH = join(T4A_FOLDER, "2024-B");
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual(["T4A files process completed."]);
@@ -101,14 +104,17 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   it("Should log that no directories were found when no directories were listed from the SFTP.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
-      // Ensure the default batch size defined on DB configuration is used.
-      maxFileUploadsPerBatch: 100,
-    });
+    const mockedJob = mockBullMQJob<T4AUploadEnqueuerQueueInDTO>(
+      {
+        // Ensure the default batch size defined on DB configuration is used.
+        maxFileUploadsPerBatch: 100,
+      },
+      QueueNames.T4AUploadEnqueuer,
+    );
     sftpClientMock.list.mockResolvedValueOnce([]);
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual(["T4A files process completed."]);
@@ -120,10 +126,13 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
   it("Should not try to add bulk jobs when a directory was found from the SFTP, but no files were found.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullJob<T4AUploadEnqueuerQueueInDTO>({
-      // Ensure the default batch size defined on DB configuration is used.
-      maxFileUploadsPerBatch: 100,
-    });
+    const mockedJob = mockBullMQJob<T4AUploadEnqueuerQueueInDTO>(
+      {
+        // Ensure the default batch size defined on DB configuration is used.
+        maxFileUploadsPerBatch: 100,
+      },
+      QueueNames.T4AUploadEnqueuer,
+    );
     sftpClientMock.list.mockResolvedValueOnce([
       { name: "9999" },
     ] as Client.FileInfo[]);
@@ -131,7 +140,7 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
     sftpClientMock.list.mockResolvedValueOnce([]);
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual(["T4A files process completed."]);

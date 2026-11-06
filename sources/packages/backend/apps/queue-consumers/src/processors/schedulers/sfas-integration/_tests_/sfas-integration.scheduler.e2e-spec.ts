@@ -8,7 +8,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -187,11 +187,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.SFASIntegration,
+    );
     mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
 
     // Act
-    await processor.processQueue(mockedJob.job);
+    await processor.process(mockedJob.job);
 
     // Assert
 
@@ -287,10 +290,13 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         ),
       ]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       // Assert
       // Expect the file was archived on SFTP.
       expect(result).toStrictEqual([
@@ -328,12 +334,15 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   it("Should import a resolved SSD and SSR as a single resolved SSR, and a resolved SSRN when the student does not have SSR or SSRN restrictions in his account.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.SFASIntegration,
+    );
     mockDownloadFiles(sftpClientMock, [
       SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
     ]);
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
     // Assert
     // Expect the file was archived on SFTP.
     expect(result).toStrictEqual([
@@ -386,12 +395,15 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         ),
       ]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
       ]);
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       // Assert
       expect(result).toStrictEqual([
         "Completed processing SFAS integration files.",
@@ -434,10 +446,13 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [SFAS_SAIL_DATA_FILENAME]);
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
       // Assert
       // Expect the file was archived on SFTP.
       expect(sftpClientMock.rename).toHaveBeenCalled();
@@ -530,13 +545,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME,
       ]);
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "Error processing record line number",
       );
 
@@ -560,13 +578,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
       ]);
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       const downloadedFile = join(
@@ -715,13 +736,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       student.sinValidation = sinValidation;
       await db.student.save(student);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME,
       ]);
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       const downloadedFile = join(
@@ -796,13 +820,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME,
       ]);
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Expect the file was archived on SFTP.
@@ -966,11 +993,14 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [INVALID_RECORD_TYPE_FILENAME]);
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Expect the file was archived on SFTP.
@@ -997,13 +1027,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME,
       ]);
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Expect the file was archived on SFTP.
@@ -1192,7 +1225,10 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       async () => {
         // Arrange
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>(
+          undefined,
+          QueueNames.SFASIntegration,
+        );
         mockDownloadFiles(
           sftpClientMock,
           [SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS],
@@ -1213,7 +1249,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         );
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         expect(result).toStrictEqual([
@@ -1276,13 +1312,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SFASIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
       ]);
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1326,13 +1365,16 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.SFASIntegration,
+    );
     mockDownloadFiles(sftpClientMock, [
       SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
     ]);
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -1359,10 +1401,13 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         return createFileFromStructuredRecords(file);
       },
     );
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.SFASIntegration,
+    );
 
     // Act/Assert
-    await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+    await expect(processor.process(mockedJob.job)).rejects.toThrow(
       `Error downloading file ${join(sfasDownloadFolder, INVALID_RECORD_TYPE_FILENAME)}.`,
     );
     expect(sftpClientMock.rename).not.toHaveBeenCalled();
@@ -1374,10 +1419,13 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   it("Should only execute the post file import operations when there are no SFAS files to be processed.", async () => {
     // Arrange
     mockDownloadFiles(sftpClientMock, []);
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.SFASIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([

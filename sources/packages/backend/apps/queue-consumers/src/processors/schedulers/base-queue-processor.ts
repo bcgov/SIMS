@@ -16,13 +16,24 @@ import { Inject, OnApplicationBootstrap } from "@nestjs/common";
 import { WorkerHost } from "@nestjs/bullmq";
 import { FILE_NOT_FOUND, EMPTY_FILE } from "../../constants";
 import { QueueService } from "@sims/services/queue";
-import { QueueConfiguration } from "@sims/sims-db";
+import {
+  QueueConfiguration,
+  configureIdleTransactionSessionTimeout,
+} from "@sims/sims-db";
+import { EntityManager } from "typeorm";
+import {
+  ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
 
 type JobResult = string | string[];
 const PERMANENT_FAILURE_ERROR_NAMES = new Set<string>([
   FILE_NOT_FOUND,
   EMPTY_FILE,
+  ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 ]);
+const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
 
 /**
  * Base class for queue processors providing common functionality and error handling.
@@ -53,7 +64,9 @@ export abstract class BaseQueueProcessor<T>
    */
   async onApplicationBootstrap(): Promise<void> {
     try {
-      const queueConfiguration = await this.getQueueConfiguration();
+      const queueConfiguration = await this.getQueueConfiguration(
+        this.worker.name as QueueNames,
+      );
       QUEUE_WORKER_EVENTS.forEach((event) => {
         this.worker.on(event, () =>
           this.metricsService.incrementJobEventCounter(
@@ -98,9 +111,11 @@ export abstract class BaseQueueProcessor<T>
       this.logger.log(endLogMessage);
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.warn) {
-        const queueConfiguration = await this.getQueueConfiguration();
+        const queueConfiguration = await this.getQueueConfiguration(
+          job.queueName as QueueNames,
+        );
         this.metricsService.incrementJobEventCounter(
-          job.queueName,
+          queueConfiguration.queueName,
           queueConfiguration.isScheduler,
           MetricsCustomQueueEvents.JobFinalizedWithWarnings,
           { incrementValue: logsSum.warn },
@@ -153,6 +168,23 @@ export abstract class BaseQueueProcessor<T>
   ): Promise<JobResult>;
 
   /**
+   * Acquires the queue lock before a processor performs a transaction-sensitive operation.
+   * @param entityManager Entity manager to be used to acquire the lock.
+   */
+  protected async acquireLock(entityManager: EntityManager): Promise<void> {
+    await Promise.all([
+      configureIdleTransactionSessionTimeout(
+        entityManager,
+        TRANSACTION_IDLE_TIMEOUT_SECONDS,
+      ),
+      this.queueService.acquireQueueLock(
+        this.worker.name as QueueNames,
+        entityManager,
+      ),
+    ]);
+  }
+
+  /**
    * Default worker options for the queue processor.
    */
   static readonly defaultWorkerOptions: Partial<WorkerOptions> = {
@@ -165,12 +197,12 @@ export abstract class BaseQueueProcessor<T>
    * Gets the queue configuration details.
    * @returns Queue configuration details.
    */
-  private async getQueueConfiguration(): Promise<QueueConfiguration> {
+  private async getQueueConfiguration(
+    queueName: QueueNames,
+  ): Promise<QueueConfiguration> {
     if (!this.queueConfiguration) {
       this.queueConfiguration =
-        await this.queueService.queueConfigurationDetails(
-          this.worker.name as QueueNames,
-        );
+        await this.queueService.queueConfigurationDetails(queueName);
     }
     return this.queueConfiguration;
   }

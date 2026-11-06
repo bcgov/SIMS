@@ -16,13 +16,14 @@ import { CustomNamedError, QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import { CASSendInvoicesScheduler } from "../cas-send-invoices.scheduler";
 import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
 import { CASService } from "@sims/integrations/cas";
 import { resetCASServiceMock } from "../../../../../test/helpers/mock-utils/cas-service.mock";
 import { CASIntegrationQueueInDTO } from "../models/cas-integration.dto";
+import { PROCESS_SUMMARY_CONTAINS_ERROR } from "../../../../utilities";
 
 const CAS_INVOICE_BATCH_SEQUENCE_NAME = "CAS_INVOICE_BATCH";
 const CAS_INVOICE_SEQUENCE_NAME = "CAS_INVOICE";
@@ -69,12 +70,15 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     // Create invoice batch to generate the report.
     const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     const casInvoice = await db.casInvoice.findOne({
@@ -115,12 +119,15 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
   it("Should contain log 'No pending invoices found' when there are no pending invoices found.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual(["Process finalized with success."]);
@@ -143,12 +150,15 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       ]);
     });
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -183,14 +193,18 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     // Create invoice batch to generate the report.
     const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
-      new Error(
+    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+      new CustomNamedError(
         "One or more errors were reported during the process, please see logs for details.",
+        PROCESS_SUMMARY_CONTAINS_ERROR,
       ),
     );
 
@@ -221,12 +235,15 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       CASInvoiceBatchApprovalStatus.Rejected,
     );
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual(["Process finalized with success."]);
@@ -255,12 +272,15 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
     // Create invoice batch to generate the report.
     const casInvoiceBatchId = await createFakeCASInvoiceBatchHelper();
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     const casInvoice = await db.casInvoice.findOne({
@@ -294,12 +314,15 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       }),
     );
     // Queued job.
-    const mockedJob = mockBullJob<CASIntegrationQueueInDTO>({
-      pollingRecordsLimit: 1,
-    });
+    const mockedJob = mockBullMQJob<CASIntegrationQueueInDTO>(
+      {
+        pollingRecordsLimit: 1,
+      },
+      QueueNames.CASSendInvoices,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     const invoice = await db.casInvoice.findOne({

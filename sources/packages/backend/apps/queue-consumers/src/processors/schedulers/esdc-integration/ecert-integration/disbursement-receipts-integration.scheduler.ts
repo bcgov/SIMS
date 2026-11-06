@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
 import { DisbursementReceiptProcessingService } from "@sims/integrations/esdc-integration";
-import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
-@Processor(QueueNames.DisbursementReceiptsFileIntegration)
-export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.DisbursementReceiptsFileIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class DisbursementReceiptsFileIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.DisbursementReceiptsFileIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly disbursementReceiptProcessingService: DisbursementReceiptProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -24,7 +23,7 @@ export class DisbursementReceiptsFileIntegrationScheduler extends BaseScheduler<
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

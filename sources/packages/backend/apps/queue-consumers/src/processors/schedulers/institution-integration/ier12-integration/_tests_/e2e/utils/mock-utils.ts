@@ -1,10 +1,10 @@
-import { getISODateOnlyString } from "@sims/utilities";
+import { getISODateOnlyString, QueueNames } from "@sims/utilities";
 import { IER12IntegrationQueueInDTO } from "../../../models/ier.model";
 import {
-  mockBullJob,
+  mockBullMQJob,
   MockBullJobResult,
 } from "../../../../../../../../test/helpers";
-import { Job } from "bull";
+import { Job } from "bullmq";
 
 /**
  * Creates the mocked IER12 job payload for the scheduler.
@@ -25,5 +25,5 @@ export function createIER12SchedulerJobMock(options?: {
   if (options?.institutionCode) {
     data.institutionCode = options.institutionCode;
   }
-  return mockBullJob(data);
+  return mockBullMQJob(data, QueueNames.IER12Integration);
 }

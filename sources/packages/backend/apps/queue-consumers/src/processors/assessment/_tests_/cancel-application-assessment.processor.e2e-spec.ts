@@ -4,7 +4,7 @@ import { QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../test/helpers";
 import { CancelApplicationAssessmentProcessor } from "../cancel-application-assessment.processor";
 import { DataSource, Repository } from "typeorm";
@@ -27,6 +27,7 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
+  QueueConfiguration,
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
@@ -35,6 +36,7 @@ import { AssessmentSequentialProcessingService } from "@sims/services";
 import { TestingModule } from "@nestjs/testing";
 import { QueueConsumersModule } from "../../../../src/queue-consumers.module";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
+import { UnrecoverableError } from "bullmq";
 
 describe(
   describeProcessorRootTest(QueueNames.CancelApplicationAssessment),
@@ -68,6 +70,22 @@ describe(
 
     beforeEach(() => {
       jest.resetAllMocks();
+      jest
+        .spyOn(
+          Reflect.get(processor, "queueService"),
+          "queueConfigurationDetails",
+        )
+        .mockImplementation((queueName) =>
+          Promise.resolve(
+            Object.assign(new QueueConfiguration(), {
+              queueName,
+              queueConfiguration: {
+                dashboardReadonly: false,
+                defaultJobOptions: {},
+              },
+            }),
+          ),
+        );
     });
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
@@ -106,12 +124,13 @@ describe(
       });
       await disbursementOverawardRepo.save(overaward);
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: studentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: studentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).toHaveBeenCalledWith(
@@ -167,12 +186,13 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
       await db.studentAssessment.save(studentAssessment);
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: studentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: studentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).not.toHaveBeenCalled();
@@ -195,12 +215,13 @@ describe(
       const studentAssessment = application.currentAssessment;
 
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: studentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: studentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(zbClientMock.cancelProcessInstance).not.toHaveBeenCalled();
@@ -210,14 +231,11 @@ describe(
           "Workflow cancellation process not executed due to the assessment cancellation not being in the correct status.",
         ]),
       );
-
-      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
-    it("Should throw an error and call job.discard when the application is not in the expected status.", async () => {
+    it("Should throw an unrecoverable error when the application is not in the expected status.", async () => {
       // Arrange
       const errorMessage = `Application must be in the ${ApplicationStatus.Cancelled} or ${ApplicationStatus.Edited} state to have the assessment cancelled.`;
-      const expectedError = new Error(errorMessage);
       const application = await saveFakeApplicationDisbursements(
         appDataSource,
         null,
@@ -228,32 +246,39 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
       await db.studentAssessment.save(studentAssessment);
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: studentAssessment.id,
-      });
-
-      // Act and Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
-        expectedError,
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: studentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
       );
-      expect(mockedJob.job.discard).toHaveBeenCalled();
+
+      // Act
+      const processPromise = processor.process(mockedJob.job);
+
+      // Assert
+      await expect(processPromise).rejects.toMatchObject({
+        name: UnrecoverableError.name,
+        message: errorMessage,
+      });
     });
 
-    it("Should throw an error and call job.discard when the assessment id was not found.", async () => {
+    it("Should throw an unrecoverable error when the assessment id was not found.", async () => {
       // Arrange
       const assessmentId = 9999;
       const errorMessage = `Assessment id ${assessmentId} was not found.`;
-      const error = new Error(errorMessage);
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId,
-      });
-
-      // Act and Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
-        error,
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId },
+        QueueNames.CancelApplicationAssessment,
       );
-      expect(mockedJob.job.discard).toHaveBeenCalled();
+
+      // Act
+      const processPromise = processor.process(mockedJob.job);
+
+      // Assert
+      await expect(processPromise).rejects.toMatchObject({
+        name: UnrecoverableError.name,
+        message: errorMessage,
+      });
     });
 
     it("Should find an impacted application and create a reassessment when canceling an application with a assessment date set in the current assessment.", async () => {
@@ -306,12 +331,13 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: currentApplicationToCancel.currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: currentApplicationToCancel.currentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Asserts
       expect(
@@ -364,12 +390,13 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: currentApplicationToCancel.currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: currentApplicationToCancel.currentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Asserts
       expect(
@@ -434,12 +461,13 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: currentApplicationToCancel.currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: currentApplicationToCancel.currentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Asserts
       expect(
@@ -496,12 +524,13 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-        assessmentId: currentApplicationToCancel.currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+        { assessmentId: currentApplicationToCancel.currentAssessment.id },
+        QueueNames.CancelApplicationAssessment,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Asserts
       expect(
@@ -571,9 +600,10 @@ describe(
           impactedApplicationAssessmentBeforeCancel,
         );
         // Queued job.
-        const mockedJob = mockBullJob<CancelAssessmentQueueInDTO>({
-          assessmentId: currentApplicationToCancel.currentAssessment.id,
-        });
+        const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
+          { assessmentId: currentApplicationToCancel.currentAssessment.id },
+          QueueNames.CancelApplicationAssessment,
+        );
         // Spy on assess impacted application method to make sure that it is not invoked.
         const assessmentSequentialProcessingService =
           await getProviderInstanceForModule(
@@ -587,7 +617,7 @@ describe(
         );
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         // Ensure that the cancellation did not create a new reassessment for the
