@@ -53,22 +53,13 @@ export class EducationProgramControllerService {
     if (!program.programConfiguration?.id) {
       throw new Error("Program configuration not found.");
     }
-    const programConfiguration =
-      await this.educationProgramSaveService.getEducationProgramConfiguration(
-        program.institution.id,
-        { programConfigurationId: program.programConfiguration.id },
-        { programId: program.id },
-      );
+    const programConfiguration = await this.getEducationProgramConfiguration(
+      program.institution.id,
+      { programConfigurationId: program.programConfiguration.id },
+      { overrideProgramData: program.programData },
+    );
     return {
       id: program.id,
-      configurationId: programConfiguration.configurationId,
-      programYearName: programConfiguration.programYearName,
-      programData: {
-        ...program.programData,
-        context: programConfiguration.context,
-      },
-      visualSchema: programConfiguration.visualSchema,
-      validationSchema: programConfiguration.validationSchema,
       institutionId: program.institution.id,
       institutionName: program.institution.operatingName,
       submittedDate: program.submittedDate,
@@ -91,13 +82,23 @@ export class EducationProgramControllerService {
       programIntensity: program.programIntensity,
       isActive: program.isActive,
       isExpired: program.isExpired,
+      ...programConfiguration,
     };
   }
 
+  /**
+   * Retrieves the configuration for an education program, including the dynamic
+   * program data, visual schema, and validation schema.
+   * @param institutionId the ID of the institution for which the configuration is being retrieved.
+   * @param programConfigurationLookup the lookup criteria for the program configuration.
+   * @param options additional options for retrieving the configuration.
+   * @returns the education program configuration, including dynamic program data, visual schema, and validation schema.
+   */
   async getEducationProgramConfiguration(
     institutionId: number,
     programConfigurationLookup: ProgramConfigurationLookup,
     options?: {
+      programId?: number;
       overrideProgramData?: Record<string, unknown>;
     },
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
@@ -105,6 +106,9 @@ export class EducationProgramControllerService {
       await this.educationProgramSaveService.getEducationProgramConfiguration(
         institutionId,
         programConfigurationLookup,
+        {
+          programId: options?.programId,
+        },
       );
     return {
       configurationId: configuration.configurationId,

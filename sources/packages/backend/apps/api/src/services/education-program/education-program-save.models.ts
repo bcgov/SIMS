@@ -100,6 +100,10 @@ export interface EducationProgramDynamicConfiguration {
   updatedAt: Date;
 }
 
+/**
+ * Allow selecting the program configuration either by its ID or by the program year ID.
+ * Exactly one of them must be provided; providing both is not allowed.
+ */
 export type ProgramConfigurationLookup =
   | { programConfigurationId: number; programYearId?: never }
   | { programYearId: number; programConfigurationId?: never };

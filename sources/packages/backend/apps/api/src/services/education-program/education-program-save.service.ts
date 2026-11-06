@@ -219,7 +219,6 @@ export class EducationProgramSaveService {
    * @param auditUserId the ID of the user performing the action.
    * @returns the renewed education program.
    */
-
   async renewProgram(
     renewFromProgramId: number,
     updatedProgramData: EducationProgramData,

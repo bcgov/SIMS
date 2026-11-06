@@ -34,6 +34,7 @@ import {
 } from "./models/education-program.dto";
 import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import {
+  ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiTags,
@@ -183,10 +184,12 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param userToken the token of the user making the request.
    * @returns id of the created program.
    */
+  @ApiBadRequestResponse({
+    description: "Education program data is not valid.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
-      "Education program data is not valid or " +
-      "education program configuration not found or " +
+      "Education program configuration not found or " +
       "education program configuration outdated (not the active one for the program year) or " +
       "duplicate SABC code.",
   })
@@ -229,8 +232,30 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
   }
 
+  /**
+   * Renews an existing education program into the next program year.
+   * Paired with the endpoint that provides the renewal configuration
+   * ({@link getEducationProgramForRenew}).
+   * @param programId ID of the education program to be renewed.
+   * @param payload information to create the renewed program.
+   * @param userToken the token of the user making the request.
+   * @returns ID of the renewed program.
+   */
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",
+  })
+  @ApiBadRequestResponse({
+    description: "Education program data is not valid.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Education program has already been renewed or " +
+      "next education program configuration for renewal not found or " +
+      "education program configuration outdated (not the expected one for the renewal) or " +
+      "duplicate SABC code.",
+  })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
   })
   @Post(":programId/renew")
   async renewEducationProgram(
@@ -276,10 +301,12 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param programId program to be updated.
    * @param payload information to be updated.
    */
+  @ApiBadRequestResponse({
+    description: "Education program data is not valid.",
+  })
   @ApiUnprocessableEntityResponse({
     description:
-      "Education program data is not valid or " +
-      "education program configuration not found or not active or " +
+      "Education program configuration not found or not active or " +
       "education program cannot be edited when inactive or expired or " +
       "duplicate SABC code.",
   })
@@ -382,6 +409,9 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param userToken User token containing authorization information.
    * @returns Paginated list of education programs for the specified program year.
    */
+  @ApiNotFoundResponse({
+    description: "Program year not found.",
+  })
   @Get("program-year/:programYearId/summary")
   async getProgramsForProgramYear(
     @Param("programYearId", ParseIntPipe)
