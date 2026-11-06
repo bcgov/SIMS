@@ -1,5 +1,3 @@
--- Create restriction for student compliance verification.
--- Stopping disbursements also prevents the student from accepting the assessment.
 INSERT INTO
     sims.restrictions (
         restriction_type,
@@ -11,13 +9,13 @@ INSERT INTO
     )
 VALUES
     (
-        'Provincial' :: sims.restriction_types,
+        'Provincial'::sims.restriction_types,
         'SCV',
         'Funding blocked for student compliance verification.',
         'Verification',
-        ARRAY [
+        ARRAY[
             'Stop full-time disbursement',
             'Stop part-time disbursement'
-        ] :: sims.restriction_action_types [],
-        'Error' :: sims.restriction_notification_types
+        ]::sims.restriction_action_types[],
+        'Error'::sims.restriction_notification_types
     );
