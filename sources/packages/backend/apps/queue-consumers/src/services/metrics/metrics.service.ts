@@ -14,7 +14,6 @@ import {
 } from "./metrics.models";
 import { Queue } from "bullmq";
 import { register, collectDefaultMetrics, Gauge, Counter } from "prom-client";
-import { LoggerService } from "@sims/utilities/logger";
 
 @Injectable()
 export class MetricsService {
@@ -42,7 +41,6 @@ export class MetricsService {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly queueService: QueueService,
-    private readonly logger: LoggerService,
   ) {
     this.jobCountsGauge = new Gauge({
       name: "queue_job_counts_current_total",
