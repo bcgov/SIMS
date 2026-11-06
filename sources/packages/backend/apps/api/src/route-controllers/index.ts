@@ -37,6 +37,8 @@ export * from "./student-appeal/student-appeal.aest.controller";
 export * from "./assessment/assessment.aest.controller";
 export * from "./batch-reassessment/models/batch-reassessment.dto";
 export * from "./batch-reassessment/batch-reassessment.aest.controller";
+export * from "./batch-restriction/models/batch-restriction.dto";
+export * from "./batch-restriction/batch-restriction.aest.controller";
 export * from "./institution-locations/institution-location.controller.service";
 export * from "./institution-locations/institution-location.institutions.controller";
 export * from "./institution-locations/institution-location.students.controller";

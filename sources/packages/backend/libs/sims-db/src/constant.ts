@@ -82,6 +82,8 @@ export const TableNames = {
   BatchReassessments: "batch_reassessments",
   BatchReassessmentApplications: "batch_reassessment_applications",
   EducationProgramsConfigurations: "education_programs_configurations",
+  BatchRestrictions: "batch_restrictions",
+  BatchRestrictionStudents: "batch_restriction_students",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;

@@ -46,6 +46,8 @@ export * from "./factories/cas-distribution-account";
 export * from "./factories/cas-invoice-batch";
 export * from "./factories/batch-reassessment";
 export * from "./factories/batch-reassessment-application";
+export * from "./factories/batch-restriction";
+export * from "./factories/batch-restriction-student";
 export * from "./factories/cas-invoice";
 export * from "./factories/cas-invoice-detail";
 export * from "./factories/sfas-application-dependant";
