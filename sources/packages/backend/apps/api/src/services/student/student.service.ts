@@ -19,6 +19,7 @@ import {
   ModifiedIndependentStatus,
   SFASApplication,
   ORMCacheManager,
+  DisbursementSchedule,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
@@ -635,7 +636,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search students based on the search criteria and institution id if provided.
    * @param searchCriteria options to search by firstName,
-   * lastName, appNumber or sin.
+   * lastName, appNumber, sin, email or documentNumber (certificate number).
    * @param institutionId id of the institution that the student applied to.
    * @returns list of student details.
    */
@@ -646,6 +647,7 @@ export class StudentService extends RecordDataModelService<Student> {
       appNumber?: string;
       sin?: string;
       email?: string;
+      documentNumber?: string;
     },
     institutionId?: number,
   ): Promise<Student[]> {
@@ -707,6 +709,25 @@ export class StudentService extends RecordDataModelService<Student> {
       searchQuery.andWhere("lower(user.email) = :email", {
         email: searchCriteria.email.toLowerCase(),
       });
+    }
+    if (searchCriteria.documentNumber) {
+      // Exact match on the certificate number of any disbursement of the student.
+      searchQuery.andWhere(
+        (qb) =>
+          `EXISTS ${qb
+            .subQuery()
+            .select("1")
+            .from(DisbursementSchedule, "disbursementSchedule")
+            .innerJoin(
+              "disbursementSchedule.studentAssessment",
+              "studentAssessment",
+            )
+            .innerJoin("studentAssessment.application", "certApplication")
+            .where("certApplication.student.id = student.id")
+            .andWhere("disbursementSchedule.documentNumber = :documentNumber")
+            .getQuery()}`,
+        { documentNumber: Number(searchCriteria.documentNumber) },
+      );
     }
     return searchQuery.getMany();
   }

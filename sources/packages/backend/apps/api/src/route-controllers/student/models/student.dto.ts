@@ -8,6 +8,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumberString,
   IsOptional,
   IsPositive,
   Length,
@@ -108,34 +109,70 @@ export class UpdateStudentAPIInDTO
 export class StudentSearchAPIInDTO {
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.lastName && !input.appNumber && !input.sin && !input.email,
+      !input.lastName &&
+      !input.appNumber &&
+      !input.sin &&
+      !input.email &&
+      !input.documentNumber,
   )
   @IsNotEmpty()
   firstName: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.appNumber && !input.sin && !input.email,
+      !input.firstName &&
+      !input.appNumber &&
+      !input.sin &&
+      !input.email &&
+      !input.documentNumber,
   )
   @IsNotEmpty()
   lastName: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.sin && !input.email,
+      !input.firstName &&
+      !input.lastName &&
+      !input.sin &&
+      !input.email &&
+      !input.documentNumber,
   )
   @IsNotEmpty()
   appNumber: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.appNumber && !input.email,
+      !input.firstName &&
+      !input.lastName &&
+      !input.appNumber &&
+      !input.email &&
+      !input.documentNumber,
   )
   @IsNotEmpty()
   sin: string;
   @ValidateIf(
     (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.appNumber && !input.sin,
+      !input.firstName &&
+      !input.lastName &&
+      !input.appNumber &&
+      !input.sin &&
+      !input.documentNumber,
   )
   @IsNotEmpty()
   email: string;
+  /**
+   * Certificate (financial document) number. Limited to 9 digits to fit the integer DB column.
+   */
+  @ValidateIf(
+    (input: StudentSearchAPIInDTO) =>
+      !!input.documentNumber ||
+      (!input.firstName &&
+        !input.lastName &&
+        !input.appNumber &&
+        !input.sin &&
+        !input.email),
+  )
+  @IsNotEmpty()
+  @IsNumberString({ no_symbols: true })
+  @MaxLength(9)
+  documentNumber: string;
 }
 
 export class SearchStudentAPIOutDTO {

@@ -1,7 +1,11 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
 import request from "supertest";
 import { DataSource, Repository } from "typeorm";
-import { saveFakeStudent } from "@sims/test-utils";
+import {
+  saveFakeApplicationDisbursements,
+  saveFakeStudent,
+} from "@sims/test-utils";
+import { faker } from "@faker-js/faker";
 import { Student } from "@sims/sims-db";
 import {
   createTestingAppModule,
@@ -173,6 +177,71 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       .expect([]);
   });
 
+  it("Should find the student by certificate number when there is an exact match.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    const documentNumber = faker.number.int({ min: 100000000, max: 999999999 });
+    await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student },
+      { firstDisbursementInitialValues: { documentNumber } },
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({ documentNumber: documentNumber.toString() })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          id: student.id,
+          firstName: student.user.firstName,
+          lastName: student.user.lastName,
+          birthDate: student.birthDate,
+          sin: student.sinValidation.sin,
+        },
+      ]);
+  });
+
+  it("Should not find the student by certificate number when there is only a partial match.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(appDataSource);
+    const documentNumber = faker.number.int({ min: 100000000, max: 999999999 });
+    await saveFakeApplicationDisbursements(
+      appDataSource,
+      { student },
+      { firstDisbursementInitialValues: { documentNumber } },
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({ documentNumber: documentNumber.toString().substring(0, 8) })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([]);
+  });
+
+  it("Should throw a bad request error when the certificate number is not numeric.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({ documentNumber: "12A45" })
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST)
+      .expect({
+        message: ["documentNumber must be a number string"],
+        error: "Bad Request",
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+  });
+
   it("Should throw a bad request error when no search parameters are provided.", async () => {
     // Arrange
     const student = await saveFakeStudent(appDataSource);
@@ -194,6 +263,9 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
           "appNumber should not be empty",
           "sin should not be empty",
           "email should not be empty",
+          "documentNumber must be shorter than or equal to 9 characters",
+          "documentNumber must be a number string",
+          "documentNumber should not be empty",
         ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,

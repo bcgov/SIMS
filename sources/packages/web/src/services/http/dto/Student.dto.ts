@@ -156,6 +156,7 @@ export interface SearchStudentAPIInDTO {
   appNumber?: string;
   sin?: string;
   email?: string;
+  documentNumber?: string;
 }
 
 /**
