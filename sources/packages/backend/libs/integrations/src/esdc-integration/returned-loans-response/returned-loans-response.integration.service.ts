@@ -11,6 +11,8 @@ import {
 import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-files/returned-loans-response-file-detail";
 import { ReturnedLoansResponseFileFooter } from "./returned-loans-response-files/returned-loans-response-file-footer";
 import { ReturnedLoansResponseFileHeader } from "./returned-loans-response-files/returned-loans-response-file-header";
+import { ReturnedLoansResponseFileAddressDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-address-detail";
+import { ReturnedLoansResponseFileReturnedLoanDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
 
 @Injectable()
 export class ReturnedLoansResponseIntegrationService extends SFTPIntegrationBase<ReturnedLoansDownloadResponse> {
@@ -55,11 +57,34 @@ export class ReturnedLoansResponseIntegrationService extends SFTPIntegrationBase
         FILE_PARSING_ERROR,
       );
     }
-    // Parse the detail records from the remaining lines in the file.
-    // The first line is the header, so we start from index 2.
-    const detailRecords = fileLines.map(
-      (line, index) => new ReturnedLoansResponseFileDetail(line, index + 2),
-    );
-    return { detailRecords };
+    // Parse the address and returned loan detail records from the remaining lines in the file.
+    const addressDetailRecords: ReturnedLoansResponseFileAddressDetail[] = [];
+    const returnedLoanDetailRecords: ReturnedLoansResponseFileReturnedLoanDetail[] =
+      [];
+    const unknownRecords: ReturnedLoansResponseFileDetail[] = [];
+    fileLines.forEach((line, index) => {
+      // The first line is the header and index starts from 0, so we start from index 2 indicating the actual line number in the file.
+      const lineNumber = index + 2;
+      const detailRecord = new ReturnedLoansResponseFileDetail(
+        line,
+        lineNumber,
+      );
+      switch (detailRecord.recordType) {
+        case ReturnedLoansResponseRecordType.AddressDetail:
+          addressDetailRecords.push(
+            new ReturnedLoansResponseFileAddressDetail(line, lineNumber),
+          );
+          break;
+        case ReturnedLoansResponseRecordType.ReturnedLoanDetail:
+          returnedLoanDetailRecords.push(
+            new ReturnedLoansResponseFileReturnedLoanDetail(line, lineNumber),
+          );
+          break;
+        default:
+          unknownRecords.push(detailRecord);
+          break;
+      }
+    });
+    return { addressDetailRecords, returnedLoanDetailRecords, unknownRecords };
   }
 }

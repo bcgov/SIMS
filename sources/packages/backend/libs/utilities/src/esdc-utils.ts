@@ -2,6 +2,30 @@ import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
 
 const CANADA_POSTAL_CODE_LENGTH = 6;
 /**
+ * Decimal character places for the 99V9(4) format.
+ * example: value = 012345, decimalPlaces = 4 => returns 01.2345
+ */
+export const DECIMAL_PLACES_99V94 = 4;
+
+/**
+ * Decimal character places for the 9V9(4) format.
+ * example: value = 01234, decimalPlaces = 4 => returns 0.1234
+ */
+export const DECIMAL_PLACES_9V94 = 4;
+
+/**
+ * Decimal character places for the 9(6)V99 format.
+ * example: value = 12345678, decimalPlaces = 2 => returns 123456.78
+ */
+export const DECIMAL_PLACES_96V99 = 2;
+
+/**
+ * Decimal character places for the 9(5)V99 format.
+ * example: value = 0123456, decimalPlaces = 2 => returns 01234.56
+ */
+export const DECIMAL_PLACES_95V99 = 2;
+
+/**
  * Gets the offering intensity code conversion for the MSFAA request file
  */
 export function getOfferingIntensityCode(offeringIntensity: string): string {
@@ -111,4 +135,23 @@ export function getFormattedPostalCode(
     return postalCodeCharArray.join("");
   }
   return postalCode;
+}
+
+/**
+ * Parse a number string which is combined with decimal places.
+ * example: value = 12345, decimalPlaces = 2 => returns 123.45
+ * These combined formats are COBOL PIC format notation as per the
+ * definition provided in the integration documentation.
+ * @param value the numeric value to be parsed.
+ * @param decimalPlaces the number of decimal places to divide by.
+ * @returns the parsed decimal value.
+ */
+export function parseCombinedDecimalString(
+  value: number,
+  decimalPlaces: number,
+): number {
+  if (Number.isNaN(value)) {
+    throw new Error("Invalid number: NaN");
+  }
+  return value / 10 ** decimalPlaces;
 }
