@@ -11,7 +11,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -180,7 +180,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -189,7 +192,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -252,13 +255,16 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       });
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -307,7 +313,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -316,7 +325,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -428,7 +437,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -437,7 +449,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -507,7 +519,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -516,7 +531,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -596,7 +611,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -605,7 +623,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -675,7 +693,10 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.SIMSToSFASIntegration,
+      );
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -684,7 +705,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       const expectedFileName = buildExpectedFileName(mockedCurrentDate);
 
       // Act
-      const processingResult = await processor.processQueue(mockedJob.job);
+      const processingResult = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -726,10 +747,13 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.SIMSToSFASIntegration,
+    );
 
     // Act/Assert
-    await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+    await expect(processor.process(mockedJob.job)).rejects.toThrow(
       "Unexpected error uploading the file.",
     );
   });

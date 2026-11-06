@@ -59,12 +59,15 @@ export function mockBullJob<T>(data?: T): MockBullJobResult<BullJob<T>> {
  * @param data optional data to start the job.
  * @returns mock creation result.
  */
-export function mockBullMQJob<T>(data?: T): MockBullJobResult<Job<T>> {
+export function mockBullMQJob<T>(
+  data?: T,
+  queueName = "FakeQueueName",
+): MockBullJobResult<Job<T>> {
   const job = createMock<Job<T>>({
     id: "FakeJobId",
     name: "FakeJobName",
     data: data as never,
-    queueName: "FakeQueueName",
+    queueName,
   });
   const logMessages: string[] = [];
   job.log.mockImplementation((message: string) => {

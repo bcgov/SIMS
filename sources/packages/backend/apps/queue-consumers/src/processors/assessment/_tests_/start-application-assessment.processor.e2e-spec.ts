@@ -5,14 +5,14 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../test/helpers";
 import {
   createE2EDataSources,
   E2EDataSources,
   saveFakeApplication,
 } from "@sims/test-utils";
-import { StudentAssessmentStatus } from "@sims/sims-db";
+import { QueueConfiguration, StudentAssessmentStatus } from "@sims/sims-db";
 import { Not } from "typeorm";
 import { ZeebeGrpcClient } from "@camunda8/sdk/dist/zeebe";
 import { resetZeebeModuleMock } from "@sims/test-utils/mocks";
@@ -37,6 +37,20 @@ describe(
 
     beforeEach(async () => {
       jest.resetAllMocks();
+      jest
+        .spyOn(
+          Reflect.get(processor, "queueService"),
+          "queueConfigurationDetails",
+        )
+        .mockImplementation(async (queueName) =>
+          Object.assign(new QueueConfiguration(), {
+            queueName,
+            queueConfiguration: {
+              dashboardReadonly: false,
+              defaultJobOptions: {},
+            },
+          }),
+        );
       resetZeebeModuleMock(zbClientMock);
       // Ensure that all assessments will be cancelled.
       await db.studentAssessment.update(
@@ -55,16 +69,19 @@ describe(
         StudentAssessmentStatus.Queued;
       await db.studentAssessment.save(currentAssessment);
       const dummyException = new Error();
-      const mockedJob = mockBullJob<StartAssessmentQueueInDTO>({
-        workflowName: "dummy-workflow-name",
-        assessmentId: currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>(
+        {
+          workflowName: "dummy-workflow-name",
+          assessmentId: currentAssessment.id,
+        },
+        QueueNames.StartApplicationAssessment,
+      );
       zbClientMock.createProcessInstance = jest.fn().mockImplementation(() => {
         throw dummyException;
       });
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "Error while starting application assessment workflow: dummy-workflow-name",
       );
     });
@@ -72,12 +89,13 @@ describe(
     it(`Should log a warn message when the assessment status is different than ${StudentAssessmentStatus.Queued}.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
-      const mockedJob = mockBullJob<StartAssessmentQueueInDTO>({
-        assessmentId: application.currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>(
+        { assessmentId: application.currentAssessment.id },
+        QueueNames.StartApplicationAssessment,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       // Assert expected result message.
@@ -92,7 +110,6 @@ describe(
           `Assessment id ${mockedJob.job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
         ]),
       ).toBe(true);
-      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should invoke the workflow create instance method with the received job parameters.", async () => {
@@ -106,13 +123,16 @@ describe(
 
       const variables = { assessmentId: currentAssessment.id };
       // Queued job.
-      const mockedJob = mockBullJob<StartAssessmentQueueInDTO>({
-        workflowName,
-        assessmentId: application.currentAssessment.id,
-      });
+      const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>(
+        {
+          workflowName,
+          assessmentId: application.currentAssessment.id,
+        },
+        QueueNames.StartApplicationAssessment,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       const createProcessInstancePayload = {

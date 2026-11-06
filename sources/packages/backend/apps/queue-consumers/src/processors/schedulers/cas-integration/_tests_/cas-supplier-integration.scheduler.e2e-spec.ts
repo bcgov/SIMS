@@ -16,7 +16,7 @@ import { CASSupplierIntegrationScheduler } from "../cas-supplier-integration.sch
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import { ContactInfo, SupplierStatus } from "@sims/sims-db";
 import {
@@ -37,6 +37,7 @@ import {
 } from "../../../../../test/helpers/mock-utils/cas-response.factory";
 import { SystemUsersService } from "@sims/services";
 import { CAS_BAD_REQUEST } from "@sims/integrations/constants";
+import { PROCESS_SUMMARY_CONTAINS_ERROR } from "../../../../utilities";
 
 describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
   let app: INestApplication;
@@ -74,10 +75,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
 
   it("Should finalize CAS supplier process with success when no supplier found.", async () => {
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -115,10 +119,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const savedCASSupplier = await saveFakeCASSupplier(db, { student });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -172,10 +179,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const savedCASSupplier = await saveFakeCASSupplier(db, { student });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -236,10 +246,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     const savedCASSupplier = await saveFakeCASSupplier(db, { student });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -296,10 +309,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.CASSupplierIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -421,10 +437,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -545,10 +564,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -658,12 +680,16 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
-      new Error(
+    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+      new CustomNamedError(
         "One or more errors were reported during the process, please see logs for details.",
+        PROCESS_SUMMARY_CONTAINS_ERROR,
       ),
     );
 
@@ -699,10 +725,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -767,10 +796,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([
@@ -831,10 +863,13 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>(
+      undefined,
+      QueueNames.CASSupplierIntegration,
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual([

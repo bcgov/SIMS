@@ -2,7 +2,7 @@ import { mockDownloadFiles } from "@sims/test-utils/mocks";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import { getPCTDateTimeWithTimezone, QueueNames } from "@sims/utilities";
@@ -156,10 +156,13 @@ describe(
           { applyListFilter: true },
         );
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>(
+          undefined,
+          QueueNames.FederalRestrictionsIntegration,
+        );
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         expect(result).toEqual([
@@ -307,10 +310,13 @@ describe(
         { applyListFilter: true },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.FederalRestrictionsIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toEqual([
@@ -338,10 +344,13 @@ describe(
         undefined,
         { applyListFilter: true },
       );
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.FederalRestrictionsIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toEqual([
@@ -384,10 +393,13 @@ describe(
       await db.federalRestriction.clear();
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.FederalRestrictionsIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toEqual(["No files found to be processed."]);

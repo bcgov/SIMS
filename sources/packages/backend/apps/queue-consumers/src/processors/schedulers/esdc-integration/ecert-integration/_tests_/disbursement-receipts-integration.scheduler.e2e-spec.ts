@@ -21,7 +21,7 @@ import {
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import { END_OF_LINE, QueueNames, base64Encode } from "@sims/utilities";
@@ -142,10 +142,13 @@ describe(
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -177,10 +180,13 @@ describe(
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -208,10 +214,13 @@ describe(
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -233,10 +242,13 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -364,10 +376,13 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_ONLY_FULL_TIME_FILE]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -471,10 +486,13 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       const downloadedFile = join(
@@ -617,10 +635,13 @@ describe(
         FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
       ]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -771,10 +792,13 @@ describe(
       // Arrange
       mockDownloadFiles(sftpClientMock, [NON_MATCHING_RECORDS_FILE]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -859,10 +883,13 @@ describe(
       // Arrange
       mockDownloadFiles(sftpClientMock, []);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.DisbursementReceiptsFileIntegration,
+      );
 
       // Act
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
     });

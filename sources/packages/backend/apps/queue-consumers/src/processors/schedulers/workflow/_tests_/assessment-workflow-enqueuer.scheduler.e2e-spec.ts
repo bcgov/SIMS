@@ -4,7 +4,7 @@ import { QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import { AssessmentWorkflowEnqueuerScheduler } from "../assessment-workflow-enqueuer.scheduler";
 import {
@@ -72,10 +72,13 @@ describe(
       // Application submitted with original assessment.
       const application = await createDefaultApplication();
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.AssessmentWorkflowEnqueuer,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -126,10 +129,13 @@ describe(
       application.currentAssessment = newestAssessment;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.AssessmentWorkflowEnqueuer,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -173,10 +179,13 @@ describe(
         await db.studentAssessment.save(submittedAssessment);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>(
+          undefined,
+          QueueNames.AssessmentWorkflowEnqueuer,
+        );
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
@@ -193,10 +202,13 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.AssessmentWorkflowEnqueuer,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
@@ -213,10 +225,13 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.AssessmentWorkflowEnqueuer,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -256,10 +271,13 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.AssessmentWorkflowEnqueuer,
+      );
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(cancelApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();

@@ -4,7 +4,7 @@ import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { PartTimeMSFAAProcessResponseIntegrationScheduler } from "../msfaa-part-time-process-response-integration.scheduler";
 import {
@@ -110,14 +110,17 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
       ]);
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       expect(result).toStrictEqual([
         "MSFAA part-time response files processed.",
       ]);
@@ -274,14 +277,17 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
 
       // Act
       // Now reactivate the cancelled MSFAA.
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       // Assert
       expect(result).toStrictEqual([
         "MSFAA part-time response files processed.",
@@ -395,14 +401,17 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
       ]);
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
 
@@ -450,14 +459,17 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid SIN hash total.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
       ]);
 
       // Act
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
 
@@ -476,14 +488,17 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid record count.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
       ]);
 
       // Act
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
 
@@ -502,7 +517,10 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid header code.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
 
       mockDownloadFiles(
         sftpClientMock,
@@ -514,7 +532,7 @@ describe(
       );
 
       // Act
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
 
@@ -533,7 +551,10 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid footer code.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>(
+        undefined,
+        QueueNames.PartTimeMSFAAProcessResponseIntegration,
+      );
 
       mockDownloadFiles(
         sftpClientMock,
@@ -547,7 +568,7 @@ describe(
       );
 
       // Act
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
 
