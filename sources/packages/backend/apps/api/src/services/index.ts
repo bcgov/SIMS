@@ -85,6 +85,7 @@ export * from "./disability-profile/disability-profile.models";
 export * from "./disability-profile/disability-profile.service";
 export * from "./education-program/education-program-save.models";
 export * from "./education-program/education-program-save.service";
+export * from "./education-program/education-program.manager.service";
 export * from "./education-program/data-validation/custom-validators/custom-validators.models";
 export * from "./education-program/data-validation/education-program-data-validation.service";
 export * from "./education-program/data-validation/data-validation-schema-cache.service";

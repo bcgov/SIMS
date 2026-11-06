@@ -74,6 +74,13 @@ export const EDUCATION_PROGRAM_DATA_INVALID = "EDUCATION_PROGRAM_DATA_INVALID";
  */
 export const EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND =
   "EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND";
+/**
+ * The program configuration used to fill the education program data is no longer
+ * the active one, for instance, when a new configuration was activated after the
+ * program form was loaded.
+ */
+export const EDUCATION_PROGRAM_CONFIGURATION_OUTDATED =
+  "EDUCATION_PROGRAM_CONFIGURATION_OUTDATED";
 
 export const STUDENT_ACCOUNT_APPLICATION_NOT_FOUND =
   "STUDENT_ACCOUNT_APPLICATION_NOT_FOUND";

@@ -2,6 +2,7 @@ import {
   ProgramCalculatedDataKey,
   ProgramEvaluationResult,
   ProgramIntensity,
+  ProgramRenewalStatus,
   ProgramStatus,
 } from "@/types";
 
@@ -43,6 +44,7 @@ export interface EducationProgramDataAPIOutDTO {
  */
 export interface EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  programYearName: string;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -95,6 +97,35 @@ export interface EducationProgramsSummaryAPIOutDTO {
   programStatus: ProgramStatus;
   isActive: boolean;
   isExpired: boolean;
+}
+
+/**
+ * Program year with at least one education program configuration.
+ */
+export interface EducationProgramYearAPIOutDTO {
+  id: number;
+  description: string;
+  /**
+   * Indicates if the program year has at least
+   * one active education program configuration.
+   */
+  hasActiveProgramConfiguration: boolean;
+}
+
+/**
+ * Education program details to be displayed in the programs management list.
+ */
+export interface EducationProgramManagerDetailsAPIOutDTO {
+  id: number;
+  name: string;
+  description: string;
+  credentialTypeToDisplay: string;
+  cipCode: string;
+  sabcCode?: string;
+  programStatus: ProgramStatus;
+  isActive: boolean;
+  isExpired: boolean;
+  renewalStatus: ProgramRenewalStatus;
 }
 
 /**

@@ -7,6 +7,7 @@ import {
   UserService,
 } from "../../services";
 import { EducationProgramEvaluationService } from "./education-program-evaluator";
+import { EducationProgramManagerService } from "./education-program.manager.service";
 import {
   AviationProgramCredentialTypes,
   EducationProgram,
@@ -18,6 +19,7 @@ import {
 import {
   DUPLICATE_SABC_CODE,
   EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+  EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_INVALID_OPERATION,
   EDUCATION_PROGRAM_NOT_FOUND,
@@ -31,6 +33,7 @@ import {
   EducationProgramDynamicConfiguration,
   EducationProgramDynamicData,
   EntranceRequirementValues,
+  ProgramConfigurationLookup,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
@@ -64,21 +67,27 @@ export class EducationProgramSaveService {
     private readonly educationProgramDataValidationService: EducationProgramDataValidationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly userService: UserService,
+    private readonly educationProgramManagerService: EducationProgramManagerService,
   ) {}
 
   /**
    * Get the program configuration including visual schema, validation schema, and context.
    * @param institutionId ID of the institution requesting the configuration.
    * @param options method options.
-   * - `programConfigurationId` ID of the program configuration. If not provided,
+   * - `programConfigurationId` ID of the program configuration. When provided, the
+   * configuration is returned regardless of its active status. If not provided,
    * the most recent active configuration is returned.
+   * - `programYearId` ID of the program year. When provided, only an active
+   * configuration for the program year is returned.
    * - `programId` ID of the program. Used to check if the program has existing offerings.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  // TODO: make the programConfigurationId required once the web is updated to always provide it.
   async getEducationProgramConfiguration(
     institutionId: number,
-    options?: { programConfigurationId?: number; programId?: number },
+    programConfigurationLookup: ProgramConfigurationLookup,
+    options?: {
+      programId?: number;
+    },
   ): Promise<EducationProgramDynamicConfiguration> {
     const institutionPromise =
       this.institutionService.getInstitutionTypeById(institutionId);
@@ -97,12 +106,22 @@ export class EducationProgramSaveService {
           programYear: {
             id: true,
             startDate: true,
+            programYear: true,
           },
         },
         relations: {
           programYear: true,
         },
-        where: { id: options?.programConfigurationId, isActive: true },
+        where: {
+          id: programConfigurationLookup?.programConfigurationId,
+          programYear: { id: programConfigurationLookup?.programYearId },
+          // When a specific configuration is requested, it must be returned regardless of
+          // its active status (e.g. an existing program associated with an inactive configuration).
+          // Otherwise, only active configurations should be considered.
+          isActive: programConfigurationLookup?.programConfigurationId
+            ? undefined
+            : true,
+        },
         order: {
           programYear: { startDate: "DESC" },
         },
@@ -119,6 +138,7 @@ export class EducationProgramSaveService {
     return {
       configurationId: programConfiguration.id,
       programYearId: programConfiguration.programYear.id,
+      programYearName: programConfiguration.programYear.programYear,
       updatedAt: programConfiguration.updatedAt,
       context: {
         isFullUpdateRestricted: hasOfferings,
@@ -134,22 +154,32 @@ export class EducationProgramSaveService {
 
   /**
    * Create a new education program.
+   * @param programYearId the ID of the program year the program is being created for.
    * @param programData the data for the new education program.
-   * @param programConfigurationId the ID of the program configuration.
+   * @param programConfigurationId the ID of the program configuration used to fill the
+   * program data. It must be the active configuration for the program year.
    * @param institutionId the ID of the institution.
    * @param auditUserId the ID of the user performing the action.
    * @returns the created education program.
    */
   async createProgram(
+    programYearId: number,
     programData: EducationProgramData,
     programConfigurationId: number,
     institutionId: number,
     auditUserId: number,
   ): Promise<EducationProgram> {
+    // Only the active configuration for the program year can be used to create a program.
     const configuration = await this.getEducationProgramConfiguration(
       institutionId,
-      { programConfigurationId },
+      { programYearId },
     );
+    if (configuration.configurationId !== programConfigurationId) {
+      throw new CustomNamedError(
+        "The program configuration has changed since the program data was retrieved.",
+        EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
+      );
+    }
     const programDataToValidate = {
       ...programData,
       context: configuration.context,
@@ -162,14 +192,109 @@ export class EducationProgramSaveService {
         programYearId: configuration.programYearId,
       },
     );
+    const program = this.createNewProgramEntity(
+      institutionId,
+      programConfigurationId,
+      auditUserId,
+    );
     return this.saveEducationProgram(
+      program,
       institutionId,
       auditUserId,
       validationResult,
       configuration.context,
+      { associateParentProgram: true },
+    );
+  }
+
+  /**
+   * Renew an existing education program into the next program year.
+   * Renewals are possible only between sequential program years.
+   * @param renewFromProgramId the ID of the program to renew from. Used to enforce sequential renewal
+   * and to create a relationship between the old and new programs.
+   * @param updatedProgramData the updated data for the new program.
+   * @param programConfigurationId the ID of the program configuration used to fill the
+   * program data. It must be the active configuration for the next program year.
+   * @param institutionId the ID of the institution.
+   * @param auditUserId the ID of the user performing the action.
+   * @returns the renewed education program.
+   */
+  async renewProgram(
+    renewFromProgramId: number,
+    updatedProgramData: EducationProgramData,
+    programConfigurationId: number,
+    institutionId: number,
+    auditUserId: number,
+  ): Promise<EducationProgram> {
+    const programToRenew =
+      await this.educationProgramService.getEducationProgramDetails(
+        renewFromProgramId,
+        institutionId,
+      );
+    if (!programToRenew) {
+      throw new CustomNamedError(
+        "Not able to find the education program to renew from.",
+        EDUCATION_PROGRAM_NOT_FOUND,
+      );
+    }
+    if (programToRenew.renewedProgram) {
+      throw new CustomNamedError(
+        "The education program has already been renewed.",
+        EDUCATION_PROGRAM_INVALID_OPERATION,
+      );
+    }
+    const expectedNextConfiguration =
+      await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
+        programToRenew.programConfiguration.programYear.startDate,
+      );
+    if (!expectedNextConfiguration) {
+      throw new CustomNamedError(
+        `No next program configuration found for renewal for the program ID ${renewFromProgramId}.`,
+        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+      );
+    }
+    if (expectedNextConfiguration.id !== programConfigurationId) {
+      throw new CustomNamedError(
+        "The program configuration has changed since the program data was retrieved.",
+        EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
+      );
+    }
+    const configuration = await this.getEducationProgramConfiguration(
+      institutionId,
+      { programConfigurationId },
+    );
+    const programDataToValidate = {
+      ...updatedProgramData,
+      context: configuration.context,
+    };
+    const validationResult = await this.getValidatedResult(
+      configuration,
+      programDataToValidate,
       {
-        programConfigurationId,
+        institutionId,
+        programYearId: configuration.programYearId,
       },
+    );
+    const program = this.createNewProgramEntity(
+      institutionId,
+      programConfigurationId,
+      auditUserId,
+    );
+    if (!programToRenew.parentProgram?.id) {
+      throw new Error(
+        `Program ID ${renewFromProgramId} cannot be renewed because it is not associated with a parent program.`,
+      );
+    }
+    program.parentProgram = {
+      id: programToRenew.parentProgram.id,
+    } as EducationProgram;
+    program.precedingProgram = { id: programToRenew.id } as EducationProgram;
+    return this.saveEducationProgram(
+      program,
+      institutionId,
+      auditUserId,
+      validationResult,
+      configuration.context,
     );
   }
 
@@ -212,10 +337,8 @@ export class EducationProgramSaveService {
     }
     const configuration = await this.getEducationProgramConfiguration(
       program.institution.id,
-      {
-        programConfigurationId: program.programConfiguration.id,
-        programId: program.id,
-      },
+      { programConfigurationId: program.programConfiguration.id },
+      { programId: program.id },
     );
     let programDataToUpdate: EducationProgramData;
     if (configuration.context.isFullUpdateRestricted) {
@@ -242,15 +365,16 @@ export class EducationProgramSaveService {
         programId: programId,
       },
     );
+    const programToUpdate = new EducationProgram();
+    programToUpdate.id = programId;
+    programToUpdate.modifier = { id: auditUserId } as User;
+    programToUpdate.updatedAt = new Date();
     return this.saveEducationProgram(
+      programToUpdate,
       institutionId,
       auditUserId,
       validationResult,
       configuration.context,
-      {
-        programId: programId,
-        programConfigurationId: program.programConfiguration.id,
-      },
     );
   }
 
@@ -287,35 +411,53 @@ export class EducationProgramSaveService {
   }
 
   /**
-   * Creates or updates an education program based on the provided validation result and options.
+   * Creates a new education program entity with the properties required
+   * for a new program (created from scratch or renewed).
+   * @param institutionId the ID of the institution.
+   * @param programConfigurationId the ID of the program configuration.
+   * @param auditUserId the ID of the user performing the action.
+   * @returns the new education program entity.
+   */
+  private createNewProgramEntity(
+    institutionId: number,
+    programConfigurationId: number,
+    auditUserId: number,
+  ): EducationProgram {
+    const program = new EducationProgram();
+    const auditUser = { id: auditUserId } as User;
+    const now = new Date();
+    program.institution = { id: institutionId } as Institution;
+    program.programConfiguration = {
+      id: programConfigurationId,
+    } as EducationProgramConfiguration;
+    program.submittedBy = auditUser;
+    program.submittedDate = now;
+    program.creator = auditUser;
+    program.createdAt = now;
+    return program;
+  }
+
+  /**
+   * Saves an education program, assigning the data based on the provided validation result.
+   * @param program the education program entity to be saved, already populated with
+   * the properties specific to the operation (create, renew, or update).
    * @param institutionId the ID of the institution.
    * @param auditUserId the ID of the user performing the action.
    * @param validationResult the result of the program data validation.
    * @param context the context of the education program.
-   * @param options optional parameters including program ID and program configuration ID.
+   * @param options optional settings for the save operation.
+   * - `associateParentProgram`: if true, the saved program will be associated as its own parent program.
+   * Used only during the first time the program is saved.
    * @returns the created or updated education program.
    */
   private async saveEducationProgram(
+    program: EducationProgram,
     institutionId: number,
     auditUserId: number,
     validationResult: EducationProgramDataValidationSuccess,
     context: EducationProgramContext,
-    options?: { programId?: number; programConfigurationId?: number },
+    options?: { associateParentProgram: boolean },
   ): Promise<EducationProgram> {
-    if (!options?.programId && !options?.programConfigurationId) {
-      throw new CustomNamedError(
-        "Program configuration ID is required when creating a new program.",
-        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
-      );
-    }
-    let program = new EducationProgram();
-    if (options?.programId) {
-      // Ensures that the user has access to the institution associated with the program id being updated.
-      program = await this.educationProgramService.getInstitutionProgram(
-        options.programId,
-        institutionId,
-      );
-    }
     const calculatedData =
       await this.educationProgramEvaluationService.evaluate(
         institutionId,
@@ -337,7 +479,6 @@ export class EducationProgramSaveService {
         fieldOfStudyCode,
       );
     }
-    program.id = options?.programId;
     program.name = validationResult.programData.programName;
     program.description = validationResult.programData.programDescription;
     // The persisted dynamic program saved at this point varies depending of the update type.
@@ -347,21 +488,6 @@ export class EducationProgramSaveService {
     // For instance, if program has offerings (isFullUpdateRestricted is true), only fields like programName
     // and programDescription may be updated.
     program.programData = { ...validationResult.programData, fieldOfStudyCode };
-    const auditUser = { id: auditUserId } as User;
-    const now = new Date();
-    if (!options?.programId) {
-      program.institution = { id: institutionId } as Institution;
-      program.programConfiguration = {
-        id: options.programConfigurationId,
-      } as EducationProgramConfiguration;
-      program.submittedBy = auditUser;
-      program.submittedDate = now;
-      program.creator = auditUser;
-      program.createdAt = now;
-    } else {
-      program.modifier = auditUser;
-      program.updatedAt = now;
-    }
     return this.dataSource.transaction(async (entityManager) => {
       await this.saveInstitutionAddsPendingProgramNotification(
         { name: program.name, programStatus: program.programStatus },
@@ -369,7 +495,17 @@ export class EducationProgramSaveService {
         auditUserId,
         entityManager,
       );
-      return entityManager.getRepository(EducationProgram).save(program);
+      const educationProgramRepo =
+        entityManager.getRepository(EducationProgram);
+      const savedProgram = await educationProgramRepo.save(program);
+      if (options?.associateParentProgram) {
+        // Associate the saved program as its own parent program.
+        await educationProgramRepo.update(
+          { id: savedProgram.id },
+          { parentProgram: { id: savedProgram.id } },
+        );
+      }
+      return savedProgram;
     });
   }
 

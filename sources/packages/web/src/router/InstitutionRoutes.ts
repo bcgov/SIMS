@@ -42,6 +42,9 @@ import OfferingRequestChange from "@/views/institution/locations/offerings/Offer
 import OfferingsUpload from "@/views/institution/OfferingsUpload.vue";
 import WithdrawalUpload from "@/views/institution/WithdrawalUpload.vue";
 import InstitutionSearchStudents from "@/views/institution/student/InstitutionSearchStudents.vue";
+import ManagePrograms from "@/views/institution/ManagePrograms.vue";
+import RenewProgram from "@/views/institution/locations/programs/RenewProgram.vue";
+import ViewProgram from "@/views/aest/institution/ViewProgram.vue";
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
@@ -130,6 +133,109 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         meta: {
           clientType: ClientIdType.Institution,
           allowOnlyBCPublic: true,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManagePrograms,
+        name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+        components: {
+          default: ManagePrograms,
+          sidebar: InstitutionHomeSideBar,
+        },
+        props: {
+          default: (route) => ({
+            programYearId: route.params.programYearId
+              ? Number.parseInt(route.params.programYearId as string)
+              : undefined,
+          }),
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+            InstitutionUserTypes.readOnlyUser,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageProgramsRenew,
+        name: InstitutionRoutesConst.RENEW_PROGRAM,
+        component: RenewProgram,
+        props: (route) => ({
+          programId: Number.parseInt(route.params.programId as string),
+          // Keep the program year selected when navigating back to the manage programs.
+          backTarget: {
+            name: "Manage Programs",
+            to: {
+              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+              params: route.query.programYearId
+                ? {
+                    programYearId: route.query.programYearId as string,
+                  }
+                : undefined,
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageProgramsCreate,
+        name: InstitutionRoutesConst.CREATE_PROGRAM,
+        component: CreateProgram,
+        props: (route) => ({
+          programYearId: Number.parseInt(route.params.programYearId as string),
+          // Keep the program year selected when navigating back to the manage programs.
+          backTarget: {
+            name: "Manage Programs",
+            to: {
+              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+              params: {
+                programYearId: route.params.programYearId as string,
+              },
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageProgramsView,
+        name: InstitutionRoutesConst.VIEW_PROGRAM,
+        component: ViewProgram,
+        props: (route) => ({
+          programId: Number.parseInt(route.params.programId as string),
+          // Keep the program year selected when navigating back to the manage programs.
+          backTarget: {
+            name: "Manage Programs",
+            to: {
+              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+              params: route.query.programYearId
+                ? {
+                    programYearId: route.query.programYearId as string,
+                  }
+                : undefined,
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,

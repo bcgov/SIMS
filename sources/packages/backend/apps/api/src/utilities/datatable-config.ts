@@ -35,6 +35,22 @@ export interface ProgramPaginationOptions extends BasePaginationOptions {
   inactiveProgramSearch?: boolean;
 }
 
+export interface ProgramsManagementPaginationOptions extends PaginationOptions {
+  sortField?: string;
+  statusSearch?: ProgramStatus[];
+  inactiveProgramSearch?: boolean;
+  /**
+   * Include programs already renewed into the next program year
+   * (programs with a renewed program).
+   */
+  renewedProgramSearch?: boolean;
+  /**
+   * Include programs not yet renewed into the next program year
+   * (programs without a renewed program).
+   */
+  notRenewedProgramSearch?: boolean;
+}
+
 /**
  * Program pagination option allowing for multiple criteria search.
  */

@@ -11,8 +11,10 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
+  EducationProgramYearAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
@@ -86,17 +88,25 @@ export class EducationProgramService {
   }
 
   /**
-   * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration. If not provided,
-   * the most recent active configuration is returned.
+   * Get the program configuration for creation, including context, visual schema,
+   * and validation schema, using the active configuration for the provided program year.
+   * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  async getEducationProgramConfiguration(
-    programConfigurationId?: number,
+  async getEducationProgramForCreate(
+    programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return ApiClient.EducationProgram.getEducationProgramConfiguration(
-      programConfigurationId,
+    return ApiClient.EducationProgram.getEducationProgramForCreate(
+      programYearId,
     );
+  }
+
+  /**
+   * Get the list of program years with at least one education program configuration.
+   * @returns program years and whether they have an active program configuration.
+   */
+  async getProgramYearsList(): Promise<EducationProgramYearAPIOutDTO[]> {
+    return ApiClient.EducationProgram.getProgramYearsList();
   }
 
   /**
@@ -111,14 +121,45 @@ export class EducationProgramService {
   }
 
   /**
-   * Creates a new education program.
+   * Get the program configuration for renewal.
+   * It includes a new program context and the data from the previous program.
+   * @param programId the ID of the education program to be renewed.
+   * @returns the next program configuration for renewal.
+   */
+  async getEducationProgramForRenew(
+    programId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return ApiClient.EducationProgram.getEducationProgramForRenew(programId);
+  }
+
+  /**
+   * Creates a new education program for the provided program year.
+   * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
   async createEducationProgram(
+    programYearId: number,
     payload: CreateEducationProgramAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return ApiClient.EducationProgram.createEducationProgram(payload);
+    return ApiClient.EducationProgram.createEducationProgram(
+      programYearId,
+      payload,
+    );
+  }
+
+  /**
+   * Renews an existing education program, creating a new program
+   * for the next program configuration.
+   * @param programId ID of the education program to be renewed.
+   * @param payload information to create the renewed program.
+   * @returns id of the created program.
+   */
+  async renewEducationProgram(
+    programId: number,
+    payload: CreateEducationProgramAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return ApiClient.EducationProgram.renewEducationProgram(programId, payload);
   }
 
   /**
@@ -178,6 +219,24 @@ export class EducationProgramService {
     isIncludeInActiveProgram?: boolean;
   }): Promise<OptionItemAPIOutDTO[]> {
     return ApiClient.EducationProgram.getProgramsListForInstitutions(options);
+  }
+
+  /**
+   * Get the list of education programs for a specific program year.
+   * @param educationProgramConfigurationId ID of the education program configuration.
+   * @param paginationOptions Pagination options for the results.
+   * @returns Paginated list of education programs for the specified program year.
+   */
+  async getProgramsForProgramYear(
+    educationProgramConfigurationId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
+  > {
+    return ApiClient.EducationProgram.getProgramsForProgramYear(
+      educationProgramConfigurationId,
+      paginationOptions,
+    );
   }
 
   /**

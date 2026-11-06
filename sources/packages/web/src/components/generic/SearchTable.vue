@@ -1,22 +1,23 @@
 <template>
   <content-group>
+    <!--
+      Optional content displayed in its own full-width line above the
+      search input and the search button.
+    -->
+    <div v-if="slots['prepend-search']" class="mb-2">
+      <slot name="prepend-search"></slot>
+    </div>
     <v-row density="compact">
       <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
-        <!--
-          Custom search input slot. When provided, it replaces the default
-          text field, allowing full control over the search input.
-        -->
-        <slot name="prepend-search">
-          <v-text-field
-            density="compact"
-            :label="searchLabel ?? 'Search'"
-            variant="outlined"
-            v-model="searchText"
-            @keyup.enter="$emit('search')"
-            prepend-inner-icon="mdi-magnify"
-            hide-details="auto"
-          />
-        </slot>
+        <v-text-field
+          density="compact"
+          :label="searchLabel ?? 'Search'"
+          variant="outlined"
+          v-model="searchText"
+          @keyup.enter="$emit('search')"
+          prepend-inner-icon="mdi-magnify"
+          hide-details="auto"
+        />
       </v-col>
       <v-col cols="auto">
         <v-btn color="primary" :loading="loading" @click="$emit('search')"
@@ -74,6 +75,6 @@ defineProps<{
 // Emitted when the user clicks the Search button or presses Enter in the text field.
 defineEmits(["search"]);
 
-// Bound to the default search text field value. Not required when the `prepend-search` slot is used.
+// Bound to the search text field value.
 const searchText = defineModel<string>();
 </script>

@@ -30,6 +30,26 @@ export enum ProgramStatus {
   Declined = "Declined",
 }
 
+/**
+ * Renewal status of an education program into the next program year.
+ */
+export enum ProgramRenewalStatus {
+  /**
+   * Program was already renewed into the next program year.
+   */
+  Renewed = "Renewed",
+  /**
+   * Program is not renewed yet and a next program configuration is available for the renewal.
+   */
+  Available = "Available",
+  /**
+   * Program is not renewed yet and there is no next program configuration available for the renewal.
+   * It can happen for a newly created program year that has not yet been configured for the next program year
+   * or for a program that has reached the end of its lifecycle and it was marked as inactive.
+   */
+  NotAvailable = "Not available",
+}
+
 export interface ProgramOfferingHeader {
   institutionId: number;
   institutionName: string;
@@ -46,6 +66,32 @@ export interface ProgramOfferingHeader {
 export interface ProgramOfferingApprovalLabels {
   assessedByLabel: string;
   assessedDateLabel: string;
+}
+
+/**
+ * Status and renewal filters applied when listing the
+ * programs of a program year.
+ */
+export interface ProgramStatusFilters {
+  /**
+   * Program statuses to be searched. When not provided,
+   * programs are not filtered by status.
+   */
+  statusSearch?: ProgramStatus[];
+  /**
+   * Indicates that only inactive programs must be listed.
+   */
+  inactiveProgramSearch: boolean;
+  /**
+   * Indicates that only programs already renewed into the
+   * next program year must be listed.
+   */
+  renewedProgramSearch: boolean;
+  /**
+   * Indicates that only programs not yet renewed into the
+   * next program year must be listed.
+   */
+  notRenewedProgramSearch: boolean;
 }
 
 /**
