@@ -16,7 +16,6 @@ import { Not } from "typeorm";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import {
   CancelAssessmentQueueInDTO,
-  QueueService,
   StartAssessmentQueueInDTO,
 } from "@sims/services/queue";
 import { WorkflowQueueRetryScheduler } from "../assessment-workflow-queue-retry.scheduler";
@@ -30,7 +29,6 @@ describe(
     let retryProcessor: WorkflowQueueRetryScheduler;
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
     let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
-    let queueService: QueueService;
     let amountHoursAssessmentRetry: number;
 
     beforeAll(async () => {
@@ -47,11 +45,9 @@ describe(
       );
       // Processor under test.
       retryProcessor = app.get(WorkflowQueueRetryScheduler);
-      queueService = app.get(QueueService);
-      amountHoursAssessmentRetry =
-        await queueService.getAmountHoursAssessmentRetry(
-          QueueNames.AssessmentWorkflowQueueRetry,
-        );
+      // Set the amount of hours for assessment retry.
+      // This value is used to calculate the retry window for assessments.
+      amountHoursAssessmentRetry = 6;
     });
 
     beforeEach(async () => {
@@ -80,7 +76,7 @@ describe(
       // Retry job.
       const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
         {
-          amountHoursAssessmentRetry: 6,
+          amountHoursAssessmentRetry,
         },
         QueueNames.AssessmentWorkflowQueueRetry,
       );
@@ -112,7 +108,7 @@ describe(
       // Retry job.
       const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
         {
-          amountHoursAssessmentRetry: 6,
+          amountHoursAssessmentRetry,
         },
         QueueNames.AssessmentWorkflowQueueRetry,
       );
@@ -145,7 +141,7 @@ describe(
       // Retry job.
       const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
         {
-          amountHoursAssessmentRetry: 6,
+          amountHoursAssessmentRetry,
         },
         QueueNames.AssessmentWorkflowQueueRetry,
       );
@@ -178,7 +174,7 @@ describe(
       // Retry job.
       const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
         {
-          amountHoursAssessmentRetry: 6,
+          amountHoursAssessmentRetry,
         },
         QueueNames.AssessmentWorkflowQueueRetry,
       );
