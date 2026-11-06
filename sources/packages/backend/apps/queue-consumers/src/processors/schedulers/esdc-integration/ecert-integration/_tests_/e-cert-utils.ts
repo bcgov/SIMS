@@ -273,11 +273,14 @@ export async function loadDisbursementAndStudentRestrictions(
  * Create application with a disbursement schedule eligible for e-Cert.
  * @param db e2e data sources.
  * @param offeringIntensity offering intensity.
+ * @param options method options.
+ * - `applicationInitialValues` initial values to be applied to the application.
  * @returns application with a disbursement schedule eligible for e-Cert.
  */
 export async function createEligibleECertApplication(
   db: E2EDataSources,
   offeringIntensity: OfferingIntensity,
+  options?: { applicationInitialValues?: Partial<Application> },
 ): Promise<Application> {
   const eligibleDisbursement: Partial<DisbursementSchedule> = {
     coeStatus: COEStatus.completed,
@@ -306,6 +309,7 @@ export async function createEligibleECertApplication(
     {
       offeringIntensity,
       applicationStatus: ApplicationStatus.Completed,
+      applicationInitialValues: options?.applicationInitialValues,
       currentAssessmentInitialValues: {
         assessmentData: { weeks: 5 } as Assessment,
         assessmentDate: new Date(),

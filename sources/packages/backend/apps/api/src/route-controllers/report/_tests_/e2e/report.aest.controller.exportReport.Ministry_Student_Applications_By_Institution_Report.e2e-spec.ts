@@ -21,7 +21,6 @@ import {
   createSingleApplicationDataSetup,
   createVersionedApplicationsDataSetup,
 } from "./student-applications-by-institution-report-utils";
-import { ConfigService } from "@sims/utilities/config";
 import {
   ApplicationStatus,
   DisbursementScheduleStatus,
@@ -30,14 +29,12 @@ import {
 describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_By_Institution_Report)", () => {
   let app: INestApplication;
   let db: E2EDataSources;
-  let applicationArchiveDays: number;
   const endpoint = "/aest/report";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    applicationArchiveDays = app.get(ConfigService).applicationArchiveDays;
   });
 
   it("Should generate the report when a report generation request is made with the appropriate filters, including optional program.", async () => {
@@ -157,8 +154,8 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         student,
         institution,
         originalSubmissionDate: now,
-        // Set the offering end date to be outside the archive date range to ensure that the application is archived.
-        currentOfferingEndDateOffset: -applicationArchiveDays - 1,
+        // Flag the application as archived to ensure it is excluded from the report.
+        isCurrentApplicationArchived: true,
       }),
     ]);
     const payload = createApplicationsByInstitutionReportPayload({
