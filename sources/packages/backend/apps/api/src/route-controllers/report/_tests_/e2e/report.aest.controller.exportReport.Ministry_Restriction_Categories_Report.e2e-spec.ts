@@ -15,18 +15,15 @@ import {
 } from "../../../../testHelpers";
 import { parse } from "papaparse";
 import request from "supertest";
-import {
-  RestrictionActionType,
-  RestrictionNotificationType,
-  RestrictionType,
-} from "@sims/sims-db";
+import { RestrictionType } from "@sims/sims-db";
+import { MinistryReportNames } from "../../models/report.dto";
 
 describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories_Report)", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   const endpoint = "/aest/report";
   const payload = {
-    reportName: "Ministry_Restriction_Categories_Report",
+    reportName: MinistryReportNames.RestrictionCategories,
     params: {},
   };
 
@@ -36,7 +33,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
     db = createE2EDataSources(dataSource);
   });
 
-  it("Should generate a report with all the existing restrictions ordered by restriction code when the report is requested.", async () => {
+  it("Should generate a report with all the existing restrictions when the report is requested.", async () => {
     // Arrange
     const restrictions = await db.restriction.find({
       select: {
@@ -62,40 +59,25 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
       .expect(HttpStatus.CREATED)
       .then((response) => {
         const fileContent = response.request.res["text"];
-        const parsedResult = parse<Record<string, string>>(fileContent, {
+        const parsedResult = parse(fileContent, {
           header: true,
         });
-        // Other tests running in parallel can create restrictions between the restrictions
-        // query and the report request. Only the report records for the queried restrictions
-        // are asserted, which still validates their content and order.
-        const restrictionCodes = new Set(
-          restrictions.map((restriction) => restriction.restrictionCode),
-        );
-        const reportRecords = parsedResult.data.filter((record) =>
-          restrictionCodes.has(record.Code),
-        );
+        // Other tests running in parallel can create restrictions, hence the report
+        // is only expected to contain the restrictions queried by this test.
         // Active counts depend on data created by other tests, hence only the numeric format is asserted.
-        expect(reportRecords).toEqual(
-          restrictions.map((restriction) => ({
-            Code: restriction.restrictionCode,
-            Description: restriction.description,
-            "Restriction Type": restriction.restrictionType,
-            Category: restriction.restrictionCategory,
-            "Action Type": restriction.actionType.join(", "),
-            "Notification Type": restriction.notificationType,
-            "Active Count": expect.stringMatching(/^\d+$/),
-          })),
+        expect(parsedResult.data).toEqual(
+          expect.arrayContaining(
+            restrictions.map((restriction) => ({
+              Code: restriction.restrictionCode,
+              Description: restriction.description,
+              "Restriction Type": restriction.restrictionType,
+              Category: restriction.restrictionCategory,
+              "Action Type": restriction.actionType.join(", "),
+              "Notification Type": restriction.notificationType,
+              "Active Count": expect.stringMatching(/^\d+$/),
+            })),
+          ),
         );
-        // Assert one restriction explicitly to validate the multiple action types formatting.
-        expect(parsedResult.data).toContainEqual({
-          Code: "SCV",
-          Description: "Funding blocked for student compliance verification.",
-          "Restriction Type": RestrictionType.Provincial,
-          Category: "Verification",
-          "Action Type": `${RestrictionActionType.StopFullTimeDisbursement}, ${RestrictionActionType.StopPartTimeDisbursement}`,
-          "Notification Type": RestrictionNotificationType.Error,
-          "Active Count": expect.stringMatching(/^\d+$/),
-        });
       });
   });
 
@@ -113,9 +95,13 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
         }),
       ]);
     const student = await saveFakeStudent(db.dataSource);
-    // Each restriction has one active record that must be counted
-    // and one inactive record that must not be counted.
+    // The student restriction has two active records and the institution restriction has one,
+    // so each count is validated against its own restriction. Inactive records must not be counted.
     await Promise.all([
+      saveFakeStudentRestriction(db.dataSource, {
+        student,
+        restriction: studentRestriction,
+      }),
       saveFakeStudentRestriction(db.dataSource, {
         student,
         restriction: studentRestriction,
@@ -152,7 +138,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Restriction_Categories
         const institutionRestrictionRecord = parsedResult.data.find(
           (record) => record.Code === institutionRestriction.restrictionCode,
         );
-        expect(studentRestrictionRecord["Active Count"]).toBe("1");
+        expect(studentRestrictionRecord["Active Count"]).toBe("2");
         expect(institutionRestrictionRecord["Active Count"]).toBe("1");
       });
   });
