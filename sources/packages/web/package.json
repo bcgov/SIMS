@@ -43,7 +43,7 @@
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/eslint-config-typescript": "^14.9.0",
-    "eslint": "^9.39.5",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-vue": "^10.3.0",
     "jiti": "^2.7.0",
