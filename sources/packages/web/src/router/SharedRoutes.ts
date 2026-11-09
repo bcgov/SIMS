@@ -5,6 +5,7 @@ import ForbiddenUser from "../views/ForbiddenUser.vue";
 import LandingPage from "../views/LandingPage.vue";
 import { AppRoutes } from "../types";
 import MaintenancePage from "@/views/MaintenancePage.vue";
+import UnexpectedError from "@/views/UnexpectedError.vue";
 
 export const sharedRoutes: Array<RouteRecordRaw> = [
   {
@@ -26,5 +27,10 @@ export const sharedRoutes: Array<RouteRecordRaw> = [
     path: AppRoutes.MaintenancePage,
     name: SharedRouteConst.MAINTENANCE_PAGE,
     component: MaintenancePage,
+  },
+  {
+    path: AppRoutes.UnexpectedError,
+    name: SharedRouteConst.UNEXPECTED_ERROR,
+    component: UnexpectedError,
   },
 ];

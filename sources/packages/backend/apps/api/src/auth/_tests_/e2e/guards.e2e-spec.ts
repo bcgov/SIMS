@@ -16,7 +16,7 @@ import {
 import { AppModule } from "../../../app.module";
 import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { DataSource } from "typeorm";
-import { MISSING_USER_ACCOUNT } from "../../../constants";
+import { MAINTENANCE_MODE, MISSING_USER_ACCOUNT } from "../../../constants";
 import {
   BEARER_AUTH_TYPE,
   FakeStudentUsersTypes,
@@ -367,10 +367,9 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
           .auth(studentToken, BEARER_AUTH_TYPE)
           .expect(HttpStatus.SERVICE_UNAVAILABLE)
           .expect({
-            statusCode: HttpStatus.SERVICE_UNAVAILABLE,
             message:
               "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
-            error: "Service Unavailable",
+            errorType: MAINTENANCE_MODE,
           });
       });
 
@@ -403,10 +402,9 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
           .auth(institutionToken, BEARER_AUTH_TYPE)
           .expect(HttpStatus.SERVICE_UNAVAILABLE)
           .expect({
-            statusCode: HttpStatus.SERVICE_UNAVAILABLE,
             message:
               "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
-            error: "Service Unavailable",
+            errorType: MAINTENANCE_MODE,
           });
       });
 
@@ -435,10 +433,9 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
           .auth(aestToken, BEARER_AUTH_TYPE)
           .expect(HttpStatus.SERVICE_UNAVAILABLE)
           .expect({
-            statusCode: HttpStatus.SERVICE_UNAVAILABLE,
             message:
               "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
-            error: "Service Unavailable",
+            errorType: MAINTENANCE_MODE,
           });
       });
 
@@ -465,10 +462,9 @@ describe("Guards and Decorators - Authentication, and Maintenance Mode (e2e)", (
           .auth(externalToken, BEARER_AUTH_TYPE)
           .expect(HttpStatus.SERVICE_UNAVAILABLE)
           .expect({
-            statusCode: HttpStatus.SERVICE_UNAVAILABLE,
             message:
               "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
-            error: "Service Unavailable",
+            errorType: MAINTENANCE_MODE,
           });
       });
 

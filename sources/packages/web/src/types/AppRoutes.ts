@@ -157,6 +157,7 @@ export enum AppRoutes {
   UnknownUser = "login/unknown-user",
   ForbiddenUser = "/forbidden-user",
   MaintenancePage = "/maintenance",
+  UnexpectedError = "/unexpected-error",
   NotAllowedUser = "login/not-allowed-user",
   StudentNotes = "student-notes/:studentId",
   StudentRestrictions = "student-restrictions/:studentId",

@@ -6,6 +6,10 @@ export const MISSING_USER_ACCOUNT = "MISSING_USER_ACCOUNT";
 export const MISSING_GROUP_ACCESS = "MISSING_GROUP_ACCESS";
 export const MISSING_USER_INFO = "MISSING_USER_INFO";
 /**
+ * The system or the client portal is under maintenance.
+ */
+export const MAINTENANCE_MODE = "MAINTENANCE_MODE";
+/**
  * An application can have only one pending appeal at a time.
  */
 export const APPLICATION_HAS_PENDING_APPEAL = "APPLICATION_HAS_PENDING_APPEAL";

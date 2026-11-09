@@ -8,6 +8,8 @@ import { Reflector } from "@nestjs/core";
 import { AuthorizedParties, IUserToken } from "..";
 import { ConfigService } from "@sims/utilities/config";
 import { ALLOW_DURING_MAINTENANCE_MODE_KEY } from "../decorators";
+import { ApiProcessError } from "../../types";
+import { MAINTENANCE_MODE } from "../../constants";
 
 /**
  * Guard that prevents access to the API when the system or a specific client portal is in maintenance mode.
@@ -38,7 +40,10 @@ export class MaintenanceModeGuard implements CanActivate {
     const userToken = user as IUserToken;
     if (this.isMaintenanceModeEnabled(userToken?.azp)) {
       throw new ServiceUnavailableException(
-        "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
+        new ApiProcessError(
+          "Service temporarily unavailable for maintenance. Please try again later or contact support if the issue persists.",
+          MAINTENANCE_MODE,
+        ),
       );
     }
 

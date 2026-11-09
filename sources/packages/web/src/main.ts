@@ -11,6 +11,7 @@ import vuetify from "./plugins/vuetify";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import { registerHttpErrorInterceptor } from "@/services/http/common/HttpErrorInterceptor";
 import { AppConfigService } from "./services/AppConfigService";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -39,6 +40,7 @@ import SearchTable from "@/components/generic/SearchTable.vue";
 import bootstrap5 from "@formio/bootstrap/bootstrap5";
 import { Formio } from "@formio/js";
 Formio.use(bootstrap5);
+registerHttpErrorInterceptor(router);
 
 AppConfigService.shared.init().then(() => {
   createApp(App)
