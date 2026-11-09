@@ -125,8 +125,8 @@ import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   SearchStudentsHeaders,
-  VForm,
 } from "@/types";
+import type { VForm } from "@/types";
 
 defineEmits<{
   goToStudentView: [studentId: number];
