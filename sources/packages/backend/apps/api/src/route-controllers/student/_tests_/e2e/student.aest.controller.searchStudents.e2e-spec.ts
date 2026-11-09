@@ -5,7 +5,6 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { faker } from "@faker-js/faker";
 import { Student } from "@sims/sims-db";
 import {
   createTestingAppModule,
@@ -179,19 +178,19 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
 
   it("Should find the student by certificate number when there is an exact match.", async () => {
     // Arrange
+    // The student is saved explicitly to have the SIN validation available for the assertion.
     const student = await saveFakeStudent(appDataSource);
-    const documentNumber = faker.number.int({ min: 100000000, max: 999999999 });
-    await saveFakeApplicationDisbursements(
-      appDataSource,
-      { student },
-      { firstDisbursementInitialValues: { documentNumber } },
-    );
+    const application = await saveFakeApplicationDisbursements(appDataSource, {
+      student,
+    });
+    const [{ documentNumber }] =
+      application.currentAssessment.disbursementSchedules;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send({ documentNumber: documentNumber.toString() })
+      .send({ documentNumber })
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([
@@ -207,19 +206,15 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
 
   it("Should not find the student by certificate number when there is only a partial match.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
-    const documentNumber = faker.number.int({ min: 100000000, max: 999999999 });
-    await saveFakeApplicationDisbursements(
-      appDataSource,
-      { student },
-      { firstDisbursementInitialValues: { documentNumber } },
-    );
+    const application = await saveFakeApplicationDisbursements(appDataSource);
+    const [{ documentNumber }] =
+      application.currentAssessment.disbursementSchedules;
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send({ documentNumber: documentNumber.toString().substring(0, 8) })
+      .send({ documentNumber: Number(documentNumber.toString().slice(0, -1)) })
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);
@@ -234,9 +229,21 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       .post(endpoint)
       .send({ documentNumber: "12A45" })
       .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.BAD_REQUEST);
+  });
+
+  it("Should throw a bad request error when the certificate number has more than 9 digits.", async () => {
+    // Arrange
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({ documentNumber: 1234567890 })
+      .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
-        message: ["documentNumber must be a number string"],
+        message: ["documentNumber must not be greater than 999999999"],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,
       });
@@ -258,14 +265,7 @@ describe("StudentMinistryController(e2e)-searchStudents", () => {
       .expect(HttpStatus.BAD_REQUEST)
       .expect({
         message: [
-          "firstName should not be empty",
-          "lastName should not be empty",
-          "appNumber should not be empty",
-          "sin should not be empty",
-          "email should not be empty",
-          "documentNumber must be shorter than or equal to 9 characters",
-          "documentNumber must be a number string",
-          "documentNumber should not be empty",
+          "At least one of the following must be provided: firstName, lastName, appNumber, sin, email, documentNumber.",
         ],
         error: "Bad Request",
         statusCode: HttpStatus.BAD_REQUEST,

@@ -8,8 +8,18 @@
             density="compact"
             variant="outlined"
             v-model.trim="documentNumber"
+            :rules="[
+              (v: string) =>
+                checkRegexPattern(
+                  v,
+                  DOCUMENT_NUMBER_REGEX,
+                  'Certificate number',
+                  false,
+                ),
+            ]"
+            :maxlength="DOCUMENT_NUMBER_MAX_LENGTH"
             @keyup.enter="searchStudents"
-            hide-details
+            hide-details="auto"
           />
         </v-col>
         <v-col cols="12" lg>
@@ -120,22 +130,35 @@ import {
   SearchStudentAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
-import { useFormatters, useSnackBar, useValidators } from "@/composables";
+import {
+  useFormatters,
+  useRules,
+  useSnackBar,
+  useValidators,
+} from "@/composables";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   SearchStudentsHeaders,
 } from "@/types";
 import type { VForm } from "@/types";
+import { defineEmits } from "vue";
 
 defineEmits<{
   goToStudentView: [studentId: number];
 }>();
 
+// Max length accepted by the API for the certificate (document) number.
+const DOCUMENT_NUMBER_MAX_LENGTH = 9;
+const DOCUMENT_NUMBER_REGEX = new RegExp(
+  `^\\d{1,${DOCUMENT_NUMBER_MAX_LENGTH}}$`,
+);
+
 const searchStudentsForm = ref({} as VForm);
 const snackBar = useSnackBar();
 const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
 const { isSINValid } = useValidators();
+const { checkRegexPattern } = useRules();
 const { mobile: isMobile } = useDisplay();
 
 const appNumber = ref("");
@@ -174,7 +197,9 @@ const searchStudents = async () => {
     lastName: lastName.value,
     sin: sin.value,
     email: email.value,
-    documentNumber: documentNumber.value,
+    documentNumber: documentNumber.value
+      ? Number(documentNumber.value)
+      : undefined,
   };
   students.value = await StudentService.shared.searchStudents(payload);
   if (students.value.length === 0) {

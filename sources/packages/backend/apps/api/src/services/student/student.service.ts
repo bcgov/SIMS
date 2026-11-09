@@ -646,7 +646,7 @@ export class StudentService extends RecordDataModelService<Student> {
       appNumber?: string;
       sin?: string;
       email?: string;
-      documentNumber?: string;
+      documentNumber?: number;
     },
     institutionId?: number,
   ): Promise<Student[]> {
@@ -715,7 +715,7 @@ export class StudentService extends RecordDataModelService<Student> {
         .innerJoin("application.studentAssessments", "studentAssessment")
         .innerJoin("studentAssessment.disbursementSchedules", "disbursement")
         .andWhere("disbursement.documentNumber = :documentNumber", {
-          documentNumber: Number(searchCriteria.documentNumber),
+          documentNumber: searchCriteria.documentNumber,
         });
     }
     return searchQuery.getMany();

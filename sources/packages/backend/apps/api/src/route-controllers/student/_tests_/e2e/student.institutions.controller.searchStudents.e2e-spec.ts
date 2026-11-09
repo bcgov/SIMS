@@ -16,7 +16,6 @@ import {
   saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { faker } from "@faker-js/faker";
 import {
   Application,
   ApplicationStatus,
@@ -128,7 +127,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       appDataSource,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-    let collegeELocation = createFakeInstitutionLocation({
+    const collegeELocation = createFakeInstitutionLocation({
       institution: collegeE,
     });
 
@@ -487,22 +486,20 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
 
   it("Should find the student by certificate number when the student has an application for the institution and there is an exact match.", async () => {
     // Arrange
+    // The student is saved explicitly to have the SIN validation available for the assertion.
     const student = await saveFakeStudent(appDataSource);
-    const documentNumber = faker.number.int({ min: 100000000, max: 999999999 });
-    await saveFakeApplicationDisbursements(
-      appDataSource,
-      {
-        institution: collegeF,
-        institutionLocation: collegeFLocation,
-        student,
-      },
-      { firstDisbursementInitialValues: { documentNumber } },
-    );
+    const application = await saveFakeApplicationDisbursements(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
+      student,
+    });
+    const [{ documentNumber }] =
+      application.currentAssessment.disbursementSchedules;
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send({ documentNumber: documentNumber.toString() })
+      .send({ documentNumber })
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect(({ body }) =>
@@ -520,18 +517,14 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
 
   it("Should not find the student by certificate number when the student has no application for the institution.", async () => {
     // Arrange
-    const student = await saveFakeStudent(appDataSource);
-    const documentNumber = faker.number.int({ min: 100000000, max: 999999999 });
-    await saveFakeApplicationDisbursements(
-      appDataSource,
-      { student },
-      { firstDisbursementInitialValues: { documentNumber } },
-    );
+    const application = await saveFakeApplicationDisbursements(appDataSource);
+    const [{ documentNumber }] =
+      application.currentAssessment.disbursementSchedules;
 
     // Act/Assert
     await request(app.getHttpServer())
       .post(endpoint)
-      .send({ documentNumber: documentNumber.toString() })
+      .send({ documentNumber })
       .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect([]);

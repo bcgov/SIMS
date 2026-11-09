@@ -7,15 +7,17 @@ import {
   IsDefined,
   IsEmail,
   IsEnum,
+  IsInt,
   IsNotEmpty,
-  IsNumberString,
   IsOptional,
   IsPositive,
   Length,
+  Max,
   MaxLength,
   ValidateIf,
 } from "class-validator";
 import { IsValidSIN } from "../../../utilities/class-validation/custom-validators/sin-validator";
+import { IsAnyProvided } from "../../../utilities/class-validation/custom-validators/is-any-provided";
 import {
   ApplicationStatus,
   FileOriginType,
@@ -105,74 +107,37 @@ export class UpdateStudentAPIInDTO
 
 /**
  * Student search parameters.
+ * At least one filter is required to avoid retrieving all the students.
  */
+@IsAnyProvided<StudentSearchAPIInDTO>([
+  "firstName",
+  "lastName",
+  "appNumber",
+  "sin",
+  "email",
+  "documentNumber",
+])
 export class StudentSearchAPIInDTO {
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.lastName &&
-      !input.appNumber &&
-      !input.sin &&
-      !input.email &&
-      !input.documentNumber,
-  )
-  @IsNotEmpty()
-  firstName: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName &&
-      !input.appNumber &&
-      !input.sin &&
-      !input.email &&
-      !input.documentNumber,
-  )
-  @IsNotEmpty()
-  lastName: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName &&
-      !input.lastName &&
-      !input.sin &&
-      !input.email &&
-      !input.documentNumber,
-  )
-  @IsNotEmpty()
-  appNumber: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName &&
-      !input.lastName &&
-      !input.appNumber &&
-      !input.email &&
-      !input.documentNumber,
-  )
-  @IsNotEmpty()
-  sin: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName &&
-      !input.lastName &&
-      !input.appNumber &&
-      !input.sin &&
-      !input.documentNumber,
-  )
-  @IsNotEmpty()
-  email: string;
+  @IsOptional()
+  firstName?: string;
+  @IsOptional()
+  lastName?: string;
+  @IsOptional()
+  appNumber?: string;
+  @IsOptional()
+  sin?: string;
+  @IsOptional()
+  email?: string;
   /**
-   * Certificate (financial document) number. Limited to 9 digits to fit the integer DB column.
+   * Document number (a.k.a. e-Cert Number). Limited to 9 digits to be safe, since there
+   * is no business requirement to have it restricted; currently it can have up to
+   * 8 (full-time) or 7 (part-time).
    */
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !!input.documentNumber ||
-      (!input.firstName &&
-        !input.lastName &&
-        !input.appNumber &&
-        !input.sin &&
-        !input.email),
-  )
-  @IsNotEmpty()
-  @IsNumberString({ no_symbols: true })
-  @MaxLength(9)
-  documentNumber: string;
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Max(999999999)
+  documentNumber?: number;
 }
 
 export class SearchStudentAPIOutDTO {
