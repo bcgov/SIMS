@@ -47,7 +47,7 @@ const educationProgram = ref<EducationProgramAPIOutDTO>();
 const formTitle = computed(() =>
   educationProgram.value
     ? `${educationProgram.value.programYearName} Program`
-    : undefined,
+    : "Program",
 );
 
 watch(

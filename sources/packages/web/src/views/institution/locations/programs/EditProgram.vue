@@ -83,7 +83,7 @@ const formTitle = computed(() => {
   }
   return educationProgram.value
     ? `Program Edit for ${educationProgram.value.programYearName}`
-    : undefined;
+    : "Program";
 });
 
 const isFullUpdateRestricted = computed(

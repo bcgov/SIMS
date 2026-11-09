@@ -100,14 +100,22 @@ export interface EducationProgramsSummaryAPIOutDTO {
 }
 
 /**
- * Program year with at least one education program configuration.
+ * Education program configuration for a specific program year.
+ * Allow retrieving the list of program years where at least one program configuration exists.
  */
-export interface EducationProgramYearAPIOutDTO {
+export class EducationProgramYearAPIOutDTO {
+  /**
+   * ID of the program year.
+   */
   id: number;
+  /**
+   * Description of the program year.
+   */
   description: string;
   /**
-   * Indicates if the program year has at least
-   * one active education program configuration.
+   * Indicates if there is at least one active program configuration for this program year.
+   * This would be an indication that and eduction program can potentially be created or
+   * changed in this program year.
    */
   hasActiveProgramConfiguration: boolean;
 }

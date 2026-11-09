@@ -165,13 +165,15 @@ export class EducationProgramYearAPIOutDTO {
   description: string;
   /**
    * Indicates if there is at least one active program configuration for this program year.
-   * This would be an indication that and eduction program can potentially be changed in this program year.
+   * This would be an indication that and eduction program can potentially be created or
+   * changed in this program year.
    */
   hasActiveProgramConfiguration: boolean;
 }
 
 /**
  * Renewal status of an education program into the next program year.
+ * Calculated status used at DTO level for API responses.
  */
 export enum ProgramRenewalStatus {
   /**
@@ -185,13 +187,13 @@ export enum ProgramRenewalStatus {
   /**
    * Program is not renewed yet and there is no next program configuration available for the renewal.
    * It can happen for a newly created program year that has not yet been configured for the next program year
-   * or for a program that has reached the end of its lifecycle and it was marked as inactive.
+   * or for an education program year that has reached the end of its lifecycle and it was marked as inactive.
    */
   NotAvailable = "Not available",
 }
 
 /**
- * Education program details for management purposes.
+ * Education program summary details for management purposes.
  */
 export class EducationProgramManagerDetailsAPIOutDTO {
   id: number;

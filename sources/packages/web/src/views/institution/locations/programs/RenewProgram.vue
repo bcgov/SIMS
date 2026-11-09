@@ -42,7 +42,7 @@ const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
 const formTitle = computed(() =>
   programConfiguration.value
     ? `Program Renewal for ${programConfiguration.value.programYearName}`
-    : undefined,
+    : "Program",
 );
 
 const submit = async (programData: Record<string, unknown>) => {
