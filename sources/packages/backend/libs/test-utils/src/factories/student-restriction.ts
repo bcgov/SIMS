@@ -91,7 +91,7 @@ export async function saveFakeStudentRestriction(
   const userRepo = dataSource.getRepository(User);
   const user = relations?.creator ?? createFakeUser();
   if (!relations?.creator) {
-    userRepo.save(user);
+    await userRepo.save(user);
   }
   relations.restrictionNote = restrictionNote;
   relations.resolutionNote = resolutionNote;
