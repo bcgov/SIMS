@@ -105,7 +105,6 @@ export class EducationProgramSaveService {
           updatedAt: true,
           programYear: {
             id: true,
-            startDate: true,
             programYear: true,
           },
         },
@@ -121,9 +120,6 @@ export class EducationProgramSaveService {
           isActive: programConfigurationLookup?.programConfigurationId
             ? undefined
             : true,
-        },
-        order: {
-          programYear: { startDate: "DESC" },
         },
       });
     const [institution, hasOfferings, programConfiguration] = await Promise.all(
@@ -245,7 +241,7 @@ export class EducationProgramSaveService {
     }
     const expectedNextConfiguration =
       await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
-        programToRenew.programConfiguration.programYear.startDate,
+        programToRenew.programConfiguration.programYear.id,
       );
     if (!expectedNextConfiguration) {
       throw new CustomNamedError(

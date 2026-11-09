@@ -2,7 +2,6 @@ import {
   ProgramCalculatedDataKey,
   ProgramEvaluationResult,
   ProgramIntensity,
-  ProgramRenewalStatus,
   ProgramStatus,
 } from "@/types";
 
@@ -118,6 +117,27 @@ export class EducationProgramYearAPIOutDTO {
    * changed in this program year.
    */
   hasActiveProgramConfiguration: boolean;
+}
+
+/**
+ * Renewal status of an education program into the next program year.
+ * Calculated status used at DTO level for API responses.
+ */
+export enum ProgramRenewalStatus {
+  /**
+   * Program was already renewed into the next program year.
+   */
+  Renewed = "Renewed",
+  /**
+   * Program is not renewed yet and a next program configuration is available for the renewal.
+   */
+  Available = "Available",
+  /**
+   * Program is not renewed yet and there is no next program configuration available for the renewal.
+   * It can happen for a newly created program year that has not yet been configured for the next program year
+   * or for an education program year that has reached the end of its lifecycle and it was marked as inactive.
+   */
+  NotAvailable = "Not available",
 }
 
 /**

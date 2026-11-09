@@ -53,6 +53,8 @@ export class EducationProgramControllerService {
     if (!program.programConfiguration?.id) {
       throw new Error("Program configuration not found.");
     }
+    // Ensure the program configuration is retrieved from the same place
+    // for creation, edit, and renewal operations.
     const programConfiguration = await this.getEducationProgramConfiguration(
       program.institution.id,
       { programConfigurationId: program.programConfiguration.id },
@@ -89,6 +91,8 @@ export class EducationProgramControllerService {
   /**
    * Retrieves the configuration for an education program, including the dynamic
    * program data, visual schema, and validation schema.
+   * Allows ensuring the program configuration is retrieved consistently from the same place
+   * for creation, edit, and renewal operations.
    * @param institutionId the ID of the institution for which the configuration is being retrieved.
    * @param programConfigurationLookup the lookup criteria for the program configuration.
    * @param options additional options for retrieving the configuration.

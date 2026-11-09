@@ -7,6 +7,7 @@
   >
     <template #prepend-search>
       <program-year-status-filters
+        class="mb-2"
         v-model:program-year-id="selectedProgramYearId"
         v-model:status-filters="statusFilters"
         :loading="loading"
@@ -96,8 +97,8 @@ import {
   ProgramSummaryFields,
   ManageProgramSummaryHeaders,
   DataTableSortByOrder,
-  ProgramRenewalStatus,
 } from "@/types";
+import { ProgramRenewalStatus } from "@/services/http/dto";
 import type {
   EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramYearAPIOutDTO,

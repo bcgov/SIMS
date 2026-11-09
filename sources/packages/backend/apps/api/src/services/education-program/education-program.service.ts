@@ -396,7 +396,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programConfiguration.visualSchema",
         "programConfiguration.validationSchema",
         "programYear.id",
-        "programYear.startDate",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")

@@ -1,12 +1,10 @@
 <template>
   <content-group>
     <!--
-      Optional content displayed in its own full-width line above the
-      search input and the search button.
+      Optional content displayed above the search input and the search button.
+      Layout and spacing are defined by the consumer.
     -->
-    <div v-if="slots['prepend-search']" class="mb-2">
-      <slot name="prepend-search"></slot>
-    </div>
+    <slot name="prepend-search"></slot>
     <v-row density="compact">
       <v-col md="auto" class="flex-grow-1 pa-0 pr-2 mb-1">
         <v-text-field

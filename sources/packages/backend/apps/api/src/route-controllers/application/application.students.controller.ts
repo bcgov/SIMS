@@ -437,7 +437,6 @@ export class ApplicationStudentsController extends BaseController {
   ): Promise<PrimaryIdentifierAPIOutDTO> {
     const programYear = await this.programYearService.getProgramYear(
       payload.programYearId,
-      { active: true },
     );
     if (!programYear) {
       throw new UnprocessableEntityException(

@@ -419,15 +419,15 @@ export class EducationProgramInstitutionsController extends BaseController {
     @Query() pagination: ProgramsManagementPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PaginatedResults<EducationProgramManagerDetailsAPIOutDTO>> {
-    const programYear =
-      await this.programYearService.getProgramYear(programYearId);
-    if (!programYear) {
+    const programYearExists =
+      await this.programYearService.programYearExists(programYearId);
+    if (!programYearExists) {
       throw new NotFoundException("Program year not found.");
     }
     const [nextProgramConfigurationForRenewal, paginatedPrograms] =
       await Promise.all([
         this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
-          programYear.startDate,
+          programYearId,
         ),
         this.educationProgramManagerService.getEducationProgramsManagerDetails(
           userToken.authorizations.institutionId,
@@ -505,7 +505,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     }
     const nextProgramConfigurationForRenewal =
       await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
-        program.programConfiguration.programYear.startDate,
+        program.programConfiguration.programYear.id,
       );
     if (!nextProgramConfigurationForRenewal) {
       throw new UnprocessableEntityException(

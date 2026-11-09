@@ -66,29 +66,34 @@ export class EducationProgramManagerService {
 
   /**
    * Get the next active education program configuration for renewal based
-   * on the current program year's start date.
+   * on the current program year.
    * The next program year is the one immediately after the current program
    * year, and its active configuration is the one expected to be used for
    * renewals.
-   * @param startDateReference the start date of the current program
-   * year to find the next education program configuration.
+   * @param currentProgramYearId the ID of the current program year to find
+   * the next education program configuration.
    * @returns the active education program configuration of the next program
    * year, or null if there is no next program year or it has no active
    * configuration.
    */
   getNextProgramConfigurationForRenewal(
-    startDateReference: string,
+    currentProgramYearId: number,
   ): Promise<EducationProgramConfiguration | null> {
-    if (!startDateReference) {
+    if (!currentProgramYearId) {
       throw new Error(
-        "Current program year start date reference is required to find the next program configuration.",
+        "Current program year ID is required to find the next program configuration.",
       );
     }
-    // Subquery to find the program year immediately after the reference date.
+    // Subquery to find the program year immediately after the current program year.
     const nextProgramYearQuery = this.programYearRepo
       .createQueryBuilder("nextProgramYear")
       .select("nextProgramYear.id")
-      .where("nextProgramYear.startDate > :startDateReference")
+      .innerJoin(
+        ProgramYear,
+        "currentProgramYear",
+        "currentProgramYear.id = :currentProgramYearId",
+      )
+      .where("nextProgramYear.startDate > currentProgramYear.startDate")
       .orderBy("nextProgramYear.startDate", "ASC")
       .limit(1);
     return this.educationProgramConfigurationRepo.findOne({
@@ -108,7 +113,7 @@ export class EducationProgramManagerService {
         programYear: {
           id: Raw(
             (alias) => `${alias} = (${nextProgramYearQuery.getQuery()})`,
-            { startDateReference },
+            { currentProgramYearId },
           ),
         },
       },

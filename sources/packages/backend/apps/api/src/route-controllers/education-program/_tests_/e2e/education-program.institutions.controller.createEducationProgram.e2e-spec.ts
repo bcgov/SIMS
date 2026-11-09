@@ -724,7 +724,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
 /**
  * Get API endpoint.
- * @param programYearId ID of the program year the program is being created for.
+ * @param options endpoint options.
+ * - `programYearId` ID of the program year the program is being created for.
  * @returns the API endpoint.
  */
 function getEndpoint(options: { programYearId: number }): string {
