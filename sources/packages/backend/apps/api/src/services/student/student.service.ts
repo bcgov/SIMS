@@ -19,7 +19,6 @@ import {
   ModifiedIndependentStatus,
   SFASApplication,
   ORMCacheManager,
-  DisbursementSchedule,
 } from "@sims/sims-db";
 import { DataSource, EntityManager, Not, UpdateResult } from "typeorm";
 import { LoggerService } from "@sims/utilities/logger";
@@ -712,22 +711,12 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     if (searchCriteria.documentNumber) {
       // Exact match on the certificate number of any disbursement of the student.
-      searchQuery.andWhere(
-        (qb) =>
-          `EXISTS ${qb
-            .subQuery()
-            .select("1")
-            .from(DisbursementSchedule, "disbursementSchedule")
-            .innerJoin(
-              "disbursementSchedule.studentAssessment",
-              "studentAssessment",
-            )
-            .innerJoin("studentAssessment.application", "certApplication")
-            .where("certApplication.student.id = student.id")
-            .andWhere("disbursementSchedule.documentNumber = :documentNumber")
-            .getQuery()}`,
-        { documentNumber: Number(searchCriteria.documentNumber) },
-      );
+      searchQuery
+        .innerJoin("application.studentAssessments", "studentAssessment")
+        .innerJoin("studentAssessment.disbursementSchedules", "disbursement")
+        .andWhere("disbursement.documentNumber = :documentNumber", {
+          documentNumber: Number(searchCriteria.documentNumber),
+        });
     }
     return searchQuery.getMany();
   }
