@@ -12,7 +12,7 @@ import {
 } from "@sims/services/queue";
 import { DeepMocked } from "@golevelup/ts-jest";
 import Client from "ssh2-sftp-client";
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import { getQueueProviderName } from "@sims/test-utils/mocks";
 import MockDate from "mockdate";
 import {

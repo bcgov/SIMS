@@ -1,6 +1,6 @@
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addHours } from "@sims/utilities";
+import { QueueJobNames, QueueNames, addHours } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -90,6 +90,7 @@ describe(
         assessmentId: application.currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
     });
@@ -122,6 +123,7 @@ describe(
         assessmentId: application.currentAssessment.id,
       };
       expect(cancelApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.CancelApplicationAssessmentJob,
         queueData,
       );
     });
@@ -155,6 +157,7 @@ describe(
         assessmentId: currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
     });
@@ -188,6 +191,7 @@ describe(
         assessmentId: currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
     });

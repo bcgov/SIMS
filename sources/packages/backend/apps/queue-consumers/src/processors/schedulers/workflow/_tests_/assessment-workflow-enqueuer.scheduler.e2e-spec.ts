@@ -1,6 +1,6 @@
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addDays } from "@sims/utilities";
+import { QueueJobNames, QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -90,6 +90,7 @@ describe(
         assessmentId: updatedApplication.currentProcessingAssessment.id,
       } as StartAssessmentQueueInDTO;
       expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
       // currentProcessingAssessment must be updated with the queued assessment.
@@ -147,6 +148,7 @@ describe(
         assessmentId: oldestAssessment.id,
       } as StartAssessmentQueueInDTO;
       expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
       // currentProcessingAssessment must be updated with the oldest assessment
@@ -244,6 +246,7 @@ describe(
         assessmentId: updatedApplication.currentAssessment.id,
       } as CancelAssessmentQueueInDTO;
       expect(cancelApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.CancelApplicationAssessmentJob,
         queueData,
       );
 

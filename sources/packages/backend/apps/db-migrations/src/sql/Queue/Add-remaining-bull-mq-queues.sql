@@ -196,7 +196,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 2 * * 1-5",
+                "pattern": "0 2 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -215,7 +215,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 1 * * 1-5",
+                "pattern": "0 23 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -234,7 +234,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 12 * * *",
+                "pattern": "0 13 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -266,13 +266,13 @@ VALUES
         {
             "defaultJobOptions": {
                 "attempts": 3,
-                "backoff": 180000,
+                "backoff": 3600000,
                 "removeOnComplete": {
                     "age": 2592000
                 }
             },
             "repeatOptions": {
-                "pattern": "0 7 * * 1-5",
+                "pattern": "30 11 * * 1-5",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -291,7 +291,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 0 * * *",
+                "pattern": "0 23 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -310,7 +310,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "45 23 * * *",
+                "pattern": "45 2 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -444,7 +444,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 16 * * *",
+                "pattern": "0 * * * *",
                 "tz": "America/Vancouver"
             },
             "jobData": {
@@ -504,7 +504,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 21 * * 1-5",
+                "pattern": "0 21 * * 0-4",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
