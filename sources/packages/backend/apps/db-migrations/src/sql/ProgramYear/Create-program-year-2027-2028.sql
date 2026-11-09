@@ -1,4 +1,6 @@
--- Create program year 2027-2028
+-- Create program year 2027-2028.
+-- The record is inserted as INACTIVE as expected across all environments for now.
+-- Non-PROD environments do not need this as active for testing purposes.
 INSERT INTO
     sims.program_years (
         program_year,

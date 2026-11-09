@@ -1,4 +1,6 @@
 -- Insert the education programs configuration for program year 2027-2028.
+-- The schema and validation JSONB columns are an exact copy from the configuration of the previous program year.
+-- The record is inserted as INACTIVE as expected to be on PROD. Non-PROD environments may activate it for testing purposes.
 INSERT INTO
   sims.education_programs_configurations (
     visual_schema,

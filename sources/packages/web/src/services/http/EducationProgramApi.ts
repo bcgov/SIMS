@@ -63,6 +63,7 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Get the program configuration for creation, including context, visual schema,
    * and validation schema, using the active configuration for the provided program year.
+   * Paired with the creation endpoint ({@link createEducationProgram}).
    * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
@@ -102,6 +103,8 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Get the program configuration for renewal.
    * It includes a new program context and the data from the previous program.
+   * Paired with the endpoint that provides the renewal configuration
+   * ({@link renewEducationProgram}).
    * @param programId the ID of the education program to be renewed.
    * @returns the next program configuration for renewal.
    */
@@ -115,6 +118,8 @@ export class EducationProgramApi extends HttpBaseClient {
 
   /**
    * Creates a new education program for the provided program year.
+   * Paired with the endpoint that provides the creation configuration
+   * ({@link getEducationProgramForCreate}).
    * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
@@ -134,6 +139,8 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Renews an existing education program, creating a new program
    * for the next program configuration.
+   * Paired with the endpoint that provides the renewal configuration
+   * ({@link getEducationProgramForRenew}).
    * @param programId ID of the education program to be renewed.
    * @param payload information to create the renewed program.
    * @returns id of the created program.

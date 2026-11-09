@@ -233,13 +233,14 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Renews an existing education program into the next program year.
+   * Renews an existing education program, creating a new program
+   * for the next program configuration.
    * Paired with the endpoint that provides the renewal configuration
    * ({@link getEducationProgramForRenew}).
    * @param programId ID of the education program to be renewed.
    * @param payload information to create the renewed program.
    * @param userToken the token of the user making the request.
-   * @returns ID of the renewed program.
+   * @returns id of the created program.
    */
   @ApiNotFoundResponse({
     description: "Not able to find the education program.",
@@ -419,8 +420,10 @@ export class EducationProgramInstitutionsController extends BaseController {
     @Query() pagination: ProgramsManagementPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<PaginatedResults<EducationProgramManagerDetailsAPIOutDTO>> {
-    const programYearExists =
-      await this.programYearService.programYearExists(programYearId);
+    const programYearExists = await this.programYearService.programYearExists(
+      programYearId,
+      { activeOnly: false },
+    );
     if (!programYearExists) {
       throw new NotFoundException("Program year not found.");
     }
@@ -479,6 +482,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   /**
    * Get the program configuration for renewal.
    * It includes a new program context and the data from the previous program.
+   * Paired with the renewal endpoint ({@link renewEducationProgram}).
    * @param programId the ID of the education program to be renewed.
    * @param userToken the token of the user making the request.
    * @returns the next program configuration for renewal.

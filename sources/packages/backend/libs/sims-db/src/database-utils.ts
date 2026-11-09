@@ -100,13 +100,18 @@ export function getUserFullNameLikeSearch(
 }
 
 /**
+ * Empty where condition array used as a default value.
+ */
+export const EMPTY_WHERE: FindOptionsWhere<unknown>[] = [{}];
+
+/**
  * Combines groups of where conditions, where the conditions inside each group
  * are combined using OR, and the groups are combined using AND.
  * Since TypeORM combines the items of a where array using OR, every condition
  * of a group is merged with every condition of the other groups.
  * @param baseWhere conditions to be applied to every combination.
  * @param conditionGroups groups of conditions, each one combined using OR.
- * A group with a single empty object (e.g. `[{}]`) does not add any condition.
+ * A group with a single empty object (e.g. {@link EMPTY_WHERE}) does not add any condition.
  * @returns where conditions, where each array item is combined using OR.
  */
 export function combineWhereConditions<Entity>(

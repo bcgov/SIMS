@@ -73,13 +73,9 @@ export class EducationProgramSaveService {
   /**
    * Get the program configuration including visual schema, validation schema, and context.
    * @param institutionId ID of the institution requesting the configuration.
-   * @param options method options.
-   * - `programConfigurationId` ID of the program configuration. When provided, the
-   * configuration is returned regardless of its active status. If not provided,
-   * the most recent active configuration is returned.
-   * - `programYearId` ID of the program year. When provided, only an active
-   * configuration for the program year is returned.
-   * - `programId` ID of the program. Used to check if the program has existing offerings.
+   * @param programConfigurationLookup the lookup criteria for the program configuration.
+   * @param options additional options for retrieving the configuration.
+   * - `programId` optional ID of the program to load program configuration.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(

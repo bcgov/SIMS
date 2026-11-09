@@ -29,10 +29,7 @@
     <!--
       On large screens the status filters are shown inline, next to the program
       year. On smaller screens they move to a second row, taking the full width,
-      to avoid compressing the buttons.
-      The toggle group height is not fixed (h-auto) and the buttons have an
-      explicit height, so when the buttons wrap into multiple lines they keep
-      their height instead of sharing the group height.
+      to avoid compressing the buttons.      
     -->
     <v-btn-toggle
       :model-value="selectedStatuses"
@@ -56,7 +53,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useDisplay } from "vuetify";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { ProgramStatus, type ProgramStatusFilters } from "@/types";
@@ -65,7 +62,9 @@ import type { EducationProgramYearAPIOutDTO } from "@/services/http/dto";
 import { useSnackBar } from "@/composables";
 
 interface ProgramYearStatusFiltersProps {
-  // Indicates the programs are being loaded.
+  /**
+   * Indicates the programs are being loaded.
+   */
   loading?: boolean;
 }
 
@@ -95,15 +94,11 @@ const statusFilters = defineModel<ProgramStatusFilters>("statusFilters", {
 });
 
 const snackBar = useSnackBar();
-const { width } = useDisplay();
-// Minimum screen width, in pixels, to show the status filters inline.
-// Below it, the filters move to a second row. A custom value is
-// used since the Vuetify lg breakpoint (1280px) is too narrow to fit all
-// the buttons and the xl one (1920px) is too wide.
-const INLINE_FILTERS_MIN_WIDTH = 1200;
-const showInlineFilters = computed(
-  () => width.value >= INLINE_FILTERS_MIN_WIDTH,
-);
+/**
+ * Indicates if the status filters are shown inline, next to the program year.
+ * On screens smaller than the Vuetify lg breakpoint, the filters move to a second row.
+ */
+const { lgAndUp: showInlineFilters } = useDisplay();
 // Sentinel value used to represent the "All" filter state.
 const ALL_STATUS = "All";
 // Renewal filter values, listed along with the program statuses.
@@ -127,10 +122,12 @@ const loadingProgramYears = ref(false);
 // Program years with education program configurations available to be selected.
 const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 
-// Program year currently selected, kept locally as the full object to be
-// provided in the emitted events. The programYearId model is not used for it
-// since, when bound by the parent, its value is only updated once the parent
-// re-renders.
+/**
+ * Program year currently selected, kept locally as the full object to be
+ * provided in the emitted events. The programYearId model is not used for it
+ * since, when bound by the parent, its value is only updated once the parent
+ * re-renders.
+ */
 const selectedProgramYear = ref<EducationProgramYearAPIOutDTO | null>();
 
 /**

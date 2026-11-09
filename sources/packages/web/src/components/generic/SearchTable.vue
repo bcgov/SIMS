@@ -1,7 +1,7 @@
 <template>
   <content-group>
     <!--
-      Optional content displayed above the search input and the search button.
+      Optional content displayed before the search input and the search button.
       Layout and spacing are defined by the consumer.
     -->
     <slot name="prepend-search"></slot>

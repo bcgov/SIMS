@@ -26,7 +26,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useSnackBar } from "@/composables";
+import { useFeatureToggles, useSnackBar } from "@/composables";
 import type { BackTarget } from "@/types";
 import { InstitutionRestrictionDisplayScope } from "@/types";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
@@ -44,11 +44,15 @@ const props = defineProps<ViewProgramProps>();
 const snackBar = useSnackBar();
 const loading = ref(true);
 const educationProgram = ref<EducationProgramAPIOutDTO>();
-const formTitle = computed(() =>
-  educationProgram.value
+const { isManageProgramsEnabled } = useFeatureToggles();
+const formTitle = computed(() => {
+  if (!isManageProgramsEnabled.value) {
+    return "Program";
+  }
+  return educationProgram.value
     ? `${educationProgram.value.programYearName} Program`
-    : "Program",
-);
+    : "Program";
+});
 
 watch(
   () => props.programId,

@@ -90,6 +90,7 @@ export class EducationProgramService {
   /**
    * Get the program configuration for creation, including context, visual schema,
    * and validation schema, using the active configuration for the provided program year.
+   * Paired with the creation endpoint ({@link createEducationProgram}).
    * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
@@ -123,6 +124,7 @@ export class EducationProgramService {
   /**
    * Get the program configuration for renewal.
    * It includes a new program context and the data from the previous program.
+   * Paired with the renewal endpoint ({@link renewEducationProgram}).
    * @param programId the ID of the education program to be renewed.
    * @returns the next program configuration for renewal.
    */
@@ -134,6 +136,8 @@ export class EducationProgramService {
 
   /**
    * Creates a new education program for the provided program year.
+   * Paired with the endpoint that provides the creation configuration
+   * ({@link getEducationProgramForCreate}).
    * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
@@ -151,6 +155,8 @@ export class EducationProgramService {
   /**
    * Renews an existing education program, creating a new program
    * for the next program configuration.
+   * Paired with the endpoint that provides the renewal configuration
+   * ({@link getEducationProgramForRenew}).
    * @param programId ID of the education program to be renewed.
    * @param payload information to create the renewed program.
    * @returns id of the created program.
@@ -223,18 +229,18 @@ export class EducationProgramService {
 
   /**
    * Get the list of education programs for a specific program year.
-   * @param educationProgramConfigurationId ID of the education program configuration.
+   * @param programYearId ID of the program year.
    * @param paginationOptions Pagination options for the results.
    * @returns Paginated list of education programs for the specified program year.
    */
   async getProgramsForProgramYear(
-    educationProgramConfigurationId: number,
+    programYearId: number,
     paginationOptions: PaginationOptions,
   ): Promise<
     PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
   > {
     return ApiClient.EducationProgram.getProgramsForProgramYear(
-      educationProgramConfigurationId,
+      programYearId,
       paginationOptions,
     );
   }

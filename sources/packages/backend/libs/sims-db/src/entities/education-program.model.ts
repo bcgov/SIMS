@@ -486,7 +486,6 @@ export class EducationProgram extends RecordDataModel {
   @OneToOne(
     () => EducationProgram,
     (educationProgram) => educationProgram.renewedProgram,
-    { eager: false, nullable: true },
   )
   @JoinColumn({
     name: "preceding_program_id",
@@ -498,7 +497,7 @@ export class EducationProgram extends RecordDataModel {
    * The first program in the renewal chain from which
    * the current program was renewed.
    */
-  @ManyToOne(() => EducationProgram, { eager: false, nullable: true })
+  @ManyToOne(() => EducationProgram)
   @JoinColumn({
     name: "parent_program_id",
     referencedColumnName: ColumnNames.ID,

@@ -3,6 +3,7 @@ import {
   combineWhereConditions,
   EducationProgram,
   EducationProgramConfiguration,
+  EMPTY_WHERE,
   ProgramYear,
 } from "@sims/sims-db";
 import {
@@ -193,7 +194,7 @@ export class EducationProgramManagerService {
     const renewedProgramSearch = !!paginationOptions.renewedProgramSearch;
     const notRenewedProgramSearch = !!paginationOptions.notRenewedProgramSearch;
     if (renewedProgramSearch === notRenewedProgramSearch) {
-      return [{}];
+      return EMPTY_WHERE;
     }
     // The renewed program is the inverse side of the relationship, hence the
     // condition is applied to its ID, which is left joined.
@@ -220,7 +221,7 @@ export class EducationProgramManagerService {
   ): FindOptionsWhere<EducationProgram>[] {
     const { statusSearch, inactiveProgramSearch } = paginationOptions;
     if (!statusSearch?.length && !inactiveProgramSearch) {
-      return [{}];
+      return EMPTY_WHERE;
     }
     const conditions: FindOptionsWhere<EducationProgram>[] = [];
     if (statusSearch?.length) {
@@ -253,7 +254,7 @@ export class EducationProgramManagerService {
   ): FindOptionsWhere<EducationProgram>[] {
     const searchCriteria = paginationOptions.searchCriteria?.trim();
     if (!searchCriteria) {
-      return [{}];
+      return EMPTY_WHERE;
     }
     return [
       { name: ILike(`%${searchCriteria}%`) },

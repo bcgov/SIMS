@@ -42,7 +42,9 @@ import { useSnackBar } from "@/composables";
 const router = useRouter();
 const snackBar = useSnackBar();
 const loading = ref(false);
-// Program years with education program configurations.
+/**
+ * Program years with education program configurations.
+ */
 const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 
 /**

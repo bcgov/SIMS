@@ -1,7 +1,7 @@
 <template>
   <search-table
     v-model="searchBox"
-    search-label="Search Program name or SABC program code or CIP"
+    search-label="Search program name or SABC code or CIP"
     :loading="loading"
     @search="searchProgramTable"
   >
@@ -16,7 +16,7 @@
       />
     </template>
     <toggle-content
-      :toggled="!programAndCount?.count"
+      :toggled="!programAndCount?.count && !loading"
       :message="noProgramsMessage"
     >
       <v-data-table-server
@@ -107,7 +107,9 @@ import type {
 import { useFormatters, useSnackBar } from "@/composables";
 
 interface ManageProgramsTableProps {
-  // Program year to be selected by default, when provided.
+  /**
+   * Program year to be selected by default, when provided.
+   */
   programYearId?: number;
 }
 
@@ -119,7 +121,9 @@ const emit = defineEmits<{
   filtersChanged: [programYearId?: number | null];
 }>();
 
-// Total of programs found for the current program year and filters.
+/**
+ * Total of programs found for the current program year and filters.
+ */
 const recordsCount = defineModel<number | undefined>("recordsCount");
 
 const { emptyStringFiller } = useFormatters();
@@ -138,7 +142,9 @@ const sortBy = ref([
     order: DataTableSortByOrder.ASC,
   },
 ]);
-// Status and renewal filters selected in the filters component.
+/**
+ * Status and renewal filters selected in the filters component.
+ */
 const statusFilters = ref<ProgramStatusFilters>({
   inactiveProgramSearch: false,
   renewedProgramSearch: false,
@@ -146,12 +152,16 @@ const statusFilters = ref<ProgramStatusFilters>({
 });
 const currentPage = ref();
 const currentPageLimit = ref();
-// Education program configuration the programs are listed for.
-// Initially set from the provided program year, when available, and validated by the filters component.
+/**
+ * Education program configuration the programs are listed for.
+ * Initially set from the provided program year, when available, and validated by the filters component.
+ */
 const selectedProgramYearId = ref<number | null | undefined>(
   props.programYearId,
 );
-// Program year selected in the filters component.
+/**
+ * Program year selected in the filters component.
+ */
 const selectedProgramYear = ref<EducationProgramYearAPIOutDTO>();
 
 // Keeps the records count in sync with the programs loaded.

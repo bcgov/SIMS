@@ -27,22 +27,26 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
 
   /**
    * Checks for the existence of the provided program year.
-   * @param id program year id to validate.
+   * @param id program year id to check for existence.
    * @param options options.
-   * - `active` when provided, filters the program year by its active status.
+   * - `activeOnly` when true, only active program years are considered.
+   * When false, the program year active status is not considered. Default is true.
    * @returns boolean indicating true if the programYear exists, false otherwise.
    */
   async programYearExists(
     id: number,
-    options?: { active?: boolean },
+    options?: { activeOnly?: boolean },
   ): Promise<boolean> {
-    return this.repo.exists({ where: { id, active: options?.active } });
+    const activeOnly = options?.activeOnly ?? true;
+    return this.repo.exists({
+      where: { id, active: activeOnly ? true : undefined },
+    });
   }
 
   /**
-   * Get a program year.
+   * Get an active program year.
    * @param programYearId program year id.
-   * @returns program year.
+   * @returns active program year.
    */
   getProgramYear(programYearId: number): Promise<ProgramYear> {
     return this.repo.findOne({
