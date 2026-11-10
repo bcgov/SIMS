@@ -189,6 +189,7 @@ export const AESTRoutesConst = {
   REPORTS: Symbol(),
   BATCH_REASSESSMENT: Symbol(),
   BATCH_REASSESSMENT_OUTCOME: Symbol(),
+  BATCH_RESTRICTION: Symbol(),
   DYNAMIC_FORM_EDITOR: Symbol(),
   CAS_INVOICES: Symbol(),
   APPLICATION_EXCEPTIONS_APPROVAL: Symbol(),

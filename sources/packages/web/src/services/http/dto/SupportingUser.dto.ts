@@ -35,6 +35,8 @@ export class ApplicationIdentifierAPIInDTO {
  */
 export class UpdateSupportingUserAPIInDTO extends ApplicationIdentifierAPIInDTO {
   @Expose()
+  email: string;
+  @Expose()
   addressLine1: string;
   @Expose()
   addressLine2?: string;

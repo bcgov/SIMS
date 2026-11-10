@@ -49,12 +49,13 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
 
   it(
     "Should return a bad request error when the supporting user authentication token is missing " +
-      "the mandatory e-mail, last name, or birthdate information.",
+      "the mandatory last name or birthdate information.",
     async () => {
       // Arrange
       // The payload does not need to represent a real Student Application because the
       // missing user information validation happens before any application lookup.
       const payload: UpdateSupportingUserAPIInDTO = {
+        email: "supporting.user@example.com",
         applicationNumber: "1234567890",
         addressLine1: "123 Some Street",
         addressLine2: undefined,
@@ -69,13 +70,12 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         supportingData: { someKey: "someValue" },
         offeringIntensity: OfferingIntensity.fullTime,
       };
-      // Mocked BCSC supporting user token without a verified email address.
+      // Mocked BCSC supporting user token without the birthdate.
       await mockJWTToken(appModule, (jwtPayload) => {
         jwtPayload.azp = AuthorizedParties.supportingUsers;
         jwtPayload.identityProvider = IdentityProviders.BCSC;
         jwtPayload.lastName = "Doe";
-        jwtPayload.birthdate = "2000-01-01";
-        jwtPayload.email = undefined;
+        jwtPayload.birthdate = undefined;
       });
       const supportingUserToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
@@ -90,6 +90,53 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         .expect({
           message:
             "The authenticated user token is missing required profile information.",
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    },
+  );
+
+  it.each([
+    ["not provided", undefined],
+    ["invalid", "invalid-email"],
+  ])(
+    "Should return a bad request error when the e-mail is %s.",
+    async (_: string, email: string) => {
+      // Arrange
+      const payload: UpdateSupportingUserAPIInDTO = {
+        email,
+        applicationNumber: "1234567890",
+        addressLine1: "123 Some Street",
+        addressLine2: undefined,
+        city: "Victoria",
+        country: "Canada",
+        phone: "1234567890",
+        postalCode: "V1V1V1",
+        provinceState: "BC",
+        studentsLastName: "Doe",
+        supportingUserType: SupportingUserType.Parent,
+        fullName: "Jane Doe",
+        supportingData: { someKey: "someValue" },
+        offeringIntensity: OfferingIntensity.fullTime,
+      };
+      await mockJWTToken(appModule, (jwtPayload) => {
+        jwtPayload.azp = AuthorizedParties.supportingUsers;
+        jwtPayload.identityProvider = IdentityProviders.BCSC;
+        jwtPayload.lastName = "Doe";
+        jwtPayload.birthdate = "2000-01-01";
+      });
+      const supportingUserToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .patch(getEndpoint())
+        .send(payload)
+        .auth(supportingUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: ["email must be an email"],
           error: "Bad Request",
           statusCode: HttpStatus.BAD_REQUEST,
         });
@@ -139,13 +186,15 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         jwtPayload.userName = user.userName;
         jwtPayload.givenNames = user.firstName;
         jwtPayload.lastName = user.lastName;
-        jwtPayload.email = user.email;
+        // The e-mail is provided by the supporting user in the payload, not by the token.
+        jwtPayload.email = undefined;
         jwtPayload.birthdate = birthDate;
       });
       const supportingUserToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
       const payload: UpdateSupportingUserAPIInDTO = {
+        email: user.email,
         applicationNumber: application.applicationNumber,
         studentsLastName: application.student.user.lastName,
         supportingUserType: SupportingUserType.Parent,
@@ -281,13 +330,14 @@ describe("SupportingUserSupportingUsersController(e2e)-updateSupportingInformati
         jwtPayload.userName = user.userName;
         jwtPayload.givenNames = user.firstName;
         jwtPayload.lastName = user.lastName;
-        jwtPayload.email = user.email;
+        jwtPayload.email = "token.email@example.com";
         jwtPayload.birthdate = birthDate;
       });
       const supportingUserToken = await getStudentToken(
         FakeStudentUsersTypes.FakeStudentUserType1,
       );
       const payload: UpdateSupportingUserAPIInDTO = {
+        email: user.email,
         applicationNumber: application.applicationNumber,
         studentsLastName: application.student.user.lastName,
         studentsDateOfBirth: application.student.birthDate,

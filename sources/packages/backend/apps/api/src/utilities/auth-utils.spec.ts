@@ -73,27 +73,44 @@ describe("Extract user real user name when Keycloak changed it (e.g. realUserNam
 });
 
 describe("Validation of user token required information", () => {
-  it("Should return false when the user token has all the required information.", () => {
-    // Act
-    const result = isUserTokenMissingRequiredInfo(VALID_USER_TOKEN);
-    // Assert
-    expect(result).toBe(false);
-  });
-
   it.each([
-    ["email", { ...VALID_USER_TOKEN, email: undefined }],
-    ["email", { ...VALID_USER_TOKEN, email: "   " }],
-    ["last name", { ...VALID_USER_TOKEN, lastName: undefined }],
-    ["last name", { ...VALID_USER_TOKEN, lastName: "   " }],
-    ["date of birth", { ...VALID_USER_TOKEN, birthdate: undefined }],
-    ["date of birth", { ...VALID_USER_TOKEN, birthdate: "   " }],
+    {
+      description: "has all the required information",
+      userToken: VALID_USER_TOKEN,
+      expectedResult: false,
+    },
+    {
+      description: "is missing the user's email",
+      userToken: { ...VALID_USER_TOKEN, email: undefined },
+      expectedResult: false,
+    },
+    {
+      description: "is missing the user's last name",
+      userToken: { ...VALID_USER_TOKEN, lastName: undefined },
+      expectedResult: true,
+    },
+    {
+      description: "has an empty user's last name",
+      userToken: { ...VALID_USER_TOKEN, lastName: "   " },
+      expectedResult: true,
+    },
+    {
+      description: "is missing the user's date of birth",
+      userToken: { ...VALID_USER_TOKEN, birthdate: undefined },
+      expectedResult: true,
+    },
+    {
+      description: "has an empty user's date of birth",
+      userToken: { ...VALID_USER_TOKEN, birthdate: "   " },
+      expectedResult: true,
+    },
   ])(
-    "Should return true when the user token is missing the user's %s.",
-    (_: string, userToken: IUserToken) => {
+    "Should return $expectedResult when the user token $description.",
+    ({ userToken, expectedResult }) => {
       // Act
       const result = isUserTokenMissingRequiredInfo(userToken);
       // Assert
-      expect(result).toBe(true);
+      expect(result).toBe(expectedResult);
     },
   );
 });

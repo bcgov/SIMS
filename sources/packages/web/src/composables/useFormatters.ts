@@ -21,6 +21,7 @@ const DEFAULT_EMPTY_VALUE = "-";
 export const DATE_ONLY_ISO_FORMAT = "YYYY-MM-DD";
 export const DATE_HOUR_MINUTE_ISO_FORMAT = "MMM DD YYYY HH:mm";
 const DEFAULT_MASKED_CHAR_REGEX = /^X+$/;
+const APPLICATION_NUMBERS_SEPARATOR_REGEX = /[\s,]+/;
 
 /**
  * Helpers to adjust how values are shown in the UI.
@@ -450,6 +451,15 @@ export function useFormatters() {
     return dayjs(date).isBefore(dayjs(referenceDate).add(weeks, "week"));
   };
 
+  /**
+   * Splits a list of application numbers separated by spaces,
+   * line breaks, or commas.
+   * @param value application numbers list.
+   * @returns application numbers.
+   */
+  const parseApplicationNumbers = (value?: string | null): string[] =>
+    value?.split(APPLICATION_NUMBERS_SEPARATOR_REGEX).filter(Boolean) ?? [];
+
   return {
     dateOnlyLongString,
     dateOnlyLongPeriodString,
@@ -475,5 +485,6 @@ export function useFormatters() {
     applicationDisabilityStatusToDisplay,
     currencyFormatter,
     isLessThanGivenWeeks,
+    parseApplicationNumbers,
   };
 }

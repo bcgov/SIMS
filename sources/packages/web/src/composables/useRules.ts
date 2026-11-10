@@ -5,8 +5,12 @@ const NOTES_MAX_CHARACTERS = 500;
 const GIVEN_NAMES_MAX_LENGTH = 100;
 const LAST_NAME_MAX_LENGTH = 100;
 const EMAIL_MAX_LENGTH = 300;
+const APPLICATION_NUMBER_LENGTH = 10;
+const APPLICATION_NUMBER_REGEX = new RegExp(
+  String.raw`^\d{${APPLICATION_NUMBER_LENGTH}}$`,
+);
 const { isSINValid, checkMaxCharacters } = useValidators();
-const { isBeforeDateOnly } = useFormatters();
+const { isBeforeDateOnly, parseApplicationNumbers } = useFormatters();
 
 export function useRules() {
   const sinValidationRule = (sin: string) => {
@@ -179,6 +183,33 @@ export function useRules() {
     message = "You must confirm to proceed.",
   ) => value || message;
 
+  /**
+   * Checks if a list of application numbers is valid.
+   * @param value application numbers separated by spaces, line breaks, or commas.
+   * @param maxApplicationNumbers max number of application numbers allowed.
+   * @returns true if all application numbers are valid and within the max
+   * allowed, otherwise a validation message.
+   */
+  const checkApplicationNumbersRule = (
+    value: string,
+    maxApplicationNumbers: number,
+  ) => {
+    const applicationNumbers = parseApplicationNumbers(value);
+    if (!applicationNumbers.length) {
+      return "Application numbers are required.";
+    }
+    if (applicationNumbers.length > maxApplicationNumbers) {
+      return `A maximum of ${maxApplicationNumbers} application numbers can be submitted at once.`;
+    }
+    const hasInvalidEntry = applicationNumbers.some(
+      (applicationNumber) => !APPLICATION_NUMBER_REGEX.test(applicationNumber),
+    );
+    if (hasInvalidEntry) {
+      return `Each application number must be exactly ${APPLICATION_NUMBER_LENGTH} digits and be separated by spaces, line breaks, or commas.`;
+    }
+    return true;
+  };
+
   return {
     sinValidationRule,
     checkNotesLengthRule,
@@ -194,5 +225,6 @@ export function useRules() {
     checkEmailValidationRule,
     checkRegexPattern,
     requiredDeclarationRule,
+    checkApplicationNumbersRule,
   };
 }
