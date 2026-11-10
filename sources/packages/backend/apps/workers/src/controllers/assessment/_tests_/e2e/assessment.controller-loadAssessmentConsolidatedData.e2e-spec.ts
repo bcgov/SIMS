@@ -711,6 +711,41 @@ describe("AssessmentController(e2e)-loadAssessmentConsolidatedData", () => {
     },
   );
 
+  it("Should load the institution location province as null when the location province is an empty string.", async () => {
+    // Arrange
+    const application = await saveFakeApplication(db.dataSource, undefined, {
+      applicationData: {
+        relationshipStatus: RelationshipStatus.Single,
+        dependantstatus: "independant",
+        taxReturnIncome: 1000,
+        workflowName: "dummy",
+      } as ApplicationData,
+      offeringIntensity: OfferingIntensity.partTime,
+    });
+    const assessment = application.currentAssessment;
+    const institutionLocation = assessment.offering.institutionLocation;
+    institutionLocation.data.address.provinceState = "";
+    await db.institutionLocation.save(institutionLocation);
+
+    // Act
+    const result = await assessmentController.loadAssessmentConsolidatedData(
+      createFakeLoadAssessmentConsolidatedDataPayload(
+        assessment.id,
+        createBaseCustomHeaders(),
+      ),
+    );
+
+    // Asserts
+    expect(result).toHaveProperty(
+      FAKE_WORKER_JOB_RESULT_PROPERTY,
+      MockedZeebeJobResult.Complete,
+    );
+    // Properties not available are sent as null to the workflow.
+    expect(
+      FakeWorkerJobResult.getOutputVariables(result).institutionLocationProvince,
+    ).toBeNull();
+  });
+
   /**
    * Creates base custom headers.
    * @returns base custom headers
