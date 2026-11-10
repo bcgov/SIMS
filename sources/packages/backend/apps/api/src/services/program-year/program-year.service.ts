@@ -33,7 +33,7 @@ export class ProgramYearService extends RecordDataModelService<ProgramYear> {
    * When false, the program year active status is not considered. Default is true.
    * @returns boolean indicating true if the programYear exists, false otherwise.
    */
-  async programYearExists(
+  programYearExists(
     id: number,
     options?: { activeOnly?: boolean },
   ): Promise<boolean> {

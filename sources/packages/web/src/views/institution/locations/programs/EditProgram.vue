@@ -99,22 +99,6 @@ const isFormReadOnly = computed(
     educationProgram.value.isExpired,
 );
 
-watch(
-  () => props.programId,
-  async (programId) => {
-    try {
-      loading.value = true;
-      educationProgram.value =
-        await EducationProgramService.shared.getEducationProgram(programId);
-    } catch {
-      snackBar.error("Unexpected error while loading program data.");
-    } finally {
-      loading.value = false;
-    }
-  },
-  { immediate: true },
-);
-
 const submit = async (programData: Record<string, unknown>) => {
   processing.value = true;
   try {
@@ -147,4 +131,20 @@ const createNewProgram = () => {
     },
   });
 };
+
+watch(
+  () => props.programId,
+  async (programId) => {
+    try {
+      loading.value = true;
+      educationProgram.value =
+        await EducationProgramService.shared.getEducationProgram(programId);
+    } catch {
+      snackBar.error("Unexpected error while loading program data.");
+    } finally {
+      loading.value = false;
+    }
+  },
+  { immediate: true },
+);
 </script>
