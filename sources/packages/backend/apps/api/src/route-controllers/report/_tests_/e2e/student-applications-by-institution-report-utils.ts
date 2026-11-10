@@ -55,7 +55,7 @@ export function createApplicationsByInstitutionReportPayload(options: {
  * - `student` student to be used in the application.
  * - `institution` institution to be used in the applications.
  * - `originalSubmissionDate` original submission date to be used in the application.
- * - `isCurrentApplicationArchived` indicates if the current application must be flagged as archived.
+ * - `currentApplicationInitialValues` initial values to be used in the current application.
  * - `parentApplicationFirstDisbursementInitialValues` initial values to be used in the parent application first disbursement.
  * @returns the created application.
  */
@@ -65,7 +65,7 @@ export async function createVersionedApplicationsDataSetup(
     student: Student;
     institution: Institution;
     originalSubmissionDate?: Date;
-    isCurrentApplicationArchived?: boolean;
+    currentApplicationInitialValues?: Partial<Application>;
     parentApplicationFirstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
@@ -114,7 +114,7 @@ export async function createVersionedApplicationsDataSetup(
         applicationStatus: ApplicationStatus.Completed,
         submittedDate: currentApplicationSubmissionDate,
         applicationNumber: previousApplication.applicationNumber,
-        isArchived: options.isCurrentApplicationArchived,
+        ...options.currentApplicationInitialValues,
       },
       offeringInitialValues: {
         studyStartDate,

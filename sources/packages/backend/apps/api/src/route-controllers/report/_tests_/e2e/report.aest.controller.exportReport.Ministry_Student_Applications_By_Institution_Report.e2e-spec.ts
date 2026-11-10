@@ -155,7 +155,7 @@ describe("ReportAESTController(e2e)-exportReport(Ministry_Student_Applications_B
         institution,
         originalSubmissionDate: now,
         // Flag the application as archived to ensure it is excluded from the report.
-        isCurrentApplicationArchived: true,
+        currentApplicationInitialValues: { isArchived: true },
       }),
     ]);
     const payload = createApplicationsByInstitutionReportPayload({
