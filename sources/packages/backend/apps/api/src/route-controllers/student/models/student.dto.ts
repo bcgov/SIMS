@@ -128,7 +128,6 @@ export class StudentSearchAPIInDTO {
    * 8 (full-time) or 7 (part-time).
    */
   @IsOptionalIfAnyOtherProvided()
-  @IsOptional()
   @IsInt()
   @IsPositive()
   @Max(999999999)
