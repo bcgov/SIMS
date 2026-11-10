@@ -168,7 +168,13 @@ export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptions
 
 export class ProgramsManagementPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["programName", "credentialType", "cipCode", "sabcCode"])
+  @IsIn([
+    "programName",
+    "credentialType",
+    "cipCode",
+    "sabcCode",
+    "programStatus",
+  ])
   sortField?: string;
   @IsArray()
   @IsOptional()

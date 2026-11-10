@@ -15,6 +15,14 @@ export const PROGRAMS_MANAGEMENT_SORT_FIELDS: Record<
 };
 
 /**
+ * Sort field received from the API to sort the programs by their status,
+ * considering inactive or expired programs as inactive.
+ * Inactive programs can include those that are expired or otherwise not currently active,
+ * which demands special handling when sorting by program status.
+ */
+export const PROGRAMS_MANAGEMENT_PROGRAM_STATUS_SORT_FIELD = "programStatus";
+
+/**
  * Program year with at least one education program configuration.
  */
 export interface ProgramYearWithConfiguration {

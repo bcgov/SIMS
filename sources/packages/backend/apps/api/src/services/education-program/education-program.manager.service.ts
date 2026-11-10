@@ -27,6 +27,7 @@ import {
   PROGRAMS_MANAGEMENT_SORT_FIELDS,
   ProgramYearWithConfiguration,
 } from "./education-program.manager.models";
+import { getProgramStatusSortExpression } from "./education-program.utils";
 
 @Injectable()
 export class EducationProgramManagerService {
@@ -133,8 +134,7 @@ export class EducationProgramManagerService {
     programYearId: number,
     paginationOptions: ProgramsManagementPaginationOptions,
   ): Promise<PaginatedResults<EducationProgram>> {
-    const sortField =
-      PROGRAMS_MANAGEMENT_SORT_FIELDS[paginationOptions.sortField] ?? "name";
+    const sortOrder = paginationOptions.sortOrder ?? FieldSortOrder.ASC;
     const baseWhere: FindOptionsWhere<EducationProgram> = {
       institution: {
         id: institutionId,
@@ -145,35 +145,50 @@ export class EducationProgramManagerService {
         },
       },
     };
-    const [results, count] = await this.educationProgramRepo.findAndCount({
-      select: {
-        id: true,
-        name: true,
-        credentialType: true,
-        cipCode: true,
-        sabcCode: true,
-        programStatus: true,
-        isActive: true,
-        effectiveEndDate: true,
-        renewedProgram: {
+    const programsQuery = this.educationProgramRepo
+      .createQueryBuilder("program")
+      .setFindOptions({
+        select: {
           id: true,
+          name: true,
+          credentialType: true,
+          cipCode: true,
+          sabcCode: true,
+          programStatus: true,
+          isActive: true,
+          effectiveEndDate: true,
+          renewedProgram: {
+            id: true,
+          },
         },
-      },
-      relations: {
-        renewedProgram: true,
-      },
-      where: combineWhereConditions(
-        baseWhere,
-        this.getProgramStatusWhereConditions(paginationOptions),
-        this.getRenewalWhereConditions(paginationOptions),
-        this.getSearchWhereConditions(paginationOptions),
-      ),
-      skip: paginationOptions.pageLimit * paginationOptions.page,
-      take: paginationOptions.pageLimit,
-      order: {
-        [sortField]: paginationOptions.sortOrder ?? FieldSortOrder.ASC,
-      },
-    });
+        relations: {
+          renewedProgram: true,
+        },
+        where: combineWhereConditions(
+          baseWhere,
+          this.getProgramStatusWhereConditions(paginationOptions),
+          this.getRenewalWhereConditions(paginationOptions),
+          this.getSearchWhereConditions(paginationOptions),
+        ),
+      })
+      // Offset and limit are used instead of skip and take, which is safe
+      // because all joined relations are to-one, hence every program is
+      // returned as a single row. If a to-many relation is ever joined,
+      // skip and take must be used instead to keep the pagination correct.
+      .offset(paginationOptions.pageLimit * paginationOptions.page)
+      .limit(paginationOptions.pageLimit);
+    const sortField =
+      PROGRAMS_MANAGEMENT_SORT_FIELDS[paginationOptions.sortField];
+    if (sortField) {
+      programsQuery.orderBy(`program.${sortField}`, sortOrder);
+    } else {
+      // Sort by program status when requested or when no sort field is provided.
+      programsQuery.orderBy(
+        getProgramStatusSortExpression("program"),
+        sortOrder,
+      );
+    }
+    const [results, count] = await programsQuery.getManyAndCount();
     return { results, count };
   }
 

@@ -138,7 +138,7 @@ const loading = ref(false);
 const searchBox = ref("");
 const sortBy = ref([
   {
-    key: ProgramSummaryFields.ProgramName,
+    key: ProgramSummaryFields.ProgramStatus,
     order: DataTableSortByOrder.ASC,
   },
 ]);
@@ -256,9 +256,12 @@ const paginationAndSortEvent = async (event: DataTableOptions) => {
  */
 const searchProgramTable = async () => {
   programAndCount.value = undefined;
+  const [sortByOptions] = sortBy.value;
   await loadPrograms(
     currentPage.value ?? DEFAULT_DATATABLE_PAGE_NUMBER,
     currentPageLimit.value ?? DEFAULT_PAGE_LIMIT,
+    sortByOptions?.key,
+    sortByOptions?.order,
   );
 };
 
