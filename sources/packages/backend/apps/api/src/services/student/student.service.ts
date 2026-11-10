@@ -635,7 +635,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search students based on the search criteria and institution id if provided.
    * @param searchCriteria options to search by firstName,
-   * lastName, appNumber or sin.
+   * lastName, appNumber, sin, email or documentNumber (certificate number).
    * @param institutionId id of the institution that the student applied to.
    * @returns list of student details.
    */
@@ -646,6 +646,7 @@ export class StudentService extends RecordDataModelService<Student> {
       appNumber?: string;
       sin?: string;
       email?: string;
+      documentNumber?: number;
     },
     institutionId?: number,
   ): Promise<Student[]> {
@@ -707,6 +708,15 @@ export class StudentService extends RecordDataModelService<Student> {
       searchQuery.andWhere("lower(user.email) = :email", {
         email: searchCriteria.email.toLowerCase(),
       });
+    }
+    if (searchCriteria.documentNumber) {
+      // Exact match on the certificate number of any disbursement of the student.
+      searchQuery
+        .innerJoin("application.studentAssessments", "studentAssessment")
+        .innerJoin("studentAssessment.disbursementSchedules", "disbursement")
+        .andWhere("disbursement.documentNumber = :documentNumber", {
+          documentNumber: searchCriteria.documentNumber,
+        });
     }
     return searchQuery.getMany();
   }

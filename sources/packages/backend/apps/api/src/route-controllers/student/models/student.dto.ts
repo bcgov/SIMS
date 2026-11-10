@@ -7,14 +7,19 @@ import {
   IsDefined,
   IsEmail,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPositive,
   Length,
+  Max,
   MaxLength,
   ValidateIf,
 } from "class-validator";
-import { IsValidSIN } from "../../../utilities/class-validation/custom-validators/sin-validator";
+import {
+  IsOptionalIfAnyOtherProvided,
+  IsValidSIN,
+} from "../../../utilities/class-validation";
 import {
   ApplicationStatus,
   FileOriginType,
@@ -103,39 +108,30 @@ export class UpdateStudentAPIInDTO
 }
 
 /**
- * Student search parameters.
+ * Student search parameters, of which at least one is required
+ * to avoid retrieving all the students.
  */
 export class StudentSearchAPIInDTO {
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.lastName && !input.appNumber && !input.sin && !input.email,
-  )
-  @IsNotEmpty()
-  firstName: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.appNumber && !input.sin && !input.email,
-  )
-  @IsNotEmpty()
-  lastName: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.sin && !input.email,
-  )
-  @IsNotEmpty()
-  appNumber: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.appNumber && !input.email,
-  )
-  @IsNotEmpty()
-  sin: string;
-  @ValidateIf(
-    (input: StudentSearchAPIInDTO) =>
-      !input.firstName && !input.lastName && !input.appNumber && !input.sin,
-  )
-  @IsNotEmpty()
-  email: string;
+  @IsOptionalIfAnyOtherProvided()
+  firstName?: string;
+  @IsOptionalIfAnyOtherProvided()
+  lastName?: string;
+  @IsOptionalIfAnyOtherProvided()
+  appNumber?: string;
+  @IsOptionalIfAnyOtherProvided()
+  sin?: string;
+  @IsOptionalIfAnyOtherProvided()
+  email?: string;
+  /**
+   * Document number (a.k.a. e-Cert Number). Limited to 9 digits to be safe, since there
+   * is no business requirement to have it restricted; currently it can have up to
+   * 8 (full-time) or 7 (part-time).
+   */
+  @IsOptionalIfAnyOtherProvided()
+  @IsInt()
+  @IsPositive()
+  @Max(999999999)
+  documentNumber?: number;
 }
 
 export class SearchStudentAPIOutDTO {
