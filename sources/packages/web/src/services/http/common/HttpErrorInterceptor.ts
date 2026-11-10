@@ -61,15 +61,6 @@ async function redirectOnHttpError(
     return;
   }
   const { status, data } = error.response;
-  if (data?.errorType) {
-    if (
-      status === HttpStatusCode.ServiceUnavailable &&
-      data.errorType === MAINTENANCE_MODE
-    ) {
-      await router.replace({ name: SharedRouteConst.MAINTENANCE_PAGE });
-    }
-    return;
-  }
   // Using replace to allow the user to go back to the previous page.
   switch (status) {
     case HttpStatusCode.Unauthorized: {
@@ -86,16 +77,32 @@ async function redirectOnHttpError(
       await router.replace({ name: SharedRouteConst.FORBIDDEN_USER });
       return;
     case HttpStatusCode.NotFound:
-      // Keeps the current URL while rendering the not found page.
       await router.replace({
         name: SharedRouteConst.PAGE_NOT_FOUND,
+        // Keeps the current URL while rendering the not found page.
         params: { pathMatch: currentRoute.path.substring(1).split("/") },
       });
       return;
-    default:
-      if (status >= HttpStatusCode.InternalServerError) {
+    case HttpStatusCode.ServiceUnavailable:
+      if (data.errorType === MAINTENANCE_MODE) {
+        await router.replace({ name: SharedRouteConst.MAINTENANCE_PAGE });
+      } else {
         await router.replace({ name: SharedRouteConst.UNEXPECTED_ERROR });
       }
+      return;
+    case HttpStatusCode.InternalServerError:
+    case HttpStatusCode.NotImplemented:
+    case HttpStatusCode.BadGateway:
+    case HttpStatusCode.GatewayTimeout:
+    case HttpStatusCode.HttpVersionNotSupported:
+    case HttpStatusCode.VariantAlsoNegotiates:
+    case HttpStatusCode.InsufficientStorage:
+    case HttpStatusCode.LoopDetected:
+    case HttpStatusCode.NotExtended:
+    case HttpStatusCode.NetworkAuthenticationRequired:
+    default:
+      await router.replace({ name: SharedRouteConst.UNEXPECTED_ERROR });
+      return;
   }
 }
 
