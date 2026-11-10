@@ -142,7 +142,6 @@ import {
   SearchStudentsHeaders,
 } from "@/types";
 import type { VForm } from "@/types";
-import { defineEmits } from "vue";
 
 defineEmits<{
   goToStudentView: [studentId: number];
@@ -151,7 +150,7 @@ defineEmits<{
 // Max length accepted by the API for the certificate (document) number.
 const DOCUMENT_NUMBER_MAX_LENGTH = 9;
 const DOCUMENT_NUMBER_REGEX = new RegExp(
-  `^\\d{1,${DOCUMENT_NUMBER_MAX_LENGTH}}$`,
+  String.raw`^\d{1,${DOCUMENT_NUMBER_MAX_LENGTH}}$`,
 );
 
 const searchStudentsForm = ref({} as VForm);
