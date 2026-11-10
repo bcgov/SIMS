@@ -16,8 +16,10 @@ import {
   MaxLength,
   ValidateIf,
 } from "class-validator";
-import { IsValidSIN } from "../../../utilities/class-validation/custom-validators/sin-validator";
-import { IsAnyProvided } from "../../../utilities/class-validation/custom-validators/is-any-provided";
+import {
+  IsOptionalIfAnyOtherProvided,
+  IsValidSIN,
+} from "../../../utilities/class-validation";
 import {
   ApplicationStatus,
   FileOriginType,
@@ -106,33 +108,26 @@ export class UpdateStudentAPIInDTO
 }
 
 /**
- * Student search parameters.
- * At least one filter is required to avoid retrieving all the students.
+ * Student search parameters, of which at least one is required
+ * to avoid retrieving all the students.
  */
-@IsAnyProvided<StudentSearchAPIInDTO>([
-  "firstName",
-  "lastName",
-  "appNumber",
-  "sin",
-  "email",
-  "documentNumber",
-])
 export class StudentSearchAPIInDTO {
-  @IsOptional()
+  @IsOptionalIfAnyOtherProvided()
   firstName?: string;
-  @IsOptional()
+  @IsOptionalIfAnyOtherProvided()
   lastName?: string;
-  @IsOptional()
+  @IsOptionalIfAnyOtherProvided()
   appNumber?: string;
-  @IsOptional()
+  @IsOptionalIfAnyOtherProvided()
   sin?: string;
-  @IsOptional()
+  @IsOptionalIfAnyOtherProvided()
   email?: string;
   /**
    * Document number (a.k.a. e-Cert Number). Limited to 9 digits to be safe, since there
    * is no business requirement to have it restricted; currently it can have up to
    * 8 (full-time) or 7 (part-time).
    */
+  @IsOptionalIfAnyOtherProvided()
   @IsOptional()
   @IsInt()
   @IsPositive()
