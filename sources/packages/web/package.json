@@ -22,7 +22,7 @@
     "ajv": "^8.20.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^3.0.1",
-    "axios": "^1.21.0",
+    "axios": "^1.21.1",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "class-transformer": "^0.5.1",
@@ -31,11 +31,11 @@
     "http-status-codes": "^2.3.0",
     "keycloak-js": "^26.2.5",
     "mitt": "^3.0.1",
-    "tslib": "^2.8.1",
+    "tslib": "^2.9.1",
     "uuid": "^14.0.3",
-    "vue": "^3.5.44",
+    "vue": "^3.5.45",
     "vue-router": "^5.4.0",
-    "vuetify": "^4.3.1",
+    "vuetify": "^4.3.3",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
@@ -43,14 +43,15 @@
     "@types/node": "^26.6.6",
     "@vitejs/plugin-vue": "^6.0.10",
     "@vue/eslint-config-typescript": "^14.9.0",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.0",
     "jiti": "^2.7.0",
     "prettier": "^3.9.10",
     "reflect-metadata": "^0.2.2",
-    "sass": "^1.107.0",
+    "sass": "^1.108.1",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5",
+    "vite": "^8.3.7",
     "vite-plugin-vuetify": "^2.1.3"
   }
 }
