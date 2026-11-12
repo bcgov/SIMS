@@ -112,7 +112,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
 
       mockDownloadFiles(sftpClientMock, [
@@ -279,7 +278,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
@@ -403,7 +401,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
 
       mockDownloadFiles(sftpClientMock, [
@@ -461,7 +458,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
 
       mockDownloadFiles(sftpClientMock, [
@@ -490,7 +486,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
 
       mockDownloadFiles(sftpClientMock, [
@@ -519,7 +514,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
 
       mockDownloadFiles(
@@ -553,7 +547,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessResponseIntegration,
       );
 
       mockDownloadFiles(

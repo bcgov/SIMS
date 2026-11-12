@@ -86,7 +86,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECertCancellationResponseIntegration,
       );
 
       // Act/Assert
@@ -123,7 +122,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECertCancellationResponseIntegration,
       );
 
       // Act/Assert
@@ -163,7 +161,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act/Assert
@@ -228,7 +225,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act/Assert
@@ -320,7 +316,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act/Assert
@@ -402,7 +397,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act
@@ -504,7 +498,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act
@@ -633,7 +626,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act
@@ -775,7 +767,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECertCancellationResponseIntegration,
         );
 
         // Act

@@ -89,7 +89,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessIntegration,
       );
       // Spy on the MSFAA content creation to intercept the process date and time used.
       const createMSFAARequestContentMock =
@@ -166,7 +165,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeMSFAAProcessIntegration,
       );
       const createMSFAARequestContentMock =
         createMSFAARequestContentSpyOnMock(app);

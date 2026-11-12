@@ -189,7 +189,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.SFASIntegration,
     );
     mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
 
@@ -292,7 +291,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
       // Act
@@ -336,7 +334,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.SFASIntegration,
     );
     mockDownloadFiles(sftpClientMock, [
       SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
@@ -397,7 +394,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
@@ -448,7 +444,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [SFAS_SAIL_DATA_FILENAME]);
       // Act
@@ -547,7 +542,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME,
@@ -580,7 +574,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
@@ -738,7 +731,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME,
@@ -822,7 +814,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME,
@@ -995,7 +986,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [INVALID_RECORD_TYPE_FILENAME]);
 
@@ -1029,7 +1019,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME,
@@ -1227,7 +1216,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.SFASIntegration,
         );
         mockDownloadFiles(
           sftpClientMock,
@@ -1314,7 +1302,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SFASIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
@@ -1367,7 +1354,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.SFASIntegration,
     );
     mockDownloadFiles(sftpClientMock, [
       SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
@@ -1403,7 +1389,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     );
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.SFASIntegration,
     );
 
     // Act/Assert
@@ -1421,7 +1406,6 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     mockDownloadFiles(sftpClientMock, []);
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.SFASIntegration,
     );
 
     // Act

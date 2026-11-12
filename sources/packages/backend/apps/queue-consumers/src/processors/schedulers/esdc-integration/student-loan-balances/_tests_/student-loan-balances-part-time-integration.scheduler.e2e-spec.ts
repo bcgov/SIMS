@@ -77,7 +77,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.StudentLoanBalancesPartTimeIntegration,
       );
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
       // Act
@@ -118,7 +117,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.StudentLoanBalancesPartTimeIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
@@ -147,7 +145,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.StudentLoanBalancesPartTimeIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME,
@@ -189,7 +186,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.StudentLoanBalancesPartTimeIntegration,
       );
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
@@ -245,7 +241,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.StudentLoanBalancesPartTimeIntegration,
       );
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
@@ -300,7 +295,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.StudentLoanBalancesPartTimeIntegration,
       );
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 

@@ -61,7 +61,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: fakeUniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act
@@ -87,7 +86,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
     // Mock an empty file.
     objectStorageService.getObject = createFakeGetObjectResponse("");
@@ -118,7 +116,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act
@@ -152,7 +149,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act
@@ -186,7 +182,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act
@@ -218,7 +213,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act
@@ -251,7 +245,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act
@@ -295,7 +288,6 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
         uniqueFileName: studentFile.uniqueFileName,
         fileName: studentFile.fileName,
       },
-      QueueNames.FileVirusScanProcessor,
     );
 
     // Act

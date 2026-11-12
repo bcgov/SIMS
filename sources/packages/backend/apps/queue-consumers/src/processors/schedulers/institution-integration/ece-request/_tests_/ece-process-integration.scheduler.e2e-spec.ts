@@ -129,7 +129,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessIntegration,
       );
 
       // Act
@@ -191,7 +190,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.ECEProcessIntegration,
     );
 
     // Act
@@ -278,7 +276,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessIntegration,
       );
 
       // Act
@@ -379,7 +376,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessIntegration,
       );
 
       // Act
@@ -483,7 +479,6 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessIntegration,
       );
 
       // Act

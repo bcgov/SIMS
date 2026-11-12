@@ -76,7 +76,6 @@ describe(
           workflowName: "dummy-workflow-name",
           assessmentId: currentAssessment.id,
         },
-        QueueNames.StartApplicationAssessment,
       );
       zbClientMock.createProcessInstance = jest.fn().mockImplementation(() => {
         throw dummyException;
@@ -93,7 +92,6 @@ describe(
       const application = await saveFakeApplication(db.dataSource);
       const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>(
         { assessmentId: application.currentAssessment.id },
-        QueueNames.StartApplicationAssessment,
       );
 
       // Act
@@ -130,7 +128,6 @@ describe(
           workflowName,
           assessmentId: application.currentAssessment.id,
         },
-        QueueNames.StartApplicationAssessment,
       );
 
       // Act

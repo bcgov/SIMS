@@ -143,7 +143,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -211,7 +210,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -277,7 +275,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -313,7 +310,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -359,7 +355,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -450,7 +445,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -503,7 +497,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -575,7 +568,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -667,7 +659,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -800,7 +791,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -912,7 +902,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -1031,7 +1020,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -1124,7 +1112,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -1264,7 +1251,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -1376,7 +1362,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -1542,7 +1527,6 @@ describe(
       // Queued job.
       const { job } = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -1667,7 +1651,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeECertIntegration,
       );
 
       // Act
@@ -1780,7 +1763,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -1885,7 +1867,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -1944,7 +1925,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
         const now = new Date();
         MockDate.set(now);
@@ -2071,7 +2051,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -2169,7 +2148,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.PartTimeECertIntegration,
           );
 
           // Act
@@ -2267,7 +2245,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.PartTimeECertIntegration,
           );
 
           // Act
@@ -2363,7 +2340,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeECertIntegration,
         );
 
         // Act
@@ -2469,7 +2445,6 @@ describe(
             // Queued job.
             const mockedJob = mockBullMQJob<void>(
               undefined,
-              QueueNames.PartTimeECertIntegration,
             );
 
             // Act
@@ -2600,7 +2575,6 @@ describe(
             // Queued job.
             const mockedJob = mockBullMQJob<void>(
               undefined,
-              QueueNames.PartTimeECertIntegration,
             );
 
             // Act
@@ -2737,7 +2711,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.PartTimeECertIntegration,
           );
 
           // Act
@@ -2886,7 +2859,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.PartTimeECertIntegration,
           );
 
           // Act

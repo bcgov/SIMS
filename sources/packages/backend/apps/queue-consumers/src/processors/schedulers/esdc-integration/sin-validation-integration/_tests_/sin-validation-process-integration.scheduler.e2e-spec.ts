@@ -78,7 +78,6 @@ describe(
       MockDate.set(now);
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SINValidationProcessIntegration,
       );
 
       // Act
@@ -180,7 +179,6 @@ describe(
       MockDate.set(now);
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SINValidationProcessIntegration,
       );
 
       // Act
@@ -233,7 +231,6 @@ describe(
       MockDate.set(now);
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SINValidationProcessIntegration,
       );
 
       // Act
@@ -256,7 +253,6 @@ describe(
       // Arrange
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SINValidationProcessIntegration,
       );
 
       // Act

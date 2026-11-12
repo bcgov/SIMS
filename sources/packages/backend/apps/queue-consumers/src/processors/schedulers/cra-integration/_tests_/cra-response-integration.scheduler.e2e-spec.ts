@@ -78,7 +78,6 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CRAResponseIntegration,
     );
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
@@ -137,7 +136,6 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CRAResponseIntegration,
     );
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);

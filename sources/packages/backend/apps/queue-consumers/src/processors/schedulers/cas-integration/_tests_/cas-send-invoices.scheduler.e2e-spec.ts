@@ -74,7 +74,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act
@@ -123,7 +122,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act
@@ -154,7 +152,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act
@@ -197,7 +194,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act
@@ -239,7 +235,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act
@@ -276,7 +271,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act
@@ -318,7 +312,6 @@ describe(describeProcessorRootTest(QueueNames.CASSendInvoices), () => {
       {
         pollingRecordsLimit: 1,
       },
-      QueueNames.CASSendInvoices,
     );
 
     // Act

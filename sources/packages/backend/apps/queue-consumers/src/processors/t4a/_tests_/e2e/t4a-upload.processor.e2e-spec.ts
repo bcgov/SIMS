@@ -98,7 +98,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
             },
           ],
         },
-        QueueNames.T4AUpload,
       );
       sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
       const fileName = `${t4aSubFolder}-T4A-${formattedReferenceDate}.pdf`;
@@ -245,7 +244,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           },
         ],
       },
-      QueueNames.T4AUpload,
     );
     sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
     const fileName = `${t4aSubFolder}-T4A-${formattedReferenceDate}.pdf`;
@@ -312,7 +310,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           },
         ],
       },
-      QueueNames.T4AUpload,
     );
     sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
 
@@ -365,7 +362,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           },
         ],
       },
-      QueueNames.T4AUpload,
     );
 
     // Act
@@ -421,7 +417,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
           },
         ],
       },
-      QueueNames.T4AUpload,
     );
 
     // Act

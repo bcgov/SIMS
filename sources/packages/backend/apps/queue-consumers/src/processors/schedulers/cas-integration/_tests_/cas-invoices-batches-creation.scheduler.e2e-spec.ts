@@ -142,7 +142,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.CASInvoicesBatchesCreation,
       );
 
       // Act
@@ -379,7 +378,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.CASInvoicesBatchesCreation,
       );
 
       // Act
@@ -448,7 +446,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.CASInvoicesBatchesCreation,
       );
 
       // Act/Assert
@@ -462,7 +459,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.CASInvoicesBatchesCreation,
       );
 
       // Act

@@ -158,7 +158,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.FederalRestrictionsIntegration,
         );
 
         // Act
@@ -312,7 +311,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.FederalRestrictionsIntegration,
       );
 
       // Act
@@ -346,7 +344,6 @@ describe(
       );
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.FederalRestrictionsIntegration,
       );
 
       // Act
@@ -395,7 +392,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.FederalRestrictionsIntegration,
       );
 
       // Act

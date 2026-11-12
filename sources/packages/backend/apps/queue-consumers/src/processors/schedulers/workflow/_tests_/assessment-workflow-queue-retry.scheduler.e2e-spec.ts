@@ -78,7 +78,6 @@ describe(
         {
           amountHoursAssessmentRetry,
         },
-        QueueNames.AssessmentWorkflowQueueRetry,
       );
 
       // Act
@@ -111,7 +110,6 @@ describe(
         {
           amountHoursAssessmentRetry,
         },
-        QueueNames.AssessmentWorkflowQueueRetry,
       );
 
       // Act
@@ -145,7 +143,6 @@ describe(
         {
           amountHoursAssessmentRetry,
         },
-        QueueNames.AssessmentWorkflowQueueRetry,
       );
 
       // Act
@@ -179,7 +176,6 @@ describe(
         {
           amountHoursAssessmentRetry,
         },
-        QueueNames.AssessmentWorkflowQueueRetry,
       );
 
       // Act

@@ -84,7 +84,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act/Assert
@@ -119,7 +118,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act/Assert
@@ -154,7 +152,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act/Assert
@@ -189,7 +186,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act/Assert
@@ -225,7 +221,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act/Assert
@@ -260,7 +255,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act
@@ -335,7 +329,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.PartTimeFeedbackIntegration,
         );
 
         // Act/Assert
@@ -407,7 +400,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.PartTimeFeedbackIntegration,
       );
 
       // Act

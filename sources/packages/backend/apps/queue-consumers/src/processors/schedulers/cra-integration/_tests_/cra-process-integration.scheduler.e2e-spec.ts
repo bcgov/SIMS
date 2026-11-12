@@ -79,7 +79,6 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CRAProcessIntegration,
     );
     const fileName = "CCRA_REQUEST_A00001.DAT";
 
@@ -187,7 +186,6 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CRAProcessIntegration,
     );
 
     // Act

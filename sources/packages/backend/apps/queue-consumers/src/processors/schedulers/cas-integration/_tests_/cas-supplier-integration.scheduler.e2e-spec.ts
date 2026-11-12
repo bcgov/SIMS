@@ -77,7 +77,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -121,7 +120,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -181,7 +179,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -248,7 +245,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -311,7 +307,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.CASSupplierIntegration,
       );
 
       // Act
@@ -439,7 +434,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -566,7 +560,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -682,7 +675,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -727,7 +719,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -798,7 +789,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act
@@ -865,7 +855,6 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.CASSupplierIntegration,
     );
 
     // Act

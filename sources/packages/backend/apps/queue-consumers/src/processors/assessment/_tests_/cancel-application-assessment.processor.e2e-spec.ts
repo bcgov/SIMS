@@ -126,7 +126,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: studentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -188,7 +187,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: studentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -217,7 +215,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: studentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -248,7 +245,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: studentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -268,7 +264,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -333,7 +328,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: currentApplicationToCancel.currentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -392,7 +386,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: currentApplicationToCancel.currentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -463,7 +456,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: currentApplicationToCancel.currentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -526,7 +518,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
         { assessmentId: currentApplicationToCancel.currentAssessment.id },
-        QueueNames.CancelApplicationAssessment,
       );
 
       // Act
@@ -602,7 +593,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
           { assessmentId: currentApplicationToCancel.currentAssessment.id },
-          QueueNames.CancelApplicationAssessment,
         );
         // Spy on assess impacted application method to make sure that it is not invoked.
         const assessmentSequentialProcessingService =

@@ -65,7 +65,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ReturnedLoansResponseIntegration,
       );
 
       // Act/Assert
@@ -108,7 +107,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ReturnedLoansResponseIntegration,
       );
 
       // Act/Assert
@@ -149,7 +147,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ReturnedLoansResponseIntegration,
         );
 
         // Act/Assert
@@ -196,7 +193,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ReturnedLoansResponseIntegration,
         );
 
         // Act
@@ -234,7 +230,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ReturnedLoansResponseIntegration,
       );
 
       // Act
@@ -277,7 +272,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ReturnedLoansResponseIntegration,
       );
 
       // Act

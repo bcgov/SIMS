@@ -144,7 +144,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.FullTimeMSFAAProcessResponseIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
@@ -269,7 +268,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.FullTimeMSFAAProcessResponseIntegration,
       );
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
@@ -398,7 +396,6 @@ describe(
         );
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.FullTimeMSFAAProcessResponseIntegration,
         );
 
         // Act

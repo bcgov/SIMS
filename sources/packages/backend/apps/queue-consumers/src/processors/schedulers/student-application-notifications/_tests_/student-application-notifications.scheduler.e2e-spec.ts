@@ -151,7 +151,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -245,7 +244,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -341,7 +339,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -417,7 +414,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -504,7 +500,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -553,7 +548,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -599,7 +593,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -667,7 +660,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -729,7 +721,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -770,7 +761,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
 
         // Act
@@ -865,7 +855,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -940,7 +929,6 @@ describe(
             // Queued job.
             const mockedJob = mockBullMQJob<void>(
               undefined,
-              QueueNames.StudentApplicationNotifications,
             );
 
             // Act
@@ -1017,7 +1005,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -1082,7 +1069,6 @@ describe(
             // Queued job.
             const mockedJob = mockBullMQJob<void>(
               undefined,
-              QueueNames.StudentApplicationNotifications,
             );
 
             // Act
@@ -1136,7 +1122,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -1200,7 +1185,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
 
         // Act
@@ -1258,7 +1242,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
 
         // Act
@@ -1296,7 +1279,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
 
         // Act
@@ -1349,7 +1331,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
 
         // Act
@@ -1407,7 +1388,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
 
         // Act
@@ -1447,7 +1427,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.StudentApplicationNotifications,
         );
         const now = new Date();
         MockDate.set(now);
@@ -1542,7 +1521,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act
@@ -1590,7 +1568,6 @@ describe(
           // Queued job.
           const mockedJob = mockBullMQJob<void>(
             undefined,
-            QueueNames.StudentApplicationNotifications,
           );
 
           // Act

@@ -71,7 +71,6 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
           externalRateLimit,
           externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
         },
-        QueueNames.ProcessNotifications,
       );
       jest.spyOn(notifyService, "sendEmailNotification").mockResolvedValue();
 
@@ -121,7 +120,6 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
         externalRateLimit: 10,
         externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
       },
-      QueueNames.ProcessNotifications,
     );
 
     // Act

@@ -144,7 +144,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act/Assert
@@ -182,7 +181,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act/Assert
@@ -216,7 +214,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act/Assert
@@ -244,7 +241,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act
@@ -378,7 +374,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act
@@ -488,7 +483,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act
@@ -637,7 +631,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act
@@ -794,7 +787,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act
@@ -885,7 +877,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.DisbursementReceiptsFileIntegration,
       );
 
       // Act

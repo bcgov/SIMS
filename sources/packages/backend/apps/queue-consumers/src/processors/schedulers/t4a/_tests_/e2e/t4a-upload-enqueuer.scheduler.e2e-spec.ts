@@ -53,7 +53,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
         // Ensure the default batch size defined on DB configuration is used.
         maxFileUploadsPerBatch: 100,
       },
-      QueueNames.T4AUploadEnqueuer,
     );
     // Mock directories and a file on SFTP where the file must be ignored.
     // Directories must be returned ordered by name.
@@ -109,7 +108,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
         // Ensure the default batch size defined on DB configuration is used.
         maxFileUploadsPerBatch: 100,
       },
-      QueueNames.T4AUploadEnqueuer,
     );
     sftpClientMock.list.mockResolvedValueOnce([]);
 
@@ -131,7 +129,6 @@ describe(describeProcessorRootTest(QueueNames.T4AUploadEnqueuer), () => {
         // Ensure the default batch size defined on DB configuration is used.
         maxFileUploadsPerBatch: 100,
       },
-      QueueNames.T4AUploadEnqueuer,
     );
     sftpClientMock.list.mockResolvedValueOnce([
       { name: "9999" },

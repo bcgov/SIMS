@@ -176,7 +176,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -256,7 +255,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // A past COE date simulates a CONR file with a COE date different from
@@ -426,7 +424,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECEProcessResponseIntegration,
         );
 
         // Modify the data in mock file to have the correct values for
@@ -525,7 +522,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECEProcessResponseIntegration,
         );
 
         // Modify the data in mock file to have the correct values for
@@ -625,7 +621,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.ECEProcessResponseIntegration,
         );
 
         // Modify the data in mock file to have the correct values for
@@ -734,7 +729,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
       const applicationNumber = application.applicationNumber;
       const currentDate = new Date();
@@ -868,7 +862,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -956,7 +949,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -1044,7 +1036,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -1116,7 +1107,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have fake disbursement value ID.
@@ -1198,7 +1188,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct disbursement
@@ -1264,7 +1253,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have invalid header.
@@ -1316,7 +1304,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have invalid detail.
@@ -1371,7 +1358,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have invalid footer.
@@ -1425,7 +1411,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have invalid footer.
@@ -1479,7 +1464,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have invalid application number.
@@ -1557,7 +1541,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -1649,7 +1632,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -1744,7 +1726,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -1831,7 +1812,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Modify the data in mock file to have the correct values for
@@ -1911,7 +1891,6 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
       mockDownloadFiles(
         sftpClientMock,
@@ -2020,7 +1999,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.ECEProcessResponseIntegration,
       );
 
       // Add a mock download for multiple files, two for each institution code.

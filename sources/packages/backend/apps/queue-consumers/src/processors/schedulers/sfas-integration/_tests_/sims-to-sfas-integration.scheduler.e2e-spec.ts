@@ -182,7 +182,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -257,7 +256,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -315,7 +313,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -439,7 +436,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -521,7 +517,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -613,7 +608,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -695,7 +689,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SIMSToSFASIntegration,
       );
 
       // Mock the current date.
@@ -749,7 +742,6 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.SIMSToSFASIntegration,
     );
 
     // Act/Assert

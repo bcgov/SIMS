@@ -74,7 +74,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.AssessmentWorkflowEnqueuer,
       );
 
       // Act
@@ -132,7 +131,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.AssessmentWorkflowEnqueuer,
       );
 
       // Act
@@ -183,7 +181,6 @@ describe(
         // Queued job.
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.AssessmentWorkflowEnqueuer,
         );
 
         // Act
@@ -206,7 +203,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.AssessmentWorkflowEnqueuer,
       );
 
       // Act
@@ -229,7 +225,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.AssessmentWorkflowEnqueuer,
       );
 
       // Act
@@ -276,7 +271,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.AssessmentWorkflowEnqueuer,
       );
 
       // Act

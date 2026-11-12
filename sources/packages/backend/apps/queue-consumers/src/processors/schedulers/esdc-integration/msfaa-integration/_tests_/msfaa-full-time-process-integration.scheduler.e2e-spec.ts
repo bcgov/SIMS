@@ -87,7 +87,6 @@ describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.FullTimeMSFAAIntegration,
     );
     // Spy on the MSFAA content creation to intercept the process date and time used.
     const createMSFAARequestContentMock =
@@ -165,7 +164,6 @@ describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
     // Queued job.
     const mockedJob = mockBullMQJob<void>(
       undefined,
-      QueueNames.FullTimeMSFAAIntegration,
     );
     const createMSFAARequestContentMock =
       createMSFAARequestContentSpyOnMock(app);

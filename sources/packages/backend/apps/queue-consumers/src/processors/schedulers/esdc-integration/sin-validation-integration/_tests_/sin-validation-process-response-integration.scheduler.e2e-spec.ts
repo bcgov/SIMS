@@ -75,7 +75,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SINValidationResponseIntegration,
       );
 
       // Act
@@ -126,7 +125,6 @@ describe(
       // Queued job.
       const mockedJob = mockBullMQJob<void>(
         undefined,
-        QueueNames.SINValidationResponseIntegration,
       );
 
       // Act
@@ -192,7 +190,6 @@ describe(
         );
         const mockedJob = mockBullMQJob<void>(
           undefined,
-          QueueNames.SINValidationResponseIntegration,
         );
 
         // Act
