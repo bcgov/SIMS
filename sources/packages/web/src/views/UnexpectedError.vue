@@ -7,6 +7,10 @@
       Try refreshing the page or returning to the home page. If the problem
       persists, please contact support.
     </p>
+    <p v-if="sessionId">
+      Please provide this session reference to support:
+      <strong>{{ sessionId }}</strong>
+    </p>
     <template #image>
       <v-img
         width="220"
@@ -21,5 +25,9 @@
 
 <script setup lang="ts">
 import ErrorPageContainer from "@/components/common/ErrorPageContainer.vue";
+import { AuthService } from "@/services/AuthService";
 import illustration from "../assets/images/person-seeing-screen.svg";
+
+// Same identifier logged by the API for every request of the user session.
+const sessionId = AuthService.shared.keycloak?.sessionId;
 </script>
