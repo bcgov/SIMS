@@ -35,7 +35,7 @@ export class SpecializedStringBuilder extends StringBuilder {
    * @param value number value.
    * @param length maximum length.
    */
-  appendNumberWithFiller(value: number, length: number): void {
+  appendNumberWithFiller(value: number | string, length: number): void {
     this.appendWithStartFiller(value, length, this.numberFiller);
   }
 

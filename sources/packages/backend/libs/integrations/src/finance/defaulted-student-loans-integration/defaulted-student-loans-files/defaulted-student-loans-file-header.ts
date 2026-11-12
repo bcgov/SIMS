@@ -11,7 +11,7 @@ export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
   /**
    * Header record type.
    */
-  recordType: DefaultedStudentLoanRecordType.Header;
+  private readonly recordType = DefaultedStudentLoanRecordType.Header;
   /**
    * Date of transmission.
    */
