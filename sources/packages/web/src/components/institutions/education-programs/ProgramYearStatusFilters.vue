@@ -29,7 +29,7 @@
     <!--
       On large screens the status filters are shown inline, next to the program
       year. On smaller screens they move to a second row, taking the full width,
-      to avoid compressing the buttons.      
+      to avoid compressing the buttons.
     -->
     <v-btn-toggle
       :model-value="selectedStatuses"

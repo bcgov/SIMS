@@ -28,13 +28,13 @@ import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import { EducationProgramConfigurationAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
-interface CreateProgramProps {
+interface RenewProgramProps {
   programId: number;
   backTarget: BackTarget;
 }
 
 const snackBar = useSnackBar();
-const props = defineProps<CreateProgramProps>();
+const props = defineProps<RenewProgramProps>();
 const router = useRouter();
 const processing = ref(false);
 const loading = ref(true);
@@ -47,7 +47,7 @@ const formTitle = computed(() =>
 
 const submit = async (programData: Record<string, unknown>) => {
   if (!programConfiguration.value) {
-    snackBar.error("Unable to create program: missing program configuration.");
+    snackBar.error("Program data was not loaded.");
     return;
   }
   processing.value = true;
@@ -59,7 +59,7 @@ const submit = async (programData: Record<string, unknown>) => {
         programConfigurationId: programConfiguration.value.configurationId,
       },
     );
-    snackBar.success("Education Program created successfully!");
+    snackBar.success("Education Program renewed successfully!");
     goBack();
   } catch (error: unknown) {
     if (error instanceof ApiProcessError) {

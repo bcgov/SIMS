@@ -153,7 +153,6 @@ const statusFilters = ref<ProgramStatusFilters>({
 const currentPage = ref();
 const currentPageLimit = ref();
 /**
- * Education program configuration the programs are listed for.
  * Initially set from the provided program year, when available, and validated by the filters component.
  */
 const selectedProgramYearId = ref<number | null | undefined>(

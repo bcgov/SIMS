@@ -48,7 +48,7 @@ const router = useRouter();
 const programsCount = ref<number>();
 
 /**
- * Keeps the route in sync with the selected program configuration.
+ * Keeps the route in sync with the selected program year.
  * @param programYearId currently selected program year id, if any.
  */
 const filtersChanged = async (programYearId?: number | null) => {
