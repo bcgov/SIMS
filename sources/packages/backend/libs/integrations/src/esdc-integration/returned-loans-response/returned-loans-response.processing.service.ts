@@ -161,18 +161,55 @@ export class ReturnedLoansResponseProcessingService {
     processSummary.info(
       `Received returned loan detail record with return reason ${returnedLoanDetailRecord.returnReason} at line ${returnedLoanDetailRecord.lineNumber}.`,
     );
+    const canProcess = this.validateReturnedLoanDetail(
+      returnedLoanDetailRecord,
+      returnedLoanAddressDetailRecordsMap,
+      processSummary,
+    );
+    if (!canProcess) {
+      // Skip processing this returned loan detail record if it cannot be processed due to validation errors.
+      return;
+    }
     const addressDetailRecord = returnedLoanAddressDetailRecordsMap.get(
       returnedLoanDetailRecord.sin,
     );
-    if (!addressDetailRecord) {
-      processSummary.error(
-        `No address detail record found for the returned loan detail record SIN at line ${returnedLoanDetailRecord.lineNumber}.`,
-      );
-      return;
-    }
+
     individualReturnedLoans.push({
       individual: addressDetailRecord,
       returnedLoan: returnedLoanDetailRecord,
     });
+  }
+
+  /**
+   * Validates a returned loan detail record to identify if it can be processed.
+   * @param returnedLoanDetailRecord returned loan detail record to validate.
+   * @param returnedLoanAddressDetailRecordsMap map of returned loan address detail records keyed by SIN.
+   * @param processSummary process summary for logging the validation steps and errors.
+   * @returns true if the returned loan detail record can be processed, false otherwise.
+   */
+  private validateReturnedLoanDetail(
+    returnedLoanDetailRecord: ReturnedLoansResponseFileReturnedLoanDetail,
+    returnedLoanAddressDetailRecordsMap: Map<
+      string,
+      ReturnedLoansResponseFileAddressDetail
+    >,
+    processSummary: ProcessSummary,
+  ): boolean {
+    const validationErrors = returnedLoanDetailRecord.validate();
+    if (validationErrors.length) {
+      processSummary.error(
+        `Validation errors for returned loan detail record at line ${returnedLoanDetailRecord.lineNumber}: ${validationErrors.join(", ")}.`,
+      );
+      return false;
+    }
+    if (
+      !returnedLoanAddressDetailRecordsMap.has(returnedLoanDetailRecord.sin)
+    ) {
+      processSummary.error(
+        `No address detail record found for the returned loan detail record SIN at line ${returnedLoanDetailRecord.lineNumber}.`,
+      );
+      return false;
+    }
+    return true;
   }
 }
