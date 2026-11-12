@@ -64,9 +64,7 @@ export abstract class BaseQueueProcessor<T>
    */
   async onApplicationBootstrap(): Promise<void> {
     try {
-      const queueConfiguration = await this.getQueueConfiguration(
-        this.worker.name as QueueNames,
-      );
+      const queueConfiguration = await this.getQueueConfiguration();
       QUEUE_WORKER_EVENTS.forEach((event) => {
         this.worker.on(event, () =>
           this.metricsService.incrementJobEventCounter(
@@ -111,11 +109,9 @@ export abstract class BaseQueueProcessor<T>
       this.logger.log(endLogMessage);
       const logsSum = processSummary.getLogLevelSum();
       if (logsSum.warn) {
-        const queueConfiguration = await this.getQueueConfiguration(
-          job.queueName as QueueNames,
-        );
+        const queueConfiguration = await this.getQueueConfiguration();
         this.metricsService.incrementJobEventCounter(
-          queueConfiguration.queueName,
+          job.queueName,
           queueConfiguration.isScheduler,
           MetricsCustomQueueEvents.JobFinalizedWithWarnings,
           { incrementValue: logsSum.warn },
@@ -197,12 +193,12 @@ export abstract class BaseQueueProcessor<T>
    * Gets the queue configuration details.
    * @returns Queue configuration details.
    */
-  private async getQueueConfiguration(
-    queueName: QueueNames,
-  ): Promise<QueueConfiguration> {
+  private async getQueueConfiguration(): Promise<QueueConfiguration> {
     if (!this.queueConfiguration) {
       this.queueConfiguration =
-        await this.queueService.queueConfigurationDetails(queueName);
+        await this.queueService.queueConfigurationDetails(
+          this.worker.name as QueueNames,
+        );
     }
     return this.queueConfiguration;
   }
