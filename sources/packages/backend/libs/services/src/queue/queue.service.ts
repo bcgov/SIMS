@@ -119,7 +119,11 @@ export class QueueService {
     queueName: QueueNames,
   ): Promise<number | undefined> {
     const queueConfig = await this.queueConfigurationDetails(queueName);
-    return queueConfig.queueConfiguration.amountHoursAssessmentRetry;
+    return (
+      queueConfig.queueConfiguration.jobData as {
+        amountHoursAssessmentRetry?: number;
+      }
+    ).amountHoursAssessmentRetry;
   }
 
   /**

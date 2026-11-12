@@ -27,7 +27,6 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   OfferingIntensity,
-  QueueConfiguration,
   StudentAssessment,
   StudentAssessmentStatus,
 } from "@sims/sims-db";
@@ -70,22 +69,6 @@ describe(
 
     beforeEach(() => {
       jest.resetAllMocks();
-      jest
-        .spyOn(
-          Reflect.get(processor, "queueService"),
-          "queueConfigurationDetails",
-        )
-        .mockImplementation((queueName) =>
-          Promise.resolve(
-            Object.assign(new QueueConfiguration(), {
-              queueName,
-              queueConfiguration: {
-                dashboardReadonly: false,
-                defaultJobOptions: {},
-              },
-            }),
-          ),
-        );
     });
 
     it("Should cancel the assessment pending disbursements and rollback overawards when the cancelled application has overawards and also one sent and one pending disbursements.", async () => {
@@ -124,9 +107,9 @@ describe(
       });
       await disbursementOverawardRepo.save(overaward);
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: studentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
+      });
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -185,9 +168,9 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
       await db.studentAssessment.save(studentAssessment);
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: studentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
+      });
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -213,9 +196,9 @@ describe(
       const studentAssessment = application.currentAssessment;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: studentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
+      });
 
       // Act
       await processor.process(mockedJob.job);
@@ -243,9 +226,9 @@ describe(
         StudentAssessmentStatus.CancellationQueued;
       await db.studentAssessment.save(studentAssessment);
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: studentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: studentAssessment.id,
+      });
 
       // Act
       const processPromise = processor.process(mockedJob.job);
@@ -262,9 +245,9 @@ describe(
       const assessmentId = 9999;
       const errorMessage = `Assessment id ${assessmentId} was not found.`;
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId,
+      });
 
       // Act
       const processPromise = processor.process(mockedJob.job);
@@ -326,9 +309,9 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: currentApplicationToCancel.currentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
+      });
 
       // Act
       await processor.process(mockedJob.job);
@@ -384,9 +367,9 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: currentApplicationToCancel.currentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
+      });
 
       // Act
       await processor.process(mockedJob.job);
@@ -454,9 +437,9 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: currentApplicationToCancel.currentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
+      });
 
       // Act
       await processor.process(mockedJob.job);
@@ -516,9 +499,9 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-        { assessmentId: currentApplicationToCancel.currentAssessment.id },
-      );
+      const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+        assessmentId: currentApplicationToCancel.currentAssessment.id,
+      });
 
       // Act
       await processor.process(mockedJob.job);
@@ -591,9 +574,9 @@ describe(
           impactedApplicationAssessmentBeforeCancel,
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>(
-          { assessmentId: currentApplicationToCancel.currentAssessment.id },
-        );
+        const mockedJob = mockBullMQJob<CancelAssessmentQueueInDTO>({
+          assessmentId: currentApplicationToCancel.currentAssessment.id,
+        });
         // Spy on assess impacted application method to make sure that it is not invoked.
         const assessmentSequentialProcessingService =
           await getProviderInstanceForModule(

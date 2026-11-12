@@ -1,6 +1,6 @@
 import { Queue } from "bullmq";
 import { INestApplication } from "@nestjs/common";
-import { QueueJobNames, QueueNames, addHours } from "@sims/utilities";
+import { QueueNames, QueueJobNames, addHours } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -16,6 +16,7 @@ import { Not } from "typeorm";
 import { StudentAssessmentStatus } from "@sims/sims-db";
 import {
   CancelAssessmentQueueInDTO,
+  QueueService,
   StartAssessmentQueueInDTO,
 } from "@sims/services/queue";
 import { WorkflowQueueRetryScheduler } from "../assessment-workflow-queue-retry.scheduler";
@@ -29,6 +30,7 @@ describe(
     let retryProcessor: WorkflowQueueRetryScheduler;
     let startApplicationAssessmentQueueMock: Queue<StartAssessmentQueueInDTO>;
     let cancelApplicationAssessmentQueueMock: Queue<CancelAssessmentQueueInDTO>;
+    let queueService: QueueService;
     let amountHoursAssessmentRetry: number;
 
     beforeAll(async () => {
@@ -45,9 +47,11 @@ describe(
       );
       // Processor under test.
       retryProcessor = app.get(WorkflowQueueRetryScheduler);
-      // Set the amount of hours for assessment retry.
-      // This value is used to calculate the retry window for assessments.
-      amountHoursAssessmentRetry = 6;
+      queueService = app.get(QueueService);
+      amountHoursAssessmentRetry =
+        await queueService.getAmountHoursAssessmentRetry(
+          QueueNames.AssessmentWorkflowQueueRetry,
+        );
     });
 
     beforeEach(async () => {
@@ -74,11 +78,9 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
-        {
-          amountHoursAssessmentRetry,
-        },
-      );
+      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
       await retryProcessor.process(mockedJob.job);
@@ -105,12 +107,11 @@ describe(
         -(amountHoursAssessmentRetry + 1),
       );
       await db.studentAssessment.save(currentAssessment);
+
       // Retry job.
-      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
-        {
-          amountHoursAssessmentRetry,
-        },
-      );
+      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
       await retryProcessor.process(mockedJob.job);
@@ -139,11 +140,9 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
-        {
-          amountHoursAssessmentRetry,
-        },
-      );
+      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
       await retryProcessor.process(mockedJob.job);
@@ -154,7 +153,6 @@ describe(
         assessmentId: currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalledWith(
-        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
     });
@@ -172,11 +170,9 @@ describe(
       await db.studentAssessment.save(currentAssessment);
 
       // Retry job.
-      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>(
-        {
-          amountHoursAssessmentRetry,
-        },
-      );
+      const mockedJob = mockBullMQJob<AssessmentWorkflowQueueRetryInDTO>({
+        amountHoursAssessmentRetry: 6,
+      });
 
       // Act
       await retryProcessor.process(mockedJob.job);
@@ -187,7 +183,6 @@ describe(
         assessmentId: currentAssessment.id,
       };
       expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalledWith(
-        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
     });
