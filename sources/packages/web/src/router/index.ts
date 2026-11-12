@@ -49,12 +49,15 @@ const router = createRouter({
 async function isMaintenanceActiveForRoute(
   to: RouteLocationNormalized,
 ): Promise<boolean> {
-  const config = await AppConfigService.shared.config();
-
-  // Do not apply maintenance checks to the maintenance page itself.
-  if (to.name === SharedRouteConst.MAINTENANCE_PAGE) {
+  // Pages that must be reachable even when the config cannot be loaded.
+  if (
+    to.name === SharedRouteConst.MAINTENANCE_PAGE ||
+    to.name === SharedRouteConst.UNEXPECTED_ERROR
+  ) {
     return false;
   }
+
+  const config = await AppConfigService.shared.config();
 
   // Global maintenance mode check.
   if (config.maintenanceMode) {

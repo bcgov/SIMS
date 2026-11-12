@@ -39,6 +39,25 @@ function getLoginRouteName(): symbol | undefined {
 }
 
 /**
+ * Gets the error payload, parsing it when requested as a blob (e.g. file downloads).
+ * The response data is not changed, since the callers may still expect a blob.
+ * @param data response data.
+ * @returns error payload, if available.
+ */
+async function getErrorPayload(
+  data: unknown,
+): Promise<{ errorType?: string } | undefined> {
+  if (!(data instanceof Blob)) {
+    return data as { errorType?: string } | undefined;
+  }
+  try {
+    return JSON.parse(await data.text());
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Redirects the user based on the HTTP error received from the API.
  * - Named errors (those with an 'errorType') are business errors to be handled
  * by the caller, except for the maintenance mode, which redirects to the maintenance page.
@@ -60,7 +79,8 @@ async function redirectOnHttpError(
   if (SHARED_ERROR_ROUTES.has(currentRoute.name)) {
     return;
   }
-  const { status, data } = error.response;
+  const { status } = error.response;
+  const data = await getErrorPayload(error.response.data);
   // Using replace to allow the user to go back to the previous page.
   switch (status) {
     case HttpStatusCode.Unauthorized: {
@@ -87,7 +107,7 @@ async function redirectOnHttpError(
       });
       return;
     case HttpStatusCode.ServiceUnavailable:
-      if (data.errorType === MAINTENANCE_MODE) {
+      if (data?.errorType === MAINTENANCE_MODE) {
         // Maintenance mode, redirect to maintenance page.
         await router.replace({ name: SharedRouteConst.MAINTENANCE_PAGE });
       } else {

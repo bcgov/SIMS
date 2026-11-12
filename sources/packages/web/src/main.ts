@@ -12,6 +12,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import { registerHttpErrorInterceptor } from "@/services/http/common/HttpErrorInterceptor";
+import { SharedRouteConst } from "@/constants/routes/RouteConstants";
 import { AppConfigService } from "./services/AppConfigService";
 import BodyHeader from "@/components/generic/BodyHeader.vue";
 import ContentGroup from "@/components/generic/ContentGroup.vue";
@@ -40,9 +41,8 @@ import SearchTable from "@/components/generic/SearchTable.vue";
 import bootstrap5 from "@formio/bootstrap/bootstrap5";
 import { Formio } from "@formio/js";
 Formio.use(bootstrap5);
-registerHttpErrorInterceptor(router);
 
-AppConfigService.shared.init().then(() => {
+const mountApp = () =>
   createApp(App)
     .use(vuetify)
     .use(store)
@@ -71,4 +71,18 @@ AppConfigService.shared.init().then(() => {
     .component("ChipLabel", ChipLabel)
     .component("SearchTable", SearchTable)
     .mount("#app");
-});
+
+const bootstrap = async () => {
+  try {
+    await AppConfigService.shared.init();
+    // Register the interceptor after the config load
+    // to not handle its failure through the router.
+    registerHttpErrorInterceptor(router);
+  } catch (error: unknown) {
+    console.error(error);
+    await router.replace({ name: SharedRouteConst.UNEXPECTED_ERROR });
+  }
+  mountApp();
+};
+
+void bootstrap();
