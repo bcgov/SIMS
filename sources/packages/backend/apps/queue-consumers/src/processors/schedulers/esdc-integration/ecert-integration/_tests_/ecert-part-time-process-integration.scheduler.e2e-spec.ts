@@ -141,9 +141,7 @@ describe(
       const { student, disbursement } =
         await createBlockedDisbursementTestData(db);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -208,9 +206,7 @@ describe(
             disbursementValues: [],
           });
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -273,9 +269,7 @@ describe(
       const notificationsToCreate = 3;
       await saveNotifications(notificationsToCreate, student, disbursement.id);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -308,9 +302,7 @@ describe(
       // Create 1 pre-existing notification for the student and the ministry 6 days before the current date for the above created disbursement.
       await saveNotifications(1, student, disbursement.id, -6);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -353,9 +345,7 @@ describe(
       // Create 1 pre-existing notification for the above created disbursement.
       await saveNotifications(1, student, disbursement.id, -7);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -443,9 +433,7 @@ describe(
         ["sequenceName"],
       );
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(job);
@@ -495,9 +483,7 @@ describe(
 
     it("Should generate an e-cert file with only header and footer when there is no disbursement to be sent.", async () => {
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(job);
@@ -566,9 +552,7 @@ describe(
         },
       );
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       await processor.process(job);
@@ -657,9 +641,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -789,9 +771,7 @@ describe(
       );
 
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(job);
@@ -900,9 +880,7 @@ describe(
         },
       );
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(job);
@@ -1018,9 +996,7 @@ describe(
         },
       );
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(job);
@@ -1110,9 +1086,7 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await processor.process(mockedJob.job);
@@ -1249,9 +1223,7 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await processor.process(mockedJob.job);
@@ -1360,9 +1332,7 @@ describe(
         });
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await processor.process(mockedJob.job);
@@ -1525,9 +1495,7 @@ describe(
         fakeCanadaLoanOverawardBalance,
       );
       // Queued job.
-      const { job } = mockBullMQJob<void>(
-        undefined,
-      );
+      const { job } = mockBullMQJob<void>();
 
       // Act
       await processor.process(job);
@@ -1649,9 +1617,7 @@ describe(
       });
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await processor.process(mockedJob.job);
@@ -1761,9 +1727,7 @@ describe(
           location,
         });
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -1865,9 +1829,7 @@ describe(
           { createProgram: true },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -1923,9 +1885,7 @@ describe(
           location,
         });
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
         const now = new Date();
         MockDate.set(now);
 
@@ -2049,9 +2009,7 @@ describe(
         );
         await db.notification.save(existingNotification);
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await processor.process(mockedJob.job);
@@ -2146,9 +2104,7 @@ describe(
           await db.studentScholasticStanding.save(scholasticStanding);
 
           // Queued job.
-          const mockedJob = mockBullMQJob<void>(
-            undefined,
-          );
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
           const result = await processor.process(mockedJob.job);
@@ -2243,9 +2199,7 @@ describe(
           await db.studentScholasticStanding.save(scholasticStanding);
 
           // Queued job.
-          const mockedJob = mockBullMQJob<void>(
-            undefined,
-          );
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
           const result = await processor.process(mockedJob.job);
@@ -2338,9 +2292,7 @@ describe(
         await db.studentScholasticStanding.save(scholasticStanding);
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -2443,9 +2395,7 @@ describe(
               );
 
             // Queued job.
-            const mockedJob = mockBullMQJob<void>(
-              undefined,
-            );
+            const mockedJob = mockBullMQJob<void>();
 
             // Act
             const result = await processor.process(mockedJob.job);
@@ -2573,9 +2523,7 @@ describe(
               },
             );
             // Queued job.
-            const mockedJob = mockBullMQJob<void>(
-              undefined,
-            );
+            const mockedJob = mockBullMQJob<void>();
 
             // Act
             const result = await processor.process(mockedJob.job);
@@ -2709,9 +2657,7 @@ describe(
               restriction,
             });
           // Queued job.
-          const mockedJob = mockBullMQJob<void>(
-            undefined,
-          );
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
           const result = await processor.process(mockedJob.job);
@@ -2857,9 +2803,7 @@ describe(
             studentRestriction,
           });
           // Queued job.
-          const mockedJob = mockBullMQJob<void>(
-            undefined,
-          );
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
           const result = await processor.process(mockedJob.job);

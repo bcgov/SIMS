@@ -73,9 +73,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const processResult = await processor.process(mockedJob.job);
@@ -123,9 +121,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const processResult = await processor.process(mockedJob.job);
@@ -188,9 +184,7 @@ describe(
           [SIN_VALIDATION_FILENAME],
           changeFile,
         );
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await expect(processor.process(mockedJob.job)).rejects.toThrow(

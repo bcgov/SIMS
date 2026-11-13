@@ -76,9 +76,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
       replaceCRAIncomeVerificationId(file, studentCRAIncomeVerification.id);
@@ -134,9 +132,7 @@ describe(describeProcessorRootTest(QueueNames.CRAResponseIntegration), () => {
     });
     await db.craIncomeVerification.save([studentCRAIncomeVerification]);
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
     mockDownloadFiles(sftpClientMock, [CRA_FILENAME], (fileContent: string) => {
       const file = getStructuredRecords(fileContent);
       replaceCRAIncomeVerificationId(file, studentCRAIncomeVerification.id);

@@ -84,9 +84,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -120,9 +118,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -159,9 +155,7 @@ describe(
           },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act/Assert
         await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -223,9 +217,7 @@ describe(
           },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act/Assert
         await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -314,9 +306,7 @@ describe(
           },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act/Assert
         await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -395,9 +385,7 @@ describe(
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         ]);
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -496,9 +484,7 @@ describe(
           PART_TIME_CANCELLATION_RESPONSE_FILE,
         ]);
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -624,9 +610,7 @@ describe(
           FULL_TIME_CANCELLATION_RESPONSE_FILE,
         ]);
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -765,9 +749,7 @@ describe(
           FULL_TIME_CANCELLATION_RESPONSE_FILE,
         ]);
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);

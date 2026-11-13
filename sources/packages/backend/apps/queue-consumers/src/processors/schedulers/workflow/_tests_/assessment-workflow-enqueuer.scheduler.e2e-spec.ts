@@ -72,9 +72,7 @@ describe(
       // Application submitted with original assessment.
       const application = await createDefaultApplication();
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await processor.process(mockedJob.job);
@@ -129,9 +127,7 @@ describe(
       application.currentAssessment = newestAssessment;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await processor.process(mockedJob.job);
@@ -179,9 +175,7 @@ describe(
         await db.studentAssessment.save(submittedAssessment);
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await processor.process(mockedJob.job);
@@ -201,9 +195,7 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await processor.process(mockedJob.job);
@@ -223,9 +215,7 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await processor.process(mockedJob.job);
@@ -269,9 +259,7 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await processor.process(mockedJob.job);

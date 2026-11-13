@@ -140,9 +140,7 @@ describe(
       const invoiceNumber = createInvoiceNameFromApplication(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -376,9 +374,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -444,9 +440,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -457,9 +451,7 @@ describe(
     it("Should finalize the process nicely when there is no pending receipt to process.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);

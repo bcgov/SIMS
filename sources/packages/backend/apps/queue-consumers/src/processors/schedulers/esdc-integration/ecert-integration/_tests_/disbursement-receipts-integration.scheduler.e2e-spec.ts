@@ -142,9 +142,7 @@ describe(
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -179,9 +177,7 @@ describe(
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -212,9 +208,7 @@ describe(
         FEDERAL_ONLY_FULL_TIME_FILE,
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -239,9 +233,7 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_FULL_TIME_FILE]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -372,9 +364,7 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_ONLY_FULL_TIME_FILE]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -481,9 +471,7 @@ describe(
       });
       mockDownloadFiles(sftpClientMock, [FEDERAL_PROVINCIAL_PART_TIME_FILE]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -629,9 +617,7 @@ describe(
         FEDERAL_PROVINCIAL_FULL_TIME_PART_TIME_FILE,
       ]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -785,9 +771,7 @@ describe(
       // Arrange
       mockDownloadFiles(sftpClientMock, [NON_MATCHING_RECORDS_FILE]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -875,9 +859,7 @@ describe(
       // Arrange
       mockDownloadFiles(sftpClientMock, []);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       await expect(processor.process(mockedJob.job)).rejects.toThrow(

@@ -75,9 +75,7 @@ describe(
       // Create user.
       const student = await createStudentWithSpecificLastName("reserved");
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
       // Act
       const result = await processor.process(mockedJob.job);
@@ -115,9 +113,7 @@ describe(
       // Create Student.
       const student = await createStudentWithSpecificLastName("random");
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
       ]);
@@ -143,9 +139,7 @@ describe(
     it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME,
       ]);
@@ -184,9 +178,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
@@ -239,9 +231,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
@@ -293,9 +283,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act

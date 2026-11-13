@@ -87,9 +87,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -121,9 +119,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -155,9 +151,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -189,9 +183,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -224,9 +216,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
       await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -258,9 +248,7 @@ describe(
       );
       mockDownloadFiles(sftpClientMock, [FEEDBACK_ERROR_FILE_SINGLE_RECORD]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -333,9 +321,7 @@ describe(
           FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS,
         ]);
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act/Assert
         await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -420,9 +406,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);

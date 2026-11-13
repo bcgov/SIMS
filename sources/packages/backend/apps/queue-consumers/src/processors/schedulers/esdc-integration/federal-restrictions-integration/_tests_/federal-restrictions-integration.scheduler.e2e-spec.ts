@@ -156,9 +156,7 @@ describe(
           { applyListFilter: true },
         );
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         const result = await processor.process(mockedJob.job);
@@ -309,9 +307,7 @@ describe(
         { applyListFilter: true },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -342,9 +338,7 @@ describe(
         undefined,
         { applyListFilter: true },
       );
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -390,9 +384,7 @@ describe(
       await db.federalRestriction.clear();
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);

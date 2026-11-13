@@ -127,9 +127,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           .institutionCode;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -188,9 +186,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
 
     // Act
     const result = await processor.process(mockedJob.job);
@@ -274,9 +270,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       await db.studentAssessment.save(newAssessment);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -374,9 +368,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           .institutionCode;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -477,9 +469,7 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           .institutionCode;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);

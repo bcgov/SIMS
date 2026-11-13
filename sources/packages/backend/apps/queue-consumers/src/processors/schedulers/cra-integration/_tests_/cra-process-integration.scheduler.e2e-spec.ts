@@ -77,9 +77,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     const now = new Date();
     MockDate.set(now);
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
     const fileName = "CCRA_REQUEST_A00001.DAT";
 
     // Act
@@ -184,9 +182,7 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     const now = new Date();
     MockDate.set(now);
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
 
     // Act
     const result = await processor.process(mockedJob.job);

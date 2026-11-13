@@ -87,9 +87,7 @@ describe(
         msfaaInputData,
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       // Spy on the MSFAA content creation to intercept the process date and time used.
       const createMSFAARequestContentMock =
         createMSFAARequestContentSpyOnMock(app);
@@ -163,9 +161,7 @@ describe(
         sequenceNumber: lifeTimeSequenceValue,
       });
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       const createMSFAARequestContentMock =
         createMSFAARequestContentSpyOnMock(app);
 

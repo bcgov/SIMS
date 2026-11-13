@@ -174,9 +174,7 @@ describe(
       const currentDate = new Date();
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -253,9 +251,7 @@ describe(
       const [referenceDisbursementValue] = disbursement!.disbursementValues!;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // A past COE date simulates a CONR file with a COE date different from
       // the actual processing time.
@@ -422,9 +418,7 @@ describe(
         const [referenceDisbursementValue] = disbursement.disbursementValues;
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Modify the data in mock file to have the correct values for
         // disbursement value ID and application number.
@@ -520,9 +514,7 @@ describe(
         const [referenceDisbursementValue] = disbursement.disbursementValues;
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Modify the data in mock file to have the correct values for
         // disbursement value ID and application number.
@@ -619,9 +611,7 @@ describe(
         const [referenceDisbursementValue] = disbursement.disbursementValues;
 
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Modify the data in mock file to have the correct values for
         // disbursement value ID and application number.
@@ -727,9 +717,7 @@ describe(
         disbursement.disbursementValues.map((awardValue) => awardValue.id);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       const applicationNumber = application.applicationNumber;
       const currentDate = new Date();
 
@@ -860,9 +848,7 @@ describe(
         secondDisbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -947,9 +933,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1034,9 +1018,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1105,9 +1087,7 @@ describe(
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have fake disbursement value ID.
       mockDownloadFiles(
@@ -1186,9 +1166,7 @@ describe(
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct disbursement
       // value ID and fake application number.
@@ -1251,9 +1229,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid header.
       mockDownloadFiles(
@@ -1302,9 +1278,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid detail.
       mockDownloadFiles(
@@ -1356,9 +1330,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
@@ -1409,9 +1381,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
@@ -1462,9 +1432,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid application number.
       // Note: The disbursement value ID is already an invalid value in file
@@ -1539,9 +1507,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1630,9 +1596,7 @@ describe(
       const [referenceDisbursement2Value] = disbursement2.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1724,9 +1688,7 @@ describe(
       const disbursementDate = disbursement.disbursementDate;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1810,9 +1772,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1889,9 +1849,7 @@ describe(
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
       const [referenceDisbursementValue] = disbursement.disbursementValues;
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE, CONR_008_CONF_SECOND_FILE],
@@ -1997,9 +1955,7 @@ describe(
     it("Should order files by name and group files per institution code when multiple files are present for distinct institutions.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Add a mock download for multiple files, two for each institution code.
       mockDownloadFiles(sftpClientMock, [

@@ -187,9 +187,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
     mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
 
     // Act
@@ -289,9 +287,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         ),
       ]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [SFAS_ALL_RESTRICTIONS_FILENAME]);
       // Act
       const result = await processor.process(mockedJob.job);
@@ -332,9 +328,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   it("Should import a resolved SSD and SSR as a single resolved SSR, and a resolved SSRN when the student does not have SSR or SSRN restrictions in his account.", async () => {
     // Arrange
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
     mockDownloadFiles(sftpClientMock, [
       SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
     ]);
@@ -392,9 +386,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         ),
       ]);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_TO_SIMS_SSR_SSRN_RESOLVED_RESTRICTIONS,
       ]);
@@ -442,9 +434,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [SFAS_SAIL_DATA_FILENAME]);
       // Act
       await processor.process(mockedJob.job);
@@ -540,9 +530,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_INVALID_RECORDS_INCONSISTENT_WITH_DATA_IMPORT_FILENAME,
       ]);
@@ -572,9 +560,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORDS_FILENAME,
       ]);
@@ -729,9 +715,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       student.sinValidation = sinValidation;
       await db.student.save(student);
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_VALID_RECORD_OVERAWARD_FILENAME,
       ]);
@@ -812,9 +796,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         DEPENDANT_AND_DISBURSEMENT_RECORDS_FILENAME,
       ]);
@@ -984,9 +966,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [INVALID_RECORD_TYPE_FILENAME]);
 
       // Act
@@ -1017,9 +997,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_INDIVIDUAL_AND_APPLICATION_ALL_VALUES_FILENAME,
       ]);
@@ -1214,9 +1192,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       async () => {
         // Arrange
         // Queued job.
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
         mockDownloadFiles(
           sftpClientMock,
           [SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS],
@@ -1300,9 +1276,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
       ]);
@@ -1352,9 +1326,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
     mockDownloadFiles(sftpClientMock, [
       SFAS_TO_SIMS_INDIVIDUAL_AND_APPLICATION_WTHD_RESTRICTIONS,
     ]);
@@ -1387,9 +1359,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
         return createFileFromStructuredRecords(file);
       },
     );
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
 
     // Act/Assert
     await expect(processor.process(mockedJob.job)).rejects.toThrow(
@@ -1404,9 +1374,7 @@ describe(describeProcessorRootTest(QueueNames.SFASIntegration), () => {
   it("Should only execute the post file import operations when there are no SFAS files to be processed.", async () => {
     // Arrange
     mockDownloadFiles(sftpClientMock, []);
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
 
     // Act
     const result = await processor.process(mockedJob.job);

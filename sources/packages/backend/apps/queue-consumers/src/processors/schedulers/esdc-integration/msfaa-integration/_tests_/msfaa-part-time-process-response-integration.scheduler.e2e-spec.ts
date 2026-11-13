@@ -110,9 +110,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
@@ -276,9 +274,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
@@ -399,9 +395,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_CANCELATION_RECORD,
@@ -456,9 +450,7 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid SIN hash total.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_SIN_HASH_TOTAL,
@@ -484,9 +476,7 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid record count.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       mockDownloadFiles(sftpClientMock, [
         MSFAA_PART_TIME_RECEIVE_FILE_WITH_INVALID_RECORDS_COUNT,
@@ -512,9 +502,7 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid header code.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       mockDownloadFiles(
         sftpClientMock,
@@ -545,9 +533,7 @@ describe(
     it("Should throw an error when the MSFAA file contains an invalid footer code.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       mockDownloadFiles(
         sftpClientMock,

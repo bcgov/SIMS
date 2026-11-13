@@ -76,9 +76,7 @@ describe(
       });
       const now = new Date();
       MockDate.set(now);
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -177,9 +175,7 @@ describe(
       );
       const now = new Date();
       MockDate.set(now);
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -229,9 +225,7 @@ describe(
       await saveFakeStudent(db.dataSource);
       const now = new Date();
       MockDate.set(now);
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);
@@ -251,9 +245,7 @@ describe(
 
     it("Should not generate any file when there are no students with pending SIN validation.", async () => {
       // Arrange
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
       const result = await processor.process(mockedJob.job);

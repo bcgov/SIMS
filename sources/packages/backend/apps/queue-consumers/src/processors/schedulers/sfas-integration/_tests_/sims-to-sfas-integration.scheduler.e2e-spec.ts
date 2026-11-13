@@ -180,9 +180,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -254,9 +252,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       });
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -311,9 +307,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -434,9 +428,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -515,9 +507,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       );
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -606,9 +596,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -687,9 +675,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
 
       // Mock the current date.
       MockDate.set(mockedCurrentDate);
@@ -740,9 +726,7 @@ describe(describeProcessorRootTest(QueueNames.SIMSToSFASIntegration), () => {
     });
 
     // Queued job.
-    const mockedJob = mockBullMQJob<void>(
-      undefined,
-    );
+    const mockedJob = mockBullMQJob<void>();
 
     // Act/Assert
     await expect(processor.process(mockedJob.job)).rejects.toThrow(

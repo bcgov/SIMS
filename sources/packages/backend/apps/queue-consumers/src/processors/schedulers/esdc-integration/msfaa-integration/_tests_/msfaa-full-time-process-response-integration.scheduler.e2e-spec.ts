@@ -142,9 +142,7 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
@@ -266,9 +264,7 @@ describe(
         ),
       );
       // Queued job.
-      const mockedJob = mockBullMQJob<void>(
-        undefined,
-      );
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
       ]);
@@ -394,9 +390,7 @@ describe(
           [MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD],
           changeFile,
         );
-        const mockedJob = mockBullMQJob<void>(
-          undefined,
-        );
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
         await expect(processor.process(mockedJob.job)).rejects.toThrow(
