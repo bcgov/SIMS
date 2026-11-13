@@ -51,7 +51,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramService } from "../../services/education-program/education-program.service";
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
-import { credentialTypeToDisplay, PaginatedResults } from "../../utilities";
+import { credentialTypeToDisplay } from "../../utilities";
 import { CustomNamedError, isSameOrAfterDate } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
 import {
@@ -428,7 +428,9 @@ export class EducationProgramInstitutionsController extends BaseController {
     programYearId: number,
     @Query() pagination: ProgramsManagementPaginationOptionsAPIInDTO,
     @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<PaginatedResults<EducationProgramManagerDetailsAPIOutDTO>> {
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
+  > {
     const programYearExists = await this.programYearService.programYearExists(
       programYearId,
       { activeOnly: false },
