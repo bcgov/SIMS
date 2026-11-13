@@ -61,10 +61,9 @@ async function getErrorPayload(
  * Redirects the user based on the HTTP error received from the API.
  * - Named errors (those with an 'errorType') are business errors to be handled
  * by the caller, except for the maintenance mode, which redirects to the maintenance page.
- * - Non-named errors 401, 403, 404 and 503 are redirected to the client login,
- * forbidden, not found and unexpected error pages, respectively.
- * - Any other non-named server error (5xx) is redirected to the unexpected error page.
- * - Client errors not listed above (e.g. 400 and 422) are left to the caller to be handled.
+ * - Non-named errors 401, 403 and 404 are redirected to the client login,
+ * forbidden and not found pages, respectively.
+ * - Any other non-named error (e.g. 400, 422 and 5xx) is redirected to the unexpected error page.
  * @param router application router.
  * @param error error to be inspected.
  */
@@ -81,6 +80,17 @@ async function redirectOnHttpError(
   }
   const { status } = error.response;
   const data = await getErrorPayload(error.response.data);
+  // Named errors are business errors handled by the caller, so no redirect is done for them (except maintenance mode).
+  if (data?.errorType) {
+    if (
+      status === HttpStatusCode.ServiceUnavailable &&
+      data.errorType === MAINTENANCE_MODE
+    ) {
+      // Maintenance mode, redirect to maintenance page.
+      await router.replace({ name: SharedRouteConst.MAINTENANCE_PAGE });
+    }
+    return;
+  }
   // Using replace to allow the user to go back to the previous page.
   switch (status) {
     case HttpStatusCode.Unauthorized: {
@@ -104,16 +114,9 @@ async function redirectOnHttpError(
         name: SharedRouteConst.PAGE_NOT_FOUND,
         // Keeps the current URL while rendering the not found page.
         params: { pathMatch: currentRoute.path.substring(1).split("/") },
+        query: currentRoute.query,
+        hash: currentRoute.hash,
       });
-      return;
-    case HttpStatusCode.ServiceUnavailable:
-      if (data?.errorType === MAINTENANCE_MODE) {
-        // Maintenance mode, redirect to maintenance page.
-        await router.replace({ name: SharedRouteConst.MAINTENANCE_PAGE });
-      } else {
-        // Service unavailable, redirect to unexpected error page.
-        await router.replace({ name: SharedRouteConst.UNEXPECTED_ERROR });
-      }
       return;
     default:
       // Unexpected HTTP error, redirect to unexpected error page.

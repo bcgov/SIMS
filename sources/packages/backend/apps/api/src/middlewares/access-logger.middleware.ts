@@ -26,7 +26,7 @@ export class AccessLoggerMiddleware implements NestMiddleware {
     userAccessLogs.push(
       `Request - ${method} ${originalUrl} From ${clientIP}`,
       `User GUID: ${userGUID}`,
-      `Session ID: ${user?.sid ?? "Session ID not found"}`,
+      `SSO Session ID: ${user?.sid ?? "SSO Session ID not found"}`,
     );
     if (user?.client_id) {
       userAccessLogs.push(`Client ID: ${user.client_id}`);

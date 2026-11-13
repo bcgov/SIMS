@@ -13,7 +13,7 @@ export class AppAllExceptionsFilter extends BaseExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost): void {
     const request: Request = host.switchToHttp().getRequest();
     const userToken = request.user as IUserToken | undefined;
-    const userInfo = `User: ${userToken?.userName ?? "not authenticated"} | Session ID: ${userToken?.sid ?? "not found"}`;
+    const userInfo = `User: ${userToken?.userName ?? "not authenticated"} | SSO Session ID: ${userToken?.sid ?? "not found"}`;
     // If the exception is an API process error, then log the exception message and request details.
     if (exception instanceof HttpException) {
       const innerException = exception.getResponse();
