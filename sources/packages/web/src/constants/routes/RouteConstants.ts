@@ -230,4 +230,5 @@ export const SharedRouteConst = {
   PAGE_NOT_FOUND: Symbol(),
   FORBIDDEN_USER: Symbol(),
   MAINTENANCE_PAGE: Symbol(),
+  UNEXPECTED_ERROR: Symbol(),
 };
