@@ -4,7 +4,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -77,11 +77,11 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     const now = new Date();
     MockDate.set(now);
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>();
     const fileName = "CCRA_REQUEST_A00001.DAT";
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     // Assert uploaded file.
@@ -182,10 +182,10 @@ describe(describeProcessorRootTest(QueueNames.CRAProcessIntegration), () => {
     const now = new Date();
     MockDate.set(now);
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>();
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     const uploadedFile = getUploadedFile(sftpClientMock);

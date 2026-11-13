@@ -48,7 +48,7 @@ import MockDate from "mockdate";
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import {
@@ -226,10 +226,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -257,10 +257,10 @@ describe(
 
     it("Should generate an e-cert file with only header and footer when there is no disbursement to be sent.", async () => {
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -344,10 +344,10 @@ describe(
       await db.disbursementOveraward.save(fakeCanadaLoanOverawardBalance);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -565,10 +565,10 @@ describe(
         ]);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert some log messages related to overaward processing.
         expect(
@@ -721,10 +721,10 @@ describe(
         await db.disbursementOveraward.save(fakeCanadaLoanOverawardBalance);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert some log messages related to overaward processing.
         expect(
@@ -895,10 +895,10 @@ describe(
       await db.programYear.save(applicationA.programYear);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(
@@ -1085,10 +1085,10 @@ describe(
         await db.programYear.save(currentApplication.programYear);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
         // Assert
         expect(
           mockedJob.containLogMessages([
@@ -1205,10 +1205,10 @@ describe(
       ]);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(
@@ -1322,10 +1322,10 @@ describe(
         });
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1419,10 +1419,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1453,10 +1453,10 @@ describe(
       });
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1491,10 +1491,10 @@ describe(
       });
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1524,10 +1524,10 @@ describe(
       });
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1600,10 +1600,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1670,10 +1670,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert uploaded file.
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -1769,10 +1769,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1920,10 +1920,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -2032,10 +2032,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -2141,10 +2141,10 @@ describe(
         });
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -2185,10 +2185,10 @@ describe(
             disbursementValues: [],
           });
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert uploaded file.
         const uploadedFile = getUploadedFile(sftpClientMock);
@@ -2271,10 +2271,10 @@ describe(
       await db.notification.save(ministryNotification);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Assert disbursement was blocked and expected student notification was created and ministry notification was not created.
@@ -2375,10 +2375,10 @@ describe(
           location,
         });
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         // Assert uploaded file.
@@ -2443,12 +2443,12 @@ describe(
           institution,
         });
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
         const now = new Date();
         MockDate.set(now);
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         // Assert log messages.
@@ -2545,12 +2545,12 @@ describe(
           location,
         });
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
         const now = new Date();
         MockDate.set(now);
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         // Assert log messages.
@@ -2669,10 +2669,10 @@ describe(
         );
         await db.notification.save(existingNotification);
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         // Assert log messages for the blocked disbursement.
@@ -2764,10 +2764,10 @@ describe(
           await db.studentScholasticStanding.save(scholasticStanding);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          const result = await processor.processQueue(mockedJob.job);
+          const result = await processor.process(mockedJob.job);
 
           // Assert
           // Assert uploaded file.
@@ -2859,10 +2859,10 @@ describe(
           await db.studentScholasticStanding.save(scholasticStanding);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          const result = await processor.processQueue(mockedJob.job);
+          const result = await processor.process(mockedJob.job);
 
           // Assert
           // Assert uploaded file.
@@ -2950,10 +2950,10 @@ describe(
         await db.studentScholasticStanding.save(scholasticStanding);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         // Assert uploaded file.
@@ -3046,10 +3046,10 @@ describe(
               );
 
             // Queued job.
-            const mockedJob = mockBullJob<void>();
+            const mockedJob = mockBullMQJob<void>();
 
             // Act
-            const result = await processor.processQueue(mockedJob.job);
+            const result = await processor.process(mockedJob.job);
 
             // Assert
             // Assert uploaded file.
@@ -3163,10 +3163,10 @@ describe(
               },
             );
             // Queued job.
-            const mockedJob = mockBullJob<void>();
+            const mockedJob = mockBullMQJob<void>();
 
             // Act
-            const result = await processor.processQueue(mockedJob.job);
+            const result = await processor.process(mockedJob.job);
 
             // Assert
             // Assert uploaded file.
@@ -3287,10 +3287,10 @@ describe(
               restriction,
             });
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          const result = await processor.processQueue(mockedJob.job);
+          const result = await processor.process(mockedJob.job);
 
           // Assert
           // Assert uploaded file.
@@ -3421,10 +3421,10 @@ describe(
             studentRestriction,
           });
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          const result = await processor.processQueue(mockedJob.job);
+          const result = await processor.process(mockedJob.job);
 
           // Assert
           // Assert uploaded file.

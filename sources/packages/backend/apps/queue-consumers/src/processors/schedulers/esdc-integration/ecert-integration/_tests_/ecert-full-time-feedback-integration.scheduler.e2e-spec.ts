@@ -18,7 +18,7 @@ import {
 import {
   createTestingAppModule,
   describeQueueProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
@@ -87,10 +87,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       const downloadedFile = join(
@@ -119,10 +119,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       const downloadedFile = join(
@@ -151,10 +151,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       const downloadedFile = join(
@@ -183,10 +183,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       const downloadedFile = join(
@@ -216,10 +216,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -248,10 +248,10 @@ describe(
       );
       mockDownloadFiles(sftpClientMock, [FEEDBACK_ERROR_FILE_SINGLE_RECORD]);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result.length).toBe(1);
@@ -321,10 +321,10 @@ describe(
           FEEDBACK_ERROR_FILE_MULTIPLE_RECORDS,
         ]);
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act/Assert
-        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        await expect(processor.process(mockedJob.job)).rejects.toThrow(
           "One or more errors were reported during the process, please see logs for details.",
         );
         expect(
@@ -406,10 +406,10 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result.length).toBe(1);

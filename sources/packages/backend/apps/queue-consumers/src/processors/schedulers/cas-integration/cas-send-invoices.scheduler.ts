@@ -1,33 +1,21 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
+import { Processor } from "@nestjs/bullmq";
 import { QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { CASInvoiceService } from "../../../services";
 import { CASIntegrationQueueInDTO } from "./models/cas-integration.dto";
 
 /**
  * Scheduler to send invoices to CAS.
  */
-@Processor(QueueNames.CASSendInvoices)
-export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueInDTO> {
+@Processor(QueueNames.CASSendInvoices, BaseQueueProcessor.defaultWorkerOptions)
+export class CASSendInvoicesScheduler extends BaseQueueProcessor<CASIntegrationQueueInDTO> {
   constructor(
-    @InjectQueue(QueueNames.CASSendInvoices)
-    schedulerQueue: Queue<CASIntegrationQueueInDTO>,
-    queueService: QueueService,
     private readonly casInvoiceService: CASInvoiceService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
-  }
-
-  protected async payload(): Promise<CASIntegrationQueueInDTO> {
-    const pollingRecordsLimit =
-      await this.queueService.getQueuePollingRecordLimit(
-        this.schedulerQueue.name as QueueNames,
-      );
-    return { pollingRecordsLimit };
+    super(logger);
   }
 
   /**
@@ -37,7 +25,7 @@ export class CASSendInvoicesScheduler extends BaseScheduler<CASIntegrationQueueI
    * @param processSummary process summary for logging.
    * @returns process summary.
    */
-  protected async process(
+  protected async processQueue(
     job: Job<CASIntegrationQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {

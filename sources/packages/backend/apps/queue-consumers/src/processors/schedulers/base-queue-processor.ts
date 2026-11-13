@@ -16,13 +16,24 @@ import { Inject, OnApplicationBootstrap } from "@nestjs/common";
 import { WorkerHost } from "@nestjs/bullmq";
 import { FILE_NOT_FOUND, EMPTY_FILE } from "../../constants";
 import { QueueService } from "@sims/services/queue";
-import { QueueConfiguration } from "@sims/sims-db";
+import {
+  QueueConfiguration,
+  configureIdleTransactionSessionTimeout,
+} from "@sims/sims-db";
+import { EntityManager } from "typeorm";
+import {
+  ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+} from "@sims/services/constants";
 
 type JobResult = string | string[];
 const PERMANENT_FAILURE_ERROR_NAMES = new Set<string>([
   FILE_NOT_FOUND,
   EMPTY_FILE,
+  ASSESSMENT_NOT_FOUND,
+  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
 ]);
+const TRANSACTION_IDLE_TIMEOUT_SECONDS = 60;
 
 /**
  * Base class for queue processors providing common functionality and error handling.
@@ -151,6 +162,23 @@ export abstract class BaseQueueProcessor<T>
     job: Job<T, JobResult>,
     processSummary: ProcessSummary,
   ): Promise<JobResult>;
+
+  /**
+   * Acquires the queue lock before a processor performs a transaction-sensitive operation.
+   * @param entityManager Entity manager to be used to acquire the lock.
+   */
+  protected async acquireLock(entityManager: EntityManager): Promise<void> {
+    await Promise.all([
+      configureIdleTransactionSessionTimeout(
+        entityManager,
+        TRANSACTION_IDLE_TIMEOUT_SECONDS,
+      ),
+      this.queueService.acquireQueueLock(
+        this.worker.name as QueueNames,
+        entityManager,
+      ),
+    ]);
+  }
 
   /**
    * Default worker options for the queue processor.

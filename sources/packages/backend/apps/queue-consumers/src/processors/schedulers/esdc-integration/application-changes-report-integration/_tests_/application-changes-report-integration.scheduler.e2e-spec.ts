@@ -9,7 +9,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { ApplicationChangesReportIntegrationScheduler } from "../application-changes-report-integration.scheduler";
 import {
@@ -98,10 +98,10 @@ describe(
         { offeringStartDateDifference: 1, offeringEndDateDifference: -1 },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -184,10 +184,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       // Assert
       // Assert process result.
       expect(result).toStrictEqual([
@@ -231,10 +231,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
