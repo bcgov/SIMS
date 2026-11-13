@@ -1,13 +1,15 @@
 <template>
+  <!--
+    The status filters are shown inline, next to the program year, when they
+    fit in a single row. Otherwise, they wrap to a second row.
+    Both elements grow to fill the available space, but the status filters have
+    a much higher grow factor. When inline, the status filters take virtually
+    all the free space and the program year keeps its width. When wrapped, each
+    element is alone in its row and takes the full width.
+  -->
   <div class="d-flex flex-wrap ga-2">
-    <!--
-      When the status filters are inline, the program year keeps a fixed width.
-      Otherwise, the filters are in a second row and the program year takes the
-      full width of the first row.
-    -->
     <v-select
-      class="flex-shrink-0"
-      :class="showInlineFilters ? 'flex-grow-0' : 'flex-grow-1'"
+      class="flex-shrink-0 flex-grow-1"
       width="180"
       label="Program year"
       placeholder="Select year"
@@ -25,19 +27,13 @@
       :loading="loading || loadingProgramYears"
       autofocus
     />
-    <v-divider v-if="showInlineFilters" vertical />
-    <!--
-      On large screens the status filters are shown inline, next to the program
-      year. On smaller screens they move to a second row, taking the full width,
-      to avoid compressing the buttons.
-    -->
     <v-btn-toggle
       :model-value="selectedStatuses"
       @update:model-value="handleStatusChange"
       multiple
       density="compact"
       class="flex-wrap h-auto ga-2 align-self-center btn-toggle"
-      :class="showInlineFilters ? 'flex-grow-1' : 'w-100'"
+      style="flex-grow: 9999"
       selected-class="selected-btn-toggle"
     >
       <v-btn
@@ -54,7 +50,6 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useDisplay } from "vuetify";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { ProgramStatus, type ProgramStatusFilters } from "@/types";
 import { INACTIVE_PROGRAM } from "@/constants";
@@ -94,11 +89,6 @@ const statusFilters = defineModel<ProgramStatusFilters>("statusFilters", {
 });
 
 const snackBar = useSnackBar();
-/**
- * Indicates if the status filters are shown inline, next to the program year.
- * On screens smaller than the Vuetify lg breakpoint, the filters move to a second row.
- */
-const { lgAndUp: showInlineFilters } = useDisplay();
 // Sentinel value used to represent the "All" filter state.
 const ALL_STATUS = "All";
 // Renewal filter values, listed along with the program statuses.

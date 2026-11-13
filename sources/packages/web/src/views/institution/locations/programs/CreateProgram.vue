@@ -49,7 +49,7 @@ const formTitle = computed(() => {
   }
   return programConfiguration.value
     ? `Program Creation for ${programConfiguration.value.programYearName}`
-    : undefined;
+    : "Program";
 });
 
 const submit = async (programData: Record<string, unknown>) => {
