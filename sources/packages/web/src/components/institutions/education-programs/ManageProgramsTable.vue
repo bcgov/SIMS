@@ -31,6 +31,9 @@
         :mobile="isMobile"
         @update:options="paginationAndSortEvent"
       >
+        <template #loading>
+          <v-skeleton-loader type="table-row@5"></v-skeleton-loader>
+        </template>
         <template #[`item.programName`]="{ item }">
           {{ item.name }}
         </template>
