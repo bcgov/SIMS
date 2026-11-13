@@ -22,7 +22,10 @@
         v-for="programYear in activeProgramYears"
         :key="programYear.id"
         :value="programYear.id"
-        @click="goToCreateProgram(programYear.id)"
+        :to="{
+          name: InstitutionRoutesConst.CREATE_PROGRAM,
+          params: { programYearId: programYear.id },
+        }"
       >
         <v-list-item-title>
           <span class="label-bold">{{ programYear.description }}</span>
@@ -33,13 +36,11 @@
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import type { EducationProgramYearAPIOutDTO } from "@/services/http/dto";
 import { useSnackBar } from "@/composables";
 
-const router = useRouter();
 const snackBar = useSnackBar();
 const loading = ref(false);
 /**
@@ -56,17 +57,6 @@ const activeProgramYears = computed(() =>
     (programYear) => programYear.hasActiveProgramConfiguration,
   ),
 );
-
-/**
- * Navigate to the create program page for the program year.
- * @param programYearId program year the program will be created for.
- */
-const goToCreateProgram = (programYearId: number) => {
-  router.push({
-    name: InstitutionRoutesConst.CREATE_PROGRAM,
-    params: { programYearId },
-  });
-};
 
 onMounted(async () => {
   loading.value = true;
