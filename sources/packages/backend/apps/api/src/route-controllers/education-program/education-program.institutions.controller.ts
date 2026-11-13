@@ -501,7 +501,8 @@ export class EducationProgramInstitutionsController extends BaseController {
   })
   @ApiUnprocessableEntityResponse({
     description:
-      "The next program configuration for renewal could not be found.",
+      "The next program configuration for renewal could not be found or " +
+      "the program has already been renewed.",
   })
   @Get(":programId/renew")
   async getEducationProgramForRenew(
@@ -515,6 +516,11 @@ export class EducationProgramInstitutionsController extends BaseController {
       );
     if (!program) {
       throw new NotFoundException("Not able to find the requested program.");
+    }
+    if (program.renewedProgram?.id) {
+      throw new UnprocessableEntityException(
+        "The program has already been renewed.",
+      );
     }
     const nextProgramConfigurationForRenewal =
       await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(

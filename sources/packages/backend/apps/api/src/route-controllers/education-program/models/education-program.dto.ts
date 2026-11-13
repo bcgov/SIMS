@@ -165,7 +165,7 @@ export class EducationProgramYearAPIOutDTO {
   description: string;
   /**
    * Indicates if there is at least one active program configuration for this program year.
-   * This would be an indication that and eduction program can potentially be created or
+   * This would be an indication that and an education program can potentially be created or
    * changed in this program year.
    */
   hasActiveProgramConfiguration: boolean;

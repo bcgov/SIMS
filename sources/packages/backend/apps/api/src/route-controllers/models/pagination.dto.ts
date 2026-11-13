@@ -20,7 +20,11 @@ import {
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
-import { AppealType, BatchReassessmentApplicationResult } from "../../services";
+import {
+  AppealType,
+  BatchReassessmentApplicationResult,
+  PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
+} from "../../services";
 import { AllowIf, IsDateAfter } from "../../utilities/class-validation";
 /**
  * Common parameters used when an API result
@@ -169,7 +173,7 @@ export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptions
 export class ProgramsManagementPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn([
-    "programName",
+    PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
     "credentialType",
     "cipCode",
     "sabcCode",

@@ -1,26 +1,24 @@
 import { EducationProgram } from "@sims/sims-db";
 
 /**
+ * Sort field received from the API to sort the programs by name.
+ */
+export const PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD = "programName";
+
+/**
  * Maps the sort fields received from the API to the
- * {@link EducationProgram} entity properties.
+ * {@link EducationProgram} entity properties, prefixed
+ * with the "program" alias used in the query.
  */
 export const PROGRAMS_MANAGEMENT_SORT_FIELDS: Record<
   string,
-  keyof EducationProgram
+  `program.${keyof EducationProgram}`
 > = {
-  programName: "name",
-  credentialType: "credentialType",
-  cipCode: "cipCode",
-  sabcCode: "sabcCode",
+  [PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD]: "program.name",
+  credentialType: "program.credentialType",
+  cipCode: "program.cipCode",
+  sabcCode: "program.sabcCode",
 };
-
-/**
- * Sort field received from the API to sort the programs by their status,
- * considering inactive or expired programs as inactive.
- * Inactive programs can include those that are expired or otherwise not currently active,
- * which demands special handling when sorting by program status.
- */
-export const PROGRAMS_MANAGEMENT_PROGRAM_STATUS_SORT_FIELD = "programStatus";
 
 /**
  * Program year with at least one education program configuration.

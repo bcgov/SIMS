@@ -201,7 +201,7 @@ const getSearchCriteria = () => ({
 });
 
 /**
- * Function to load program list and count for the program configuration.
+ * Function to load program list and count for the program year.
  * @param page page number, if nothing passed then DEFAULT_DATATABLE_PAGE_NUMBER.
  * @param pageCount page limit, if nothing passed then DEFAULT_PAGE_LIMIT.
  * @param sortField sort field.

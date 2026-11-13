@@ -24,6 +24,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { FieldSortOrder } from "@sims/utilities";
 import {
+  PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
   PROGRAMS_MANAGEMENT_SORT_FIELDS,
   ProgramYearWithConfiguration,
 } from "./education-program.manager.models";
@@ -180,13 +181,24 @@ export class EducationProgramManagerService {
     const sortField =
       PROGRAMS_MANAGEMENT_SORT_FIELDS[paginationOptions.sortField];
     if (sortField) {
-      programsQuery.orderBy(`program.${sortField}`, sortOrder);
+      programsQuery.orderBy(sortField, sortOrder);
     } else {
       // Sort by program status when requested or when no sort field is provided.
       programsQuery.orderBy(
         getProgramStatusSortExpression("program"),
         sortOrder,
       );
+    }
+    if (
+      paginationOptions.sortField !==
+      PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD
+    ) {
+      // Sort by name as a secondary criteria to keep the results consistent.
+      const defaultSortField =
+        PROGRAMS_MANAGEMENT_SORT_FIELDS[
+          PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD
+        ];
+      programsQuery.addOrderBy(defaultSortField, FieldSortOrder.ASC);
     }
     const [results, count] = await programsQuery.getManyAndCount();
     return { results, count };
