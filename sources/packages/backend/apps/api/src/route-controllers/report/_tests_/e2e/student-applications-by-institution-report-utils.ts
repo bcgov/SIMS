@@ -38,7 +38,6 @@ export function createApplicationsByInstitutionReportPayload(options: {
       program,
       startDate,
       endDate,
-      isLimitedByArchiveDate: true,
       offeringIntensity: {
         "Full Time": true,
         "Part Time": true,
@@ -56,8 +55,7 @@ export function createApplicationsByInstitutionReportPayload(options: {
  * - `student` student to be used in the application.
  * - `institution` institution to be used in the applications.
  * - `originalSubmissionDate` original submission date to be used in the application.
- * - `currentOfferingEndDateOffset` current offering end date offset to be used in the application.
- * useful when the offering end date must be set in the past.
+ * - `currentApplicationInitialValues` initial values to be used in the current application.
  * - `parentApplicationFirstDisbursementInitialValues` initial values to be used in the parent application first disbursement.
  * @returns the created application.
  */
@@ -67,7 +65,7 @@ export async function createVersionedApplicationsDataSetup(
     student: Student;
     institution: Institution;
     originalSubmissionDate?: Date;
-    currentOfferingEndDateOffset?: number;
+    currentApplicationInitialValues?: Partial<Application>;
     parentApplicationFirstDisbursementInitialValues?: Partial<DisbursementSchedule>;
   },
 ): Promise<Application> {
@@ -103,18 +101,6 @@ export async function createVersionedApplicationsDataSetup(
         options.parentApplicationFirstDisbursementInitialValues,
     },
   );
-  let currentApplicationStartDate = studyStartDate;
-  let currentApplicationStudyEndDate = studyEndDate;
-  if (options?.currentOfferingEndDateOffset) {
-    currentApplicationStudyEndDate = getISODateOnlyString(
-      addDays(options.currentOfferingEndDateOffset, new Date()),
-    );
-    // Set start date to be before the end date (just to be consistent with the data).
-    // Only the end date is relevant for the report, as it is used to determine if the application is archived or not.
-    currentApplicationStartDate = getISODateOnlyString(
-      addDays(-30, new Date(currentApplicationStudyEndDate)),
-    );
-  }
   const currentApplication = await saveFakeApplicationDisbursements(
     db.dataSource,
     {
@@ -128,10 +114,11 @@ export async function createVersionedApplicationsDataSetup(
         applicationStatus: ApplicationStatus.Completed,
         submittedDate: currentApplicationSubmissionDate,
         applicationNumber: previousApplication.applicationNumber,
+        ...options.currentApplicationInitialValues,
       },
       offeringInitialValues: {
-        studyStartDate: currentApplicationStartDate,
-        studyEndDate: currentApplicationStudyEndDate,
+        studyStartDate,
+        studyEndDate,
       },
       currentAssessmentInitialValues: {
         assessmentDate: addDays(2, originalSubmissionDate),

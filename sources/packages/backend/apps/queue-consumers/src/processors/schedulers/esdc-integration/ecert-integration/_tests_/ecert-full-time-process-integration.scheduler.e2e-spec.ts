@@ -95,8 +95,6 @@ describe(
     const MINISTRY_NOTIFICATION_EMAIL = "dummy@some.domain";
 
     beforeAll(async () => {
-      // Env variable required for querying the eligible e-Cert records.
-      process.env.APPLICATION_ARCHIVE_DAYS = "365";
       const { nestApplication, dataSource, sshClientMock } =
         await createTestingAppModule();
       app = nestApplication;
@@ -277,6 +275,49 @@ describe(
       expect(header).toContain("100BC  NEW ENTITLEMENT");
       // Validate footer.
       expect(footer.substring(0, 3)).toBe("999");
+    });
+
+    it("Should not include a disbursement in the e-Cert when the application is archived.", async () => {
+      // Arrange
+      const [eligibleApplication, archivedApplication] = await Promise.all([
+        createEligibleECertApplication(db, OFFERING_INTENSITY),
+        createEligibleECertApplication(db, OFFERING_INTENSITY, {
+          applicationInitialValues: { isArchived: true },
+        }),
+      ]);
+      const [archivedDisbursement] =
+        archivedApplication.currentAssessment.disbursementSchedules;
+      // Queued job.
+      const mockedJob = mockBullJob<void>();
+
+      // Act
+      const result = await processor.processQueue(mockedJob.job);
+
+      // Assert
+      const uploadedFileName = getUploadedFileName();
+      expect(result).toStrictEqual([
+        `Generated file: ${uploadedFileName}`,
+        "Uploaded records: 1",
+      ]);
+      // Assert that only the eligible application disbursement was sent.
+      const [eligibleDisbursement] =
+        eligibleApplication.currentAssessment.disbursementSchedules;
+      const disbursements = await db.disbursementSchedule.find({
+        select: { id: true, disbursementScheduleStatus: true },
+        where: { id: In([eligibleDisbursement.id, archivedDisbursement.id]) },
+      });
+      expect(disbursements).toEqual(
+        expect.arrayContaining([
+          {
+            id: eligibleDisbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          {
+            id: archivedDisbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        ]),
+      );
     });
 
     it("Should execute overawards deductions and calculate awards effective value when student has overawards to be deducted.", async () => {
