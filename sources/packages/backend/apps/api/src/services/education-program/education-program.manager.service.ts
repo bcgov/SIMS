@@ -7,9 +7,9 @@ import {
   ProgramYear,
 } from "@sims/sims-db";
 import {
+  Any,
   FindOptionsWhere,
   ILike,
-  In,
   IsNull,
   Like,
   Not,
@@ -253,7 +253,7 @@ export class EducationProgramManagerService {
     const conditions: FindOptionsWhere<EducationProgram>[] = [];
     if (statusSearch?.length) {
       conditions.push({
-        programStatus: In(statusSearch),
+        programStatus: Any(statusSearch),
         isActive: true,
         effectiveEndDate: Or(
           IsNull(),
