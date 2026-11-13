@@ -613,7 +613,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
         component: CreateProgram,
         props: (route) => ({
-          locationId: Number.parseInt(route.params.locationId as string),
           backTarget: {
             name: "Programs",
             to: {
