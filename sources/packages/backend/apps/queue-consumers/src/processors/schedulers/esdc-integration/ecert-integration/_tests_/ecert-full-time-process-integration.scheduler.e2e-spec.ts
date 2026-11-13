@@ -302,22 +302,21 @@ describe(
       // Assert that only the eligible application disbursement was sent.
       const [eligibleDisbursement] =
         eligibleApplication.currentAssessment.disbursementSchedules;
-      const [sentDisbursement, archivedPendingDisbursement] =
-        await Promise.all([
-          db.disbursementSchedule.findOne({
-            select: { id: true, disbursementScheduleStatus: true },
-            where: { id: eligibleDisbursement.id },
-          }),
-          db.disbursementSchedule.findOne({
-            select: { id: true, disbursementScheduleStatus: true },
-            where: { id: archivedDisbursement.id },
-          }),
-        ]);
-      expect(sentDisbursement.disbursementScheduleStatus).toBe(
-        DisbursementScheduleStatus.Sent,
-      );
-      expect(archivedPendingDisbursement.disbursementScheduleStatus).toBe(
-        DisbursementScheduleStatus.Pending,
+      const disbursements = await db.disbursementSchedule.find({
+        select: { id: true, disbursementScheduleStatus: true },
+        where: { id: In([eligibleDisbursement.id, archivedDisbursement.id]) },
+      });
+      expect(disbursements).toEqual(
+        expect.arrayContaining([
+          {
+            id: eligibleDisbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          {
+            id: archivedDisbursement.id,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          },
+        ]),
       );
     });
 
