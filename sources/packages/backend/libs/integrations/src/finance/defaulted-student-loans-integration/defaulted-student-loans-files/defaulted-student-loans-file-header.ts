@@ -17,7 +17,7 @@ export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
    */
   transmissionDate: Date;
   /**
-   * Unique number of the transmission to CLMB(to Collections and Loans Management Branch).
+   * Unique number of the transmission to CLMB(Collections and Loans Management Branch).
    */
   transmissionNumber: number;
   /**

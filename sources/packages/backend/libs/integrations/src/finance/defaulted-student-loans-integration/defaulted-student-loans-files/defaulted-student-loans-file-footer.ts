@@ -47,23 +47,23 @@ export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
    */
   filler: string;
   getFixedFormat(): string {
-    const header = new SpecializedStringBuilder({
+    const footer = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,
       dateFormat: DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
     });
-    header.append(this.recordType);
-    header.appendFormattedDate(this.transmissionDate);
-    header.appendNumberWithFiller(this.transmissionNumber, 10);
-    header.appendStringWithFiller(this.transmissionSourceID, 10);
-    header.appendStringWithFiller(this.transmissionDescription, 80);
-    header.appendNumberWithFiller(this.recordCount, 11);
-    header.appendNumberWithFiller(
+    footer.append(this.recordType);
+    footer.appendFormattedDate(this.transmissionDate);
+    footer.appendNumberWithFiller(this.transmissionNumber, 10);
+    footer.appendStringWithFiller(this.transmissionSourceID, 10);
+    footer.appendStringWithFiller(this.transmissionDescription, 80);
+    footer.appendNumberWithFiller(this.recordCount, 11);
+    footer.appendNumberWithFiller(
       decimalRound(this.totalBOAValue).toFixed(2),
       16,
     );
-    header.appendStringWithFiller(this.isTotalBOAValueNegative ? "-" : "", 1);
-    header.appendOptionalStringWithFiller(this.filler, 1118);
-    return header.toString();
+    footer.appendStringWithFiller(this.isTotalBOAValueNegative ? "-" : "", 1);
+    footer.appendOptionalStringWithFiller(this.filler, 1118);
+    return footer.toString();
   }
 }
