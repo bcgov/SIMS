@@ -36,7 +36,6 @@ export interface ProgramPaginationOptions extends BasePaginationOptions {
 }
 
 export interface ProgramsManagementPaginationOptions extends PaginationOptions {
-  sortField?: string;
   statusSearch?: ProgramStatus[];
   inactiveProgramSearch?: boolean;
   /**
