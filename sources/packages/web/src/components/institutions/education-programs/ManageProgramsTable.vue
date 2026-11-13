@@ -53,24 +53,12 @@
           ></status-chip-program>
         </template>
         <template #[`item.renewal`]="{ item }">
-          <v-btn
-            v-if="item.renewalStatus === ProgramRenewalStatus.Available"
-            color="primary"
-            :to="getRenewProgramRoute(item.id)"
-            >Renew</v-btn
-          >
-          <span v-else class="text-body-2 text-medium-emphasis text-no-wrap">
-            <v-icon
-              :icon="
-                item.renewalStatus === ProgramRenewalStatus.Renewed
-                  ? 'fa:fas fa-check'
-                  : 'fa:fas fa-clock'
-              "
-              size="14"
-              class="mr-1"
-            />
-            {{ item.renewalStatus }}
-          </span>
+          <program-renewal-action
+            v-if="selectedProgramYearId"
+            :program-id="item.id"
+            :renewal-status="item.renewalStatus"
+            :program-year-id="selectedProgramYearId"
+          />
         </template>
         <template #[`item.programId`]="{ item }">
           <v-btn
@@ -91,6 +79,7 @@ import type { RouteLocationRaw } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
 import ProgramYearStatusFilters from "@/components/institutions/education-programs/ProgramYearStatusFilters.vue";
+import ProgramRenewalAction from "@/components/institutions/education-programs/ProgramRenewalAction.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import type { DataTableOptions, ProgramStatusFilters } from "@/types";
 import {
@@ -101,7 +90,6 @@ import {
   ManageProgramSummaryHeaders,
   DataTableSortByOrder,
 } from "@/types";
-import { ProgramRenewalStatus } from "@/services/http/dto";
 import type {
   EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramYearAPIOutDTO,
@@ -266,23 +254,6 @@ const searchProgramTable = async () => {
     sortByOptions?.order,
   );
 };
-
-/**
- * Route to the renew program page for the next program year.
- * Used as a link target to allow the page to be opened in a new tab.
- * @param programId program to be renewed.
- * @returns renew program route location.
- */
-const getRenewProgramRoute = (programId: number): RouteLocationRaw => ({
-  name: InstitutionRoutesConst.RENEW_PROGRAM,
-  params: {
-    programId,
-  },
-  // Allows the renew page to navigate back keeping the current program year selected.
-  query: {
-    programYearId: selectedProgramYearId.value,
-  },
-});
 
 /**
  * Route to the view program page.
