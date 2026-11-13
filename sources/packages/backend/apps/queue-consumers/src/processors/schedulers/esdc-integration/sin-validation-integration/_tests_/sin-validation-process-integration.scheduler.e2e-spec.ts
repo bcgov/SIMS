@@ -4,7 +4,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -76,10 +76,10 @@ describe(
       });
       const now = new Date();
       MockDate.set(now);
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -175,10 +175,10 @@ describe(
       );
       const now = new Date();
       MockDate.set(now);
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -225,10 +225,10 @@ describe(
       await saveFakeStudent(db.dataSource);
       const now = new Date();
       MockDate.set(now);
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       const uploadedFile = getUploadedFile(sftpClientMock);
@@ -245,10 +245,10 @@ describe(
 
     it("Should not generate any file when there are no students with pending SIN validation.", async () => {
       // Arrange
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([

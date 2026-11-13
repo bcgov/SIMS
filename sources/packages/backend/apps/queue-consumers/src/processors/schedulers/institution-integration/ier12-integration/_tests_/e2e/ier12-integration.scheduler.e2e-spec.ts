@@ -217,7 +217,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       const mockedJob = createIER12SchedulerJobMock();
 
       // Act
-      const ier12Results = await processor.processQueue(mockedJob.job);
+      const ier12Results = await processor.process(mockedJob.job);
 
       // Assert
       expect(ier12Results).toBeDefined();
@@ -312,7 +312,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       const mockedJob = createIER12SchedulerJobMock();
 
       // Act
-      const ier12Results = await processor.processQueue(mockedJob.job);
+      const ier12Results = await processor.process(mockedJob.job);
       // Assert
       // Assert process result.
       expect(ier12Results).toBeDefined();
@@ -408,7 +408,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       const mockedJob = createIER12SchedulerJobMock();
 
       // Act
-      const ier12Results = await processor.processQueue(mockedJob.job);
+      const ier12Results = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -507,7 +507,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
       });
 
       // Act
-      const ier12Results = await processor.processQueue(mockedJob.job);
+      const ier12Results = await processor.process(mockedJob.job);
 
       // Assert
       // Assert process result.
@@ -593,7 +593,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -692,7 +692,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -788,7 +788,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -889,7 +889,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const mockedJob = createIER12SchedulerJobMock();
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -979,7 +979,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -1077,7 +1077,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -1206,7 +1206,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -1328,7 +1328,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -1421,7 +1421,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -1549,7 +1549,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const mockedJob = createIER12SchedulerJobMock({ modifiedSince });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert process result.
     expect(ier12Results).toBeDefined();
@@ -1648,7 +1648,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert
     // Assert process result.
@@ -1735,7 +1735,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const mockedJob = createIER12SchedulerJobMock({ institutionCode });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert logs
     const today = dayjs().startOf("day").toDate();
@@ -1759,7 +1759,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const mockedJob = createIER12SchedulerJobMock({ institutionCode });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert logs
     expect(
@@ -1778,7 +1778,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const mockedJob = createIER12SchedulerJobMock({ modifiedSince });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert logs
     expect(
@@ -1800,7 +1800,7 @@ describe(describeProcessorRootTest(QueueNames.IER12Integration), () => {
     const mockedJob = createIER12SchedulerJobMock({ modifiedSince });
 
     // Act
-    const ier12Results = await processor.processQueue(mockedJob.job);
+    const ier12Results = await processor.process(mockedJob.job);
 
     // Assert logs
     expect(

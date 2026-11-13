@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { ApplicationChangesReportProcessingService } from "@sims/integrations/esdc-integration";
 
-@Processor(QueueNames.ApplicationChangesReportIntegration)
-export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.ApplicationChangesReportIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class ApplicationChangesReportIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.ApplicationChangesReportIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly applicationChangesReportProcessingService: ApplicationChangesReportProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -28,7 +27,7 @@ export class ApplicationChangesReportIntegrationScheduler extends BaseScheduler<
    * @param processSummary process summary for logging.
    * @returns process summary.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {

@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { StudentApplicationNotificationService } from "../../../services";
 
-@Processor(QueueNames.StudentApplicationNotifications)
-export class StudentApplicationNotificationsScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.StudentApplicationNotifications,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class StudentApplicationNotificationsScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.StudentApplicationNotifications)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly studentApplicationNotificationService: StudentApplicationNotificationService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -24,7 +23,7 @@ export class StudentApplicationNotificationsScheduler extends BaseScheduler<void
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

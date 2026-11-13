@@ -10,7 +10,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -149,10 +149,10 @@ describe(
           );
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -240,10 +240,10 @@ describe(
           await db.notification.save(studentNotification);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -333,10 +333,10 @@ describe(
           await db.disbursementSchedule.save(newAssessmentDisbursement);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -406,10 +406,10 @@ describe(
           );
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -490,10 +490,10 @@ describe(
           await db.notification.save(notification);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -536,10 +536,10 @@ describe(
           );
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -579,10 +579,10 @@ describe(
           );
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -644,10 +644,10 @@ describe(
           );
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -703,10 +703,10 @@ describe(
           await db.notification.save(notification);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -741,10 +741,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -833,10 +833,10 @@ describe(
           await db.craIncomeVerification.save(craVerification2);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          const result = await processor.processQueue(mockedJob.job);
+          const result = await processor.process(mockedJob.job);
 
           expect(result).toStrictEqual(["Process finalized with success."]);
 
@@ -905,10 +905,10 @@ describe(
             await db.craIncomeVerification.save(craVerification);
 
             // Queued job.
-            const mockedJob = mockBullJob<void>();
+            const mockedJob = mockBullMQJob<void>();
 
             // Act
-            const result = await processor.processQueue(mockedJob.job);
+            const result = await processor.process(mockedJob.job);
 
             expect(result).toStrictEqual(["Process finalized with success."]);
 
@@ -979,10 +979,10 @@ describe(
           await db.sinValidation.save(olderSinValidation);
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          const result = await processor.processQueue(mockedJob.job);
+          const result = await processor.process(mockedJob.job);
 
           expect(result).toStrictEqual(["Process finalized with success."]);
 
@@ -1041,10 +1041,10 @@ describe(
             );
 
             // Queued job.
-            const mockedJob = mockBullJob<void>();
+            const mockedJob = mockBullMQJob<void>();
 
             // Act
-            const result = await processor.processQueue(mockedJob.job);
+            const result = await processor.process(mockedJob.job);
 
             expect(result).toStrictEqual(["Process finalized with success."]);
 
@@ -1092,10 +1092,10 @@ describe(
           );
 
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -1153,10 +1153,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1208,10 +1208,10 @@ describe(
         await db.notification.save(notification);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1243,10 +1243,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1293,10 +1293,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1348,10 +1348,10 @@ describe(
         );
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1385,12 +1385,12 @@ describe(
         });
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
         const now = new Date();
         MockDate.set(now);
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(
@@ -1477,10 +1477,10 @@ describe(
           );
           await db.notification.save(existingNotification);
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(
@@ -1522,10 +1522,10 @@ describe(
             institutionRestriction,
           });
           // Queued job.
-          const mockedJob = mockBullJob<void>();
+          const mockedJob = mockBullMQJob<void>();
 
           // Act
-          await processor.processQueue(mockedJob.job);
+          await processor.process(mockedJob.job);
 
           // Assert
           expect(

@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
 import { SINValidationProcessingService } from "@sims/integrations/esdc-integration";
-import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
-@Processor(QueueNames.SINValidationResponseIntegration)
-export class SINValidationResponseIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.SINValidationResponseIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class SINValidationResponseIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.SINValidationResponseIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly sinValidationProcessingService: SINValidationProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -24,7 +23,7 @@ export class SINValidationResponseIntegrationScheduler extends BaseScheduler<voi
    * @param processSummary process summary for logging.
    * @returns summary with what was processed and the list of all errors, if any.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

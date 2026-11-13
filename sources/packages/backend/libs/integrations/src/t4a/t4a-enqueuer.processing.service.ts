@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { ProcessSummary } from "@sims/utilities/logger";
 import { T4AIntegrationService } from "@sims/integrations/t4a/t4a.integration.service";
-import { InjectQueue } from "@nestjs/bull";
+import { InjectQueue } from "@nestjs/bullmq";
 import { T4AUploadQueueInDTO } from "@sims/services/queue";
-import { QueueNames } from "@sims/utilities";
-import { Queue } from "bull";
+import { QueueJobNames, QueueNames } from "@sims/utilities";
+import { Queue } from "bullmq";
 import { SFTPItemType } from "@sims/integrations/services/ssh";
 import { ConfigService } from "@sims/utilities/config";
 
@@ -75,7 +75,7 @@ export class T4AEnqueuerProcessingService {
       const enqueueStart = performance.now();
       const referenceDate = new Date();
       // Queues in the format required by addBulk, splitted by max files per batch.
-      const queues: { data: T4AUploadQueueInDTO }[] = [];
+      const queues: { name: string; data: T4AUploadQueueInDTO }[] = [];
       for (
         let i = 0;
         i < relativeFilePaths.length;
@@ -86,6 +86,7 @@ export class T4AEnqueuerProcessingService {
           i + maxFileUploadsPerBatch,
         );
         queues.push({
+          name: QueueJobNames.T4AUploadJob,
           data: new T4AUploadQueueInDTO(referenceDate, filesBatch),
         });
       }

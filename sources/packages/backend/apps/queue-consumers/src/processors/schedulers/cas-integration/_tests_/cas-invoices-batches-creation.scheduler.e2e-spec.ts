@@ -14,7 +14,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   Application,
@@ -140,10 +140,10 @@ describe(
       const invoiceNumber = createInvoiceNameFromApplication(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -374,10 +374,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -440,10 +440,10 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         `No distribution accounts found for award ${BC_GRANT_WITHOUT_DISTRIBUTION_ACCOUNT} and offering intensity ${OfferingIntensity.fullTime}.`,
       );
     });
@@ -451,10 +451,10 @@ describe(
     it("Should finalize the process nicely when there is no pending receipt to process.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual(["No batch was generated."]);

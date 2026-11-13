@@ -5,7 +5,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../test/helpers";
 import {
   createE2EDataSources,
@@ -55,7 +55,7 @@ describe(
         StudentAssessmentStatus.Queued;
       await db.studentAssessment.save(currentAssessment);
       const dummyException = new Error();
-      const mockedJob = mockBullJob<StartAssessmentQueueInDTO>({
+      const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>({
         workflowName: "dummy-workflow-name",
         assessmentId: currentAssessment.id,
       });
@@ -64,7 +64,7 @@ describe(
       });
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "Error while starting application assessment workflow: dummy-workflow-name",
       );
     });
@@ -72,12 +72,12 @@ describe(
     it(`Should log a warn message when the assessment status is different than ${StudentAssessmentStatus.Queued}.`, async () => {
       // Arrange
       const application = await saveFakeApplication(db.dataSource);
-      const mockedJob = mockBullJob<StartAssessmentQueueInDTO>({
+      const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>({
         assessmentId: application.currentAssessment.id,
       });
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       // Assert expected result message.
@@ -92,7 +92,6 @@ describe(
           `Assessment id ${mockedJob.job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
         ]),
       ).toBe(true);
-      expect(mockedJob.job.discard).toHaveBeenCalled();
     });
 
     it("Should invoke the workflow create instance method with the received job parameters.", async () => {
@@ -106,13 +105,13 @@ describe(
 
       const variables = { assessmentId: currentAssessment.id };
       // Queued job.
-      const mockedJob = mockBullJob<StartAssessmentQueueInDTO>({
+      const mockedJob = mockBullMQJob<StartAssessmentQueueInDTO>({
         workflowName,
         assessmentId: application.currentAssessment.id,
       });
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       const createProcessInstancePayload = {
