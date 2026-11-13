@@ -112,7 +112,7 @@ const loadProgramConfiguration = async (
       programYearId = activeProgramYear.id;
     }
     programConfiguration.value =
-      await EducationProgramService.shared.getEducationProgramForCreate(
+      await EducationProgramService.shared.getEducationProgramConfigurationForCreate(
         programYearId,
       );
     resolvedProgramYearId.value = programYearId;

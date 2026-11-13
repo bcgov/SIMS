@@ -82,7 +82,7 @@ watch(
     try {
       loading.value = true;
       programConfiguration.value =
-        await EducationProgramService.shared.getEducationProgramForRenew(
+        await EducationProgramService.shared.getEducationProgramConfigurationForRenew(
           programId,
         );
     } catch {

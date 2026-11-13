@@ -141,7 +141,7 @@ export class EducationProgramInstitutionsController extends BaseController {
       "The provided program year does not have an active program configuration.",
   })
   @Get("program-year/:programYearId/create")
-  async getEducationProgramForCreate(
+  async getEducationProgramConfigurationForCreate(
     @Param("programYearId", ParseIntPipe) programYearId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
@@ -181,7 +181,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   /**
    * Creates a new education program for the provided program year.
    * Paired with the endpoint that provides the creation configuration
-   * ({@link getEducationProgramForCreate}).
+   * ({@link getEducationProgramConfigurationForCreate}).
    * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @param userToken the token of the user making the request.
@@ -245,7 +245,7 @@ export class EducationProgramInstitutionsController extends BaseController {
    * Renews an existing education program, creating a new program
    * for the next program configuration.
    * Paired with the endpoint that provides the renewal configuration
-   * ({@link getEducationProgramForRenew}).
+   * ({@link getEducationProgramConfigurationForRenew}).
    * @param programId ID of the education program to be renewed.
    * @param payload information to create the renewed program.
    * @param userToken the token of the user making the request.
@@ -507,7 +507,7 @@ export class EducationProgramInstitutionsController extends BaseController {
       "the program has already been renewed.",
   })
   @Get(":programId/renew")
-  async getEducationProgramForRenew(
+  async getEducationProgramConfigurationForRenew(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {

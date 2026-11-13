@@ -67,7 +67,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  async getEducationProgramForCreate(
+  async getEducationProgramConfigurationForCreate(
     programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     return this.getCall<EducationProgramConfigurationAPIOutDTO>(
@@ -108,7 +108,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * @param programId the ID of the education program to be renewed.
    * @returns the next program configuration for renewal.
    */
-  async getEducationProgramForRenew(
+  async getEducationProgramConfigurationForRenew(
     programId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     return this.getCall<EducationProgramConfigurationAPIOutDTO>(
@@ -119,7 +119,7 @@ export class EducationProgramApi extends HttpBaseClient {
   /**
    * Creates a new education program for the provided program year.
    * Paired with the endpoint that provides the creation configuration
-   * ({@link getEducationProgramForCreate}).
+   * ({@link getEducationProgramConfigurationForCreate}).
    * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
@@ -140,7 +140,7 @@ export class EducationProgramApi extends HttpBaseClient {
    * Renews an existing education program, creating a new program
    * for the next program configuration.
    * Paired with the endpoint that provides the renewal configuration
-   * ({@link getEducationProgramForRenew}).
+   * ({@link getEducationProgramConfigurationForRenew}).
    * @param programId ID of the education program to be renewed.
    * @param payload information to create the renewed program.
    * @returns id of the created program.
