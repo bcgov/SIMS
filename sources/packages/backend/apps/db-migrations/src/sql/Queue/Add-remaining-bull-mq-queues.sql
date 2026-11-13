@@ -196,7 +196,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 2 * * *",
+                "pattern": "0 2 * * 1-5",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -215,7 +215,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 23 * * *",
+                "pattern": "0 1 * * 1-5",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -272,7 +272,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "30 11 * * 1-5",
+                "pattern": "0 7 * * 1-5",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -291,7 +291,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 23 * * *",
+                "pattern": "0 0 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -310,7 +310,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "45 2 * * *",
+                "pattern": "45 23 * * *",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
@@ -444,7 +444,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 * * * *",
+                "pattern": "0 16 * * *",
                 "tz": "America/Vancouver"
             },
             "jobData": {
@@ -504,7 +504,7 @@ VALUES
                 }
             },
             "repeatOptions": {
-                "pattern": "0 21 * * 0-4",
+                "pattern": "0 21 * * 1-5",
                 "tz": "America/Vancouver"
             },
             "dashboardReadonly": false
