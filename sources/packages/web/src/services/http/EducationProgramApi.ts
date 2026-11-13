@@ -8,8 +8,10 @@ import {
   DeclineProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  EducationProgramManagerDetailsAPIOutDTO,
   EducationProgramPendingAPIOutDTO,
   EducationProgramsSummaryAPIOutDTO,
+  EducationProgramYearAPIOutDTO,
   OptionItemAPIOutDTO,
   PaginatedResultsAPIOutDTO,
   PrimaryIdentifierAPIOutDTO,
@@ -59,18 +61,30 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Get the program configuration including context, visual schema, and validation schema.
-   * @param programConfigurationId ID of the program configuration. If not provided,
-   * the most recent active configuration is returned.
+   * Get the program configuration for creation, including context, visual schema,
+   * and validation schema, using the active configuration for the provided program year.
+   * Paired with the creation endpoint ({@link createEducationProgram}).
+   * @param programYearId ID of the program year.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
-  async getEducationProgramConfiguration(
-    programConfigurationId?: number,
+  async getEducationProgramConfigurationForCreate(
+    programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    const url = programConfigurationId
-      ? `education-program/configuration/${programConfigurationId}`
-      : "education-program/configuration";
-    return this.getCall(this.addClientRoot(url));
+    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
+      this.addClientRoot(
+        `education-program/program-year/${programYearId}/create`,
+      ),
+    );
+  }
+
+  /**
+   * Get the list of program years with at least one education program configuration.
+   * @returns program years and whether they have an active program configuration.
+   */
+  async getProgramYearsList(): Promise<EducationProgramYearAPIOutDTO[]> {
+    return this.getCall<EducationProgramYearAPIOutDTO[]>(
+      this.addClientRoot("education-program/program-years-list"),
+    );
   }
 
   /**
@@ -87,14 +101,58 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Creates a new education program.
+   * Get the program configuration for renewal.
+   * It includes a new program context and the data from the previous program.
+   * Paired with the endpoint that provides the renewal configuration
+   * ({@link renewEducationProgram}).
+   * @param programId the ID of the education program to be renewed.
+   * @returns the next program configuration for renewal.
+   */
+  async getEducationProgramConfigurationForRenew(
+    programId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
+      this.addClientRoot(`education-program/${programId}/renew`),
+    );
+  }
+
+  /**
+   * Creates a new education program for the provided program year.
+   * Paired with the endpoint that provides the creation configuration
+   * ({@link getEducationProgramConfigurationForCreate}).
+   * @param programYearId ID of the program year the program is being created for.
    * @param payload information to create the new program.
    * @returns id of the created program.
    */
   async createEducationProgram(
+    programYearId: number,
     payload: CreateEducationProgramAPIInDTO,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    return this.postCall(this.addClientRoot("education-program"), payload);
+    return this.postCall(
+      this.addClientRoot(
+        `education-program/program-year/${programYearId}/create`,
+      ),
+      payload,
+    );
+  }
+
+  /**
+   * Renews an existing education program, creating a new program
+   * for the next program configuration.
+   * Paired with the endpoint that provides the renewal configuration
+   * ({@link getEducationProgramConfigurationForRenew}).
+   * @param programId ID of the education program to be renewed.
+   * @param payload information to create the renewed program.
+   * @returns id of the created program.
+   */
+  async renewEducationProgram(
+    programId: number,
+    payload: CreateEducationProgramAPIInDTO,
+  ): Promise<PrimaryIdentifierAPIOutDTO> {
+    return this.postCall(
+      this.addClientRoot(`education-program/${programId}/renew`),
+      payload,
+    );
   }
 
   /**
@@ -163,6 +221,24 @@ export class EducationProgramApi extends HttpBaseClient {
       url = `${url}?isIncludeInActiveProgram=${options?.isIncludeInActiveProgram}`;
     }
     return this.getCall<OptionItemAPIOutDTO[]>(this.addClientRoot(url));
+  }
+
+  /**
+   * Get the list of education programs for a specific program year.
+   * @param programYearId ID of the program year.
+   * @param paginationOptions Pagination options for the results.
+   * @returns Paginated list of education programs for the specified program year.
+   */
+  async getProgramsForProgramYear(
+    programYearId: number,
+    paginationOptions: PaginationOptions,
+  ): Promise<
+    PaginatedResultsAPIOutDTO<EducationProgramManagerDetailsAPIOutDTO>
+  > {
+    const url = `education-program/program-year/${programYearId}/summary?${getPaginationQueryString(
+      paginationOptions,
+    )}`;
+    return this.getCall(this.addClientRoot(url));
   }
 
   /**

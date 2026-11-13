@@ -38,7 +38,6 @@ import {
   ProgramPaginationOptions,
   PaginationOptions,
   ProgramLocationPaginationOptions,
-  SortPriority,
 } from "../../utilities";
 import {
   CustomNamedError,
@@ -51,6 +50,7 @@ import {
 } from "../../constants";
 import { NoteSharedService } from "@sims/services";
 import { INACTIVE_PROGRAM } from "../education-program/constants";
+import { getProgramStatusSortExpression } from "./education-program.utils";
 
 @Injectable()
 export class EducationProgramService extends RecordDataModelService<EducationProgram> {
@@ -389,15 +389,23 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.assessedDate",
         "programs.effectiveEndDate",
         "programs.isActive",
+        "parentProgram.id",
+        "precedingProgram.id",
+        "renewedProgram.id",
         "programConfiguration.id",
         "programConfiguration.visualSchema",
         "programConfiguration.validationSchema",
+        "programYear.id",
       ])
       .leftJoin("programs.submittedBy", "submittedBy")
       .leftJoin("programs.assessedBy", "assessedBy")
       .innerJoin("programs.institution", "institution")
       .innerJoin("institution.institutionType", "institutionType")
       .innerJoin("programs.programConfiguration", "programConfiguration")
+      .innerJoin("programConfiguration.programYear", "programYear")
+      .leftJoin("programs.parentProgram", "parentProgram")
+      .leftJoin("programs.precedingProgram", "precedingProgram")
+      .leftJoin("programs.renewedProgram", "renewedProgram")
       .where("programs.id = :id", { id: programId });
     if (institutionId) {
       query.andWhere("institution.id = :institutionId", { institutionId });
@@ -761,15 +769,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       paginatedProgramQuery.orderBy(defaultSortField, "ASC");
     } else
       // Default sort and order.
-      paginatedProgramQuery.orderBy(
-        `CASE           
-          WHEN programs.programStatus = '${ProgramStatus.Pending}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority1}
-          WHEN programs.programStatus = '${ProgramStatus.Approved}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority2}
-          WHEN programs.programStatus = '${ProgramStatus.Declined}' and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE) THEN ${SortPriority.Priority3}
-          WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN ${SortPriority.Priority4}
-          ELSE ${SortPriority.Priority5}
-        END`,
-      );
+      paginatedProgramQuery.orderBy(getProgramStatusSortExpression("programs"));
 
     // Total count and summary.
     return await Promise.all([

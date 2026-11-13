@@ -1,8 +1,8 @@
 <template>
-  <body-header-container title="Program"
+  <body-header-container :title="title"
     ><content-group>
       <error-summary ref="errorSummary" :errors="errorSummaryMessages" />
-      <v-skeleton-loader :loading="loading" type="article, text@5">
+      <v-skeleton-loader :loading="isLoading" type="article, text@5">
         <json-forms
           :data="formModel"
           :schema="programFormSchema"
@@ -11,7 +11,7 @@
           :validation-mode="validationMode"
           :additional-errors="requiredErrorsPerProperty"
           :ajv="programFormAjv"
-          :readonly="isReadonly"
+          :readonly="isReadOnly"
           @change="onProgramFormChange"
         />
       </v-skeleton-loader>
@@ -22,19 +22,15 @@
       @primary-click="submit"
       :disable-primary-button="isProcessing"
       :processing="isProcessing"
-      v-if="!isReadonly && !loading"
+      v-if="!isReadOnly && !isLoading"
     />
   </body-header-container>
 </template>
 <script setup lang="ts">
-import { useSnackBar } from "@/composables";
-import { computed, nextTick, ref, useTemplateRef, watchEffect } from "vue";
+import { computed, nextTick, ref, useTemplateRef, watch } from "vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
-import { EducationProgramService } from "@/services/EducationProgramService";
 import {
-  CreateEducationProgramAPIInDTO,
-  EducationProgramAPIOutDTO,
-  UpdateEducationProgramAPIInDTO,
+  EducationProgramConfigurationAPIOutDTO,
   EducationProgramDataAPIOutDTO,
 } from "@/services/http/dto";
 import { JsonForms } from "@jsonforms/vue";
@@ -51,58 +47,58 @@ import { ErrorMessage } from "@/types";
 
 interface ProgramFormProps {
   /**
-   * ID of the program to be edited.
-   * If not provided, a new program will be created.
+   * Title displayed in the form header.
    */
-  programId?: number;
+  title?: string;
   /**
-   * Indicates whether the form is read-only.
+   * Program configuration providing the validation and visual schemas,
+   * the program data used to create the form model, and the program year.
    */
-  readOnly?: boolean;
+  programConfiguration?: EducationProgramConfigurationAPIOutDTO;
+  /**
+   * Indicates whether the consumer is still loading the form data.
+   */
+  isLoading?: boolean;
   /**
    * Indicates whether the form is currently processing a submission.
    * Allows control of the loading from the consumer that is submitting the form.
    */
   isProcessing?: boolean;
+  /**
+   * Indicates whether the form is read-only.
+   */
+  isReadOnly?: boolean;
 }
 
 const props = withDefaults(defineProps<ProgramFormProps>(), {
-  programId: undefined,
-  readOnly: true,
+  title: "Program",
+  programConfiguration: undefined,
+  isLoading: false,
   isProcessing: false,
+  isReadOnly: true,
 });
+
 const emit = defineEmits<{
   cancel: [];
-  create: [program: CreateEducationProgramAPIInDTO];
-  update: [program: UpdateEducationProgramAPIInDTO];
-  loaded: [program: EducationProgramAPIOutDTO];
+  submit: [programData: Record<string, unknown>];
 }>();
 
-const loading = ref(true);
-const snackBar = useSnackBar();
 const errorSummary =
   useTemplateRef<InstanceType<typeof ErrorSummary>>("errorSummary");
-/**
- * Program configuration ID used when creating a new program.
- * Currently the most recent program configuration is used for creation,
- * later, the configuration must be explicitly selected by the user.
- */
-let programConfigurationIdForCreation: number | undefined;
+
 /**
  * Form model holding the current state of the program data.
  * This includes both the user-entered data and the calculated flags.
  */
 const formModel = ref({} as EducationProgramDataAPIOutDTO);
-/**
- * Indicates whether the loaded program can no longer be edited
- * because it is inactive or expired. Always false for creation.
- */
-const isProgramInactive = ref(false);
-const isReadonly = computed(() => props.readOnly || isProgramInactive.value);
 // Errors are always computed; only shown once the user tries to submit.
 const validationMode = ref<ValidationMode>("ValidateAndHide");
-const programFormSchema = ref<JsonSchema>({} as JsonSchema);
-const programFormUiSchema = ref<UISchemaElement>({} as UISchemaElement);
+const programFormSchema = computed(
+  () => (props.programConfiguration?.validationSchema ?? {}) as JsonSchema,
+);
+const programFormUiSchema = computed(
+  () => (props.programConfiguration?.visualSchema ?? {}) as UISchemaElement,
+);
 
 const calculateFlags = computed(() =>
   createFlagsCalculator(programFormSchema.value),
@@ -178,61 +174,17 @@ const submit = async () => {
   // Context and flags should be recalculated by the server.
   delete programData.context;
   delete programData.flags;
-  if (props.programId) {
-    emit("update", { programData });
-  } else if (programConfigurationIdForCreation) {
-    emit("create", {
-      programData,
-      programConfigurationId: programConfigurationIdForCreation,
-    });
-  } else {
-    snackBar.error("Unable to create program: missing program configuration.");
-  }
+  emit("submit", programData);
 };
 
-const loadProgram = async (programId: number) => {
-  try {
-    loading.value = true;
-    const programDetails =
-      await EducationProgramService.shared.getEducationProgram(programId);
-    programFormSchema.value = programDetails.validationSchema as JsonSchema;
-    programFormUiSchema.value = programDetails.visualSchema as UISchemaElement;
-    isProgramInactive.value =
-      !programDetails.isActive || programDetails.isExpired;
-    // Set after the schema, since the flags are declared by it.
-    formModel.value = withFlags(programDetails.programData);
-    emit("loaded", programDetails);
-  } catch {
-    snackBar.error("Unexpected error while loading program data.");
-  } finally {
-    loading.value = false;
-  }
-};
-
-const loadProgramForCreation = async () => {
-  try {
-    loading.value = true;
-    // Load the most recent active program configuration for creation.
-    const programConfiguration =
-      await EducationProgramService.shared.getEducationProgramConfiguration();
-    programConfigurationIdForCreation = programConfiguration.configurationId;
-    programFormSchema.value =
-      programConfiguration.validationSchema as JsonSchema;
-    programFormUiSchema.value =
-      programConfiguration.visualSchema as UISchemaElement;
-    formModel.value = programConfiguration.programData;
-  } catch {
-    snackBar.error("Unexpected error while loading program configuration.");
-  } finally {
-    loading.value = false;
-  }
-};
-
-watchEffect(async () => {
-  if (props.programId) {
-    await loadProgram(props.programId);
-    return;
-  }
-  await loadProgramForCreation();
-});
+// Recreates the form model whenever the consumer provides a new program configuration.
+watch(
+  () => props.programConfiguration,
+  (programConfiguration) => {
+    if (programConfiguration) {
+      formModel.value = withFlags(programConfiguration.programData);
+    }
+  },
+  { immediate: true },
+);
 </script>

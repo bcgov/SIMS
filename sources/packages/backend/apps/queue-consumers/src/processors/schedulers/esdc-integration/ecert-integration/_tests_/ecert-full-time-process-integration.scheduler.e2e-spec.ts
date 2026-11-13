@@ -288,10 +288,10 @@ describe(
       const [archivedDisbursement] =
         archivedApplication.currentAssessment.disbursementSchedules;
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       const uploadedFileName = getUploadedFileName();

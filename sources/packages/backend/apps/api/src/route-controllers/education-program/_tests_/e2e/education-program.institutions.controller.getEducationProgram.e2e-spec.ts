@@ -78,6 +78,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
         .expect({
           id: savedProgram.id,
           configurationId: mostRecentProgramConfiguration.id,
+          programYearName: mostRecentProgramConfiguration.programYear.programYear,
           programData: {
             ...savedProgram.programData,
             context: {

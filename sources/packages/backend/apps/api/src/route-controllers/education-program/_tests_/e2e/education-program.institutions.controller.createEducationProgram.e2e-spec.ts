@@ -99,7 +99,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(getEndpoint())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -270,7 +274,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       // Act/Assert
       let educationProgramId: number;
       await request(app.getHttpServer())
-        .post(getEndpoint())
+        .post(
+          getEndpoint({
+            programYearId: mostRecentProgramConfiguration.programYear.id,
+          }),
+        )
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.CREATED)
@@ -308,7 +316,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(getEndpoint())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -370,7 +382,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(getEndpoint())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
       .send(getCreationPayload(mostRecentProgramConfiguration.id))
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
@@ -393,7 +409,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(getEndpoint())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -420,7 +440,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(getEndpoint())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -456,7 +480,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     // Act/Assert
     let educationProgramId: number;
     await request(app.getHttpServer())
-      .post(getEndpoint())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.CREATED)
@@ -473,6 +501,31 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         sabcCode: TEST_SABC_CODE,
       }),
     );
+  });
+
+  it("Should throw unprocessable entity error when the program year has no active program configuration.", async () => {
+    // Arrange
+    const payload = getCreationPayload(mostRecentProgramConfiguration.id);
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(
+        getEndpoint({
+          programYearId: 99999,
+        }),
+      )
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "The provided program year does not have an active program configuration.",
+        error: "Not Found",
+      });
   });
 
   // Test bad request data.
@@ -620,7 +673,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
       // Act/Assert
       await request(app.getHttpServer())
-        .post(getEndpoint())
+        .post(
+          getEndpoint({
+            programYearId: mostRecentProgramConfiguration.programYear.id,
+          }),
+        )
         .send(payload)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.BAD_REQUEST)
@@ -668,8 +725,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
 
 /**
  * Get API endpoint.
+ * @param options endpoint options.
+ * - `programYearId` ID of the program year the program is being created for.
  * @returns the API endpoint.
  */
-function getEndpoint(): string {
-  return "/institutions/education-program";
+function getEndpoint(options: { programYearId: number }): string {
+  return `/institutions/education-program/program-year/${options.programYearId}/create`;
 }
