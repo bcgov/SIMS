@@ -96,8 +96,8 @@ export class EducationProgramControllerService {
    * @param institutionId the ID of the institution for which the configuration is being retrieved.
    * @param programConfigurationLookup the lookup criteria for the program configuration.
    * @param options additional options for retrieving the configuration.
-   * - `overrideProgramData` optional program data that should override the default configuration.
    * - `programId` optional ID of the program to load program configuration.
+   * - `overrideProgramData` optional program data that should override the default configuration.
    * @returns the education program configuration, including dynamic program data, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(
