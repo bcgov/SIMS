@@ -137,7 +137,8 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   @ApiNotFoundResponse({
-    description: "Not able to find an active program configuration.",
+    description:
+      "The provided program year does not have an active program configuration.",
   })
   @Get("program-year/:programYearId/create")
   async getEducationProgramForCreate(
@@ -154,7 +155,9 @@ export class EducationProgramInstitutionsController extends BaseController {
         error instanceof CustomNamedError &&
         error.name === EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND
       ) {
-        throw new NotFoundException(error.message);
+        throw new NotFoundException(
+          "The provided program year does not have an active program configuration.",
+        );
       }
       throw error;
     }
@@ -184,6 +187,10 @@ export class EducationProgramInstitutionsController extends BaseController {
    * @param userToken the token of the user making the request.
    * @returns id of the created program.
    */
+  @ApiNotFoundResponse({
+    description:
+      "The provided program year does not have an active program configuration.",
+  })
   @ApiBadRequestResponse({
     description: "Education program data is not valid.",
   })
@@ -217,10 +224,12 @@ export class EducationProgramInstitutionsController extends BaseController {
     } catch (error: unknown) {
       if (error instanceof CustomNamedError) {
         switch (error.name) {
+          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
+            throw new NotFoundException(
+              "The provided program year does not have an active program configuration.",
+            );
           case EDUCATION_PROGRAM_DATA_INVALID:
             throw new BadRequestException(error.objectInfo, error.message);
-          case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
-            throw new UnprocessableEntityException(error.message);
           case EDUCATION_PROGRAM_CONFIGURATION_OUTDATED:
           case DUPLICATE_SABC_CODE:
             throw new UnprocessableEntityException(
