@@ -6,22 +6,22 @@ const FORMS_SUBMISSION_FEATURE_TOGGLE = "FORMS_SUBMISSION";
 const BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE = "BULK_WITHDRAWAL_UPLOAD";
 const MANAGE_PROGRAMS_FEATURE_TOGGLE = "MANAGE_PROGRAMS";
 
+/**
+ * App config shared across all composable instances.
+ * Null only while the config is being loaded for the first time,
+ * after that it should always be defined.
+ */
+const appConfig = ref<AppConfig | null>(null);
+
+/**
+ * Loads the config into the shared ref. The service caches the config,
+ * so this is cheap, and it still refreshes once the cache expires.
+ */
+const loadConfig = async () => {
+  appConfig.value = await AppConfigService.shared.config();
+};
+
 export function useFeatureToggles() {
-  /**
-   * Keep the app config for easy access to the feature toggles.
-   * Null only while the config is being loaded for the first time,
-   * after that it should always be defined.
-   */
-  const appConfig = ref<AppConfig | null>(null);
-
-  /**
-   * Ensures the config is loaded and up to date
-   * when the composable is initialized.
-   */
-  const loadConfig = async () => {
-    appConfig.value = await AppConfigService.shared.config();
-  };
-
   // Load config on composable initialization.
   void loadConfig();
 
@@ -56,6 +56,7 @@ export function useFeatureToggles() {
   );
 
   return {
+    loadConfig,
     isFormSubmissionEnabled,
     isBulkWithdrawalUploadEnabled,
     isManageProgramsEnabled,

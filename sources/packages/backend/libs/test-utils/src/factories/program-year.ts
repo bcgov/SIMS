@@ -54,6 +54,27 @@ export async function ensureProgramYearExists(
 }
 
 /**
+ * Ensures that consecutive program years exist starting from the provided prefix,
+ * using {@link ensureProgramYearExists} for each one of them.
+ * @param db e2e data sources.
+ * @param startingPrefix prefix of the first program year, for instance, a prefix
+ * 2000 with a count of 2 would ensure the program years 2000-2001 and 2001-2002.
+ * @param count number of consecutive program years.
+ * @returns program years ordered by their prefixes.
+ */
+export async function ensureSequentialProgramYearsExist(
+  db: E2EDataSources,
+  startingPrefix: number,
+  count: number,
+): Promise<ProgramYear[]> {
+  return Promise.all(
+    Array.from({ length: count }, (_, index) =>
+      ensureProgramYearExists(db, startingPrefix + index),
+    ),
+  );
+}
+
+/**
  * Uses the year of 1999 to create a part-time only program year for testing purposes.
  * @param db e2e data sources.
  * @returns the created part-time only program year.

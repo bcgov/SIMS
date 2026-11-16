@@ -26,14 +26,19 @@ import {
 } from "../../constants";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, EntityManager, Repository } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  FindOptionsWhere,
+  Repository,
+} from "typeorm";
 import {
   EducationProgramContext,
   EducationProgramData,
   EducationProgramDynamicConfiguration,
   EducationProgramDynamicData,
   EntranceRequirementValues,
-  ProgramConfigurationLookup,
+  ProgramConfigurationCriteria,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
@@ -73,25 +78,31 @@ export class EducationProgramSaveService {
   /**
    * Get the program configuration including visual schema, validation schema, and context.
    * @param institutionId ID of the institution requesting the configuration.
-   * @param programConfigurationLookup the lookup criteria for the program configuration.
-   * @param options additional options for retrieving the configuration.
-   * - `programId` optional ID of the program to load program configuration.
+   * @param programConfigurationCriteria the criteria to retrieve the program configuration.
    * @returns the program configuration including context, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(
     institutionId: number,
-    programConfigurationLookup: ProgramConfigurationLookup,
-    options?: {
-      programId?: number;
-    },
+    programConfigurationCriteria: ProgramConfigurationCriteria,
   ): Promise<EducationProgramDynamicConfiguration> {
     const institutionPromise =
       this.institutionService.getInstitutionTypeById(institutionId);
-    const hasOfferingsPromise = options?.programId
+    const hasOfferingsPromise = programConfigurationCriteria.programId
       ? this.educationProgramOfferingService.hasExistingOffering(
-          options.programId,
+          programConfigurationCriteria.programId,
         )
       : Promise.resolve(false);
+
+    const where: FindOptionsWhere<EducationProgramConfiguration> =
+      programConfigurationCriteria.programYearId
+        ? // When selecting by program year, only the active configuration must be considered.
+          {
+            programYear: { id: programConfigurationCriteria.programYearId },
+            isActive: true,
+          }
+        : // When a specific configuration is requested, it must be returned regardless of
+          // its active status (e.g. an existing program associated with an inactive configuration).
+          { id: programConfigurationCriteria.programConfigurationId };
     const programConfigurationPromise =
       this.educationProgramConfigurationRepo.findOne({
         select: {
@@ -107,16 +118,7 @@ export class EducationProgramSaveService {
         relations: {
           programYear: true,
         },
-        where: {
-          id: programConfigurationLookup?.programConfigurationId,
-          programYear: { id: programConfigurationLookup?.programYearId },
-          // When a specific configuration is requested, it must be returned regardless of
-          // its active status (e.g. an existing program associated with an inactive configuration).
-          // Otherwise, only active configurations should be considered.
-          isActive: programConfigurationLookup?.programConfigurationId
-            ? undefined
-            : true,
-        },
+        where,
       });
     const [institution, hasOfferings, programConfiguration] = await Promise.all(
       [institutionPromise, hasOfferingsPromise, programConfigurationPromise],
@@ -329,8 +331,10 @@ export class EducationProgramSaveService {
     }
     const configuration = await this.getEducationProgramConfiguration(
       program.institution.id,
-      { programConfigurationId: program.programConfiguration.id },
-      { programId: program.id },
+      {
+        programConfigurationId: program.programConfiguration.id,
+        programId: program.id,
+      },
     );
     let programDataToUpdate: EducationProgramData;
     if (configuration.context.isFullUpdateRestricted) {

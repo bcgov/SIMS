@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import ApiClient from "../services/http/ApiClient";
 import { AppConfig } from "../types/contracts/ConfigContract";
 
@@ -8,18 +9,23 @@ export class AppConfigService {
   private _config?: AppConfig;
 
   private readonly _storageKey: string = "app-config";
-  private readonly _configExpiry: number = 1000 * 60 * 60;
+  private readonly _configExpiryMinutes = 60;
 
   public static get shared(): AppConfigService {
     return this.instance || (this.instance = new this());
   }
 
-  private isValidConfig(config: AppConfig) {
-    // Validating config from its update time with _config expiry time
-    if (Date.now() - config.updateTime.getMilliseconds() > this._configExpiry) {
-      return false;
-    }
-    return true;
+  /**
+   * Checks if the config is still within its expiry time.
+   * @param config config to be validated.
+   * @returns true if the config has not expired yet, otherwise false.
+   */
+  private isValidConfig(config: AppConfig): boolean {
+    const expiresAt = dayjs(config.updateTime).add(
+      this._configExpiryMinutes,
+      "minute",
+    );
+    return dayjs().isBefore(expiresAt);
   }
 
   private getLocalConfig() {
@@ -30,7 +36,7 @@ export class AppConfigService {
   }
 
   private async updateConfig() {
-    if (!this.config) {
+    if (!this._config) {
       if (localStorage.getItem(this._storageKey)) {
         const config = this.getLocalConfig() as AppConfig;
         if (this.isValidConfig(config)) {
