@@ -243,7 +243,7 @@
               "attr": ""
             }
           ],
-          "content": "<h4 class=\"category-header-medium-small\"><strong>Documents required:</strong></h4>\n<p>A letter including all the following details:</p>\n<ul><li>Each exceptional expense</li><li>When the exceptional expense(s) occurred</li><li>The amount of payment</li><li>Why these expenses were necessary during the study period</li></ul>",
+          "content": "<h4 class=\"category-header-medium-small\">Documents required:</h4>\n<p>A letter including all the following details:</p>\n<ul><li>Each exceptional expense</li><li>When the exceptional expense(s) occurred</li><li>The amount of payment</li><li>Why these expenses were necessary during the study period</li></ul>",
           "refreshOnChange": false,
           "customClass": "align-bullets",
           "key": "exceptionalExpensePanelContent3",
