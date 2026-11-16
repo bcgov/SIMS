@@ -56,13 +56,13 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramYearsList", () =
 
     // Program years are shared across tests running in parallel, hence only the
     // program years created by this test are asserted.
-    const testProgramYearIds = [
+    const testProgramYearIds = new Set([
       activeConfigurationProgramYear.id,
       inactiveConfigurationProgramYear.id,
       noConfigurationProgramYear.id,
-    ];
+    ]);
     const testProgramYears = programYears.filter((programYear) =>
-      testProgramYearIds.includes(programYear.id),
+      testProgramYearIds.has(programYear.id),
     );
     // The program year without configurations must not be returned, each program year
     // must be returned only once, and the most recent program year must be returned first.
