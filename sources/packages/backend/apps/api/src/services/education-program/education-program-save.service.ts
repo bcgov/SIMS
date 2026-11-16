@@ -92,7 +92,6 @@ export class EducationProgramSaveService {
           programConfigurationCriteria.programId,
         )
       : Promise.resolve(false);
-
     const where: FindOptionsWhere<EducationProgramConfiguration> =
       programConfigurationCriteria.programYearId
         ? // When selecting by program year, only the active configuration must be considered.

@@ -93,9 +93,10 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramForCrea
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: "Education program configuration not found.",
+        message:
+          "The provided program year does not have an active program configuration.",
         error: "Not Found",
+        statusCode: HttpStatus.NOT_FOUND,
       });
   });
 

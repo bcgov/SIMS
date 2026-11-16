@@ -520,7 +520,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
-  it("Should throw unprocessable entity error when the program year does not exist.", async () => {
+  it("Should throw not found error when the program year does not exist.", async () => {
     // Arrange
     const payload = getCreationPayload(mostRecentProgramConfiguration.id);
     const institutionUserToken = await getInstitutionToken(
@@ -545,7 +545,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       });
   });
 
-  it("Should throw unprocessable entity error when the program year has only an inactive program configuration.", async () => {
+  it("Should throw not found error when the program year has only an inactive program configuration.", async () => {
     // Arrange
     const payload = getCreationPayload(inactiveProgramConfiguration.id);
     const institutionUserToken = await getInstitutionToken(
@@ -561,11 +561,12 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       )
       .send(payload)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect(HttpStatus.NOT_FOUND)
       .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        message: "Education program configuration not found.",
-        error: "Unprocessable Entity",
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "The provided program year does not have an active program configuration.",
+        error: "Not Found",
       });
   });
 
