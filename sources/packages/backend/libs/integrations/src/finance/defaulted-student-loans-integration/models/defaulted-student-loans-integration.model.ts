@@ -39,6 +39,25 @@ export enum DefaultedStudentLoanBalanceType {
   PDB = "PDB",
 }
 
+/**
+ * Defaulted student loan interest types.
+ */
+export enum DefaultedStudentLoanInterestType {
+  Fixed = "FXD",
+  PrimePlus = "PR+",
+}
+
+/**
+ * Balance types which are populated with values for the defaulted student loans integration.
+ */
+export const POPULATED_BALANCE_TYPES = [
+  DefaultedStudentLoanBalanceType.BOA,
+  DefaultedStudentLoanBalanceType.PRN,
+  DefaultedStudentLoanBalanceType.INT,
+  DefaultedStudentLoanBalanceType.EXP,
+  DefaultedStudentLoanBalanceType.DIN,
+];
+
 export interface BalanceTypeItem {
   /**
    * Defaulted student loan balance type name.
@@ -63,7 +82,7 @@ export interface BalanceTypeItem {
    * FXD - Fixed interest type.
    * PR+ - Prime plus interest type.
    */
-  interestType: "FXD" | "PR+";
+  interestType: DefaultedStudentLoanInterestType | undefined;
   /**
    * Flag to determine if interest should be calculated for this balance type for this account.
    */

@@ -7,6 +7,8 @@ import {
 import { FixedFormatFileLine } from "../../../services/ssh";
 import { SpecializedStringBuilder } from "@sims/utilities";
 
+const FILLER_LENGTH = 1146;
+
 export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
   /**
    * Header record type.
@@ -23,15 +25,13 @@ export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
   /**
    * Unique ID number that identifies from where the transmission came.
    */
-  transmissionSourceID: string;
+  private readonly transmissionSourceID = "STLDLLAB";
   /**
    * Description of the transmission.
    */
-  transmissionDescription: string;
-  /**
-   * Filler for the header record.
-   */
-  filler: string;
+  private readonly transmissionDescription =
+    "DEFAULTED DIRECT LEND STUDENT LOANS";
+
   getFixedFormat(): string {
     const header = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
@@ -43,7 +43,7 @@ export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
     header.appendNumberWithFiller(this.transmissionNumber, 10);
     header.appendStringWithFiller(this.transmissionSourceID, 10);
     header.appendStringWithFiller(this.transmissionDescription, 80);
-    header.appendOptionalStringWithFiller(this.filler, 1146);
+    header.appendStringWithFiller("", FILLER_LENGTH);
     return header.toString();
   }
 }

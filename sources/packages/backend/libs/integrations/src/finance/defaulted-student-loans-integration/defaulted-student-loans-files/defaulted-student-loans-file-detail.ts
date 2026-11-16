@@ -21,6 +21,10 @@ const BALANCE_TYPE_ELEMENT_LENGTH = 41;
 const FREE_AREA_FILLER_LENGTH = 100;
 
 /**
+ * Total number of balance type elements expected in the defaulted student loans file.
+ */
+const TOTAL_BALANCE_TYPE_ELEMENTS = 8;
+/**
  * Map of balance types to their corresponding calculate interest flag.
  * This determines whether interest should be calculated for each balance type.
  */
@@ -75,6 +79,7 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
   firstName?: string;
   /**
    * Current middle names of client. Names are separated by spaces.
+   * Field value mapping TBD, populated with filler.
    */
   middleNames?: string;
   /**
@@ -175,84 +180,18 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
    */
   originalDueDate?: Date;
   /**
-   * Balance type item for the balance type BOA.
+   * Array of populated balance type items for the loan.
+   * Currently the balance type BOA, PRN, INT, EXP, and DIN are expected to be included.
    */
-  balanceTyeBOA: BalanceTypeItem;
+  populatedBalanceTypeItems: BalanceTypeItem[];
   /**
-   * Balance type item for the balance type PRN.
+   * Date when a student loan enters repayment.
    */
-  balanceTyePRN: BalanceTypeItem;
+  consolidationDate: Date;
   /**
-   * Balance type item for the balance type INT.
+   * Next payment due date before a loan is defaulted.
    */
-  balanceTyeINT: BalanceTypeItem;
-  /**
-   * Balance type item for the balance type EXP.
-   */
-  balanceTyeEXP: BalanceTypeItem;
-  /**
-   * Balance type item for the balance type DIN.
-   */
-  balanceTyeDIN: BalanceTypeItem;
-  /**
-   * Next of kin address type.
-   */
-  private readonly nextOfKINAddressType = "K";
-  /**
-   * The date in which the next of kin address becomes effective.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINAddressEffectiveDate?: Date;
-  /**
-   * The date when the next of kin address is no longer valid.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINAddressEndDate?: Date;
-  /**
-   * The next of Kin person's first and last name.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINAddressName?: string;
-  /**
-   * Address information line 1 for the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINAddressLine1?: string;
-  /**
-   * Address information line 2 for the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINAddressLine2?: string;
-  /**
-   * City of the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINCity?: string;
-  /**
-   * Province of the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINProvince?: string;
-  /**
-   * Country of the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINCountry?: string;
-  /**
-   * Postal code of the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINPostalCode?: string;
-  /**
-   * Home phone number of the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINHomePhone?: string;
-  /**
-   * Business phone number of the next of kin address.
-   * Currently ignored, populated with filler.
-   */
-  nextOfKINBusinessPhone?: string;
+  eventDate: Date;
 
   getFixedFormat(): string {
     const detail = new SpecializedStringBuilder({
@@ -291,30 +230,22 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     detail.appendNumberWithFiller(this.originalBalance.toFixed(2), 14);
     detail.append(this.originalBalance < 0 ? "-" : SPACE_FILLER);
     detail.appendOptionalFormattedDate(this.originalDueDate);
-    this.appendBalanceTypeItem(detail, this.balanceTyeBOA);
-    this.appendBalanceTypeItem(detail, this.balanceTyePRN);
-    this.appendBalanceTypeItem(detail, this.balanceTyeINT);
-    this.appendBalanceTypeItem(detail, this.balanceTyeEXP);
-    this.appendBalanceTypeItem(detail, this.balanceTyeDIN);
+    this.populatedBalanceTypeItems.forEach((balanceTypeItem) => {
+      this.appendBalanceTypeItem(detail, balanceTypeItem);
+    });
     // The file has space for 8 balance type elements but only 5 of them are currently mapped by the system.
     // Hence remaining balance type elements should be filled with space.
-    for (let i = 0; i < 3; i++) {
+    for (
+      let i = 0;
+      i < TOTAL_BALANCE_TYPE_ELEMENTS - this.populatedBalanceTypeItems.length;
+      i++
+    ) {
       detail.appendStringWithFiller("", BALANCE_TYPE_ELEMENT_LENGTH);
     }
     // Append free area filler.
     detail.appendStringWithFiller("", FREE_AREA_FILLER_LENGTH);
-    detail.append(this.nextOfKINAddressType);
-    detail.appendOptionalFormattedDate(this.nextOfKINAddressEffectiveDate);
-    detail.appendOptionalFormattedDate(this.nextOfKINAddressEndDate);
-    detail.appendOptionalStringWithFiller(this.nextOfKINAddressName, 65);
-    detail.appendOptionalStringWithFiller(this.nextOfKINAddressLine1, 50);
-    detail.appendOptionalStringWithFiller(this.nextOfKINAddressLine2, 50);
-    detail.appendOptionalStringWithFiller(this.nextOfKINCity, 20);
-    detail.appendOptionalStringWithFiller(this.nextOfKINProvince, 20);
-    detail.appendOptionalStringWithFiller(this.nextOfKINCountry, 20);
-    detail.appendOptionalStringWithFiller(this.nextOfKINPostalCode, 15);
-    detail.appendOptionalStringWithFiller(this.nextOfKINHomePhone, 10);
-    detail.appendOptionalStringWithFiller(this.nextOfKINBusinessPhone, 10);
+    detail.appendFormattedDate(this.consolidationDate);
+    detail.appendFormattedDate(this.eventDate);
     return detail.toString();
   }
 

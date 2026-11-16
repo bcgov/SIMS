@@ -111,6 +111,7 @@ import { ModuleRef } from "@nestjs/core";
 import { getQueueToken } from "@nestjs/bullmq";
 import { BULL_MQ_MIGRATED_QUEUE_NAMES, JOB_SUFFIX } from "@sims/utilities";
 import { Queue } from "bullmq";
+import { DefaultedStudentLoansIntegrationModule } from "@sims/integrations/finance/defaulted-student-loans-integration/defaulted-student-loans.integration.module";
 // TODO: Removed ATBCResponseIntegrationScheduler in providers, the queuename from enum and the decorators of the processor as part of #2539.
 @Module({
   imports: [
@@ -141,6 +142,7 @@ import { Queue } from "bullmq";
     ECertCancellationResponseIntegrationModule,
     T4AIntegrationModule,
     ReturnedLoansResponseIntegrationModule,
+    DefaultedStudentLoansIntegrationModule,
   ],
   providers: [
     VirusScanProcessor,
