@@ -5,7 +5,7 @@
         color="primary"
         v-bind="menuProps"
         :disabled="!activeProgramYears.length"
-        :loading="loading"
+        :loading="loadingEducationProgramYears"
         prepend-icon="fa:fa fa-plus-circle"
         append-icon="mdi-menu-down"
       >
@@ -35,38 +35,20 @@
   </v-menu>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { EducationProgramService } from "@/services/EducationProgramService";
-import type { EducationProgramYearAPIOutDTO } from "@/services/http/dto";
-import { useSnackBar } from "@/composables";
+import { useEducationProgramYears } from "@/composables";
 
-const snackBar = useSnackBar();
-const loading = ref(false);
-/**
- * Program years with education program configurations.
- */
-const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
+const { educationProgramYears, loadingEducationProgramYears } =
+  useEducationProgramYears();
 
 /**
  * Program years with at least one active education program configuration,
  * available to have new programs created for.
  */
 const activeProgramYears = computed(() =>
-  programYears.value.filter(
+  educationProgramYears.value.filter(
     (programYear) => programYear.hasActiveProgramConfiguration,
   ),
 );
-
-onMounted(async () => {
-  loading.value = true;
-  try {
-    programYears.value =
-      await EducationProgramService.shared.getProgramYearsList();
-  } catch {
-    snackBar.error("Unexpected error while loading program years.");
-  } finally {
-    loading.value = false;
-  }
-});
 </script>

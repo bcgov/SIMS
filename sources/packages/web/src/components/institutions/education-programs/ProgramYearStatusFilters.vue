@@ -15,7 +15,7 @@
       placeholder="Select year"
       persistent-placeholder
       density="compact"
-      :items="programYears"
+      :items="educationProgramYears"
       item-title="description"
       item-value="id"
       return-object
@@ -24,7 +24,7 @@
       variant="outlined"
       hide-details="auto"
       prepend-inner-icon="mdi-calendar-range"
-      :loading="loading || loadingProgramYears"
+      :loading="loading || loadingEducationProgramYears"
       autofocus
     />
     <v-btn-toggle
@@ -49,12 +49,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { EducationProgramService } from "@/services/EducationProgramService";
+import { ref, watch } from "vue";
 import { ProgramStatus, type ProgramStatusFilters } from "@/types";
 import { INACTIVE_PROGRAM } from "@/constants";
 import type { EducationProgramYearAPIOutDTO } from "@/services/http/dto";
-import { useSnackBar } from "@/composables";
+import { useEducationProgramYears } from "@/composables";
 
 interface ProgramYearStatusFiltersProps {
   /**
@@ -88,7 +87,9 @@ const statusFilters = defineModel<ProgramStatusFilters>("statusFilters", {
   }),
 });
 
-const snackBar = useSnackBar();
+// Program years with education program configurations available to be selected.
+const { educationProgramYears, loadingEducationProgramYears } =
+  useEducationProgramYears();
 // Sentinel value used to represent the "All" filter state.
 const ALL_STATUS = "All";
 // Renewal filter values, listed along with the program statuses.
@@ -108,9 +109,6 @@ const STATUS_FILTERS = [
 ];
 const PROGRAM_STATUSES = Object.values(ProgramStatus) as string[];
 const selectedStatuses = ref([ALL_STATUS]);
-const loadingProgramYears = ref(false);
-// Program years with education program configurations available to be selected.
-const programYears = ref<EducationProgramYearAPIOutDTO[]>([]);
 
 /**
  * Program year currently selected, kept locally as the full object to be
@@ -180,19 +178,10 @@ const handleStatusChange = (newVal: string[]) => {
   emitFiltersChanged();
 };
 
-onMounted(async () => {
-  loadingProgramYears.value = true;
-  try {
-    programYears.value =
-      await EducationProgramService.shared.getProgramYearsList();
-  } catch {
-    snackBar.error("Unexpected error while loading program years.");
-  } finally {
-    loadingProgramYears.value = false;
-  }
+watch(educationProgramYears, () => {
   // No program year is selected by default, unless a valid one was provided,
   // otherwise the user must select one to list the programs.
-  selectedProgramYear.value = programYears.value.find(
+  selectedProgramYear.value = educationProgramYears.value.find(
     (programYear) => programYear.id === programYearId.value,
   );
   if (!selectedProgramYear.value) {

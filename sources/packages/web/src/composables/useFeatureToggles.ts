@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 
 const FORMS_SUBMISSION_FEATURE_TOGGLE = "FORMS_SUBMISSION";
 const BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE = "BULK_WITHDRAWAL_UPLOAD";
-const MANAGE_PROGRAMS_FEATURE_TOGGLE = "MANAGE_PROGRAMS";
+export const MANAGE_PROGRAMS_FEATURE_TOGGLE = "MANAGE_PROGRAMS";
 
 /**
  * App config shared across all composable instances.
