@@ -300,7 +300,5 @@ const programYearFiltersInitialized = async (
   }
 };
 
-// Loads the program years shared with the components that depend on them,
-// such as the program year filter and the create program menu.
 onMounted(loadEducationProgramYears);
 </script>
