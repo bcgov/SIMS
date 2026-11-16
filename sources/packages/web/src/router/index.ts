@@ -3,7 +3,6 @@ import {
   createWebHistory,
   RouteRecordRaw,
   RouteLocationNormalized,
-  RouteRecordName,
 } from "vue-router";
 import { studentRoutes } from "./StudentRoutes";
 import { institutionRoutes } from "./InstitutionRoutes";
@@ -14,12 +13,7 @@ import { supportingUsersRoutes } from "./SupportingUserRoutes";
 import { validateInstitutionUserAccess } from "./InstitutionRouteHelper";
 import { InstitutionUserTypes } from "@/types";
 import { AppConfigService } from "@/services/AppConfigService";
-import {
-  AESTRoutesConst,
-  InstitutionRoutesConst,
-  SharedRouteConst,
-  StudentRoutesConst,
-} from "@/constants/routes/RouteConstants";
+import { SharedRouteConst } from "@/constants/routes/RouteConstants";
 import { useFeatureToggles } from "@/composables/useFeatureToggles";
 
 declare module "vue-router" {
@@ -34,22 +28,11 @@ declare module "vue-router" {
     allowOnlyBCPublic?: boolean;
     /**
      * Feature toggle that must be enabled for the route to be accessible.
-     * When disabled, the user is redirected to the client type dashboard.
+     * When disabled, the user is redirected to the not found page.
      */
     featureToggle?: string;
   }
 }
-
-/**
- * Routes to redirect to, per client type, when a route
- * is not accessible because its feature toggle is disabled.
- */
-const FEATURE_TOGGLE_REDIRECTS: Partial<Record<ClientIdType, RouteRecordName>> =
-  {
-    [ClientIdType.Student]: StudentRoutesConst.STUDENT_DASHBOARD,
-    [ClientIdType.Institution]: InstitutionRoutesConst.INSTITUTION_DASHBOARD,
-    [ClientIdType.AEST]: AESTRoutesConst.AEST_DASHBOARD,
-  };
 
 const routes: Array<RouteRecordRaw> = [
   ...studentRoutes,
@@ -127,9 +110,12 @@ router.beforeResolve(async (to, _from, next) => {
     await loadConfig();
     if (!isFeatureToggleEnabled(to.meta.featureToggle)) {
       next({
-        name:
-          FEATURE_TOGGLE_REDIRECTS[to.meta.clientType] ??
-          SharedRouteConst.FORBIDDEN_USER,
+        name: SharedRouteConst.PAGE_NOT_FOUND,
+        // Keeps the current URL while rendering the not found page.
+        params: { pathMatch: to.path.substring(1).split("/") },
+        query: to.query,
+        hash: to.hash,
+        replace: true,
       });
       return;
     }

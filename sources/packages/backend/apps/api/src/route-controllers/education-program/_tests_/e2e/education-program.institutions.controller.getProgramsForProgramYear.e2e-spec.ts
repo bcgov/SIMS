@@ -73,40 +73,39 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     // Arrange
     // A UUID is embedded in the names so that searchCriteria can isolate programs
     // created in this test from programs created by other tests or executions.
-    const searchString = faker.string.uuid();
+    const searchCriteria = faker.string.uuid();
     const notRenewedProgram = await saveEducationProgram(
       renewableProgramConfiguration,
-      { initialValues: { name: `Alpha ${searchString}` } },
+      { initialValues: { name: `Alpha ${searchCriteria}` } },
     );
     const renewedProgram = await saveEducationProgram(
       renewableProgramConfiguration,
-      { initialValues: { name: `Beta ${searchString}` } },
+      { initialValues: { name: `Beta ${searchCriteria}` } },
     );
     // Program from the next program year, renewed from the program above,
     // that must not be returned since it belongs to a different program year.
     await saveEducationProgram(nextProgramConfiguration, {
-      initialValues: { name: `Charlie ${searchString}` },
+      initialValues: { name: `Charlie ${searchCriteria}` },
       precedingProgram: renewedProgram,
     });
     // Program from a different institution that must not be returned.
     await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: { name: `Delta ${searchString}` },
+      initialValues: { name: `Delta ${searchCriteria}` },
       institution: collegeC,
       auditUser: collegeCUser,
     });
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria,
+      sortField: "programName",
+      sortOrder: "ASC",
+    });
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: searchString,
-          sortField: "programName",
-          sortOrder: "ASC",
-        }),
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
@@ -120,22 +119,22 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
 
   it(`Should return the programs with renewal status "${ProgramRenewalStatus.NotAvailable}" when the next program year has no active configuration.`, async () => {
     // Arrange
-    const searchString = faker.string.uuid();
+    const searchCriteria = faker.string.uuid();
     const program = await saveEducationProgram(
       notRenewableProgramConfiguration,
-      { initialValues: { name: `Alpha ${searchString}` } },
+      { initialValues: { name: `Alpha ${searchCriteria}` } },
     );
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(
+      notRenewableProgramConfiguration.programYear.id,
+      { searchCriteria },
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        getEndpoint(notRenewableProgramConfiguration.programYear.id, {
-          searchCriteria: searchString,
-        }),
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
@@ -146,16 +145,16 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       });
   });
 
-  it("Should return the programs sorted by program status (pending, approved, declined, and inactive) when no sort field is provided.", async () => {
+  it("Should return the programs sorted by program status (pending, approved, declined, and inactive) and then by name when no sort field is provided.", async () => {
     // Arrange
     // Names in the reverse order of the expected program status order to
     // ensure the programs are not sorted by name.
-    const searchString = faker.string.uuid();
+    const searchCriteria = faker.string.uuid();
     const inactiveProgram = await saveEducationProgram(
       renewableProgramConfiguration,
       {
         initialValues: {
-          name: `Alpha ${searchString}`,
+          name: `Alpha ${searchCriteria}`,
           programStatus: ProgramStatus.Approved,
           isActive: false,
         },
@@ -165,7 +164,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       renewableProgramConfiguration,
       {
         initialValues: {
-          name: `Bravo ${searchString}`,
+          name: `Bravo ${searchCriteria}`,
           programStatus: ProgramStatus.Declined,
         },
       },
@@ -174,16 +173,27 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       renewableProgramConfiguration,
       {
         initialValues: {
-          name: `Charlie ${searchString}`,
+          name: `Charlie ${searchCriteria}`,
           programStatus: ProgramStatus.Approved,
         },
       },
     );
-    const pendingProgram = await saveEducationProgram(
+    // Pending program saved before the next pending program, but expected
+    // after it, to ensure the programs with the same status are sorted by name.
+    const secondPendingProgram = await saveEducationProgram(
       renewableProgramConfiguration,
       {
         initialValues: {
-          name: `Delta ${searchString}`,
+          name: `Echo ${searchCriteria}`,
+          programStatus: ProgramStatus.Pending,
+        },
+      },
+    );
+    const firstPendingProgram = await saveEducationProgram(
+      renewableProgramConfiguration,
+      {
+        initialValues: {
+          name: `Delta ${searchCriteria}`,
           programStatus: ProgramStatus.Pending,
         },
       },
@@ -191,20 +201,26 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria,
+    });
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: searchString,
-        }),
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        count: 4,
+        count: 5,
         results: [
-          getExpectedProgram(pendingProgram, ProgramRenewalStatus.Available),
+          getExpectedProgram(
+            firstPendingProgram,
+            ProgramRenewalStatus.Available,
+          ),
+          getExpectedProgram(
+            secondPendingProgram,
+            ProgramRenewalStatus.Available,
+          ),
           getExpectedProgram(approvedProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(declinedProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(inactiveProgram, ProgramRenewalStatus.Available),
@@ -214,51 +230,49 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
 
   it("Should return only the active and not expired programs with the requested status when a status filter is applied.", async () => {
     // Arrange
-    const searchString = faker.string.uuid();
-    const pendingProgram = await saveEducationProgram(
-      renewableProgramConfiguration,
-      {
+    const searchCriteria = faker.string.uuid();
+    const [pendingProgram] = await Promise.all([
+      saveEducationProgram(renewableProgramConfiguration, {
         initialValues: {
-          name: `Alpha ${searchString}`,
+          name: `Alpha ${searchCriteria}`,
           programStatus: ProgramStatus.Pending,
         },
-      },
-    );
-    // Approved program that must not be returned.
-    await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: {
-        name: `Bravo ${searchString}`,
-        programStatus: ProgramStatus.Approved,
-      },
-    });
-    // Inactive pending program that must not be returned.
-    await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: {
-        name: `Charlie ${searchString}`,
-        programStatus: ProgramStatus.Pending,
-        isActive: false,
-      },
-    });
-    // Expired pending program that must not be returned.
-    await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: {
-        name: `Delta ${searchString}`,
-        programStatus: ProgramStatus.Pending,
-        effectiveEndDate: getISODateOnlyString(new Date()),
-      },
-    });
+      }),
+      // Approved program that must not be returned.
+      saveEducationProgram(renewableProgramConfiguration, {
+        initialValues: {
+          name: `Bravo ${searchCriteria}`,
+          programStatus: ProgramStatus.Approved,
+        },
+      }),
+      // Inactive pending program that must not be returned.
+      saveEducationProgram(renewableProgramConfiguration, {
+        initialValues: {
+          name: `Charlie ${searchCriteria}`,
+          programStatus: ProgramStatus.Pending,
+          isActive: false,
+        },
+      }),
+      // Expired pending program that must not be returned.
+      saveEducationProgram(renewableProgramConfiguration, {
+        initialValues: {
+          name: `Delta ${searchCriteria}`,
+          programStatus: ProgramStatus.Pending,
+          effectiveEndDate: getISODateOnlyString(new Date()),
+        },
+      }),
+    ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria,
+      statusSearch: ProgramStatus.Pending,
+    });
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: searchString,
-          statusSearch: ProgramStatus.Pending,
-        }),
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
@@ -271,20 +285,20 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
 
   it("Should return only the inactive or expired programs when only the inactive program filter is applied.", async () => {
     // Arrange
-    const searchString = faker.string.uuid();
+    const searchCriteria = faker.string.uuid();
     // Active program that must not be returned.
     await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: { name: `Alpha ${searchString}` },
+      initialValues: { name: `Alpha ${searchCriteria}` },
     });
     const inactiveProgram = await saveEducationProgram(
       renewableProgramConfiguration,
-      { initialValues: { name: `Bravo ${searchString}`, isActive: false } },
+      { initialValues: { name: `Bravo ${searchCriteria}`, isActive: false } },
     );
     const expiredProgram = await saveEducationProgram(
       renewableProgramConfiguration,
       {
         initialValues: {
-          name: `Charlie ${searchString}`,
+          name: `Charlie ${searchCriteria}`,
           effectiveEndDate: getISODateOnlyString(new Date()),
         },
       },
@@ -292,17 +306,16 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria,
+      inactiveProgramSearch: "true",
+      sortField: "programName",
+      sortOrder: "ASC",
+    });
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: searchString,
-          inactiveProgramSearch: "true",
-          sortField: "programName",
-          sortOrder: "ASC",
-        }),
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
@@ -339,14 +352,14 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
   ].forEach(({ scenario, renewalFilters, expectRenewed, expectNotRenewed }) => {
     it(`Should return the programs matching the renewal filters when ${scenario}.`, async () => {
       // Arrange
-      const searchString = faker.string.uuid();
+      const searchCriteria = faker.string.uuid();
       const notRenewedProgram = await saveEducationProgram(
         renewableProgramConfiguration,
-        { initialValues: { name: `Alpha ${searchString}` } },
+        { initialValues: { name: `Alpha ${searchCriteria}` } },
       );
       const renewedProgram = await saveEducationProgram(
         renewableProgramConfiguration,
-        { initialValues: { name: `Bravo ${searchString}` } },
+        { initialValues: { name: `Bravo ${searchCriteria}` } },
       );
       await saveEducationProgram(nextProgramConfiguration, {
         precedingProgram: renewedProgram,
@@ -357,10 +370,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       const expectedResults: EducationProgramManagerDetailsAPIOutDTO[] = [];
       if (expectNotRenewed) {
         expectedResults.push(
-          getExpectedProgram(
-            notRenewedProgram,
-            ProgramRenewalStatus.Available,
-          ),
+          getExpectedProgram(notRenewedProgram, ProgramRenewalStatus.Available),
         );
       }
       if (expectRenewed) {
@@ -368,17 +378,19 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
           getExpectedProgram(renewedProgram, ProgramRenewalStatus.Renewed),
         );
       }
+      const endpoint = getEndpoint(
+        renewableProgramConfiguration.programYear.id,
+        {
+          searchCriteria,
+          sortField: "programName",
+          sortOrder: "ASC",
+          ...renewalFilters,
+        },
+      );
 
       // Act/Assert
       await request(app.getHttpServer())
-        .get(
-          getEndpoint(renewableProgramConfiguration.programYear.id, {
-            searchCriteria: searchString,
-            sortField: "programName",
-            sortOrder: "ASC",
-            ...renewalFilters,
-          }),
-        )
+        .get(endpoint)
         .auth(institutionUserToken, BEARER_AUTH_TYPE)
         .expect(HttpStatus.OK)
         .expect({
@@ -388,15 +400,9 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     });
   });
 
-  it("Should return only the programs whose SABC code matches the search criteria, ignoring the case.", async () => {
+  it("Should return only the program with the matching SABC code when the search criteria is the SABC code in a different case.", async () => {
     // Arrange
-    // Hexadecimal letters are excluded to avoid matching the UUIDs used in the
-    // program names of other tests, since the search also matches the program name.
-    const sabcCode = `${faker.string.alpha({
-      length: 3,
-      casing: "upper",
-      exclude: ["A", "B", "C", "D", "E", "F"],
-    })}${faker.string.numeric(1)}`;
+    const sabcCode = "XYZ9";
     const matchingProgram = await saveEducationProgram(
       renewableProgramConfiguration,
       { initialValues: { sabcCode } },
@@ -404,27 +410,31 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria: sabcCode.toLowerCase(),
+    });
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: sabcCode.toLowerCase(),
-        }),
-      )
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        count: 1,
-        results: [
-          getExpectedProgram(matchingProgram, ProgramRenewalStatus.Available),
-        ],
-      });
+    try {
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 1,
+          results: [
+            getExpectedProgram(matchingProgram, ProgramRenewalStatus.Available),
+          ],
+        });
+    } finally {
+      // Remove the fixed SABC code to allow the test to be executed again.
+      await db.educationProgram.update(matchingProgram.id, { sabcCode: null });
+    }
   });
 
-  it("Should return only the programs whose CIP code matches the search criteria.", async () => {
+  it("Should return only the program with the matching CIP code when the search criteria is the CIP code.", async () => {
     // Arrange
-    const cipCode = `${faker.string.numeric(2)}.${faker.string.numeric(4)}`;
+    const cipCode = "98.7654";
     const matchingProgram = await saveEducationProgram(
       renewableProgramConfiguration,
       { initialValues: { cipCode } },
@@ -432,52 +442,59 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria: cipCode,
+    });
 
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: cipCode,
-        }),
-      )
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({
-        count: 1,
-        results: [
-          getExpectedProgram(matchingProgram, ProgramRenewalStatus.Available),
-        ],
+    try {
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(institutionUserToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          count: 1,
+          results: [
+            getExpectedProgram(matchingProgram, ProgramRenewalStatus.Available),
+          ],
+        });
+    } finally {
+      // Replace the fixed CIP code to allow the test to be executed again.
+      // The CIP code is mandatory, hence the default fake value is used.
+      await db.educationProgram.update(matchingProgram.id, {
+        cipCode: "cipCode",
       });
+    }
   });
 
   it("Should return the requested page of programs and the total count when the results are paginated.", async () => {
     // Arrange
-    const searchString = faker.string.uuid();
-    await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: { name: `Alpha ${searchString}` },
-    });
-    const secondProgram = await saveEducationProgram(
-      renewableProgramConfiguration,
-      { initialValues: { name: `Bravo ${searchString}` } },
-    );
-    await saveEducationProgram(renewableProgramConfiguration, {
-      initialValues: { name: `Charlie ${searchString}` },
-    });
+    const searchCriteria = faker.string.uuid();
+    const [secondProgram] = await Promise.all([
+      saveEducationProgram(renewableProgramConfiguration, {
+        initialValues: { name: `Bravo ${searchCriteria}` },
+      }),
+      saveEducationProgram(renewableProgramConfiguration, {
+        initialValues: { name: `Alpha ${searchCriteria}` },
+      }),
+      saveEducationProgram(renewableProgramConfiguration, {
+        initialValues: { name: `Charlie ${searchCriteria}` },
+      }),
+    ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria,
+      sortField: "programName",
+      sortOrder: "ASC",
+      page: "1",
+      pageLimit: "1",
+    });
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(
-        getEndpoint(renewableProgramConfiguration.programYear.id, {
-          searchCriteria: searchString,
-          sortField: "programName",
-          sortOrder: "ASC",
-          page: "1",
-          pageLimit: "1",
-        }),
-      )
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
@@ -493,10 +510,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
+    const endpoint = getEndpoint(999999);
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(getEndpoint(999999))
+      .get(endpoint)
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
