@@ -18,8 +18,7 @@
       :items="educationProgramYears"
       item-title="description"
       item-value="id"
-      return-object
-      :model-value="selectedProgramYear"
+      :model-value="selectedProgramYear?.id"
       @update:model-value="programYearChanged"
       variant="outlined"
       hide-details="auto"
@@ -88,8 +87,11 @@ const statusFilters = defineModel<ProgramStatusFilters>("statusFilters", {
 });
 
 // Program years with education program configurations available to be selected.
-const { educationProgramYears, loadingEducationProgramYears } =
-  useEducationProgramYears();
+const {
+  educationProgramYears,
+  educationProgramYearsLoaded,
+  loadingEducationProgramYears,
+} = useEducationProgramYears();
 // Sentinel value used to represent the "All" filter state.
 const ALL_STATUS = "All";
 // Renewal filter values, listed along with the program statuses.
@@ -116,24 +118,32 @@ const selectedStatuses = ref([ALL_STATUS]);
  * since, when bound by the parent, its value is only updated once the parent
  * re-renders.
  */
-const selectedProgramYear = ref<EducationProgramYearAPIOutDTO | null>();
+const selectedProgramYear = ref<EducationProgramYearAPIOutDTO>();
+
+/**
+ * Finds the program year among the ones available to be selected.
+ * @param id program year id.
+ * @returns program year found, if any.
+ */
+const findProgramYear = (
+  id: number | null | undefined,
+): EducationProgramYearAPIOutDTO | undefined =>
+  educationProgramYears.value.find((programYear) => programYear.id === id);
 
 /**
  * Notifies that the filters were changed by the user.
  */
 const emitFiltersChanged = () => {
-  emit("filtersChanged", selectedProgramYear.value ?? undefined);
+  emit("filtersChanged", selectedProgramYear.value);
 };
 
 /**
  * Handles the program year selection changed by the user.
- * @param programYear program year selected.
+ * @param id program year id selected.
  */
-const programYearChanged = (
-  programYear: EducationProgramYearAPIOutDTO | null,
-) => {
-  selectedProgramYear.value = programYear;
-  programYearId.value = programYear?.id;
+const programYearChanged = (id: number | null) => {
+  selectedProgramYear.value = findProgramYear(id);
+  programYearId.value = id;
   emitFiltersChanged();
 };
 
@@ -178,15 +188,25 @@ const handleStatusChange = (newVal: string[]) => {
   emitFiltersChanged();
 };
 
-watch(educationProgramYears, () => {
-  // No program year is selected by default, unless a valid one was provided,
-  // otherwise the user must select one to list the programs.
-  selectedProgramYear.value = educationProgramYears.value.find(
-    (programYear) => programYear.id === programYearId.value,
-  );
-  if (!selectedProgramYear.value) {
-    programYearId.value = undefined;
-  }
-  emit("initialized", selectedProgramYear.value ?? undefined);
-});
+// Validates the initial program year selection once the program years are
+// loaded, immediately when they are already cached. Once loaded, the cache is
+// never cleared, hence this runs only once, and later refreshes, successful
+// or not, do not re-initialize the selection.
+watch(
+  educationProgramYearsLoaded,
+  (loaded) => {
+    if (!loaded) {
+      // Keeps the provided program year until the first load.
+      return;
+    }
+    // No program year is selected by default, unless a valid one was provided,
+    // otherwise the user must select one to list the programs.
+    selectedProgramYear.value = findProgramYear(programYearId.value);
+    if (!selectedProgramYear.value) {
+      programYearId.value = undefined;
+    }
+    emit("initialized", selectedProgramYear.value);
+  },
+  { immediate: true },
+);
 </script>

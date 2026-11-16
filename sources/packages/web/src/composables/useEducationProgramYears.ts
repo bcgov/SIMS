@@ -25,6 +25,14 @@ export function useEducationProgramYears() {
   );
 
   /**
+   * Indicates the program years were loaded at least once, allowing an empty
+   * list from the API to be distinguished from a cache not loaded yet.
+   */
+  const educationProgramYearsLoaded = computed(
+    () => !!educationProgramYearsCache.value,
+  );
+
+  /**
    * Indicates the program years are being loaded.
    */
   const loadingEducationProgramYears = computed(
@@ -50,6 +58,7 @@ export function useEducationProgramYears() {
 
   return {
     educationProgramYears,
+    educationProgramYearsLoaded,
     loadingEducationProgramYears,
     loadEducationProgramYears,
   };
