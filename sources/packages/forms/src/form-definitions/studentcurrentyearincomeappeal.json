@@ -69,7 +69,7 @@
           "value": ""
         }
       ],
-      "content": "If you have had, or anticipate having a significant decrease in gross income for {{data.currentTaxYear}}, you can submit this appeal to be assessed using this year's estimated gross income.",
+      "content": "If you have had, or anticipate having a significant decrease in gross income for {{data.currentTaxYear}}, due to an exceptional circumstance (unexpected and beyond your control), you can submit this appeal to be assessed using this year's estimated gross income.",
       "refreshOnChange": true,
       "key": "html87",
       "type": "htmlelement",
