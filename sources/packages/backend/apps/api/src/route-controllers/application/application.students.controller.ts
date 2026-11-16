@@ -435,7 +435,7 @@ export class ApplicationStudentsController extends BaseController {
     @Body() payload: CreateApplicationAPIInDTO,
     @UserToken() studentToken: StudentUserToken,
   ): Promise<PrimaryIdentifierAPIOutDTO> {
-    const programYear = await this.programYearService.getActiveProgramYear(
+    const programYear = await this.programYearService.getProgramYear(
       payload.programYearId,
     );
     if (!programYear) {

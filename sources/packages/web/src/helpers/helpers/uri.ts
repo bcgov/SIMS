@@ -44,7 +44,7 @@ export const getPaginationQueryString = (
     typeof paginationOptions.searchCriteria === "string"
   ) {
     parameters.push(
-      `${PaginationParams.SearchCriteria}=${paginationOptions.searchCriteria}`,
+      `${PaginationParams.SearchCriteria}=${encodeURIComponent(paginationOptions.searchCriteria)}`,
     );
   }
   if (
@@ -53,7 +53,11 @@ export const getPaginationQueryString = (
   ) {
     const searchCriteria = paginationOptions.searchCriteria;
     for (const searchCriterion in searchCriteria) {
-      parameters.push(`${searchCriterion}=${searchCriteria[searchCriterion]}`);
+      // Encode values to support special characters like &, #, + and %.
+      // Arrays are still sent as comma-separated values (comma is decoded by the API).
+      parameters.push(
+        `${searchCriterion}=${encodeURIComponent(String(searchCriteria[searchCriterion]))}`,
+      );
     }
   }
   return parameters.join("&");

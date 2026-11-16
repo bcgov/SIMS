@@ -93,8 +93,20 @@ export interface EducationProgramDynamicData extends EducationProgramData {
 export interface EducationProgramDynamicConfiguration {
   configurationId: number;
   programYearId: number;
+  programYearName: string;
   visualSchema: unknown;
   validationSchema: unknown;
   context: EducationProgramContext;
   updatedAt: Date;
 }
+
+/**
+ * Allow selecting the program configuration either by its ID or by the program year ID.
+ * Exactly one of them must be provided; providing both is not allowed.
+ * The combinations ensure that a maximum of one record will be retrieved from the database.
+ */
+export type ProgramConfigurationLookup =
+  // When selecting by program configuration ID, the specific configuration is retrieved regardless of its active status.
+  | { programConfigurationId: number; programYearId?: never }
+  // When selecting by program year ID, the program configuration must be the active one.
+  | { programYearId: number; programConfigurationId?: never };

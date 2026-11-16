@@ -1,4 +1,10 @@
-import { EntityManager, ObjectLiteral, QueryRunner, Repository } from "typeorm";
+import {
+  EntityManager,
+  FindOptionsWhere,
+  ObjectLiteral,
+  QueryRunner,
+  Repository,
+} from "typeorm";
 
 /**
  * Result type of a Typeorm query when the method getRawAndEntities is used.
@@ -91,4 +97,35 @@ export function getUserFullNameLikeSearch(
   searchCriteriaParameterName = "searchCriteria",
 ) {
   return `(COALESCE(${userTableAlias}.firstName || ' ', '') || ${userTableAlias}.lastName) ILIKE :${searchCriteriaParameterName}`;
+}
+
+/**
+ * Empty where condition array used as a default value.
+ */
+export const EMPTY_WHERE: FindOptionsWhere<unknown>[] = [{}];
+
+/**
+ * Combines groups of where conditions, where the conditions inside each group
+ * are combined using OR, and the groups are combined using AND.
+ * Since TypeORM combines the items of a where array using OR, every condition
+ * of a group is merged with every condition of the other groups.
+ * @param baseWhere conditions to be applied to every combination.
+ * @param conditionGroups groups of conditions, each one combined using OR.
+ * A group with a single empty object (e.g. {@link EMPTY_WHERE}) does not add any condition.
+ * @returns where conditions, where each array item is combined using OR.
+ */
+export function combineWhereConditions<Entity>(
+  baseWhere: FindOptionsWhere<Entity>,
+  ...conditionGroups: FindOptionsWhere<Entity>[][]
+): FindOptionsWhere<Entity>[] {
+  return conditionGroups.reduce(
+    (combinedConditions, conditionGroup) =>
+      combinedConditions.flatMap((combinedCondition) =>
+        conditionGroup.map((condition) => ({
+          ...combinedCondition,
+          ...condition,
+        })),
+      ),
+    [baseWhere],
+  );
 }

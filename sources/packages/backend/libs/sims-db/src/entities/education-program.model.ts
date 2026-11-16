@@ -478,6 +478,42 @@ export class EducationProgram extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   programConfiguration: EducationProgramConfiguration;
+
+  /**
+   * The immediate previous program, from the previous program year,
+   * from which the current program was renewed.
+   */
+  @OneToOne(
+    () => EducationProgram,
+    (educationProgram) => educationProgram.renewedProgram,
+  )
+  @JoinColumn({
+    name: "preceding_program_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  precedingProgram?: EducationProgram;
+
+  /**
+   * The first program in the renewal chain from which
+   * the current program was renewed.
+   */
+  @ManyToOne(() => EducationProgram)
+  @JoinColumn({
+    name: "parent_program_id",
+    referencedColumnName: ColumnNames.ID,
+  })
+  parentProgram?: EducationProgram;
+
+  /**
+   * The program, from the next program year, created when
+   * the current program was renewed.
+   * Inverse side of {@link precedingProgram}.
+   */
+  @OneToOne(
+    () => EducationProgram,
+    (educationProgram) => educationProgram.precedingProgram,
+  )
+  renewedProgram?: EducationProgram;
 }
 
 /**
