@@ -49,7 +49,7 @@
           "value": ""
         }
       ],
-      "content": "If you have had exceptional expenses that created financial hardship that affected your ability to start or continue your studies these expenses may be considered as part of your assessment.",
+      "content": "If you have incurred expenses outside of standard living costs that are unexpected and beyond your control, and that created financial hardship affecting your ability to start or continue your studies, these expenses may be considered as part of your assessment. Expenses incurred must be from the previous 12 months up to the date of your application submission.",
       "refreshOnChange": true,
       "key": "html87",
       "type": "htmlelement",
@@ -243,43 +243,10 @@
               "attr": ""
             }
           ],
-          "content": "<h4 class=\"category-header-medium-small\">Please provide:</h4>\n<ul><li>A letter explaining your situation including the type of expense(s) and when the expense(s) occurred.</li></ul>",
+          "content": "<h4 class=\"category-header-medium-small\"><strong>Documents required:</strong></h4>\n<p>A letter including all the following details:</p>\n<ul><li>Each exceptional expense</li><li>When the exceptional expense(s) occurred</li><li>The amount of payment</li><li>Why these expenses were necessary during the study period</li></ul>",
           "refreshOnChange": false,
           "customClass": "align-bullets",
           "key": "exceptionalExpensePanelContent3",
-          "type": "htmlelement",
-          "input": false,
-          "hideLabel": true,
-          "tableView": false
-        },
-        {
-          "label": "HTML",
-          "tag": "p",
-          "attrs": [
-            {
-              "attr": "",
-              "value": ""
-            }
-          ],
-          "content": "And",
-          "refreshOnChange": true,
-          "key": "exceptionalExpensePanelContent4",
-          "type": "htmlelement",
-          "input": false,
-          "tableView": false
-        },
-        {
-          "label": "Content",
-          "attrs": [
-            {
-              "value": "",
-              "attr": ""
-            }
-          ],
-          "content": "<h4 class=\"category-header-medium-small\">Provide at least one of the following:</h4>\n<ul>\n<li>A copy of your insurance documents or claim information.</li>\n<li>Receipt showing payment of costs.</li>\n<li>Bank statement.</li></ul>",
-          "refreshOnChange": false,
-          "customClass": "align-bullets",
-          "key": "exceptionalExpensePanelContent5",
           "type": "htmlelement",
           "input": false,
           "hideLabel": true,
