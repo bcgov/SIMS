@@ -899,9 +899,9 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
         "Unexpected error while creating supplier and site on CAS.",
+        "CAS API call failed.",
       ]),
     ).toBe(true);
-    // The bug causes the CAS error to be swallowed and the process to fail later.
     expect(
       mockedJob.containLogMessages([
         "Unexpected error while updating supplier and site for the student.",
@@ -953,6 +953,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       mockedJob.containLogMessages([
         `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
         "Unexpected error while creating a new site on CAS.",
+        "CAS API call failed.",
       ]),
     ).toBe(true);
     expect(

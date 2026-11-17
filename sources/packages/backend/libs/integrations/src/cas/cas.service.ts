@@ -306,9 +306,10 @@ export class CASService {
   }
 
   /**
-   * Gets the details of a failed CAS request to be part of the error message.
-   * The details are added to the message because only the message and
-   * the stack of the errors are logged, not their custom properties.
+   * Gets non-sensitive details of a failed CAS request to be part of the error message.
+   * The details are added to the message because only the message and the stack of
+   * the errors are logged. The request URL and the response body are not
+   * included because they may contain sensitive data.
    * @param error error caught during the CAS request.
    * @returns details of the failed request or an empty string if not an HTTP error.
    */
@@ -317,19 +318,11 @@ export class CASService {
       return "";
     }
     const details: string[] = [];
-    if (error.config?.url) {
-      details.push(
-        `request: ${error.config.method?.toUpperCase()} ${error.config.url}`,
-      );
-    }
     if (error.code) {
       details.push(`code: ${error.code}`);
     }
     if (error.response) {
-      details.push(
-        `status: ${error.response.status}`,
-        `body: ${JSON.stringify(error.response.data)}`,
-      );
+      details.push(`status: ${error.response.status}`);
     }
     return details.length ? ` CAS error details - ${details.join(", ")}.` : "";
   }

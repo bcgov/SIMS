@@ -12,12 +12,9 @@ describe("CASService-createSupplierAndSite", () => {
   let casService: CASService;
   let httpService: Mocked<HttpService>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    // A new service instance per test ensures no CAS token is cached between tests.
     [casService, httpService] = await initializeService();
-  });
-
-  beforeEach(() => {
-    jest.resetAllMocks();
   });
 
   it("Should invoke CAS API with formatted payload when all data was provided as expected.", async () => {
@@ -69,29 +66,23 @@ describe("CASService-createSupplierAndSite", () => {
     );
   });
 
-  it("Should throw an error with the CAS response body when CAS returns a bad request without CAS returned messages.", async () => {
+  it("Should throw an error with the CAS error code and status when CAS returns a bad request without CAS returned messages.", async () => {
     // Arrange
-    const casResponseBody = {
-      code: "BadRequest",
-      message: "Invalid supplier data.",
-    };
-    // The CAS token is cached by the previous test, hence only the supplier creation call is mocked.
-    httpService.axiosRef.post = jest.fn().mockRejectedValueOnce(
+    mockAuthenticationResponseOnce(httpService).mockRejectedValueOnce(
       new AxiosError(
         "Request failed with status code 400",
         "ERR_BAD_REQUEST",
-        {
-          headers: new AxiosHeaders(),
-          method: "post",
-          url: "cas-url/cfs/supplier/",
-        },
+        { headers: new AxiosHeaders() },
         {},
         {
           status: HttpStatusCode.BadRequest,
           statusText: "Bad Request",
           headers: {},
           config: { headers: new AxiosHeaders() },
-          data: casResponseBody,
+          data: {
+            code: "BadRequest",
+            message: "Invalid supplier data.",
+          },
         },
       ),
     );
@@ -112,7 +103,7 @@ describe("CASService-createSupplierAndSite", () => {
     await expect(
       casService.createSupplierAndSite(supplierData),
     ).rejects.toThrow(
-      `Error while creating supplier and site on CAS. CAS error details - request: POST cas-url/cfs/supplier/, code: ERR_BAD_REQUEST, status: 400, body: ${JSON.stringify(casResponseBody)}.`,
+      "Error while creating supplier and site on CAS. CAS error details - code: ERR_BAD_REQUEST, status: 400.",
     );
   });
 });
