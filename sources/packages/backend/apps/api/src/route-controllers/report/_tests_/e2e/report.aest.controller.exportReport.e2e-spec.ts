@@ -1082,10 +1082,14 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       AESTGroups.BusinessAdministrators,
     );
     // Expected report records.
-    const expectedFullTimeRecord =
-      buildUnmetNeedReportData(fullTimeApplication);
-    const expectedPartTimeRecord =
-      buildUnmetNeedReportData(partTimeApplication);
+    const expectedFullTimeRecord = buildUnmetNeedReportData(
+      fullTimeApplication,
+      { includeUnmetNeed: true },
+    );
+    const expectedPartTimeRecord = buildUnmetNeedReportData(
+      partTimeApplication,
+      { includeUnmetNeed: true },
+    );
 
     // Act/Assert
     await request(app.getHttpServer())

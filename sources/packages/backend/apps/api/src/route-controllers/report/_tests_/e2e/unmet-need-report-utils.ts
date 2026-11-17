@@ -224,10 +224,14 @@ export async function createApplicationsDataSetup(
 /**
  * Build Unmet Need Report report data.
  * @param application application to generate the expected report record.
+ * @param options options.
+ * - `includeUnmetNeed`: when true, includes the federal and provincial
+ * unmet need columns (ministry report only).
  * @returns report data.
  */
 export function buildUnmetNeedReportData(
   application: Application,
+  options?: { includeUnmetNeed?: boolean },
 ): Record<string, string | number> {
   const assessmentData = application.currentAssessment
     .assessmentData as FullTimeAssessment;
@@ -241,6 +245,7 @@ export function buildUnmetNeedReportData(
     application.currentAssessment.disbursementSchedules.flatMap(
       (ds) => ds.disbursementValues,
     );
+  const totalAssistance = sumAwardAmounts(disbursementValues);
   const unmetNeedReportData = {
     "Student First Name": savedUser.firstName,
     "Student Last Name": savedUser.lastName,
@@ -288,8 +293,16 @@ export function buildUnmetNeedReportData(
       assessmentData.totalProvincialAssessedResources.toString(),
     "Provincial assessed need":
       assessmentData.provincialAssessmentNeed.toString(),
-    "Total assistance": sumAwardAmounts(disbursementValues).toFixed(2),
-  };
+    "Total assistance": totalAssistance.toFixed(2),
+  } as Record<string, string | number>;
+  if (options?.includeUnmetNeed) {
+    unmetNeedReportData["Federal Unmet Need"] = (
+      assessmentData.federalAssessmentNeed - totalAssistance
+    ).toFixed(2);
+    unmetNeedReportData["Provincial Unmet Need"] = (
+      assessmentData.provincialAssessmentNeed - totalAssistance
+    ).toFixed(2);
+  }
   const expectedValueCodes = [
     "CSLF",
     "CSGP",
