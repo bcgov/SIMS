@@ -35,7 +35,10 @@ import {
   ProgramDeliveryTypeValues,
   ProgramCourseLoadCalculationTypes,
 } from "../../../../services";
-import { getCreationPayload } from "./education-program.utils";
+import {
+  ensureCreateEducationProgramInactiveConfiguration,
+  getCreationPayload,
+} from "./education-program.utils";
 
 describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", () => {
   let app: INestApplication;
@@ -43,6 +46,10 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
   let collegeF: Institution;
   let collegeFUser: User;
   let mostRecentProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Inactive configuration, the only one associated with its program year.
+   */
+  let inactiveProgramConfiguration: EducationProgramConfiguration;
   const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
   const TEST_SABC_CODE = "GGG9";
 
@@ -52,6 +59,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     db = createE2EDataSources(dataSource);
     mostRecentProgramConfiguration =
       await getMostRecentEducationProgramConfiguration({ db });
+    inactiveProgramConfiguration =
+      await ensureCreateEducationProgramInactiveConfiguration(db);
     const { institution, user: institutionUser } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -160,6 +169,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         programConfiguration: {
           id: true,
         },
+        parentProgram: {
+          id: true,
+        },
         institution: {
           id: true,
         },
@@ -169,6 +181,8 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       },
       where: { id: educationProgramId },
       relations: {
+        programConfiguration: true,
+        parentProgram: true,
         institution: true,
         submittedBy: true,
       },
@@ -221,6 +235,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         assessedDate: null,
         effectiveEndDate: null,
         fieldOfStudyCode: 15,
+        programConfiguration: { id: mostRecentProgramConfiguration.id },
+        // A newly created program is its own parent program.
+        parentProgram: { id: educationProgramId },
         institution: {
           id: collegeF.id,
         },
@@ -503,7 +520,7 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
     );
   });
 
-  it("Should throw unprocessable entity error when the program year has no active program configuration.", async () => {
+  it("Should throw not found error when the program year does not exist.", async () => {
     // Arrange
     const payload = getCreationPayload(mostRecentProgramConfiguration.id);
     const institutionUserToken = await getInstitutionToken(
@@ -525,6 +542,56 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         message:
           "The provided program year does not have an active program configuration.",
         error: "Not Found",
+      });
+  });
+
+  it("Should throw not found error when the program year has only an inactive program configuration.", async () => {
+    // Arrange
+    const payload = getCreationPayload(inactiveProgramConfiguration.id);
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(
+        getEndpoint({
+          programYearId: inactiveProgramConfiguration.programYear.id,
+        }),
+      )
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.NOT_FOUND)
+      .expect({
+        statusCode: HttpStatus.NOT_FOUND,
+        message:
+          "The provided program year does not have an active program configuration.",
+        error: "Not Found",
+      });
+  });
+
+  it("Should throw unprocessable entity error when the program configuration provided is not the active one for the program year.", async () => {
+    // Arrange
+    // Program data filled using a configuration other than the active one for the program year.
+    const payload = getCreationPayload(inactiveProgramConfiguration.id);
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(
+        getEndpoint({
+          programYearId: mostRecentProgramConfiguration.programYear.id,
+        }),
+      )
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        errorType: "EDUCATION_PROGRAM_CONFIGURATION_OUTDATED",
+        message:
+          "The program configuration has changed since the program data was retrieved.",
       });
   });
 

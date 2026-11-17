@@ -14,6 +14,7 @@ import { validateInstitutionUserAccess } from "./InstitutionRouteHelper";
 import { InstitutionUserTypes } from "@/types";
 import { AppConfigService } from "@/services/AppConfigService";
 import { SharedRouteConst } from "@/constants/routes/RouteConstants";
+import { useFeatureToggles } from "@/composables/useFeatureToggles";
 
 declare module "vue-router" {
   /**
@@ -25,6 +26,11 @@ declare module "vue-router" {
     institutionUserTypes?: InstitutionUserTypes[];
     allowOnlyLegalSigningAuthority?: boolean;
     allowOnlyBCPublic?: boolean;
+    /**
+     * Feature toggle that must be enabled for the route to be accessible.
+     * When disabled, the user is redirected to the not found page.
+     */
+    featureToggle?: string;
   }
 }
 
@@ -97,8 +103,28 @@ router.beforeResolve(async (to, _from, next) => {
     return;
   }
 
+  // Prevent access to routes whose feature toggle is disabled.
+  if (to.meta?.featureToggle) {
+    const { loadConfig, isFeatureToggleEnabled } = useFeatureToggles();
+    // Ensure the shared config is loaded before checking the toggle.
+    await loadConfig();
+    if (!isFeatureToggleEnabled(to.meta.featureToggle)) {
+      next({
+        name: SharedRouteConst.PAGE_NOT_FOUND,
+        // Keeps the current URL while rendering the not found page.
+        params: { pathMatch: to.path.substring(1).split("/") },
+        query: to.query,
+        hash: to.hash,
+        replace: true,
+      });
+      return;
+    }
+  }
+
   if (to.meta?.clientType === ClientIdType.Institution) {
+    // The validation is responsible for calling next.
     await validateInstitutionUserAccess(to, _from, next);
+    return;
   }
 
   next();

@@ -8,7 +8,7 @@ import {
   EducationProgramService,
   InstitutionUserAuthorizations,
   EducationProgramSaveService,
-  ProgramConfigurationLookup,
+  ProgramConfigurationCriteria,
 } from "../../services";
 import {
   EducationProgramAPIOutDTO,
@@ -57,8 +57,8 @@ export class EducationProgramControllerService {
     // for creation, edit, and renewal operations.
     const programConfiguration = await this.getEducationProgramConfiguration(
       program.institution.id,
-      { programConfigurationId: program.programConfiguration.id },
-      { overrideProgramData: program.programData, programId },
+      { programConfigurationId: program.programConfiguration.id, programId },
+      { overrideProgramData: program.programData },
     );
     return {
       id: program.id,
@@ -94,27 +94,22 @@ export class EducationProgramControllerService {
    * Allows ensuring the program configuration is retrieved consistently from the same place
    * for creation, edit, and renewal operations.
    * @param institutionId the ID of the institution for which the configuration is being retrieved.
-   * @param programConfigurationLookup the lookup criteria for the program configuration.
+   * @param programConfigurationCriteria the criteria to retrieve the program configuration.
    * @param options additional options for retrieving the configuration.
-   * - `programId` optional ID of the program to load program configuration.
    * - `overrideProgramData` optional program data that should override the default configuration.
    * @returns the education program configuration, including dynamic program data, visual schema, and validation schema.
    */
   async getEducationProgramConfiguration(
     institutionId: number,
-    programConfigurationLookup: ProgramConfigurationLookup,
+    programConfigurationCriteria: ProgramConfigurationCriteria,
     options?: {
-      programId?: number;
       overrideProgramData?: Record<string, unknown>;
     },
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     const configuration =
       await this.educationProgramSaveService.getEducationProgramConfiguration(
         institutionId,
-        programConfigurationLookup,
-        {
-          programId: options?.programId,
-        },
+        programConfigurationCriteria,
       );
     return {
       configurationId: configuration.configurationId,
