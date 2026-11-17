@@ -143,7 +143,7 @@ function getExpectedConfigurations(
       formType: "Parent current year income",
       formCategory: "Student appeal",
       formDescription:
-        "If either of your parents have had, or anticipate having a significant decrease in gross income due to an exceptional circumstance (unexpected and beyond their control), you can submit this appeal to be assessed using this year's estimated gross income.",
+        "If either of your parents has had or anticipates having a significant decrease in gross income due to an exceptional circumstance (unexpected and beyond their control), you can submit this appeal to be assessed using this year's estimated gross income.",
       allowBundledSubmission: true,
       hasApplicationScope: true,
     },
@@ -153,7 +153,7 @@ function getExpectedConfigurations(
       formType: "Spouse/common-law partner current year income",
       formCategory: "Student appeal",
       formDescription:
-        "If your spouse/common-law partner has had, or anticipate having a significant decrease in gross income due to an exceptional circumstance (unexpected and beyond their control), you can submit this appeal to be assessed using this year's estimated gross income.",
+        "If your spouse/common-law partner has had or anticipates having a significant decrease in gross income due to an exceptional circumstance (unexpected and beyond their control), you can submit this appeal to be assessed using this year's estimated gross income.",
       allowBundledSubmission: true,
       hasApplicationScope: true,
     },
@@ -183,7 +183,7 @@ function getExpectedConfigurations(
       formType: "Student current year income",
       formCategory: "Student appeal",
       formDescription:
-        "If you have had, or anticipate having a significant decrease in gross income due to an exceptional circumstance (unexpected and beyond your control), you can submit this appeal to be assessed using this year's estimated gross income.",
+        "If you have had or anticipate having a significant decrease in gross income due to an exceptional circumstance (unexpected and beyond your control), you can submit this appeal to be assessed using this year's estimated gross income.",
       allowBundledSubmission: true,
       hasApplicationScope: true,
     },
