@@ -1,14 +1,12 @@
 import {
   BalanceTypeItem,
   DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
-  DefaultedStudentLoanBalanceType,
   DefaultedStudentLoanRecordType,
   NUMBER_FILLER,
   SPACE_FILLER,
 } from "../models/defaulted-student-loans-integration.model";
 import { FixedFormatFileLine } from "../../../services/ssh";
 import { decimalRound, SpecializedStringBuilder } from "@sims/utilities";
-import { YNFlag } from "../../../models";
 
 /**
  * Length of a balance type element in the defaulted student loans file.
@@ -24,21 +22,6 @@ const FREE_AREA_FILLER_LENGTH = 100;
  * Total number of balance type elements expected in the defaulted student loans file.
  */
 const TOTAL_BALANCE_TYPE_ELEMENTS = 8;
-/**
- * Map of balance types to their corresponding calculate interest flag.
- * This determines whether interest should be calculated for each balance type.
- */
-export const CALCULATE_INTEREST_FLAG_MAP = new Map<
-  DefaultedStudentLoanBalanceType,
-  YNFlag
->([
-  [DefaultedStudentLoanBalanceType.BOA, YNFlag.N],
-  [DefaultedStudentLoanBalanceType.PRN, YNFlag.Y],
-  [DefaultedStudentLoanBalanceType.INT, YNFlag.N],
-  [DefaultedStudentLoanBalanceType.EXP, YNFlag.N],
-  [DefaultedStudentLoanBalanceType.DIN, YNFlag.Y],
-  [DefaultedStudentLoanBalanceType.PDB, YNFlag.Y],
-]);
 
 export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
   /**
