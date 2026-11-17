@@ -1,5 +1,10 @@
 import { AuthService } from "@/services/AuthService";
-import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import {
+  AxiosError,
+  AxiosRequestConfig,
+  AxiosResponse,
+  isAxiosError,
+} from "axios";
 import HttpClient from "./HttpClient";
 import { MINIMUM_TOKEN_VALIDITY } from "@/constants/system-constants";
 import { ApiProcessError, ClientIdType, ClientTypeBaseRoute } from "@/types";
@@ -116,7 +121,7 @@ export default abstract class HttpBaseClient {
   protected async downloadFile<T>(
     url: string,
     payload?: T,
-  ): Promise<AxiosResponse<any>> {
+  ): Promise<AxiosResponse<unknown>> {
     try {
       const requestConfig: AxiosRequestConfig = {
         ...this.addAuthHeader(),
@@ -131,7 +136,7 @@ export default abstract class HttpBaseClient {
       }
       return await this.apiClient.get(this.addClientRoot(url), requestConfig);
     } catch (error: unknown) {
-      if (error instanceof AxiosError && error.response?.data) {
+      if (isAxiosError(error) && error.response?.data) {
         // Parse error response data that was requested as blob.
         error.response.data = JSON.parse(await error.response.data.text());
       }
@@ -185,15 +190,6 @@ export default abstract class HttpBaseClient {
       this.handleRequestError(error);
       throw error;
     }
-  }
-
-  protected handleCustomError(error: any) {
-    if (error.response) {
-      this.handleRequestError(error.response.data?.message);
-      throw error.response.data?.message;
-    }
-    this.handleRequestError(error);
-    throw error;
   }
 
   /**
