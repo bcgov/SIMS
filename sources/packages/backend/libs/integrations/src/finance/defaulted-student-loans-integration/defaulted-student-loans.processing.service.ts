@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { SequenceControlService } from "@sims/services";
-import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { IndividualReturnedLoan } from "../../esdc-integration";
 import { DefaultedStudentLoansIntegrationService } from "./defaulted-student-loans.integration.service";
@@ -10,6 +9,11 @@ import { DefaultedStudentLoansIntegrationService } from "./defaulted-student-loa
  * Sequence group name for defaulted student loans file sequence control.
  */
 const SEQUENCE_GROUP_NAME = "DEFAULTED_STUDENT_LOANS_FILE";
+
+/**
+ * Eligible return reasons for processing defaulted student loans.
+ */
+const ELIGIBLE_RETURN_REASONS = new Set(["A270", "S90"]);
 
 @Injectable()
 export class DefaultedStudentLoansProcessingService {
@@ -32,11 +36,16 @@ export class DefaultedStudentLoansProcessingService {
     individualReturnedLoans: IndividualReturnedLoan[],
     processSummary: ProcessSummary,
   ): Promise<void> {
-    if (!individualReturnedLoans.length) {
-      processSummary.info("No individual returned loans to process.");
+    const eligibleReturnedLoans = individualReturnedLoans.filter((loan) =>
+      ELIGIBLE_RETURN_REASONS.has(loan.returnedLoan.returnReason),
+    );
+    if (!eligibleReturnedLoans.length) {
+      processSummary.info(
+        "No eligible returned loans to process for defaulted student loans file generation.",
+      );
       return;
     }
-    const beginProcessingInfo = `Processing ${individualReturnedLoans.length} returned loan(s).`;
+    const beginProcessingInfo = `Processing ${eligibleReturnedLoans.length} returned loan(s) for defaulted student loans file generation.`;
     // Adding logger to indicate that the processing has started without waiting for the process summary to log later.
     this.logger.log(beginProcessingInfo);
     processSummary.info(beginProcessingInfo);
@@ -46,7 +55,7 @@ export class DefaultedStudentLoansProcessingService {
         async (nextSequenceNumber: number) => {
           const fileContent =
             this.integrationService.createDefaultedStudentLoansFileContent(
-              individualReturnedLoans,
+              eligibleReturnedLoans,
               nextSequenceNumber,
             );
           const { fileName, filePath } = this.createFileName();
@@ -67,16 +76,14 @@ export class DefaultedStudentLoansProcessingService {
 
   /**
    * Creates the defaulted student loans request filename.
-   * File format: STLDLLAB-YYYYMMDD-SEQUENCE_NUMBER.DAT
    * @returns object containing the filename and full file path.
    */
   private createFileName(): {
     fileName: string;
     filePath: string;
   } {
-    const timestamp = getFileNameAsExtendedCurrentTimestamp();
     // The file name format is not final. It is subject to change based response from RMS team.
-    const fileName = `STLDLLAB-${timestamp}.DAT`;
+    const fileName = "STLDLLAB.DAT";
     const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
     return { fileName, filePath };
   }

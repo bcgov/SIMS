@@ -194,6 +194,7 @@ export abstract class BaseQueueProcessor<T>
    * @returns Queue configuration details.
    */
   private async getQueueConfiguration(): Promise<QueueConfiguration> {
+    console.log(`Fetching queue configuration for worker: ${this.worker.name}`);
     if (!this.queueConfiguration) {
       this.queueConfiguration =
         await this.queueService.queueConfigurationDetails(
