@@ -957,7 +957,7 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     ).toBe(true);
     expect(
       mockedJob.containLogMessages([
-        "Unexpected error while updating CAS supplier for the student.",
+        "Error while updating CAS supplier for the student.",
       ]),
     ).toBe(false);
   });
