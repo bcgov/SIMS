@@ -871,6 +871,98 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
     });
   });
 
+  it("Should log the CAS API error and not fail on an undefined result when createSupplierAndSite throws an unknown error.", async () => {
+    // Arrange
+    const savedCASSupplier = await saveFakeCASSupplier(db);
+    casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+      Promise.resolve(createFakeCASNotFoundSupplierResponse()),
+    );
+    // Error that is not a CustomNamedError, for instance, a network failure.
+    casServiceMock.createSupplierAndSite = jest
+      .fn()
+      .mockRejectedValue(new Error("CAS API call failed."));
+
+    // Queued job.
+    const mockedJob = mockBullMQJob<void>();
+
+    // Act
+    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+      new CustomNamedError(
+        "One or more errors were reported during the process, please see logs for details.",
+        PROCESS_SUMMARY_CONTAINS_ERROR,
+      ),
+    );
+
+    // Assert
+    expect(
+      mockedJob.containLogMessages([
+        `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
+        `CAS evaluation result status: ${CASEvaluationStatus.NotFound}.`,
+        "Unexpected error while creating supplier and site on CAS.",
+        "CAS API call failed.",
+      ]),
+    ).toBe(true);
+    expect(
+      mockedJob.containLogMessages([
+        "Unexpected error while updating supplier and site for the student.",
+      ]),
+    ).toBe(false);
+    const casSupplier = await db.casSupplier.findOne({
+      select: { id: true, supplierStatus: true },
+      where: { id: savedCASSupplier.id },
+    });
+    expect(casSupplier.supplierStatus).toBe(
+      SupplierStatus.PendingSupplierVerification,
+    );
+  });
+
+  it("Should log the CAS API error and not fail on an undefined result when createSiteForExistingSupplier throws an unknown error.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const savedCASSupplier = await saveFakeCASSupplier(db, { student });
+    casServiceMock.getSupplierInfoFromCAS = jest.fn(() =>
+      Promise.resolve(
+        createFakeCASSupplierResponse({
+          initialValues: {
+            supplierNumber: "1000000",
+            supplierName: "SMITH, DOE",
+            status: "ACTIVE",
+            supplierProtected: "N",
+          },
+        }),
+      ),
+    );
+    // Error that is not a CustomNamedError, for instance, a network failure.
+    casServiceMock.createSiteForExistingSupplier = jest
+      .fn()
+      .mockRejectedValue(new Error("CAS API call failed."));
+
+    // Queued job.
+    const mockedJob = mockBullMQJob<void>();
+
+    // Act
+    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+      new CustomNamedError(
+        "One or more errors were reported during the process, please see logs for details.",
+        PROCESS_SUMMARY_CONTAINS_ERROR,
+      ),
+    );
+
+    // Assert
+    expect(
+      mockedJob.containLogMessages([
+        `Processing student CAS supplier ID: ${savedCASSupplier.id}.`,
+        "Unexpected error while creating a new site on CAS.",
+        "CAS API call failed.",
+      ]),
+    ).toBe(true);
+    expect(
+      mockedJob.containLogMessages([
+        "Error while updating CAS supplier for the student.",
+      ]),
+    ).toBe(false);
+  });
+
   afterAll(async () => {
     await app?.close();
   });
