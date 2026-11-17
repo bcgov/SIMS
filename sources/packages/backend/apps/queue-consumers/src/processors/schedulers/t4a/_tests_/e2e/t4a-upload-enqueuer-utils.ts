@@ -1,6 +1,7 @@
 import Client from "ssh2-sftp-client";
 import { uuidV4Matcher } from "@sims/test-utils/matchers";
 import { join } from "node:path";
+import { QueueJobNames } from "@sims/utilities";
 
 /**
  * Create a T4A file name based on the number of files and the file number.
@@ -52,6 +53,7 @@ export function createT4AUploadQueueInDTO(
     uniqueID: uuidV4Matcher,
   }));
   return {
+    name: QueueJobNames.T4AUploadJob,
     data: {
       referenceDate,
       files,

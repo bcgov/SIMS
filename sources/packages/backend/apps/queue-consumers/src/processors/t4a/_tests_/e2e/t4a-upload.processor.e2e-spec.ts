@@ -8,7 +8,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import {
   createE2EDataSources,
@@ -88,21 +88,23 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
       const formattedReferenceDate = getISODateOnlyString(now);
       const uniqueID = uuid();
       const fileContentBuffer = Buffer.from("PDF FILE CONTENT");
-      const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
-        referenceDate: now,
-        files: [
-          {
-            relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
-            uniqueID,
-          },
-        ],
-      });
+      const mockedJob = mockBullMQJob<T4AUploadQueueInDTO>(
+        {
+          referenceDate: now,
+          files: [
+            {
+              relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+              uniqueID,
+            },
+          ],
+        },
+      );
       sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
       const fileName = `${t4aSubFolder}-T4A-${formattedReferenceDate}.pdf`;
       const uniqueFileName = `${t4aSubFolder}-T4A-${formattedReferenceDate}-${uniqueID}.pdf`;
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       // Assert expected result message.
@@ -232,20 +234,22 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     const formattedReferenceDate = getISODateOnlyString(now);
     const uniqueID = uuid();
     const fileContentBuffer = Buffer.from("PDF FILE CONTENT");
-    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
-      referenceDate: now,
-      files: [
-        {
-          relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
-          uniqueID,
-        },
-      ],
-    });
+    const mockedJob = mockBullMQJob<T4AUploadQueueInDTO>(
+      {
+        referenceDate: now,
+        files: [
+          {
+            relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+            uniqueID,
+          },
+        ],
+      },
+    );
     sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
     const fileName = `${t4aSubFolder}-T4A-${formattedReferenceDate}.pdf`;
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     // Assert expected result message.
@@ -296,19 +300,21 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     const t4aSubFolder = now.getFullYear().toString();
     const uniqueID = uuid();
     const fileContentBuffer = Buffer.from("PDF FILE CONTENT");
-    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
-      referenceDate: now,
-      files: [
-        {
-          relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
-          uniqueID,
-        },
-      ],
-    });
+    const mockedJob = mockBullMQJob<T4AUploadQueueInDTO>(
+      {
+        referenceDate: now,
+        files: [
+          {
+            relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+            uniqueID,
+          },
+        ],
+      },
+    );
     sftpClientMock.get.mockResolvedValueOnce(fileContentBuffer);
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     // Assert expected result message.
@@ -346,18 +352,20 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     const now = new Date();
     const t4aSubFolder = now.getFullYear().toString();
     const uniqueID = uuid();
-    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
-      referenceDate: now,
-      files: [
-        {
-          relativeFilePath: join(t4aSubFolder, `${invalidSIN}.pdf`),
-          uniqueID,
-        },
-      ],
-    });
+    const mockedJob = mockBullMQJob<T4AUploadQueueInDTO>(
+      {
+        referenceDate: now,
+        files: [
+          {
+            relativeFilePath: join(t4aSubFolder, `${invalidSIN}.pdf`),
+            uniqueID,
+          },
+        ],
+      },
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     // Assert expected result message.
@@ -399,18 +407,20 @@ describe(describeProcessorRootTest(QueueNames.T4AUpload), () => {
     const now = new Date();
     const t4aSubFolder = now.getFullYear().toString();
     const uniqueID = uuid();
-    const mockedJob = mockBullJob<T4AUploadQueueInDTO>({
-      referenceDate: now,
-      files: [
-        {
-          relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
-          uniqueID,
-        },
-      ],
-    });
+    const mockedJob = mockBullMQJob<T4AUploadQueueInDTO>(
+      {
+        referenceDate: now,
+        files: [
+          {
+            relativeFilePath: join(t4aSubFolder, `${SIN_NUMBER}.pdf`),
+            uniqueID,
+          },
+        ],
+      },
+    );
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     // Assert expected result message.

@@ -103,6 +103,45 @@ export const ProgramSummaryHeaders = [
   },
 ];
 
+export const ManageProgramSummaryHeaders = [
+  {
+    title: "Program name",
+    sortable: true,
+    key: "programName",
+  },
+  {
+    title: "Credential",
+    sortable: true,
+    key: "credentialType",
+  },
+  {
+    title: "CIP",
+    sortable: true,
+    key: "cipCode",
+  },
+  {
+    title: "SABC code",
+    sortable: true,
+    key: "sabcCode",
+  },
+  {
+    title: "Status",
+    sortable: true,
+    key: "programStatus",
+  },
+  {
+    title: "Renewal",
+    sortable: false,
+    key: "renewal",
+    width: "160px",
+  },
+  {
+    title: "Action",
+    sortable: false,
+    key: "programId",
+  },
+];
+
 /**
  * Pagination Query param constants
  */
@@ -457,6 +496,19 @@ export const BatchReassessmentApplicationHeaders = [
   { title: "Result", sortable: false, key: "result" },
   { title: "Failure Reason", sortable: false, key: "failureReason" },
   { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Batch restriction history headers.
+ */
+export const BatchRestrictionHistoryHeaders = [
+  { title: "Batch ID", sortable: false, key: "batchNumber" },
+  { title: "Submitted Date", sortable: false, key: "submittedDate" },
+  { title: "Submitted By", sortable: false, key: "submittedBy" },
+  { title: "Restriction", sortable: false, key: "restriction" },
+  { title: "Count", sortable: false, key: "totalCount" },
+  { title: "Successful", sortable: false, key: "successCount" },
+  { title: "Failed", sortable: false, key: "failureCount" },
 ];
 
 /**

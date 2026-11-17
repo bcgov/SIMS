@@ -4,7 +4,7 @@ import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { FullTimeMSFAAProcessResponseIntegrationScheduler } from "../msfaa-full-time-process-response-integration.scheduler";
 import {
@@ -142,14 +142,14 @@ describe(
         },
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
       ]);
 
       // Act
       // Now reactivate the cancelled MSFAA.
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -264,12 +264,12 @@ describe(
         ),
       );
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD,
       ]);
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -390,10 +390,10 @@ describe(
           [MSFAA_FULL_TIME_RECEIVE_FILE_WITH_SINGLE_CANCELLATION_RECORD],
           changeFile,
         );
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+        await expect(processor.process(mockedJob.job)).rejects.toThrow(
           "One or more errors were reported during the process, please see logs for details.",
         );
 

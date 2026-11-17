@@ -553,6 +553,28 @@
           ]
         },
         {
+          "title": "Code SCV - Student compliance verification",
+          "customClass": "collapsible",
+          "collapsible": true,
+          "key": "codeSCVTitle",
+          "type": "panel",
+          "label": "Panel",
+          "collapsed": true,
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "html": "<p>Your StudentAid BC application requires further verification before funding may be released. Please contact StudentAid BC at <a href=\"mailto:studentcompliance.verify@gov.bc.ca\">studentcompliance.verify@gov.bc.ca</a> to request a verification video call and include your application number in the email.</p>\n\n<p>Please note: Students who knowingly report false or misleading information on their StudentAid BC application or otherwise participate in the misuse of the student financial assistance program will not be eligible to receive funding through StudentAid BC and will be reported to appropriate authorities.</p>",
+              "label": "Content",
+              "refreshOnChange": false,
+              "key": "contentSCV",
+              "type": "content",
+              "input": false,
+              "tableView": false
+            }
+          ]
+        },
+        {
           "label": "HTML",
           "tag": "h3",
           "className": "category-header-medium primary-color mt-5",

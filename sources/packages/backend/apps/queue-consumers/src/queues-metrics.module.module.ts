@@ -17,9 +17,8 @@ export class QueuesMetricsModule implements OnModuleInit {
    * Method that is invoked on application initialization and
    * is responsible for setting up the metrics for all queues.
    */
-  async onModuleInit(): Promise<void> {
-    this.logger.log("Associating queue events for metrics.");
+  onModuleInit(): void {
+    this.logger.log("Configuring queue metrics.");
     this.metricsService.setGlobalMetricsConfigurations();
-    await this.metricsService.associateQueueEventsCountersMetrics();
   }
 }

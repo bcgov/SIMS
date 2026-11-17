@@ -1,16 +1,16 @@
-import { Processor } from "@nestjs/bull";
-import { Job } from "bull";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
 import { T4AUploadQueueInDTO } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { BaseQueue } from "..";
+import { BaseQueueProcessor } from "..";
 import { T4AUploadProcessingService } from "@sims/integrations/t4a";
 
 /**
  * Uploads T4A files to student accounts.
  */
-@Processor(QueueNames.T4AUpload)
-export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
+@Processor(QueueNames.T4AUpload, BaseQueueProcessor.defaultWorkerOptions)
+export class T4AUploadProcessor extends BaseQueueProcessor<T4AUploadQueueInDTO> {
   constructor(
     logger: LoggerService,
     private readonly t4aUploadProcessingService: T4AUploadProcessingService,
@@ -26,7 +26,7 @@ export class T4AUploadProcessor extends BaseQueue<T4AUploadQueueInDTO> {
    * @param processSummary Summary object to log the process details.
    * @returns A message indicating the processing result.
    */
-  protected async process(
+  protected async processQueue(
     job: Job<T4AUploadQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {

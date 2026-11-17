@@ -23,8 +23,11 @@ export class AccessLoggerMiddleware implements NestMiddleware {
     const userGUID = user?.userName ? user.userName : "User GUID not found";
     const userAgent = headers["user-agent"] ?? "User agent not found";
     const userAccessLogs: string[] = [];
-    userAccessLogs.push(`Request - ${method} ${originalUrl} From ${clientIP}`);
-    userAccessLogs.push(`User GUID: ${userGUID}`);
+    userAccessLogs.push(
+      `Request - ${method} ${originalUrl} From ${clientIP}`,
+      `User GUID: ${userGUID}`,
+      `SSO Session ID: ${user?.sid ?? "SSO Session ID not found"}`,
+    );
     if (user?.client_id) {
       userAccessLogs.push(`Client ID: ${user.client_id}`);
     }

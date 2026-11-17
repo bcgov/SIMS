@@ -1,8 +1,7 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { QueueNames } from "@sims/utilities";
-import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
@@ -10,16 +9,16 @@ import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
  * Search for assessments that have some pending operation, for instance,
  * initialization or cancellation, and queue them.
  */
-@Processor(QueueNames.AssessmentWorkflowEnqueuer)
-export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.AssessmentWorkflowEnqueuer,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class AssessmentWorkflowEnqueuerScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.AssessmentWorkflowEnqueuer)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -28,7 +27,7 @@ export class AssessmentWorkflowEnqueuerScheduler extends BaseScheduler<void> {
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

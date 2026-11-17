@@ -173,7 +173,7 @@ export class StudentService extends RecordDataModelService<Student> {
     // If a user id was provided, use it as the audit user. It means that
     // the user is being created by the Ministry on behalf of the student.
     const auditUser = auditUserId ? ({ id: auditUserId } as User) : user;
-    user.email = userInfo.email.trim();
+    user.email = studentInfo.email.trim();
     user.firstName = userInfo.givenNames?.trim();
     user.lastName = userInfo.lastName.trim();
     if (userInfo.userId) {
@@ -521,7 +521,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Updates student information.
    * @param studentId student to be updated.
-   * @param studentInfo student information to be updated.
+   * @param studentInfo student information to be updated, including the e-mail.
    * @param auditUserId user who is making the changes.
    * @returns updated student.
    */
@@ -530,8 +530,19 @@ export class StudentService extends RecordDataModelService<Student> {
     studentInfo: StudentInfo,
     auditUserId: number,
   ): Promise<Student> {
+    const studentUser = await this.repo.findOneOrFail({
+      select: { id: true, user: { id: true } },
+      relations: { user: true },
+      where: { id: studentId },
+      loadEagerRelations: false,
+    });
     const student = new Student();
     student.id = studentId;
+    student.user = {
+      id: studentUser.user.id,
+      email: studentInfo.email.trim(),
+      modifier: { id: auditUserId },
+    } as User;
     student.contactInfo = {
       address: transformAddressDetails(studentInfo),
       phone: studentInfo.phone,
@@ -554,7 +565,7 @@ export class StudentService extends RecordDataModelService<Student> {
     // TODO: Remove the trim function below once the DTO sanitization is done.
     studentUserData.givenNames = studentUserData.givenNames?.trim();
     studentUserData.lastName = studentUserData.lastName.trim();
-    studentUserData.email = studentUserData.email.trim();
+    studentUserData.email = studentUserData.email?.trim();
     const studentToSync = await this.getStudentById(studentUserData.studentId);
     let mustSave = false;
     if (!studentUserData.givenNames) {
@@ -578,8 +589,9 @@ export class StudentService extends RecordDataModelService<Student> {
     }
     // This condition is not added above, as email does not trigger SIN validation request.
     if (
+      studentUserData.email &&
       studentUserData.email.toLowerCase() !==
-      studentToSync.user.email.toLowerCase()
+        studentToSync.user.email.toLowerCase()
     ) {
       studentToSync.user.email = studentUserData.email;
       mustSave = true;
@@ -623,7 +635,7 @@ export class StudentService extends RecordDataModelService<Student> {
   /**
    * Search students based on the search criteria and institution id if provided.
    * @param searchCriteria options to search by firstName,
-   * lastName, appNumber or sin.
+   * lastName, appNumber, sin, email or documentNumber (certificate number).
    * @param institutionId id of the institution that the student applied to.
    * @returns list of student details.
    */
@@ -634,6 +646,7 @@ export class StudentService extends RecordDataModelService<Student> {
       appNumber?: string;
       sin?: string;
       email?: string;
+      documentNumber?: number;
     },
     institutionId?: number,
   ): Promise<Student[]> {
@@ -695,6 +708,15 @@ export class StudentService extends RecordDataModelService<Student> {
       searchQuery.andWhere("lower(user.email) = :email", {
         email: searchCriteria.email.toLowerCase(),
       });
+    }
+    if (searchCriteria.documentNumber) {
+      // Exact match on the certificate number of any disbursement of the student.
+      searchQuery
+        .innerJoin("application.studentAssessments", "studentAssessment")
+        .innerJoin("studentAssessment.disbursementSchedules", "disbursement")
+        .andWhere("disbursement.documentNumber = :documentNumber", {
+          documentNumber: searchCriteria.documentNumber,
+        });
     }
     return searchQuery.getMany();
   }

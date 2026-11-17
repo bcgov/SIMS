@@ -158,19 +158,11 @@ export class SupportingUserSupportingUsersController extends BaseController {
         "The authenticated user token is missing required profile information.",
       );
     }
-    // Regardless of the API call is successful or not, create/update
-    // the user being used to execute the request.
-    const userQuery = this.userService.syncUser(
-      userToken.userName,
-      userToken.email,
-      userToken.givenNames,
-      userToken.lastName,
-    );
     // Use the provided data to search for the Student Application.
     // The application must be search using at least 3 criteria as
     // per defined by the Ministry policies.
-    const supportingUserQuery =
-      this.supportingUserService.getSupportingUserForApplication(
+    const supportingUser =
+      await this.supportingUserService.getSupportingUserForApplication(
         payload.supportingUserType,
         payload.applicationNumber,
         payload.studentsLastName,
@@ -179,12 +171,6 @@ export class SupportingUserSupportingUsersController extends BaseController {
           studentsDateOfBirth: payload.studentsDateOfBirth,
         },
       );
-
-    // Wait for both queries to finish.
-    const [user, supportingUser] = await Promise.all([
-      userQuery,
-      supportingUserQuery,
-    ]);
 
     if (!supportingUser) {
       throw new UnprocessableEntityException(
@@ -228,6 +214,15 @@ export class SupportingUserSupportingUsersController extends BaseController {
         ),
       );
     }
+
+    // The user is created/updated only after the submitted data, including the
+    // e-mail provided by the supporting user, is validated.
+    const user = await this.userService.syncUser(
+      userToken.userName,
+      submissionResult.email,
+      userToken.givenNames,
+      userToken.lastName,
+    );
 
     // Check if the same user is trying to provide data to the same application
     // that he already provided.

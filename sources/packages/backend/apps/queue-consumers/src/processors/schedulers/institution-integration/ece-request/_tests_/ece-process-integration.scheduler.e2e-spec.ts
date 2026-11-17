@@ -24,7 +24,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { INestApplication } from "@nestjs/common";
 import {
@@ -127,10 +127,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           .institutionCode;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
@@ -186,10 +186,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
     );
 
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>();
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(result).toStrictEqual(["No eligible COEs found."]);
@@ -270,10 +270,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
       await db.studentAssessment.save(newAssessment);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
@@ -368,10 +368,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           .institutionCode;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");
@@ -469,10 +469,10 @@ describe(describeProcessorRootTest(QueueNames.ECEProcessIntegration), () => {
           .institutionCode;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       const uploadedFile = getUploadedFile(sftpClientMock);
       const fileDate = dayjs().format("YYYYMMDD");

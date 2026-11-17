@@ -13,6 +13,7 @@ import {
 import {
   createFakeInstitutionLocation,
   saveFakeApplication,
+  saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
 import {
@@ -126,7 +127,7 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
       appDataSource,
       InstitutionTokenTypes.CollegeEReadOnlyUser,
     );
-    let collegeELocation = createFakeInstitutionLocation({
+    const collegeELocation = createFakeInstitutionLocation({
       institution: collegeE,
     });
 
@@ -481,6 +482,52 @@ describe("StudentInstitutionsController(e2e)-searchStudents", () => {
           },
         ]),
       );
+  });
+
+  it("Should find the student by certificate number when the student has an application for the institution and there is an exact match.", async () => {
+    // Arrange
+    // The student is saved explicitly to have the SIN validation available for the assertion.
+    const student = await saveFakeStudent(appDataSource);
+    const application = await saveFakeApplicationDisbursements(appDataSource, {
+      institution: collegeF,
+      institutionLocation: collegeFLocation,
+      student,
+    });
+    const [{ documentNumber }] =
+      application.currentAssessment.disbursementSchedules;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({ documentNumber })
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect(({ body }) =>
+        expect(body).toEqual([
+          {
+            id: student.id,
+            firstName: student.user.firstName,
+            lastName: student.user.lastName,
+            birthDate: student.birthDate,
+            sin: student.sinValidation.sin,
+          },
+        ]),
+      );
+  });
+
+  it("Should not find the student by certificate number when the student has no application for the institution.", async () => {
+    // Arrange
+    const application = await saveFakeApplicationDisbursements(appDataSource);
+    const [{ documentNumber }] =
+      application.currentAssessment.disbursementSchedules;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(endpoint)
+      .send({ documentNumber })
+      .auth(collegeFInstitutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect([]);
   });
 
   /**

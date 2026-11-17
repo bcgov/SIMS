@@ -60,8 +60,11 @@ describe("StudentStudentsController(e2e)-create", () => {
   it("Should create a BCSC student for the first time when a valid payload is submitted and the student has no data that matches any other student in SIMS or SFAS.", async () => {
     // Arrange
     const birthDate = "2000-01-01";
-    // Student creation payload.
-    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+    // Student creation payload with an e-mail that is different from the one in the token.
+    const payload = createFakeStudentPayload({
+      sinNumber: SIN_NUMBER_A,
+      email: "student.provided.email@example.com",
+    });
     // Mocked user info to populate the JWT token.
     const user = createFakeUser();
     // Mock the user received in the token.
@@ -94,6 +97,7 @@ describe("StudentStudentsController(e2e)-create", () => {
           firstName: true,
           lastName: true,
           userName: true,
+          email: true,
         },
         sinConsent: true,
         sinValidation: { id: true, sin: true },
@@ -112,6 +116,7 @@ describe("StudentStudentsController(e2e)-create", () => {
         firstName: user.firstName,
         lastName: user.lastName,
         userName: user.userName,
+        email: payload.email,
       },
       sinValidation: {
         id: expect.any(Number),
@@ -120,12 +125,15 @@ describe("StudentStudentsController(e2e)-create", () => {
     });
   });
 
-  it("Should return a bad request error when the BCSC authentication token is missing the mandatory e-mail information.", async () => {
+  it("Should create a BCSC student using the e-mail provided in the payload when the BCSC authentication token has no e-mail.", async () => {
     // Arrange
-    const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+    const payload = createFakeStudentPayload({
+      sinNumber: SIN_NUMBER_A,
+      email: "student.provided.email@example.com",
+    });
     // Mocked user info to populate the JWT token with a new, not yet associated, user.
     const user = createFakeUser();
-    // Mocked BCSC token without a verified email address.
+    // Mocked BCSC token without an e-mail address.
     await mockJWTToken(appModule, (jwtPayload) => {
       jwtPayload.userName = user.userName;
       jwtPayload.lastName = user.lastName;
@@ -137,19 +145,50 @@ describe("StudentStudentsController(e2e)-create", () => {
       FakeStudentUsersTypes.FakeStudentUserType1,
     );
 
-    // Act/Assert
-    await request(app.getHttpServer())
+    // Act
+    const response = await request(app.getHttpServer())
       .post(endpoint)
       .send(payload)
       .auth(studentToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.BAD_REQUEST)
-      .expect({
-        message:
-          "The BCSC identity token is missing required profile information.",
-        error: "Bad Request",
-        statusCode: HttpStatus.BAD_REQUEST,
-      });
+      .expect(HttpStatus.CREATED);
+
+    // Assert
+    const createdStudent = await db.student.findOneOrFail({
+      select: { id: true, user: { id: true, email: true } },
+      relations: { user: true },
+      where: { id: response.body.id },
+      loadEagerRelations: false,
+    });
+    expect(createdStudent.user.email).toBe(payload.email);
   });
+
+  it.each([
+    ["not provided", undefined],
+    ["invalid", "invalid-email"],
+  ])(
+    "Should return a bad request error when the e-mail is %s.",
+    async (_: string, email: string) => {
+      // Arrange
+      const payload = createFakeStudentPayload({ sinNumber: SIN_NUMBER_A });
+      const user = createFakeUser();
+      await mockJWTUserInfo(appModule, { ...user, birthDate: "2000-01-01" });
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .post(endpoint)
+        .send({ ...payload, email })
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.BAD_REQUEST)
+        .expect({
+          message: ["email must be an email"],
+          error: "Bad Request",
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+    },
+  );
 
   it("Should refresh the cached login information after creating a student account.", async () => {
     // Arrange
@@ -468,11 +507,14 @@ describe("StudentStudentsController(e2e)-create", () => {
 /** * Create valid student creation payload.
  * @param options options to create the payload.
  * - `sinNumber` SIN number to be used in the payload.
+ * - `email` e-mail to be used in the payload.
  * @returns student creation payload. */
 function createFakeStudentPayload(options: {
   sinNumber: string;
+  email?: string;
 }): CreateStudentAPIInDTO {
   const payload: CreateStudentAPIInDTO = {
+    email: options.email ?? "student.email@example.com",
     mode: "student-create",
     identityProvider: IdentityProviders.BCSC,
     country: "Canada",

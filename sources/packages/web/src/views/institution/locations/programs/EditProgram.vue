@@ -32,18 +32,23 @@
       />
     </template>
     <program-form
-      :read-only="readOnly"
-      :program-id="programId"
+      :title="formTitle"
+      :program-configuration="educationProgram"
+      :is-loading="loading"
+      :is-read-only="isFormReadOnly"
       :is-processing="processing"
-      @loaded="loaded"
-      @update="submit"
+      @submit="submit"
       @cancel="goBack"
     />
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useInstitutionAuth, useSnackBar } from "@/composables";
-import { computed, ref } from "vue";
+import {
+  useFeatureToggles,
+  useInstitutionAuth,
+  useSnackBar,
+} from "@/composables";
+import { computed, ref, watch } from "vue";
 import type { BackTarget } from "@/types";
 import {
   ApiProcessError,
@@ -53,10 +58,7 @@ import {
 import { useRouter } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
-import {
-  EducationProgramAPIOutDTO,
-  UpdateEducationProgramAPIInDTO,
-} from "@/services/http/dto";
+import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
@@ -69,20 +71,43 @@ interface EditProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const isFullUpdateRestricted = ref(false);
 const { isReadOnlyUser } = useInstitutionAuth();
+const { isManageProgramsEnabled } = useFeatureToggles();
 const readOnly = computed(() => isReadOnlyUser(props.locationId));
 const processing = ref(false);
+const loading = ref(true);
+const educationProgram = ref<EducationProgramAPIOutDTO>();
+const formTitle = computed(() => {
+  if (!isManageProgramsEnabled.value) {
+    return "Program";
+  }
+  return educationProgram.value
+    ? `Program Edit for ${educationProgram.value.programYearName}`
+    : "Program";
+});
 
-const submit = async (program: UpdateEducationProgramAPIInDTO) => {
+const isFullUpdateRestricted = computed(
+  () => !!educationProgram.value?.programData.context.isFullUpdateRestricted,
+);
+/**
+ * Inactive or expired programs can no longer be edited.
+ */
+const isFormReadOnly = computed(
+  () =>
+    readOnly.value ||
+    !educationProgram.value?.isActive ||
+    educationProgram.value.isExpired,
+);
+
+const submit = async (programData: Record<string, unknown>) => {
   processing.value = true;
   try {
     await EducationProgramService.shared.updateEducationProgram(
       props.programId,
-      program,
+      { programData },
     );
     snackBar.success("Education Program updated successfully!");
-    await goBack();
+    goBack();
   } catch (error: unknown) {
     if (error instanceof ApiProcessError) {
       snackBar.error(error.message);
@@ -94,12 +119,7 @@ const submit = async (program: UpdateEducationProgramAPIInDTO) => {
   }
 };
 
-const loaded = (program: EducationProgramAPIOutDTO) => {
-  isFullUpdateRestricted.value =
-    program.programData.context.isFullUpdateRestricted;
-};
-
-const goBack = async (): Promise<void> => {
+const goBack = (): void => {
   router.push(props.backTarget.to);
 };
 
@@ -111,4 +131,20 @@ const createNewProgram = () => {
     },
   });
 };
+
+watch(
+  () => props.programId,
+  async (programId) => {
+    try {
+      loading.value = true;
+      educationProgram.value =
+        await EducationProgramService.shared.getEducationProgram(programId);
+    } catch {
+      snackBar.error("Unexpected error while loading program data.");
+    } finally {
+      loading.value = false;
+    }
+  },
+  { immediate: true },
+);
 </script>

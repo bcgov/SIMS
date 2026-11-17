@@ -1,6 +1,6 @@
 import { Global, Module, Provider } from "@nestjs/common";
 import { QueueNames } from "@sims/utilities";
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import { createMock } from "@golevelup/ts-jest";
 import { QueueService } from "@sims/services/queue";
 

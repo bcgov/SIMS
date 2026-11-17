@@ -23,7 +23,6 @@ import {
   mapInstitutionActiveRestrictions,
   mapStudentActiveRestrictions,
 } from "./disbursement-schedule.models";
-import { ConfigService } from "@sims/utilities/config";
 
 interface GroupedStudentActiveRestrictions {
   [studentId: number]: StudentActiveRestriction[];
@@ -40,7 +39,6 @@ export class ECertGenerationService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationRepo: Repository<Application>,
-    private readonly configService: ConfigService,
   ) {}
 
   /**
@@ -62,10 +60,6 @@ export class ECertGenerationService {
     checkDisbursementMinDate?: boolean;
     allowNonCompleted?: boolean;
   }): Promise<EligibleECertDisbursement[]> {
-    // Applications with offerings end dates beyond the archive limit will no longer be disbursed.
-    const offeringEndDateMinDate = addDays(
-      -this.configService.applicationArchiveDays,
-    );
     const eligibleApplicationsQuery = this.applicationRepo
       .createQueryBuilder("application")
       .select([
@@ -207,12 +201,8 @@ export class ECertGenerationService {
           applicationStatus: ApplicationStatus.Completed,
         },
       );
-      eligibleApplicationsQuery.andWhere(
-        "offering.studyEndDate >= :offeringEndDateMinDate",
-        {
-          offeringEndDateMinDate,
-        },
-      );
+      // Archived applications will no longer be disbursed.
+      eligibleApplicationsQuery.andWhere("application.isArchived = false");
     }
     if (options.applicationIds?.length) {
       eligibleApplicationsQuery.andWhere(

@@ -42,6 +42,14 @@ const router = createRouter({
 });
 
 /**
+ * Pages that must be reachable even when the config cannot be loaded.
+ */
+const NON_CONFIG_ROUTES = new Set<RouteLocationNormalized["name"]>([
+  SharedRouteConst.MAINTENANCE_PAGE,
+  SharedRouteConst.UNEXPECTED_ERROR,
+]);
+
+/**
  * Encapsulates maintenance mode checks for a given route and app config.
  * @param to The route to check for maintenance mode.
  * @returns True if the route should be redirected to the maintenance page, otherwise false.
@@ -49,12 +57,11 @@ const router = createRouter({
 async function isMaintenanceActiveForRoute(
   to: RouteLocationNormalized,
 ): Promise<boolean> {
-  const config = await AppConfigService.shared.config();
-
-  // Do not apply maintenance checks to the maintenance page itself.
-  if (to.name === SharedRouteConst.MAINTENANCE_PAGE) {
+  if (NON_CONFIG_ROUTES.has(to.name)) {
     return false;
   }
+
+  const config = await AppConfigService.shared.config();
 
   // Global maintenance mode check.
   if (config.maintenanceMode) {

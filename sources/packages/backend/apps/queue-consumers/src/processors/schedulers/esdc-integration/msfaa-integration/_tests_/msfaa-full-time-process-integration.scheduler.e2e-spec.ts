@@ -4,7 +4,7 @@ import { QueueNames, getISODateOnlyString } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { FullTimeMSFAAProcessIntegrationScheduler } from "../msfaa-full-time-process-integration.scheduler";
 import { E2EDataSources, createE2EDataSources } from "@sims/test-utils";
@@ -85,13 +85,13 @@ describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
       msfaaInputData,
     );
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>();
     // Spy on the MSFAA content creation to intercept the process date and time used.
     const createMSFAARequestContentMock =
       createMSFAARequestContentSpyOnMock(app);
 
     // Act
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
 
     // Assert
     expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
@@ -160,12 +160,12 @@ describe(describeProcessorRootTest(QueueNames.FullTimeMSFAAIntegration), () => {
       sequenceNumber: lifeTimeSequenceValue,
     });
     // Queued job.
-    const mockedJob = mockBullJob<void>();
+    const mockedJob = mockBullMQJob<void>();
     const createMSFAARequestContentMock =
       createMSFAARequestContentSpyOnMock(app);
 
     // Act/Assert
-    const result = await processor.processQueue(mockedJob.job);
+    const result = await processor.process(mockedJob.job);
     expect(createMSFAARequestContentMock).toHaveBeenCalledTimes(1);
     const { processDateFormatted, processTimeFormatted } =
       getProcessDateFromMSFAARequestContent(createMSFAARequestContentMock);

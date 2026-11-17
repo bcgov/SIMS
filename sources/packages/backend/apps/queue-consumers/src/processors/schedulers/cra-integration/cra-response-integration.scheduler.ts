@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
 import { CRAIncomeVerificationProcessingService } from "@sims/integrations/cra-integration/cra-income-verification.processing.service";
-import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 
-@Processor(QueueNames.CRAResponseIntegration)
-export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.CRAResponseIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class CRAResponseIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.CRAResponseIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly cra: CRAIncomeVerificationProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -23,7 +22,7 @@ export class CRAResponseIntegrationScheduler extends BaseScheduler<void> {
    * @params job job details.
    * @returns Summary with what was processed and the list of all errors, if any.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

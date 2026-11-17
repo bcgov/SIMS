@@ -31,14 +31,14 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
     appModule = module;
   });
 
-  it("Should return a bad request error when the BCSC authentication token is missing the mandatory profile information.", async () => {
+  it("Should return a bad request error when the BCSC authentication token is missing the mandatory last name or birthdate information.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
-    // Mock a BCSC token for the persisted student without a verified email address.
+    // Mock a BCSC token for the persisted student without the last name.
     await mockJWTToken(appModule, (jwtPayload) => {
       jwtPayload.userName = student.user.userName;
-      jwtPayload.email = undefined;
-      jwtPayload.lastName = "Doe";
+      jwtPayload.email = student.user.email;
+      jwtPayload.lastName = undefined;
       jwtPayload.birthdate = "2000-01-01";
     });
     const studentToken = await getStudentToken(
@@ -58,7 +58,7 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
       });
   });
 
-  it("Should synchronize the student and user data when the BCSC authentication token has all the mandatory profile information.", async () => {
+  it("Should synchronize the student and user data, except the e-mail, when the BCSC authentication token has all the mandatory profile information.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource, undefined, {
       initialValue: { birthDate: "1990-01-01" },
@@ -111,7 +111,8 @@ describe("StudentStudentsController(e2e)-synchronizeFromUserToken", () => {
         id: student.user.id,
         firstName: updatedGivenNames,
         lastName: updatedLastName,
-        email: updatedEmail,
+        // E-mail is not synchronized from the token after the account creation.
+        email: student.user.email,
       },
     });
   });

@@ -4,7 +4,7 @@ import { QueueNames } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import {
   E2EDataSources,
@@ -75,10 +75,10 @@ describe(
       // Create user.
       const student = await createStudentWithSpecificLastName("reserved");
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       // Assert
       expect(result.length).toBe(1);
       expect(
@@ -113,12 +113,12 @@ describe(
       // Create Student.
       const student = await createStudentWithSpecificLastName("random");
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_STUDENT_NOT_FOUND_FILENAME,
       ]);
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       // Assert
       expect(result.length).toBe(1);
       expect(result).toStrictEqual(["Process finalized with success."]);
@@ -139,13 +139,13 @@ describe(
     it("Should throw an error for number of records mismatch when the records in the trailer does not match the number of records.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [
         STUDENT_LOAN_BALANCES_RECORDS_MISMATCH_FILENAME,
       ]);
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       // Assert log has the extra details.
@@ -178,11 +178,11 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);
@@ -231,11 +231,11 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);
@@ -283,11 +283,11 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(sftpClientMock, [STUDENT_LOAN_BALANCES_FILENAME]);
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual(["Process finalized with success."]);

@@ -596,8 +596,10 @@ export class AssessmentController {
           institutionLocation?.institution.organizationStatus,
       },
       location: {
+        // Empty provinces (e.g. international locations) become undefined, and
+        // then null in filterObjectProperties, so the workflow default applies.
         institutionLocationProvince:
-          institutionLocation?.data.address?.provinceState,
+          institutionLocation?.data.address?.provinceState || undefined,
       },
       student: {
         craReportedIncome: this.getAdjustedCRAReportedIncome(

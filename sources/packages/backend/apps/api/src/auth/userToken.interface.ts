@@ -41,6 +41,11 @@ export interface IUserToken {
    */
   userName: string;
   /**
+   * Keycloak session id, shared by all the requests of the same user session
+   * and present on the API logs to allow tracing the user activity.
+   */
+  sid?: string;
+  /**
    * User email from received token.
    */
   email: string;

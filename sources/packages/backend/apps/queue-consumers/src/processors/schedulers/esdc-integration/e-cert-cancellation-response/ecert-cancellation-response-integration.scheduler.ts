@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { ECertCancellationResponseProcessingService } from "@sims/integrations/esdc-integration";
 
-@Processor(QueueNames.ECertCancellationResponseIntegration)
-export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.ECertCancellationResponseIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class ECertCancellationResponseIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.ECertCancellationResponseIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly eCertCancellationResponseProcessingService: ECertCancellationResponseProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -25,7 +24,7 @@ export class ECertCancellationResponseIntegrationScheduler extends BaseScheduler
    * @param processSummary process summary for logging.
    * @returns process summary.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {

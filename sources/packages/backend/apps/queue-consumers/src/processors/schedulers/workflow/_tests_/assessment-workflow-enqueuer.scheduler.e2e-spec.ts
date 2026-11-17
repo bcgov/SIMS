@@ -1,10 +1,10 @@
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, addDays } from "@sims/utilities";
+import { QueueJobNames, QueueNames, addDays } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../test/helpers";
 import { AssessmentWorkflowEnqueuerScheduler } from "../assessment-workflow-enqueuer.scheduler";
 import {
@@ -72,10 +72,10 @@ describe(
       // Application submitted with original assessment.
       const application = await createDefaultApplication();
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -87,6 +87,7 @@ describe(
         assessmentId: updatedApplication.currentProcessingAssessment.id,
       } as StartAssessmentQueueInDTO;
       expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
       // currentProcessingAssessment must be updated with the queued assessment.
@@ -126,10 +127,10 @@ describe(
       application.currentAssessment = newestAssessment;
       await db.application.save(application);
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -141,6 +142,7 @@ describe(
         assessmentId: oldestAssessment.id,
       } as StartAssessmentQueueInDTO;
       expect(startApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.StartApplicationAssessmentJob,
         queueData,
       );
       // currentProcessingAssessment must be updated with the oldest assessment
@@ -173,10 +175,10 @@ describe(
         await db.studentAssessment.save(submittedAssessment);
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Act
-        await processor.processQueue(mockedJob.job);
+        await processor.process(mockedJob.job);
 
         // Assert
         expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
@@ -193,10 +195,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(startApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();
@@ -213,10 +215,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       // Load application and related assessments for assertion.
@@ -229,6 +231,7 @@ describe(
         assessmentId: updatedApplication.currentAssessment.id,
       } as CancelAssessmentQueueInDTO;
       expect(cancelApplicationAssessmentQueueMock.add).toHaveBeenCalledWith(
+        QueueJobNames.CancelApplicationAssessmentJob,
         queueData,
       );
 
@@ -256,10 +259,10 @@ describe(
       await db.application.save(application);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(cancelApplicationAssessmentQueueMock.add).not.toHaveBeenCalled();

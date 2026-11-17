@@ -2,7 +2,27 @@
   <v-form ref="searchStudentsForm">
     <content-group class="mb-2">
       <v-row density="compact">
-        <v-col cols="12" lg="2">
+        <v-col cols="12" lg>
+          <v-text-field
+            label="Certificate number"
+            density="compact"
+            variant="outlined"
+            v-model.trim="documentNumber"
+            :rules="[
+              (v: string) =>
+                checkRegexPattern(
+                  v,
+                  DOCUMENT_NUMBER_REGEX,
+                  'Certificate number',
+                  false,
+                ),
+            ]"
+            :maxlength="DOCUMENT_NUMBER_MAX_LENGTH"
+            @keyup.enter="searchStudents"
+            hide-details="auto"
+          />
+        </v-col>
+        <v-col cols="12" lg>
           <v-text-field
             label="Email address"
             density="compact"
@@ -12,43 +32,39 @@
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="2">
+        <v-col cols="12" lg>
           <v-text-field
             label="Application number"
             density="compact"
-            data-cy="appNumber"
             variant="outlined"
             v-model.trim="appNumber"
             @keyup.enter="searchStudents"
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="2">
+        <v-col cols="12" lg>
           <v-text-field
             label="SIN"
             density="compact"
-            data-cy="sin"
             variant="outlined"
             v-model.trim="sin"
             @keyup.enter="searchStudents"
             hide-details
           />
         </v-col>
-        <v-col cols="12" lg="2">
+        <v-col cols="12" lg>
           <v-text-field
             label="Given names"
             density="compact"
-            data-cy="firstName"
             variant="outlined"
             v-model.trim="firstName"
             @keyup.enter="searchStudents"
             hide-details
           /> </v-col
-        ><v-col cols="12" lg="2">
+        ><v-col cols="12" lg>
           <v-text-field
             label="Last name"
             density="compact"
-            data-cy="lastName"
             variant="outlined"
             v-model.trim="lastName"
             @keyup.enter="searchStudents"
@@ -97,10 +113,7 @@
             </div>
           </template>
           <template #[`item.action`]="{ item }">
-            <v-btn
-              color="primary"
-              data-cy="viewStudent"
-              @click="$emit('goToStudentView', item.id)"
+            <v-btn color="primary" @click="$emit('goToStudentView', item.id)"
               >View</v-btn
             >
           </template>
@@ -109,93 +122,89 @@
     </content-group>
   </template>
 </template>
-<script lang="ts">
-import { ref, computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref, computed } from "vue";
 import { useDisplay } from "vuetify";
-
 import { StudentService } from "@/services/StudentService";
 import {
   SearchStudentAPIInDTO,
   SearchStudentAPIOutDTO,
 } from "@/services/http/dto";
-import { useFormatters, useSnackBar, useValidators } from "@/composables";
+import {
+  useFormatters,
+  useRules,
+  useSnackBar,
+  useValidators,
+} from "@/composables";
 import {
   DEFAULT_PAGE_LIMIT,
   ITEMS_PER_PAGE,
   SearchStudentsHeaders,
-  VForm,
 } from "@/types";
+import type { VForm } from "@/types";
 
-export default defineComponent({
-  emits: ["goToStudentView"],
-  setup() {
-    const searchStudentsForm = ref({} as VForm);
-    const snackBar = useSnackBar();
-    const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
-    const { isSINValid } = useValidators();
-    const { mobile: isMobile } = useDisplay();
+defineEmits<{
+  goToStudentView: [studentId: number];
+}>();
 
-    const appNumber = ref("");
-    const firstName = ref("");
-    const lastName = ref("");
-    const students = ref([] as SearchStudentAPIOutDTO[]);
-    const sin = ref("");
-    const email = ref("");
-    const isValidSearch = () => {
-      const hasNoInput =
-        !appNumber.value &&
-        !firstName.value &&
-        !sin.value &&
-        !lastName.value &&
-        !email.value;
-      if (hasNoInput) {
-        return "Please provide at least one search parameter.";
-      }
-      if (sin.value) {
-        return isSINValid(sin.value) || "Please provide a proper SIN.";
-      }
-      return true;
-    };
-    const searchStudents = async () => {
-      const validationResult = await searchStudentsForm.value.validate();
-      if (!validationResult.valid) {
-        return;
-      }
-      const payload: SearchStudentAPIInDTO = {
-        appNumber: appNumber.value,
-        firstName: firstName.value,
-        lastName: lastName.value,
-        sin: sin.value,
-        email: email.value,
-      };
-      students.value = await StudentService.shared.searchStudents(payload);
-      if (students.value.length === 0) {
-        snackBar.warn("No Students found for the given search criteria. ");
-      }
-    };
+// Max length accepted by the API for the certificate (document) number.
+const DOCUMENT_NUMBER_MAX_LENGTH = 9;
+const DOCUMENT_NUMBER_REGEX = new RegExp(
+  String.raw`^\d{1,${DOCUMENT_NUMBER_MAX_LENGTH}}$`,
+);
 
-    const studentsFound = computed(() => {
-      return students.value.length > 0;
-    });
-    return {
-      sin,
-      appNumber,
-      firstName,
-      lastName,
-      email,
-      studentsFound,
-      searchStudents,
-      students,
-      dateOnlyLongString,
-      sinDisplayFormat,
-      isSINValid,
-      searchStudentsForm,
-      isValidSearch,
-      SearchStudentsHeaders,
-      DEFAULT_PAGE_LIMIT,
-      ITEMS_PER_PAGE,
-      isMobile,
-    };
-  },
-});
+const searchStudentsForm = ref({} as VForm);
+const snackBar = useSnackBar();
+const { dateOnlyLongString, sinDisplayFormat } = useFormatters();
+const { isSINValid } = useValidators();
+const { checkRegexPattern } = useRules();
+const { mobile: isMobile } = useDisplay();
+
+const appNumber = ref("");
+const firstName = ref("");
+const lastName = ref("");
+const students = ref([] as SearchStudentAPIOutDTO[]);
+const sin = ref("");
+const email = ref("");
+const documentNumber = ref("");
+
+const isValidSearch = () => {
+  const hasNoInput =
+    !appNumber.value &&
+    !firstName.value &&
+    !sin.value &&
+    !lastName.value &&
+    !email.value &&
+    !documentNumber.value;
+  if (hasNoInput) {
+    return "Please provide at least one search parameter.";
+  }
+  if (sin.value) {
+    return isSINValid(sin.value) || "Please provide a proper SIN.";
+  }
+  return true;
+};
+
+const searchStudents = async () => {
+  const validationResult = await searchStudentsForm.value.validate();
+  if (!validationResult.valid) {
+    return;
+  }
+  const payload: SearchStudentAPIInDTO = {
+    appNumber: appNumber.value,
+    firstName: firstName.value,
+    lastName: lastName.value,
+    sin: sin.value,
+    email: email.value,
+    documentNumber: documentNumber.value
+      ? Number(documentNumber.value)
+      : undefined,
+  };
+  students.value = await StudentService.shared.searchStudents(payload);
+  if (students.value.length === 0) {
+    snackBar.warn("No Students found for the given search criteria. ");
+  }
+};
+
+const studentsFound = computed(() => students.value.length > 0);
 </script>

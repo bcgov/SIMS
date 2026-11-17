@@ -41,3 +41,4 @@ export * from "@/services/http/dto/FormSubmission.dto";
 export * from "@/services/http/dto/MSFAANumber.dto";
 export * from "@/services/http/dto/DisabilityProfile.dto";
 export * from "@/services/http/dto/BatchReassessment.dto";
+export * from "@/services/http/dto/BatchRestriction.dto";

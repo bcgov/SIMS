@@ -1,24 +1,23 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { QueueNames } from "@sims/utilities";
 import { SIMSToSFASProcessingService } from "@sims/integrations/sfas-integration";
 import { SIMSToSFASService } from "@sims/integrations/services/sfas";
 import { SIMS_TO_SFAS_BRIDGE_FILE_INITIAL_DATE } from "@sims/integrations/constants";
 
-@Processor(QueueNames.SIMSToSFASIntegration)
-export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.SIMSToSFASIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class SIMSToSFASIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.SIMSToSFASIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly simsToSFASService: SIMSToSFASService,
     private readonly simsToSFASIntegrationProcessingService: SIMSToSFASProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -27,7 +26,7 @@ export class SIMSToSFASIntegrationScheduler extends BaseScheduler<void> {
    * @param _job process job.
    * @param processSummary process summary for logging.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {

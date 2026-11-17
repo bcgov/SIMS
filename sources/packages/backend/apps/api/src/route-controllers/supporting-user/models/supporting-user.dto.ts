@@ -1,4 +1,5 @@
 import {
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -59,6 +60,8 @@ export class ApplicationIdentifierAPIInDTO {
  * must) be done by the Form.IO dry run.
  */
 export class UpdateSupportingUserAPIInDTO {
+  @IsEmail()
+  email: string;
   @Length(APPLICATION_NUMBER_LENGTH, APPLICATION_NUMBER_LENGTH)
   applicationNumber: string;
   @IsNotEmpty()

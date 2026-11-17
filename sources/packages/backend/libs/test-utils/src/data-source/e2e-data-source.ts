@@ -73,6 +73,8 @@ import {
   BatchReassessment,
   BatchReassessmentApplication,
   EducationProgramConfiguration,
+  BatchRestriction,
+  BatchRestrictionStudent,
 } from "@sims/sims-db";
 import { DataSource, Repository } from "typeorm";
 
@@ -98,6 +100,8 @@ export function createE2EDataSources(dataSource: DataSource): E2EDataSources {
     batchReassessmentApplication: dataSource.getRepository(
       BatchReassessmentApplication,
     ),
+    batchRestriction: dataSource.getRepository(BatchRestriction),
+    batchRestrictionStudent: dataSource.getRepository(BatchRestrictionStudent),
     betaUsersAuthorizations: dataSource.getRepository(BetaUsersAuthorizations),
     casSupplier: dataSource.getRepository(CASSupplier),
     casInvoiceBatch: dataSource.getRepository(CASInvoiceBatch),
@@ -214,6 +218,8 @@ export interface E2EDataSources {
   applicationRestrictionBypass: Repository<ApplicationRestrictionBypass>;
   batchReassessment: Repository<BatchReassessment>;
   batchReassessmentApplication: Repository<BatchReassessmentApplication>;
+  batchRestriction: Repository<BatchRestriction>;
+  batchRestrictionStudent: Repository<BatchRestrictionStudent>;
   betaUsersAuthorizations: Repository<BetaUsersAuthorizations>;
   casSupplier: Repository<CASSupplier>;
   casInvoiceBatch: Repository<CASInvoiceBatch>;

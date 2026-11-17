@@ -22,6 +22,7 @@ export function getMostRecentEducationProgramConfiguration(options: {
       updatedAt: true,
       programYear: {
         id: true,
+        programYear: true,
         startDate: true,
       },
     },

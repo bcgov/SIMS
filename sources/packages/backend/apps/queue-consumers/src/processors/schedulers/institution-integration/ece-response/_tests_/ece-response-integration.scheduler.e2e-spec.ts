@@ -12,7 +12,7 @@ import {
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import { ECEResponseIntegrationScheduler } from "../ece-response-integration.scheduler";
 import {
@@ -174,7 +174,7 @@ describe(
       const currentDate = new Date();
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -197,7 +197,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -251,7 +251,7 @@ describe(
       const [referenceDisbursementValue] = disbursement!.disbursementValues!;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // A past COE date simulates a CONR file with a COE date different from
       // the actual processing time.
@@ -283,7 +283,7 @@ describe(
       MockDate.set(now);
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       const notifications = await getUnsentECEResponseNotifications(db);
       const [emailAddress] = locationCONF.integrationContacts!;
@@ -418,7 +418,7 @@ describe(
         const [referenceDisbursementValue] = disbursement.disbursementValues;
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Modify the data in mock file to have the correct values for
         // disbursement value ID and application number.
@@ -442,7 +442,7 @@ describe(
         );
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         expect(result).toStrictEqual([
@@ -514,7 +514,7 @@ describe(
         const [referenceDisbursementValue] = disbursement.disbursementValues;
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Modify the data in mock file to have the correct values for
         // disbursement value ID and application number.
@@ -538,7 +538,7 @@ describe(
         );
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         expect(result).toStrictEqual([
@@ -611,7 +611,7 @@ describe(
         const [referenceDisbursementValue] = disbursement.disbursementValues;
 
         // Queued job.
-        const mockedJob = mockBullJob<void>();
+        const mockedJob = mockBullMQJob<void>();
 
         // Modify the data in mock file to have the correct values for
         // disbursement value ID and application number.
@@ -635,7 +635,7 @@ describe(
         );
 
         // Act
-        const result = await processor.processQueue(mockedJob.job);
+        const result = await processor.process(mockedJob.job);
 
         // Assert
         expect(result).toStrictEqual([
@@ -717,7 +717,7 @@ describe(
         disbursement.disbursementValues.map((awardValue) => awardValue.id);
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       const applicationNumber = application.applicationNumber;
       const currentDate = new Date();
 
@@ -745,7 +745,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -848,7 +848,7 @@ describe(
         secondDisbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -877,7 +877,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -933,7 +933,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -955,7 +955,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1018,7 +1018,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1041,7 +1041,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1087,7 +1087,7 @@ describe(
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have fake disbursement value ID.
       mockDownloadFiles(
@@ -1108,7 +1108,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1166,7 +1166,7 @@ describe(
       const fakeApplicationNumber = "9999999999";
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct disbursement
       // value ID and fake application number.
@@ -1188,7 +1188,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       expect(result).toStrictEqual([
         "Institution locations processed as a result of ECE response files received: 1. Check logs for details.",
         "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
@@ -1229,7 +1229,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid header.
       mockDownloadFiles(
@@ -1241,7 +1241,7 @@ describe(
       );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -1278,7 +1278,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid detail.
       mockDownloadFiles(
@@ -1290,7 +1290,7 @@ describe(
       );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -1330,7 +1330,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
@@ -1342,7 +1342,7 @@ describe(
       );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -1381,7 +1381,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid footer.
       mockDownloadFiles(
@@ -1393,7 +1393,7 @@ describe(
       );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -1432,7 +1432,7 @@ describe(
       );
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have invalid application number.
       // Note: The disbursement value ID is already an invalid value in file
@@ -1451,7 +1451,7 @@ describe(
       );
 
       // Act/Assert
-      await expect(processor.processQueue(mockedJob.job)).rejects.toThrow(
+      await expect(processor.process(mockedJob.job)).rejects.toThrow(
         "One or more errors were reported during the process, please see logs for details.",
       );
       expect(
@@ -1507,7 +1507,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1531,7 +1531,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1596,7 +1596,7 @@ describe(
       const [referenceDisbursement2Value] = disbursement2.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1630,7 +1630,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1688,7 +1688,7 @@ describe(
       const disbursementDate = disbursement.disbursementDate;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1715,7 +1715,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1772,7 +1772,7 @@ describe(
       const [referenceDisbursementValue] = disbursement.disbursementValues;
 
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Modify the data in mock file to have the correct values for
       // disbursement value ID and application number.
@@ -1802,7 +1802,7 @@ describe(
       );
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -1849,7 +1849,7 @@ describe(
       const [disbursement] =
         application.currentAssessment.disbursementSchedules;
       const [referenceDisbursementValue] = disbursement.disbursementValues;
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
       mockDownloadFiles(
         sftpClientMock,
         [CONR_008_CONF_FILE, CONR_008_CONF_SECOND_FILE],
@@ -1871,7 +1871,7 @@ describe(
       // Act
       const mockedDate = new Date();
       MockDate.set(mockedDate);
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
       const notifications = await getUnsentECEResponseNotifications(db);
 
       // Assert
@@ -1955,7 +1955,7 @@ describe(
     it("Should order files by name and group files per institution code when multiple files are present for distinct institutions.", async () => {
       // Arrange
       // Queued job.
-      const mockedJob = mockBullJob<void>();
+      const mockedJob = mockBullMQJob<void>();
 
       // Add a mock download for multiple files, two for each institution code.
       mockDownloadFiles(sftpClientMock, [
@@ -1966,7 +1966,7 @@ describe(
       ]);
 
       // Act
-      await processor.processQueue(mockedJob.job);
+      await processor.process(mockedJob.job);
 
       // Assert
       expect(

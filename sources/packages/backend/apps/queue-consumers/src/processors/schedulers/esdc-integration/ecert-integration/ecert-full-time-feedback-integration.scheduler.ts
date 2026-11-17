@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
 import { FullTimeECertFileHandler } from "@sims/integrations/esdc-integration";
-import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
-@Processor(QueueNames.FullTimeFeedbackIntegration)
-export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.FullTimeFeedbackIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class FullTimeECertFeedbackIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.FullTimeFeedbackIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly fullTimeECertFileHandler: FullTimeECertFileHandler,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -24,7 +23,7 @@ export class FullTimeECertFeedbackIntegrationScheduler extends BaseScheduler<voi
    * @param processSummary process summary for logging.
    * @returns processing results.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

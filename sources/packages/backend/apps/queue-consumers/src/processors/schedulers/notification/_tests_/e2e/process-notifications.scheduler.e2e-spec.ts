@@ -3,7 +3,7 @@ import { QueueNames, CustomNamedError } from "@sims/utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
-  mockBullJob,
+  mockBullMQJob,
 } from "../../../../../../test/helpers";
 import {
   createE2EDataSources,
@@ -65,15 +65,17 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
       await db.notification.save(notifications);
       // Queued job with an external rate limit lower than the total pending notifications.
       const externalRateLimit = 2;
-      const mockedJob = mockBullJob<ProcessNotificationsQueueInDTO>({
-        pollingRecordsLimit: 10,
-        externalRateLimit,
-        externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
-      });
+      const mockedJob = mockBullMQJob<ProcessNotificationsQueueInDTO>(
+        {
+          pollingRecordsLimit: 10,
+          externalRateLimit,
+          externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
+        },
+      );
       jest.spyOn(notifyService, "sendEmailNotification").mockResolvedValue();
 
       // Act
-      const result = await processor.processQueue(mockedJob.job);
+      const result = await processor.process(mockedJob.job);
 
       // Assert
       expect(result).toStrictEqual([
@@ -112,14 +114,16 @@ describe(describeProcessorRootTest(QueueNames.ProcessNotifications), () => {
       .mockRejectedValue(rateLimitExceededError);
 
     // Queued job with a rate limit high enough to not interfere with this scenario.
-    const mockedJob = mockBullJob<ProcessNotificationsQueueInDTO>({
-      pollingRecordsLimit,
-      externalRateLimit: 10,
-      externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
-    });
+    const mockedJob = mockBullMQJob<ProcessNotificationsQueueInDTO>(
+      {
+        pollingRecordsLimit,
+        externalRateLimit: 10,
+        externalRateLimitSeconds: EXTERNAL_RATE_LIMIT_SECONDS,
+      },
+    );
 
     // Act
-    await processor.processQueue(mockedJob.job);
+    await processor.process(mockedJob.job);
 
     // Assert
     // The notification already sent before the rate limit error is still

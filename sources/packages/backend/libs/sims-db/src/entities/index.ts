@@ -102,6 +102,8 @@ export * from "./student-loan-balance.model";
 export * from "./ecert-feedback-error.model";
 export * from "./batch-reassessment.model";
 export * from "./batch-reassessment-application.model";
+export * from "./batch-restriction.model";
+export * from "./batch-restriction-student.model";
 export * from "./cas-invoice-batch-approval-status.type";
 export * from "./cas-invoice-status.type";
 export * from "./cas-distribution-account.model";

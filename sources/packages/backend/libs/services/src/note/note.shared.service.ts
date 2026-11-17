@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { StudentNote } from "./note.models";
+import { CreatedStudentNote, StudentNote } from "./note.models";
 import { Institution, Note, NoteType, Student, User } from "@sims/sims-db";
 import { ColumnNames, TableNames } from "@sims/sims-db/constant";
 import { EntityManager } from "typeorm";
@@ -48,40 +48,41 @@ export class NoteSharedService {
    * @param studentNotes notes to be created, each one associated with a student.
    * @param auditUserId user that should be considered the one that is causing the changes.
    * @param entityManager transactional entity manager.
-   * @returns notes created, in the same order as the provided studentNotes.
+   * @returns notes created, each one associated with its respective student.
    */
   async createStudentNotes(
     studentNotes: StudentNote[],
     auditUserId: number,
     entityManager: EntityManager,
-  ): Promise<Note[]> {
+  ): Promise<CreatedStudentNote[]> {
     if (!studentNotes.length) {
       return [];
     }
-    const notesToCreate = studentNotes.map((studentNote) =>
-      this.buildNote(
+    const createdStudentNotes = studentNotes.map((studentNote) => ({
+      studentId: studentNote.studentId,
+      note: this.buildNote(
         studentNote.noteType,
         studentNote.description,
         auditUserId,
       ),
-    );
-    // Single bulk save for all the notes.
-    const savedNotes = await entityManager
-      .getRepository(Note)
-      .save(notesToCreate);
-
-    const studentNoteRelations = savedNotes.map((savedNote, index) => ({
-      [ColumnNames.StudentId]: studentNotes[index].studentId,
-      [ColumnNames.NoteId]: savedNote.id,
     }));
+    // Single bulk save for all the notes.
+    await entityManager
+      .getRepository(Note)
+      .save(createdStudentNotes.map(({ note }) => note));
     // Single bulk insert for all the student-note associations.
     await entityManager
       .createQueryBuilder()
       .insert()
       .into(TableNames.StudentNotes)
-      .values(studentNoteRelations)
+      .values(
+        createdStudentNotes.map((createdStudentNote) => ({
+          [ColumnNames.StudentId]: createdStudentNote.studentId,
+          [ColumnNames.NoteId]: createdStudentNote.note.id,
+        })),
+      )
       .execute();
-    return savedNotes;
+    return createdStudentNotes;
   }
 
   /**

@@ -1,21 +1,20 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { QueueService } from "@sims/services/queue";
+import { Processor } from "@nestjs/bullmq";
 import { QueueNames } from "@sims/utilities";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { ECEResponseProcessingService } from "@sims/integrations/institution-integration/ece-integration";
 
-@Processor(QueueNames.ECEProcessResponseIntegration)
-export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.ECEProcessResponseIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class ECEResponseIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.ECEProcessResponseIntegration)
-    schedulerQueue: Queue<void>,
     private readonly eceResponseProcessingService: ECEResponseProcessingService,
-    queueService: QueueService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -24,7 +23,7 @@ export class ECEResponseIntegrationScheduler extends BaseScheduler<void> {
    * @param processSummary process summary for logging.
    * @returns Processing result log.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string[] | string> {

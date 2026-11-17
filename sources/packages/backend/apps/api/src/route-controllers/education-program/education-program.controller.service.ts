@@ -8,8 +8,12 @@ import {
   EducationProgramService,
   InstitutionUserAuthorizations,
   EducationProgramSaveService,
+  ProgramConfigurationLookup,
 } from "../../services";
-import { EducationProgramAPIOutDTO } from "./models/education-program.dto";
+import {
+  EducationProgramAPIOutDTO,
+  EducationProgramConfigurationAPIOutDTO,
+} from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
@@ -49,23 +53,15 @@ export class EducationProgramControllerService {
     if (!program.programConfiguration?.id) {
       throw new Error("Program configuration not found.");
     }
-    const programConfiguration =
-      await this.educationProgramSaveService.getEducationProgramConfiguration(
-        program.institution.id,
-        {
-          programConfigurationId: program.programConfiguration.id,
-          programId: program.id,
-        },
-      );
+    // Ensure the program configuration is retrieved from the same place
+    // for creation, edit, and renewal operations.
+    const programConfiguration = await this.getEducationProgramConfiguration(
+      program.institution.id,
+      { programConfigurationId: program.programConfiguration.id },
+      { overrideProgramData: program.programData, programId },
+    );
     return {
       id: program.id,
-      configurationId: programConfiguration.configurationId,
-      programData: {
-        ...program.programData,
-        context: programConfiguration.context,
-      },
-      visualSchema: programConfiguration.visualSchema,
-      validationSchema: programConfiguration.validationSchema,
       institutionId: program.institution.id,
       institutionName: program.institution.operatingName,
       submittedDate: program.submittedDate,
@@ -88,6 +84,51 @@ export class EducationProgramControllerService {
       programIntensity: program.programIntensity,
       isActive: program.isActive,
       isExpired: program.isExpired,
+      ...programConfiguration,
+    };
+  }
+
+  /**
+   * Retrieves the configuration for an education program, including the dynamic
+   * program data, visual schema, and validation schema.
+   * Allows ensuring the program configuration is retrieved consistently from the same place
+   * for creation, edit, and renewal operations.
+   * @param institutionId the ID of the institution for which the configuration is being retrieved.
+   * @param programConfigurationLookup the lookup criteria for the program configuration.
+   * @param options additional options for retrieving the configuration.
+   * - `programId` optional ID of the program to load program configuration.
+   * - `overrideProgramData` optional program data that should override the default configuration.
+   * @returns the education program configuration, including dynamic program data, visual schema, and validation schema.
+   */
+  async getEducationProgramConfiguration(
+    institutionId: number,
+    programConfigurationLookup: ProgramConfigurationLookup,
+    options?: {
+      programId?: number;
+      overrideProgramData?: Record<string, unknown>;
+    },
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    const configuration =
+      await this.educationProgramSaveService.getEducationProgramConfiguration(
+        institutionId,
+        programConfigurationLookup,
+        {
+          programId: options?.programId,
+        },
+      );
+    return {
+      configurationId: configuration.configurationId,
+      programYearName: configuration.programYearName,
+      programData: {
+        ...options?.overrideProgramData,
+        context: {
+          isFullUpdateRestricted: configuration.context.isFullUpdateRestricted,
+          isBCPrivate: configuration.context.isBCPrivate,
+          isBCInstitution: configuration.context.isBCInstitution,
+        },
+      },
+      visualSchema: configuration.visualSchema,
+      validationSchema: configuration.validationSchema,
     };
   }
 

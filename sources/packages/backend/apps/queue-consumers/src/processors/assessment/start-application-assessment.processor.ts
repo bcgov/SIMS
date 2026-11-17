@@ -1,18 +1,21 @@
-import { Processor } from "@nestjs/bull";
-import { Job } from "bull";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
 import { StartAssessmentQueueInDTO } from "@sims/services/queue";
 import { WorkflowClientService } from "@sims/services";
 import { QueueNames } from "@sims/utilities";
 import { StudentAssessmentService } from "../../services";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { StudentAssessmentStatus } from "@sims/sims-db";
-import { BaseQueue } from "../../processors";
+import { BaseQueueProcessor } from "../../processors";
 
 /**
  * Process messages sent to start assessment queue.
  */
-@Processor(QueueNames.StartApplicationAssessment)
-export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessmentQueueInDTO> {
+@Processor(
+  QueueNames.StartApplicationAssessment,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class StartApplicationAssessmentProcessor extends BaseQueueProcessor<StartAssessmentQueueInDTO> {
   constructor(
     private readonly workflowClientService: WorkflowClientService,
     private readonly studentAssessmentService: StudentAssessmentService,
@@ -27,7 +30,7 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     job: Job<StartAssessmentQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
@@ -35,7 +38,6 @@ export class StartApplicationAssessmentProcessor extends BaseQueue<StartAssessme
       job.data.assessmentId,
     );
     if (assessment.studentAssessmentStatus !== StudentAssessmentStatus.Queued) {
-      await job.discard();
       processSummary.warn(
         `Assessment id ${job.data.assessmentId} is not in ${StudentAssessmentStatus.Queued} status.`,
       );

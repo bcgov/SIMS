@@ -1,8 +1,7 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { addHours, QueueNames } from "@sims/utilities";
-import { QueueService } from "@sims/services/queue";
 import { WorkflowEnqueuerService } from "../../../services";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-queue-retry.dto";
@@ -10,16 +9,16 @@ import { AssessmentWorkflowQueueRetryInDTO } from "./models/assessment-workflow-
 /**
  * Retry assessments.
  */
-@Processor(QueueNames.AssessmentWorkflowQueueRetry)
-export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflowQueueRetryInDTO> {
+@Processor(
+  QueueNames.AssessmentWorkflowQueueRetry,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class WorkflowQueueRetryScheduler extends BaseQueueProcessor<AssessmentWorkflowQueueRetryInDTO> {
   constructor(
-    @InjectQueue(QueueNames.AssessmentWorkflowQueueRetry)
-    schedulerQueue: Queue<AssessmentWorkflowQueueRetryInDTO>,
-    queueService: QueueService,
     private readonly workflowEnqueuerService: WorkflowEnqueuerService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -28,7 +27,7 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
    * @param processSummary process summary for logging.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     job: Job<AssessmentWorkflowQueueRetryInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string> {
@@ -78,17 +77,5 @@ export class WorkflowQueueRetryScheduler extends BaseScheduler<AssessmentWorkflo
         "Unexpected error while enqueueing assessment workflows.";
       parentProcessSummary.error(errorMessage, error);
     }
-  }
-
-  /**
-   * Builds the payload for the job.
-   * @returns payload.
-   */
-  protected async payload(): Promise<AssessmentWorkflowQueueRetryInDTO> {
-    const amountHoursAssessmentRetry =
-      await this.queueService.getAmountHoursAssessmentRetry(
-        this.schedulerQueue.name as QueueNames,
-      );
-    return { amountHoursAssessmentRetry };
   }
 }

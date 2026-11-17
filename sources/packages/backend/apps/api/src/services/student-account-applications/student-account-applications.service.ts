@@ -153,12 +153,12 @@ export class StudentAccountApplicationsService extends RecordDataModelService<St
       userId: accountApplication.user.id,
       lastName: studentProfile.lastName,
       givenNames: studentProfile.firstName,
-      email: studentProfile.email,
       birthdate: studentProfile.dateOfBirth,
       userName: accountApplication.user.userName,
     };
 
     const studentInfo = {
+      email: studentProfile.email,
       phone: studentProfile.phone,
       sinNumber: studentProfile.sinNumber,
       addressLine1: studentProfile.addressLine1,

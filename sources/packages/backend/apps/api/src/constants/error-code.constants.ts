@@ -6,6 +6,10 @@ export const MISSING_USER_ACCOUNT = "MISSING_USER_ACCOUNT";
 export const MISSING_GROUP_ACCESS = "MISSING_GROUP_ACCESS";
 export const MISSING_USER_INFO = "MISSING_USER_INFO";
 /**
+ * The system or the client portal is under maintenance.
+ */
+export const MAINTENANCE_MODE = "MAINTENANCE_MODE";
+/**
  * An application can have only one pending appeal at a time.
  */
 export const APPLICATION_HAS_PENDING_APPEAL = "APPLICATION_HAS_PENDING_APPEAL";
@@ -74,6 +78,13 @@ export const EDUCATION_PROGRAM_DATA_INVALID = "EDUCATION_PROGRAM_DATA_INVALID";
  */
 export const EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND =
   "EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND";
+/**
+ * The program configuration used to fill the education program data is no longer
+ * the active one, for instance, when a new configuration was activated after the
+ * program form was loaded.
+ */
+export const EDUCATION_PROGRAM_CONFIGURATION_OUTDATED =
+  "EDUCATION_PROGRAM_CONFIGURATION_OUTDATED";
 
 export const STUDENT_ACCOUNT_APPLICATION_NOT_FOUND =
   "STUDENT_ACCOUNT_APPLICATION_NOT_FOUND";

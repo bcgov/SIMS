@@ -56,10 +56,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
     const fakeUniqueFileName = "file.random";
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: fakeUniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: fakeUniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const errorMessage = `File ${fakeUniqueFileName} is not found or has already been scanned for viruses. Scanning the file for viruses is aborted.`;
@@ -79,10 +81,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     const studentFile = createFakeStudentFileUpload();
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
     // Mock an empty file.
     objectStorageService.getObject = createFakeGetObjectResponse("");
 
@@ -107,10 +111,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Connection refused", "ECONNREFUSED");
     }); // Queued job.
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Connection to ClamAV server failed.`;
@@ -138,10 +144,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Server not found", "ENOTFOUND");
     }); // Queued job.
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. ClamAV server is unavailable.`;
@@ -169,10 +177,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     clamAVServiceMock.scanFile = jest.fn(() => {
       throw new ClamAVError("Unknown error", undefined);
     }); // Queued job.
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. Unknown error.`;
@@ -198,10 +208,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     studentFile.virusScanStatus = VirusScanStatus.InProgress;
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(null));
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const errorMessage = `Unable to scan the file ${studentFile.uniqueFileName} for viruses. File scanning failed due to unknown error.`;
@@ -228,10 +240,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(true));
     // Queued job.
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const result = await processor.process(mockedJob.job);
@@ -269,10 +283,12 @@ describe(describeProcessorRootTest(QueueNames.FileVirusScanProcessor), () => {
     await db.studentFile.save(studentFile);
     clamAVServiceMock.scanFile = jest.fn(() => Promise.resolve(false));
     // Queued job.
-    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>({
-      uniqueFileName: studentFile.uniqueFileName,
-      fileName: studentFile.fileName,
-    });
+    const mockedJob = mockBullMQJob<VirusScanQueueInDTO>(
+      {
+        uniqueFileName: studentFile.uniqueFileName,
+        fileName: studentFile.fileName,
+      },
+    );
 
     // Act
     const result = await processor.process(mockedJob.job);

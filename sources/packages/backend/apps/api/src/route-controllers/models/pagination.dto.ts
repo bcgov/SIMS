@@ -20,7 +20,11 @@ import {
 } from "@sims/sims-db";
 import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
-import { AppealType, BatchReassessmentApplicationResult } from "../../services";
+import {
+  AppealType,
+  BatchReassessmentApplicationResult,
+  PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
+} from "../../services";
 import { AllowIf, IsDateAfter } from "../../utilities/class-validation";
 /**
  * Common parameters used when an API result
@@ -164,6 +168,41 @@ export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptions
   @IsBoolean()
   @ToBoolean()
   inactiveProgramSearch?: boolean;
+}
+
+export class ProgramsManagementPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn([
+    PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
+    "credentialType",
+    "cipCode",
+    "sabcCode",
+    "programStatus",
+  ])
+  sortField?: string;
+  @IsArray()
+  @IsOptional()
+  @Transform(({ value }) => value.split(","))
+  @IsEnum(ProgramStatus, { each: true })
+  statusSearch?: ProgramStatus[];
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  inactiveProgramSearch?: boolean;
+  /**
+   * Include programs already renewed into the next program year.
+   */
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  renewedProgramSearch?: boolean;
+  /**
+   * Include programs not yet renewed into the next program year.
+   */
+  @IsOptional()
+  @IsBoolean()
+  @ToBoolean()
+  notRenewedProgramSearch?: boolean;
 }
 
 export class OfferingsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {

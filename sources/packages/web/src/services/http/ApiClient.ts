@@ -39,6 +39,7 @@ import { FormSubmissionApi } from "@/services/http/FormSubmissionApi";
 import { MSFAANumberApi } from "@/services/http/MSFAANumberApi";
 import { DisabilityProfileApi } from "@/services/http/DisabilityProfileApi";
 import { BatchReassessmentApi } from "@/services/http/BatchReassessmentApi";
+import { BatchRestrictionApi } from "@/services/http/BatchRestrictionApi";
 
 const ApiClient = {
   AuditApi: new AuditApi(),
@@ -83,6 +84,7 @@ const ApiClient = {
   MSFAANumberApi: new MSFAANumberApi(),
   DisabilityProfileApi: new DisabilityProfileApi(),
   BatchReassessmentApi: new BatchReassessmentApi(),
+  BatchRestrictionApi: new BatchRestrictionApi(),
 };
 
 export default ApiClient;

@@ -1,28 +1,21 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
+import { Processor } from "@nestjs/bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { FullTimeECertFileHandler } from "@sims/integrations/esdc-integration";
-import { QueueService } from "@sims/services/queue";
 import { QueueNames } from "@sims/utilities";
-import { Queue } from "bull";
 import { FullTimeCalculationProcess } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { ECertProcessIntegrationBaseScheduler } from "./ecert-process-integration-base.scheduler";
 import { LoggerService } from "@sims/utilities/logger";
 
-@Processor(QueueNames.FullTimeECertIntegration)
+@Processor(
+  QueueNames.FullTimeECertIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
 export class FullTimeECertProcessIntegrationScheduler extends ECertProcessIntegrationBaseScheduler {
   constructor(
-    @InjectQueue(QueueNames.FullTimeECertIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     fullTimeCalculationProcess: FullTimeCalculationProcess,
     fullTimeECertFileHandler: FullTimeECertFileHandler,
     logger: LoggerService,
   ) {
-    super(
-      schedulerQueue,
-      queueService,
-      fullTimeCalculationProcess,
-      fullTimeECertFileHandler,
-      logger,
-    );
+    super(fullTimeCalculationProcess, fullTimeECertFileHandler, logger);
   }
 }

@@ -1,24 +1,23 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { Job, Queue } from "bull";
-import { BaseScheduler } from "../../base-scheduler";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
+import { BaseQueueProcessor } from "../../base-queue-processor";
 import { QueueNames } from "@sims/utilities";
-import { QueueService } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { StudentLoanBalancesProcessingService } from "@sims/integrations/esdc-integration";
 
 /**
  * Process Student Loan Balances file from the SFTP location.
  */
-@Processor(QueueNames.StudentLoanBalancesPartTimeIntegration)
-export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseScheduler<void> {
+@Processor(
+  QueueNames.StudentLoanBalancesPartTimeIntegration,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseQueueProcessor<void> {
   constructor(
-    @InjectQueue(QueueNames.StudentLoanBalancesPartTimeIntegration)
-    schedulerQueue: Queue<void>,
-    queueService: QueueService,
     private readonly studentLoanBalancesProcessingService: StudentLoanBalancesProcessingService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
+    super(logger);
   }
 
   /**
@@ -28,7 +27,7 @@ export class StudentLoanBalancesPartTimeIntegrationScheduler extends BaseSchedul
    * @param processSummary process summary.
    * @returns processing result.
    */
-  protected async process(
+  protected async processQueue(
     _job: Job<void>,
     processSummary: ProcessSummary,
   ): Promise<string> {

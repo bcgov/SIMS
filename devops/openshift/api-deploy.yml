@@ -231,8 +231,6 @@ objects:
                       name: ${API_SECRET_NAME}
                 - name: CAMUNDA_TOKEN_DISK_CACHE_DISABLE
                   value: ${CAMUNDA_TOKEN_DISK_CACHE_DISABLE}
-                - name: APPLICATION_ARCHIVE_DAYS
-                  value: ${APPLICATION_ARCHIVE_DAYS}
                 - name: S3_ACCESS_KEY_ID
                   valueFrom:
                     secretKeyRef:
@@ -615,8 +613,6 @@ parameters:
     value: queue-dashboard-token-expiration-seconds
   - name: QUEUE_DASHBOARD_BASE_URL
     required: true
-  - name: APPLICATION_ARCHIVE_DAYS
-    require: true
   - name: S3_ACCESS_KEY_ID_KEY
     value: s3-access-key-id
   - name: S3_SECRET_ACCESS_KEY_KEY

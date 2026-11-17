@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { ApplicationService, StudentAssessmentService } from "..";
-import { Queue } from "bull";
+import { Queue } from "bullmq";
 import {
   CancelAssessmentQueueInDTO,
   StartAssessmentQueueInDTO,
 } from "@sims/services/queue";
-import { InjectQueue } from "@nestjs/bull";
-import { QueueNames, processInParallel } from "@sims/utilities";
+import { InjectQueue } from "@nestjs/bullmq";
+import { QueueJobNames, QueueNames, processInParallel } from "@sims/utilities";
 import {
   Application,
   StudentAssessment,
@@ -220,7 +220,10 @@ export class WorkflowEnqueuerService {
       summary.info(
         `Adding assessment to queue ${QueueNames.StartApplicationAssessment}.`,
       );
-      await this.startAssessmentQueue.add({ assessmentId: nextAssessment.id });
+      await this.startAssessmentQueue.add(
+        QueueJobNames.StartApplicationAssessmentJob,
+        { assessmentId: nextAssessment.id },
+      );
       summary.info("Assessment queued for start.");
     } catch (error: unknown) {
       summary.error(
@@ -270,9 +273,10 @@ export class WorkflowEnqueuerService {
       summary.info(
         `Adding assessment to queue ${QueueNames.CancelApplicationAssessment}.`,
       );
-      await this.cancelAssessmentQueue.add({
-        assessmentId: nextAssessment.id,
-      });
+      await this.cancelAssessmentQueue.add(
+        QueueJobNames.CancelApplicationAssessmentJob,
+        { assessmentId: nextAssessment.id },
+      );
       summary.info("Assessment queued for cancellation.");
     } catch (error: unknown) {
       summary.error(
@@ -296,9 +300,10 @@ export class WorkflowEnqueuerService {
       summary.info(
         `Queueing assessment retry for assessment id ${assessment.id}.`,
       );
-      await this.startAssessmentQueue.add({
-        assessmentId: assessment.id,
-      });
+      await this.startAssessmentQueue.add(
+        QueueJobNames.StartApplicationAssessmentJob,
+        { assessmentId: assessment.id },
+      );
       summary.info("Assessment queued retry processed.");
     } catch (error: unknown) {
       summary.error(
@@ -322,9 +327,10 @@ export class WorkflowEnqueuerService {
       summary.info(
         `Queueing assessment cancellation retry for assessment id ${assessment.id}.`,
       );
-      await this.cancelAssessmentQueue.add({
-        assessmentId: assessment.id,
-      });
+      await this.cancelAssessmentQueue.add(
+        QueueJobNames.CancelApplicationAssessmentJob,
+        { assessmentId: assessment.id },
+      );
       summary.info("Assessment cancellation retry processed.");
     } catch (error: unknown) {
       summary.error(

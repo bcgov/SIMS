@@ -112,7 +112,7 @@ function getExpectedConfigurations(
       formType: "Exceptional expense",
       formCategory: "Student appeal",
       formDescription:
-        "If you have had exceptional expenses that created financial hardship that affected your ability to start or continue your studies these expenses may be considered AS part of your assessment.",
+        "If you have incurred expenses outside of standard living costs that are unexpected and beyond your control, and that created financial hardship affecting your ability to start or continue your studies, these expenses may be considered as part of your assessment. Expenses incurred must be from the previous 12 months up to the date of your application submission.",
       allowBundledSubmission: true,
       hasApplicationScope: true,
     },

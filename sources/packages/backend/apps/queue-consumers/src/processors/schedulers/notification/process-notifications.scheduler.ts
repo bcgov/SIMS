@@ -1,10 +1,9 @@
-import { InjectQueue, Processor } from "@nestjs/bull";
-import { Job, Queue } from "bull";
+import { Processor } from "@nestjs/bullmq";
+import { Job } from "bullmq";
 import { NotificationService } from "@sims/services/notifications";
 import { ProcessNotificationsQueueInDTO } from "./models/notification.dto";
-import { BaseScheduler } from "../base-scheduler";
+import { BaseQueueProcessor } from "../base-queue-processor";
 import { QueueNames } from "@sims/utilities";
-import { QueueService } from "@sims/services/queue";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 
 const DEFAULT_POLLING_RECORDS_LIMIT = 100;
@@ -14,29 +13,16 @@ const DEFAULT_EXTERNAL_RATE_LIMIT_SECONDS = 60;
 /**
  * Process notifications which are unsent.
  */
-@Processor(QueueNames.ProcessNotifications)
-export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificationsQueueInDTO> {
+@Processor(
+  QueueNames.ProcessNotifications,
+  BaseQueueProcessor.defaultWorkerOptions,
+)
+export class ProcessNotificationScheduler extends BaseQueueProcessor<ProcessNotificationsQueueInDTO> {
   constructor(
-    @InjectQueue(QueueNames.ProcessNotifications)
-    schedulerQueue: Queue<ProcessNotificationsQueueInDTO>,
     private readonly notificationService: NotificationService,
-    queueService: QueueService,
     logger: LoggerService,
   ) {
-    super(schedulerQueue, queueService, logger);
-  }
-
-  protected async payload(): Promise<ProcessNotificationsQueueInDTO> {
-    const queueConfigurationDetails =
-      await this.queueService.queueConfigurationDetails(
-        this.schedulerQueue.name as QueueNames,
-      );
-    const config = queueConfigurationDetails.queueConfiguration;
-    return {
-      pollingRecordsLimit: config.pollingRecordLimit,
-      externalRateLimit: config.externalRateLimit,
-      externalRateLimitSeconds: config.externalRateLimitSeconds,
-    };
+    super(logger);
   }
 
   /**
@@ -46,7 +32,7 @@ export class ProcessNotificationScheduler extends BaseScheduler<ProcessNotificat
    * @param processSummary process summary for logging.
    * @returns processing summary.
    */
-  protected async process(
+  protected async processQueue(
     job: Job<ProcessNotificationsQueueInDTO>,
     processSummary: ProcessSummary,
   ): Promise<string[]> {
