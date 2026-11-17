@@ -19,6 +19,7 @@ import {
   ThrottleOptions,
   ThrottleSettings,
   Notify,
+  FinanceIntegrationConfig,
 } from "./config.models";
 
 @Injectable()
@@ -145,6 +146,15 @@ export class ConfigService {
       ftpResponseFolder: process.env.ESDC_RESPONSE_FOLDER,
       environmentCode: process.env.ESDC_ENVIRONMENT_CODE,
       fileOverdueDays: Number(process.env.ESDC_FILE_OVERDUE_DAYS) || 5,
+    });
+  }
+
+  /**
+   * Finance integration configuration.
+   */
+  get financeIntegration(): FinanceIntegrationConfig {
+    return this.getCachedConfig("financeIntegrationConfig", {
+      ftpRequestFolder: process.env.FINANCE_REQUEST_FOLDER,
     });
   }
 

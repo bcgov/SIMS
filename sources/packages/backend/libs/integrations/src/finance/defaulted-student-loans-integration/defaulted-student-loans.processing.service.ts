@@ -1,7 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import { SequenceControlService } from "@sims/services";
-import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
+import {
+  ConfigService,
+  FinanceIntegrationConfig,
+} from "@sims/utilities/config";
 import { IndividualReturnedLoan } from "../../esdc-integration";
 import { DefaultedStudentLoansIntegrationService } from "./defaulted-student-loans.integration.service";
 
@@ -17,14 +20,14 @@ const ELIGIBLE_RETURN_REASONS = new Set(["A270", "S90"]);
 
 @Injectable()
 export class DefaultedStudentLoansProcessingService {
-  private readonly esdcConfig: ESDCIntegrationConfig;
+  private readonly financeIntegrationConfig: FinanceIntegrationConfig;
   constructor(
     private readonly sequenceService: SequenceControlService,
     private readonly integrationService: DefaultedStudentLoansIntegrationService,
     private readonly logger: LoggerService,
     config: ConfigService,
   ) {
-    this.esdcConfig = config.esdcIntegration;
+    this.financeIntegrationConfig = config.financeIntegration;
   }
 
   /**
@@ -84,7 +87,7 @@ export class DefaultedStudentLoansProcessingService {
   } {
     // The file name format is not final. It is subject to change based response from RMS team.
     const fileName = "STLDLLAB.DAT";
-    const filePath = `${this.esdcConfig.ftpRequestFolder}\\${fileName}`;
+    const filePath = `${this.financeIntegrationConfig.ftpRequestFolder}\\${fileName}`;
     return { fileName, filePath };
   }
 }
