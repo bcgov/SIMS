@@ -8,7 +8,6 @@ import {
   DefaultedStudentLoanBalanceType,
   DefaultedStudentLoanInterestType,
   POPULATED_BALANCE_TYPES,
-  TRANSMISSION_SOURCE_ID,
 } from "./models/defaulted-student-loans-integration.model";
 import { DefaultedStudentLoansFileHeader } from "./defaulted-student-loans-files/defaulted-student-loans-file-header";
 import { DefaultedStudentLoansFileDetail } from "./defaulted-student-loans-files/defaulted-student-loans-file-detail";
@@ -30,19 +29,20 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
    * Creates the defaulted student loans file content from individual returned loans.
    * The file consists of a header record, detail records for each loan, and a footer record.
    * @param individualReturnedLoans array of individual returned loans to process.
-   * @param transmissionNumber unique transmission number for the file.
+   * @param fileSequenceNumber unique sequence number for the file.
    * @returns array of fixed format file lines representing the complete file content.
    */
   createDefaultedStudentLoansFileContent(
     individualReturnedLoans: IndividualReturnedLoan[],
-    transmissionNumber: number,
+    fileSequenceNumber: number,
   ): FixedFormatFileLine[] {
+    const fileCreationDate = new Date();
     const fileContent: FixedFormatFileLine[] = [];
 
     // Create and add header record.
     const header = new DefaultedStudentLoansFileHeader();
-    header.transmissionDate = new Date();
-    header.transmissionNumber = transmissionNumber;
+    header.transmissionDate = fileCreationDate;
+    header.transmissionNumber = fileSequenceNumber;
     fileContent.push(header);
 
     const detailRecords = individualReturnedLoans.map(
@@ -60,14 +60,11 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
       return sum + boaAmount;
     }, 0);
     const footer = new DefaultedStudentLoansFileFooter();
-    footer.transmissionDate = new Date();
-    footer.transmissionNumber = 1;
-    footer.transmissionSourceID = TRANSMISSION_SOURCE_ID;
-    footer.transmissionDescription = "Defaulted Student Loans";
+    footer.transmissionDate = fileCreationDate;
+    footer.transmissionNumber = fileSequenceNumber;
     footer.recordCount = individualReturnedLoans.length;
     footer.totalBOAValue = totalBOAValue;
     footer.isTotalBOAValueNegative = totalBOAValue < 0;
-    footer.filler = "";
     fileContent.push(footer);
     return fileContent;
   }

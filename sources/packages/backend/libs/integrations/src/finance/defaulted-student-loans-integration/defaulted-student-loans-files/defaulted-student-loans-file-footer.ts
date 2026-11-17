@@ -1,6 +1,8 @@
 import {
   DefaultedStudentLoanRecordType,
   DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
+  FILE_SOURCE_ID,
+  FILE_DESCRIPTION,
 } from "../models/defaulted-student-loans-integration.model";
 import {
   NUMBER_FILLER,
@@ -8,6 +10,11 @@ import {
 } from "@sims/integrations/institution-integration/ier12-integration";
 import { SpecializedStringBuilder, decimalRound } from "@sims/utilities";
 import { FixedFormatFileLine } from "../../../services/ssh";
+
+/**
+ * Filler length.
+ */
+const FILLER_LENGTH = 1119;
 
 export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
   /**
@@ -25,11 +32,11 @@ export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
   /**
    * Unique ID number that identifies from where the transmission came.
    */
-  transmissionSourceID: string;
+  private readonly transmissionSourceID = FILE_SOURCE_ID;
   /**
    * Description of the transmission.
    */
-  transmissionDescription: string;
+  private readonly transmissionDescription = FILE_DESCRIPTION;
   /**
    * Total number of detail records in the transmission.
    */
@@ -42,15 +49,13 @@ export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
    * Indicates if the total BOA value is negative.
    */
   isTotalBOAValueNegative: boolean;
-  /**
-   * Filler for the header record.
-   */
-  filler: string;
+
   getFixedFormat(): string {
     const footer = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,
       dateFormat: DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
+      dateFiller: SPACE_FILLER,
     });
     footer.append(this.recordType);
     footer.appendFormattedDate(this.transmissionDate);
@@ -63,7 +68,7 @@ export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
       16,
     );
     footer.appendStringWithFiller(this.isTotalBOAValueNegative ? "-" : "", 1);
-    footer.appendOptionalStringWithFiller(this.filler, 1118);
+    footer.appendStringWithFiller("", FILLER_LENGTH);
     return footer.toString();
   }
 }

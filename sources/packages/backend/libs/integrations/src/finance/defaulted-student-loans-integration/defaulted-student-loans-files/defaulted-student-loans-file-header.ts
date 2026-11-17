@@ -1,13 +1,18 @@
 import {
   DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
   DefaultedStudentLoanRecordType,
+  FILE_DESCRIPTION,
+  FILE_SOURCE_ID,
   NUMBER_FILLER,
   SPACE_FILLER,
 } from "../models/defaulted-student-loans-integration.model";
 import { FixedFormatFileLine } from "../../../services/ssh";
 import { SpecializedStringBuilder } from "@sims/utilities";
 
-const FILLER_LENGTH = 1146;
+/**
+ * Filler length.
+ */
+const FILLER_LENGTH = 1147;
 
 export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
   /**
@@ -25,18 +30,18 @@ export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
   /**
    * Unique ID number that identifies from where the transmission came.
    */
-  private readonly transmissionSourceID = "STLDLLAB";
+  private readonly transmissionSourceID = FILE_SOURCE_ID;
   /**
    * Description of the transmission.
    */
-  private readonly transmissionDescription =
-    "DEFAULTED DIRECT LEND STUDENT LOANS";
+  private readonly transmissionDescription = FILE_DESCRIPTION;
 
   getFixedFormat(): string {
     const header = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,
       dateFormat: DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
+      dateFiller: SPACE_FILLER,
     });
     header.append(this.recordType);
     header.appendFormattedDate(this.transmissionDate);

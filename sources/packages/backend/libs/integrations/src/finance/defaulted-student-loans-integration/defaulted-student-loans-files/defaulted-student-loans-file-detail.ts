@@ -181,6 +181,7 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,
       dateFormat: DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
+      dateFiller: SPACE_FILLER,
     });
     detail.append(this.recordType);
     detail.appendStringWithFiller(this.clientID, 30);
@@ -201,12 +202,12 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     detail.appendOptionalStringWithFiller(this.addressName, 65);
     detail.appendStringWithFiller(this.addressLine1, 50);
     detail.appendOptionalStringWithFiller(this.addressLine2, 50);
-    detail.appendStringWithFiller(this.city, 50);
-    detail.appendStringWithFiller(this.province, 50);
-    detail.appendStringWithFiller(this.country, 50);
-    detail.appendStringWithFiller(this.postalCode, 10);
-    detail.appendOptionalStringWithFiller(this.homePhone, 15);
-    detail.appendOptionalStringWithFiller(this.businessPhone, 15);
+    detail.appendStringWithFiller(this.city, 20);
+    detail.appendStringWithFiller(this.province, 20);
+    detail.appendStringWithFiller(this.country, 20);
+    detail.appendStringWithFiller(this.postalCode, 15);
+    detail.appendOptionalStringWithFiller(this.homePhone, 10);
+    detail.appendOptionalStringWithFiller(this.businessPhone, 10);
     detail.appendOptionalStringWithFiller(this.fileId, 30);
     detail.appendOptionalNumberWithFiller(this.accountStatus, 3);
     detail.appendOptionalNumberWithFiller(this.accountSubStatus, 3);

@@ -13,9 +13,14 @@ export enum DefaultedStudentLoanRecordType {
 export const DEFAULTED_STUDENT_LOANS_DATE_FORMAT = "YYYYMMDD";
 
 /**
- * Fixed value sent as transmission ID for the defaulted student loans integration.
+ * Fixed value sent as file source identifier for the defaulted student loans integration.
  */
-export const TRANSMISSION_SOURCE_ID = "STLDLLAB";
+export const FILE_SOURCE_ID = "STLDLLAB";
+
+/**
+ * Fixed value sent as file description for the defaulted student loans integration.
+ */
+export const FILE_DESCRIPTION = "DEFAULTED DIRECT LEND STUDENT LOANS";
 
 /**
  * Space filler used in the defaulted student loans file.

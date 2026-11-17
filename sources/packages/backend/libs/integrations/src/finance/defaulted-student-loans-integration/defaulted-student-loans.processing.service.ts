@@ -61,6 +61,7 @@ export class DefaultedStudentLoansProcessingService {
         "Unexpected error occurred while processing defaulted student loans.",
         error,
       );
+      throw error;
     }
   }
 

@@ -10,6 +10,7 @@ import {
 import { ReturnedLoansResponseIntegrationService } from "./returned-loans-response.integration.service";
 import { ReturnedLoansResponseFileAddressDetail } from "./returned-loans-response-files/returned-loans-response-file-address-detail";
 import { ReturnedLoansResponseFileReturnedLoanDetail } from "./returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
+import { DefaultedStudentLoansProcessingService } from "@sims/integrations/finance/defaulted-student-loans-integration/defaulted-student-loans.processing.service";
 
 /**
  * Processes the returned loans response file(s)
@@ -21,6 +22,7 @@ export class ReturnedLoansResponseProcessingService {
   constructor(
     configService: ConfigService,
     private readonly integrationService: ReturnedLoansResponseIntegrationService,
+    private readonly defaultedStudentLoansProcessingService: DefaultedStudentLoansProcessingService,
     private readonly logger: LoggerService,
   ) {
     this.esdcConfig = configService.esdcIntegration;
@@ -139,6 +141,16 @@ export class ReturnedLoansResponseProcessingService {
     }
     fileProcessSummary.info(
       `Finished processing records for the returned loans response file ${remoteFilePath}.`,
+    );
+    fileProcessSummary.info(
+      `Begin defaulted student loans file generation for returned loans response file ${remoteFilePath}. `,
+    );
+    await this.defaultedStudentLoansProcessingService.processDefaultedStudentLoans(
+      individualReturnedLoans,
+      fileProcessSummary,
+    );
+    fileProcessSummary.info(
+      "Defaulted student loans file generation completed.",
     );
   }
 
