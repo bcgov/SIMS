@@ -11,6 +11,8 @@ import { ReturnedLoansResponseIntegrationService } from "./returned-loans-respon
 import { ReturnedLoansResponseFileAddressDetail } from "./returned-loans-response-files/returned-loans-response-file-address-detail";
 import { ReturnedLoansResponseFileReturnedLoanDetail } from "./returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
 import { DefaultedStudentLoansProcessingService } from "@sims/integrations/finance/defaulted-student-loans-integration/defaulted-student-loans.processing.service";
+import { FeatureTogglesService } from "@sims/services";
+import { DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE } from "@sims/integrations/constants";
 
 /**
  * Processes the returned loans response file(s)
@@ -19,13 +21,16 @@ import { DefaultedStudentLoansProcessingService } from "@sims/integrations/finan
 @Injectable()
 export class ReturnedLoansResponseProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
+  private readonly featureToggles: string[];
   constructor(
     configService: ConfigService,
     private readonly integrationService: ReturnedLoansResponseIntegrationService,
     private readonly defaultedStudentLoansProcessingService: DefaultedStudentLoansProcessingService,
     private readonly logger: LoggerService,
+    featureToggleService: FeatureTogglesService,
   ) {
     this.esdcConfig = configService.esdcIntegration;
+    this.featureToggles = featureToggleService.featureToggles;
   }
 
   /**
@@ -142,16 +147,19 @@ export class ReturnedLoansResponseProcessingService {
     fileProcessSummary.info(
       `Finished processing records for the returned loans response file ${remoteFilePath}.`,
     );
-    fileProcessSummary.info(
-      `Begin defaulted student loans file generation for returned loans response file ${remoteFilePath}. `,
-    );
-    await this.defaultedStudentLoansProcessingService.processDefaultedStudentLoans(
-      individualReturnedLoans,
-      fileProcessSummary,
-    );
-    fileProcessSummary.info(
-      "Defaulted student loans file generation completed.",
-    );
+    // Check if the defaulted student loans feature toggle is enabled and process accordingly.
+    if (this.featureToggles.includes(DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE)) {
+      fileProcessSummary.info(
+        `Begin defaulted student loans file generation for returned loans response file ${remoteFilePath}. `,
+      );
+      await this.defaultedStudentLoansProcessingService.processDefaultedStudentLoans(
+        individualReturnedLoans,
+        fileProcessSummary,
+      );
+      fileProcessSummary.info(
+        "Defaulted student loans file generation completed.",
+      );
+    }
   }
 
   /**

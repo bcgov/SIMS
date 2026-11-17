@@ -15,6 +15,7 @@ import Client from "ssh2-sftp-client";
 import { join } from "node:path";
 import { ReturnedLoansResponseIntegrationScheduler } from "../returned-loans-response-integration.scheduler";
 import { ReturnedLoansResponseRecordType } from "@sims/integrations/esdc-integration";
+import { DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE } from "@sims/integrations/constants";
 
 const OTH_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.OTH.D2026222.001";
 const PDD_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.PDD.D2026222.001";
@@ -32,6 +33,7 @@ describe(
         __dirname,
         "returned-loans-response-files",
       );
+      process.env.FEATURE_TOGGLES = DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE;
       const { nestApplication, sshClientMock } = await createTestingAppModule();
       app = nestApplication;
       sftpClientMock = sshClientMock;

@@ -7,6 +7,7 @@ import {
 } from "@sims/utilities/config";
 import { IndividualReturnedLoan } from "../../esdc-integration";
 import { DefaultedStudentLoansIntegrationService } from "./defaulted-student-loans.integration.service";
+import { getFileNameAsExtendedCurrentTimestamp } from "@sims/utilities";
 
 /**
  * Sequence group name for defaulted student loans file sequence control.
@@ -86,7 +87,8 @@ export class DefaultedStudentLoansProcessingService {
     filePath: string;
   } {
     // The file name format is not final. It is subject to change based response from RMS team.
-    const fileName = "STLDLLAB.DAT";
+    const timestamp = getFileNameAsExtendedCurrentTimestamp();
+    const fileName = `STLDLLAB-${timestamp}.DAT`;
     const filePath = `${this.financeIntegrationConfig.ftpRequestFolder}\\${fileName}`;
     return { fileName, filePath };
   }
