@@ -23,7 +23,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Field: RTG-DET-CONS-DATE.
    *
    */
-  get consolidationDate(): Date {
+  get consolidationDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(32, 40));
   }
 
@@ -79,7 +79,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Interest owing from date.
    * Field: RTG-DET-INT-FROM-DATE.
    */
-  get interestOwingFromDate(): Date {
+  get interestOwingFromDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(60, 68));
   }
 
@@ -115,7 +115,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Date of 'Return to Government' event.
    * Field: RTG-DET-EVENT-DATE.
    */
-  get returnEventDate(): Date {
+  get returnEventDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(87, 95));
   }
 
@@ -123,7 +123,24 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Date of the borrower last acknowledged the debt in writing.
    * Field: RTG-DET-ACKNW-DATE.
    */
-  get debtAcknowledgementDate(): Date {
+  get debtAcknowledgementDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(95, 103));
+  }
+
+  /**
+   * Validates the returned loan detail fields.
+   * @returns validation errors as an array of strings.
+   */
+  validate(): string[] {
+    // Get validation errors from the parent class.
+    const errors: string[] = super.validate();
+    if (!this.returnReason) {
+      errors.push("Invalid return reason");
+    }
+    // As per the ministry of finance, F and V are the only expected interest rate types for returned loans.
+    if (!this.interestRateType || this.interestRateType.trim() === "") {
+      errors.push("Invalid interest rate type");
+    }
+    return errors;
   }
 }

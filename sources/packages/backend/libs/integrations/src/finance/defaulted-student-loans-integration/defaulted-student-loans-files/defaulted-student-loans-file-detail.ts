@@ -194,7 +194,7 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     detail.appendOptionalStringWithFiller(this.middleNames, 40);
     detail.appendOptionalStringWithFiller(this.initials, 6);
     detail.appendFormattedDate(this.birthDate);
-    detail.append(this.gender);
+    detail.appendStringWithFiller(this.gender, 1);
     detail.appendOptionalStringWithFiller(this.email, 65);
     detail.append(this.addressType);
     detail.appendOptionalFormattedDate(this.addressEffectiveDate);
@@ -228,8 +228,8 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     }
     // Append free area filler.
     detail.appendStringWithFiller("", FREE_AREA_FILLER_LENGTH);
-    detail.appendFormattedDate(this.consolidationDate);
-    detail.appendFormattedDate(this.eventDate);
+    detail.appendOptionalFormattedDate(this.consolidationDate);
+    detail.appendOptionalFormattedDate(this.eventDate);
     return detail.toString();
   }
 
@@ -257,6 +257,8 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     stringBuilder.append(balanceTypeItem.shouldCalculateInterest);
     stringBuilder.append(balanceTypeItem.shouldOverrideInterestRate);
     stringBuilder.append(balanceTypeItem.shouldReportInterest);
-    stringBuilder.appendFormattedDate(balanceTypeItem.interestCalculationDate);
+    stringBuilder.appendOptionalFormattedDate(
+      balanceTypeItem.interestCalculationDate,
+    );
   }
 }

@@ -193,7 +193,7 @@ export class ReturnedLoansResponseProcessingService {
   }
 
   /**
-   * Validates a returned loan detail record to identify if it can be processed.
+   * Validates a returned loan detail and it's associated address detail record to identify if it can be processed.
    * @param returnedLoanDetailRecord returned loan detail record to validate.
    * @param returnedLoanAddressDetailRecordsMap map of returned loan address detail records keyed by SIN.
    * @param processSummary process summary for logging the validation steps and errors.
@@ -207,21 +207,27 @@ export class ReturnedLoansResponseProcessingService {
     >,
     processSummary: ProcessSummary,
   ): boolean {
-    const validationErrors = returnedLoanDetailRecord.validate();
-    if (validationErrors.length) {
-      processSummary.error(
-        `Validation errors for returned loan detail record at line ${returnedLoanDetailRecord.lineNumber}: ${validationErrors.join(", ")}.`,
-      );
-      return false;
-    }
-    if (
-      !returnedLoanAddressDetailRecordsMap.has(returnedLoanDetailRecord.sin)
-    ) {
+    const addressDetailRecord = returnedLoanAddressDetailRecordsMap.get(
+      returnedLoanDetailRecord.sin,
+    );
+    if (!addressDetailRecord) {
       processSummary.error(
         `No address detail record found for the returned loan detail record SIN at line ${returnedLoanDetailRecord.lineNumber}.`,
       );
       return false;
     }
-    return true;
+    const validationErrors = returnedLoanDetailRecord.validate();
+    if (validationErrors.length) {
+      processSummary.error(
+        `Validation errors for returned loan detail record at line ${returnedLoanDetailRecord.lineNumber}: ${validationErrors.join(", ")}.`,
+      );
+    }
+    const addressValidationErrors = addressDetailRecord.validate();
+    if (addressValidationErrors.length) {
+      processSummary.error(
+        `Validation errors for address detail record at line ${addressDetailRecord.lineNumber}: ${addressValidationErrors.join(", ")}.`,
+      );
+    }
+    return !validationErrors.length && !addressValidationErrors.length;
   }
 }

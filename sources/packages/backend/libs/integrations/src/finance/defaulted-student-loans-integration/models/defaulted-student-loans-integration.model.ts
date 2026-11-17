@@ -87,7 +87,7 @@ export interface BalanceTypeItem {
    * FXD - Fixed interest type.
    * PR+ - Prime plus interest type.
    */
-  interestType: DefaultedStudentLoanInterestType | undefined;
+  interestType: DefaultedStudentLoanInterestType;
   /**
    * Flag to determine if interest should be calculated for this balance type for this account.
    */

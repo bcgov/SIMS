@@ -176,14 +176,14 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
    */
   private mapInterestRateType(
     interestRateType: string,
-  ): DefaultedStudentLoanInterestType | undefined {
+  ): DefaultedStudentLoanInterestType {
     switch (interestRateType) {
       case "F":
         return DefaultedStudentLoanInterestType.Fixed;
       case "V":
         return DefaultedStudentLoanInterestType.PrimePlus;
       default:
-        return undefined;
+        throw new Error(`Unsupported interest rate type: ${interestRateType}`);
     }
   }
 }

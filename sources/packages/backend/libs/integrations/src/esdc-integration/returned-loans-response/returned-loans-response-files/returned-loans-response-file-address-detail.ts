@@ -36,7 +36,7 @@ export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansRespons
   /**
    * Customer birth date.
    */
-  get dateOfBirth(): Date {
+  get dateOfBirth(): Date | null {
     return this.convertToDateRecord(this.line.substring(59, 67));
   }
 
@@ -99,7 +99,23 @@ export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansRespons
   /**
    * Date that the address information was last updated.
    */
-  get addressEffectiveDate(): Date {
+  get addressEffectiveDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(229, 237));
+  }
+
+  /**
+   * Validates the address detail fields.
+   * @returns validation errors as an array of strings.
+   */
+  validate(): string[] {
+    // Get validation errors from the parent class.
+    const errors: string[] = super.validate();
+    if (!this.lastName) {
+      errors.push("Invalid last name");
+    }
+    if (!this.dateOfBirth) {
+      errors.push("Invalid birth date");
+    }
+    return errors;
   }
 }
