@@ -78,7 +78,10 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
           this.systemUsersService.systemUser.id,
         );
       }
-      summary.error("Unexpected error while creating supplier and site on CAS.", error);
+      summary.error(
+        "Unexpected error while creating supplier and site on CAS.",
+        error,
+      );
       return { isSupplierUpdated: false };
     }
     try {

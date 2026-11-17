@@ -1,6 +1,7 @@
 import { CASService, CreateSupplierAndSiteData } from "@sims/integrations/cas";
 import { Mocked } from "@suites/unit";
 import { HttpService } from "@nestjs/axios";
+import { AxiosError, AxiosHeaders, HttpStatusCode } from "axios";
 import {
   DEFAULT_CAS_AXIOS_AUTH_HEADER,
   initializeService,
@@ -65,6 +66,53 @@ describe("CASService-createSupplierAndSite", () => {
         ],
       },
       DEFAULT_CAS_AXIOS_AUTH_HEADER,
+    );
+  });
+
+  it("Should throw an error with the CAS response body when CAS returns a bad request without CAS returned messages.", async () => {
+    // Arrange
+    const casResponseBody = {
+      code: "BadRequest",
+      message: "Invalid supplier data.",
+    };
+    // The CAS token is cached by the previous test, hence only the supplier creation call is mocked.
+    httpService.axiosRef.post = jest.fn().mockRejectedValueOnce(
+      new AxiosError(
+        "Request failed with status code 400",
+        "ERR_BAD_REQUEST",
+        {
+          headers: new AxiosHeaders(),
+          method: "post",
+          url: "cas-url/cfs/supplier/",
+        },
+        {},
+        {
+          status: HttpStatusCode.BadRequest,
+          statusText: "Bad Request",
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: casResponseBody,
+        },
+      ),
+    );
+    const supplierData: CreateSupplierAndSiteData = {
+      firstName: "First",
+      lastName: "Last",
+      sin: "999999999",
+      emailAddress: "test@test.com",
+      supplierSite: {
+        addressLine1: "Street",
+        city: "City",
+        provinceCode: "BC",
+        postalCode: "h1h h2h",
+      },
+    };
+
+    // Act and Assert
+    await expect(
+      casService.createSupplierAndSite(supplierData),
+    ).rejects.toThrow(
+      `Error while creating supplier and site on CAS. CAS error details - request: POST cas-url/cfs/supplier/, code: ERR_BAD_REQUEST, status: 400, body: ${JSON.stringify(casResponseBody)}.`,
     );
   });
 });

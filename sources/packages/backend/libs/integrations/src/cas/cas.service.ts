@@ -13,10 +13,10 @@ import {
   PendingInvoicePayload,
   SendInvoicesResponse,
 } from "./models/cas-service.model";
-import { AxiosError } from "axios";
+import { isAxiosError } from "axios";
 import { HttpService } from "@nestjs/axios";
 import { CASIntegrationConfig, ConfigService } from "@sims/utilities/config";
-import { stringify } from "querystring";
+import { stringify } from "node:querystring";
 import {
   CustomNamedError,
   convertToASCIIString,
@@ -282,10 +282,11 @@ export class CASService {
    * @param defaultMessage The default message to throw for non-specific errors.
    */
   private handleBadRequestError(error: unknown, defaultMessage: string): never {
+    // Not using instanceof because the error can be created by a different build (CJS/ESM) of axios.
     if (
-      error instanceof AxiosError &&
+      isAxiosError(error) &&
       error.response?.status === HttpStatus.BAD_REQUEST &&
-      !!error.response?.data[CAS_RETURNED_MESSAGES]
+      !!error.response?.data?.[CAS_RETURNED_MESSAGES]
     ) {
       const casKnownErrors = error.response.data[
         CAS_RETURNED_MESSAGES
@@ -299,6 +300,37 @@ export class CASService {
         casKnownErrorArray,
       );
     }
-    throw new Error(defaultMessage, { cause: error });
+    throw new Error(`${defaultMessage}${this.getCASErrorDetails(error)}`, {
+      cause: error,
+    });
+  }
+
+  /**
+   * Gets the details of a failed CAS request to be part of the error message.
+   * The details are added to the message because only the message and
+   * the stack of the errors are logged, not their custom properties.
+   * @param error error caught during the CAS request.
+   * @returns details of the failed request or an empty string if not an HTTP error.
+   */
+  private getCASErrorDetails(error: unknown): string {
+    if (!isAxiosError(error)) {
+      return "";
+    }
+    const details: string[] = [];
+    if (error.config?.url) {
+      details.push(
+        `request: ${error.config.method?.toUpperCase()} ${error.config.url}`,
+      );
+    }
+    if (error.code) {
+      details.push(`code: ${error.code}`);
+    }
+    if (error.response) {
+      details.push(
+        `status: ${error.response.status}`,
+        `body: ${JSON.stringify(error.response.data)}`,
+      );
+    }
+    return details.length ? ` CAS error details - ${details.join(", ")}.` : "";
   }
 }

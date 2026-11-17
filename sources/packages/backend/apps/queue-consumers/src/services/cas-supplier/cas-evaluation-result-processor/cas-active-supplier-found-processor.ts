@@ -81,7 +81,10 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
           },
         );
       }
-      summary.error("Unexpected error while creating a new site on CAS.", error);
+      summary.error(
+        "Unexpected error while creating a new site on CAS.",
+        error,
+      );
       return { isSupplierUpdated: false };
     }
     try {
