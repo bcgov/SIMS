@@ -13,6 +13,25 @@ export enum ReturnedLoansResponseRecordType {
 }
 
 /**
+ * Interest rate type of a returned loan.
+ * Field: RTG-DET-INT-RATE-TYPE.
+ */
+export enum ReturnedLoanInterestRateType {
+  /**
+   * Fixed interest rate.
+   */
+  Fixed = "F",
+  /**
+   * Variable interest rate.
+   */
+  Variable = "V",
+  /**
+   * Value sent for class A loans (space in the file).
+   */
+  None = " ",
+}
+
+/**
  * Date format used in the returned loans response file.
  * Official document states the format as CCYYMMDD which corresponds to YYYYMMDD.
  */

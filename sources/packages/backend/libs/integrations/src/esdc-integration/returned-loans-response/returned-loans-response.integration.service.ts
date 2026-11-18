@@ -8,11 +8,14 @@ import {
   ReturnedLoansDownloadResponse,
   ReturnedLoansResponseRecordType,
 } from "./models/returned-loans-response.model";
-import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-files/returned-loans-response-file-detail";
-import { ReturnedLoansResponseFileFooter } from "./returned-loans-response-files/returned-loans-response-file-footer";
-import { ReturnedLoansResponseFileHeader } from "./returned-loans-response-files/returned-loans-response-file-header";
-import { ReturnedLoansResponseFileAddressDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-address-detail";
-import { ReturnedLoansResponseFileReturnedLoanDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
+
+import {
+  ReturnedLoansResponseFileDetail,
+  ReturnedLoansResponseFileFooter,
+  ReturnedLoansResponseFileHeader,
+  ReturnedLoansResponseFileAddressDetail,
+  ReturnedLoansResponseFileReturnedLoanDetail,
+} from "./returned-loans-response-files";
 
 @Injectable()
 export class ReturnedLoansResponseIntegrationService extends SFTPIntegrationBase<ReturnedLoansDownloadResponse> {

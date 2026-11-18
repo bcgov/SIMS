@@ -148,7 +148,7 @@ export class ReturnedLoansResponseProcessingService {
       `Finished processing records for the returned loans response file ${remoteFilePath}.`,
     );
     // Check if the defaulted student loans feature toggle is enabled and process accordingly.
-    if (this.featureToggles.includes(DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE)) {
+    if (this.featureToggles?.includes(DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE)) {
       fileProcessSummary.info(
         `Begin defaulted student loans file generation for returned loans response file ${remoteFilePath}. `,
       );

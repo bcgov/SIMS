@@ -145,7 +145,6 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
    * 030 - UNSECURED.
    * 010 - Orderly Payment of Debt - OPD.
    * Hardcoded to 30 as per the current process followed in legacy system.
-   *
    */
   private readonly accountStatus = 30;
   /**

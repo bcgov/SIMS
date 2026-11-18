@@ -6,6 +6,7 @@ import {
   parseCombinedDecimalString,
 } from "@sims/utilities";
 import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-file-detail";
+import { ReturnedLoanInterestRateType } from "../models/returned-loans-response.model";
 
 /**
  * Returned loan response file detail.
@@ -21,7 +22,6 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
   /**
    * Consolidation date.
    * Field: RTG-DET-CONS-DATE.
-   *
    */
   get consolidationDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(32, 40));
@@ -34,8 +34,8 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * V - variable interest rate.
    * Space - class A loan.
    */
-  get interestRateType(): string {
-    return this.line.substring(40, 41).trim();
+  get interestRateType(): ReturnedLoanInterestRateType {
+    return this.line.substring(40, 41).trim() as ReturnedLoanInterestRateType;
   }
 
   /**
@@ -143,11 +143,23 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
     if (Number.isNaN(this.totalInterestOutstanding)) {
       errors.push("Invalid total interest outstanding");
     }
-    if (this.interestRateType === "F" && Number.isNaN(this.fixedInterestRate)) {
+    // As we are not expecting class A loans, only fixed and variable interest rate types are expected.
+    if (
+      ![
+        ReturnedLoanInterestRateType.Fixed,
+        ReturnedLoanInterestRateType.Variable,
+      ].includes(this.interestRateType)
+    ) {
+      errors.push("Invalid interest rate type");
+    }
+    if (
+      this.interestRateType === ReturnedLoanInterestRateType.Fixed &&
+      Number.isNaN(this.fixedInterestRate)
+    ) {
       errors.push("Invalid fixed interest rate");
     }
     if (
-      this.interestRateType === "V" &&
+      this.interestRateType === ReturnedLoanInterestRateType.Variable &&
       Number.isNaN(this.variableInterestSpread)
     ) {
       errors.push("Invalid variable interest spread");
