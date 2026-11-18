@@ -63,28 +63,29 @@ export class CASActiveSupplierFoundProcessor extends CASEvaluationResultProcesso
       });
       summary.info("Created a new site on CAS.");
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        if (error.name === CAS_BAD_REQUEST) {
-          summary.warn("Known CAS error while creating a new site on CAS.");
-          return this.processBadRequestErrors(
-            studentSupplier,
-            summary,
-            error.objectInfo as string[],
-            this.systemUsersService.systemUser.id,
-            {
-              partialSupplier: {
-                supplierNumber: evaluationResult.activeSupplier.suppliernumber,
-                supplierName: evaluationResult.activeSupplier.suppliername,
-                status: evaluationResult.activeSupplier.status,
-                supplierProtected:
-                  evaluationResult.activeSupplier.supplierprotected === "Y",
-              },
+      if (error instanceof CustomNamedError && error.name === CAS_BAD_REQUEST) {
+        summary.warn("Known CAS error while creating a new site on CAS.");
+        return this.processBadRequestErrors(
+          studentSupplier,
+          summary,
+          error.objectInfo as string[],
+          this.systemUsersService.systemUser.id,
+          {
+            partialSupplier: {
+              supplierNumber: evaluationResult.activeSupplier.suppliernumber,
+              supplierName: evaluationResult.activeSupplier.suppliername,
+              status: evaluationResult.activeSupplier.status,
+              supplierProtected:
+                evaluationResult.activeSupplier.supplierprotected === "Y",
             },
-          );
-        }
-        summary.error("Error while creating a new site on CAS.", error);
-        return { isSupplierUpdated: false };
+          },
+        );
       }
+      summary.error(
+        "Unexpected error while creating a new site on CAS.",
+        error,
+      );
+      return { isSupplierUpdated: false };
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
