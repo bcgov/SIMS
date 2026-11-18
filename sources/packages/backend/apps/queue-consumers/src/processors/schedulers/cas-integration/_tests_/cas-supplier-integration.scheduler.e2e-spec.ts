@@ -881,13 +881,12 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       .mockRejectedValue(new Error("CAS API call failed."));
 
     // Queued job.
-    const mockedJob = mockBullMQJob<void>();
+    const mockedJob = mockBullJob<void>();
 
     // Act
-    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
-      new CustomNamedError(
+    await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
+      new Error(
         "One or more errors were reported during the process, please see logs for details.",
-        PROCESS_SUMMARY_CONTAINS_ERROR,
       ),
     );
 
@@ -936,13 +935,12 @@ describe(describeProcessorRootTest(QueueNames.CASSupplierIntegration), () => {
       .mockRejectedValue(new Error("CAS API call failed."));
 
     // Queued job.
-    const mockedJob = mockBullMQJob<void>();
+    const mockedJob = mockBullJob<void>();
 
     // Act
-    await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
-      new CustomNamedError(
+    await expect(processor.processQueue(mockedJob.job)).rejects.toStrictEqual(
+      new Error(
         "One or more errors were reported during the process, please see logs for details.",
-        PROCESS_SUMMARY_CONTAINS_ERROR,
       ),
     );
 
