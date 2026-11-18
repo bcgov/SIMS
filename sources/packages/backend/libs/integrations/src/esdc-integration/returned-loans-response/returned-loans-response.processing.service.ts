@@ -10,7 +10,7 @@ import {
 import { ReturnedLoansResponseIntegrationService } from "./returned-loans-response.integration.service";
 import { ReturnedLoansResponseFileAddressDetail } from "./returned-loans-response-files/returned-loans-response-file-address-detail";
 import { ReturnedLoansResponseFileReturnedLoanDetail } from "./returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
-import { DefaultedStudentLoansProcessingService } from "@sims/integrations/finance/defaulted-student-loans-integration/defaulted-student-loans.processing.service";
+import { DefaultedStudentLoansProcessingService } from "../../finance";
 import { FeatureTogglesService } from "@sims/services";
 import { DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE } from "@sims/integrations/constants";
 

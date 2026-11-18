@@ -150,8 +150,5 @@ export function parseCombinedDecimalString(
   value: number,
   decimalPlaces: number,
 ): number {
-  if (Number.isNaN(value)) {
-    throw new Error("Invalid number: NaN");
-  }
   return value / 10 ** decimalPlaces;
 }

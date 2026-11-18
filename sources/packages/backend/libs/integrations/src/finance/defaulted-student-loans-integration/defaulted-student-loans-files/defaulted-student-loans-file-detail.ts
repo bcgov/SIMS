@@ -144,9 +144,10 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
    * 005 - BANKRUPTCY SECURED.
    * 030 - UNSECURED.
    * 010 - Orderly Payment of Debt - OPD.
-   * Field value mapping TBD, populated with filler.
+   * Hardcoded to 30 as per the current process followed in legacy system.
+   *
    */
-  accountStatus?: 5 | 30 | 10;
+  private readonly accountStatus = 30;
   /**
    * Sub-status of the account.
    * Field value mapping TBD, populated with filler.
@@ -209,7 +210,7 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     detail.appendOptionalStringWithFiller(this.homePhone, 10);
     detail.appendOptionalStringWithFiller(this.businessPhone, 10);
     detail.appendOptionalStringWithFiller(this.fileId, 30);
-    detail.appendOptionalNumberWithFiller(this.accountStatus, 3);
+    detail.appendNumberWithFiller(this.accountStatus, 3);
     detail.appendOptionalNumberWithFiller(this.accountSubStatus, 3);
     detail.appendNumberWithFiller(this.originalBalance.toFixed(2), 14);
     detail.append(this.originalBalance < 0 ? "-" : SPACE_FILLER);

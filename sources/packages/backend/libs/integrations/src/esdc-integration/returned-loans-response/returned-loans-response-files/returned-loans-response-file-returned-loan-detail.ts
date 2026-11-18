@@ -137,9 +137,20 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
     if (!this.returnReason) {
       errors.push("Invalid return reason");
     }
-    // As per the ministry of finance, F and V are the only expected interest rate types for returned loans.
-    if (!this.interestRateType || this.interestRateType.trim() === "") {
-      errors.push("Invalid interest rate type");
+    if (Number.isNaN(this.totalPrincipalOutstanding)) {
+      errors.push("Invalid total principal outstanding");
+    }
+    if (Number.isNaN(this.totalInterestOutstanding)) {
+      errors.push("Invalid total interest outstanding");
+    }
+    if (this.interestRateType === "F" && Number.isNaN(this.fixedInterestRate)) {
+      errors.push("Invalid fixed interest rate");
+    }
+    if (
+      this.interestRateType === "V" &&
+      Number.isNaN(this.variableInterestSpread)
+    ) {
+      errors.push("Invalid variable interest spread");
     }
     return errors;
   }
