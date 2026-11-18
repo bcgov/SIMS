@@ -69,7 +69,7 @@
           "value": ""
         }
       ],
-      "content": "If your spouse/common-law partner has had, or is anticipated to have, a significant decrease in gross income for {{data.currentTaxYear}}, you may submit this appeal to request assessment using their current year estimated gross income.",
+      "content": "If your spouse/common-law partner has had or anticipates having a significant decrease in gross income for {{data.currentTaxYear}} due to an exceptional circumstance (unexpected and beyond their control), you can submit this appeal to be assessed using this year's estimated gross income.",
       "refreshOnChange": true,
       "key": "partnerCurrentYearIncomeTest1",
       "type": "htmlelement",
