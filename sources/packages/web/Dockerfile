@@ -27,7 +27,7 @@ RUN sed 's/${PORT}/'"${PORT}"'/g' nginx/default.conf.template > default.conf
 # Building app
 RUN npm run build
 
-FROM ${DOCKER_REGISTRY}/nginx:1.29.3-alpine3.22 AS deployer
+FROM ${DOCKER_REGISTRY}/nginx:1.30.7-alpine3.24 AS deployer
 
 # Copy the app built on builder stage to the resulting container.
 COPY --from=builder /app/dist /usr/share/nginx/html
