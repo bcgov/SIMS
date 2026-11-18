@@ -1,6 +1,6 @@
-import { ReturnedLoansResponseFileAddressDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-address-detail";
+import { ReturnedLoansResponseFileAddressDetail } from "../returned-loans-response-files/returned-loans-response-file-address-detail";
 import { ReturnedLoansResponseFileDetail } from "../returned-loans-response-files/returned-loans-response-file-detail";
-import { ReturnedLoansResponseFileReturnedLoanDetail } from "@sims/integrations/esdc-integration/returned-loans-response/returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
+import { ReturnedLoansResponseFileReturnedLoanDetail } from "../returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
 
 /**
  * Returned loans response record type.

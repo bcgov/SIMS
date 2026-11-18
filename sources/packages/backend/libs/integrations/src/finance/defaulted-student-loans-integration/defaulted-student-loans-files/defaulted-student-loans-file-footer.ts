@@ -3,11 +3,9 @@ import {
   DEFAULTED_STUDENT_LOANS_DATE_FORMAT,
   FILE_SOURCE_ID,
   FILE_DESCRIPTION,
-} from "../models/defaulted-student-loans-integration.model";
-import {
   NUMBER_FILLER,
   SPACE_FILLER,
-} from "@sims/integrations/institution-integration/ier12-integration";
+} from "../models/defaulted-student-loans-integration.model";
 import { SpecializedStringBuilder, decimalRound } from "@sims/utilities";
 import { FixedFormatFileLine } from "../../../services/ssh";
 
