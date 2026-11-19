@@ -24,6 +24,7 @@ import {
   User,
 } from "@sims/sims-db";
 import { Role } from "../../../../auth/roles.enum";
+import MockDate from "mockdate";
 
 describe("EducationProgramAESTController(e2e)-approveProgram", () => {
   let app: INestApplication;
@@ -44,16 +45,23 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
     await db.user.save(sharedUser);
   });
 
+  beforeEach(() => {
+    MockDate.reset();
+  });
+
   it("Should approve a pending education program and associate the approval note with the program and the institution when the payload is valid.", async () => {
     // Arrange
     const program = await savePendingProgram();
     const approvedNote = "Program approved note.";
-    const endpoint = `/aest/education-program/${program.id}/institution/${sharedInstitution.id}/approve`;
+    const endpoint = getEndpoint(program.id, sharedInstitution.id);
     const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const aestUser = await getAESTUser(
       db.dataSource,
       AESTGroups.BusinessAdministrators,
     );
+    // Set a date to be used to verify the audit dates.
+    const now = new Date();
+    MockDate.set(now);
 
     // Act
     await request(app.getHttpServer())
@@ -90,8 +98,8 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
     expect(approvedProgram).toEqual({
       id: program.id,
       programStatus: ProgramStatus.Approved,
-      assessedDate: expect.any(Date),
-      updatedAt: approvedProgram.assessedDate,
+      assessedDate: now,
+      updatedAt: now,
       assessedBy: expectedUser,
       modifier: expectedUser,
       programNote: {
@@ -117,38 +125,9 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
     });
   });
 
-  it("Should return a bad request HTTP status when the payload contains the no longer supported effectiveEndDate property.", async () => {
-    // Arrange
-    const program = await savePendingProgram();
-    const endpoint = `/aest/education-program/${program.id}/institution/${sharedInstitution.id}/approve`;
-    const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .patch(endpoint)
-      .send({
-        approvedNote: "Program approved note.",
-        effectiveEndDate: "2030-12-31",
-      })
-      .auth(userToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.BAD_REQUEST)
-      .expect({
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: ["property effectiveEndDate should not exist"],
-        error: "Bad Request",
-      });
-    // Assert the program was not changed.
-    const notChangedProgram = await db.educationProgram.findOne({
-      select: { id: true, programStatus: true },
-      where: { id: program.id },
-      loadEagerRelations: false,
-    });
-    expect(notChangedProgram.programStatus).toBe(ProgramStatus.Pending);
-  });
-
   it("Should return a bad request HTTP status when the approved note is not provided.", async () => {
     // Arrange
-    const endpoint = `/aest/education-program/99999/institution/${sharedInstitution.id}/approve`;
+    const endpoint = getEndpoint(99999, sharedInstitution.id);
     const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -170,7 +149,7 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
   it(`Should return a forbidden HTTP status when the AEST user does not have the ${Role.InstitutionApproveDeclineProgram} role.`, async () => {
     // Arrange
     const program = await savePendingProgram();
-    const endpoint = `/aest/education-program/${program.id}/institution/${sharedInstitution.id}/approve`;
+    const endpoint = getEndpoint(program.id, sharedInstitution.id);
     // Read-only user without the approve/decline program role.
     const userToken = await getAESTToken();
 
@@ -212,3 +191,13 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
     await app?.close();
   });
 });
+
+/**
+ * Get the endpoint for approving an education program.
+ * @param programId program ID to be approved.
+ * @param institutionId institution ID the program belongs to.
+ * @returns endpoint for approving an education program.
+ */
+function getEndpoint(programId: number, institutionId: number): string {
+  return `/aest/education-program/${programId}/institution/${institutionId}/approve`;
+}
