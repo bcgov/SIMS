@@ -85,7 +85,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
 
   /**
    * Accrued interest calculating from interest owing from date up to interest owing to date.
-   * Field:RTG-DET-TOT-INTBAL.
+   * Field: RTG-DET-TOT-INTBAL.
    * Legacy data type: 9(5)V99.
    */
   get totalInterestOutstanding(): number {

@@ -249,6 +249,7 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     stringBuilder.append(balanceTypeItem.balanceType);
     stringBuilder.appendNumberWithFiller(roundedBalance.toFixed(2), 14);
     stringBuilder.append(roundedBalance < 0 ? "-" : SPACE_FILLER);
+    // Convert to format ".01200".
     stringBuilder.append(
       decimalRound(interestRateValue, 5).toFixed(5).substring(1),
     );
