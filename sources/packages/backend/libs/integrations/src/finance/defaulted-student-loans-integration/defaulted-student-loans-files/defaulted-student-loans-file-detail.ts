@@ -5,7 +5,7 @@ import {
   NUMBER_FILLER,
   SPACE_FILLER,
 } from "../models/defaulted-student-loans-integration.model";
-import { FixedFormatFileLine } from "../../../services/ssh";
+import { IntegrationFileLine } from "../../../services/ssh";
 import { decimalRound, SpecializedStringBuilder } from "@sims/utilities";
 
 /**
@@ -23,7 +23,7 @@ const FREE_AREA_FILLER_LENGTH = 100;
  */
 const TOTAL_BALANCE_TYPE_ELEMENTS = 8;
 
-export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
+export class DefaultedStudentLoansFileDetail extends IntegrationFileLine {
   /**
    * Detail record type.
    */
@@ -176,7 +176,13 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
    */
   eventDate: Date;
 
-  getFixedFormat(): string {
+  getContext(): Record<string, string | number | Date> {
+    return {
+      birthDate: this.birthDate || "NA",
+    };
+  }
+
+  getFixedFormatLine(): string {
     const detail = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,

@@ -271,7 +271,7 @@ describe(
             `Begin defaulted student loans file generation for returned loans response file ${downloadedFile}`,
             "Processing 2 returned loan(s) for defaulted student loans file generation.",
             "Defaulted student loans file generation completed.",
-            "No address detail record found for the returned loan detail record SIN at line 3",
+            "No address detail record found for the returned loan detail record SIN at line 3.",
           ]),
         ).toBe(true);
         // Assert that the file is not expected to be archived on SFTP.

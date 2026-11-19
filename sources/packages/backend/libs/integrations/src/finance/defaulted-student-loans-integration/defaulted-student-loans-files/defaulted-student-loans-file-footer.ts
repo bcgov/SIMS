@@ -7,14 +7,14 @@ import {
   SPACE_FILLER,
 } from "../models/defaulted-student-loans-integration.model";
 import { SpecializedStringBuilder, decimalRound } from "@sims/utilities";
-import { FixedFormatFileLine } from "../../../services/ssh";
+import { IntegrationFileLine } from "../../../services/ssh";
 
 /**
  * Filler length.
  */
 const FILLER_LENGTH = 1119;
 
-export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
+export class DefaultedStudentLoansFileFooter extends IntegrationFileLine {
   /**
    * Footer record type.
    */
@@ -48,7 +48,14 @@ export class DefaultedStudentLoansFileFooter implements FixedFormatFileLine {
    */
   isTotalBOAValueNegative: boolean;
 
-  getFixedFormat(): string {
+  getContext(): Record<string, string | number | Date> {
+    return {
+      transmissionDate: this.transmissionDate || "NA",
+      transmissionNumber: this.transmissionNumber || "NA",
+    };
+  }
+
+  getFixedFormatLine(): string {
     const footer = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,

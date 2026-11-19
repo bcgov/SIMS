@@ -6,7 +6,7 @@ import {
   NUMBER_FILLER,
   SPACE_FILLER,
 } from "../models/defaulted-student-loans-integration.model";
-import { FixedFormatFileLine } from "../../../services/ssh";
+import { IntegrationFileLine } from "../../../services/ssh";
 import { SpecializedStringBuilder } from "@sims/utilities";
 
 /**
@@ -14,7 +14,7 @@ import { SpecializedStringBuilder } from "@sims/utilities";
  */
 const FILLER_LENGTH = 1147;
 
-export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
+export class DefaultedStudentLoansFileHeader extends IntegrationFileLine {
   /**
    * Header record type.
    */
@@ -36,7 +36,14 @@ export class DefaultedStudentLoansFileHeader implements FixedFormatFileLine {
    */
   private readonly transmissionDescription = FILE_DESCRIPTION;
 
-  getFixedFormat(): string {
+  getContext(): Record<string, string | number | Date> {
+    return {
+      transmissionDate: this.transmissionDate || "NA",
+      transmissionNumber: this.transmissionNumber || "NA",
+    };
+  }
+
+  getFixedFormatLine(): string {
     const header = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
       stringFiller: SPACE_FILLER,
