@@ -53,7 +53,10 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
     // Arrange
     const program = await savePendingProgram();
     const approvedNote = "Program approved note.";
-    const endpoint = getEndpoint(program.id, sharedInstitution.id);
+    const endpoint = getEndpoint({
+      programId: program.id,
+      institutionId: sharedInstitution.id,
+    });
     const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
     const aestUser = await getAESTUser(
       db.dataSource,
@@ -127,7 +130,10 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
 
   it("Should return a bad request HTTP status when the approved note is not provided.", async () => {
     // Arrange
-    const endpoint = getEndpoint(99999, sharedInstitution.id);
+    const endpoint = getEndpoint({
+      programId: 99999,
+      institutionId: sharedInstitution.id,
+    });
     const userToken = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -149,7 +155,10 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
   it(`Should return a forbidden HTTP status when the AEST user does not have the ${Role.InstitutionApproveDeclineProgram} role.`, async () => {
     // Arrange
     const program = await savePendingProgram();
-    const endpoint = getEndpoint(program.id, sharedInstitution.id);
+    const endpoint = getEndpoint({
+      programId: program.id,
+      institutionId: sharedInstitution.id,
+    });
     // Read-only user without the approve/decline program role.
     const userToken = await getAESTToken();
 
@@ -194,10 +203,14 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
 
 /**
  * Get the endpoint for approving an education program.
- * @param programId program ID to be approved.
- * @param institutionId institution ID the program belongs to.
+ * @param options endpoint options.
+ * - `programId` program ID to be approved.
+ * - `institutionId` institution ID the program belongs to.
  * @returns endpoint for approving an education program.
  */
-function getEndpoint(programId: number, institutionId: number): string {
-  return `/aest/education-program/${programId}/institution/${institutionId}/approve`;
+function getEndpoint(options: {
+  programId: number;
+  institutionId: number;
+}): string {
+  return `/aest/education-program/${options.programId}/institution/${options.institutionId}/approve`;
 }
