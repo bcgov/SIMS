@@ -167,7 +167,7 @@ describe(
 
     it(
       "Should log warning for the unknown detail record and continue to process other detail record(s) when the returned loans response file" +
-        " has known detail record at line 3.",
+        " has unknown detail record at line 3.",
       async () => {
         // Arrange
         const loanRecordTypeSearchSuffix = "621604933";
@@ -209,7 +209,7 @@ describe(
             "Received 1 returned loans response file(s) to process.",
             `The downloaded file ${downloadedFile} contains 5 address detail records, 4 returned loan detail records, and 1 unknown records.`,
             `The downloaded file ${downloadedFile} contains records with unknown record types: 20.`,
-            "Received returned loan detail record with return reason A270 at line 5",
+            "Received returned loan detail record with return reason A270 at line 5.",
             "Received returned loan detail record with return reason A270 at line 7.",
             "Received returned loan detail record with return reason HRDC at line 9.",
             "Received returned loan detail record with return reason HRDC at line 11.",
@@ -262,8 +262,8 @@ describe(
           mockedJob.containLogMessages([
             "Received 1 returned loans response file(s) to process.",
             `The downloaded file ${downloadedFile} contains 5 address detail records, 5 returned loan detail records, and 0 unknown records.`,
-            "Received returned loan detail record with return reason A270 at line 3",
-            "Received returned loan detail record with return reason A270 at line 5",
+            "Received returned loan detail record with return reason A270 at line 3.",
+            "Received returned loan detail record with return reason A270 at line 5.",
             "Received returned loan detail record with return reason A270 at line 7.",
             "Received returned loan detail record with return reason HRDC at line 9.",
             "Received returned loan detail record with return reason HRDC at line 11.",

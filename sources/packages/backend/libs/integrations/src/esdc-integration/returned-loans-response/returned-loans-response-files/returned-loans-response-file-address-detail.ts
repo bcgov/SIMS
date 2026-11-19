@@ -2,6 +2,7 @@ import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-file-
 
 /**
  * Returned loan response file address detail.
+ * In all the comment blocks, "Customer" refers to the individual associated with the returned loan.
  */
 export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansResponseFileDetail {
   constructor(
@@ -11,7 +12,6 @@ export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansRespons
     super(line, lineNumber);
   }
 
-  // In all the comment blocks below, "Customer" refers to the individual associated with the returned loan.
   /**
    * Customer last name.
    */

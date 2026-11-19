@@ -12,7 +12,11 @@ import {
 import { DefaultedStudentLoansFileHeader } from "./defaulted-student-loans-files/defaulted-student-loans-file-header";
 import { DefaultedStudentLoansFileDetail } from "./defaulted-student-loans-files/defaulted-student-loans-file-detail";
 import { DefaultedStudentLoansFileFooter } from "./defaulted-student-loans-files/defaulted-student-loans-file-footer";
-import { IndividualReturnedLoan, ReturnedLoan } from "../../esdc-integration";
+import {
+  IndividualReturnedLoan,
+  ReturnedLoan,
+  ReturnedLoanInterestRateType,
+} from "../../esdc-integration";
 import { YNFlag } from "@sims/integrations/models";
 
 @Injectable()
@@ -94,7 +98,6 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
     detail.country = individual.country;
     detail.postalCode = individual.postalCode;
     detail.homePhone = individual.homePhone;
-    detail.originalDueDate = returnedLoan.consolidationDate;
     detail.populatedBalanceTypeItems = POPULATED_BALANCE_TYPES.map(
       (balanceType) => this.buildBalanceTypeItem(balanceType, returnedLoan),
     );
@@ -113,9 +116,10 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
     balanceType: DefaultedStudentLoanBalanceType,
     returnedLoan: ReturnedLoan,
   ): BalanceTypeItem {
-    const interestType = this.mapInterestRateType(
-      returnedLoan.interestRateType,
-    );
+    const interestType =
+      returnedLoan.interestRateType === ReturnedLoanInterestRateType.Fixed
+        ? DefaultedStudentLoanInterestType.Fixed
+        : DefaultedStudentLoanInterestType.PrimePlus;
     const balanceTypeBaseValues = {
       balanceType,
       interestFormulaCode: "SMP",
@@ -166,24 +170,6 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
         };
       default:
         throw new Error(`Unsupported balance type: ${balanceType}`);
-    }
-  }
-
-  /**
-   * Maps the interest rate type from the returned loan to the corresponding defaulted student loan interest type.
-   * @param interestRateType returned loan interest rate type.
-   * @returns corresponding defaulted student loan interest type or undefined if not mapped.
-   */
-  private mapInterestRateType(
-    interestRateType: string,
-  ): DefaultedStudentLoanInterestType {
-    switch (interestRateType) {
-      case "F":
-        return DefaultedStudentLoanInterestType.Fixed;
-      case "V":
-        return DefaultedStudentLoanInterestType.PrimePlus;
-      default:
-        throw new Error(`Unsupported interest rate type: ${interestRateType}`);
     }
   }
 }

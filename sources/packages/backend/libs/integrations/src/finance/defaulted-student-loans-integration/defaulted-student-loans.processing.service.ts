@@ -86,7 +86,7 @@ export class DefaultedStudentLoansProcessingService {
     fileName: string;
     filePath: string;
   } {
-    // The file name format is not final. It is subject to change based response from RMS team.
+    // The file name format is not final. It is subject to change based on the response from RMS team.
     const timestamp = getFileNameAsExtendedCurrentTimestamp();
     const fileName = `STLDLLAB-${timestamp}.DAT`;
     const filePath = `${this.financeIntegrationConfig.ftpOutputFolder}\\${fileName}`;

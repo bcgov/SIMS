@@ -97,7 +97,7 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
    */
   addressEndDate?: Date;
   /**
-   * The name that should appear on mail outs for this address.  This includes 'In Care Of' addresses.
+   * The name that should appear on mail outs for this address. This includes 'In Care Of' addresses.
    * Field value mapping TBD, populated with filler.
    */
   addressName?: string;

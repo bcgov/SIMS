@@ -53,6 +53,9 @@ export interface ReturnedLoansResponseResult {
   receivedFiles: number;
 }
 
+/**
+ * Returned loan individual information.
+ */
 export interface ReturnedLoanIndividual {
   sin: string;
   lastName: string;
@@ -70,6 +73,9 @@ export interface ReturnedLoanIndividual {
   addressEffectiveDate: Date;
 }
 
+/**
+ * Returned loan information.
+ */
 export interface ReturnedLoan {
   consolidationDate: Date;
   interestRateType: string;
@@ -84,6 +90,9 @@ export interface ReturnedLoan {
   debtAcknowledgementDate: Date;
 }
 
+/**
+ * Individual returned loan information.
+ */
 export interface IndividualReturnedLoan {
   individual: ReturnedLoanIndividual;
   returnedLoan: ReturnedLoan;

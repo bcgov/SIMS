@@ -99,7 +99,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Interest owing to date.
    * Field: RTG-DET-INT-TO-DATE.
    */
-  get interestOwingToDate(): Date {
+  get interestOwingToDate(): Date | null {
     return this.convertToDateRecord(this.line.substring(75, 83));
   }
 
@@ -120,7 +120,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
   }
 
   /**
-   * Date of the borrower last acknowledged the debt in writing.
+   * Date the borrower last acknowledged the debt in writing.
    * Field: RTG-DET-ACKNW-DATE.
    */
   get debtAcknowledgementDate(): Date | null {
