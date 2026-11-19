@@ -57,3 +57,4 @@ export * from "@/types/RouteNavigation";
 export * from "@/types/contracts/StudentDisabilityProfile";
 export * from "@/types/contracts/DisabilityProfile";
 export * from "@/types/contracts/BatchReassessment";
+export * from "@/types/contracts/BatchRestriction";
