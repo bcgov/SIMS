@@ -67,21 +67,22 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
       });
       summary.info("Created supplier and site on CAS.");
     } catch (error: unknown) {
-      if (error instanceof CustomNamedError) {
-        if (error.name === CAS_BAD_REQUEST) {
-          summary.warn(
-            "Known CAS error while creating supplier and site on CAS.",
-          );
-          return this.processBadRequestErrors(
-            studentSupplier,
-            summary,
-            error.objectInfo as string[],
-            this.systemUsersService.systemUser.id,
-          );
-        }
-        summary.error("Error while creating supplier and site on CAS.", error);
-        return { isSupplierUpdated: false };
+      if (error instanceof CustomNamedError && error.name === CAS_BAD_REQUEST) {
+        summary.warn(
+          "Known CAS error while creating supplier and site on CAS.",
+        );
+        return this.processBadRequestErrors(
+          studentSupplier,
+          summary,
+          error.objectInfo as string[],
+          this.systemUsersService.systemUser.id,
+        );
       }
+      summary.error(
+        "Unexpected error while creating supplier and site on CAS.",
+        error,
+      );
+      return { isSupplierUpdated: false };
     }
     try {
       const [submittedAddress] = result.submittedData.SupplierAddress;
@@ -134,5 +135,6 @@ export class CASActiveSupplierNotFoundProcessor extends CASEvaluationResultProce
         error,
       );
     }
+    return { isSupplierUpdated: false };
   }
 }

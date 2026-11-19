@@ -1,5 +1,16 @@
 import { faker } from "@faker-js/faker";
-import { ProgramIntensity, FormYesNoOptions } from "@sims/sims-db";
+import {
+  EducationProgramConfiguration,
+  ProgramIntensity,
+  ProgramYear,
+  FormYesNoOptions,
+} from "@sims/sims-db";
+import {
+  E2EDataSources,
+  ensureEducationProgramConfigurationExists,
+  ensureProgramYearExists,
+  ensureSequentialProgramYearsExist,
+} from "@sims/test-utils";
 import { OTHER_REGULATORY_BODY } from "../../../../services/education-program/constants";
 import {
   EducationProgramDynamicData,
@@ -12,6 +23,299 @@ import {
   CreateEducationProgramAPIInDTO,
   UpdateEducationProgramAPIInDTO,
 } from "../../models/education-program.dto";
+
+/**
+ * Program year prefixes reserved for e2e tests that need full control over the
+ * program configurations of a program year (e.g. "next program year" resolution
+ * for renewals) without affecting other tests running in parallel.
+ * Past years are used to avoid interfering with tests relying on the most recent
+ * active education program configuration.
+ * Check here before reserving a new year, keeping the entries sorted.
+ * Entries that start a sequence of consecutive program years state how many
+ * years they take.
+ * Note: 1999 is also taken by ensureProgramYearExistsForPartTimeOnly from test-utils.
+ */
+const E2E_PROGRAM_YEAR_PREFIX = {
+  /**
+   * Renewal available (2 years: 1950-1951).
+   */
+  RenewProgramGetAvailable: 1950,
+  /**
+   * Renewal not available (2 years: 1960-1961).
+   */
+  RenewProgramGetNotAvailable: 1960,
+  /**
+   * Program year with an active configuration.
+   */
+  ProgramYearsListActiveConfiguration: 1970,
+  /**
+   * Program year with only an inactive configuration.
+   */
+  ProgramYearsListInactiveConfiguration: 1971,
+  /**
+   * Program year without any configuration.
+   */
+  ProgramYearsListNoConfiguration: 1972,
+  /**
+   * Program year with an inactive configuration.
+   */
+  CreateProgramInactiveConfiguration: 1980,
+  /**
+   * Renewal available (2 years: 1985-1986).
+   */
+  ProgramsForProgramYearRenewalAvailable: 1985,
+  /**
+   * Renewal not available (2 years: 1987-1988).
+   */
+  ProgramsForProgramYearRenewalNotAvailable: 1987,
+  /**
+   * Renewal chain (3 years: 1990-1992).
+   */
+  RenewProgramChain: 1990,
+  /**
+   * Renewal not available (2 years: 1995-1996).
+   */
+  RenewProgramNotAvailable: 1995,
+} as const;
+
+/**
+ * Program configurations to test the renewal status, where the program
+ * can only be renewed if the next program year has an active configuration.
+ */
+interface RenewalStatusProgramConfigurations {
+  /**
+   * Inactive configuration of the program year from which the program can be renewed.
+   */
+  renewableProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Active configuration of the program year immediately after the renewable one.
+   */
+  nextProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Inactive configuration of the program year whose next program year has
+   * only an inactive configuration.
+   */
+  notRenewableProgramConfiguration: EducationProgramConfiguration;
+}
+
+/**
+ * Ensures the program configurations for the getEducationProgramForRenew e2e tests.
+ * @param db e2e data sources.
+ * @returns program configurations to test the renewal status.
+ */
+export function ensureGetEducationProgramForRenewConfigurations(
+  db: E2EDataSources,
+): Promise<RenewalStatusProgramConfigurations> {
+  return ensureRenewalStatusProgramConfigurations(
+    db,
+    E2E_PROGRAM_YEAR_PREFIX.RenewProgramGetAvailable,
+    E2E_PROGRAM_YEAR_PREFIX.RenewProgramGetNotAvailable,
+  );
+}
+
+/**
+ * Ensures the program configurations for the getProgramsForProgramYear e2e tests.
+ * @param db e2e data sources.
+ * @returns program configurations to test the renewal status.
+ */
+export function ensureGetProgramsForProgramYearConfigurations(
+  db: E2EDataSources,
+): Promise<RenewalStatusProgramConfigurations> {
+  return ensureRenewalStatusProgramConfigurations(
+    db,
+    E2E_PROGRAM_YEAR_PREFIX.ProgramsForProgramYearRenewalAvailable,
+    E2E_PROGRAM_YEAR_PREFIX.ProgramsForProgramYearRenewalNotAvailable,
+  );
+}
+
+/**
+ * Ensures the program configurations for the renewEducationProgram e2e tests.
+ * - Renewal chain: three consecutive program years where each one (except the
+ * first) has an active configuration, allowing a program to be renewed twice.
+ * - Renewal not available: two consecutive program years where the next program
+ * year has only an inactive configuration.
+ * @param db e2e data sources.
+ * @returns program configurations for the renewal chain and the renewal not available.
+ */
+export async function ensureRenewEducationProgramConfigurations(
+  db: E2EDataSources,
+): Promise<{
+  firstProgramConfiguration: EducationProgramConfiguration;
+  secondProgramConfiguration: EducationProgramConfiguration;
+  thirdProgramConfiguration: EducationProgramConfiguration;
+  notRenewableProgramConfiguration: EducationProgramConfiguration;
+}> {
+  const [
+    [
+      firstProgramConfiguration,
+      secondProgramConfiguration,
+      thirdProgramConfiguration,
+    ],
+    [notRenewableProgramConfiguration],
+  ] = await Promise.all([
+    ensureSequentialProgramConfigurations(
+      db,
+      E2E_PROGRAM_YEAR_PREFIX.RenewProgramChain,
+      [{ isActive: false }, { isActive: true }, { isActive: true }],
+    ),
+    ensureSequentialProgramConfigurations(
+      db,
+      E2E_PROGRAM_YEAR_PREFIX.RenewProgramNotAvailable,
+      [{ isActive: false }, { isActive: false }],
+    ),
+  ]);
+  return {
+    firstProgramConfiguration,
+    secondProgramConfiguration,
+    thirdProgramConfiguration,
+    notRenewableProgramConfiguration,
+  };
+}
+
+/**
+ * Ensures the program configuration for the createEducationProgram e2e tests.
+ * @param db e2e data sources.
+ * @returns inactive configuration, the only one associated with its program year.
+ */
+export async function ensureCreateEducationProgramInactiveConfiguration(
+  db: E2EDataSources,
+): Promise<EducationProgramConfiguration> {
+  const [inactiveProgramConfiguration] =
+    await ensureSequentialProgramConfigurations(
+      db,
+      E2E_PROGRAM_YEAR_PREFIX.CreateProgramInactiveConfiguration,
+      [{ isActive: false }],
+    );
+  return inactiveProgramConfiguration;
+}
+
+/**
+ * Ensures the program years and their program configurations for the
+ * getProgramYearsList e2e tests.
+ * @param db e2e data sources.
+ * @returns program years with different program configuration setups.
+ */
+export async function ensureGetProgramYearsListProgramYears(
+  db: E2EDataSources,
+): Promise<{
+  /**
+   * Program year with an active and an inactive program configuration.
+   */
+  activeConfigurationProgramYear: ProgramYear;
+  /**
+   * Program year with only an inactive program configuration.
+   */
+  inactiveConfigurationProgramYear: ProgramYear;
+  /**
+   * Program year without any program configuration.
+   */
+  noConfigurationProgramYear: ProgramYear;
+}> {
+  const [
+    activeConfigurationProgramYear,
+    inactiveConfigurationProgramYear,
+    noConfigurationProgramYear,
+  ] = await Promise.all([
+    ensureProgramYearExists(
+      db,
+      E2E_PROGRAM_YEAR_PREFIX.ProgramYearsListActiveConfiguration,
+    ),
+    ensureProgramYearExists(
+      db,
+      E2E_PROGRAM_YEAR_PREFIX.ProgramYearsListInactiveConfiguration,
+    ),
+    ensureProgramYearExists(
+      db,
+      E2E_PROGRAM_YEAR_PREFIX.ProgramYearsListNoConfiguration,
+    ),
+  ]);
+  await Promise.all([
+    ensureEducationProgramConfigurationExists(
+      db,
+      activeConfigurationProgramYear,
+    ),
+    ensureEducationProgramConfigurationExists(
+      db,
+      activeConfigurationProgramYear,
+      { isActive: false },
+    ),
+    ensureEducationProgramConfigurationExists(
+      db,
+      inactiveConfigurationProgramYear,
+      { isActive: false },
+    ),
+  ]);
+  return {
+    activeConfigurationProgramYear,
+    inactiveConfigurationProgramYear,
+    noConfigurationProgramYear,
+  };
+}
+
+/**
+ * Ensures the program configurations to test the renewal status.
+ * @param db e2e data sources.
+ * @param renewalAvailablePrefix prefix of the first of two consecutive program
+ * years where the next program year has an active configuration.
+ * @param renewalNotAvailablePrefix prefix of the first of two consecutive program
+ * years where the next program year has only an inactive configuration.
+ * @returns program configurations to test the renewal status.
+ */
+async function ensureRenewalStatusProgramConfigurations(
+  db: E2EDataSources,
+  renewalAvailablePrefix: number,
+  renewalNotAvailablePrefix: number,
+): Promise<RenewalStatusProgramConfigurations> {
+  const [
+    [renewableProgramConfiguration, nextProgramConfiguration],
+    [notRenewableProgramConfiguration],
+  ] = await Promise.all([
+    ensureSequentialProgramConfigurations(db, renewalAvailablePrefix, [
+      { isActive: false },
+      { isActive: true },
+    ]),
+    ensureSequentialProgramConfigurations(db, renewalNotAvailablePrefix, [
+      { isActive: false },
+      { isActive: false },
+    ]),
+  ]);
+  return {
+    renewableProgramConfiguration,
+    nextProgramConfiguration,
+    notRenewableProgramConfiguration,
+  };
+}
+
+/**
+ * Ensures consecutive program years exist starting from the provided prefix,
+ * each one with an education program configuration with the provided options.
+ * @param db e2e data sources.
+ * @param startingPrefix prefix of the first program year.
+ * @param configurationsOptions options for each program year configuration, in order.
+ * The number of items defines the number of consecutive program years.
+ * - `isActive` indicates if the configuration must be active.
+ * @returns configurations ordered by program year, including the program year relation.
+ */
+async function ensureSequentialProgramConfigurations(
+  db: E2EDataSources,
+  startingPrefix: number,
+  configurationsOptions: { isActive: boolean }[],
+): Promise<EducationProgramConfiguration[]> {
+  const programYears = await ensureSequentialProgramYearsExist(
+    db,
+    startingPrefix,
+    configurationsOptions.length,
+  );
+  return Promise.all(
+    programYears.map((programYear, index) =>
+      ensureEducationProgramConfigurationExists(
+        db,
+        programYear,
+        configurationsOptions[index],
+      ),
+    ),
+  );
+}
 
 /**
  * Get the payload for updating an education program.

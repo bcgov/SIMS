@@ -73,7 +73,7 @@
   </search-table>
 </template>
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useDisplay } from "vuetify";
 import type { RouteLocationRaw } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -95,7 +95,11 @@ import type {
   EducationProgramYearAPIOutDTO,
   PaginatedResultsAPIOutDTO,
 } from "@/services/http/dto";
-import { useFormatters, useSnackBar } from "@/composables";
+import {
+  useEducationProgramYears,
+  useFormatters,
+  useSnackBar,
+} from "@/composables";
 
 interface ManageProgramsTableProps {
   /**
@@ -119,6 +123,7 @@ const recordsCount = defineModel<number | undefined>("recordsCount");
 
 const { emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
+const { loadEducationProgramYears } = useEducationProgramYears();
 const { mobile: isMobile } = useDisplay();
 const programAndCount = ref(
   {} as
@@ -294,4 +299,6 @@ const programYearFiltersInitialized = async (
     await searchProgramTable();
   }
 };
+
+onMounted(loadEducationProgramYears);
 </script>

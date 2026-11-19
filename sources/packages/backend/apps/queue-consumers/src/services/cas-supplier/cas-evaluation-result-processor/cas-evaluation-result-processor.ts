@@ -47,7 +47,9 @@ export abstract class CASEvaluationResultProcessor {
     auditUserId: number,
     options?: { partialSupplier?: CASSupplierInfoForBadRequest },
   ): Promise<ProcessorResult> {
-    summary.warn("A known error occurred during processing.");
+    summary.warn(
+      `A known error occurred during processing. CAS returned: ${error.join(" | ")}`,
+    );
     const now = new Date();
     const auditUser = { id: auditUserId } as User;
     try {

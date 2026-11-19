@@ -6,6 +6,7 @@
       "request": "launch",
       "name": "Debug - Web UI",
       "url": "http://localhost:8080",
+      "userDataDir": "${userHome}/.chrome-debug-profile",
       "webRoot": "${workspaceFolder}/sources/packages/web",
       "sourceMapPathOverrides": {
         "/@fs/*": "/*",

@@ -105,8 +105,17 @@ export interface EducationProgramDynamicConfiguration {
  * Exactly one of them must be provided; providing both is not allowed.
  * The combinations ensure that a maximum of one record will be retrieved from the database.
  */
-export type ProgramConfigurationLookup =
+export type ProgramConfigurationCriteria =
   // When selecting by program configuration ID, the specific configuration is retrieved regardless of its active status.
-  | { programConfigurationId: number; programYearId?: never }
+  // The optional program ID allows the context to be resolved for an existing program (e.g. offerings check).
+  | {
+      programConfigurationId: number;
+      programId?: number;
+      programYearId?: never;
+    }
   // When selecting by program year ID, the program configuration must be the active one.
-  | { programYearId: number; programConfigurationId?: never };
+  | {
+      programYearId: number;
+      programConfigurationId?: never;
+      programId?: never;
+    };
