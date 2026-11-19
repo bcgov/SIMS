@@ -786,7 +786,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // Fetching only the active programs with the provided program status.
     if (paginationOptions.statusSearch) {
       programQuery.andWhere(
-        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
+        "programs.programStatus ANY (:...programStatusSearchCriteria) and programs.isActive = true",
         {
           programStatusSearchCriteria: paginationOptions.statusSearch,
         },

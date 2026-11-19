@@ -170,7 +170,7 @@ describe("EducationProgramAESTController(e2e)-approveProgram", () => {
    * Creates and saves a pending education program for the shared institution.
    * @returns the saved pending program.
    */
-  async function savePendingProgram(): Promise<EducationProgram> {
+  function savePendingProgram(): Promise<EducationProgram> {
     const program = createFakeEducationProgram(
       {
         institution: sharedInstitution,
