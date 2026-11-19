@@ -24,7 +24,6 @@ import {
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
-import { getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocationId", () => {
   let app: INestApplication;
@@ -89,27 +88,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
       },
       { initialValues: { isActive: false, name: `Inactive ${searchString}` } },
     );
-    // Expired program (inactive) that should not be returned by default.
-    const expiredProgram = createFakeEducationProgram(
-      {
-        institution: collegeF,
-        auditUser: sharedUser,
-        programConfiguration: mostRecentProgramConfiguration,
-      },
-      {
-        initialValues: {
-          isActive: true,
-          effectiveEndDate: getISODateOnlyString(new Date()),
-          name: `Expired ${searchString}`,
-        },
-      },
-    );
     const [savedFirstProgram, savedSecondProgram] =
       await db.educationProgram.save([
         firstProgram,
         secondProgram,
         inactiveProgram,
-        expiredProgram,
       ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -134,7 +117,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedFirstProgram.programStatus,
             isActive: savedFirstProgram.isActive,
-            isExpired: savedFirstProgram.isExpired,
             credentialTypeToDisplay: savedFirstProgram.credentialType,
           },
           {
@@ -148,7 +130,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedSecondProgram.programStatus,
             isActive: savedSecondProgram.isActive,
-            isExpired: savedSecondProgram.isExpired,
             credentialTypeToDisplay: savedSecondProgram.credentialType,
           },
         ],
@@ -200,7 +181,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedMatchingProgram.programStatus,
             isActive: savedMatchingProgram.isActive,
-            isExpired: savedMatchingProgram.isExpired,
             credentialTypeToDisplay: savedMatchingProgram.credentialType,
           },
         ],
@@ -253,7 +233,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedMatchingProgram.programStatus,
             isActive: savedMatchingProgram.isActive,
-            isExpired: savedMatchingProgram.isExpired,
             credentialTypeToDisplay: savedMatchingProgram.credentialType,
           },
         ],
@@ -308,7 +287,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedMatchingProgram.programStatus,
             isActive: savedMatchingProgram.isActive,
-            isExpired: savedMatchingProgram.isExpired,
             credentialTypeToDisplay: savedMatchingProgram.credentialType,
           },
         ],
@@ -383,7 +361,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedApprovedProgram.programStatus,
             isActive: savedApprovedProgram.isActive,
-            isExpired: savedApprovedProgram.isExpired,
             credentialTypeToDisplay: savedApprovedProgram.credentialType,
           },
         ],
@@ -417,21 +394,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
         },
       },
     );
-    // Expired program (inactive display status) that should be returned.
-    const expiredProgram = createFakeEducationProgram(
-      {
-        institution: collegeF,
-        auditUser: sharedUser,
-        programConfiguration: mostRecentProgramConfiguration,
-      },
-      {
-        initialValues: {
-          isActive: true,
-          effectiveEndDate: getISODateOnlyString(new Date()),
-          name: `Gamma expired ${searchString}`,
-        },
-      },
-    );
     // Inactive program with a non-matching stored status (Pending).
     // It should still be returned because all inactive programs are included
     // regardless of their stored programStatus when inactiveProgramSearch is true.
@@ -453,12 +415,10 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
     const [
       savedActiveProgram,
       savedInactiveProgram,
-      savedExpiredProgram,
       savedInactivePendingProgram,
     ] = await db.educationProgram.save([
       activeProgram,
       inactiveProgram,
-      expiredProgram,
       inactivePendingProgram,
     ]);
     const institutionUserToken = await getInstitutionToken(
@@ -484,7 +444,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedActiveProgram.programStatus,
             isActive: savedActiveProgram.isActive,
-            isExpired: savedActiveProgram.isExpired,
             credentialTypeToDisplay: savedActiveProgram.credentialType,
           },
           {
@@ -498,22 +457,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedInactiveProgram.programStatus,
             isActive: savedInactiveProgram.isActive,
-            isExpired: savedInactiveProgram.isExpired,
             credentialTypeToDisplay: savedInactiveProgram.credentialType,
-          },
-          {
-            programId: savedExpiredProgram.id,
-            programName: savedExpiredProgram.name,
-            cipCode: savedExpiredProgram.cipCode,
-            sabcCode: null,
-            credentialType: savedExpiredProgram.credentialType,
-            totalOfferings: "0",
-            locationId: collegeFLocation.id,
-            locationName: collegeFLocation.name,
-            programStatus: savedExpiredProgram.programStatus,
-            isActive: savedExpiredProgram.isActive,
-            isExpired: savedExpiredProgram.isExpired,
-            credentialTypeToDisplay: savedExpiredProgram.credentialType,
           },
           {
             programId: savedInactivePendingProgram.id,
@@ -526,11 +470,10 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedInactivePendingProgram.programStatus,
             isActive: savedInactivePendingProgram.isActive,
-            isExpired: savedInactivePendingProgram.isExpired,
             credentialTypeToDisplay: savedInactivePendingProgram.credentialType,
           },
         ],
-        count: 4,
+        count: 3,
       });
   });
 
@@ -600,7 +543,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedFirstProgram.programStatus,
             isActive: savedFirstProgram.isActive,
-            isExpired: savedFirstProgram.isExpired,
             credentialTypeToDisplay: savedFirstProgram.credentialType,
           },
           {
@@ -614,7 +556,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedSecondProgram.programStatus,
             isActive: savedSecondProgram.isActive,
-            isExpired: savedSecondProgram.isExpired,
             credentialTypeToDisplay: savedSecondProgram.credentialType,
           },
         ],
@@ -683,7 +624,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedFirstProgram.programStatus,
             isActive: savedFirstProgram.isActive,
-            isExpired: savedFirstProgram.isExpired,
             credentialTypeToDisplay: savedFirstProgram.credentialType,
           },
           {
@@ -697,7 +637,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsSummaryByLocati
             locationName: collegeFLocation.name,
             programStatus: savedSecondProgram.programStatus,
             isActive: savedSecondProgram.isActive,
-            isExpired: savedSecondProgram.isExpired,
             credentialTypeToDisplay: savedSecondProgram.credentialType,
           },
         ],

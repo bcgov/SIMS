@@ -76,7 +76,7 @@
             <template #[`item.programStatus`]="{ item }">
               <status-chip-program
                 :status="item.programStatus"
-                :is-active="item.isActive && !item.isExpired"
+                :is-active="item.isActive"
               ></status-chip-program>
             </template>
             <template #[`item.action`]="{ item }">

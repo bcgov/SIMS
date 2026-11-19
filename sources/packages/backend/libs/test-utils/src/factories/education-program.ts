@@ -47,7 +47,6 @@ export function createFakeEducationProgram(
     program.submittedDate = options.initialValues.submittedDate;
   }
   program.isActive = options?.initialValues?.isActive ?? true;
-  program.effectiveEndDate = options?.initialValues?.effectiveEndDate ?? null;
   program.sabcCode = options?.initialValues?.sabcCode ?? null;
   program.programData =
     options?.initialValues?.programData ?? createFakeProgramData(program);

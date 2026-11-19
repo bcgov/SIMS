@@ -106,7 +106,7 @@ export class EducationProgramOfferingAESTController extends BaseController {
   }
 
   /**
-   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is active/not expired.
+   * Gets a list of Program Offerings with status 'Creation Pending' where the Program is active.
    * Pagination, sort and search are available on results.
    * @param paginationOptions pagination options.
    * @returns pending offerings.

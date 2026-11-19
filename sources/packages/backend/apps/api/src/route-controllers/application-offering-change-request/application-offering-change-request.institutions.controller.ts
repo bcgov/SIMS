@@ -48,7 +48,6 @@ import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { IInstitutionUserToken, InstitutionUserTypes } from "../../auth";
 import { CustomNamedError } from "@sims/utilities";
 import {
-  EDUCATION_PROGRAM_IS_EXPIRED,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_INTENSITY_MISMATCH,
@@ -141,7 +140,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
       applicationNumber: application.applicationNumber,
       programId: offering.educationProgram.id,
       isProgramActive: offering.educationProgram.isActive,
-      isProgramExpired: offering.educationProgram.isExpired,
       offeringId: offering.id,
       offeringIntensity: offering.offeringIntensity,
       programYearId: application.programYear.id,
@@ -306,7 +304,6 @@ export class ApplicationOfferingChangeRequestInstitutionsController extends Base
             );
           case OFFERING_PROGRAM_YEAR_MISMATCH:
           case EDUCATION_PROGRAM_IS_NOT_ACTIVE:
-          case EDUCATION_PROGRAM_IS_EXPIRED:
             throw new UnprocessableEntityException(error.message);
           case OFFERING_DOES_NOT_BELONG_TO_LOCATION:
             throw new UnauthorizedException(error.message);

@@ -22,7 +22,6 @@ import {
 } from "../../../../testHelpers";
 import request from "supertest";
 import { createFakeEducationProgram } from "@sims/test-utils/factories/education-program";
-import { getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () => {
   let app: INestApplication;
@@ -96,7 +95,6 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
             savedProgram.submittedBy.firstName +
             " " +
             savedProgram.submittedBy.lastName,
-          effectiveEndDate: getISODateOnlyString(savedProgram.effectiveEndDate),
           assessedDate: savedProgram.assessedDate,
           assessedBy: "",
           name: savedProgram.name,
@@ -110,7 +108,6 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
           institutionProgramCode: null,
           programIntensity: savedProgram.programIntensity,
           isActive: savedProgram.isActive,
-          isExpired: savedProgram.isExpired,
         });
     });
 

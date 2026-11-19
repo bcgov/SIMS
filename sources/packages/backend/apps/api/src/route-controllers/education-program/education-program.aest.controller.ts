@@ -41,7 +41,6 @@ import { EducationProgramControllerService } from "./education-program.controlle
 import { Role } from "../../auth/roles.enum";
 import { OptionItemAPIOutDTO } from "..";
 import { OfferingTypes } from "@sims/sims-db";
-import { isSameOrAfterDate } from "@sims/utilities";
 
 @AllowAuthorizedParty(AuthorizedParties.aest)
 @Groups(UserGroups.AESTUser)
@@ -56,7 +55,7 @@ export class EducationProgramAESTController extends BaseController {
   }
 
   /**
-   * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
+   * Gets a list of Education Programs with status 'Pending' where the Program is active.
    * Pagination, sort and search are available on results.
    * @param paginationOptions Pagination options.
    * @returns Pending programs.
@@ -122,7 +121,6 @@ export class EducationProgramAESTController extends BaseController {
         submittedDate: program.submittedDate,
         programStatus: program.programStatus,
         isActive: program.isActive,
-        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
         totalOfferings: program.totalOfferings,
         locationId: program.locationId,
         locationName: program.locationName,
@@ -162,7 +160,6 @@ export class EducationProgramAESTController extends BaseController {
     @Body() payload: ApproveProgramAPIInDTO,
   ): Promise<void> {
     await this.programService.approveEducationProgram(
-      payload.effectiveEndDate,
       payload.approvedNote,
       institutionId,
       programId,

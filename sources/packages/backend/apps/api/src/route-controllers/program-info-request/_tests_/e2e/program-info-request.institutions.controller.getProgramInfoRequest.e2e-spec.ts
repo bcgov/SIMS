@@ -189,7 +189,6 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
           isActiveProgramYear: true,
           selectedProgram: pirProgram.id,
           isActiveProgram: true,
-          isExpiredProgram: false,
         });
     },
   );
@@ -263,7 +262,6 @@ describe("ProgramInfoRequestInstitutionsController(e2e)-getProgramInfoRequest", 
         studentSelectedProgram: pirProgram.name,
         studentSelectedProgramDescription: pirProgram.description,
         isActiveProgram: true,
-        isExpiredProgram: false,
         // Properties expected only when assessment has an offering associated.
         selectedOffering: pirOffering.id,
         offeringName: pirOffering.name,

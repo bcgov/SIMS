@@ -295,7 +295,7 @@ export class EducationProgramApi extends HttpBaseClient {
   }
 
   /**
-   * Gets a list of Programs with status 'Pending' where the Program is active/not expired.
+   * Gets a list of Programs with status 'Pending' where the Program is active.
    * @param paginationOptions The pagination options.
    * @returns pending programs.
    */

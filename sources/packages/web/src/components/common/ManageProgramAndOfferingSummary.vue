@@ -63,10 +63,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const isProgramEditable = computed(
-      () =>
-        props.educationProgram.isActive && !props.educationProgram.isExpired,
-    );
+    const isProgramEditable = computed(() => props.educationProgram.isActive);
     return {
       isProgramEditable,
     };

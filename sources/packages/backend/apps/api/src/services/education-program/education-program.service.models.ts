@@ -67,7 +67,6 @@ export interface EducationProgramSummary {
   programStatus: ProgramStatus;
   isActive: boolean;
   submittedDate: Date;
-  effectiveEndDate?: Date;
   totalOfferings: number;
   locationId: number;
   locationName: string;

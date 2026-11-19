@@ -93,7 +93,6 @@ export class ApplicationOfferingChangeRequestService {
         "currentAssessment.id",
         "educationProgram.id",
         "educationProgram.isActive",
-        "educationProgram.effectiveEndDate",
         "offering.id",
         "offering.studyStartDate",
         "offering.studyEndDate",

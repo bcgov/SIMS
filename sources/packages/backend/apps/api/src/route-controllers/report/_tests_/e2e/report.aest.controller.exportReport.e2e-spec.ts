@@ -1724,8 +1724,6 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       "Program Status": fakeOffering.educationProgram.programStatus,
       "Program Deactivated?": (!fakeOffering.educationProgram
         .isActive).toString(),
-      "Program Expiry Date":
-        fakeOffering.educationProgram.effectiveEndDate ?? "",
       "Offering Name": fakeOffering.name,
       "Study Start Date": fakeOffering.studyStartDate,
       "Study End Date": fakeOffering.studyEndDate,
@@ -1760,7 +1758,6 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       "Credit or Hours": fakeProgram.courseLoadCalculation,
       "Program Status": fakeProgram.programStatus,
       "Program Deactivated?": (!fakeProgram.isActive).toString(),
-      "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
       "Offering Name": "",
       "Study Start Date": "",
       "Study End Date": "",

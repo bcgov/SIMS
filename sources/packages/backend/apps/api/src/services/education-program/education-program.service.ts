@@ -22,10 +22,7 @@ import {
   Not,
   Equal,
   UpdateResult,
-  MoreThan,
-  IsNull,
   Brackets,
-  Or,
   SelectQueryBuilder,
 } from "typeorm";
 import {
@@ -39,11 +36,7 @@ import {
   PaginationOptions,
   ProgramLocationPaginationOptions,
 } from "../../utilities";
-import {
-  CustomNamedError,
-  FieldSortOrder,
-  getISODateOnlyString,
-} from "@sims/utilities";
+import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   EDUCATION_PROGRAM_INVALID_OPERATION,
@@ -79,7 +72,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       select: {
         id: true,
         isActive: true,
-        effectiveEndDate: true,
         institution: { id: true },
       },
       relations: {
@@ -268,14 +260,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .where("programs.programStatus = :programStatus", {
         programStatus: ProgramStatus.Approved,
       })
-      .andWhere("programs.isActive = true")
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where("programs.effectiveEndDate is null").orWhere(
-            "programs.effectiveEndDate > CURRENT_DATE",
-          );
-        }),
-      );
+      .andWhere("programs.isActive = true");
     if (!isFulltimeAllowed) {
       programsQuery.andWhere("programs.programIntensity = :programIntensity", {
         programIntensity: ProgramIntensity.fullTimePartTime,
@@ -310,13 +295,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       })
       .andWhere("programs.institution.id = :institutionId", { institutionId });
     if (!options?.isIncludeInActiveProgram) {
-      query.andWhere("programs.isActive = true").andWhere(
-        new Brackets((qb) => {
-          qb.where("programs.effectiveEndDate is null").orWhere(
-            "programs.effectiveEndDate > CURRENT_DATE",
-          );
-        }),
-      );
+      query.andWhere("programs.isActive = true");
     }
     return query.orderBy("programs.name").getMany();
   }
@@ -387,7 +366,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "assessedBy.firstName",
         "assessedBy.lastName",
         "programs.assessedDate",
-        "programs.effectiveEndDate",
         "programs.isActive",
         "parentProgram.id",
         "precedingProgram.id",
@@ -418,15 +396,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * this is a db transaction performing
    * 3 functions, creating note, update the
    * program and adding institution notes
-   * @param effectiveEndDate effective end date
-   * of the approved education program.
    * @param approvalNote approval note.
    * @param institutionId institution id.
    * @param programId program id.
    * @param userId user who is making the changes.
    */
   async approveEducationProgram(
-    effectiveEndDate: string,
     approvalNote: string,
     institutionId: number,
     programId: number,
@@ -450,7 +425,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       program.id = programId;
       program.programStatus = ProgramStatus.Approved;
       program.assessedDate = now;
-      program.effectiveEndDate = effectiveEndDate;
       program.assessedBy = auditUser;
       program.modifier = auditUser;
       program.updatedAt = now;
@@ -540,7 +514,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         "programs.description",
         "programs.id",
         "programs.isActive",
-        "programs.effectiveEndDate",
       ])
       .where("programs.id = :programId", { programId })
       .getOne();
@@ -574,10 +547,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           id: institutionId,
         },
         isActive: true,
-        effectiveEndDate: Or(
-          IsNull(),
-          MoreThan(getISODateOnlyString(new Date())),
-        ),
       },
     });
   }
@@ -609,10 +578,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
           },
         },
         isActive: true,
-        effectiveEndDate: Or(
-          IsNull(),
-          MoreThan(getISODateOnlyString(new Date())),
-        ),
       },
     });
   }
@@ -700,7 +665,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
       .addSelect("location.name", "locationName")
       .addSelect("programs.programStatus", "programStatus")
       .addSelect("programs.isActive", "isActive")
-      .addSelect("programs.effectiveEndDate", "effectiveEndDate")
       .addSelect("programs.sabcCode", "sabcCode")
       .addSelect(
         (qb) =>
@@ -757,7 +721,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // sort
     if (paginationOptions.sortField === "programStatus") {
       paginatedProgramQuery.orderBy(
-        `CASE WHEN programs.isActive = false or (programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE) THEN '${INACTIVE_PROGRAM}' ELSE programs.programStatus :: text END`,
+        `CASE WHEN programs.isActive = false THEN '${INACTIVE_PROGRAM}' ELSE programs.programStatus :: text END`,
         paginationOptions.sortOrder,
       );
     } else if (paginationOptions.sortField && paginationOptions.sortOrder) {
@@ -808,10 +772,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
             .orWhere("programs.isActive = :programIsActiveSearchCriteria", {
               programIsActiveSearchCriteria:
                 !paginationOptions.inactiveProgramSearch,
-            })
-            .orWhere(
-              "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
-            ),
+            }),
         ),
       );
       queryParams.push(
@@ -825,7 +786,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // Fetching only the active programs with the provided program status.
     if (paginationOptions.statusSearch) {
       programQuery.andWhere(
-        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true and (programs.effectiveEndDate is null OR programs.effectiveEndDate > CURRENT_DATE)",
+        "programs.programStatus IN (:...programStatusSearchCriteria) and programs.isActive = true",
         {
           programStatusSearchCriteria: paginationOptions.statusSearch,
         },
@@ -837,21 +798,18 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
     // Fetching only the inactive status programs.
     if (paginationOptions.inactiveProgramSearch) {
       programQuery.andWhere(
-        new Brackets((qb) => {
-          qb.where("programs.isActive = :programIsActiveSearchCriteria", {
-            programIsActiveSearchCriteria:
-              !paginationOptions.inactiveProgramSearch,
-          }).orWhere(
-            "programs.effectiveEndDate is not null and programs.effectiveEndDate <= CURRENT_DATE",
-          );
-        }),
+        "programs.isActive = :programIsActiveSearchCriteria",
+        {
+          programIsActiveSearchCriteria:
+            !paginationOptions.inactiveProgramSearch,
+        },
       );
       queryParams.push(!paginationOptions.inactiveProgramSearch);
     }
   }
 
   /**
-   * Gets a list of Education Programs with status 'Pending' where the Program is active/not expired.
+   * Gets a list of Education Programs with status 'Pending' where the Program is active.
    * For each program, retrieves the location with the most offerings, or any location if no offerings exist.
    * Pagination, sort and search are available on results.
    * @param paginationOptions Pagination options.
