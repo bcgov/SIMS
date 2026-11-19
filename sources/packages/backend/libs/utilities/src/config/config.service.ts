@@ -154,7 +154,7 @@ export class ConfigService {
    */
   get financeIntegration(): FinanceIntegrationConfig {
     return this.getCachedConfig("financeIntegrationConfig", {
-      ftpRequestFolder: process.env.FINANCE_OUTPUT_FOLDER,
+      ftpOutputFolder: process.env.FINANCE_OUTPUT_FOLDER,
     });
   }
 

@@ -118,7 +118,7 @@ export interface ESDCIntegrationConfig {
 }
 
 export interface FinanceIntegrationConfig {
-  ftpRequestFolder: string;
+  ftpOutputFolder: string;
 }
 
 export interface SFASIntegrationConfig {
