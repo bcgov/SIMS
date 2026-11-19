@@ -26,9 +26,9 @@ export enum ReturnedLoanInterestRateType {
    */
   Variable = "V",
   /**
-   * Value sent for class A loans (space in the file).
+   * Value sent for class A loans (space in the file trimmed to empty string).
    */
-  None = " ",
+  None = "",
 }
 
 /**

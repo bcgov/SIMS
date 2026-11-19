@@ -48,6 +48,10 @@ export class DefaultedStudentLoansFileFooter extends IntegrationFileLine {
    */
   isTotalBOAValueNegative: boolean;
 
+  /**
+   * Get context information to identify the record.
+   * @returns context information to identify the record.
+   */
   getContext(): Record<string, string | number | Date> {
     return {
       transmissionDate: this.transmissionDate || "NA",
@@ -55,6 +59,10 @@ export class DefaultedStudentLoansFileFooter extends IntegrationFileLine {
     };
   }
 
+  /**
+   * Get the fixed format line value of the defaulted student loans footer record.
+   * @returns fixed format line value of the footer record.
+   */
   getFixedFormatLine(): string {
     const footer = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,

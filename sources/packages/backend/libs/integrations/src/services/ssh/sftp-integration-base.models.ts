@@ -12,6 +12,12 @@ export interface FixedFormatFileLine {
  * Represents a single fixed format line in an integration file.
  */
 export abstract class IntegrationFileLine implements FixedFormatFileLine {
+  /**
+   * Get the fixed format line of an integration file.
+   * Note:This method must not be overridden by derived classes.
+   * Derived classes should implement the getFixedFormatLine method instead.
+   * @returns The fixed format line as a string.
+   */
   getFixedFormat(): string {
     try {
       return this.getFixedFormatLine();

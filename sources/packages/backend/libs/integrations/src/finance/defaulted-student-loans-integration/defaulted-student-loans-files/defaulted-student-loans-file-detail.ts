@@ -176,12 +176,20 @@ export class DefaultedStudentLoansFileDetail extends IntegrationFileLine {
    */
   eventDate: Date;
 
+  /**
+   * Get context information to identify the record.
+   * @returns context information to identify the record.
+   */
   getContext(): Record<string, string | number | Date> {
     return {
       birthDate: this.birthDate || "NA",
     };
   }
 
+  /**
+   * Get the fixed format line value of the defaulted student loans detail record.
+   * @returns fixed format line value of the detail record.
+   */
   getFixedFormatLine(): string {
     const detail = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,

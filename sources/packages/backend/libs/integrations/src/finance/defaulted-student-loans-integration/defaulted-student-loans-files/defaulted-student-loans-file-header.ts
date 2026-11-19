@@ -36,6 +36,10 @@ export class DefaultedStudentLoansFileHeader extends IntegrationFileLine {
    */
   private readonly transmissionDescription = FILE_DESCRIPTION;
 
+  /**
+   * Get context information to identify the record.
+   * @returns context information to identify the record.
+   */
   getContext(): Record<string, string | number | Date> {
     return {
       transmissionDate: this.transmissionDate || "NA",
@@ -43,6 +47,10 @@ export class DefaultedStudentLoansFileHeader extends IntegrationFileLine {
     };
   }
 
+  /**
+   * Get the fixed format line value of the defaulted student loans header record.
+   * @returns fixed format line value of the header record.
+   */
   getFixedFormatLine(): string {
     const header = new SpecializedStringBuilder({
       numberFiller: NUMBER_FILLER,
