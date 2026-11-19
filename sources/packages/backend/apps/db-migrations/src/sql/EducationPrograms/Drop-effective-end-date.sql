@@ -11,7 +11,18 @@ ADD COLUMN effective_end_date_before_removal DATE;
 
 COMMENT ON COLUMN sims.education_programs_history.effective_end_date_before_removal IS 'Historical data from the original table. See original table comments for details.';
 
+-- Disable the history trigger to avoid creating history entries for the backfill.
+ALTER TABLE sims.education_programs DISABLE TRIGGER education_programs_history_trigger;
+
 UPDATE sims.education_programs
+SET
+  effective_end_date_before_removal = effective_end_date
+WHERE
+  effective_end_date IS NOT NULL;
+
+ALTER TABLE sims.education_programs ENABLE TRIGGER education_programs_history_trigger;
+
+UPDATE sims.education_programs_history
 SET
   effective_end_date_before_removal = effective_end_date
 WHERE

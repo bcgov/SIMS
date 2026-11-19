@@ -797,14 +797,7 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
 
     // Fetching only the inactive status programs.
     if (paginationOptions.inactiveProgramSearch) {
-      programQuery.andWhere(
-        "programs.isActive = :programIsActiveSearchCriteria",
-        {
-          programIsActiveSearchCriteria:
-            !paginationOptions.inactiveProgramSearch,
-        },
-      );
-      queryParams.push(!paginationOptions.inactiveProgramSearch);
+      programQuery.andWhere("programs.isActive = false");
     }
   }
 
