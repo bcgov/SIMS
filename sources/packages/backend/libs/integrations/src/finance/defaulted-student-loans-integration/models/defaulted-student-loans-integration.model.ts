@@ -33,6 +33,11 @@ export const SPACE_FILLER = " ";
 export const NUMBER_FILLER = "0";
 
 /**
+ * Interest formula code for simple interest.
+ */
+export const SIMPLE_INTEREST_FORMULA_CODE = "SMP";
+
+/**
  * Defaulted student loan balance types.
  */
 export enum DefaultedStudentLoanBalanceType {

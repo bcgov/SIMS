@@ -219,13 +219,11 @@ export class DefaultedStudentLoansFileDetail implements FixedFormatFileLine {
     });
     // The file has space for 8 balance type elements but only 5 of them are currently mapped by the system.
     // Hence remaining balance type elements should be filled with space.
-    for (
-      let i = 0;
-      i < TOTAL_BALANCE_TYPE_ELEMENTS - this.populatedBalanceTypeItems.length;
-      i++
-    ) {
-      detail.appendStringWithFiller("", BALANCE_TYPE_ELEMENT_LENGTH);
-    }
+    detail.appendStringWithFiller(
+      "",
+      BALANCE_TYPE_ELEMENT_LENGTH *
+        (TOTAL_BALANCE_TYPE_ELEMENTS - this.populatedBalanceTypeItems.length),
+    );
     // Append free area filler.
     detail.appendStringWithFiller("", FREE_AREA_FILLER_LENGTH);
     detail.appendOptionalFormattedDate(this.consolidationDate);

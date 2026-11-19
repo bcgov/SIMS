@@ -8,6 +8,7 @@ import {
   DefaultedStudentLoanBalanceType,
   DefaultedStudentLoanInterestType,
   POPULATED_BALANCE_TYPES,
+  SIMPLE_INTEREST_FORMULA_CODE,
 } from "./models/defaulted-student-loans-integration.model";
 import { DefaultedStudentLoansFileHeader } from "./defaulted-student-loans-files/defaulted-student-loans-file-header";
 import { DefaultedStudentLoansFileDetail } from "./defaulted-student-loans-files/defaulted-student-loans-file-detail";
@@ -58,7 +59,7 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
     // Calculate the sum of BOA balance amounts from all detail records.
     const totalBOAValue = detailRecords.reduce((sum, detail) => {
       const boaItem = detail.populatedBalanceTypeItems.find(
-        (item) => item.balanceType === "BOA",
+        (item) => item.balanceType === DefaultedStudentLoanBalanceType.BOA,
       );
       const boaAmount = boaItem?.balanceAmount ?? 0;
       return sum + boaAmount;
@@ -122,7 +123,7 @@ export class DefaultedStudentLoansIntegrationService extends SFTPIntegrationBase
         : DefaultedStudentLoanInterestType.PrimePlus;
     const balanceTypeBaseValues = {
       balanceType,
-      interestFormulaCode: "SMP",
+      interestFormulaCode: SIMPLE_INTEREST_FORMULA_CODE,
       interestType,
       interestRate:
         interestType === DefaultedStudentLoanInterestType.Fixed
