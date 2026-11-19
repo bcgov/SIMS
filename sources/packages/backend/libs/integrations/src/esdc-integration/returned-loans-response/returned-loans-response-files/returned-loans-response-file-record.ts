@@ -20,9 +20,13 @@ export abstract class ReturnedLoansResponseFileRecord {
   /**
    * Converts a date string from the response file to a Date object.
    * @param dateText Date string in the format specified by date format.
-   * @returns Date object representing the date.
+   * @returns Date object representing the date or null if the date is invalid.
    */
-  protected convertToDateRecord(dateText: string): Date {
-    return getDateOnlyFromFormat(dateText, RETURNED_LOANS_RESPONSE_DATE_FORMAT);
+  protected convertToDateRecord(dateText: string): Date | null {
+    return getDateOnlyFromFormat(
+      dateText,
+      RETURNED_LOANS_RESPONSE_DATE_FORMAT,
+      true,
+    );
   }
 }

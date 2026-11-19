@@ -2,6 +2,30 @@ import { RelationshipStatus, OfferingIntensity } from "@sims/sims-db";
 
 const CANADA_POSTAL_CODE_LENGTH = 6;
 /**
+ * Decimal character places for the COBOL PIC format 99V9(4).
+ * example: value = 012345, decimalPlaces = 4 => returns 01.2345
+ */
+export const DECIMAL_PLACES_99V94 = 4;
+
+/**
+ * Decimal character places for the COBOL PIC format 9V9(4).
+ * example: value = 01234, decimalPlaces = 4 => returns 0.1234
+ */
+export const DECIMAL_PLACES_9V94 = 4;
+
+/**
+ * Decimal character places for the COBOL PIC format 9(6)V99.
+ * example: value = 12345678, decimalPlaces = 2 => returns 123456.78
+ */
+export const DECIMAL_PLACES_96V99 = 2;
+
+/**
+ * Decimal character places for the COBOL PIC format 9(5)V99.
+ * example: value = 0123456, decimalPlaces = 2 => returns 01234.56
+ */
+export const DECIMAL_PLACES_95V99 = 2;
+
+/**
  * Gets the offering intensity code conversion for the MSFAA request file
  */
 export function getOfferingIntensityCode(offeringIntensity: string): string {
@@ -111,4 +135,18 @@ export function getFormattedPostalCode(
     return postalCodeCharArray.join("");
   }
   return postalCode;
+}
+
+/**
+ * Parse a whole number which is combined with decimal places identified by {@link decimalPlaces}.
+ * example: value = 12345, decimalPlaces = 2 => returns 123.45.
+ * @param value the combined numeric value to be parsed as decimal.
+ * @param decimalPlaces the number of desired decimal places.
+ * @returns the parsed decimal value.
+ */
+export function parseCombinedDecimalNumber(
+  value: number,
+  decimalPlaces: number,
+): number {
+  return value / 10 ** decimalPlaces;
 }

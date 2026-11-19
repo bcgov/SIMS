@@ -214,6 +214,11 @@ objects:
                     secretKeyRef:
                       key: ${ESDC_ENVIRONMENT_CODE_NAME_KEY}
                       name: ${QUEUE_CONSUMERS_SECRET_NAME}
+                - name: FINANCE_OUTPUT_FOLDER
+                  valueFrom:
+                    secretKeyRef:
+                      key: ${FINANCE_OUTPUT_FOLDER_NAME_KEY}
+                      name: ${QUEUE_CONSUMERS_SECRET_NAME}
                 - name: ATBC_LOGIN_ENDPOINT
                   value: ${ATBC_LOGIN_ENDPOINT}
                 - name: ATBC_ENDPOINT
@@ -522,6 +527,8 @@ parameters:
     value: esdc-response-folder
   - name: ESDC_ENVIRONMENT_CODE_NAME_KEY
     value: esdc-environment-code
+  - name: FINANCE_OUTPUT_FOLDER_NAME_KEY
+    value: finance-output-folder
   - name: APPLICATION_ARCHIVE_DAYS
     require: true
   - name: CAS_BASE_URL_NAME_KEY

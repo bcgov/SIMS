@@ -3,14 +3,16 @@ import { CustomNamedError, processInParallel } from "@sims/utilities";
 import { ConfigService, ESDCIntegrationConfig } from "@sims/utilities/config";
 import { LoggerService, ProcessSummary } from "@sims/utilities/logger";
 import {
+  IndividualReturnedLoan,
   ReturnedLoansDownloadResponse,
-  ReturnedLoansResponseRecordType,
   ReturnedLoansResponseResult,
 } from "./models/returned-loans-response.model";
 import { ReturnedLoansResponseIntegrationService } from "./returned-loans-response.integration.service";
-import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-files/returned-loans-response-file-detail";
 import { ReturnedLoansResponseFileAddressDetail } from "./returned-loans-response-files/returned-loans-response-file-address-detail";
 import { ReturnedLoansResponseFileReturnedLoanDetail } from "./returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
+import { DefaultedStudentLoansProcessingService } from "../../finance";
+import { FeatureTogglesService } from "@sims/services";
+import { DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE } from "@sims/integrations/constants";
 
 /**
  * Processes the returned loans response file(s)
@@ -19,12 +21,16 @@ import { ReturnedLoansResponseFileReturnedLoanDetail } from "./returned-loans-re
 @Injectable()
 export class ReturnedLoansResponseProcessingService {
   private readonly esdcConfig: ESDCIntegrationConfig;
+  private readonly featureToggles: string[];
   constructor(
     configService: ConfigService,
     private readonly integrationService: ReturnedLoansResponseIntegrationService,
+    private readonly defaultedStudentLoansProcessingService: DefaultedStudentLoansProcessingService,
     private readonly logger: LoggerService,
+    featureToggleService: FeatureTogglesService,
   ) {
     this.esdcConfig = configService.esdcIntegration;
+    this.featureToggles = featureToggleService.featureToggles;
   }
 
   /**
@@ -90,7 +96,7 @@ export class ReturnedLoansResponseProcessingService {
       downloadResponse =
         await this.integrationService.downloadResponseFile(remoteFilePath);
       fileProcessSummary.info(
-        `The downloaded file ${remoteFilePath} contains ${downloadResponse.detailRecords.length} detail records.`,
+        `The downloaded file ${remoteFilePath} contains ${downloadResponse.addressDetailRecords.length} address detail records, ${downloadResponse.returnedLoanDetailRecords.length} returned loan detail records, and ${downloadResponse.unknownRecords.length} unknown records.`,
       );
     } catch (error: unknown) {
       // Abort the process nicely not throwing an exception and
@@ -105,59 +111,131 @@ export class ReturnedLoansResponseProcessingService {
       }
       return;
     }
-
-    for (const detailRecord of downloadResponse.detailRecords) {
+    const { addressDetailRecords, returnedLoanDetailRecords, unknownRecords } =
+      downloadResponse;
+    if (unknownRecords.length) {
+      fileProcessSummary.warn(
+        `The downloaded file ${remoteFilePath} contains records with unknown record types: ${downloadResponse.unknownRecords.map((r) => r.recordType).join(", ")}.`,
+      );
+    }
+    // TODO: When the details records are being persisted, business must confirm if we should continue processing
+    // when there are no returned loan detail records but there are address detail records.
+    if (!returnedLoanDetailRecords.length) {
+      fileProcessSummary.error(
+        `The downloaded file ${remoteFilePath} contains no returned loan detail records to process.`,
+      );
+      return;
+    }
+    // Create a map of returned loan address detail records keyed by SIN to process returned loan detail records.
+    const returnedLoanAddressDetailRecordsMap: Map<
+      string,
+      ReturnedLoansResponseFileAddressDetail
+    > = new Map(addressDetailRecords.map((record) => [record.sin, record]));
+    // TODO: The individual and returned loan details should be persisted to the database.
+    const individualReturnedLoans: IndividualReturnedLoan[] = [];
+    for (const returnedLoanDetailRecord of returnedLoanDetailRecords) {
       const recordProcessSummary = new ProcessSummary();
       fileProcessSummary.children(recordProcessSummary);
-
       // Process the returned loans record.
-      this.processRecord(detailRecord, recordProcessSummary);
+      this.processReturnedLoan(
+        returnedLoanDetailRecord,
+        returnedLoanAddressDetailRecordsMap,
+        individualReturnedLoans,
+        recordProcessSummary,
+      );
     }
-
     fileProcessSummary.info(
       `Finished processing records for the returned loans response file ${remoteFilePath}.`,
     );
-
-    // TODO: When the archive requirements are defined, implement the logic to archive the processed file.
+    // Check if the defaulted student loans feature toggle is enabled and process accordingly.
+    if (this.featureToggles?.includes(DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE)) {
+      fileProcessSummary.info(
+        `Begin defaulted student loans file generation for returned loans response file ${remoteFilePath}.`,
+      );
+      await this.defaultedStudentLoansProcessingService.processDefaultedStudentLoans(
+        individualReturnedLoans,
+        fileProcessSummary,
+      );
+      fileProcessSummary.info(
+        "Defaulted student loans file generation completed.",
+      );
+    }
   }
 
   /**
-   * Process a returned loans response file detail record.
-   * @param detailRecord detail record to process.
+   * Process a returned loans response record.
+   * @param returnedLoanDetailRecord returned loan detail record to process.
+   * @param returnedLoanAddressDetailRecordsMap map of returned loan address detail records keyed by SIN.
+   * @param individualReturnedLoans array to collect processed individual returned loans.
    * @param processSummary process summary for logging the processing steps and errors.
    */
-  private processRecord(
-    detailRecord: ReturnedLoansResponseFileDetail,
+  private processReturnedLoan(
+    returnedLoanDetailRecord: ReturnedLoansResponseFileReturnedLoanDetail,
+    returnedLoanAddressDetailRecordsMap: Map<
+      string,
+      ReturnedLoansResponseFileAddressDetail
+    >,
+    individualReturnedLoans: IndividualReturnedLoan[],
     processSummary: ProcessSummary,
   ): void {
-    switch (detailRecord.recordType) {
-      // TODO: Implement the processing logic for address and returned loan detail records.
-      case ReturnedLoansResponseRecordType.AddressDetail: {
-        const addressDetailRecord = new ReturnedLoansResponseFileAddressDetail(
-          detailRecord.line,
-          detailRecord.lineNumber,
-        );
-        processSummary.info(
-          `Received address detail record at line ${addressDetailRecord.lineNumber}.`,
-        );
-        break;
-      }
-      case ReturnedLoansResponseRecordType.ReturnedLoanDetail: {
-        const returnedLoanDetailRecord =
-          new ReturnedLoansResponseFileReturnedLoanDetail(
-            detailRecord.line,
-            detailRecord.lineNumber,
-          );
-        processSummary.info(
-          `Received returned loan detail record with return reason ${returnedLoanDetailRecord.returnReason} at line ${returnedLoanDetailRecord.lineNumber}.`,
-        );
-        break;
-      }
-      default:
-        processSummary.info(
-          `Invalid detail record type ${detailRecord.recordType} at line ${detailRecord.lineNumber}.`,
-        );
-        return;
+    processSummary.info(
+      `Received returned loan detail record with return reason ${returnedLoanDetailRecord.returnReason} at line ${returnedLoanDetailRecord.lineNumber}.`,
+    );
+    const canProcess = this.validateReturnedLoanDetail(
+      returnedLoanDetailRecord,
+      returnedLoanAddressDetailRecordsMap,
+      processSummary,
+    );
+    if (!canProcess) {
+      // Skip processing this returned loan detail record if it cannot be processed due to validation errors.
+      return;
     }
+    const addressDetailRecord = returnedLoanAddressDetailRecordsMap.get(
+      returnedLoanDetailRecord.sin,
+    );
+
+    individualReturnedLoans.push({
+      individual: addressDetailRecord,
+      returnedLoan: returnedLoanDetailRecord,
+    });
+  }
+
+  /**
+   * Validates a returned loan detail and it's associated address detail record to identify if it can be processed.
+   * @param returnedLoanDetailRecord returned loan detail record to validate.
+   * @param returnedLoanAddressDetailRecordsMap map of returned loan address detail records keyed by SIN.
+   * @param processSummary process summary for logging the validation steps and errors.
+   * @returns true if the returned loan detail record can be processed, false otherwise.
+   */
+  private validateReturnedLoanDetail(
+    returnedLoanDetailRecord: ReturnedLoansResponseFileReturnedLoanDetail,
+    returnedLoanAddressDetailRecordsMap: Map<
+      string,
+      ReturnedLoansResponseFileAddressDetail
+    >,
+    processSummary: ProcessSummary,
+  ): boolean {
+    const addressDetailRecord = returnedLoanAddressDetailRecordsMap.get(
+      returnedLoanDetailRecord.sin,
+    );
+    if (!addressDetailRecord) {
+      processSummary.error(
+        `No address detail record found for the returned loan detail record SIN at line ${returnedLoanDetailRecord.lineNumber}.`,
+      );
+      return false;
+    }
+    const validationErrors = returnedLoanDetailRecord.validate();
+    if (validationErrors.length) {
+      processSummary.error(
+        `Validation errors for returned loan detail record at line ${returnedLoanDetailRecord.lineNumber}: ${validationErrors.join(", ")}.`,
+      );
+    }
+    const addressValidationErrors = addressDetailRecord.validate();
+    if (addressValidationErrors.length) {
+      processSummary.error(
+        `Validation errors for address detail record at line ${addressDetailRecord.lineNumber}: ${addressValidationErrors.join(", ")}.`,
+      );
+    }
+    return !validationErrors.length && !addressValidationErrors.length;
   }
 }

@@ -51,3 +51,9 @@ export const T4A_FILE_GROUP_NAME = "Tax Documents";
  * Default maximum number of file uploads per batch for a T4A upload enqueuer job.
  */
 export const DEFAULT_MAX_FILE_UPLOADS_PER_BATCH = 100;
+
+/**
+ * Feature toggle for enabling the defaulted student loans file generation functionality.
+ */
+export const DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE =
+  "DEFAULTED_STUDENT_LOANS_FILE_GENERATION";

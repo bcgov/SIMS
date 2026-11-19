@@ -17,4 +17,16 @@ export class ReturnedLoansResponseFileDetail extends ReturnedLoansResponseFileRe
   get sin(): string {
     return this.line.substring(2, 11).trim();
   }
+
+  /**
+   * Validate the data to sanitize the record.
+   * @returns validation errors if any, otherwise an empty array.
+   */
+  validate(): string[] {
+    const errors: string[] = [];
+    if (!this.sin) {
+      errors.push("Invalid SIN");
+    }
+    return errors;
+  }
 }

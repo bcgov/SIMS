@@ -1,4 +1,6 @@
+import { ReturnedLoansResponseFileAddressDetail } from "../returned-loans-response-files/returned-loans-response-file-address-detail";
 import { ReturnedLoansResponseFileDetail } from "../returned-loans-response-files/returned-loans-response-file-detail";
+import { ReturnedLoansResponseFileReturnedLoanDetail } from "../returned-loans-response-files/returned-loans-response-file-returned-loan-detail";
 
 /**
  * Returned loans response record type.
@@ -11,6 +13,25 @@ export enum ReturnedLoansResponseRecordType {
 }
 
 /**
+ * Interest rate type of a returned loan.
+ * Field: RTG-DET-INT-RATE-TYPE.
+ */
+export enum ReturnedLoanInterestRateType {
+  /**
+   * Fixed interest rate.
+   */
+  Fixed = "F",
+  /**
+   * Variable interest rate.
+   */
+  Variable = "V",
+  /**
+   * Value sent for class A loans (space in the file trimmed to empty string).
+   */
+  None = "",
+}
+
+/**
  * Date format used in the returned loans response file.
  * Official document states the format as CCYYMMDD which corresponds to YYYYMMDD.
  */
@@ -20,7 +41,9 @@ export const RETURNED_LOANS_RESPONSE_DATE_FORMAT = "YYYYMMDD";
  * Returned loans response downloaded file.
  */
 export interface ReturnedLoansDownloadResponse {
-  detailRecords: ReturnedLoansResponseFileDetail[];
+  addressDetailRecords: ReturnedLoansResponseFileAddressDetail[];
+  returnedLoanDetailRecords: ReturnedLoansResponseFileReturnedLoanDetail[];
+  unknownRecords: ReturnedLoansResponseFileDetail[];
 }
 
 /**
@@ -28,4 +51,49 @@ export interface ReturnedLoansDownloadResponse {
  */
 export interface ReturnedLoansResponseResult {
   receivedFiles: number;
+}
+
+/**
+ * Returned loan individual information.
+ */
+export interface ReturnedLoanIndividual {
+  sin: string;
+  lastName: string;
+  initialName: string;
+  firstName: string;
+  dateOfBirth: Date;
+  gender: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  provinceCode: string;
+  country: string;
+  postalCode: string;
+  homePhone: string;
+  addressEffectiveDate: Date;
+}
+
+/**
+ * Returned loan information.
+ */
+export interface ReturnedLoan {
+  consolidationDate: Date;
+  interestRateType: string;
+  fixedInterestRate: number;
+  variableInterestSpread: number;
+  totalPrincipalOutstanding: number;
+  interestOwingFromDate: Date;
+  totalInterestOutstanding: number;
+  interestOwingToDate: Date;
+  returnReason: string;
+  returnEventDate: Date;
+  debtAcknowledgementDate: Date;
+}
+
+/**
+ * Individual returned loan information.
+ */
+export interface IndividualReturnedLoan {
+  individual: ReturnedLoanIndividual;
+  returnedLoan: ReturnedLoan;
 }

@@ -117,6 +117,10 @@ export interface ESDCIntegrationConfig {
   fileOverdueDays: number;
 }
 
+export interface FinanceIntegrationConfig {
+  ftpOutputFolder: string;
+}
+
 export interface SFASIntegrationConfig {
   ftpReceiveFolder: string;
   ftpSendFolder: string;

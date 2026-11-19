@@ -15,6 +15,7 @@ import Client from "ssh2-sftp-client";
 import { join } from "node:path";
 import { ReturnedLoansResponseIntegrationScheduler } from "../returned-loans-response-integration.scheduler";
 import { ReturnedLoansResponseRecordType } from "@sims/integrations/esdc-integration";
+import { DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE } from "@sims/integrations/constants";
 
 const OTH_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.OTH.D2026222.001";
 const PDD_RETURNED_LOANS_RESPONSE_FILE = "EDU.PBC.RTG.PDD.D2026222.001";
@@ -32,6 +33,7 @@ describe(
         __dirname,
         "returned-loans-response-files",
       );
+      process.env.FEATURE_TOGGLES = DEFAULTED_STUDENT_LOANS_FEATURE_TOGGLE;
       const { nestApplication, sshClientMock } = await createTestingAppModule();
       app = nestApplication;
       sftpClientMock = sshClientMock;
@@ -164,8 +166,8 @@ describe(
     );
 
     it(
-      "Should log error for the detail record and continue to process other detail record(s) when the returned loans response file" +
-        " has 10 detail records where the detail record at line 3 has invalid record type.",
+      "Should log warning for the unknown detail record and continue to process other detail record(s) when the returned loans response file" +
+        " has unknown detail record at line 3.",
       async () => {
         // Arrange
         const loanRecordTypeSearchSuffix = "621604933";
@@ -194,6 +196,8 @@ describe(
         expect(result).toStrictEqual([
           "Process finalized with success.",
           "Received files: 1.",
+          "Attention, process finalized with success but some errors and/or warnings messages may require some attention.",
+          "Error(s): 0, Warning(s): 1, Info: 20",
         ]);
         const downloadedFile = join(
           process.env.ESDC_RESPONSE_FOLDER,
@@ -203,12 +207,71 @@ describe(
         expect(
           mockedJob.containLogMessages([
             "Received 1 returned loans response file(s) to process.",
-            `The downloaded file ${downloadedFile} contains 10 detail records.`,
-            "Received address detail record at line 2.",
-            "Invalid detail record type 20 at line 3.",
-            "Received address detail record at line 4.",
+            `The downloaded file ${downloadedFile} contains 5 address detail records, 4 returned loan detail records, and 1 unknown records.`,
+            `The downloaded file ${downloadedFile} contains records with unknown record types: 20.`,
             "Received returned loan detail record with return reason A270 at line 5.",
+            "Received returned loan detail record with return reason A270 at line 7.",
+            "Received returned loan detail record with return reason HRDC at line 9.",
+            "Received returned loan detail record with return reason HRDC at line 11.",
             `Finished processing records for the returned loans response file ${downloadedFile}.`,
+            `Begin defaulted student loans file generation for returned loans response file ${downloadedFile}`,
+            "Processing 2 returned loan(s) for defaulted student loans file generation.",
+            "Defaulted student loans file generation completed.",
+          ]),
+        ).toBe(true);
+        // Assert that the file is not expected to be archived on SFTP.
+        expect(sftpClientMock.rename).not.toHaveBeenCalled();
+      },
+    );
+
+    it(
+      "Should log error and continue to process other detail record(s) when the returned loans response file" +
+        " has a detail record at line 3 without a matching address record for the customer.",
+      async () => {
+        // Arrange
+        const loanRecordTypeSearchSuffix = "621604933";
+        const loanRecordTypeSearch = `${ReturnedLoansResponseRecordType.AddressDetail}${loanRecordTypeSearchSuffix}`;
+        // Change the SIN in the address detail record to simulate a missing matching address for the customer.
+        const loanRecordTypeReplace = `${ReturnedLoansResponseRecordType.AddressDetail}621604939`;
+        mockDownloadFiles(
+          sftpClientMock,
+          [OTH_RETURNED_LOANS_RESPONSE_FILE],
+          (fileContent: string) => {
+            const file = getStructuredRecords(fileContent);
+            file.records[0] = file.records[0].replace(
+              loanRecordTypeSearch,
+              loanRecordTypeReplace,
+            );
+            return createFileFromStructuredRecords(file);
+          },
+        );
+        // Queued job.
+        const mockedJob = mockBullMQJob<void>();
+
+        // Act/Assert
+        await expect(processor.process(mockedJob.job)).rejects.toThrow(
+          "One or more errors were reported during the process, please see logs for details.",
+        );
+
+        const downloadedFile = join(
+          process.env.ESDC_RESPONSE_FOLDER,
+          OTH_RETURNED_LOANS_RESPONSE_FILE,
+        );
+        // Check for the log messages.
+        expect(
+          mockedJob.containLogMessages([
+            "Received 1 returned loans response file(s) to process.",
+            `The downloaded file ${downloadedFile} contains 5 address detail records, 5 returned loan detail records, and 0 unknown records.`,
+            "Received returned loan detail record with return reason A270 at line 3.",
+            "Received returned loan detail record with return reason A270 at line 5.",
+            "Received returned loan detail record with return reason A270 at line 7.",
+            "Received returned loan detail record with return reason HRDC at line 9.",
+            "Received returned loan detail record with return reason HRDC at line 11.",
+            `Finished processing records for the returned loans response file ${downloadedFile}.`,
+            `Begin defaulted student loans file generation for returned loans response file ${downloadedFile}`,
+            "Processing 2 returned loan(s) for defaulted student loans file generation.",
+            "Defaulted student loans file generation completed.",
+            "No address detail record found for the returned loan detail record SIN at line 3.",
           ]),
         ).toBe(true);
         // Assert that the file is not expected to be archived on SFTP.
@@ -238,18 +301,16 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "Received 1 returned loans response file(s) to process.",
-          `The downloaded file ${downloadedFile} contains 10 detail records.`,
-          "Received address detail record at line 2.",
+          `The downloaded file ${downloadedFile} contains 5 address detail records, 5 returned loan detail records, and 0 unknown records.`,
           "Received returned loan detail record with return reason A270 at line 3.",
-          "Received address detail record at line 4.",
           "Received returned loan detail record with return reason A270 at line 5.",
-          "Received address detail record at line 6.",
           "Received returned loan detail record with return reason A270 at line 7.",
-          "Received address detail record at line 8.",
           "Received returned loan detail record with return reason HRDC at line 9.",
-          "Received address detail record at line 10.",
           "Received returned loan detail record with return reason HRDC at line 11.",
           `Finished processing records for the returned loans response file ${downloadedFile}.`,
+          `Begin defaulted student loans file generation for returned loans response file ${downloadedFile}.`,
+          "Processing 3 returned loan(s) for defaulted student loans file generation.",
+          "Defaulted student loans file generation completed.",
         ]),
       ).toBe(true);
       // Assert that the file is not expected to be archived on SFTP.
@@ -278,18 +339,15 @@ describe(
       expect(
         mockedJob.containLogMessages([
           "Received 1 returned loans response file(s) to process.",
-          `The downloaded file ${downloadedFile} contains 10 detail records.`,
-          "Received address detail record at line 2.",
+          `The downloaded file ${downloadedFile} contains 5 address detail records, 5 returned loan detail records, and 0 unknown records.`,
           "Received returned loan detail record with return reason DIR at line 3.",
-          "Received address detail record at line 4.",
           "Received returned loan detail record with return reason DIR at line 5.",
-          "Received address detail record at line 6.",
           "Received returned loan detail record with return reason PD at line 7.",
-          "Received address detail record at line 8.",
           "Received returned loan detail record with return reason PD at line 9.",
-          "Received address detail record at line 10.",
           "Received returned loan detail record with return reason PD at line 11.",
           `Finished processing records for the returned loans response file ${downloadedFile}.`,
+          `Begin defaulted student loans file generation for returned loans response file ${downloadedFile}.`,
+          "No eligible returned loans to process for defaulted student loans file generation.",
         ]),
       ).toBe(true);
       // Assert that the file is not expected to be archived on SFTP.
