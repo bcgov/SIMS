@@ -9,6 +9,33 @@ export interface FixedFormatFileLine {
 }
 
 /**
+ * Represents a single fixed format line in an integration file.
+ */
+export abstract class IntegrationFileLine implements FixedFormatFileLine {
+  getFixedFormat(): string {
+    try {
+      return this.getFixedFormatLine();
+    } catch (error) {
+      throw new Error(
+        `Unexpected error generating fixed format line for context: ${JSON.stringify(this.getContext())}`,
+        { cause: error },
+      );
+    }
+  }
+  /**
+   * Fixed format line value.
+   * Derived classes should implement this method to provide the fixed format line.
+   * @returns The fixed format line as a string.
+   */
+  protected abstract getFixedFormatLine(): string;
+  /**
+   * Context information typically includes key/unique details about line to help identify it in logs or error messages.
+   * @returns The context information as a string.
+   */
+  protected abstract getContext(): Record<string, string | number | Date>;
+}
+
+/**
  * Enumeration for SSH2 SFTP item types.
  */
 export enum SFTPItemType {
