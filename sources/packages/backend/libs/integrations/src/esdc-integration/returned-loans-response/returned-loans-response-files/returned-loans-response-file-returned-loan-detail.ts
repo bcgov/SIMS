@@ -3,7 +3,7 @@ import {
   DECIMAL_PLACES_96V99,
   DECIMAL_PLACES_99V94,
   DECIMAL_PLACES_9V94,
-  parseCombinedDecimalString,
+  parseCombinedDecimalNumber,
 } from "@sims/utilities";
 import { ReturnedLoansResponseFileDetail } from "./returned-loans-response-file-detail";
 import { ReturnedLoanInterestRateType } from "../models/returned-loans-response.model";
@@ -44,7 +44,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Legacy data type: 99V9(4).
    */
   get fixedInterestRate(): number {
-    return parseCombinedDecimalString(
+    return parseCombinedDecimalNumber(
       +this.line.substring(41, 47),
       DECIMAL_PLACES_99V94,
     );
@@ -57,7 +57,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Legacy data type: 9V9(4).
    */
   get variableInterestSpread(): number {
-    return parseCombinedDecimalString(
+    return parseCombinedDecimalNumber(
       +this.line.substring(47, 52),
       DECIMAL_PLACES_9V94,
     );
@@ -69,7 +69,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Legacy data type: 9(6)V99.
    */
   get totalPrincipalOutstanding(): number {
-    return parseCombinedDecimalString(
+    return parseCombinedDecimalNumber(
       +this.line.substring(52, 60),
       DECIMAL_PLACES_96V99,
     );
@@ -89,7 +89,7 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
    * Legacy data type: 9(5)V99.
    */
   get totalInterestOutstanding(): number {
-    return parseCombinedDecimalString(
+    return parseCombinedDecimalNumber(
       +this.line.substring(68, 75),
       DECIMAL_PLACES_95V99,
     );

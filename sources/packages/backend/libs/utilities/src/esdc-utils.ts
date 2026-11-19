@@ -138,13 +138,13 @@ export function getFormattedPostalCode(
 }
 
 /**
- * Parse a number string which is combined with decimal places.
- * example: value = 12345, decimalPlaces = 2 => returns 123.45
- * @param value the numeric value to be parsed.
- * @param decimalPlaces the number of decimal places to divide by.
+ * Parse a whole number which is combined with decimal places identified by {@link decimalPlaces}.
+ * example: value = 12345, decimalPlaces = 2 => returns 123.45.
+ * @param value the combined numeric value to be parsed as decimal.
+ * @param decimalPlaces the number of desired decimal places.
  * @returns the parsed decimal value.
  */
-export function parseCombinedDecimalString(
+export function parseCombinedDecimalNumber(
   value: number,
   decimalPlaces: number,
 ): number {
