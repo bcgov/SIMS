@@ -28,9 +28,42 @@ SET
 WHERE
   effective_end_date_before_removal IS NOT NULL;
 
--- Drop the backup column from education_programs and education_programs_history tables.
+-- Reactivate the programs deactivated due to an expired effective end date,
+-- only when the is_active was not changed since the deactivation (last updated by the system user).
+-- History trigger intentionally kept enabled to audit the change.
+UPDATE sims.education_programs
+SET
+  is_active = TRUE,
+  is_active_updated_by = NULL,
+  is_active_updated_on = NULL,
+  updated_at = NOW(),
+  modifier = (
+    SELECT
+      id
+    FROM
+      sims.users
+    WHERE
+      -- System user.
+      user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+  )
+WHERE
+  is_active = FALSE
+  AND deactivated_on_removal = TRUE
+  AND is_active_updated_by = (
+    SELECT
+      id
+    FROM
+      sims.users
+    WHERE
+      -- System user.
+      user_name = '8fb44f70-6ce6-11ed-b307-8743a2da47ef@system'
+  );
+
+-- Drop the backup columns from education_programs and education_programs_history tables.
 ALTER TABLE sims.education_programs
-DROP COLUMN effective_end_date_before_removal;
+DROP COLUMN effective_end_date_before_removal,
+DROP COLUMN deactivated_on_removal;
 
 ALTER TABLE sims.education_programs_history
-DROP COLUMN effective_end_date_before_removal;
+DROP COLUMN effective_end_date_before_removal,
+DROP COLUMN deactivated_on_removal;
