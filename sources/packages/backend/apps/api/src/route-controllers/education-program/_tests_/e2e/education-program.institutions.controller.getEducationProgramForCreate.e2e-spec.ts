@@ -66,6 +66,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramForCrea
             configurationId: mostRecentProgramConfiguration.id,
             programYearName:
               mostRecentProgramConfiguration.programYear.programYear,
+            hasActiveProgramYearConfiguration: true,
             programData: {
               context: {
                 // No program exists yet, hence no offerings.

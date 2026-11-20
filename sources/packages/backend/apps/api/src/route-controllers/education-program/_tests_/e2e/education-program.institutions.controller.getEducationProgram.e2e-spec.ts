@@ -78,6 +78,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgram", () =
           id: savedProgram.id,
           configurationId: mostRecentProgramConfiguration.id,
           programYearName: mostRecentProgramConfiguration.programYear.programYear,
+          hasActiveProgramYearConfiguration: true,
           programData: {
             ...savedProgram.programData,
             context: {

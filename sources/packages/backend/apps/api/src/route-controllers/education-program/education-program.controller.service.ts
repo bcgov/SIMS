@@ -7,8 +7,9 @@ import {
 import {
   EducationProgramService,
   InstitutionUserAuthorizations,
-  EducationProgramSaveService,
+  EducationProgramConfigurationRetrievalService,
   ProgramConfigurationCriteria,
+  RequiredProgramConfiguration,
 } from "../../services";
 import {
   EducationProgramAPIOutDTO,
@@ -28,7 +29,7 @@ import { OptionItemAPIOutDTO } from "../models/common.dto";
 export class EducationProgramControllerService {
   constructor(
     private readonly programService: EducationProgramService,
-    private readonly educationProgramSaveService: EducationProgramSaveService,
+    private readonly educationProgramConfigurationRetrievalService: EducationProgramConfigurationRetrievalService,
     private readonly institutionService: InstitutionService,
   ) {}
 
@@ -57,7 +58,11 @@ export class EducationProgramControllerService {
     // for creation, edit, and renewal operations.
     const programConfiguration = await this.getEducationProgramConfiguration(
       program.institution.id,
-      { programConfigurationId: program.programConfiguration.id, programId },
+      {
+        requiredConfiguration:
+          RequiredProgramConfiguration.ProgramAssociatedConfiguration,
+        programId,
+      },
       { overrideProgramData: program.programData },
     );
     return {
@@ -90,9 +95,10 @@ export class EducationProgramControllerService {
    * Retrieves the configuration for an education program, including the dynamic
    * program data, visual schema, and validation schema.
    * Allows ensuring the program configuration is retrieved consistently from the same place
-   * for creation, edit, and renewal operations.
+   * for creation, renewal, view, and update operations.
    * @param institutionId the ID of the institution for which the configuration is being retrieved.
-   * @param programConfigurationCriteria the criteria to retrieve the program configuration.
+   * @param programConfigurationCriteria the criteria to retrieve the program configuration,
+   * based on the required configuration.
    * @param options additional options for retrieving the configuration.
    * - `overrideProgramData` optional program data that should override the default configuration.
    * @returns the education program configuration, including dynamic program data, visual schema, and validation schema.
@@ -105,13 +111,15 @@ export class EducationProgramControllerService {
     },
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
     const configuration =
-      await this.educationProgramSaveService.getEducationProgramConfiguration(
+      await this.educationProgramConfigurationRetrievalService.getEducationProgramConfiguration(
         institutionId,
         programConfigurationCriteria,
       );
     return {
       configurationId: configuration.configurationId,
       programYearName: configuration.programYearName,
+      hasActiveProgramYearConfiguration:
+        configuration.hasActiveProgramYearConfiguration,
       programData: {
         ...options?.overrideProgramData,
         context: {

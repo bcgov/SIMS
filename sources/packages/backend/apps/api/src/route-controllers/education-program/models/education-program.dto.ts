@@ -59,6 +59,11 @@ export class EducationProgramDataAPIOutDTO {
 export class EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
   programYearName: string;
+  /**
+   * Indicates if the program year of the configuration has an active configuration,
+   * which is required for programs from the program year to be edited.
+   */
+  hasActiveProgramYearConfiguration: boolean;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -116,6 +121,11 @@ export class CreateEducationProgramAPIInDTO {
  * and the configuration it was filled in against.
  */
 export class UpdateEducationProgramAPIInDTO {
+  /**
+   * Program configuration ID against which the program is being updated.
+   */
+  @IsPositive()
+  programConfigurationId: number;
   /**
    * Dynamic program data, validated later against the configuration's
    * validation schema (AJV). Only the shape and size are checked here.

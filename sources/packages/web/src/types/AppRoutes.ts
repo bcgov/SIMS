@@ -69,6 +69,7 @@ export enum AppRoutes {
   InstitutionStudentSearch = "student-search",
   InstitutionManagePrograms = "manage-programs/program-year/:programYearId?",
   InstitutionManageProgramsView = "manage-programs/program-view/:programId",
+  InstitutionManageProgramsEdit = "manage-programs/program-edit/:programId",
   InstitutionManageProgramsRenew = "manage-programs/program-renew/:programId",
   InstitutionManageProgramsCreate = "manage-programs/program-year/:programYearId/program-create",
   InstitutionProfile = "institution-profile",

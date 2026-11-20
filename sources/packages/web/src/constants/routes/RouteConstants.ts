@@ -104,6 +104,7 @@ export const InstitutionRoutesConst = {
   RENEW_PROGRAM: Symbol(),
   CREATE_PROGRAM: Symbol(),
   VIEW_PROGRAM: Symbol(),
+  EDIT_PROGRAM: Symbol(),
   STUDENT_PROFILE: Symbol(),
   STUDENT_DETAILS: Symbol(),
   STUDENT_APPLICATIONS: Symbol(),

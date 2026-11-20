@@ -13,7 +13,6 @@ import {
   IsNull,
   Like,
   Not,
-  Raw,
   Repository,
 } from "typeorm";
 import {
@@ -34,8 +33,6 @@ export class EducationProgramManagerService {
   constructor(
     @InjectRepository(EducationProgram)
     private readonly educationProgramRepo: Repository<EducationProgram>,
-    @InjectRepository(EducationProgramConfiguration)
-    private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
     @InjectRepository(ProgramYear)
     private readonly programYearRepo: Repository<ProgramYear>,
   ) {}
@@ -64,62 +61,6 @@ export class EducationProgramManagerService {
       .groupBy("programYear.id")
       .orderBy("programYear.startDate", "DESC")
       .getRawMany<ProgramYearWithConfiguration>();
-  }
-
-  /**
-   * Get the next active education program configuration for renewal based
-   * on the current program year.
-   * The next program year is the one immediately after the current program
-   * year, and its active configuration is the one expected to be used for
-   * renewals.
-   * @param currentProgramYearId the ID of the current program year to find
-   * the next education program configuration.
-   * @returns the active education program configuration of the next program
-   * year, or null if there is no next program year or it has no active
-   * configuration.
-   */
-  getNextProgramConfigurationForRenewal(
-    currentProgramYearId: number,
-  ): Promise<EducationProgramConfiguration | null> {
-    if (!currentProgramYearId) {
-      throw new Error(
-        "Current program year ID is required to find the next program configuration.",
-      );
-    }
-    // Subquery to find the program year immediately after the current program year.
-    const nextProgramYearQuery = this.programYearRepo
-      .createQueryBuilder("nextProgramYear")
-      .select("nextProgramYear.id")
-      .innerJoin(
-        ProgramYear,
-        "currentProgramYear",
-        "currentProgramYear.id = :currentProgramYearId",
-      )
-      .where("nextProgramYear.startDate > currentProgramYear.startDate")
-      .orderBy("nextProgramYear.startDate", "ASC")
-      .limit(1);
-    return this.educationProgramConfigurationRepo.findOne({
-      select: {
-        id: true,
-        isActive: true,
-        programYear: {
-          id: true,
-          startDate: true,
-        },
-      },
-      relations: {
-        programYear: true,
-      },
-      where: {
-        isActive: true,
-        programYear: {
-          id: Raw(
-            (alias) => `${alias} = (${nextProgramYearQuery.getQuery()})`,
-            { currentProgramYearId },
-          ),
-        },
-      },
-    });
   }
 
   /**
