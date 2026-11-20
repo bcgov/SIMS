@@ -229,7 +229,6 @@ export class ApplicationStudentsController extends BaseController {
       "Selected offering id is invalid or " +
       "invalid study dates or selected study start date is not within the program year or " +
       "the education program is not active or " +
-      "the education program is expired or " +
       "or INVALID_OPERATION_IN_THE_CURRENT_STATUS or ASSESSMENT_INVALID_OPERATION_IN_THE_CURRENT_STATE " +
       "or INSTITUTION_LOCATION_NOT_VALID or OFFERING_NOT_VALID " +
       "or Invalid offering intensity " +
@@ -321,7 +320,6 @@ export class ApplicationStudentsController extends BaseController {
       "Program year is not active " +
       "or selected offering ID is invalid " +
       "or the education program is not active " +
-      "or the education program is expired " +
       "or invalid offering intensity " +
       "or an application change request is already in progress " +
       "or application is not in the correct status to be submitted " +

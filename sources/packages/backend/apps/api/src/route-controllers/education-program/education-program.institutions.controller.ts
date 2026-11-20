@@ -52,7 +52,7 @@ import { EducationProgramService } from "../../services/education-program/educat
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
 import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
-import { CustomNamedError, isSameOrAfterDate } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
 import {
   EducationProgramData,
@@ -116,7 +116,6 @@ export class EducationProgramInstitutionsController extends BaseController {
         credentialType: program.credentialType,
         programStatus: program.programStatus,
         isActive: program.isActive,
-        isExpired: isSameOrAfterDate(program.effectiveEndDate, new Date()),
         totalOfferings: program.totalOfferings,
         locationId: program.locationId,
         locationName: program.locationName,
@@ -317,7 +316,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Education program configuration not found or not active or " +
-      "education program cannot be edited when inactive or expired or " +
+      "education program cannot be edited when inactive or " +
       "duplicate SABC code.",
   })
   @ApiNotFoundResponse({
@@ -461,7 +460,6 @@ export class EducationProgramInstitutionsController extends BaseController {
         sabcCode: program.sabcCode,
         programStatus: program.programStatus,
         isActive: program.isActive,
-        isExpired: program.isExpired,
         renewalStatus: program.renewedProgram
           ? ProgramRenewalStatus.Renewed
           : nextProgramConfigurationForRenewal

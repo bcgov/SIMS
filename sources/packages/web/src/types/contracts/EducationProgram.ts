@@ -38,7 +38,6 @@ export interface ProgramOfferingHeader {
   status: ProgramStatus | OfferingStatus;
   assessedBy?: string;
   assessedDate?: Date;
-  effectiveEndDate?: Date; // This field is only for programs.
   locationName: string; // This field is offering specific.
   parentOfferingId?: number;
 }

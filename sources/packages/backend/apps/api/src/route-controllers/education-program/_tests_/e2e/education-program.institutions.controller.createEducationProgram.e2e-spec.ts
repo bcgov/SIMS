@@ -23,7 +23,6 @@ import {
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
 import { IsNull } from "typeorm";
 import {
   GC_NOTIFY_TEMPLATE_IDS,
@@ -160,7 +159,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         intlExchangeProgramEligibility: true,
         programDeclaration: true,
         assessedDate: true,
-        effectiveEndDate: true,
         fieldOfStudyCode: true,
         requirementsByBCITA: true,
         noneOfTheAboveEntranceRequirements: true,
@@ -233,7 +231,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         intlExchangeProgramEligibility: null,
         programDeclaration: programData.programDeclaration,
         assessedDate: null,
-        effectiveEndDate: null,
         fieldOfStudyCode: 15,
         programConfiguration: { id: mostRecentProgramConfiguration.id },
         // A newly created program is its own parent program.
@@ -243,7 +240,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         },
         submittedBy: { id: collegeFUser.id },
         isActive: true,
-        isExpired: false,
       }),
     );
   });
@@ -440,53 +436,9 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
       });
   });
 
-  it("Should create an education program when SABC code passed exists for an expired education program.", async () => {
-    // Arrange
-    await saveEducationProgram(
-      TEST_SABC_CODE,
-      true,
-      getISODateOnlyString(new Date()),
-    );
-    const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
-      appendedProgramData: { sabcCode: TEST_SABC_CODE },
-    });
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    let educationProgramId: number;
-    await request(app.getHttpServer())
-      .post(
-        getEndpoint({
-          programYearId: mostRecentProgramConfiguration.programYear.id,
-        }),
-      )
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.CREATED)
-      .then((response) => {
-        expect(response.body.id).toBeGreaterThan(0);
-        educationProgramId = response.body.id;
-      });
-
-    const educationProgram = await db.educationProgram.findOne({
-      where: { id: educationProgramId },
-    });
-    expect(educationProgram).toEqual(
-      expect.objectContaining({
-        sabcCode: TEST_SABC_CODE,
-      }),
-    );
-  });
-
   it("Should create an education program when SABC code passed exists for an education program flagged as inactive.", async () => {
     // Arrange
-    await saveEducationProgram(
-      TEST_SABC_CODE,
-      false,
-      getISODateOnlyString(addDays(1)),
-    );
+    await saveEducationProgram(TEST_SABC_CODE, false);
     const payload = getCreationPayload(mostRecentProgramConfiguration.id, {
       appendedProgramData: { sabcCode: TEST_SABC_CODE },
     });
@@ -760,13 +712,11 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
    * Saves an education program with parameters.
    * @param sabcCode SABC code.
    * @param isActive is active flag.
-   * @param effectiveEndDate effective end date.
    * @returns an education program.
    */
   async function saveEducationProgram(
     sabcCode: string,
     isActive?: boolean,
-    effectiveEndDate?: string,
   ): Promise<EducationProgram> {
     const educationProgram = createFakeEducationProgram(
       {
@@ -778,7 +728,6 @@ describe("EducationProgramInstitutionsController(e2e)-createEducationProgram", (
         initialValues: {
           sabcCode,
           isActive,
-          effectiveEndDate,
         } as Partial<EducationProgram>,
       },
     );

@@ -25,7 +25,6 @@ import {
   FormSubmissionCancellationReason,
 } from "@sims/sims-db";
 import {
-  Brackets,
   DataSource,
   EntityManager,
   In,
@@ -515,7 +514,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.operatingName",
         "institutionType.id",
         "educationProgram.isActive",
-        "educationProgram.effectiveEndDate",
       ])
       .innerJoin("offerings.educationProgram", "educationProgram")
       .innerJoin("offerings.institutionLocation", "institutionLocation")
@@ -899,7 +897,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "location.id",
         "program.id",
         "program.isActive",
-        "program.effectiveEndDate",
         "offerings.studyStartDate",
         "offerings.studyEndDate",
         "offerings.offeringIntensity",
@@ -974,7 +971,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "educationProgram.deliveredOnline",
         "educationProgram.deliveredOnSite",
         "educationProgram.isActive",
-        "educationProgram.effectiveEndDate",
         "parentOffering.id",
       ])
       .innerJoin("offering.educationProgram", "educationProgram")
@@ -1125,12 +1121,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         OFFERING_NOT_VALID,
       );
     }
-    if (currentOffering.educationProgram.isExpired) {
-      throw new CustomNamedError(
-        "Program is expired to request a change for the offering.",
-        OFFERING_NOT_VALID,
-      );
-    }
 
     const requestedOffering = this.populateProgramOffering(
       educationProgramOffering,
@@ -1188,7 +1178,6 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
         "institution.id",
         "educationProgram.id",
         "educationProgram.isActive",
-        "educationProgram.effectiveEndDate",
       ])
       .innerJoin("offerings.institutionLocation", "location")
       .innerJoin("offerings.educationProgram", "educationProgram")
@@ -1519,7 +1508,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
   }
 
   /**
-   * Gets a list of Program Offerings with the specified status where the Program is active/not expired.
+   * Gets a list of Program Offerings with the specified status where the Program is active.
    * Pagination, sort and search are available on results.
    * @param status the status to filter on.
    * @param paginationOptions pagination options.
@@ -1551,14 +1540,7 @@ export class EducationProgramOfferingService extends RecordDataModelService<Educ
       .innerJoin("offerings.institutionLocation", "institutionLocation")
       .innerJoin("institutionLocation.institution", "institution")
       .where("offerings.offeringStatus = :status", { status })
-      .andWhere("educationProgram.isActive = true")
-      .andWhere(
-        new Brackets((qb) => {
-          qb.where("educationProgram.effectiveEndDate is null").orWhere(
-            "educationProgram.effectiveEndDate > CURRENT_DATE",
-          );
-        }),
-      );
+      .andWhere("educationProgram.isActive = true");
     // Search by offering name.
     if (paginationOptions.searchCriteria) {
       offeringsQuery.andWhere("offerings.name Ilike :searchCriteria", {

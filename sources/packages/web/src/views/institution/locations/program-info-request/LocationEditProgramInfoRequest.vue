@@ -174,11 +174,9 @@ export default defineComponent({
         programInfoRequestStatus: mapProgramInfoChipStatus(
           programRequestData.value.pirStatus,
         ),
-        // When an inactive or expired program is submitted for PIR, the program dropdown should not preselect the program name.
+        // When an inactive program is submitted for PIR, the program dropdown should not preselect the program name.
         selectedProgram:
-          !isReadOnly.value &&
-          (!programRequestData.value.isActiveProgram ||
-            programRequestData.value.isExpiredProgram)
+          !isReadOnly.value && !programRequestData.value.isActiveProgram
             ? null
             : programRequestData.value.selectedProgram,
         // Hide the create program button for read-only user.

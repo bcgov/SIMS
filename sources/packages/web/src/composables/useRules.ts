@@ -10,7 +10,7 @@ const APPLICATION_NUMBER_REGEX = new RegExp(
   String.raw`^\d{${APPLICATION_NUMBER_LENGTH}}$`,
 );
 const { isSINValid, checkMaxCharacters } = useValidators();
-const { isBeforeDateOnly, parseApplicationNumbers } = useFormatters();
+const { parseApplicationNumbers } = useFormatters();
 
 export function useRules() {
   const sinValidationRule = (sin: string) => {
@@ -99,22 +99,6 @@ export function useRules() {
       );
     }
     return "Expiry end date is required.";
-  };
-
-  /**
-   * Check if a date is in the future, considering only the date part.
-   * @param date date value to be validated.
-   * @param fieldName friendly field name to be added to the validation message.
-   * @returns true if the date is in the future, otherwise a validation message.
-   */
-  const checkFutureDateRule = (date: Date | string, fieldName = "Date") => {
-    if (!date) {
-      return `${fieldName} is required.`;
-    }
-    if (!isBeforeDateOnly(new Date(), date)) {
-      return `${fieldName} must be in the future.`;
-    }
-    return true;
   };
 
   /**
@@ -214,7 +198,6 @@ export function useRules() {
     sinValidationRule,
     checkNotesLengthRule,
     checkStringDateFormatRule,
-    checkFutureDateRule,
     checkNullOrEmptyRule,
     checkOnlyDigitsRule,
     checkLengthRule,

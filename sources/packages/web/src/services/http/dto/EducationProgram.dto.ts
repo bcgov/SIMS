@@ -73,8 +73,6 @@ export interface EducationProgramAPIOutDTO extends EducationProgramConfiguration
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
-  effectiveEndDate?: string;
-  isExpired: boolean;
   institutionId: number;
   institutionName: string;
 }
@@ -95,7 +93,6 @@ export interface EducationProgramsSummaryAPIOutDTO {
   locationId: number;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
 }
 
 /**
@@ -151,7 +148,6 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   sabcCode?: string;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
   /**
    * Renewal status of the education program into the next program year.
    * All programs are available for renewal into the next program year,
@@ -197,7 +193,6 @@ export interface StudentEducationProgramAPIOutDTO {
 }
 
 export interface ApproveProgramAPIInDTO {
-  effectiveEndDate: string;
   approvedNote: string;
 }
 

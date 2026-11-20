@@ -15,7 +15,7 @@ import {
   EducationProgramConfigurationAPIOutDTO,
 } from "./models/education-program.dto";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
-import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
+import { CustomNamedError } from "@sims/utilities";
 import {
   EDUCATION_PROGRAM_NOT_FOUND,
   EDUCATION_PROGRAM_INVALID_OPERATION,
@@ -66,7 +66,6 @@ export class EducationProgramControllerService {
       institutionName: program.institution.operatingName,
       submittedDate: program.submittedDate,
       submittedBy: getUserFullName(program.submittedBy),
-      effectiveEndDate: getISODateOnlyString(program.effectiveEndDate),
       assessedDate: program.assessedDate,
       assessedBy: getUserFullName(program.assessedBy),
       // Program attributes persisted in dedicated columns, independent
@@ -83,7 +82,6 @@ export class EducationProgramControllerService {
       institutionProgramCode: program.institutionProgramCode,
       programIntensity: program.programIntensity,
       isActive: program.isActive,
-      isExpired: program.isExpired,
       ...programConfiguration,
     };
   }

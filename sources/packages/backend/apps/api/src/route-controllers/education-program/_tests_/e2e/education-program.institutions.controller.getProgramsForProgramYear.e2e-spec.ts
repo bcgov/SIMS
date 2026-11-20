@@ -20,7 +20,6 @@ import {
 } from "../../../../testHelpers";
 import request from "supertest";
 import { faker } from "@faker-js/faker";
-import { getISODateOnlyString } from "@sims/utilities";
 import {
   EducationProgramManagerDetailsAPIOutDTO,
   ProgramRenewalStatus,
@@ -228,7 +227,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       });
   });
 
-  it("Should return only the active and not expired programs with the requested status when a status filter is applied.", async () => {
+  it("Should return only the active programs with the requested status when a status filter is applied.", async () => {
     // Arrange
     const searchCriteria = faker.string.uuid();
     const [pendingProgram] = await Promise.all([
@@ -253,14 +252,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
           isActive: false,
         },
       }),
-      // Expired pending program that must not be returned.
-      saveEducationProgram(renewableProgramConfiguration, {
-        initialValues: {
-          name: `Delta ${searchCriteria}`,
-          programStatus: ProgramStatus.Pending,
-          effectiveEndDate: getISODateOnlyString(new Date()),
-        },
-      }),
     ]);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -283,7 +274,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       });
   });
 
-  it("Should return only the inactive or expired programs when only the inactive program filter is applied.", async () => {
+  it("Should return only the inactive programs when only the inactive program filter is applied.", async () => {
     // Arrange
     const searchCriteria = faker.string.uuid();
     // Active program that must not be returned.
@@ -293,15 +284,6 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
     const inactiveProgram = await saveEducationProgram(
       renewableProgramConfiguration,
       { initialValues: { name: `Bravo ${searchCriteria}`, isActive: false } },
-    );
-    const expiredProgram = await saveEducationProgram(
-      renewableProgramConfiguration,
-      {
-        initialValues: {
-          name: `Charlie ${searchCriteria}`,
-          effectiveEndDate: getISODateOnlyString(new Date()),
-        },
-      },
     );
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
@@ -319,10 +301,9 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        count: 2,
+        count: 1,
         results: [
           getExpectedProgram(inactiveProgram, ProgramRenewalStatus.Available),
-          getExpectedProgram(expiredProgram, ProgramRenewalStatus.Available),
         ],
       });
   });
@@ -579,7 +560,6 @@ function getExpectedProgram(
     sabcCode: program.sabcCode,
     programStatus: program.programStatus,
     isActive: program.isActive,
-    isExpired: program.isExpired,
     renewalStatus,
   };
 }

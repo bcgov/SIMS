@@ -322,12 +322,6 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_INVALID_OPERATION,
       );
     }
-    if (program.isExpired) {
-      throw new CustomNamedError(
-        "Education program cannot be edited when expired.",
-        EDUCATION_PROGRAM_INVALID_OPERATION,
-      );
-    }
     const configuration = await this.getEducationProgramConfiguration(
       program.institution.id,
       {

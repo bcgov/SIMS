@@ -19,7 +19,6 @@ import {
   User,
 } from "@sims/sims-db";
 import request from "supertest";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
 
 describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", () => {
   let app: INestApplication;
@@ -37,17 +36,17 @@ describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", (
     await db.user.save(sharedUser);
   });
 
-  it("Should retrieve all active, non-expired, and approved programs, ordered by name when there are active, approved and non-expired programs for the institution.", async () => {
+  it("Should retrieve all active and approved programs, ordered by name when there are active and approved programs for the institution.", async () => {
     // Arrange
     const institution = await db.institution.save(createFakeInstitution());
     const educationPrograms = [
-      // Approved, active and non-expired program.
+      // Approved and active program.
       {
         isActive: true,
         programStatus: ProgramStatus.Approved,
         name: "Z Program",
       },
-      // Approved, active and non-expired program.
+      // Approved and active program.
       {
         isActive: true,
         programStatus: ProgramStatus.Approved,
@@ -60,10 +59,6 @@ describe("EducationProgramAESTController(e2e)-getProgramsListForInstitutions", (
       // Pending program.
       {
         programStatus: ProgramStatus.Pending,
-      },
-      // Expired program.
-      {
-        effectiveEndDate: getISODateOnlyString(addDays(-1)),
       },
     ].map((initialValues) =>
       createFakeEducationProgram(

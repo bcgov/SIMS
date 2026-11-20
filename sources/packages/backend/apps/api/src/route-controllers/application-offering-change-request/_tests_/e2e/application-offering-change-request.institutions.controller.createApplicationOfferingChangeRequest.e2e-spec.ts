@@ -560,63 +560,6 @@ describe("ApplicationOfferingChangeRequestInstitutionsController(e2e)-createAppl
       });
   });
 
-  it("Should throw program is expired error when trying to submit an application offering request for an expired program.", async () => {
-    // Arrange
-    const savedUser = await db.user.save(createFakeUser());
-    // Student has a completed application to the institution.
-    const application = await saveFakeApplicationDisbursements(
-      db.dataSource,
-      { institutionLocation: collegeFLocation },
-      {
-        applicationStatus: ApplicationStatus.Completed,
-      },
-    );
-
-    await db.student.save(application.student);
-    await db.application.save(application);
-
-    // New offering with full time intensity.
-    const newOffering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-        programConfiguration: mostRecentProgramConfiguration,
-        institutionLocation: collegeFLocation,
-      },
-      {
-        initialValues: {
-          studyStartDate: getISODateOnlyString(
-            addDays(5, application.programYear.startDate),
-          ),
-          studyEndDate: getISODateOnlyString(
-            addDays(85, application.programYear.startDate),
-          ),
-        },
-        programInitialValues: {
-          effectiveEndDate: getISODateOnlyString(new Date()),
-        },
-      },
-    );
-    await db.educationProgramOffering.save(newOffering);
-
-    const payload = {
-      applicationId: application.id,
-      offeringId: newOffering.id,
-      reason: "Test reason.",
-    };
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .post(endpoint)
-      .send(payload)
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message: "The education program is expired.",
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      });
-  });
-
   afterAll(async () => {
     await app?.close();
   });
