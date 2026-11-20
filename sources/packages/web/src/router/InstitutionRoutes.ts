@@ -225,6 +225,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: ViewProgram,
         props: (route) => ({
           programId: Number.parseInt(route.params.programId as string),
+          programYearId: route.query.programYearId
+            ? Number.parseInt(route.query.programYearId as string)
+            : undefined,
+          allowProgramActions: true,
           // Keep the program year selected when navigating back to the manage programs.
           backTarget: {
             name: "Manage Programs",
@@ -245,6 +249,38 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
             InstitutionUserTypes.readOnlyUser,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageProgramsEdit,
+        name: InstitutionRoutesConst.EDIT_PROGRAM,
+        component: EditProgram,
+        props: (route) => ({
+          programId: Number.parseInt(route.params.programId as string),
+          programYearId: route.query.programYearId
+            ? Number.parseInt(route.query.programYearId as string)
+            : undefined,
+          allowProgramActions: true,
+          // Keep the program year selected when navigating back to the manage programs.
+          backTarget: {
+            name: "Manage Programs",
+            to: {
+              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+              params: route.query.programYearId
+                ? {
+                    programYearId: route.query.programYearId as string,
+                  }
+                : undefined,
+            },
+          },
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
           ],
         },
       },

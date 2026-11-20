@@ -41,6 +41,22 @@ const E2E_PROGRAM_YEAR_PREFIX = {
    */
   RenewProgramGetAvailable: 1950,
   /**
+   * Program year with an active and an inactive configuration.
+   */
+  UpdateProgramGetActiveConfiguration: 1955,
+  /**
+   * Program year with only an inactive configuration.
+   */
+  UpdateProgramGetNoActiveConfiguration: 1956,
+  /**
+   * Program year with an active and an inactive configuration.
+   */
+  UpdateProgramActiveConfiguration: 1957,
+  /**
+   * Program year with only an inactive configuration.
+   */
+  UpdateProgramNoActiveConfiguration: 1958,
+  /**
    * Renewal not available (2 years: 1960-1961).
    */
   RenewProgramGetNotAvailable: 1960,
@@ -96,6 +112,55 @@ interface RenewalStatusProgramConfigurations {
    * only an inactive configuration.
    */
   notRenewableProgramConfiguration: EducationProgramConfiguration;
+}
+
+/**
+ * Program configurations to test the program update, where the active
+ * configuration of the program year is expected for a full update.
+ */
+interface UpdateProgramConfigurations {
+  /**
+   * Inactive configuration of a program year that also has an active configuration.
+   */
+  outdatedProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Active configuration of the same program year as the outdated configuration.
+   */
+  activeProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Inactive configuration of a program year without an active configuration.
+   */
+  noActiveProgramConfiguration: EducationProgramConfiguration;
+}
+
+/**
+ * Ensures the program configurations for the getEducationProgramConfigurationForUpdate e2e tests.
+ * @param db e2e data sources.
+ * @returns program configurations to test the program update.
+ */
+export function ensureGetEducationProgramForUpdateConfigurations(
+  db: E2EDataSources,
+): Promise<UpdateProgramConfigurations> {
+  return ensureUpdateProgramConfigurations(
+    db,
+    E2E_PROGRAM_YEAR_PREFIX.UpdateProgramGetActiveConfiguration,
+    E2E_PROGRAM_YEAR_PREFIX.UpdateProgramGetNoActiveConfiguration,
+  );
+}
+
+/**
+ * Ensures the program configurations for the updateEducationProgram e2e tests.
+ * @param db e2e data sources.
+ * @returns program configurations to test the program update.
+ */
+export function ensureUpdateEducationProgramConfigurations(
+  db: E2EDataSources,
+): Promise<UpdateProgramConfigurations> {
+  return ensureUpdateProgramConfigurations(
+    db,
+    E2E_PROGRAM_YEAR_PREFIX.UpdateProgramActiveConfiguration,
+    E2E_PROGRAM_YEAR_PREFIX.UpdateProgramNoActiveConfiguration,
+  );
 }
 
 /**
@@ -287,6 +352,52 @@ async function ensureRenewalStatusProgramConfigurations(
 }
 
 /**
+ * Ensures the program configurations to test the program update.
+ * @param db e2e data sources.
+ * @param activeConfigurationPrefix prefix of the program year with an active
+ * and an inactive configuration.
+ * @param noActiveConfigurationPrefix prefix of the program year with only an
+ * inactive configuration.
+ * @returns program configurations to test the program update.
+ */
+async function ensureUpdateProgramConfigurations(
+  db: E2EDataSources,
+  activeConfigurationPrefix: number,
+  noActiveConfigurationPrefix: number,
+): Promise<UpdateProgramConfigurations> {
+  const [activeConfigurationProgramYear, noActiveConfigurationProgramYear] =
+    await Promise.all([
+      ensureProgramYearExists(db, activeConfigurationPrefix),
+      ensureProgramYearExists(db, noActiveConfigurationPrefix),
+    ]);
+  const [
+    outdatedProgramConfiguration,
+    activeProgramConfiguration,
+    noActiveProgramConfiguration,
+  ] = await Promise.all([
+    ensureEducationProgramConfigurationExists(
+      db,
+      activeConfigurationProgramYear,
+      { isActive: false },
+    ),
+    ensureEducationProgramConfigurationExists(
+      db,
+      activeConfigurationProgramYear,
+    ),
+    ensureEducationProgramConfigurationExists(
+      db,
+      noActiveConfigurationProgramYear,
+      { isActive: false },
+    ),
+  ]);
+  return {
+    outdatedProgramConfiguration,
+    activeProgramConfiguration,
+    noActiveProgramConfiguration,
+  };
+}
+
+/**
  * Ensures consecutive program years exist starting from the provided prefix,
  * each one with an education program configuration with the provided options.
  * @param db e2e data sources.
@@ -319,16 +430,21 @@ async function ensureSequentialProgramConfigurations(
 
 /**
  * Get the payload for updating an education program.
+ * @param programConfigurationId ID of the program configuration for which the education program is being updated.
  * @param options Options to customize the update payload.
  * - `appendedProgramData` Additional program data to append to the payload.
  * @returns The update payload for the education program.
  */
-export function getUpdatePayload(options?: {
-  appendedProgramData?: { [key: string]: unknown };
-}): UpdateEducationProgramAPIInDTO & {
+export function getUpdatePayload(
+  programConfigurationId: number,
+  options?: {
+    appendedProgramData?: { [key: string]: unknown };
+  },
+): UpdateEducationProgramAPIInDTO & {
   programData: EducationProgramDynamicData;
 } {
   return {
+    programConfigurationId,
     programData: getProgramDataPayload(options),
   };
 }

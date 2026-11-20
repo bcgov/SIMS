@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import {
   AviationCredentialTypeOptions,
-  EducationProgramOfferingService,
   EducationProgramService,
   SABC_CODE_UNIQUE_KEYWORD,
   UserService,
 } from "../../services";
 import { EducationProgramEvaluationService } from "./education-program-evaluator";
-import { EducationProgramManagerService } from "./education-program.manager.service";
+import { EducationProgramConfigurationRetrievalService } from "./education-program-configuration-retrieval.service";
+import { RequiredProgramConfiguration } from "./education-program-configuration-retrieval.models";
 import {
   AviationProgramCredentialTypes,
   EducationProgram,
@@ -25,20 +25,13 @@ import {
   EDUCATION_PROGRAM_NOT_FOUND,
 } from "../../constants";
 import { InstitutionService } from "../../services/institution/institution.service";
-import { InjectRepository } from "@nestjs/typeorm";
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  Repository,
-} from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import {
   EducationProgramContext,
   EducationProgramData,
   EducationProgramDynamicConfiguration,
   EducationProgramDynamicData,
   EntranceRequirementValues,
-  ProgramConfigurationCriteria,
   ProgramDeliveryTypeValues,
 } from "./education-program-save.models";
 import { EducationProgramDataValidationService } from "./data-validation/education-program-data-validation.service";
@@ -63,87 +56,14 @@ import {
 export class EducationProgramSaveService {
   constructor(
     private readonly dataSource: DataSource,
-    @InjectRepository(EducationProgramConfiguration)
-    private readonly educationProgramConfigurationRepo: Repository<EducationProgramConfiguration>,
     private readonly educationProgramService: EducationProgramService,
     private readonly institutionService: InstitutionService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
-    private readonly educationProgramOfferingService: EducationProgramOfferingService,
     private readonly educationProgramDataValidationService: EducationProgramDataValidationService,
     private readonly notificationActionsService: NotificationActionsService,
     private readonly userService: UserService,
-    private readonly educationProgramManagerService: EducationProgramManagerService,
+    private readonly educationProgramConfigurationRetrievalService: EducationProgramConfigurationRetrievalService,
   ) {}
-
-  /**
-   * Get the program configuration including visual schema, validation schema, and context.
-   * @param institutionId ID of the institution requesting the configuration.
-   * @param programConfigurationCriteria the criteria to retrieve the program configuration.
-   * @returns the program configuration including context, visual schema, and validation schema.
-   */
-  async getEducationProgramConfiguration(
-    institutionId: number,
-    programConfigurationCriteria: ProgramConfigurationCriteria,
-  ): Promise<EducationProgramDynamicConfiguration> {
-    const institutionPromise =
-      this.institutionService.getInstitutionTypeById(institutionId);
-    const hasOfferingsPromise = programConfigurationCriteria.programId
-      ? this.educationProgramOfferingService.hasExistingOffering(
-          programConfigurationCriteria.programId,
-        )
-      : Promise.resolve(false);
-    const where: FindOptionsWhere<EducationProgramConfiguration> =
-      programConfigurationCriteria.programYearId
-        ? // When selecting by program year, only the active configuration must be considered.
-          {
-            programYear: { id: programConfigurationCriteria.programYearId },
-            isActive: true,
-          }
-        : // When a specific configuration is requested, it must be returned regardless of
-          // its active status (e.g. an existing program associated with an inactive configuration).
-          { id: programConfigurationCriteria.programConfigurationId };
-    const programConfigurationPromise =
-      this.educationProgramConfigurationRepo.findOne({
-        select: {
-          id: true,
-          visualSchema: true,
-          validationSchema: true,
-          updatedAt: true,
-          programYear: {
-            id: true,
-            programYear: true,
-          },
-        },
-        relations: {
-          programYear: true,
-        },
-        where,
-      });
-    const [institution, hasOfferings, programConfiguration] = await Promise.all(
-      [institutionPromise, hasOfferingsPromise, programConfigurationPromise],
-    );
-    if (!programConfiguration) {
-      throw new CustomNamedError(
-        "Education program configuration not found.",
-        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
-      );
-    }
-    return {
-      configurationId: programConfiguration.id,
-      programYearId: programConfiguration.programYear.id,
-      programYearName: programConfiguration.programYear.programYear,
-      updatedAt: programConfiguration.updatedAt,
-      context: {
-        isFullUpdateRestricted: hasOfferings,
-        isBCPrivate: institution.institutionType.isBCPrivate,
-        isBCInstitution:
-          institution.institutionType.isBCPrivate ||
-          institution.institutionType.isBCPublic,
-      },
-      visualSchema: programConfiguration.visualSchema,
-      validationSchema: programConfiguration.validationSchema,
-    };
-  }
 
   /**
    * Create a new education program.
@@ -163,10 +83,15 @@ export class EducationProgramSaveService {
     auditUserId: number,
   ): Promise<EducationProgram> {
     // Only the active configuration for the program year can be used to create a program.
-    const configuration = await this.getEducationProgramConfiguration(
-      institutionId,
-      { programYearId },
-    );
+    const configuration =
+      await this.educationProgramConfigurationRetrievalService.getEducationProgramConfiguration(
+        institutionId,
+        {
+          requiredConfiguration:
+            RequiredProgramConfiguration.ProgramYearActiveConfiguration,
+          programYearId,
+        },
+      );
     if (configuration.configurationId !== programConfigurationId) {
       throw new CustomNamedError(
         "The program configuration has changed since the program data was retrieved.",
@@ -236,26 +161,36 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_INVALID_OPERATION,
       );
     }
-    const expectedNextConfiguration =
-      await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
-        programToRenew.programConfiguration.programYear.id,
-      );
-    if (!expectedNextConfiguration) {
-      throw new CustomNamedError(
-        `No next program configuration found for renewal for the program ID ${renewFromProgramId}.`,
-        EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
-      );
+    let configuration: EducationProgramDynamicConfiguration;
+    try {
+      configuration =
+        await this.educationProgramConfigurationRetrievalService.getEducationProgramConfiguration(
+          institutionId,
+          {
+            requiredConfiguration:
+              RequiredProgramConfiguration.NextProgramYearActiveConfiguration,
+            currentProgramYearId:
+              programToRenew.programConfiguration.programYear.id,
+          },
+        );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND
+      ) {
+        throw new CustomNamedError(
+          `No next program configuration found for renewal for the program ID ${renewFromProgramId}.`,
+          EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
+        );
+      }
+      throw error;
     }
-    if (expectedNextConfiguration.id !== programConfigurationId) {
+    if (configuration.configurationId !== programConfigurationId) {
       throw new CustomNamedError(
         "The program configuration has changed since the program data was retrieved.",
         EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
       );
     }
-    const configuration = await this.getEducationProgramConfiguration(
-      institutionId,
-      { programConfigurationId },
-    );
     const programDataToValidate = {
       ...updatedProgramData,
       context: configuration.context,
@@ -295,6 +230,9 @@ export class EducationProgramSaveService {
    * Update an existing and active education program.
    * @param programId the ID of the program to update.
    * @param programData the updated data for the education program.
+   * @param programConfigurationId the ID of the program configuration used to fill the
+   * program data. It must be the configuration expected for the update
+   * ({@link RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate}).
    * @param institutionId the ID of the institution.
    * @param auditUserId the ID of the user performing the action.
    * @returns the updated education program.
@@ -302,6 +240,7 @@ export class EducationProgramSaveService {
   async updateProgram(
     programId: number,
     programData: EducationProgramData,
+    programConfigurationId: number,
     institutionId: number,
     auditUserId: number,
   ): Promise<EducationProgram> {
@@ -322,13 +261,21 @@ export class EducationProgramSaveService {
         EDUCATION_PROGRAM_INVALID_OPERATION,
       );
     }
-    const configuration = await this.getEducationProgramConfiguration(
-      program.institution.id,
-      {
-        programConfigurationId: program.programConfiguration.id,
-        programId: program.id,
-      },
-    );
+    const configuration =
+      await this.educationProgramConfigurationRetrievalService.getEducationProgramConfiguration(
+        program.institution.id,
+        {
+          requiredConfiguration:
+            RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate,
+          programId: program.id,
+        },
+      );
+    if (configuration.configurationId !== programConfigurationId) {
+      throw new CustomNamedError(
+        "The program configuration has changed since the program data was retrieved.",
+        EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
+      );
+    }
     let programDataToUpdate: EducationProgramData;
     if (configuration.context.isFullUpdateRestricted) {
       // Only the name and description can be changed once the program has
@@ -356,6 +303,11 @@ export class EducationProgramSaveService {
     );
     const programToUpdate = new EducationProgram();
     programToUpdate.id = programId;
+    // For a full update, the program is moved to the active configuration of the program year.
+    // For a partial update, the configuration the program was saved with is kept.
+    programToUpdate.programConfiguration = {
+      id: configuration.configurationId,
+    } as EducationProgramConfiguration;
     programToUpdate.modifier = { id: auditUserId } as User;
     programToUpdate.updatedAt = new Date();
     return this.saveEducationProgram(
