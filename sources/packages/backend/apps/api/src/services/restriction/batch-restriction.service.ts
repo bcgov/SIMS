@@ -16,7 +16,6 @@ import {
 } from "@sims/services";
 import { DataSource, EntityManager, Repository } from "typeorm";
 import {
-  BatchRestrictionDetails,
   BatchRestrictionStudentResult,
   BatchRestrictionSummary,
 } from "./models/batch-restriction.model";
@@ -108,10 +107,10 @@ export class BatchRestrictionService {
    * @param batchRestrictionId batch restriction ID.
    * @returns the batch restriction details, or null when it does not exist.
    */
-  async getBatchRestrictionDetails(
+  getBatchRestrictionDetails(
     batchRestrictionId: number,
-  ): Promise<BatchRestrictionDetails | null> {
-    const batchRestriction = await this.batchRestrictionRepo.findOne({
+  ): Promise<BatchRestriction | null> {
+    return this.batchRestrictionRepo.findOne({
       select: {
         id: true,
         batchNumber: true,
@@ -120,15 +119,6 @@ export class BatchRestrictionService {
       relations: { restriction: true },
       where: { id: batchRestrictionId },
     });
-    if (!batchRestriction) {
-      return null;
-    }
-    return {
-      id: batchRestriction.id,
-      batchNumber: batchRestriction.batchNumber,
-      restrictionCode: batchRestriction.restriction.restrictionCode,
-      restrictionDescription: batchRestriction.restriction.description,
-    };
   }
 
   /**

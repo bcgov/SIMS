@@ -17,7 +17,7 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { Role } from "../../../../auth";
-import { BatchRestriction, Student } from "@sims/sims-db";
+import { BatchRestriction, Restriction, Student, User } from "@sims/sims-db";
 import { BatchRestrictionStudentResult } from "../../../../services";
 
 const APPLICATION_NOT_FOUND_REASON = "The application number does not exist.";
@@ -25,39 +25,50 @@ const APPLICATION_NOT_FOUND_REASON = "The application number does not exist.";
 describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () => {
   let app: INestApplication;
   let db: E2EDataSources;
+  let auditUser: User;
+  let restriction: Restriction;
   let batch: BatchRestriction;
   let student: Student;
+  let secondStudent: Student;
+  // Application numbers of the same student.
   const successfulApplicationNumbers = ["9900000001", "9900000002"];
+  const secondStudentApplicationNumber = "9900000003";
   const failedApplicationNumber = "9999999999";
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
     db = createE2EDataSources(dataSource);
-    const auditUser = await db.user.save(createFakeUser());
-    const restriction = await db.restriction.save(createFakeRestriction());
-    student = await saveFakeStudent(db.dataSource);
-    const studentRestriction = await db.studentRestriction.save(
-      createFakeStudentRestriction({
-        student,
-        restriction,
-        creator: auditUser,
-      }),
-    );
-    // Batch with two successful application numbers of the same student
-    // and one failed application number.
-    batch = await db.batchRestriction.save(
-      createFakeBatchRestriction({ restriction, creator: auditUser }),
-    );
-    await db.batchRestrictionStudent.save([
-      ...successfulApplicationNumbers.map((applicationNumber) =>
-        createFakeBatchRestrictionStudent({
-          batchRestriction: batch,
-          applicationNumber,
-          studentRestriction,
+    auditUser = await db.user.save(createFakeUser());
+    restriction = await db.restriction.save(createFakeRestriction());
+    [student, secondStudent] = await Promise.all([
+      saveFakeStudent(db.dataSource),
+      saveFakeStudent(db.dataSource),
+    ]);
+    const [studentRestriction, secondStudentRestriction] = await Promise.all([
+      db.studentRestriction.save(
+        createFakeStudentRestriction({
+          student,
+          restriction,
           creator: auditUser,
         }),
       ),
+      db.studentRestriction.save(
+        createFakeStudentRestriction({
+          student: secondStudent,
+          restriction,
+          creator: auditUser,
+        }),
+      ),
+    ]);
+    // Batch with two successful application numbers of the same student,
+    // one successful application number of another student, and one failed application number.
+    batch = await db.batchRestriction.save(
+      createFakeBatchRestriction({ restriction, creator: auditUser }),
+    );
+    // The application numbers are saved out of order to ensure the endpoint
+    // orders them by application number instead of returning them in the order they were saved.
+    await db.batchRestrictionStudent.save([
       createFakeBatchRestrictionStudent(
         {
           batchRestriction: batch,
@@ -65,6 +76,20 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
           creator: auditUser,
         },
         { initialValues: { failureReason: APPLICATION_NOT_FOUND_REASON } },
+      ),
+      createFakeBatchRestrictionStudent({
+        batchRestriction: batch,
+        applicationNumber: secondStudentApplicationNumber,
+        studentRestriction: secondStudentRestriction,
+        creator: auditUser,
+      }),
+      ...successfulApplicationNumbers.toReversed().map((applicationNumber) =>
+        createFakeBatchRestrictionStudent({
+          batchRestriction: batch,
+          applicationNumber,
+          studentRestriction,
+          creator: auditUser,
+        }),
       ),
     ]);
   });
@@ -92,16 +117,22 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
             failureReason: null,
           })),
           {
+            applicationNumber: secondStudentApplicationNumber,
+            studentId: secondStudent.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          },
+          {
             applicationNumber: failedApplicationNumber,
             result: BatchRestrictionStudentResult.Failed,
             failureReason: APPLICATION_NOT_FOUND_REASON,
           },
         ],
-        count: 3,
+        count: 4,
       });
   });
 
-  it("Should return the second page of application numbers when the page limit is two and there are three application numbers in the batch.", async () => {
+  it("Should return the second page of application numbers when the page limit is two and there are four application numbers in the batch.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
@@ -118,12 +149,18 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .expect({
         results: [
           {
+            applicationNumber: secondStudentApplicationNumber,
+            studentId: secondStudent.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          },
+          {
             applicationNumber: failedApplicationNumber,
             result: BatchRestrictionStudentResult.Failed,
             failureReason: APPLICATION_NOT_FOUND_REASON,
           },
         ],
-        count: 3,
+        count: 4,
       });
   });
 
@@ -142,13 +179,21 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        results: successfulApplicationNumbers.map((applicationNumber) => ({
-          applicationNumber,
-          studentId: student.id,
-          result: BatchRestrictionStudentResult.Successful,
-          failureReason: null,
-        })),
-        count: 2,
+        results: [
+          ...successfulApplicationNumbers.map((applicationNumber) => ({
+            applicationNumber,
+            studentId: student.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          })),
+          {
+            applicationNumber: secondStudentApplicationNumber,
+            studentId: secondStudent.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          },
+        ],
+        count: 3,
       });
   });
 
@@ -167,13 +212,21 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.OK)
       .expect({
-        results: successfulApplicationNumbers.map((applicationNumber) => ({
-          applicationNumber,
-          studentId: student.id,
-          result: BatchRestrictionStudentResult.Successful,
-          failureReason: null,
-        })),
-        count: 2,
+        results: [
+          ...successfulApplicationNumbers.map((applicationNumber) => ({
+            applicationNumber,
+            studentId: student.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          })),
+          {
+            applicationNumber: secondStudentApplicationNumber,
+            studentId: secondStudent.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          },
+        ],
+        count: 3,
       });
   });
 
@@ -205,8 +258,6 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
 
   it("Should return the student of a successful application number when the student restriction was deleted after the batch was submitted.", async () => {
     // Arrange
-    const auditUser = await db.user.save(createFakeUser());
-    const restriction = await db.restriction.save(createFakeRestriction());
     const deletedRestrictionStudent = await saveFakeStudent(db.dataSource);
     const deletedStudentRestriction = await db.studentRestriction.save(
       createFakeStudentRestriction(
@@ -221,7 +272,7 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
     const deletedRestrictionBatch = await db.batchRestriction.save(
       createFakeBatchRestriction({ restriction, creator: auditUser }),
     );
-    const deletedRestrictionApplicationNumber = "9900000003";
+    const deletedRestrictionApplicationNumber = "9900000004";
     await db.batchRestrictionStudent.save(
       createFakeBatchRestrictionStudent({
         batchRestriction: deletedRestrictionBatch,

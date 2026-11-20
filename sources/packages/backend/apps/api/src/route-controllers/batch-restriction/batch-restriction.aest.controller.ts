@@ -141,8 +141,8 @@ export class BatchRestrictionAESTController extends BaseController {
     return {
       id: batchRestriction.id,
       batchNumber: batchRestriction.batchNumber,
-      restrictionCode: batchRestriction.restrictionCode,
-      restrictionDescription: batchRestriction.restrictionDescription,
+      restrictionCode: batchRestriction.restriction.restrictionCode,
+      restrictionDescription: batchRestriction.restriction.description,
     };
   }
 

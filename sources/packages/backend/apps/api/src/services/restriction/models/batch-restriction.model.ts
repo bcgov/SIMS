@@ -15,16 +15,6 @@ export interface BatchRestrictionSummary {
 }
 
 /**
- * Details of a batch restriction submission.
- */
-export interface BatchRestrictionDetails {
-  id: number;
-  batchNumber: number;
-  restrictionCode: string;
-  restrictionDescription: string;
-}
-
-/**
  * Result of adding the restriction to a student in a batch restriction.
  */
 export enum BatchRestrictionStudentResult {

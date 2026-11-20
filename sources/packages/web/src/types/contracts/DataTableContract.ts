@@ -513,6 +513,16 @@ export const BatchRestrictionHistoryHeaders = [
 ];
 
 /**
+ * Batch restriction outcome headers.
+ */
+export const BatchRestrictionStudentHeaders = [
+  { title: "Application Number", sortable: false, key: "applicationNumber" },
+  { title: "Result", sortable: false, key: "result" },
+  { title: "Failure Reason", sortable: false, key: "failureReason" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
  * CAS invoice headers.
  */
 export const CASInvoiceHeaders = [
@@ -953,14 +963,4 @@ export const DisabilityProfileArchivedHeaders = [
   { title: "Completed by", sortable: true, key: "completedBy" },
   { title: "Disabilities", sortable: false, key: "disabilities" },
   { title: "Actions", sortable: false, key: "actions", width: "100px" },
-];
-
-/**
- * Batch restriction outcome headers.
- */
-export const BatchRestrictionStudentHeaders = [
-  { title: "Application Number", sortable: false, key: "applicationNumber" },
-  { title: "Result", sortable: false, key: "result" },
-  { title: "Failure Reason", sortable: false, key: "failureReason" },
-  { title: "Action", sortable: false, key: "action" },
 ];
