@@ -45,7 +45,26 @@
           clearable
           multiple
           chips
-          hide-details="auto" />
+          hide-details="auto"
+        >
+          <template #item="{ item, props }">
+            <v-list-item
+              v-bind="props"
+              :active="formModel.locationIds?.includes(item.id)"
+            >
+              <template #prepend>
+                <v-checkbox-btn
+                  :model-value="formModel.locationIds?.includes(item.id)"
+                />
+              </template>
+              <template #append>
+                <status-chip-designation-agreement
+                  :status="item.designationStatus"
+                />
+              </template>
+            </v-list-item>
+          </template>
+        </v-select>
         <v-textarea
           label="Notes"
           v-model="formModel.noteDescription"
@@ -69,6 +88,7 @@
 import { ref, reactive, defineComponent, computed } from "vue";
 import ModalDialogBase from "@/components/generic/ModalDialogBase.vue";
 import ErrorSummary from "@/components/generic/ErrorSummary.vue";
+import StatusChipDesignationAgreement from "@/components/generic/StatusChipDesignationAgreement.vue";
 import { useModalDialog, useRules, useSnackBar } from "@/composables";
 import { VForm, RestrictionType, FieldRequirementType } from "@/types";
 import {
@@ -88,7 +108,7 @@ interface FieldAttributes {
 }
 
 export default defineComponent({
-  components: { ModalDialogBase, ErrorSummary },
+  components: { ModalDialogBase, ErrorSummary, StatusChipDesignationAgreement },
   props: {
     institutionId: {
       type: Number,
