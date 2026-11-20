@@ -144,6 +144,7 @@ export class BatchRestrictionService {
   ): Promise<PaginatedResults<BatchRestrictionStudent>> {
     const query = this.batchRestrictionStudentRepo
       .createQueryBuilder("batchStudent")
+      .withDeleted()
       .select([
         "batchStudent.id",
         "batchStudent.applicationNumber",

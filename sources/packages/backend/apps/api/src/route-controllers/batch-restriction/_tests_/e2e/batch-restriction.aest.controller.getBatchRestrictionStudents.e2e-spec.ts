@@ -203,6 +203,58 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       });
   });
 
+  it("Should return the student of a successful application number when the student restriction was deleted after the batch was submitted.", async () => {
+    // Arrange
+    const auditUser = await db.user.save(createFakeUser());
+    const restriction = await db.restriction.save(createFakeRestriction());
+    const deletedRestrictionStudent = await saveFakeStudent(db.dataSource);
+    const deletedStudentRestriction = await db.studentRestriction.save(
+      createFakeStudentRestriction(
+        {
+          student: deletedRestrictionStudent,
+          restriction,
+          creator: auditUser,
+        },
+        { isActive: false, deletedAt: new Date() },
+      ),
+    );
+    const deletedRestrictionBatch = await db.batchRestriction.save(
+      createFakeBatchRestriction({ restriction, creator: auditUser }),
+    );
+    const deletedRestrictionApplicationNumber = "9900000003";
+    await db.batchRestrictionStudent.save(
+      createFakeBatchRestrictionStudent({
+        batchRestriction: deletedRestrictionBatch,
+        applicationNumber: deletedRestrictionApplicationNumber,
+        studentRestriction: deletedStudentRestriction,
+        creator: auditUser,
+      }),
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(
+        getEndpoint({
+          batchRestrictionId: deletedRestrictionBatch.id,
+          queryString: "page=0&pageLimit=10",
+        }),
+      )
+      .auth(token, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        results: [
+          {
+            applicationNumber: deletedRestrictionApplicationNumber,
+            studentId: deletedRestrictionStudent.id,
+            result: BatchRestrictionStudentResult.Successful,
+            failureReason: null,
+          },
+        ],
+        count: 1,
+      });
+  });
+
   it("Should throw a HttpStatus Not Found (404) error when the batch restriction does not exist.", async () => {
     // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
