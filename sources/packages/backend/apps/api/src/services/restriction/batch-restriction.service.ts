@@ -15,7 +15,13 @@ import {
   StudentRestrictionSharedService,
 } from "@sims/services";
 import { DataSource, EntityManager, Repository } from "typeorm";
-import { BatchRestrictionSummary } from "./models/batch-restriction.model";
+import {
+  BatchRestrictionStudentResult,
+  BatchRestrictionSummary,
+} from "./models/batch-restriction.model";
+import { BatchRestrictionStudentPaginationOptions } from "../../utilities/datatable-config";
+import { PaginatedResults } from "../../utilities";
+import { FieldSortOrder } from "@sims/utilities";
 
 const BATCH_RESTRICTION_NUMBER_SEQUENCE_NAME = "BATCH_RESTRICTION_NUMBER";
 /**
@@ -35,6 +41,8 @@ export class BatchRestrictionService {
     private readonly dataSource: DataSource,
     @InjectRepository(BatchRestriction)
     private readonly batchRestrictionRepo: Repository<BatchRestriction>,
+    @InjectRepository(BatchRestrictionStudent)
+    private readonly batchRestrictionStudentRepo: Repository<BatchRestrictionStudent>,
     private readonly sequenceService: SequenceControlService,
     private readonly noteSharedService: NoteSharedService,
     private readonly studentRestrictionSharedService: StudentRestrictionSharedService,
@@ -81,6 +89,87 @@ export class BatchRestrictionService {
       .leftJoin("batchRestriction.creator", "creator")
       .orderBy("batchRestriction.createdAt", "DESC")
       .getRawMany<BatchRestrictionSummary>();
+  }
+
+  /**
+   * Checks if a batch restriction exists.
+   * @param batchRestrictionId batch restriction ID.
+   * @returns true if the batch restriction exists, otherwise false.
+   */
+  batchRestrictionExists(batchRestrictionId: number): Promise<boolean> {
+    return this.batchRestrictionRepo.exists({
+      where: { id: batchRestrictionId },
+    });
+  }
+
+  /**
+   * Gets the details of a batch restriction submission.
+   * @param batchRestrictionId batch restriction ID.
+   * @returns the batch restriction details, or null when it does not exist.
+   */
+  getBatchRestrictionDetails(
+    batchRestrictionId: number,
+  ): Promise<BatchRestriction | null> {
+    return this.batchRestrictionRepo.findOne({
+      select: {
+        id: true,
+        batchNumber: true,
+        restriction: { id: true, restrictionCode: true, description: true },
+      },
+      relations: { restriction: true },
+      where: { id: batchRestrictionId },
+    });
+  }
+
+  /**
+   * Gets the outcome of each student in a batch restriction.
+   * @param batchRestrictionId batch restriction ID.
+   * @param paginationOptions pagination options, with optional application number
+   * search criteria and result filter.
+   * @returns paginated student outcomes, ordered by application number by default.
+   */
+  async getBatchRestrictionStudents(
+    batchRestrictionId: number,
+    paginationOptions: BatchRestrictionStudentPaginationOptions,
+  ): Promise<PaginatedResults<BatchRestrictionStudent>> {
+    const query = this.batchRestrictionStudentRepo
+      .createQueryBuilder("batchStudent")
+      .withDeleted()
+      .select([
+        "batchStudent.id",
+        "batchStudent.applicationNumber",
+        "batchStudent.failureReason",
+        "studentRestriction.id",
+        "student.id",
+      ])
+      .leftJoin("batchStudent.studentRestriction", "studentRestriction")
+      .leftJoin("studentRestriction.student", "student")
+      .where("batchStudent.batchRestriction.id = :batchRestrictionId", {
+        batchRestrictionId,
+      });
+    const searchCriteria = paginationOptions.searchCriteria?.trim();
+    if (searchCriteria) {
+      query.andWhere("batchStudent.applicationNumber ILIKE :search", {
+        search: `%${searchCriteria}%`,
+      });
+    }
+    switch (paginationOptions.result) {
+      case BatchRestrictionStudentResult.Successful:
+        query.andWhere("batchStudent.failureReason IS NULL");
+        break;
+      case BatchRestrictionStudentResult.Failed:
+        query.andWhere("batchStudent.failureReason IS NOT NULL");
+        break;
+    }
+    query
+      .orderBy(
+        "batchStudent.applicationNumber",
+        paginationOptions.sortOrder ?? FieldSortOrder.ASC,
+      )
+      .offset(paginationOptions.page * paginationOptions.pageLimit)
+      .limit(paginationOptions.pageLimit);
+    const [batchStudents, count] = await query.getManyAndCount();
+    return { results: batchStudents, count };
   }
 
   /**

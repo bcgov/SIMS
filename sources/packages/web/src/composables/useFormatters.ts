@@ -242,7 +242,7 @@ export function useFormatters() {
    * @param value string.
    * @returns '-' or the actual string.
    */
-  const emptyStringFiller = (value?: string): string => {
+  const emptyStringFiller = (value?: string | null): string => {
     return value ? value : DEFAULT_EMPTY_VALUE;
   };
 

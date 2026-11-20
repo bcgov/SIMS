@@ -509,6 +509,17 @@ export const BatchRestrictionHistoryHeaders = [
   { title: "Count", sortable: false, key: "totalCount" },
   { title: "Successful", sortable: false, key: "successCount" },
   { title: "Failed", sortable: false, key: "failureCount" },
+  { title: "Action", sortable: false, key: "action" },
+];
+
+/**
+ * Batch restriction outcome headers.
+ */
+export const BatchRestrictionStudentHeaders = [
+  { title: "Application Number", sortable: false, key: "applicationNumber" },
+  { title: "Result", sortable: false, key: "result" },
+  { title: "Failure Reason", sortable: false, key: "failureReason" },
+  { title: "Action", sortable: false, key: "action" },
 ];
 
 /**

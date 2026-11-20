@@ -6,7 +6,11 @@ import {
   OfferingIntensity,
 } from "@sims/sims-db";
 import { FieldSortOrder } from "@sims/utilities";
-import { AppealType, BatchReassessmentApplicationResult } from "../services";
+import {
+  AppealType,
+  BatchReassessmentApplicationResult,
+  BatchRestrictionStudentResult,
+} from "../services";
 
 /**
  *  Base Pagination option.
@@ -133,4 +137,14 @@ export interface BatchReassessmentApplicationPaginationOptions extends Paginatio
    * Reassessment result to filter the applications.
    */
   result?: BatchReassessmentApplicationResult;
+}
+
+/**
+ * Batch restriction student pagination options.
+ */
+export interface BatchRestrictionStudentPaginationOptions extends PaginationOptions {
+  /**
+   * Restriction result to filter the students.
+   */
+  result?: BatchRestrictionStudentResult;
 }

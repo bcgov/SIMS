@@ -23,6 +23,7 @@ import { ToBoolean } from "../../utilities/class-transform";
 import {
   AppealType,
   BatchReassessmentApplicationResult,
+  BatchRestrictionStudentResult,
   PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
 } from "../../services";
 import { AllowIf, IsDateAfter } from "../../utilities/class-validation";
@@ -295,6 +296,18 @@ export class BatchReassessmentApplicationPaginationOptionsAPIInDTO extends Pagin
   @IsOptional()
   @IsEnum(BatchReassessmentApplicationResult)
   result?: BatchReassessmentApplicationResult;
+}
+
+/**
+ * Batch restriction student specific pagination options.
+ */
+export class BatchRestrictionStudentPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
+  @IsOptional()
+  @IsIn(["applicationNumber"])
+  sortField?: string;
+  @IsOptional()
+  @IsEnum(BatchRestrictionStudentResult)
+  result?: BatchRestrictionStudentResult;
 }
 
 /**
