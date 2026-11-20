@@ -17,7 +17,6 @@ import {
 import { DataSource, EntityManager, Repository } from "typeorm";
 import {
   BatchRestrictionDetails,
-  BatchRestrictionStudentOutcome,
   BatchRestrictionStudentResult,
   BatchRestrictionSummary,
 } from "./models/batch-restriction.model";
@@ -134,7 +133,6 @@ export class BatchRestrictionService {
 
   /**
    * Gets the outcome of each student in a batch restriction.
-   * A student is successful when it has no failure reason, and failed otherwise.
    * @param batchRestrictionId batch restriction ID.
    * @param paginationOptions pagination options, with optional application number
    * search criteria and result filter.
@@ -143,7 +141,7 @@ export class BatchRestrictionService {
   async getBatchRestrictionStudents(
     batchRestrictionId: number,
     paginationOptions: BatchRestrictionStudentPaginationOptions,
-  ): Promise<PaginatedResults<BatchRestrictionStudentOutcome>> {
+  ): Promise<PaginatedResults<BatchRestrictionStudent>> {
     const query = this.batchRestrictionStudentRepo
       .createQueryBuilder("batchStudent")
       .select([
@@ -180,17 +178,7 @@ export class BatchRestrictionService {
       .offset(paginationOptions.page * paginationOptions.pageLimit)
       .limit(paginationOptions.pageLimit);
     const [batchStudents, count] = await query.getManyAndCount();
-    return {
-      results: batchStudents.map((batchStudent) => ({
-        applicationNumber: batchStudent.applicationNumber,
-        studentId: batchStudent.studentRestriction?.student.id,
-        result: batchStudent.failureReason
-          ? BatchRestrictionStudentResult.Failed
-          : BatchRestrictionStudentResult.Successful,
-        failureReason: batchStudent.failureReason,
-      })),
-      count,
-    };
+    return { results: batchStudents, count };
   }
 
   /**

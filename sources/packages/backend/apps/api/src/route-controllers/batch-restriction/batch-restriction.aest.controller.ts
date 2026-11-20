@@ -35,7 +35,11 @@ import {
   BatchRestrictionStudentPaginationOptionsAPIInDTO,
   PaginatedResultsAPIOutDTO,
 } from "../models/pagination.dto";
-import { BatchRestrictionService, RestrictionService } from "../../services";
+import {
+  BatchRestrictionService,
+  BatchRestrictionStudentResult,
+  RestrictionService,
+} from "../../services";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { getUserFullName } from "../../utilities";
 import { RestrictionType } from "@sims/sims-db";
@@ -173,8 +177,10 @@ export class BatchRestrictionAESTController extends BaseController {
     return {
       results: students.results.map((student) => ({
         applicationNumber: student.applicationNumber,
-        studentId: student.studentId,
-        result: student.result,
+        studentId: student.studentRestriction?.student.id,
+        result: student.failureReason
+          ? BatchRestrictionStudentResult.Failed
+          : BatchRestrictionStudentResult.Successful,
         failureReason: student.failureReason,
       })),
       count: students.count,

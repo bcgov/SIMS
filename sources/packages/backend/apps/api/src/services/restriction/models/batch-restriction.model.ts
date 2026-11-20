@@ -37,13 +37,3 @@ export enum BatchRestrictionStudentResult {
    */
   Failed = "Failed",
 }
-
-/**
- * Outcome of a single student included in a batch restriction.
- */
-export interface BatchRestrictionStudentOutcome {
-  applicationNumber: string;
-  studentId?: number;
-  result: BatchRestrictionStudentResult;
-  failureReason?: string;
-}
