@@ -78,7 +78,7 @@
               />
             </template>
             <template #[`item.failureReason`]="{ item }">
-              {{ emptyStringFiller(item.failureReason ?? undefined) }}
+              {{ emptyStringFiller(item.failureReason) }}
             </template>
             <template #[`item.action`]="{ item }">
               <v-btn
