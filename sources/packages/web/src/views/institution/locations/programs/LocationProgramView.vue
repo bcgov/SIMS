@@ -31,9 +31,7 @@
       :location-id="locationId"
       :education-program="educationProgram"
       :allow-edit="!isReadOnly"
-      :allow-deactivate="!isReadOnly"
       :can-create-offering="effectiveRestrictionState.canCreateOffering"
-      @program-data-updated="programDataUpdated"
     />
   </full-page-container>
 </template>
@@ -94,12 +92,9 @@ export default defineComponent({
 
     onMounted(loadInitialData);
 
-    const programDataUpdated = () => getEducationProgramAndOffering();
-
     return {
       educationProgram,
       InstitutionRoutesConst,
-      programDataUpdated,
       isReadOnly,
       effectiveRestrictionState,
       InstitutionRestrictionDisplayScope,
