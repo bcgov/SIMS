@@ -6,14 +6,10 @@
         :route-location="backTarget.to"
         sub-title="View Program"
       >
-        <template #buttons v-if="allowProgramChanges">
+        <template #buttons v-if="allowProgramChanges && canModifyProgram">
           <program-actions-menu
             :program-id="programId"
-            navigation-title="Edit"
-            :navigation-route="editProgramRoute"
-            :navigation-disabled="!canModifyProgram"
-            :deactivate-disabled="!canModifyProgram"
-            :disabled="loading"
+            :program-year-id="programYearId"
             @deactivated="loadProgram(programId)"
           />
         </template>
@@ -37,7 +33,6 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import type { RouteLocationRaw } from "vue-router";
 import {
   useFeatureToggles,
   useInstitutionAuth,
@@ -45,7 +40,6 @@ import {
 } from "@/composables";
 import type { BackTarget } from "@/types";
 import { BannerTypes } from "@/types";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import ProgramActionsMenu from "@/components/institutions/education-programs/ProgramActionsMenu.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
@@ -91,16 +85,6 @@ const canModifyProgram = computed(
 const allowProgramChanges = computed(
   () => !!educationProgram.value?.hasActiveProgramYearConfiguration,
 );
-
-/**
- * Route to the edit program page, keeping the program year selected
- * to allow navigating back to the manage programs.
- */
-const editProgramRoute = computed<RouteLocationRaw>(() => ({
-  name: InstitutionRoutesConst.EDIT_PROGRAM,
-  params: { programId: props.programId },
-  query: { programYearId: props.programYearId },
-}));
 
 /**
  * Loads the education program to be displayed.

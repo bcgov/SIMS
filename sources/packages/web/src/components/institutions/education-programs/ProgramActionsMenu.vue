@@ -5,7 +5,6 @@
         color="primary"
         v-bind="activatorProps"
         prepend-icon="fa:fa fa-chevron-circle-down"
-        :disabled="disabled"
       >
         Program actions
       </v-btn>
@@ -16,14 +15,9 @@
       bg-color="default"
       color="primary"
     >
-      <v-list-item
-        :disabled="navigationDisabled"
-        :to="navigationRoute"
-        :title="navigationTitle"
-      />
+      <v-list-item :to="editProgramRoute" title="Edit" />
       <v-divider-inset-opaque />
       <v-list-item
-        :disabled="deactivateDisabled"
         base-color="danger"
         @click="deactivate"
         title="Deactivate"
@@ -36,9 +30,10 @@
   />
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { ModalDialog, useSnackBar } from "@/composables";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
 import { DeactivateProgramAPIInDTO } from "@/services/http/dto";
 import { EducationProgramService } from "@/services/EducationProgramService";
@@ -49,25 +44,10 @@ interface ProgramActionsMenuProps {
    */
   programId: number;
   /**
-   * Title of the option to navigate to another program page (e.g. View or Edit).
+   * Program year selected in the manage programs, when accessed from there.
+   * Allows the edit page to navigate back keeping the same program year selected.
    */
-  navigationTitle: string;
-  /**
-   * Route of the option to navigate to another program page.
-   */
-  navigationRoute: RouteLocationRaw;
-  /**
-   * Disables the option to navigate to another program page.
-   */
-  navigationDisabled?: boolean;
-  /**
-   * Disables the option to deactivate the program.
-   */
-  deactivateDisabled?: boolean;
-  /**
-   * Disables the menu, for instance, while the program is loading.
-   */
-  disabled?: boolean;
+  programYearId?: number;
 }
 
 const props = defineProps<ProgramActionsMenuProps>();
@@ -77,6 +57,17 @@ const emit = defineEmits<{
 }>();
 
 const snackBar = useSnackBar();
+
+/**
+ * Route to the edit program page, keeping the program year selected
+ * to allow navigating back to the manage programs.
+ */
+const editProgramRoute = computed<RouteLocationRaw>(() => ({
+  name: InstitutionRoutesConst.EDIT_PROGRAM,
+  params: { programId: props.programId },
+  query: { programYearId: props.programYearId },
+}));
+
 const deactivateEducationProgramModal = ref(
   {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
 );
