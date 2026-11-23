@@ -5,27 +5,9 @@
         :title="backTarget.name"
         :route-location="backTarget.to"
         sub-title="View Program"
-      >
-        <template #buttons v-if="allowProgramActions && !isProgramYearInactive">
-          <program-actions-menu
-            :program-id="programId"
-            navigation-title="Edit"
-            :navigation-route="editProgramRoute"
-            :navigation-disabled="!canModifyProgram"
-            :deactivate-disabled="!canModifyProgram"
-            :disabled="loading"
-            @deactivated="loadProgram(programId)"
-          />
-        </template>
-      </header-navigator>
+      />
     </template>
     <template #alerts>
-      <banner
-        v-if="isProgramYearInactive"
-        class="mb-2"
-        :type="BannerTypes.Info"
-        summary="This program can no longer be changed because it is associated with a program year that is no longer active."
-      />
       <institution-restriction-banner
         v-if="!!locationId"
         :scope="InstitutionRestrictionDisplayScope.Program"
@@ -44,18 +26,11 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import type { RouteLocationRaw } from "vue-router";
-import {
-  useFeatureToggles,
-  useInstitutionAuth,
-  useSnackBar,
-} from "@/composables";
+import { useFeatureToggles, useSnackBar } from "@/composables";
 import type { BackTarget } from "@/types";
-import { BannerTypes, InstitutionRestrictionDisplayScope } from "@/types";
-import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
+import { InstitutionRestrictionDisplayScope } from "@/types";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
-import ProgramActionsMenu from "@/components/institutions/education-programs/ProgramActionsMenu.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
@@ -63,15 +38,6 @@ interface ViewProgramProps {
   locationId?: number;
   programId: number;
   institutionId?: number;
-  /**
-   * Program year selected in the manage programs, when accessed from there.
-   * Allows the edit page to navigate back keeping the same program year selected.
-   */
-  programYearId?: number;
-  /**
-   * Allows the institution to edit or deactivate the program from this page.
-   */
-  allowProgramActions?: boolean;
   backTarget: BackTarget;
 }
 const props = defineProps<ViewProgramProps>();
@@ -79,7 +45,6 @@ const snackBar = useSnackBar();
 const loading = ref(true);
 const educationProgram = ref<EducationProgramAPIOutDTO>();
 const { isManageProgramsEnabled } = useFeatureToggles();
-const { canModifyPrograms } = useInstitutionAuth();
 const formTitle = computed(() => {
   if (!isManageProgramsEnabled.value) {
     return "Program";
@@ -88,37 +53,6 @@ const formTitle = computed(() => {
     ? `${educationProgram.value.programYearName} Program`
     : "Program";
 });
-
-/**
- * Indicates if the program can be edited or deactivated, which requires
- * the program to be active and the user to be allowed to modify programs.
- * Evaluated only when the program actions are allowed (institution context).
- */
-const canModifyProgram = computed(
-  () => !!educationProgram.value?.isActive && canModifyPrograms.value,
-);
-
-/**
- * Indicates if the program year of the program no longer has an active
- * configuration, preventing the program from being edited.
- * Only relevant when the program actions are allowed (institution context).
- */
-const isProgramYearInactive = computed(
-  () =>
-    props.allowProgramActions &&
-    !!educationProgram.value &&
-    !educationProgram.value.hasActiveProgramYearConfiguration,
-);
-
-/**
- * Route to the edit program page, keeping the program year selected
- * to allow navigating back to the manage programs.
- */
-const editProgramRoute = computed<RouteLocationRaw>(() => ({
-  name: InstitutionRoutesConst.EDIT_PROGRAM,
-  params: { programId: props.programId },
-  query: { programYearId: props.programYearId },
-}));
 
 /**
  * Loads the education program to be displayed.

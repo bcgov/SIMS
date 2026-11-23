@@ -5,18 +5,7 @@
         :title="backTarget.name"
         :route-location="backTarget.to"
         sub-title="Edit Program"
-      >
-        <template #buttons v-if="allowProgramActions">
-          <program-actions-menu
-            :program-id="programId"
-            navigation-title="View"
-            :navigation-route="viewProgramRoute"
-            :deactivate-disabled="!programConfiguration || !canModifyPrograms"
-            :disabled="loading || processing"
-            @deactivated="programDeactivated"
-          />
-        </template>
-      </header-navigator>
+      />
     </template>
     <template #alerts>
       <banner
@@ -72,7 +61,6 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import { EducationProgramConfigurationAPIOutDTO } from "@/services/http/dto";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
-import ProgramActionsMenu from "@/components/institutions/education-programs/ProgramActionsMenu.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface EditProgramProps {
@@ -86,17 +74,13 @@ interface EditProgramProps {
    * Program year selected in the manage programs, when accessed from there.
    */
   programYearId?: number;
-  /**
-   * Allows the program to be viewed or deactivated from this page.
-   */
-  allowProgramActions?: boolean;
   backTarget: BackTarget;
 }
 
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const { isReadOnlyUser, canModifyPrograms } = useInstitutionAuth();
+const { isReadOnlyUser } = useInstitutionAuth();
 const { isManageProgramsEnabled } = useFeatureToggles();
 /**
  * Read-only access is defined per location. When no location is provided,
@@ -150,24 +134,6 @@ const submit = async (programData: Record<string, unknown>) => {
 
 const goBack = (): void => {
   router.push(props.backTarget.to);
-};
-
-/**
- * Route to the view program page, keeping the program year selected
- * to allow navigating back to the manage programs.
- */
-const viewProgramRoute = computed<RouteLocationRaw>(() => ({
-  name: InstitutionRoutesConst.VIEW_PROGRAM,
-  params: { programId: props.programId },
-  query: { programYearId: props.programYearId },
-}));
-
-/**
- * Inactive programs can no longer be edited, hence the
- * program is displayed once it is deactivated.
- */
-const programDeactivated = async (): Promise<void> => {
-  await router.push(viewProgramRoute.value);
 };
 
 /**

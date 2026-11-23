@@ -62,6 +62,13 @@
         </template>
         <template #[`item.programId`]="{ item }">
           <v-btn
+            v-if="item.isProgramConfigurationActive"
+            class="mr-2"
+            color="primary"
+            :to="getEditProgramRoute(item.id)"
+            >Edit</v-btn
+          >
+          <v-btn
             color="primary"
             variant="outlined"
             :to="getViewProgramRoute(item.id)"
@@ -270,6 +277,21 @@ const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
   name: InstitutionRoutesConst.VIEW_PROGRAM,
   params: { programId },
   // Allows the view page to navigate back keeping the current program year selected.
+  query: {
+    programYearId: selectedProgramYearId.value,
+  },
+});
+
+/**
+ * Route to the edit program page.
+ * Used as a link target to allow the page to be opened in a new tab.
+ * @param programId program to be edited.
+ * @returns edit program route location.
+ */
+const getEditProgramRoute = (programId: number): RouteLocationRaw => ({
+  name: InstitutionRoutesConst.EDIT_PROGRAM,
+  params: { programId },
+  // Allows the edit page to navigate back keeping the current program year selected.
   query: {
     programYearId: selectedProgramYearId.value,
   },

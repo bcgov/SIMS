@@ -100,9 +100,14 @@ export class EducationProgramManagerService {
           renewedProgram: {
             id: true,
           },
+          programConfiguration: {
+            id: true,
+            isActive: true,
+          },
         },
         relations: {
           renewedProgram: true,
+          programConfiguration: true,
         },
         where: combineWhereConditions(
           baseWhere,

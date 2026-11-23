@@ -145,14 +145,21 @@ export enum ProgramRenewalStatus {
 /**
  * Education program summary details for management purposes.
  */
-export class EducationProgramManagerDetailsAPIOutDTO {
+export interface EducationProgramManagerDetailsAPIOutDTO {
   id: number;
   name: string;
   credentialTypeToDisplay: string;
   cipCode: string;
   sabcCode?: string;
   programStatus: ProgramStatus;
+  /**
+   * Indicates if the education program is currently active.
+   */
   isActive: boolean;
+  /**
+   * Indicates if the program configuration associated with the education program is currently active.
+   */
+  isProgramConfigurationActive: boolean;
   /**
    * Renewal status of the education program into the next program year.
    * All programs are available for renewal into the next program year,
