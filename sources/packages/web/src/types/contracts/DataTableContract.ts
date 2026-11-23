@@ -926,6 +926,7 @@ export const MSFAAActivityHeaders = [
     key: "newIssuingProvince",
     sortable: false,
   },
+  { title: "Action", key: "action", sortable: false },
 ];
 
 /**

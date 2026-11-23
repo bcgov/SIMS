@@ -86,6 +86,23 @@ export async function removeJWTUserRoles(
 }
 
 /**
+ * Adds the provided roles to the JWT token. Useful for roles not yet provisioned in the test Keycloak realm.
+ * @param testingModule nest testing module.
+ * @param rolesToAdd client roles to be added to the token payload.
+ * @param azp the authorized party (client ID) to which the roles will be added, default is "aest".
+ */
+export async function addJWTUserRoles(
+  testingModule: TestingModule,
+  rolesToAdd: ClientRole[],
+  azp = AuthorizedParties.aest,
+): Promise<void> {
+  await mockJWTToken(testingModule, (payload: IUserToken) => {
+    const roles = payload.resource_access[azp]?.roles ?? [];
+    payload.resource_access[azp] = { roles: [...roles, ...rolesToAdd] };
+  });
+}
+
+/**
  * Adds dynamic form configuration roles to the JWT token to authorize form submission actions.
  * @param testingModule nest testing module.
  * @param dynamicFormConfigurations dynamic form configurations to authorize.

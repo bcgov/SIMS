@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, IsNull, Repository } from "typeorm";
+import { DataSource, EntityManager, In, IsNull, Repository } from "typeorm";
 import {
   MSFAANumber,
   Student,
@@ -21,8 +21,24 @@ import {
   APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   APPLICATION_NOT_FOUND,
   INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  MSFAA_NUMBER_INVALID_OPERATION,
+  MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
+
+/**
+ * MSFAA record that can be reissued.
+ */
+export interface MSFAAEligibleForReissue {
+  /**
+   * MSFAA id.
+   */
+  id: number;
+  /**
+   * Application to be used as the reference for the new MSFAA.
+   */
+  referenceApplicationId: number;
+}
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -64,47 +80,113 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Reissues a new MSFAA number to be associated with the student, cancelling any
+   * Gets the most recent MSFAA of each offering intensity that can be reissued.
+   * An MSFAA can be reissued when it is the most recent one for its offering intensity,
+   * it is cancelled, and it is associated with at least one disbursement.
+   * @param studentId student to have the MSFAA records checked.
+   * @param entityManager entity manager to be used instead of the default one, when provided.
+   * @returns MSFAA records eligible to be reissued.
+   */
+  async getMSFAAsEligibleForReissue(
+    studentId: number,
+    entityManager?: EntityManager,
+  ): Promise<MSFAAEligibleForReissue[]> {
+    const manager = entityManager ?? this.dataSource.manager;
+    const studentMSFAAs = await manager.getRepository(MSFAANumber).find({
+      select: { id: true, offeringIntensity: true, cancelledDate: true },
+      where: { student: { id: studentId } },
+      order: { createdAt: "DESC", id: "DESC" },
+    });
+    // Records are sorted from the newest to the oldest.
+    const mostRecentByIntensity = new Map<OfferingIntensity, MSFAANumber>();
+    for (const msfaa of studentMSFAAs) {
+      if (!mostRecentByIntensity.has(msfaa.offeringIntensity)) {
+        mostRecentByIntensity.set(msfaa.offeringIntensity, msfaa);
+      }
+    }
+    const cancelledMSFAAIds = [...mostRecentByIntensity.values()]
+      .filter((msfaa) => msfaa.cancelledDate)
+      .map((msfaa) => msfaa.id);
+    if (!cancelledMSFAAIds.length) {
+      return [];
+    }
+    const disbursements = await manager
+      .getRepository(DisbursementSchedule)
+      .find({
+        select: {
+          id: true,
+          msfaaNumber: { id: true },
+          studentAssessment: { id: true, application: { id: true } },
+        },
+        relations: {
+          msfaaNumber: true,
+          studentAssessment: { application: true },
+        },
+        where: { msfaaNumber: { id: In(cancelledMSFAAIds) } },
+        order: { id: "DESC" },
+      });
+    const eligibleMSFAAs = new Map<number, MSFAAEligibleForReissue>();
+    for (const disbursement of disbursements) {
+      // The reference application is the one from the most recent disbursement.
+      if (!eligibleMSFAAs.has(disbursement.msfaaNumber.id)) {
+        eligibleMSFAAs.set(disbursement.msfaaNumber.id, {
+          id: disbursement.msfaaNumber.id,
+          referenceApplicationId: disbursement.studentAssessment.application.id,
+        });
+      }
+    }
+    return [...eligibleMSFAAs.values()];
+  }
+
+  /**
+   * Reissues a new MSFAA number to replace a cancelled one, cancelling any
    * pending MSFAA for the particular offering intensity and also associating the
    * new MSFAA number to any pending disbursement for the same offering intensity.
-   * Reissuing an MSFAA is only valid for an application with pending disbursement
-   * where the MSFAA is cancelled.
-   * @param referenceApplicationId reference application id.
+   * @param msfaaNumberId cancelled MSFAA to be reissued.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager transactional entity manager, allowing the reissue to be
+   * part of a larger transaction.
    * @returns the newly created MSFAA.
    */
-  async reissueMSFAA(
-    referenceApplicationId: number,
+  async reissueMSFAANumber(
+    msfaaNumberId: number,
     auditUserId: number,
+    entityManager: EntityManager,
   ): Promise<MSFAANumber> {
-    const application = await this.getApplicationForMSFAACreation(
-      referenceApplicationId,
-    );
-    // If multiple disbursements are pending they must be associated with the same
-    // MSFAA hence selecting the first one should be enough for the validations.
-    const [pendingDisbursement] =
-      application.currentAssessment.disbursementSchedules.filter(
-        (schedule) =>
-          schedule.disbursementScheduleStatus ===
-          DisbursementScheduleStatus.Pending,
-      );
-    if (!pendingDisbursement) {
+    const msfaaNumber = await entityManager.getRepository(MSFAANumber).findOne({
+      select: {
+        id: true,
+        offeringIntensity: true,
+        student: { id: true },
+      },
+      relations: { student: true },
+      where: { id: msfaaNumberId },
+    });
+    if (!msfaaNumber) {
       throw new CustomNamedError(
-        "Not possible to reissue an MSFAA when there is no pending disbursements for the application.",
-        APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
+        `MSFAA number id ${msfaaNumberId} was not found.`,
+        MSFAA_NUMBER_NOT_FOUND,
       );
     }
-    if (!pendingDisbursement.msfaaNumber.cancelledDate) {
+    const eligibleMSFAAs = await this.getMSFAAsEligibleForReissue(
+      msfaaNumber.student.id,
+      entityManager,
+    );
+    const eligibleMSFAA = eligibleMSFAAs.find(
+      (eligible) => eligible.id === msfaaNumber.id,
+    );
+    if (!eligibleMSFAA) {
       throw new CustomNamedError(
-        "Not possible to reissue an MSFAA when the current associated MSFAA is not cancelled.",
-        APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
+        "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no disbursements associated.",
+        MSFAA_NUMBER_INVALID_OPERATION,
       );
     }
     return this.internalActivateMSFAANumber(
-      application.student.id,
-      application.id,
-      application.currentAssessment.offering.offeringIntensity,
+      msfaaNumber.student.id,
+      eligibleMSFAA.referenceApplicationId,
+      msfaaNumber.offeringIntensity,
       auditUserId,
+      { entityManager },
     );
   }
 
@@ -158,6 +240,8 @@ export class MSFAANumberSharedService {
    * msfaaNumber as the msfaaNumber of the msfaa record,
    * dateSigned as the date the msfaaNumber got signed,
    * and serviceProviderReceivedDate as the serviceProviderReceivedDate of the msfaa record to be reactivated.
+   * - `entityManager` transactional entity manager to be used when the activation must be
+   * part of an existing transaction. When not provided, a new transaction is created.
    * @returns created MSFAA record.
    */
   private async internalActivateMSFAANumber(
@@ -166,13 +250,16 @@ export class MSFAANumberSharedService {
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
     options?: {
-      existingMSFAA: Pick<
+      existingMSFAA?: Pick<
         MSFAANumber,
         "id" | "msfaaNumber" | "dateSigned" | "serviceProviderReceivedDate"
       >;
+      entityManager?: EntityManager;
     },
   ): Promise<MSFAANumber> {
-    return this.dataSource.transaction(async (entityManager) => {
+    const activate = async (
+      entityManager: EntityManager,
+    ): Promise<MSFAANumber> => {
       const auditUser = this.systemUsersService.systemUser;
       const now = new Date();
       const nowISODate = getISODateOnlyString(now);
@@ -259,7 +346,11 @@ export class MSFAANumberSharedService {
         });
       }
       return newActiveMSFAA;
-    });
+    };
+    if (options?.entityManager) {
+      return activate(options.entityManager);
+    }
+    return this.dataSource.transaction(activate);
   }
 
   /**

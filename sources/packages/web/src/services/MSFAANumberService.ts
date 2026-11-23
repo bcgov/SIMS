@@ -1,5 +1,9 @@
 import ApiClient from "@/services/http/ApiClient";
-import { MSFAANumberAPIOutDTO } from "@/services/http/dto";
+import {
+  CancelMSFAAAPIInDTO,
+  MSFAANumberAPIOutDTO,
+  ReissueMSFAAAPIInDTO,
+} from "@/services/http/dto";
 
 /**
  * Client service layer for MSFAA number activity.
@@ -21,5 +25,29 @@ export class MSFAANumberService {
     studentId: number,
   ): Promise<MSFAANumberAPIOutDTO[]> {
     return ApiClient.MSFAANumberApi.getStudentMSFAAActivity(studentId);
+  }
+
+  /**
+   * Cancels an MSFAA and adds a general note to the student profile.
+   * @param msfaaNumberId MSFAA to be cancelled.
+   * @param payload note describing the cancellation.
+   */
+  async cancelMSFAANumber(
+    msfaaNumberId: number,
+    payload: CancelMSFAAAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.MSFAANumberApi.cancelMSFAANumber(msfaaNumberId, payload);
+  }
+
+  /**
+   * Reissues a cancelled MSFAA and adds a general note to the student profile.
+   * @param msfaaNumberId cancelled MSFAA to be reissued.
+   * @param payload note describing the reissue.
+   */
+  async reissueMSFAANumber(
+    msfaaNumberId: number,
+    payload: ReissueMSFAAAPIInDTO,
+  ): Promise<void> {
+    await ApiClient.MSFAANumberApi.reissueMSFAANumber(msfaaNumberId, payload);
   }
 }

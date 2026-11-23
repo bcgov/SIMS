@@ -224,16 +224,6 @@ export class ApplicationService {
   }
 
   /**
-   * Creates a new MSFAA number to be associated with the student, cancelling any
-   * pending MSFAA for the particular offering intensity and also associating the
-   * new MSFAA number to any pending disbursement for the same offering intensity.
-   * @param applicationId reference application id.
-   */
-  async reissueMSFAA(applicationId: number): Promise<void> {
-    await ApiClient.Application.reissueMSFAA(applicationId);
-  }
-
-  /**
    * Gets application and assessment status details.
    * @param applicationId application id.
    * @returns application and assessment details.

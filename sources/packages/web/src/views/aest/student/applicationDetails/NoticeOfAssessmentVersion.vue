@@ -16,10 +16,7 @@
       />
       <application-header-title :application-id="versionApplicationId" />
     </template>
-    <notice-of-assessment-form-view
-      :assessment-id="assessmentId"
-      :can-reissue-m-s-f-a-a="false"
-    />
+    <notice-of-assessment-form-view :assessment-id="assessmentId" />
   </full-page-container>
 </template>
 

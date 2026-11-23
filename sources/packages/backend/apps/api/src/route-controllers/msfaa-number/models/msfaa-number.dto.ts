@@ -1,9 +1,14 @@
-import { OfferingIntensity } from "@sims/sims-db";
+import { IsNotEmpty, MaxLength } from "class-validator";
+import { NOTE_DESCRIPTION_MAX_LENGTH, OfferingIntensity } from "@sims/sims-db";
 
 /**
  * MSFAA activity record details for a student as seen by Ministry users.
  */
 export class MSFAANumberAPIOutDTO {
+  /**
+   * MSFAA id.
+   */
+  id: number;
   /**
    * Date the MSFAA record was created.
    */
@@ -32,4 +37,27 @@ export class MSFAANumberAPIOutDTO {
    * Province which issued the cancellation (new_issuing_province), null if not cancelled.
    */
   newIssuingProvince?: string;
+  /**
+   * Indicates if the MSFAA can be reissued, which happens when it is the most recent
+   * MSFAA for its offering intensity, it is cancelled, and it has disbursements associated.
+   */
+  canBeReissued: boolean;
+}
+
+/**
+ * Details to cancel an MSFAA.
+ */
+export class CancelMSFAAAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
+}
+
+/**
+ * Details to reissue an MSFAA.
+ */
+export class ReissueMSFAAAPIInDTO {
+  @IsNotEmpty()
+  @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
+  noteDescription: string;
 }
