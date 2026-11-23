@@ -28,11 +28,11 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
   let auditUser: User;
   let restriction: Restriction;
   let batch: BatchRestriction;
-  let student: Student;
-  let secondStudent: Student;
-  // Application numbers of the same student.
-  const successfulApplicationNumbers = ["9900000001", "9900000002"];
-  const secondStudentApplicationNumber = "9900000003";
+  let studentOne: Student;
+  let studentTwo: Student;
+  // Student one has two application numbers and student two has one.
+  const studentOneApplicationNumbers = ["9900000001", "9900000002"];
+  const studentTwoApplicationNumber = "9900000003";
   const failedApplicationNumber = "9999999999";
 
   beforeAll(async () => {
@@ -41,33 +41,32 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
     db = createE2EDataSources(dataSource);
     auditUser = await db.user.save(createFakeUser());
     restriction = await db.restriction.save(createFakeRestriction());
-    [student, secondStudent] = await Promise.all([
+    [studentOne, studentTwo] = await Promise.all([
       saveFakeStudent(db.dataSource),
       saveFakeStudent(db.dataSource),
     ]);
-    const [studentRestriction, secondStudentRestriction] = await Promise.all([
+    const [studentOneRestriction, studentTwoRestriction] = await Promise.all([
       db.studentRestriction.save(
         createFakeStudentRestriction({
-          student,
+          student: studentOne,
           restriction,
           creator: auditUser,
         }),
       ),
       db.studentRestriction.save(
         createFakeStudentRestriction({
-          student: secondStudent,
+          student: studentTwo,
           restriction,
           creator: auditUser,
         }),
       ),
     ]);
-    // Batch with two successful application numbers of the same student,
-    // one successful application number of another student, and one failed application number.
+    // Batch with two successful application numbers for student one,
+    // one successful application number for student two, and one failed application number.
     batch = await db.batchRestriction.save(
       createFakeBatchRestriction({ restriction, creator: auditUser }),
     );
-    // The application numbers are saved out of order to ensure the endpoint
-    // orders them by application number instead of returning them in the order they were saved.
+    // The application numbers are saved out of order to ensure the endpoint orders them by application number.
     await db.batchRestrictionStudent.save([
       createFakeBatchRestrictionStudent(
         {
@@ -79,15 +78,15 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       ),
       createFakeBatchRestrictionStudent({
         batchRestriction: batch,
-        applicationNumber: secondStudentApplicationNumber,
-        studentRestriction: secondStudentRestriction,
+        applicationNumber: studentTwoApplicationNumber,
+        studentRestriction: studentTwoRestriction,
         creator: auditUser,
       }),
-      ...successfulApplicationNumbers.toReversed().map((applicationNumber) =>
+      ...studentOneApplicationNumbers.toReversed().map((applicationNumber) =>
         createFakeBatchRestrictionStudent({
           batchRestriction: batch,
           applicationNumber,
-          studentRestriction,
+          studentRestriction: studentOneRestriction,
           creator: auditUser,
         }),
       ),
@@ -110,15 +109,15 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .expect(HttpStatus.OK)
       .expect({
         results: [
-          ...successfulApplicationNumbers.map((applicationNumber) => ({
+          ...studentOneApplicationNumbers.map((applicationNumber) => ({
             applicationNumber,
-            studentId: student.id,
+            studentId: studentOne.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           })),
           {
-            applicationNumber: secondStudentApplicationNumber,
-            studentId: secondStudent.id,
+            applicationNumber: studentTwoApplicationNumber,
+            studentId: studentTwo.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           },
@@ -149,8 +148,8 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .expect({
         results: [
           {
-            applicationNumber: secondStudentApplicationNumber,
-            studentId: secondStudent.id,
+            applicationNumber: studentTwoApplicationNumber,
+            studentId: studentTwo.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           },
@@ -180,15 +179,15 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .expect(HttpStatus.OK)
       .expect({
         results: [
-          ...successfulApplicationNumbers.map((applicationNumber) => ({
+          ...studentOneApplicationNumbers.map((applicationNumber) => ({
             applicationNumber,
-            studentId: student.id,
+            studentId: studentOne.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           })),
           {
-            applicationNumber: secondStudentApplicationNumber,
-            studentId: secondStudent.id,
+            applicationNumber: studentTwoApplicationNumber,
+            studentId: studentTwo.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           },
@@ -213,15 +212,15 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       .expect(HttpStatus.OK)
       .expect({
         results: [
-          ...successfulApplicationNumbers.map((applicationNumber) => ({
+          ...studentOneApplicationNumbers.map((applicationNumber) => ({
             applicationNumber,
-            studentId: student.id,
+            studentId: studentOne.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           })),
           {
-            applicationNumber: secondStudentApplicationNumber,
-            studentId: secondStudent.id,
+            applicationNumber: studentTwoApplicationNumber,
+            studentId: studentTwo.id,
             result: BatchRestrictionStudentResult.Successful,
             failureReason: null,
           },
