@@ -61,19 +61,21 @@
           />
         </template>
         <template #[`item.programId`]="{ item }">
-          <v-btn
-            v-if="item.isProgramConfigurationActive"
-            class="mr-2"
-            color="primary"
-            :to="getEditProgramRoute(item.id)"
-            >Edit</v-btn
-          >
-          <v-btn
-            color="primary"
-            variant="outlined"
-            :to="getViewProgramRoute(item.id)"
-            >View</v-btn
-          >
+          <div class="d-flex flex-nowrap gc-2">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              :to="getViewProgramRoute(item.id)"
+              >View</v-btn
+            >
+            <v-btn
+              v-if="item.isProgramConfigurationActive && item.isActive"
+              color="primary"
+              variant="outlined"
+              :to="getEditProgramRoute(item.id)"
+              >Edit</v-btn
+            >
+          </div>
         </template>
       </v-data-table-server>
     </toggle-content>
