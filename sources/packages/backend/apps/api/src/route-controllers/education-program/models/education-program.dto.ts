@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -126,6 +127,12 @@ export class UpdateEducationProgramAPIInDTO {
    */
   @IsPositive()
   programConfigurationId: number;
+  /**
+   * Indicates if the full update was restricted when the program data was retrieved
+   * for the update. The update is rejected if the full update became restricted since then.
+   */
+  @IsBoolean()
+  isFullUpdateRestricted: boolean;
   /**
    * Dynamic program data, validated later against the configuration's
    * validation schema (AJV). Only the shape and size are checked here.

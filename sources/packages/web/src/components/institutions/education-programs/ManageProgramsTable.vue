@@ -69,7 +69,11 @@
               >View</v-btn
             >
             <v-btn
-              v-if="item.isProgramConfigurationActive && item.isActive"
+              v-if="
+                item.isProgramConfigurationActive &&
+                item.isActive &&
+                canModifyPrograms
+              "
               color="primary"
               variant="outlined"
               :to="getEditProgramRoute(item.id)"
@@ -107,6 +111,7 @@ import type {
 import {
   useEducationProgramYears,
   useFormatters,
+  useInstitutionAuth,
   useSnackBar,
 } from "@/composables";
 
@@ -133,6 +138,7 @@ const recordsCount = defineModel<number | undefined>("recordsCount");
 const { emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
 const { loadEducationProgramYears } = useEducationProgramYears();
+const { canModifyPrograms } = useInstitutionAuth();
 const { mobile: isMobile } = useDisplay();
 const programAndCount = ref(
   {} as

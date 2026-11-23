@@ -197,6 +197,11 @@ export interface UpdateEducationProgramAPIInDTO {
    */
   programConfigurationId: number;
   /**
+   * Indicates if the full update was restricted when the program data was retrieved
+   * for the update. The update is rejected if the full update became restricted since then.
+   */
+  isFullUpdateRestricted: boolean;
+  /**
    * Dynamic program data, whose shape is defined by the program
    * configuration schemas.
    */

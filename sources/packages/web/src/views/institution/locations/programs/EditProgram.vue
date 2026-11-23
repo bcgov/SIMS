@@ -117,6 +117,7 @@ const submit = async (programData: Record<string, unknown>) => {
       {
         programData,
         programConfigurationId: programConfiguration.value.configurationId,
+        isFullUpdateRestricted: isFullUpdateRestricted.value,
       },
     );
     snackBar.success("Education Program updated successfully!");

@@ -69,6 +69,7 @@ import {
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
   EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
+  EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED,
 } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -326,6 +327,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     description:
       "Education program configuration not found or not active or " +
       "education program configuration outdated (not the expected one for the update) or " +
+      "education program full update became restricted since the program data was retrieved or " +
       "education program cannot be edited when inactive or " +
       "duplicate SABC code.",
   })
@@ -349,6 +351,7 @@ export class EducationProgramInstitutionsController extends BaseController {
         programId,
         payload.programData as EducationProgramData,
         payload.programConfigurationId,
+        payload.isFullUpdateRestricted,
         userToken.authorizations.institutionId,
         userToken.userId,
       );
@@ -363,6 +366,7 @@ export class EducationProgramInstitutionsController extends BaseController {
           case EDUCATION_PROGRAM_INVALID_OPERATION:
             throw new UnprocessableEntityException(error.message);
           case EDUCATION_PROGRAM_CONFIGURATION_OUTDATED:
+          case EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED:
           case DUPLICATE_SABC_CODE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),

@@ -85,6 +85,13 @@ export const EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND =
  */
 export const EDUCATION_PROGRAM_CONFIGURATION_OUTDATED =
   "EDUCATION_PROGRAM_CONFIGURATION_OUTDATED";
+/**
+ * The education program update restriction (full or partial update) changed
+ * since the program form was loaded, for instance, when an offering was added
+ * to the program while it was being fully edited.
+ */
+export const EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED =
+  "EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED";
 
 export const STUDENT_ACCOUNT_APPLICATION_NOT_FOUND =
   "STUDENT_ACCOUNT_APPLICATION_NOT_FOUND";

@@ -23,6 +23,7 @@ import {
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_INVALID_OPERATION,
   EDUCATION_PROGRAM_NOT_FOUND,
+  EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED,
 } from "../../constants";
 import { InstitutionService } from "../../services/institution/institution.service";
 import { DataSource, EntityManager } from "typeorm";
@@ -233,6 +234,9 @@ export class EducationProgramSaveService {
    * @param programConfigurationId the ID of the program configuration used to fill the
    * program data. It must be the configuration expected for the update
    * ({@link RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate}).
+   * @param isFullUpdateRestricted indicates if the full update was restricted when the
+   * program data was retrieved for the update. The update is rejected if the program
+   * was retrieved for a full update but the full update is now restricted.
    * @param institutionId the ID of the institution.
    * @param auditUserId the ID of the user performing the action.
    * @returns the updated education program.
@@ -241,6 +245,7 @@ export class EducationProgramSaveService {
     programId: number,
     programData: EducationProgramData,
     programConfigurationId: number,
+    isFullUpdateRestricted: boolean,
     institutionId: number,
     auditUserId: number,
   ): Promise<EducationProgram> {
@@ -270,6 +275,17 @@ export class EducationProgramSaveService {
           programId: program.id,
         },
       );
+    // Checked before the configuration ID since a restriction change can also change
+    // the expected configuration, and this check provides the more specific error.
+    if (
+      configuration.context.isFullUpdateRestricted &&
+      !isFullUpdateRestricted
+    ) {
+      throw new CustomNamedError(
+        "This program can no longer be fully edited.",
+        EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED,
+      );
+    }
     if (configuration.configurationId !== programConfigurationId) {
       throw new CustomNamedError(
         "The program configuration has changed since the program data was retrieved.",

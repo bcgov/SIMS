@@ -433,18 +433,22 @@ async function ensureSequentialProgramConfigurations(
  * @param programConfigurationId ID of the program configuration for which the education program is being updated.
  * @param options Options to customize the update payload.
  * - `appendedProgramData` Additional program data to append to the payload.
+ * - `isFullUpdateRestricted` Indicates if the full update was restricted when the
+ * program data was retrieved. Defaults to false.
  * @returns The update payload for the education program.
  */
 export function getUpdatePayload(
   programConfigurationId: number,
   options?: {
     appendedProgramData?: { [key: string]: unknown };
+    isFullUpdateRestricted?: boolean;
   },
 ): UpdateEducationProgramAPIInDTO & {
   programData: EducationProgramDynamicData;
 } {
   return {
     programConfigurationId,
+    isFullUpdateRestricted: options?.isFullUpdateRestricted ?? false,
     programData: getProgramDataPayload(options),
   };
 }

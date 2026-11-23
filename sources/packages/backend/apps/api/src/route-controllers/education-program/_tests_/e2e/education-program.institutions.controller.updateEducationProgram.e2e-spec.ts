@@ -8,6 +8,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeEducationProgram,
+  createFakeEducationProgramOffering,
   getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
@@ -237,6 +238,39 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
         errorType: "EDUCATION_PROGRAM_CONFIGURATION_OUTDATED",
         message:
           "The program configuration has changed since the program data was retrieved.",
+      });
+  });
+
+  it("Should throw unprocessable entity error when the program data was retrieved for a full update and the program has offerings now.", async () => {
+    // Arrange
+    const program = createFakeEducationProgram({
+      institution: collegeF,
+      auditUser: collegeFUser,
+      programConfiguration: activeProgramConfiguration,
+    });
+    await db.educationProgram.save(program);
+    // Offering added after the program data was retrieved for a full update.
+    const offering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program,
+    });
+    await db.educationProgramOffering.save(offering);
+    const payload = getUpdatePayload(activeProgramConfiguration.id, {
+      isFullUpdateRestricted: false,
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(getEndpoint(program.id))
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        errorType: "EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED",
+        message: "This program can no longer be fully edited.",
       });
   });
 
