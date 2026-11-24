@@ -6,9 +6,9 @@ import {
   createFakeBatchRestriction,
   createFakeBatchRestrictionStudent,
   createFakeRestriction,
-  createFakeStudentRestriction,
   createFakeUser,
   saveFakeStudent,
+  saveFakeStudentRestriction,
 } from "@sims/test-utils";
 import {
   AESTGroups,
@@ -46,20 +46,16 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
       saveFakeStudent(db.dataSource),
     ]);
     const [studentOneRestriction, studentTwoRestriction] = await Promise.all([
-      db.studentRestriction.save(
-        createFakeStudentRestriction({
-          student: studentOne,
-          restriction,
-          creator: auditUser,
-        }),
-      ),
-      db.studentRestriction.save(
-        createFakeStudentRestriction({
-          student: studentTwo,
-          restriction,
-          creator: auditUser,
-        }),
-      ),
+      saveFakeStudentRestriction(db.dataSource, {
+        student: studentOne,
+        restriction,
+        creator: auditUser,
+      }),
+      saveFakeStudentRestriction(db.dataSource, {
+        student: studentTwo,
+        restriction,
+        creator: auditUser,
+      }),
     ]);
     // Batch with two successful application numbers for student one,
     // one successful application number for student two, and one failed application number.
@@ -258,15 +254,14 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
   it("Should return the student of a successful application number when the student restriction was deleted after the batch was submitted.", async () => {
     // Arrange
     const deletedRestrictionStudent = await saveFakeStudent(db.dataSource);
-    const deletedStudentRestriction = await db.studentRestriction.save(
-      createFakeStudentRestriction(
-        {
-          student: deletedRestrictionStudent,
-          restriction,
-          creator: auditUser,
-        },
-        { isActive: false, deletedAt: new Date() },
-      ),
+    const deletedStudentRestriction = await saveFakeStudentRestriction(
+      db.dataSource,
+      {
+        student: deletedRestrictionStudent,
+        restriction,
+        creator: auditUser,
+      },
+      { isActive: false, deletedAt: new Date() },
     );
     const deletedRestrictionBatch = await db.batchRestriction.save(
       createFakeBatchRestriction({ restriction, creator: auditUser }),
@@ -357,7 +352,7 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestrictionStudents", () =
     await request(app.getHttpServer())
       .get(
         getEndpoint({
-          batchRestrictionId: 1,
+          batchRestrictionId: batch.id,
           queryString: "page=0&pageLimit=10",
         }),
       )

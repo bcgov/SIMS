@@ -4,6 +4,8 @@ import {
   Application,
   BatchRestriction,
   BatchRestrictionStudent,
+  combineWhereConditions,
+  EMPTY_WHERE,
   NoteType,
   Restriction,
   StudentRestriction,
@@ -14,8 +16,18 @@ import {
   SequenceControlService,
   StudentRestrictionSharedService,
 } from "@sims/services";
-import { DataSource, EntityManager, Repository } from "typeorm";
 import {
+  DataSource,
+  EntityManager,
+  FindOptionsWhere,
+  ILike,
+  IsNull,
+  Not,
+  Repository,
+} from "typeorm";
+import {
+  BATCH_RESTRICTION_STUDENT_APPLICATION_NUMBER_SORT_FIELD,
+  BATCH_RESTRICTION_STUDENT_SORT_FIELDS,
   BatchRestrictionStudentResult,
   BatchRestrictionSummary,
 } from "./models/batch-restriction.model";
@@ -132,44 +144,67 @@ export class BatchRestrictionService {
     batchRestrictionId: number,
     paginationOptions: BatchRestrictionStudentPaginationOptions,
   ): Promise<PaginatedResults<BatchRestrictionStudent>> {
-    const query = this.batchRestrictionStudentRepo
+    const [results, count] = await this.batchRestrictionStudentRepo
       .createQueryBuilder("batchStudent")
-      .withDeleted()
-      .select([
-        "batchStudent.id",
-        "batchStudent.applicationNumber",
-        "batchStudent.failureReason",
-        "studentRestriction.id",
-        "student.id",
-      ])
-      .leftJoin("batchStudent.studentRestriction", "studentRestriction")
-      .leftJoin("studentRestriction.student", "student")
-      .where("batchStudent.batchRestriction.id = :batchRestrictionId", {
-        batchRestrictionId,
-      });
-    const searchCriteria = paginationOptions.searchCriteria?.trim();
-    if (searchCriteria) {
-      query.andWhere("batchStudent.applicationNumber ILIKE :search", {
-        search: `%${searchCriteria}%`,
-      });
-    }
-    switch (paginationOptions.result) {
-      case BatchRestrictionStudentResult.Successful:
-        query.andWhere("batchStudent.failureReason IS NULL");
-        break;
-      case BatchRestrictionStudentResult.Failed:
-        query.andWhere("batchStudent.failureReason IS NOT NULL");
-        break;
-    }
-    query
+      .setFindOptions({
+        withDeleted: true,
+        select: {
+          id: true,
+          applicationNumber: true,
+          failureReason: true,
+          studentRestriction: { id: true, student: { id: true } },
+        },
+        relations: { studentRestriction: { student: true } },
+        where: combineWhereConditions(
+          { batchRestriction: { id: batchRestrictionId } },
+          this.getResultWhereConditions(paginationOptions),
+          this.getSearchWhereConditions(paginationOptions),
+        ),
+      })
       .orderBy(
-        "batchStudent.applicationNumber",
+        BATCH_RESTRICTION_STUDENT_SORT_FIELDS[
+          paginationOptions.sortField ??
+            BATCH_RESTRICTION_STUDENT_APPLICATION_NUMBER_SORT_FIELD
+        ],
         paginationOptions.sortOrder ?? FieldSortOrder.ASC,
       )
       .offset(paginationOptions.page * paginationOptions.pageLimit)
-      .limit(paginationOptions.pageLimit);
-    const [batchStudents, count] = await query.getManyAndCount();
-    return { results: batchStudents, count };
+      .limit(paginationOptions.pageLimit)
+      .getManyAndCount();
+    return { results, count };
+  }
+
+  /**
+   * Builds the where conditions to filter the batch students by result.
+   * @param paginationOptions pagination options with the optional result filter.
+   * @returns where conditions to filter the batch students by result.
+   */
+  private getResultWhereConditions(
+    paginationOptions: BatchRestrictionStudentPaginationOptions,
+  ): FindOptionsWhere<BatchRestrictionStudent>[] {
+    switch (paginationOptions.result) {
+      case BatchRestrictionStudentResult.Successful:
+        return [{ failureReason: IsNull() }];
+      case BatchRestrictionStudentResult.Failed:
+        return [{ failureReason: Not(IsNull()) }];
+      default:
+        return EMPTY_WHERE;
+    }
+  }
+
+  /**
+   * Builds the where conditions to filter the batch students by the search criteria.
+   * @param paginationOptions pagination options with the optional search criteria.
+   * @returns where conditions to filter the batch students by the search criteria.
+   */
+  private getSearchWhereConditions(
+    paginationOptions: BatchRestrictionStudentPaginationOptions,
+  ): FindOptionsWhere<BatchRestrictionStudent>[] {
+    const searchCriteria = paginationOptions.searchCriteria?.trim();
+    if (!searchCriteria) {
+      return EMPTY_WHERE;
+    }
+    return [{ applicationNumber: ILike(`%${searchCriteria}%`) }];
   }
 
   /**

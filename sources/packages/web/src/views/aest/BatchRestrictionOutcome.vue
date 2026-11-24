@@ -9,21 +9,11 @@
         :route-location="{ name: AESTRoutesConst.BATCH_RESTRICTION }"
         sub-title="Batch Restriction Outcome"
       />
+      <detail-header :header-map="batchHeaderMap" />
     </template>
     <body-header-container :enable-card-view="true">
       <template #header>
-        <body-header title="Batch restriction outcome">
-          <template #subtitle>
-            <p class="mb-0">
-              <strong>Batch ID:</strong> {{ batchRestriction?.batchNumber }}
-            </p>
-            <p class="mb-0">
-              <strong>Restriction:</strong>
-              {{ batchRestriction?.restrictionCode }} -
-              {{ batchRestriction?.restrictionDescription }}
-            </p>
-          </template>
-        </body-header>
+        <body-header title="Batch restriction outcome" />
       </template>
       <search-table
         v-model="searchCriteria"
@@ -100,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import {
   BatchRestrictionStudentHeaders,
@@ -121,6 +111,7 @@ import {
 import { BatchRestrictionService } from "@/services/BatchRestrictionService";
 import { useFormatters, useSnackBar } from "@/composables";
 import StatusChipBatchRestrictionStudentResult from "@/components/generic/StatusChipBatchRestrictionStudentResult.vue";
+import DetailHeader from "@/components/generic/DetailHeader.vue";
 
 const ResultFilter = {
   All: "All",
@@ -145,6 +136,13 @@ const batchRestriction = ref<BatchRestrictionDetailsAPIOutDTO>();
 const paginatedStudents = ref<
   PaginatedResultsAPIOutDTO<BatchRestrictionStudentAPIOutDTO>
 >({ results: [], count: 0 });
+
+const batchHeaderMap = computed<Record<string, string | undefined>>(() => ({
+  "Batch ID": batchRestriction.value?.batchNumber.toString(),
+  Restriction: batchRestriction.value
+    ? `${batchRestriction.value.restrictionCode} - ${batchRestriction.value.restrictionDescription}`
+    : undefined,
+}));
 
 const currentPagination: PaginationOptions = {
   page: DEFAULT_DATATABLE_PAGE_NUMBER,

@@ -22,6 +22,7 @@ import { Transform } from "class-transformer";
 import { ToBoolean } from "../../utilities/class-transform";
 import {
   AppealType,
+  BATCH_RESTRICTION_STUDENT_APPLICATION_NUMBER_SORT_FIELD,
   BatchReassessmentApplicationResult,
   BatchRestrictionStudentResult,
   PROGRAMS_MANAGEMENT_PROGRAM_NAME_SORT_FIELD,
@@ -303,7 +304,7 @@ export class BatchReassessmentApplicationPaginationOptionsAPIInDTO extends Pagin
  */
 export class BatchRestrictionStudentPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
-  @IsIn(["applicationNumber"])
+  @IsIn([BATCH_RESTRICTION_STUDENT_APPLICATION_NUMBER_SORT_FIELD])
   sortField?: string;
   @IsOptional()
   @IsEnum(BatchRestrictionStudentResult)

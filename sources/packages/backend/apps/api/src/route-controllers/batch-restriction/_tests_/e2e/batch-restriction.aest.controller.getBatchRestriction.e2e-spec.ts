@@ -14,13 +14,14 @@ import {
   getAESTToken,
 } from "../../../../testHelpers";
 import { Role } from "../../../../auth";
-import { Restriction, User } from "@sims/sims-db";
+import { BatchRestriction, Restriction, User } from "@sims/sims-db";
 
 describe("BatchRestrictionAESTController(e2e)-getBatchRestriction", () => {
   let app: INestApplication;
   let db: E2EDataSources;
   let auditUser: User;
   let provincialRestriction: Restriction;
+  let batch: BatchRestriction;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -28,16 +29,16 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestriction", () => {
     db = createE2EDataSources(dataSource);
     auditUser = await db.user.save(createFakeUser());
     provincialRestriction = await db.restriction.save(createFakeRestriction());
-  });
-
-  it("Should return the batch restriction details when the batch restriction exists.", async () => {
-    // Arrange
-    const batch = await db.batchRestriction.save(
+    batch = await db.batchRestriction.save(
       createFakeBatchRestriction({
         restriction: provincialRestriction,
         creator: auditUser,
       }),
     );
+  });
+
+  it("Should return the batch restriction details when the batch restriction exists.", async () => {
+    // Arrange
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -75,7 +76,7 @@ describe("BatchRestrictionAESTController(e2e)-getBatchRestriction", () => {
 
     // Act/Assert
     await request(app.getHttpServer())
-      .get(getEndpoint({ batchRestrictionId: 1 }))
+      .get(getEndpoint({ batchRestrictionId: batch.id }))
       .auth(token, BEARER_AUTH_TYPE)
       .expect(HttpStatus.FORBIDDEN)
       .expect({
