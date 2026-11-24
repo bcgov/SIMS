@@ -476,7 +476,6 @@ export class EducationProgramInstitutionsController extends BaseController {
         sabcCode: program.sabcCode,
         programStatus: program.programStatus,
         isActive: program.isActive,
-        isProgramConfigurationActive: program.programConfiguration.isActive,
         renewalStatus: program.renewedProgram
           ? ProgramRenewalStatus.Renewed
           : nextProgramConfigurationForRenewal

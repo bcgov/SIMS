@@ -123,9 +123,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
         count: 2,
         results: [
           getExpectedProgram(notRenewedProgram, ProgramRenewalStatus.Available),
-          getExpectedProgram(renewedProgram, ProgramRenewalStatus.Renewed, {
-            isProgramConfigurationActive: true,
-          }),
+          getExpectedProgram(renewedProgram, ProgramRenewalStatus.Renewed),
         ],
       });
   });
@@ -228,18 +226,12 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       .expect({
         count: 5,
         results: [
-          getExpectedProgram(
-            firstPendingProgram,
-            ProgramRenewalStatus.Available,
-            { isProgramConfigurationActive: true },
-          ),
+          getExpectedProgram(firstPendingProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(
             secondPendingProgram,
             ProgramRenewalStatus.Available,
           ),
-          getExpectedProgram(approvedProgram, ProgramRenewalStatus.Available, {
-            isProgramConfigurationActive: true,
-          }),
+          getExpectedProgram(approvedProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(declinedProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(inactiveProgram, ProgramRenewalStatus.Available),
         ],
@@ -564,16 +556,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
  * Gets the expected API result for a saved education program.
  * @param program saved education program.
  * @param renewalStatus expected renewal status.
- * @param options method options.
- * - `isProgramConfigurationActive` expected active status of the program
- * configuration. Defaults to false, since most programs are associated with
- * inactive configurations.
  * @returns expected API result.
  */
 function getExpectedProgram(
   program: EducationProgram,
   renewalStatus: ProgramRenewalStatus,
-  options?: { isProgramConfigurationActive?: boolean },
 ): EducationProgramManagerDetailsAPIOutDTO {
   return {
     id: program.id,
@@ -584,8 +571,6 @@ function getExpectedProgram(
     sabcCode: program.sabcCode,
     programStatus: program.programStatus,
     isActive: program.isActive,
-    isProgramConfigurationActive:
-      options?.isProgramConfigurationActive ?? false,
     renewalStatus,
   };
 }

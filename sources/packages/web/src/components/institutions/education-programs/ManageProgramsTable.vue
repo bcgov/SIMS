@@ -69,11 +69,7 @@
               >View</v-btn
             >
             <v-btn
-              v-if="
-                item.isProgramConfigurationActive &&
-                item.isActive &&
-                canModifyPrograms
-              "
+              v-if="canEditPrograms && item.isActive"
               color="primary"
               variant="outlined"
               :to="getEditProgramRoute(item.id)"
@@ -173,6 +169,16 @@ const selectedProgramYearId = ref<number | null | undefined>(
  * Program year selected in the filters component.
  */
 const selectedProgramYear = ref<EducationProgramYearAPIOutDTO>();
+/**
+ * Programs listed are all from the selected program year, which must have an active
+ * program configuration for its programs to be edited, matching the API validation.
+ * The user must also be allowed to modify programs.
+ */
+const canEditPrograms = computed(
+  () =>
+    !!selectedProgramYear.value?.hasActiveProgramConfiguration &&
+    canModifyPrograms.value,
+);
 
 // Keeps the records count in sync with the programs loaded.
 watch(

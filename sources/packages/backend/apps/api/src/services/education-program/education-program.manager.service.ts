@@ -102,7 +102,6 @@ export class EducationProgramManagerService {
           },
           programConfiguration: {
             id: true,
-            isActive: true,
           },
         },
         relations: {

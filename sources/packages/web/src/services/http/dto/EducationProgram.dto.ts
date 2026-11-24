@@ -157,10 +157,6 @@ export interface EducationProgramManagerDetailsAPIOutDTO {
    */
   isActive: boolean;
   /**
-   * Indicates if the program configuration associated with the education program is currently active.
-   */
-  isProgramConfigurationActive: boolean;
-  /**
    * Renewal status of the education program into the next program year.
    * All programs are available for renewal into the next program year,
    * independently of their current status or being active.
