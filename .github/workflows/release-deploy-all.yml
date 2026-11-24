@@ -174,7 +174,7 @@ jobs:
     if: ${{ !cancelled() && needs.env-setup.result == 'success' && (needs.deploy-secrets.result == 'success' || needs.deploy-secrets.result == 'skipped') }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3.2
+        uses: redhat-actions/openshift-tools-installer@v3.3
         with:
           oc: "4"
           skip_cache: true
@@ -253,7 +253,7 @@ jobs:
     if: ${{ !cancelled() && needs.env-setup.result == 'success' && needs.run-db-migrations.result == 'success' }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3.2
+        uses: redhat-actions/openshift-tools-installer@v3.3
         with:
           oc: "4"
           skip_cache: true
@@ -291,7 +291,7 @@ jobs:
     if: ${{ !cancelled() && needs.env-setup.result == 'success' && needs.run-db-migrations.result == 'success' }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3.2
+        uses: redhat-actions/openshift-tools-installer@v3.3
         with:
           oc: "4"
           skip_cache: true
@@ -326,7 +326,7 @@ jobs:
     if: ${{ !cancelled() && needs.env-setup.result == 'success' && needs.run-db-migrations.result == 'success' }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3.2
+        uses: redhat-actions/openshift-tools-installer@v3.3
         with:
           oc: "4"
           skip_cache: true
@@ -362,7 +362,7 @@ jobs:
     if: ${{ !cancelled() && needs.env-setup.result == 'success' && needs.run-db-migrations.result == 'success' }}
     steps:
       - name: Install CLI tools from OpenShift Mirror
-        uses: redhat-actions/openshift-tools-installer@v3.2
+        uses: redhat-actions/openshift-tools-installer@v3.3
         with:
           oc: "4"
           skip_cache: true
