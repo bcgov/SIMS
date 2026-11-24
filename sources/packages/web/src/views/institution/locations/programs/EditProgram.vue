@@ -2,8 +2,8 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        :title="backTarget.name"
-        :route-location="backTarget.to"
+        title="Manage Programs"
+        :route-location="manageProgramsRoute"
         sub-title="Edit Program"
       />
     </template>
@@ -27,7 +27,6 @@
       </banner>
       <institution-restriction-banner
         :scope="InstitutionRestrictionDisplayScope.Program"
-        :location-id="locationId"
         :program-id="programId"
       />
     </template>
@@ -43,13 +42,8 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import {
-  useFeatureToggles,
-  useInstitutionAuth,
-  useSnackBar,
-} from "@/composables";
+import { useInstitutionAuth, useSnackBar } from "@/composables";
 import { computed, ref, watch } from "vue";
-import type { BackTarget } from "@/types";
 import {
   ApiProcessError,
   BannerTypes,
@@ -64,42 +58,27 @@ import InstitutionRestrictionBanner from "@/components/institutions/banners/Inst
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface EditProgramProps {
-  /**
-   * Location from where the program is being edited, when accessed from the
-   * location programs. Not provided when accessed from the manage programs.
-   */
-  locationId?: number;
   programId: number;
-  /**
-   * Program year selected in the manage programs, when accessed from there.
-   */
-  programYearId?: number;
-  backTarget: BackTarget;
 }
 
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const { isReadOnlyUser } = useInstitutionAuth();
-const { isManageProgramsEnabled } = useFeatureToggles();
+const { canModifyPrograms } = useInstitutionAuth();
 /**
- * Read-only access is defined per location. When no location is provided,
- * the route authorization already prevents read-only users.
+ * The user must be allowed to modify programs, matching the API authorization.
+ * The route authorization does not prevent read-only users from accessing
+ * routes without a location.
  */
-const readOnly = computed(() =>
-  props.locationId ? isReadOnlyUser(props.locationId) : false,
-);
+const readOnly = computed(() => !canModifyPrograms.value);
 const processing = ref(false);
 const loading = ref(true);
 const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
-const formTitle = computed(() => {
-  if (!isManageProgramsEnabled.value) {
-    return "Program";
-  }
-  return programConfiguration.value
+const formTitle = computed(() =>
+  programConfiguration.value
     ? `Program Edit for ${programConfiguration.value.programYearName}`
-    : "Program";
-});
+    : "Program",
+);
 
 const isFullUpdateRestricted = computed(
   () =>
@@ -133,29 +112,32 @@ const submit = async (programData: Record<string, unknown>) => {
   }
 };
 
+/**
+ * Route back to the manage programs, selecting the program year of the
+ * program once it is loaded.
+ */
+const manageProgramsRoute = computed<RouteLocationRaw>(() => ({
+  name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+  params: programConfiguration.value
+    ? { programYearId: programConfiguration.value.programYearId }
+    : undefined,
+}));
+
 const goBack = (): void => {
-  router.push(props.backTarget.to);
+  router.push(manageProgramsRoute.value);
 };
 
 /**
- * Route to create a new program, based on where the program is being edited from.
- * - Location programs: create the program from the location.
- * - Manage programs: create the program for the selected program year.
+ * Route to create a new program for the program year of the program being edited.
  */
 const createProgramRoute = computed<RouteLocationRaw | undefined>(() => {
-  if (props.locationId) {
-    return {
-      name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-      params: { locationId: props.locationId },
-    };
+  if (!programConfiguration.value) {
+    return undefined;
   }
-  if (props.programYearId) {
-    return {
-      name: InstitutionRoutesConst.CREATE_PROGRAM,
-      params: { programYearId: props.programYearId },
-    };
-  }
-  return undefined;
+  return {
+    name: InstitutionRoutesConst.CREATE_PROGRAM,
+    params: { programYearId: programConfiguration.value.programYearId },
+  };
 });
 
 watch(

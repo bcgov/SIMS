@@ -45,7 +45,7 @@
           </v-menu>
           <v-btn
             v-if="allowEdit"
-            class="mr-4 float-right"
+            class="float-right"
             @click="goToAddNewOffering()"
             color="primary"
             prepend-icon="fa:fa fa-plus-circle"

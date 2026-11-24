@@ -43,11 +43,6 @@ interface ProgramActionsMenuProps {
    * Program the actions are applied to.
    */
   programId: number;
-  /**
-   * Program year selected in the manage programs, when accessed from there.
-   * Allows the edit page to navigate back keeping the same program year selected.
-   */
-  programYearId?: number;
 }
 
 const props = defineProps<ProgramActionsMenuProps>();
@@ -59,13 +54,11 @@ const emit = defineEmits<{
 const snackBar = useSnackBar();
 
 /**
- * Route to the edit program page, keeping the program year selected
- * to allow navigating back to the manage programs.
+ * Route to the edit program page.
  */
 const editProgramRoute = computed<RouteLocationRaw>(() => ({
   name: InstitutionRoutesConst.EDIT_PROGRAM,
   params: { programId: props.programId },
-  query: { programYearId: props.programYearId },
 }));
 
 const deactivateEducationProgramModal = ref(

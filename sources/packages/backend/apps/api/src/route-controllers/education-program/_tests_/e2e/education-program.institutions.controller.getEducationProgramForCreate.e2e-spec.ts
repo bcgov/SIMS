@@ -64,6 +64,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramForCrea
           .expect(HttpStatus.OK)
           .expect({
             configurationId: mostRecentProgramConfiguration.id,
+            programYearId: mostRecentProgramConfiguration.programYear.id,
             programYearName:
               mostRecentProgramConfiguration.programYear.programYear,
             hasActiveProgramYearConfiguration: true,

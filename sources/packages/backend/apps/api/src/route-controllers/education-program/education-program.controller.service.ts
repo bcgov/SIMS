@@ -117,6 +117,7 @@ export class EducationProgramControllerService {
       );
     return {
       configurationId: configuration.configurationId,
+      programYearId: configuration.programYearId,
       programYearName: configuration.programYearName,
       hasActiveProgramYearConfiguration:
         configuration.hasActiveProgramYearConfiguration,

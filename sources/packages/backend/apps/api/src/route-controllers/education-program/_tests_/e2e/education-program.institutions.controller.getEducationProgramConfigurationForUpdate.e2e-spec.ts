@@ -81,6 +81,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramConfigu
       .expect(HttpStatus.OK)
       .expect({
         configurationId: activeProgramConfiguration.id,
+        programYearId: activeProgramConfiguration.programYear.id,
         programYearName: activeProgramConfiguration.programYear.programYear,
         hasActiveProgramYearConfiguration: true,
         programData: {
@@ -119,6 +120,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramConfigu
       .expect(HttpStatus.OK)
       .expect({
         configurationId: outdatedProgramConfiguration.id,
+        programYearId: outdatedProgramConfiguration.programYear.id,
         programYearName: outdatedProgramConfiguration.programYear.programYear,
         // The program year still has an active configuration, other than the program one.
         hasActiveProgramYearConfiguration: true,

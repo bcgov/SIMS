@@ -78,7 +78,6 @@ export const InstitutionRoutesConst = {
   DESIGNATION_VIEW: Symbol(),
   MANAGE_USERS: Symbol(),
   VIEW_LOCATION_PROGRAMS: Symbol(),
-  EDIT_LOCATION_PROGRAMS: Symbol(),
   ADD_LOCATION_PROGRAMS: Symbol(),
   LOCATION_PROGRAMS: Symbol(),
   ADD_LOCATION_OFFERINGS: Symbol(),

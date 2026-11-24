@@ -225,21 +225,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: ViewProgram,
         props: (route) => ({
           programId: Number.parseInt(route.params.programId as string),
-          programYearId: route.query.programYearId
-            ? Number.parseInt(route.query.programYearId as string)
-            : undefined,
-          // Keep the program year selected when navigating back to the manage programs.
-          backTarget: {
-            name: "Manage Programs",
-            to: {
-              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-              params: route.query.programYearId
-                ? {
-                    programYearId: route.query.programYearId as string,
-                  }
-                : undefined,
-            },
-          },
         }),
         meta: {
           clientType: ClientIdType.Institution,
@@ -257,21 +242,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: EditProgram,
         props: (route) => ({
           programId: Number.parseInt(route.params.programId as string),
-          programYearId: route.query.programYearId
-            ? Number.parseInt(route.query.programYearId as string)
-            : undefined,
-          // Keep the program year selected when navigating back to the manage programs.
-          backTarget: {
-            name: "Manage Programs",
-            to: {
-              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-              params: route.query.programYearId
-                ? {
-                    programYearId: route.query.programYearId as string,
-                  }
-                : undefined,
-            },
-          },
         }),
         meta: {
           clientType: ClientIdType.Institution,
@@ -667,33 +637,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
-          ],
-        },
-      },
-      {
-        path: AppRoutes.LocationProgramsEdit,
-        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-        component: EditProgram,
-        props: (route) => ({
-          programId: Number.parseInt(route.params.programId as string),
-          locationId: Number.parseInt(route.params.locationId as string),
-          backTarget: {
-            name: "View Program",
-            to: {
-              name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-              params: {
-                programId: Number.parseInt(route.params.programId as string),
-                locationId: Number.parseInt(route.params.locationId as string),
-              },
-            },
-          },
-        }),
-        meta: {
-          clientType: ClientIdType.Institution,
-          institutionUserTypes: [
-            InstitutionUserTypes.admin,
-            InstitutionUserTypes.user,
-            InstitutionUserTypes.readOnlyUser,
           ],
         },
       },

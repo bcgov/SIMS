@@ -59,6 +59,10 @@ export class EducationProgramDataAPIOutDTO {
  */
 export class EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  /**
+   * Program year of the configuration.
+   */
+  programYearId: number;
   programYearName: string;
   /**
    * Indicates if the program year of the configuration has an active configuration,

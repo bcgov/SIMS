@@ -2,14 +2,13 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        :title="backTarget.name"
-        :route-location="backTarget.to"
+        title="Manage Programs"
+        :route-location="manageProgramsRoute"
         sub-title="View Program"
       >
         <template #buttons v-if="allowProgramChanges && canModifyProgram">
           <program-actions-menu
             :program-id="programId"
-            :program-year-id="programYearId"
             @deactivated="loadProgram(programId)"
           />
         </template>
@@ -38,8 +37,9 @@ import {
   useInstitutionAuth,
   useSnackBar,
 } from "@/composables";
-import type { BackTarget } from "@/types";
+import type { RouteLocationRaw } from "vue-router";
 import { BannerTypes } from "@/types";
+import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
 import ProgramActionsMenu from "@/components/institutions/education-programs/ProgramActionsMenu.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
@@ -47,12 +47,6 @@ import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface ViewProgramProps {
   programId: number;
-  /**
-   * Program year selected in the manage programs, when accessed from there.
-   * Allows the edit page to navigate back keeping the same program year selected.
-   */
-  programYearId?: number;
-  backTarget: BackTarget;
 }
 const props = defineProps<ViewProgramProps>();
 const snackBar = useSnackBar();
@@ -68,6 +62,17 @@ const formTitle = computed(() => {
     ? `${educationProgram.value.programYearName} Program`
     : "Program";
 });
+
+/**
+ * Route back to the manage programs, selecting the program year of the
+ * program once it is loaded.
+ */
+const manageProgramsRoute = computed<RouteLocationRaw>(() => ({
+  name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+  params: educationProgram.value
+    ? { programYearId: educationProgram.value.programYearId }
+    : undefined,
+}));
 
 /**
  * Indicates if the program can be edited or deactivated, which requires

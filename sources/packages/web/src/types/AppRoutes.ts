@@ -82,7 +82,6 @@ export enum AppRoutes {
   LocationPrograms = "location-programs/location/:locationId",
   LocationProgramsView = "location-programs/location/:locationId/program-view/:programId",
   LocationProgramsCreate = "location-programs/location/:locationId/program-create",
-  LocationProgramsEdit = "location-programs/location/:locationId/program-edit/:programId",
   LocationOfferings = "location-offerings/location/:locationId/education-program/:programId",
   LocationOfferingsEdit = "location-offerings/location/:locationId/education-program/:programId/offering/:offeringId",
   LocationOfferingsView = "location-offerings/location/:locationId/education-program/:programId/offering/:offeringId/view",

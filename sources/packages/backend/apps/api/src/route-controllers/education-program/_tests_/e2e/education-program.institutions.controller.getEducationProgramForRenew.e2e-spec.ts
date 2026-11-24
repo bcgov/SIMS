@@ -82,6 +82,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramForRene
       .expect(HttpStatus.OK)
       .expect({
         configurationId: nextProgramConfiguration.id,
+        programYearId: nextProgramConfiguration.programYear.id,
         programYearName: nextProgramConfiguration.programYear.programYear,
         hasActiveProgramYearConfiguration: true,
         programData: {

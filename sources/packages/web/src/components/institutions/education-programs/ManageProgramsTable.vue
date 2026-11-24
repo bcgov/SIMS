@@ -290,10 +290,6 @@ const searchProgramTable = async () => {
 const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
   name: InstitutionRoutesConst.VIEW_PROGRAM,
   params: { programId },
-  // Allows the view page to navigate back keeping the current program year selected.
-  query: {
-    programYearId: selectedProgramYearId.value,
-  },
 });
 
 /**
@@ -305,10 +301,6 @@ const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
 const getEditProgramRoute = (programId: number): RouteLocationRaw => ({
   name: InstitutionRoutesConst.EDIT_PROGRAM,
   params: { programId },
-  // Allows the edit page to navigate back keeping the current program year selected.
-  query: {
-    programYearId: selectedProgramYearId.value,
-  },
 });
 
 /**

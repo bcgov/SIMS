@@ -43,6 +43,10 @@ export interface EducationProgramDataAPIOutDTO {
  */
 export interface EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  /**
+   * Program year of the configuration.
+   */
+  programYearId: number;
   programYearName: string;
   /**
    * Indicates if the program year of the configuration has an active configuration,
