@@ -143,11 +143,17 @@ export class EducationProgramInstitutionsController extends BaseController {
     description:
       "The provided program year does not have an active program configuration.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Get("program-year/:programYearId/create")
   async getEducationProgramConfigurationForCreate(
     @Param("programYearId", ParseIntPipe) programYearId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     try {
       return await this.educationProgramControllerService.getEducationProgramConfiguration(
         userToken.authorizations.institutionId,
@@ -520,11 +526,17 @@ export class EducationProgramInstitutionsController extends BaseController {
       "The next program configuration for renewal could not be found or " +
       "the program has already been renewed.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Get(":programId/renew")
   async getEducationProgramConfigurationForRenew(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     const program =
       await this.educationProgramService.getEducationProgramDetails(
         programId,
@@ -578,11 +590,17 @@ export class EducationProgramInstitutionsController extends BaseController {
       "Education program cannot be edited when inactive or " +
       "the program year does not have an active program configuration.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Get(":programId/update")
   async getEducationProgramConfigurationForUpdate(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     const program =
       await this.educationProgramService.getEducationProgramDetails(
         programId,

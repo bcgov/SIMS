@@ -12,21 +12,7 @@
         <body-header
           title="All programs"
           :records-count="programAndCount?.count"
-        >
-          <template #actions>
-            <div class="d-flex justify-end">
-              <v-btn
-                v-if="!isReadOnlyUser(locationId)"
-                color="primary"
-                @click="goToAddNewProgram()"
-                data-cy="createProgram"
-                prepend-icon="fa:fa fa-plus-circle"
-              >
-                Create program
-              </v-btn>
-            </div>
-          </template>
-        </body-header>
+        />
       </template>
       <search-table
         v-model="searchBox"
@@ -142,11 +128,7 @@ import {
 import { INACTIVE_PROGRAM } from "@/constants";
 import { ref, watch, computed, defineComponent } from "vue";
 import StatusChipProgram from "@/components/generic/StatusChipProgram.vue";
-import {
-  useInstitutionAuth,
-  useInstitutionState,
-  useFormatters,
-} from "@/composables";
+import { useInstitutionState, useFormatters } from "@/composables";
 import { useDisplay } from "vuetify";
 
 export default defineComponent({
@@ -159,7 +141,6 @@ export default defineComponent({
   },
   setup(props) {
     const { getLocationName } = useInstitutionState();
-    const { isReadOnlyUser } = useInstitutionAuth();
     const { emptyStringFiller } = useFormatters();
     const { mobile: isMobile } = useDisplay();
     const router = useRouter();
@@ -295,15 +276,6 @@ export default defineComponent({
       await searchProgramTable();
     };
 
-    const goToAddNewProgram = () => {
-      router.push({
-        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        params: {
-          locationId: props.locationId,
-        },
-      });
-    };
-
     const goToViewProgram = (programId: number) => {
       router.push({
         name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
@@ -316,7 +288,6 @@ export default defineComponent({
 
     return {
       programAndCount,
-      goToAddNewProgram,
       goToViewProgram,
       locationDetails,
       DEFAULT_PAGE_LIMIT,
@@ -329,7 +300,6 @@ export default defineComponent({
       ProgramSummaryFields,
       locationName,
       ProgramSummaryHeaders,
-      isReadOnlyUser,
       selectedStatuses,
       handleStatusChange,
       ALL_STATUS,

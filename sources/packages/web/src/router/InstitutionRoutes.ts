@@ -459,6 +459,47 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.LocationProgramInfoRequestCreateProgram,
+        name: InstitutionRoutesConst.CREATE_PROGRAM_FROM_PIR,
+        component: CreateProgram,
+        props: (route) => {
+          const programYearId = route.params.programYearId as string;
+          const locationId = route.query.locationId as string | undefined;
+          const applicationId = route.query.applicationId as
+            | string
+            | undefined;
+          return {
+            programYearId: Number.parseInt(programYearId),
+            // Navigate back to the program info request the program was created from,
+            // when provided, otherwise to the manage programs for the program year.
+            backTarget:
+              locationId && applicationId
+                ? {
+                    name: "Program info request",
+                    to: {
+                      name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+                      params: { locationId, applicationId },
+                    },
+                  }
+                : {
+                    name: "Manage Programs",
+                    to: {
+                      name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+                      params: { programYearId },
+                    },
+                  },
+          };
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
         path: AppRoutes.LocationCOEDetails,
         name: InstitutionRoutesConst.COE_EDIT,
         component: LocationCOERequest,
@@ -614,29 +655,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
             InstitutionUserTypes.readOnlyUser,
-          ],
-        },
-      },
-      {
-        path: AppRoutes.LocationProgramsCreate,
-        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        component: CreateProgram,
-        props: (route) => ({
-          backTarget: {
-            name: "Programs",
-            to: {
-              name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-              params: {
-                locationId: Number.parseInt(route.params.locationId as string),
-              },
-            },
-          },
-        }),
-        meta: {
-          clientType: ClientIdType.Institution,
-          institutionUserTypes: [
-            InstitutionUserTypes.admin,
-            InstitutionUserTypes.user,
           ],
         },
       },

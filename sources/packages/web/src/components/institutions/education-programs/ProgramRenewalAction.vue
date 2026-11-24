@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    v-if="renewalStatus === ProgramRenewalStatus.Available"
+    v-if="canRenew"
     color="primary"
     :to="renewProgramRoute"
     >Renew</v-btn
@@ -15,6 +15,7 @@ import { computed } from "vue";
 import type { RouteLocationRaw } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { ProgramRenewalStatus } from "@/services/http/dto";
+import { useInstitutionAuth } from "@/composables";
 
 interface ProgramRenewalActionProps {
   /**
@@ -33,16 +34,33 @@ interface ProgramRenewalActionProps {
 }
 
 const props = defineProps<ProgramRenewalActionProps>();
+const { canModifyPrograms } = useInstitutionAuth();
 
 /**
- * Icon displayed along with the renewal status when the program
- * is not available to be renewed.
+ * Indicates if the renew action is displayed, which requires the program
+ * to be available for renewal and the user to be allowed to modify programs.
+ * Otherwise, only the renewal status is displayed.
  */
-const renewalStatusIcon = computed(() =>
-  props.renewalStatus === ProgramRenewalStatus.Renewed
-    ? "fa:fas fa-check"
-    : "fa:fas fa-clock",
+const canRenew = computed(
+  () =>
+    props.renewalStatus === ProgramRenewalStatus.Available &&
+    canModifyPrograms.value,
 );
+
+/**
+ * Icon displayed along with the renewal status when the renew action
+ * is not displayed.
+ */
+const renewalStatusIcon = computed(() => {
+  switch (props.renewalStatus) {
+    case ProgramRenewalStatus.Renewed:
+      return "fa:fas fa-check";
+    case ProgramRenewalStatus.Available:
+      return "fa:fas fa-rotate";
+    default:
+      return "fa:fas fa-clock";
+  }
+});
 
 /**
  * Route to the renew program page for the next program year.

@@ -1,5 +1,5 @@
 <template>
-  <v-menu>
+  <v-menu v-if="canModifyPrograms">
     <template #activator="{ props: menuProps }">
       <v-btn
         color="primary"
@@ -37,10 +37,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
-import { useEducationProgramYears } from "@/composables";
+import { useEducationProgramYears, useInstitutionAuth } from "@/composables";
 
 const { educationProgramYears, loadingEducationProgramYears } =
   useEducationProgramYears();
+// Read-only users are not allowed to create programs.
+const { canModifyPrograms } = useInstitutionAuth();
 
 /**
  * Program years with at least one active education program configuration,
