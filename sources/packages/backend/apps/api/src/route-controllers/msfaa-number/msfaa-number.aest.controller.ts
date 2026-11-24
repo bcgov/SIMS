@@ -130,7 +130,7 @@ export class MSFAANumberAESTController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Not possible to reissue an MSFAA that is not the most recent one, " +
-      "is not cancelled, or has no disbursements associated.",
+      "is not cancelled, or has no pending disbursements associated.",
   })
   async reissueMSFAANumber(
     @Param("msfaaNumberId", ParseIntPipe) msfaaNumberId: number,

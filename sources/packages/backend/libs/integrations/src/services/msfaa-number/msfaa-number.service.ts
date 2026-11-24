@@ -11,6 +11,7 @@ import {
   NotificationActionsService,
   SystemUsersService,
 } from "@sims/services";
+import { MSFAA_MINISTRY_CANCELLATION_PROVINCE } from "@sims/services/constants";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -126,6 +127,7 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
         student: { id: true },
         referenceApplication: { id: true },
         cancelledDate: true,
+        newIssuingProvince: true,
         dateSigned: true,
         offeringIntensity: true,
       },
@@ -144,6 +146,16 @@ export class MSFAANumberService extends RecordDataModelService<MSFAANumber> {
       );
     }
     const systemUser = this.systemUsersService.systemUser;
+    // A Ministry cancellation is final and must not be undone by a delayed signing response.
+    if (
+      retrievedMSFAARecord.cancelledDate &&
+      retrievedMSFAARecord.newIssuingProvince ===
+        MSFAA_MINISTRY_CANCELLATION_PROVINCE
+    ) {
+      throw new Error(
+        `MSFAA number ${msfaaNumber} was cancelled by the Ministry and cannot be reactivated.`,
+      );
+    }
     // If there is a retrievedMSFAARecord, check if the msfaa number was cancelled earlier. If yes, reactivate it.
     if (retrievedMSFAARecord.cancelledDate) {
       // Re-associate all disbursements pending e-cert generation for the same offering intensity with this msfaa number.

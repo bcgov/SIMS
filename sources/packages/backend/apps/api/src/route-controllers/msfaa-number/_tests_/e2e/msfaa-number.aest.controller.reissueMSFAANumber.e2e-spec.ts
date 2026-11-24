@@ -28,7 +28,7 @@ import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 import { In } from "typeorm";
 
 const INVALID_REISSUE_MESSAGE =
-  "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no disbursements associated.";
+  "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no pending disbursements associated.";
 
 describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
   let app: INestApplication;
@@ -202,6 +202,72 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       .post(getEndpoint(olderCancelledMSFAA.id))
       .auth(token, BEARER_AUTH_TYPE)
       .send({ noteDescription: "Not the most recent MSFAA." })
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: INVALID_REISSUE_MESSAGE,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should return unprocessable entity when the application with the pending disbursement is cancelled.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const cancelledMSFAA = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student },
+        { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+      ),
+    );
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: cancelledMSFAA },
+      { applicationStatus: ApplicationStatus.Cancelled },
+    );
+    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(getEndpoint(cancelledMSFAA.id))
+      .auth(token, BEARER_AUTH_TYPE)
+      .send({ noteDescription: "Application is cancelled." })
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        message: INVALID_REISSUE_MESSAGE,
+        error: "Unprocessable Entity",
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      });
+  });
+
+  it("Should return unprocessable entity when the same MSFAA is reissued twice.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    const cancelledMSFAA = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student },
+        { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+      ),
+    );
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: cancelledMSFAA },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
+    await request(app.getHttpServer())
+      .post(getEndpoint(cancelledMSFAA.id))
+      .auth(token, BEARER_AUTH_TYPE)
+      .send({ noteDescription: "First reissue." })
+      .expect(HttpStatus.CREATED);
+    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(getEndpoint(cancelledMSFAA.id))
+      .auth(token, BEARER_AUTH_TYPE)
+      .send({ noteDescription: "Second reissue." })
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: INVALID_REISSUE_MESSAGE,

@@ -4,16 +4,11 @@ import { MSFAANumber, NoteType, User } from "@sims/sims-db";
 import { DataSource, IsNull, Repository } from "typeorm";
 import { MSFAANumberSharedService, NoteSharedService } from "@sims/services";
 import {
+  MSFAA_MINISTRY_CANCELLATION_PROVINCE,
   MSFAA_NUMBER_INVALID_OPERATION,
   MSFAA_NUMBER_NOT_FOUND,
 } from "@sims/services/constants";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
-
-/**
- * Province set as the one cancelling an MSFAA when the
- * cancellation is performed by a Ministry user.
- */
-const MINISTRY_CANCELLATION_PROVINCE = "BC";
 
 /**
  * MSFAA activity record with the indication if it can be reissued.
@@ -97,7 +92,7 @@ export class MSFAANumberService {
         { id: msfaaNumberId, cancelledDate: IsNull() },
         {
           cancelledDate: getISODateOnlyString(now),
-          newIssuingProvince: MINISTRY_CANCELLATION_PROVINCE,
+          newIssuingProvince: MSFAA_MINISTRY_CANCELLATION_PROVINCE,
           modifier: { id: auditUserId } as User,
           updatedAt: now,
         },

@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import {
+  Any,
   DataSource,
   EntityManager,
-  In,
   IsNull,
   Not,
   Repository,
@@ -32,6 +32,15 @@ import {
   MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
+
+/**
+ * Application statuses where an MSFAA must not be created or reissued.
+ */
+const MSFAA_NOT_ALLOWED_APPLICATION_STATUSES = [
+  ApplicationStatus.Draft,
+  ApplicationStatus.Cancelled,
+  ApplicationStatus.Edited,
+];
 
 /**
  * MSFAA record that can be reissued.
@@ -122,7 +131,14 @@ export class MSFAANumberSharedService {
         },
         where: {
           disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-          msfaaNumber: { id: In(cancelledMSFAAs.map((msfaa) => msfaa.id)) },
+          msfaaNumber: { id: Any(cancelledMSFAAs.map((msfaa) => msfaa.id)) },
+          studentAssessment: {
+            application: {
+              applicationStatus: Not(
+                Any(MSFAA_NOT_ALLOWED_APPLICATION_STATUSES),
+              ),
+            },
+          },
         },
         order: { id: "DESC" },
       });
@@ -185,6 +201,15 @@ export class MSFAANumberSharedService {
         MSFAA_NUMBER_NOT_FOUND,
       );
     }
+    // Serializes concurrent reissues for the student, so the eligibility
+    // is checked again after any in-flight reissue has been committed.
+    await entityManager
+      .getRepository(Student)
+      .createQueryBuilder("student")
+      .select("student.id")
+      .where("student.id = :studentId", { studentId: msfaaNumber.student.id })
+      .setLock("pessimistic_write")
+      .getOne();
     const eligibleMSFAAs = await this.getMSFAAsEligibleForReissue(
       msfaaNumber.student.id,
       entityManager,
@@ -440,12 +465,11 @@ export class MSFAANumberSharedService {
         APPLICATION_NOT_FOUND,
       );
     }
-    const nowAllowedApplicationStatuses = [
-      ApplicationStatus.Draft,
-      ApplicationStatus.Cancelled,
-      ApplicationStatus.Edited,
-    ];
-    if (nowAllowedApplicationStatuses.includes(application.applicationStatus)) {
+    if (
+      MSFAA_NOT_ALLOWED_APPLICATION_STATUSES.includes(
+        application.applicationStatus,
+      )
+    ) {
       throw new CustomNamedError(
         `Not possible to create an MSFAA when the application status is '${application.applicationStatus}'.`,
         INVALID_OPERATION_IN_THE_CURRENT_STATUS,

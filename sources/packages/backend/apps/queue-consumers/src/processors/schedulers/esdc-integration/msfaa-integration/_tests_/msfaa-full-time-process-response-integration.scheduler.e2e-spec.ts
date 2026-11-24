@@ -1,6 +1,11 @@
 import { DeepMocked } from "@golevelup/ts-jest";
 import { INestApplication } from "@nestjs/common";
-import { QueueNames, getISODateOnlyString } from "@sims/utilities";
+import {
+  QueueNames,
+  getISODateOnlyString,
+  CustomNamedError,
+} from "@sims/utilities";
+import { PROCESS_SUMMARY_CONTAINS_ERROR } from "../../../../../utilities";
 import {
   createTestingAppModule,
   describeProcessorRootTest,
@@ -33,6 +38,7 @@ import Client from "ssh2-sftp-client";
 import { join } from "node:path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
 import { IsNull } from "typeorm";
+import { MSFAA_MINISTRY_CANCELLATION_PROVINCE } from "@sims/services/constants";
 
 describe(
   describeProcessorRootTest(QueueNames.FullTimeMSFAAProcessResponseIntegration),
@@ -244,6 +250,79 @@ describe(
       expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         currentMSFAA.id,
       );
+    });
+
+    it("Should not reactivate an MSFAA cancelled by the Ministry when the same MSFAA is received as signed in the response file.", async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const ministryCancelledMSFAA = createFakeMSFAANumber(
+        { student },
+        {
+          msfaaState: MSFAAStates.CancelledSystem,
+          msfaaInitialValues: {
+            msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+            offeringIntensity: OfferingIntensity.fullTime,
+          },
+        },
+      );
+      ministryCancelledMSFAA.newIssuingProvince =
+        MSFAA_MINISTRY_CANCELLATION_PROVINCE;
+      await db.msfaaNumber.save(ministryCancelledMSFAA);
+      // Pending disbursement associated with a different, active, MSFAA.
+      const activeMSFAA = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Pending,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.fullTime,
+            },
+          },
+        ),
+      );
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber: activeMSFAA },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      );
+      const mockedJob = mockBullMQJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
+      ]);
+
+      // Act
+      await expect(processor.process(mockedJob.job)).rejects.toStrictEqual(
+        new CustomNamedError(
+          "One or more errors were reported during the process, please see logs for details.",
+          PROCESS_SUMMARY_CONTAINS_ERROR,
+        ),
+      );
+
+      // Assert
+      const msfaaAfterResponse = await db.msfaaNumber.findOne({
+        select: {
+          dateSigned: true,
+          cancelledDate: true,
+          newIssuingProvince: true,
+        },
+        where: { id: ministryCancelledMSFAA.id },
+      });
+      expect(msfaaAfterResponse).toEqual({
+        dateSigned: null,
+        cancelledDate: ministryCancelledMSFAA.cancelledDate,
+        newIssuingProvince: MSFAA_MINISTRY_CANCELLATION_PROVINCE,
+      });
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const disbursementAfterResponse = await db.disbursementSchedule.findOne({
+        select: { id: true, msfaaNumber: { id: true } },
+        relations: { msfaaNumber: true },
+        where: { id: disbursement.id },
+      });
+      expect(disbursementAfterResponse.msfaaNumber.id).toBe(activeMSFAA.id);
     });
 
     it("Should cancel a pending MSFAA record and save a cancellation notification when an MSFAA cancellation record is received in the response file.", async () => {
