@@ -32,6 +32,7 @@ import Reports from "@/views/aest/Reports.vue";
 import BatchReassessment from "@/views/aest/BatchReassessment.vue";
 import BatchReassessmentOutcome from "@/views/aest/BatchReassessmentOutcome.vue";
 import BatchRestriction from "@/views/aest/BatchRestriction.vue";
+import BatchRestrictionOutcome from "@/views/aest/BatchRestrictionOutcome.vue";
 import FormioEditor from "@/views/aest/FormioEditor.vue";
 import ViewOffering from "@/views/aest/institution/ViewOffering.vue";
 import CASInvoices from "@/views/aest/CASInvoices.vue";
@@ -844,6 +845,24 @@ export const aestRoutes: Array<RouteRecordRaw> = [
         components: {
           default: BatchRestriction,
           sidebar: AESTHomeSideBar,
+        },
+        meta: {
+          clientType: ClientIdType.AEST,
+        },
+      },
+      {
+        path: AppRoutes.BatchRestrictionOutcome,
+        name: AESTRoutesConst.BATCH_RESTRICTION_OUTCOME,
+        components: {
+          default: BatchRestrictionOutcome,
+          sidebar: AESTHomeSideBar,
+        },
+        props: {
+          default: (route) => ({
+            batchRestrictionId: Number.parseInt(
+              route.params.batchRestrictionId as string,
+            ),
+          }),
         },
         meta: {
           clientType: ClientIdType.AEST,
