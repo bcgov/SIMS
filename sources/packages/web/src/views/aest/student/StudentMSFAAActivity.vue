@@ -4,20 +4,20 @@
       <template #header>
         <body-header title="Activity" :records-count="msfaaActivity?.length">
           <template #actions>
-            <v-row no-gutters class="justify-end align-center">
-              <v-col cols="12" sm="6" md="4" lg="3">
+            <v-row density="compact" class="justify-end align-center">
+              <v-col cols="12" sm="6" md="4" lg="3" class="pa-0">
                 <v-select
                   v-model="selectedMSFAAId"
-                  :items="reissuableMSFAAs"
-                  label="Cancelled MSFAA to reissue"
+                  :items="reissueOptions"
+                  label="MSFAA number"
                   density="compact"
                   variant="outlined"
-                  hide-details="auto"
+                  hide-details
                   clearable
-                  :disabled="!reissuableMSFAAs.length"
+                  :disabled="!reissueOptions.length"
                 />
               </v-col>
-              <v-col cols="auto" class="ml-2">
+              <v-col cols="auto">
                 <check-permission-role :role="Role.StudentReissueMSFAA">
                   <template #="{ notAllowed }">
                     <v-btn
@@ -77,15 +77,12 @@
               {{ emptyStringFiller(item.newIssuingProvince) }}
             </template>
             <template #[`item.action`]="{ item }">
-              <check-permission-role
-                v-if="!item.cancelledDate"
-                :role="Role.StudentCancelMSFAA"
-              >
+              <check-permission-role :role="Role.StudentCancelMSFAA">
                 <template #="{ notAllowed }">
                   <v-btn
                     color="primary"
                     variant="outlined"
-                    :disabled="notAllowed"
+                    :disabled="notAllowed || !!item.cancelledDate"
                     @click="cancelMSFAA(item)"
                     >Cancel</v-btn
                   >
@@ -158,17 +155,17 @@ const snackBar = useSnackBar();
 const isLoading = ref(true);
 const msfaaActivity = ref<MSFAANumberAPIOutDTO[]>([]);
 const selectedMSFAAId = ref<number>();
-const cancelMSFAAModal = ref({} as ModalDialog<UserNoteModal<unknown> | false>);
+const cancelMSFAAModal = ref({} as ModalDialog<UserNoteModal<number>>);
 const reissueMSFAAModal = ref(
-  {} as ModalDialog<UserNoteModal<unknown> | false>,
+  {} as ModalDialog<UserNoteModal<MSFAANumberAPIOutDTO>>,
 );
 
 // Only the cancelled MSFAAs that the API indicates as eligible can be reissued.
-const reissuableMSFAAs = computed(() =>
+const reissueOptions = computed(() =>
   msfaaActivity.value
     .filter((msfaa) => msfaa.canBeReissued)
     .map((msfaa) => ({
-      title: `${mapOfferingIntensity(msfaa.offeringIntensity)} - ${msfaa.msfaaNumber}`,
+      title: msfaa.msfaaNumber,
       value: msfaa.id,
     })),
 );
@@ -191,11 +188,8 @@ const cancelMSFAA = async (msfaa: MSFAANumberAPIOutDTO) => {
 };
 
 const cancelMSFAACall = async (
-  userNoteModalResult: UserNoteModal<number> | false,
+  userNoteModalResult: UserNoteModal<number>,
 ): Promise<boolean> => {
-  if (!userNoteModalResult) {
-    return false;
-  }
   try {
     await MSFAANumberService.shared.cancelMSFAANumber(
       userNoteModalResult.showParameter,
@@ -221,11 +215,8 @@ const reissueMSFAA = async () => {
 };
 
 const reissueMSFAACall = async (
-  userNoteModalResult: UserNoteModal<MSFAANumberAPIOutDTO> | false,
+  userNoteModalResult: UserNoteModal<MSFAANumberAPIOutDTO>,
 ): Promise<boolean> => {
-  if (!userNoteModalResult) {
-    return false;
-  }
   try {
     await MSFAANumberService.shared.reissueMSFAANumber(
       userNoteModalResult.showParameter.id,

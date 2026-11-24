@@ -163,6 +163,41 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
       });
   });
 
+  it("Should indicate that a cancelled MSFAA with disbursements can be reissued when a newer MSFAA was already issued for the same offering intensity.", async () => {
+    // Arrange.
+    const student = await saveFakeStudent(db.dataSource);
+    const cancelledMSFAA = createFakeMSFAANumber(
+      { student },
+      { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+    );
+    cancelledMSFAA.createdAt = addDays(-2);
+    const newerPendingMSFAA = createFakeMSFAANumber({ student });
+    await db.msfaaNumber.save([cancelledMSFAA, newerPendingMSFAA]);
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: cancelledMSFAA },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/msfaa-number/student/${student.id}`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .then((response) => {
+        const canBeReissuedById = new Map<number, boolean>(
+          response.body.map((msfaa: MSFAANumberAPIOutDTO) => [
+            msfaa.id,
+            msfaa.canBeReissued,
+          ]),
+        );
+        expect(canBeReissuedById.get(cancelledMSFAA.id)).toBe(true);
+        expect(canBeReissuedById.get(newerPendingMSFAA.id)).toBe(false);
+      });
+  });
+
   it("Should return an empty array when the student has no MSFAA records.", async () => {
     // Arrange.
     const student = await saveFakeStudent(db.dataSource);

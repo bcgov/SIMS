@@ -1,5 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, EntityManager, In, IsNull, Repository } from "typeorm";
+import {
+  DataSource,
+  EntityManager,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from "typeorm";
 import {
   MSFAANumber,
   Student,
@@ -81,8 +88,8 @@ export class MSFAANumberSharedService {
 
   /**
    * Gets the most recent MSFAA of each offering intensity that can be reissued.
-   * An MSFAA can be reissued when it is the most recent one for its offering intensity,
-   * it is cancelled, and it is associated with at least one disbursement.
+   * Only cancelled MSFAAs that are associated with at least one pending disbursement are
+   * considered, even when a newer MSFAA was already issued for the same intensity.
    * @param studentId student to have the MSFAA records checked.
    * @param entityManager entity manager to be used instead of the default one, when provided.
    * @returns MSFAA records eligible to be reissued.
@@ -92,22 +99,13 @@ export class MSFAANumberSharedService {
     entityManager?: EntityManager,
   ): Promise<MSFAAEligibleForReissue[]> {
     const manager = entityManager ?? this.dataSource.manager;
-    const studentMSFAAs = await manager.getRepository(MSFAANumber).find({
-      select: { id: true, offeringIntensity: true, cancelledDate: true },
-      where: { student: { id: studentId } },
+    // Records are sorted from the newest to the oldest.
+    const cancelledMSFAAs = await manager.getRepository(MSFAANumber).find({
+      select: { id: true, offeringIntensity: true },
+      where: { student: { id: studentId }, cancelledDate: Not(IsNull()) },
       order: { createdAt: "DESC", id: "DESC" },
     });
-    // Records are sorted from the newest to the oldest.
-    const mostRecentByIntensity = new Map<OfferingIntensity, MSFAANumber>();
-    for (const msfaa of studentMSFAAs) {
-      if (!mostRecentByIntensity.has(msfaa.offeringIntensity)) {
-        mostRecentByIntensity.set(msfaa.offeringIntensity, msfaa);
-      }
-    }
-    const cancelledMSFAAIds = [...mostRecentByIntensity.values()]
-      .filter((msfaa) => msfaa.cancelledDate)
-      .map((msfaa) => msfaa.id);
-    if (!cancelledMSFAAIds.length) {
+    if (!cancelledMSFAAs.length) {
       return [];
     }
     const disbursements = await manager
@@ -122,20 +120,39 @@ export class MSFAANumberSharedService {
           msfaaNumber: true,
           studentAssessment: { application: true },
         },
-        where: { msfaaNumber: { id: In(cancelledMSFAAIds) } },
+        where: {
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+          msfaaNumber: { id: In(cancelledMSFAAs.map((msfaa) => msfaa.id)) },
+        },
         order: { id: "DESC" },
       });
-    const eligibleMSFAAs = new Map<number, MSFAAEligibleForReissue>();
+    // The reference application is the one from the most recent disbursement.
+    const referenceApplicationByMSFAA = new Map<number, number>();
     for (const disbursement of disbursements) {
-      // The reference application is the one from the most recent disbursement.
-      if (!eligibleMSFAAs.has(disbursement.msfaaNumber.id)) {
-        eligibleMSFAAs.set(disbursement.msfaaNumber.id, {
-          id: disbursement.msfaaNumber.id,
-          referenceApplicationId: disbursement.studentAssessment.application.id,
+      if (!referenceApplicationByMSFAA.has(disbursement.msfaaNumber.id)) {
+        referenceApplicationByMSFAA.set(
+          disbursement.msfaaNumber.id,
+          disbursement.studentAssessment.application.id,
+        );
+      }
+    }
+    const eligibleByIntensity = new Map<
+      OfferingIntensity,
+      MSFAAEligibleForReissue
+    >();
+    for (const msfaa of cancelledMSFAAs) {
+      const referenceApplicationId = referenceApplicationByMSFAA.get(msfaa.id);
+      if (
+        referenceApplicationId &&
+        !eligibleByIntensity.has(msfaa.offeringIntensity)
+      ) {
+        eligibleByIntensity.set(msfaa.offeringIntensity, {
+          id: msfaa.id,
+          referenceApplicationId,
         });
       }
     }
-    return [...eligibleMSFAAs.values()];
+    return [...eligibleByIntensity.values()];
   }
 
   /**
@@ -177,7 +194,7 @@ export class MSFAANumberSharedService {
     );
     if (!eligibleMSFAA) {
       throw new CustomNamedError(
-        "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no disbursements associated.",
+        "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no pending disbursements associated.",
         MSFAA_NUMBER_INVALID_OPERATION,
       );
     }

@@ -171,7 +171,7 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       });
   });
 
-  it("Should return unprocessable entity when the cancelled MSFAA is not the most recent one for its offering intensity.", async () => {
+  it("Should return unprocessable entity when a newer cancelled MSFAA with disbursements exists for the same offering intensity.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const olderCancelledMSFAA = createFakeMSFAANumber(
@@ -179,15 +179,20 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
     );
     olderCancelledMSFAA.createdAt = addDays(-10);
-    await db.msfaaNumber.save(olderCancelledMSFAA);
+    const newerCancelledMSFAA = createFakeMSFAANumber(
+      { student },
+      { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+    );
+    await db.msfaaNumber.save([olderCancelledMSFAA, newerCancelledMSFAA]);
     await saveFakeApplicationDisbursements(
       db.dataSource,
       { student, msfaaNumber: olderCancelledMSFAA },
       { applicationStatus: ApplicationStatus.Completed },
     );
-    // A newer signed MSFAA for the same intensity.
-    await db.msfaaNumber.save(
-      createFakeMSFAANumber({ student }, { msfaaState: MSFAAStates.Signed }),
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: newerCancelledMSFAA },
+      { applicationStatus: ApplicationStatus.Completed },
     );
     await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
