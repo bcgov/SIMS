@@ -10,10 +10,10 @@ INSERT INTO
     )
 VALUES
     (
-        'BC Loan Forgiveness Application',
+        'BC Loan Forgiveness application',
         'bcloanforgivenessapplication',
         'Student form',
-        'This form allows you to apply for the BC Loan Forgiveness Program. Before submitting an application, please ensure you have read the below instructions thoroughly.',
+        'This form allows you to apply for the BC Loan Forgiveness Program.',
         FALSE,
         FALSE,
         'bc-loan-forgiveness-application'

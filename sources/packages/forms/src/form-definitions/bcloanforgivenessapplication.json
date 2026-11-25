@@ -1,5 +1,5 @@
 {
-  "title": "BC Loan Forgiveness Application",
+  "title": "BC Loan Forgiveness application",
   "name": "bcloanforgivenessapplication",
   "path": "bcloanforgivenessapplication",
   "type": "form",
@@ -35,8 +35,8 @@
       "tableView": false
     },
     {
-      "label": "Program Requirements and Process",
-      "title": "Program Requirements and Process",
+      "label": "Program requirements and process",
+      "title": "Program requirements and process",
       "customClass": "collapsible",
       "collapsible": true,
       "key": "programRequirementsAndProcessPanel",
@@ -81,7 +81,7 @@
               "value": ""
             }
           ],
-          "content": "<ol>\r\n  <li>You must not be in full-time studies.</li>\r\n  <li>You must be in repayment of your BC student loan.</li>\r\n  <li>Both your British Columbia and Canada (if applicable) student loans must not be restricted, in default, delinquent or impacted by bankruptcy.</li>\r\n  <li>If you do not achieve the minimum of 100 hours of service, you will be removed from the program and you will be responsible for payment.</li>\r\n  <li>The Province will forgive the outstanding B.C. portion of your Canada-B.C. integrated student loan debt at a rate of 20% per year for up to five years if you are employed in an eligible occupation at a publicly funded facility in British Columbia either in an eligible underserved community or working with children, and providing equal to or greater than 400 hours of in-person service. If you provide between 100 and 399 hours of in-person service in a given year, the outstanding portion of your loan will be forgiven at the prorated rate indicated below:</li>\r\n\r\n<table class=\"formio-grid-table\">\r\n  <thead>\r\n    <tr>\r\n      <th>Hours of In-Person Service</th>\r\n      <th>Percentage Debt Forgiveness</th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr><td>0 to 99</td><td>0</td></tr>\r\n    <tr><td>100 to 249</td><td>10</td></tr>\r\n    <tr><td>250 to 399</td><td>15</td></tr>\r\n    <tr><td>400+</td><td>20</td></tr>\r\n  </tbody>\r\n</table>\r\n\r\n\r\n  <li>You may leave and re-enter the program if you still have B.C. Student Loan debt and meet all the program requirements. Upon re-entry the program restarts the 5 year program length and you will receive up to 20% of any remaining B.C. Student Loan debt per year.</li>\r\n  <li>One year after your initial program registration date (your “anniversary date”), you will be required to submit a signed employment letter from your employer, health authority or contractor documenting your hours of in-person service at a publicly funded facility in British Columbia either in an eligible underserved community or working with children. You will receive notification requesting your employment letter one month prior to your anniversary date, and you will have 45 days after your anniversary date to submit. Failure to submit a signed employment letter after 45 days will result in your removal from the program.</li>\r\n  <li>Loan forgiveness will be paid on the B.C. portion of your Canada-B.C. integrated student loan principal amount for the one year period beginning the date you were approved and registered in the program by StudentAid BC. The amount will vary depending on the number of in-person service hours delivered as indicated above.</li>\r\n</ol>",
+          "content": "<ol>\r\n  <li>You must not be in full-time studies.</li>\r\n  <li>You must be in repayment of your BC student loan.</li>\r\n  <li>Both your British Columbia and Canada (if applicable) student loans must not be restricted, in default, delinquent or impacted by bankruptcy.</li>\r\n  <li>If you do not achieve the minimum of 100 hours of service, you will be removed from the program and you will be responsible for payment.</li>\r\n  <li>The Province will forgive the outstanding B.C. portion of your Canada-B.C. integrated student loan debt at a rate of 20% per year for up to five years if you are employed in an eligible occupation at a publicly funded facility in British Columbia either in an eligible underserved community or working with children, and providing equal to or greater than 400 hours of in-person service. If you provide between 100 and 399 hours of in-person service in a given year, the outstanding portion of your loan will be forgiven at the prorated rate indicated below:</li>\r\n\r\n<table class=\"formio-grid-table\">\r\n  <thead>\r\n    <tr>\r\n      <th>Hours of In-Person Service</th>\r\n      <th>Percentage Debt Forgiveness</th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr><td>0 to 99</td><td>0</td></tr>\r\n    <tr><td>100 to 249</td><td>10</td></tr>\r\n    <tr><td>250 to 399</td><td>15</td></tr>\r\n    <tr><td>400+</td><td>20</td></tr>\r\n  </tbody>\r\n</table>\r\n\r\n\r\n  <li>You may leave and re-enter the program if you still have B.C. Student Loan debt and meet all the program requirements. Upon re-entry the program restarts the 5 year program length and you will receive up to 20% of any remaining B.C. Student Loan debt per year.</li>\r\n  <li>One year after your initial program registration date (your “anniversary date”), you will be required to submit a signed employment letter from your employer, health authority or contractor documenting your hours of in-person service at a publicly funded facility in British Columbia either in an eligible underserved community or working with children. You will receive notification requesting your employment letter one month prior to your anniversary date, and you will have 45 days after your anniversary date to submit. Failure to submit a signed employment letter after 45 days will result in your removal from the program.</li>\r\n  <li>BC Loan Forgiveness will be paid on the B.C. portion of your Canada-B.C. integrated student loan principal amount for the one year period beginning the date you were approved and registered in the program by StudentAid BC. The amount will vary depending on the number of in-person service hours delivered as indicated above.</li>\r\n</ol>",
           "refreshOnChange": false,
           "customClass": "formio-bordered flexible-width-formio-bordered",
           "key": "html2",
@@ -342,7 +342,7 @@
                   "value": ""
                 }
               ],
-              "content": "<strong> Not eligible for BC loan forgiveness</strong>\r\n<br/>\r\nBased on your answers to the above questions you do not qualify for the BC Loan forgiveness please cancel your application.",
+              "content": "<strong> Not eligible for BC Loan Forgiveness</strong>\r\n<br/>\r\nBased on your answers to the above questions you do not qualify for the BC Loan Forgiveness please cancel your application.",
               "refreshOnChange": false,
               "key": "html3",
               "type": "htmlelement",
@@ -474,7 +474,7 @@
           "hideLabel": true,
           "tableView": false,
           "storage": "url",
-          "dir": "BC Loan Forgiveness Application - Supporting Documents",
+          "dir": "BC Loan Forgiveness application - Supporting Documents",
           "webcam": false,
           "capture": false,
           "fileTypes": [
