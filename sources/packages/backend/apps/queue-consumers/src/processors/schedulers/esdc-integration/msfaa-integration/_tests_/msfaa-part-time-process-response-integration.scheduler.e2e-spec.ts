@@ -316,6 +316,12 @@ describe(
       );
       expect(msfaaReactivatedRecord.cancelledDate).toBe(null);
       expect(msfaaReactivatedRecord.newIssuingProvince).toBe(null);
+      // The reactivated MSFAA must be the only valid one, hence the unsigned current MSFAA is cancelled.
+      const currentMSFAAAfterResponse = await db.msfaaNumber.findOne({
+        select: { cancelledDate: true },
+        where: { id: currentMSFAA.id },
+      });
+      expect(currentMSFAAAfterResponse.cancelledDate).not.toBeNull();
       // Validate msfaa updated to the reactivated msfaa for all pending disbursements.
       const [appAFirstDisbursementSchedule, appASecondDisbursementSchedule] =
         applicationA.currentAssessment.disbursementSchedules;
