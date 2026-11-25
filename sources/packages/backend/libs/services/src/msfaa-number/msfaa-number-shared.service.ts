@@ -93,54 +93,58 @@ export class MSFAANumberSharedService {
     entityManager?: EntityManager,
   ): Promise<MSFAAEligibleForReissue[]> {
     const manager = entityManager ?? this.dataSource.manager;
-    // Latest MSFAA of each offering intensity.
+    // For each offering intensity, gets the latest MSFAA with its disbursements in a single query.
     const msfaaRepo = manager.getRepository(MSFAANumber);
-    const latestMSFAAs = await Promise.all(
+    const eligibleMSFAAs = await Promise.all(
       [OfferingIntensity.fullTime, OfferingIntensity.partTime].map(
-        (offeringIntensity) =>
-          msfaaRepo.findOne({
-            select: { id: true, cancelledDate: true },
+        async (offeringIntensity) => {
+          const latestMSFAA = await msfaaRepo.findOne({
+            select: {
+              id: true,
+              createdAt: true,
+              cancelledDate: true,
+              disbursementSchedules: {
+                id: true,
+                disbursementScheduleStatus: true,
+                studentAssessment: { id: true, application: { id: true } },
+              },
+            },
+            relations: {
+              disbursementSchedules: {
+                studentAssessment: { application: true },
+              },
+            },
             where: { student: { id: studentId }, offeringIntensity },
-            order: { createdAt: "DESC", id: "DESC" },
-          }),
+            order: {
+              createdAt: "DESC",
+              id: "DESC",
+              // The reference application is the one from the oldest pending disbursement.
+              disbursementSchedules: { id: "ASC" },
+            },
+          });
+          // Only cancelled MSFAAs with at least one pending disbursement are eligible for reissue.
+          if (!latestMSFAA?.cancelledDate) {
+            return null;
+          }
+          const oldestPendingDisbursement =
+            latestMSFAA.disbursementSchedules.find(
+              (disbursement) =>
+                disbursement.disbursementScheduleStatus ===
+                DisbursementScheduleStatus.Pending,
+            );
+          // No pending disbursement found, so this MSFAA is not eligible for reissue.
+          if (!oldestPendingDisbursement) {
+            return null;
+          }
+          return {
+            id: latestMSFAA.id,
+            referenceApplicationId:
+              oldestPendingDisbursement.studentAssessment.application.id,
+          };
+        },
       ),
     );
-    // Only cancelled MSFAAs are eligible for reissue.
-    const cancelledMSFAAs = latestMSFAAs.filter(
-      (msfaa) => msfaa?.cancelledDate,
-    );
-    if (!cancelledMSFAAs.length) {
-      return [];
-    }
-
-    // Only cancelled MSFAAs with at least one pending disbursement are eligible for reissue.
-    const disbursementRepo = manager.getRepository(DisbursementSchedule);
-    const eligibleMSFAAs = await Promise.all(
-      cancelledMSFAAs.map(async (msfaa) => {
-        // The reference application is the one from the most recent pending disbursement.
-        const latestPendingDisbursement = await disbursementRepo.findOne({
-          select: {
-            id: true,
-            studentAssessment: { id: true, application: { id: true } },
-          },
-          relations: { studentAssessment: { application: true } },
-          where: {
-            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-            msfaaNumber: { id: msfaa.id },
-          },
-          order: { id: "DESC" },
-        });
-        if (!latestPendingDisbursement) {
-          return null;
-        }
-        return {
-          id: msfaa.id,
-          referenceApplicationId:
-            latestPendingDisbursement.studentAssessment.application.id,
-        };
-      }),
-    );
-    return eligibleMSFAAs.filter(Boolean);
+    return eligibleMSFAAs.filter((msfaa) => !!msfaa);
   }
 
   /**
