@@ -9,16 +9,70 @@
   ],
   "components": [
     {
+      "label": "Underserved communities",
+      "key": "underservedCommunities",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "HTML",
+      "tag": "p",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "This form allows you to apply for the BC Loan Forgiveness Program. Before submitting an application, please ensure you have read the below instructions thoroughly.",
+      "refreshOnChange": false,
+      "key": "html8",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
       "label": "Program Requirements and Process",
       "title": "Program Requirements and Process",
       "customClass": "collapsible",
       "collapsible": true,
-      "key": "panel",
+      "key": "programRequirementsAndProcessPanel",
       "type": "panel",
       "collapsed": false,
       "input": false,
       "tableView": false,
       "components": [
+        {
+          "label": "Data: Works with children occupations",
+          "persistent": false,
+          "customDefaultValue": "value = [\n  \"Audiologist\",\n  \"Occupational therapist\",\n  \"Physiotherapist\",\n  \"School psychologist\",\n  \"Speech language pathologist\",\n  \"Teacher of the deaf/hard of hearing or the visually impaired\",\n  \"Technology educator\",\n];",
+          "key": "worksWithChildrenOccupations",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Data: Works with underserved communities occupations",
+          "persistent": false,
+          "calculateValue": "value = [\n  \"Audiologist\",\n  \"Diagnostic medical sonographer\",\n  \"Medical laboratory technologist\",\n  \"Midwifery\",\n  \"Nursing (including licensed practical nursing, nurse practitioners, registered psychiatric nurses and registered nurses)\",\n  \"Occupational therapist\",\n  \"Physician, including residents\",\n  \"Physiotherapist\",\n  \"Polysomnographer\",\n  \"Radiation therapist\",\n  \"Respiratory therapist\",\n  \"Speech language pathologist\",\n];\n",
+          "key": "worksInUnderservedCommunitiesOccupations",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
+        {
+          "label": "Max uploaded files",
+          "persistent": false,
+          "calculateValue": "value = 25;",
+          "calculateServer": true,
+          "key": "maxUploadedFiles",
+          "type": "hidden",
+          "input": true,
+          "tableView": false
+        },
         {
           "label": "HTML",
           "attrs": [
@@ -41,7 +95,7 @@
       "label": "Employment Information",
       "title": "Employment Information",
       "collapsible": false,
-      "key": "panel1",
+      "key": "employmentInformationPanel",
       "type": "panel",
       "input": false,
       "tableView": false,
@@ -118,17 +172,17 @@
         },
         {
           "label": "Please select the date your employment started.",
+          "placeholder": "Select date",
           "widget": {
             "type": "calendar",
-            "altInput": true,
             "allowInput": true,
             "clickOpens": true,
             "enableDate": true,
-            "enableTime": true,
+            "enableTime": false,
             "mode": "single",
             "noCalendar": false,
-            "format": "yyyy-MM-dd hh:mm a",
-            "dateFormat": "yyyy-MM-ddTHH:mm:ssZ",
+            "format": "yyyy-MM-dd",
+            "dateFormat": "yyyy-MM-dd",
             "useLocaleSettings": false,
             "hourIncrement": 1,
             "minuteIncrement": 5,
@@ -227,28 +281,232 @@
         {
           "label": "Please select one of the following eligible occupations.",
           "widget": "choicesjs",
+          "placeholder": "<i class='fa fa-search'></i> Search or select an occupation",
           "tableView": true,
+          "dataSrc": "custom",
+          "data": {
+            "custom": "let occupations = [];\r\nif (data.worksWithChildren === \"yes\") {\r\n  occupations = data.worksWithChildrenOccupations;\r\n} else if (data.worksInUnderservedCommunity === \"yes\") {\r\n  occupations = data.worksInUnderservedCommunitiesOccupations;\r\n}\r\n\r\nvalues = [...occupations].sort((a, b) => a.localeCompare(b));"
+          },
+          "valueProperty": "value",
+          "customOptions": {
+            "searchResultLimit": -1
+          },
           "validateWhenHidden": false,
           "key": "occupation",
+          "customConditional": "show = data.worksWithChildren === \"yes\" || data.worksInUnderservedCommunity === \"yes\";",
           "type": "select",
           "input": true
         },
         {
           "label": "Please select the community you work in from the list below.",
           "widget": "choicesjs",
+          "placeholder": "<i class='fa fa-search'></i> Search or select a community",
           "tableView": true,
+          "dataSrc": "custom",
           "data": {
-            "values": [
-              {
-                "label": "100 Mile House",
-                "value": "100MileHouse"
-              }
-            ]
+            "custom": "return (data.underservedCommunities || []).map((underservedCommunity) => ({\r\n  label: underservedCommunity.lookupValue,\r\n  value: underservedCommunity.lookupKey,\r\n}));"
+          },
+          "valueProperty": "value",
+          "refreshOn": "underservedCommunities",
+          "customOptions": {
+            "searchResultLimit": -1
           },
           "validateWhenHidden": false,
-          "key": "select",
+          "key": "underservedCommunity",
+          "conditional": {
+            "show": true,
+            "when": "worksInUnderservedCommunity",
+            "eq": "yes"
+          },
           "type": "select",
           "input": true
+        },
+        {
+          "label": "Not eligible panel",
+          "title": "Not eligible panel",
+          "customClass": "alert-banner-container alert-banner-error",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel",
+          "customConditional": "show = data.worksWithChildren === \"no\" && data.worksInUnderservedCommunity === \"no\";",
+          "type": "panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Not eligible banner",
+              "className": "alert alert-error fa fa-ban w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> Not eligible for BC loan forgiveness</strong>\r\n<br/>\r\nBased on your answers to the above questions you do not qualify for the BC Loan forgiveness please cancel your application.",
+              "refreshOnChange": false,
+              "key": "html3",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            }
+          ],
+          "breadcrumbClickable": true,
+          "buttonSettings": {
+            "previous": true,
+            "cancel": true,
+            "next": true
+          },
+          "navigateOnEnter": false,
+          "saveOnEnter": false,
+          "scrollToTop": false
+        }
+      ]
+    },
+    {
+      "label": "Upload supporting documents panel",
+      "title": "Upload supporting documents panel",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "panel1",
+      "type": "panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "HTML",
+          "tag": "h3",
+          "className": "category-header-medium primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Upload supporting documents",
+          "refreshOnChange": false,
+          "key": "html4",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "To confirm your eligibility for the BC Loan Forgiveness Program, upload the required supporting document(s). Please do not upload password protected files as they may delay your application.",
+          "refreshOnChange": false,
+          "key": "html9",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "h4",
+          "className": "category-header-medium-small",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Required document(s):",
+          "refreshOnChange": false,
+          "key": "html1",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<ul>\n  <li>A current employment letter written and signed by your employer</li>\n</ul>",
+          "refreshOnChange": false,
+          "key": "html5",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "h4",
+          "className": "category-header-medium-small",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Your employment letter must contain all of the following:",
+          "refreshOnChange": false,
+          "key": "html6",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<ul>\r\n  <li>must be on company letterhead;</li>\r\n  <li>current date (this date must be within one month of the date your application was received at StudentAid BC);</li>\r\n  <li>employer's signature;</li>\r\n  <li>applicant’s name and job title;</li>\r\n  <li>employment status (full-time/part-time/casual on-call);</li>\r\n  <li>hired/start date;</li>\r\n  <li>name of the publicly-funded facility;</li>\r\n  <li>name of the community; and</li>\r\n  <li>whether working with children (for specific occupations).</li>\r\n</ul>",
+          "refreshOnChange": false,
+          "key": "html7",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "Upload supporting documents",
+          "hideLabel": true,
+          "tableView": false,
+          "storage": "url",
+          "dir": "BC Loan Forgiveness Application - Supporting Documents",
+          "webcam": false,
+          "capture": false,
+          "fileTypes": [
+            {
+              "label": "",
+              "value": ""
+            }
+          ],
+          "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+          "fileMaxSize": "",
+          "multiple": true,
+          "clearOnHide": false,
+          "validate": {
+            "required": true,
+            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+          },
+          "validateWhenHidden": false,
+          "key": "requiredDocuments",
+          "type": "file",
+          "url": "student/files",
+          "input": true
+        },
+        {
+          "label": "Content",
+          "input": false,
+          "className": "file-upload-info-container",
+          "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+          "type": "htmlelement",
+          "hideLabel": true,
+          "tableView": false,
+          "key": "content"
         }
       ]
     },
@@ -271,14 +529,13 @@
     },
     {
       "label": "Declaration",
-      "widget": "",
       "applyMaskOn": "change",
       "autoExpand": false,
       "customClass": "fixed-height-declaration-large",
       "hideLabel": true,
       "disabled": true,
       "tableView": true,
-      "defaultValue": "I am applying for assistance under any one or more of the disability programs outlined on the StudentAid BC Disability Verification Form. I UNDERSTAND THAT THIS DISABILITY APPLICATION FORMS PART OF MY APPLICATION FOR STUDENT FINANCIAL ASSISTANCE AND AS SUCH INCLUDES ALL TERMS AND CONDITIONS AS STATED IN THE FULL TIME OR PART TIME STUDENTAID BC APPLICATION DECLARATIONS.\n\nIn addition to the terms and conditions stated in the Full Time or Part Time StudentAid BC Application Declarations, I also understand that:\n\n<ol><li>If I receive money to pay for educational related specialized services through the Canada Student Grant for Services and Equipment - Students with Disabilities (CSG-DSE) while at a public or private post-secondary institution, or the Assistance Program for Students with Disabilities (APSD) program while at a private post-secondary institution, I will provide to StudentAid BC, at the end of my study period, receipts showing that the funds were spent for their intended purpose, and will repay any unused funds to the British Columbia Minister of Finance.</li>\n<li>If I am attending a post-secondary institution in BC, I will only request funds from the APSD program after I have exhausted all funds available through the CSG-DSE.</li>\n<li>I give permission to the BC Ministry of Post-Secondary Education and Future Skills to disclose information directly related to my disability to the Ministry of Employment and Social Development Canada, and/or Assistive Technology British Columbia (The Board of Education of School District No. 39 (Vancouver), also known as Vancouver School Board) for the purposes of determining my eligibility for disability funding.</li>\n<li>I give permission to my school to disclose information to the Ministry of Employment and Social Development Canada, the BC Ministry of Post-Secondary Education and Future Skills and/or Assistive Technology British Columbia (ATBC) regarding my disability, access requirements, academic standing, awards, living arrangements and financial status for the purposes of verifying or investigating information pertaining to this application and related documents, determining my eligibility for disability funding or determining whether I will be required to repay any funding I may receive.</li>\n<li>If I am awarded a CSG-DSE and/or a grant under the APSD, I authorize ATBC or the Institution that I am, or will be, attending to cash the grant cheque(s) on my behalf and apply the funds to retain a service worker and/or buy equipment and/or software on my behalf and/or apply the grant to the Learning Disability Assessment Bursary (LDAB) fund.</li></ol>\n<strong>Collection and use of information.</strong> The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post- Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria B.C., V8W 9H7, or <a href=\"mailto:StudentAidBC@gov.bc.ca\">StudentAidBC@gov.bc.ca.</a>",
+      "defaultValue": "PLACEHOLDER FIELD ------- awaiting confirmed wording from policy and legal.\n\n<strong>Collection and use of information.</strong> The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post- Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria B.C., V8W 9H7, or <a href=\"mailto:StudentAidBC@gov.bc.ca\">StudentAidBC@gov.bc.ca.</a>",
       "persistent": false,
       "validateWhenHidden": false,
       "key": "textArea",

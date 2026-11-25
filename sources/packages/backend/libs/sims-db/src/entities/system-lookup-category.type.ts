@@ -42,4 +42,8 @@ export enum SystemLookupCategory {
    * Program aviation credential lookup values.
    */
   ProgramAviationCredential = "Program aviation credential",
+  /**
+   * Underserved communities in BC. This is not an exhaustive list of BC communities.
+   */
+  UnderservedCommunity = "Underserved community",
 }

@@ -9,6 +9,7 @@ import {
   SupplementaryDataProgramYear,
   SupplementaryDataBaseLoader,
   SupplementaryDataScholasticStandingWithdrawals,
+  SupplementaryDataUnderservedCommunities,
 } from ".";
 
 /**
@@ -26,11 +27,13 @@ export class SupplementaryDataLoader {
     private readonly supplementaryDataParents: SupplementaryDataParents,
     private readonly supplementaryDataProgramYear: SupplementaryDataProgramYear,
     private readonly supplementaryDataScholasticStandingWithdrawals: SupplementaryDataScholasticStandingWithdrawals,
+    private readonly supplementaryDataUnderservedCommunities: SupplementaryDataUnderservedCommunities,
   ) {
     this.dataLoaders = [
       this.supplementaryDataParents,
       this.supplementaryDataProgramYear,
       this.supplementaryDataScholasticStandingWithdrawals,
+      this.supplementaryDataUnderservedCommunities,
     ];
   }
 
