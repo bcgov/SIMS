@@ -37,15 +37,6 @@
       v-if="headerDetails.assessedDate"
       :value="dateOnlyLongString(headerDetails.assessedDate)"
     />
-    <v-divider-vertical-opaque
-      v-if="headerDetails.effectiveEndDate"
-      class="mx-2 my-0"
-    />
-    <header-title-value
-      v-if="headerDetails.effectiveEndDate"
-      title="Effective end date"
-      :value="dateOnlyLongString(headerDetails.effectiveEndDate)"
-    />
   </div>
 </template>
 

@@ -186,6 +186,7 @@ export enum AppRoutes {
   BatchReassessment = "batch-reassessment",
   BatchReassessmentOutcome = "batch-reassessment/:batchReassessmentId",
   BatchRestriction = "batch-restriction",
+  BatchRestrictionOutcome = "batch-restriction/:batchRestrictionId",
   CASInvoices = "invoices",
   DynamicFormEditor = "dynamic-form-editor",
   ApplicationRestrictionsManagement = "application-restrictions-management",

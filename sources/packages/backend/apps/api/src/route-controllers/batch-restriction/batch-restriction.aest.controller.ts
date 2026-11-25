@@ -2,10 +2,18 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
   Post,
+  Query,
   UnprocessableEntityException,
 } from "@nestjs/common";
-import { ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import {
+  ApiNotFoundResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import {
   AllowAuthorizedParty,
   Groups,
@@ -19,9 +27,19 @@ import { ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   BatchRestrictionAPIInDTO,
+  BatchRestrictionDetailsAPIOutDTO,
+  BatchRestrictionStudentAPIOutDTO,
   BatchRestrictionSummaryAPIOutDTO,
 } from "./models/batch-restriction.dto";
-import { BatchRestrictionService, RestrictionService } from "../../services";
+import {
+  BatchRestrictionStudentPaginationOptionsAPIInDTO,
+  PaginatedResultsAPIOutDTO,
+} from "../models/pagination.dto";
+import {
+  BatchRestrictionService,
+  BatchRestrictionStudentResult,
+  RestrictionService,
+} from "../../services";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { getUserFullName } from "../../utilities";
 import { RestrictionType } from "@sims/sims-db";
@@ -99,5 +117,73 @@ export class BatchRestrictionAESTController extends BaseController {
       successCount: summary.successCount,
       failureCount: summary.failureCount,
     }));
+  }
+
+  /**
+   * Gets the details of a batch restriction submission.
+   * @param batchRestrictionId batch restriction ID.
+   * @returns batch restriction details.
+   */
+  @Get(":batchRestrictionId")
+  @ApiNotFoundResponse({ description: "Batch restriction not found." })
+  async getBatchRestriction(
+    @Param("batchRestrictionId", ParseIntPipe) batchRestrictionId: number,
+  ): Promise<BatchRestrictionDetailsAPIOutDTO> {
+    const batchRestriction =
+      await this.batchRestrictionService.getBatchRestrictionDetails(
+        batchRestrictionId,
+      );
+    if (!batchRestriction) {
+      throw new NotFoundException(
+        `Batch restriction with ID ${batchRestrictionId} not found.`,
+      );
+    }
+    return {
+      id: batchRestriction.id,
+      batchNumber: batchRestriction.batchNumber,
+      restrictionCode: batchRestriction.restriction.restrictionCode,
+      restrictionDescription: batchRestriction.restriction.description,
+    };
+  }
+
+  /**
+   * Gets the restriction outcome of all students in a batch restriction.
+   * @param batchRestrictionId batch restriction ID.
+   * @param paginationOptions pagination options, with optional application number
+   * search criteria and result filter.
+   * @returns paginated student outcomes.
+   */
+  @Get(":batchRestrictionId/students")
+  @ApiNotFoundResponse({ description: "Batch restriction not found." })
+  async getBatchRestrictionStudents(
+    @Param("batchRestrictionId", ParseIntPipe) batchRestrictionId: number,
+    @Query()
+    paginationOptions: BatchRestrictionStudentPaginationOptionsAPIInDTO,
+  ): Promise<PaginatedResultsAPIOutDTO<BatchRestrictionStudentAPIOutDTO>> {
+    const batchRestrictionExists =
+      await this.batchRestrictionService.batchRestrictionExists(
+        batchRestrictionId,
+      );
+    if (!batchRestrictionExists) {
+      throw new NotFoundException(
+        `Batch restriction with ID ${batchRestrictionId} not found.`,
+      );
+    }
+    const students =
+      await this.batchRestrictionService.getBatchRestrictionStudents(
+        batchRestrictionId,
+        paginationOptions,
+      );
+    return {
+      results: students.results.map((student) => ({
+        applicationNumber: student.applicationNumber,
+        studentId: student.studentRestriction?.student.id,
+        result: student.failureReason
+          ? BatchRestrictionStudentResult.Failed
+          : BatchRestrictionStudentResult.Successful,
+        failureReason: student.failureReason,
+      })),
+      count: students.count,
+    };
   }
 }

@@ -3,21 +3,21 @@
     :program-id="programId"
     :location-id="locationId"
     :education-program="educationProgram"
-    :allow-edit="allowEdit && isProgramEditable"
-    :allow-deactivate="allowDeactivate && isProgramEditable"
+    :allow-edit="allowEdit && educationProgram.isActive"
+    :allow-deactivate="allowDeactivate && educationProgram.isActive"
     :can-create-offering="canCreateOffering"
     @program-data-updated="$emit('programDataUpdated')"
   />
   <offering-summary
     :program-id="programId"
     :location-id="locationId"
-    :allow-edit="allowEdit && isProgramEditable"
+    :allow-edit="allowEdit && educationProgram.isActive"
     :institution-id="institutionId"
   />
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import ProgramDetails from "@/components/common/ProgramDetails.vue";
 import OfferingSummary from "@/components/common/OfferingSummary.vue";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
@@ -61,15 +61,6 @@ export default defineComponent({
       required: false,
       default: false,
     },
-  },
-  setup(props) {
-    const isProgramEditable = computed(
-      () =>
-        props.educationProgram.isActive && !props.educationProgram.isExpired,
-    );
-    return {
-      isProgramEditable,
-    };
   },
 });
 </script>

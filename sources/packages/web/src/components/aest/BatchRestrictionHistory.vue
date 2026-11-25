@@ -40,6 +40,17 @@
           <template #[`item.failureCount`]="{ item }">
             {{ item.failureCount }}
           </template>
+          <template #[`item.action`]="{ item }">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              :to="{
+                name: AESTRoutesConst.BATCH_RESTRICTION_OUTCOME,
+                params: { batchRestrictionId: item.id },
+              }"
+              >View</v-btn
+            >
+          </template>
         </v-data-table>
       </toggle-content>
     </content-group>
@@ -53,6 +64,7 @@ import { BatchRestrictionHistoryHeaders } from "@/types/contracts/DataTableContr
 import { BatchRestrictionSummaryAPIOutDTO } from "@/services/http/dto";
 import { useFormatters, useSnackBar } from "@/composables";
 import { BatchRestrictionService } from "@/services/BatchRestrictionService";
+import { AESTRoutesConst } from "@/constants/routes/RouteConstants";
 
 const snackBar = useSnackBar();
 const { getISODateHourMinuteString } = useFormatters();

@@ -296,7 +296,7 @@ export class EducationProgramService {
   }
 
   /**
-   * Gets a list of Programs with status 'Pending' where the Program is active/not expired.
+   * Gets a list of Programs with status 'Pending' where the Program is active.
    * Pagination, sort and search are available on results.
    * @param paginationOptions Pagination options.
    * @returns pending programs.

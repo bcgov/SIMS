@@ -1,5 +1,4 @@
 import {
-  IsDateString,
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -18,8 +17,7 @@ import {
   CREDENTIAL_TYPE_MAX_LENGTH,
   CIP_CODE_MAX_LENGTH,
 } from "@sims/sims-db";
-import { IsDateAfter, JsonMaxSize } from "../../../utilities/class-validation";
-import { getPCTDateFormatted } from "@sims/utilities";
+import { JsonMaxSize } from "../../../utilities/class-validation";
 import { JSON_20KB } from "../../../constants";
 
 /**
@@ -90,8 +88,6 @@ export class EducationProgramAPIOutDTO extends EducationProgramConfigurationAPIO
   submittedBy: string;
   assessedDate?: Date;
   assessedBy?: string;
-  effectiveEndDate?: string;
-  isExpired: boolean;
   institutionId: number;
   institutionName: string;
 }
@@ -147,7 +143,6 @@ export class EducationProgramsSummaryAPIOutDTO {
   locationId: number;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
 }
 
 /**
@@ -203,7 +198,6 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   sabcCode?: string;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
   /**
    * Renewal status of the education program into the next program year.
    * All programs are available for renewal into the next program year,
@@ -224,7 +218,6 @@ export class EducationProgramsSummaryLocationAPIOutDTO {
   locationId: number;
   programStatus: ProgramStatus;
   isActive: boolean;
-  isExpired: boolean;
 }
 
 export class ProgramEvaluationDataAPIInDTO {
@@ -254,9 +247,6 @@ export class ProgramEvaluationAPIOutDTO {
 }
 
 export class ApproveProgramAPIInDTO {
-  @IsDateString()
-  @IsDateAfter(() => getPCTDateFormatted(new Date()), "Expiry date")
-  effectiveEndDate: string;
   @IsNotEmpty()
   @MaxLength(NOTE_DESCRIPTION_MAX_LENGTH)
   approvedNote: string;

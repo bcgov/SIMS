@@ -22,7 +22,7 @@ import {
   User,
 } from "@sims/sims-db";
 import request from "supertest";
-import { addDays, getISODateOnlyString } from "@sims/utilities";
+import { addDays } from "@sims/utilities";
 
 const PAST_SUBMITTED_DATE = new Date("2000-01-01");
 
@@ -406,56 +406,6 @@ describe("EducationProgramOfferingAESTController(e2e)-getPendingOfferings", () =
       {
         auditUser: savedUser,
         program: inactiveProgram,
-      },
-      {
-        initialValues: {
-          name: "Psychology 101",
-          offeringStatus: OfferingStatus.CreationPending,
-          submittedDate: PAST_SUBMITTED_DATE,
-        },
-      },
-    );
-
-    await db.educationProgramOffering.save([psych101Offering]);
-
-    // Ministry token.
-    const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    // Include a search criteria that matches both offerings to avoid test data collisions.
-    const searchCriteria = "Psychology";
-    const endpoint = `/aest/education-program-offering/pending?page=0&pageLimit=10&searchCriteria=${searchCriteria}`;
-
-    // Act/Assert
-    // No results are expected since the Program is inactive and we are searching on a specific name.
-    await request(app.getHttpServer())
-      .get(endpoint)
-      .auth(token, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.OK)
-      .expect({ results: [], count: 0 });
-  });
-
-  it("Should return no offerings when the Program is expired.", async () => {
-    // Arrange
-
-    // Create an expired Program.
-    const expiredProgram = createFakeEducationProgram(
-      {
-        auditUser: savedUser,
-        programConfiguration: mostRecentProgramConfiguration,
-      },
-      {
-        initialValues: {
-          effectiveEndDate: getISODateOnlyString(addDays(-1)),
-        },
-      },
-    );
-    await db.educationProgram.save(expiredProgram);
-
-    // Create an offering for the expired Program.
-    // Custom dates/names are used to avoid collisions with other test data.
-    const psych101Offering = createFakeEducationProgramOffering(
-      {
-        auditUser: savedUser,
-        program: expiredProgram,
       },
       {
         initialValues: {

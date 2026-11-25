@@ -69,7 +69,6 @@ import {
   OFFERING_DOES_NOT_BELONG_TO_LOCATION,
   OFFERING_PROGRAM_YEAR_MISMATCH,
   EDUCATION_PROGRAM_IS_NOT_ACTIVE,
-  EDUCATION_PROGRAM_IS_EXPIRED,
   ACTIVE_INSTITUTION_RESTRICTION,
 } from "../../constants";
 import {
@@ -956,7 +955,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
         "pirProgram.name",
         "pirProgram.description",
         "pirProgram.isActive",
-        "pirProgram.effectiveEndDate",
         "educationProgram.id",
         "offering.id",
         "offering.name",
@@ -2294,14 +2292,6 @@ export class ApplicationService extends RecordDataModelService<Application> {
       throw new CustomNamedError(
         "The education program is not active.",
         EDUCATION_PROGRAM_IS_NOT_ACTIVE,
-      );
-    }
-
-    // Validates if the program is expired.
-    if (offering.educationProgram.isExpired) {
-      throw new CustomNamedError(
-        "The education program is expired.",
-        EDUCATION_PROGRAM_IS_EXPIRED,
       );
     }
 

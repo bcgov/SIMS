@@ -12,6 +12,7 @@ import {
   Length,
   MaxLength,
 } from "class-validator";
+import { BatchRestrictionStudentResult } from "../../../services";
 
 /**
  * Maximum number of application numbers accepted in a single batch restriction submission.
@@ -50,4 +51,24 @@ export class BatchRestrictionSummaryAPIOutDTO {
   totalCount: number;
   successCount: number;
   failureCount: number;
+}
+
+/**
+ * Details of a batch restriction submission.
+ */
+export class BatchRestrictionDetailsAPIOutDTO {
+  id: number;
+  batchNumber: number;
+  restrictionCode: string;
+  restrictionDescription: string;
+}
+
+/**
+ * Outcome of adding the restriction to a student in a batch restriction.
+ */
+export class BatchRestrictionStudentAPIOutDTO {
+  applicationNumber: string;
+  studentId?: number;
+  result: BatchRestrictionStudentResult;
+  failureReason: string | null;
 }

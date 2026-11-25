@@ -13,7 +13,6 @@ import {
   IsNull,
   Like,
   Not,
-  Or,
   Raw,
   Repository,
 } from "typeorm";
@@ -157,7 +156,6 @@ export class EducationProgramManagerService {
           sabcCode: true,
           programStatus: true,
           isActive: true,
-          effectiveEndDate: true,
           renewedProgram: {
             id: true,
           },
@@ -237,8 +235,8 @@ export class EducationProgramManagerService {
   /**
    * Builds the where conditions to filter the programs by status.
    * - No filter: all programs are returned.
-   * - Status filter only: active and non-expired programs with one of the statuses.
-   * - Inactive filter only: inactive or expired programs.
+   * - Status filter only: active programs with one of the statuses.
+   * - Inactive filter only: inactive programs.
    * - Both filters: programs matching any of the above conditions.
    * @param paginationOptions options containing the status filters.
    * @returns where conditions, where each array item is combined using OR.
@@ -255,17 +253,10 @@ export class EducationProgramManagerService {
       conditions.push({
         programStatus: Any(statusSearch),
         isActive: true,
-        effectiveEndDate: Or(
-          IsNull(),
-          Raw((alias) => `${alias} > CURRENT_DATE`),
-        ),
       });
     }
     if (inactiveProgramSearch) {
-      conditions.push(
-        { isActive: false },
-        { effectiveEndDate: Raw((alias) => `${alias} <= CURRENT_DATE`) },
-      );
+      conditions.push({ isActive: false });
     }
     return conditions;
   }

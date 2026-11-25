@@ -98,9 +98,9 @@ export async function createApplicationsDataSetup(
         assessmentDate: now,
         assessmentData: {
           totalFederalAssessedResources: 10,
-          federalAssessmentNeed: 3,
+          federalAssessmentNeed: 200,
           totalProvincialAssessedResources: 5,
-          provincialAssessmentNeed: 11,
+          provincialAssessmentNeed: 100,
           totalAssessedCost: 50,
         } as Assessment,
       },
@@ -196,11 +196,7 @@ export async function createApplicationsDataSetup(
         } as WorkflowData,
         assessmentDate: new Date(),
         assessmentData: {
-          totalFederalAssessedResources: 12,
-          federalAssessmentNeed: 34,
-          totalProvincialAssessedResources: 56,
-          provincialAssessmentNeed: 78,
-          totalAssessmentNeed: 910,
+          totalAssessmentNeed: 5000,
         } as Assessment,
       },
       applicationData: {
@@ -224,10 +220,14 @@ export async function createApplicationsDataSetup(
 /**
  * Build Unmet Need Report report data.
  * @param application application to generate the expected report record.
+ * @param options options.
+ * - `includeUnmetNeed`: when true, includes the federal and provincial
+ * unmet need columns (ministry report only).
  * @returns report data.
  */
 export function buildUnmetNeedReportData(
   application: Application,
+  options?: { includeUnmetNeed?: boolean },
 ): Record<string, string | number> {
   const assessmentData = application.currentAssessment
     .assessmentData as FullTimeAssessment;
@@ -241,6 +241,7 @@ export function buildUnmetNeedReportData(
     application.currentAssessment.disbursementSchedules.flatMap(
       (ds) => ds.disbursementValues,
     );
+  const totalAssistance = sumAwardAmounts(disbursementValues);
   const unmetNeedReportData = {
     "Student First Name": savedUser.firstName,
     "Student Last Name": savedUser.lastName,
@@ -281,15 +282,30 @@ export function buildUnmetNeedReportData(
     "Federal/Provincial Assessed Costs": (
       assessmentData.totalAssessedCost ?? assessmentData.totalAssessmentNeed
     ).toString(),
+    // Part-time assessments do not persist the federal and provincial values below.
     "Federal Assessed Resources":
-      assessmentData.totalFederalAssessedResources.toString(),
-    "Federal assessed need": assessmentData.federalAssessmentNeed.toString(),
+      assessmentData.totalFederalAssessedResources?.toString() ?? "",
+    "Federal assessed need":
+      assessmentData.federalAssessmentNeed?.toString() ?? "",
     "Provincial Assessed Resources":
-      assessmentData.totalProvincialAssessedResources.toString(),
+      assessmentData.totalProvincialAssessedResources?.toString() ?? "",
     "Provincial assessed need":
-      assessmentData.provincialAssessmentNeed.toString(),
-    "Total assistance": sumAwardAmounts(disbursementValues).toFixed(2),
-  };
+      assessmentData.provincialAssessmentNeed?.toString() ?? "",
+    "Total assistance": totalAssistance.toFixed(2),
+  } as Record<string, string | number>;
+  if (options?.includeUnmetNeed) {
+    // The unmet need is empty when the assessed need is not persisted (part-time).
+    unmetNeedReportData["Federal Unmet Need"] =
+      assessmentData.federalAssessmentNeed === undefined
+        ? ""
+        : (assessmentData.federalAssessmentNeed - totalAssistance).toFixed(2);
+    unmetNeedReportData["Provincial Unmet Need"] =
+      assessmentData.provincialAssessmentNeed === undefined
+        ? ""
+        : (assessmentData.provincialAssessmentNeed - totalAssistance).toFixed(
+            2,
+          );
+  }
   const expectedValueCodes = [
     "CSLF",
     "CSGP",

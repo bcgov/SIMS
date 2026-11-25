@@ -1082,10 +1082,14 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       AESTGroups.BusinessAdministrators,
     );
     // Expected report records.
-    const expectedFullTimeRecord =
-      buildUnmetNeedReportData(fullTimeApplication);
-    const expectedPartTimeRecord =
-      buildUnmetNeedReportData(partTimeApplication);
+    const expectedFullTimeRecord = buildUnmetNeedReportData(
+      fullTimeApplication,
+      { includeUnmetNeed: true },
+    );
+    const expectedPartTimeRecord = buildUnmetNeedReportData(
+      partTimeApplication,
+      { includeUnmetNeed: true },
+    );
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -1724,8 +1728,6 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       "Program Status": fakeOffering.educationProgram.programStatus,
       "Program Deactivated?": (!fakeOffering.educationProgram
         .isActive).toString(),
-      "Program Expiry Date":
-        fakeOffering.educationProgram.effectiveEndDate ?? "",
       "Offering Name": fakeOffering.name,
       "Study Start Date": fakeOffering.studyStartDate,
       "Study End Date": fakeOffering.studyEndDate,
@@ -1760,7 +1762,6 @@ describe("ReportAESTController(e2e)-exportReport", () => {
       "Credit or Hours": fakeProgram.courseLoadCalculation,
       "Program Status": fakeProgram.programStatus,
       "Program Deactivated?": (!fakeProgram.isActive).toString(),
-      "Program Expiry Date": fakeProgram.effectiveEndDate ?? "",
       "Offering Name": "",
       "Study Start Date": "",
       "Study End Date": "",

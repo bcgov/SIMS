@@ -16,7 +16,6 @@ import {
   EducationProgramConfiguration,
 } from ".";
 import { ProgramIntensity } from "./program-intensity.type";
-import { isSameOrAfterDate } from "@sims/utilities";
 
 export const CREDENTIAL_TYPE_MAX_LENGTH = 50;
 export const CIP_CODE_MAX_LENGTH = 50;
@@ -369,24 +368,6 @@ export class EducationProgram extends RecordDataModel {
     nullable: true,
   })
   assessedDate?: Date;
-
-  /**
-   * Effective End date of the approved Education program.
-   */
-  @Column({
-    name: "effective_end_date",
-    type: "date",
-    nullable: true,
-  })
-  effectiveEndDate?: string;
-
-  /**
-   * Returns `true` in case the effective end date has been reached or
-   * the effective end date is null. Otherwise `false`.
-   */
-  get isExpired(): boolean {
-    return isSameOrAfterDate(this.effectiveEndDate, new Date());
-  }
 
   /**
    * Education program note.

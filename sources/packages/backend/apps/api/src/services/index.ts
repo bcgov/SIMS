@@ -16,6 +16,7 @@ export * from "./restriction/restriction.service";
 export * from "./restriction/student-restriction.service";
 export * from "./restriction/institution-restriction.service";
 export * from "./restriction/batch-restriction.service";
+export * from "./restriction/models/batch-restriction.model";
 export * from "./student-appeal/student-appeal.service";
 export * from "./student-appeal-request/student-appeal-request.service";
 export * from "./dynamic-form-configuration/dynamic-form-configuration.service";

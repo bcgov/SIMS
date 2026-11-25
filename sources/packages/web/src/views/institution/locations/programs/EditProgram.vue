@@ -90,13 +90,10 @@ const isFullUpdateRestricted = computed(
   () => !!educationProgram.value?.programData.context.isFullUpdateRestricted,
 );
 /**
- * Inactive or expired programs can no longer be edited.
+ * Inactive programs can no longer be edited.
  */
 const isFormReadOnly = computed(
-  () =>
-    readOnly.value ||
-    !educationProgram.value?.isActive ||
-    educationProgram.value.isExpired,
+  () => readOnly.value || !educationProgram.value?.isActive,
 );
 
 const submit = async (programData: Record<string, unknown>) => {

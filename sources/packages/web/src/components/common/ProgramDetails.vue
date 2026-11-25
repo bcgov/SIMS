@@ -5,9 +5,7 @@
         <template #status-chip>
           <status-chip-program
             :status="educationProgram.programStatus"
-            :is-active="
-              educationProgram.isActive && !educationProgram.isExpired
-            "
+            :is-active="educationProgram.isActive"
             data-cy="programStatus"
           ></status-chip-program>
         </template>

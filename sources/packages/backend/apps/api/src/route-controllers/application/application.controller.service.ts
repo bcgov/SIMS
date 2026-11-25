@@ -519,10 +519,9 @@ export class ApplicationControllerService {
         data.selectedProgram,
       );
       if (selectedProgram) {
-        // Assign selected program && selected offering for application as null when the program is not approved, inactive or expired.
+        // Assign selected program && selected offering for application as null when the program is not approved or inactive.
         if (
           !selectedProgram.isActive ||
-          selectedProgram.isExpired ||
           selectedProgram.programStatus !== ProgramStatus.Approved
         ) {
           data.selectedProgram = null;
@@ -1056,11 +1055,6 @@ export class ApplicationControllerService {
       if (!offering.educationProgram.isActive) {
         throw new UnprocessableEntityException(
           "The education program is not active.",
-        );
-      }
-      if (offering.educationProgram.isExpired) {
-        throw new UnprocessableEntityException(
-          "The education program is expired.",
         );
       }
       if (offering.offeringIntensity !== offeringIntensity) {
