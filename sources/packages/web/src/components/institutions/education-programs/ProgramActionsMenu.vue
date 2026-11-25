@@ -15,10 +15,15 @@
       bg-color="default"
       color="primary"
     >
-      <v-list-item :to="editProgramRoute" title="Edit" />
+      <v-list-item
+        :to="editProgramRoute"
+        :disabled="actionsDisabled"
+        title="Edit"
+      />
       <v-divider-inset-opaque />
       <v-list-item
         base-color="danger"
+        :disabled="actionsDisabled"
         @click="deactivate"
         title="Deactivate"
       />
@@ -32,7 +37,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import type { RouteLocationRaw } from "vue-router";
-import { ModalDialog, useSnackBar } from "@/composables";
+import { ModalDialog, useInstitutionAuth, useSnackBar } from "@/composables";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import EducationProgramDeactivationModal from "@/components/common/modals/EducationProgramDeactivationModal.vue";
 import { DeactivateProgramAPIInDTO } from "@/services/http/dto";
@@ -43,6 +48,10 @@ interface ProgramActionsMenuProps {
    * Program the actions are applied to.
    */
   programId: number;
+  /**
+   * Indicates if the program is active.
+   */
+  isProgramActive: boolean;
 }
 
 const props = defineProps<ProgramActionsMenuProps>();
@@ -52,6 +61,15 @@ const emit = defineEmits<{
 }>();
 
 const snackBar = useSnackBar();
+const { canModifyPrograms } = useInstitutionAuth();
+
+/**
+ * Indicates if the actions must be disabled, which happens when the program
+ * is not active or the user is not allowed to modify programs.
+ */
+const actionsDisabled = computed(
+  () => !props.isProgramActive || !canModifyPrograms.value,
+);
 
 /**
  * Route to the edit program page.

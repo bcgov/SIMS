@@ -6,9 +6,10 @@
         :route-location="manageProgramsRoute"
         sub-title="View Program"
       >
-        <template #buttons v-if="allowProgramChanges && canModifyProgram">
+        <template #buttons v-if="allowProgramChanges">
           <program-actions-menu
             :program-id="programId"
+            :is-program-active="!!educationProgram?.isActive"
             @deactivated="loadProgram(programId)"
           />
         </template>
@@ -32,11 +33,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import {
-  useFeatureToggles,
-  useInstitutionAuth,
-  useSnackBar,
-} from "@/composables";
+import { useFeatureToggles, useSnackBar } from "@/composables";
 import type { RouteLocationRaw } from "vue-router";
 import { BannerTypes } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -53,7 +50,6 @@ const snackBar = useSnackBar();
 const loading = ref(true);
 const educationProgram = ref<EducationProgramAPIOutDTO>();
 const { isManageProgramsEnabled } = useFeatureToggles();
-const { canModifyPrograms } = useInstitutionAuth();
 const formTitle = computed(() => {
   if (!isManageProgramsEnabled.value) {
     return "Program";
@@ -73,14 +69,6 @@ const manageProgramsRoute = computed<RouteLocationRaw>(() => ({
     ? { programYearId: educationProgram.value.programYearId }
     : undefined,
 }));
-
-/**
- * Indicates if the program can be edited or deactivated, which requires
- * the program to be active and the user to be allowed to modify programs.
- */
-const canModifyProgram = computed(
-  () => !!educationProgram.value?.isActive && canModifyPrograms.value,
-);
 
 /**
  * Indicates if the program can be changed (edited or deactivated), which

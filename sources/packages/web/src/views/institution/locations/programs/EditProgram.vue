@@ -19,7 +19,8 @@
             color="success"
             :to="createProgramRoute"
             class="btn-font-color-light"
-            v-if="!readOnly && createProgramRoute"
+            v-if="createProgramRoute"
+            :disabled="!canModifyPrograms"
           >
             Create program
           </v-btn>
@@ -34,7 +35,7 @@
       :title="formTitle"
       :program-configuration="programConfiguration"
       :is-loading="loading"
-      :is-read-only="readOnly"
+      :is-read-only="!canModifyPrograms"
       :is-processing="processing"
       @submit="submit"
       @cancel="goBack"
@@ -64,13 +65,12 @@ interface EditProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const { canModifyPrograms } = useInstitutionAuth();
 /**
  * The user must be allowed to modify programs, matching the API authorization.
  * The route authorization does not prevent read-only users from accessing
  * routes without a location.
  */
-const readOnly = computed(() => !canModifyPrograms.value);
+const { canModifyPrograms } = useInstitutionAuth();
 const processing = ref(false);
 const loading = ref(true);
 const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
