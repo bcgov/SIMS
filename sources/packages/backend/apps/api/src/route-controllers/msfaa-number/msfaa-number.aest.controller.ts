@@ -22,7 +22,7 @@ import {
   UserToken,
 } from "../../auth/decorators";
 import { MSFAANumberService, StudentService } from "../../services";
-import { ClientTypeBaseRoute } from "../../types";
+import { ApiProcessError, ClientTypeBaseRoute } from "../../types";
 import BaseController from "../BaseController";
 import {
   CancelMSFAAAPIInDTO,
@@ -32,6 +32,7 @@ import {
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
 import {
+  MSFAA_INELIGIBLE,
   MSFAA_NUMBER_INVALID_OPERATION,
   MSFAA_NUMBER_NOT_FOUND,
 } from "@sims/services/constants";
@@ -149,8 +150,10 @@ export class MSFAANumberAESTController extends BaseController {
         switch (error.name) {
           case MSFAA_NUMBER_NOT_FOUND:
             throw new NotFoundException(error.message);
-          case MSFAA_NUMBER_INVALID_OPERATION:
-            throw new UnprocessableEntityException(error.message);
+          case MSFAA_INELIGIBLE:
+            throw new UnprocessableEntityException(
+              new ApiProcessError(error.message, error.name),
+            );
         }
       }
       throw error;

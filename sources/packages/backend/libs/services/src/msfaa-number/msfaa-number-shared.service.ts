@@ -19,7 +19,7 @@ import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   APPLICATION_NOT_FOUND,
-  MSFAA_NUMBER_INVALID_OPERATION,
+  MSFAA_INELIGIBLE,
   MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
@@ -196,7 +196,7 @@ export class MSFAANumberSharedService {
     if (!eligibleMSFAA) {
       throw new CustomNamedError(
         "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no pending disbursements associated.",
-        MSFAA_NUMBER_INVALID_OPERATION,
+        MSFAA_INELIGIBLE,
       );
     }
     return this.internalActivateMSFAANumber(

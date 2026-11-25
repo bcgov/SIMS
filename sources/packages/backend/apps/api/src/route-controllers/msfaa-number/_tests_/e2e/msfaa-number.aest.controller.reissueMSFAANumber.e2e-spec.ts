@@ -26,6 +26,7 @@ import { addDays } from "@sims/utilities";
 import { Role } from "../../../../auth";
 import { ConfigServiceMockHelper } from "@sims/test-utils/mocks";
 import { In } from "typeorm";
+import { MSFAA_INELIGIBLE } from "@sims/services/constants";
 
 const INVALID_REISSUE_MESSAGE =
   "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no pending disbursements associated.";
@@ -141,8 +142,7 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: INVALID_REISSUE_MESSAGE,
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorType: MSFAA_INELIGIBLE,
       });
   });
 
@@ -166,8 +166,7 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: INVALID_REISSUE_MESSAGE,
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorType: MSFAA_INELIGIBLE,
       });
   });
 
@@ -205,8 +204,7 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: INVALID_REISSUE_MESSAGE,
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorType: MSFAA_INELIGIBLE,
       });
   });
 
@@ -241,8 +239,7 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       .expect(HttpStatus.UNPROCESSABLE_ENTITY)
       .expect({
         message: INVALID_REISSUE_MESSAGE,
-        error: "Unprocessable Entity",
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        errorType: MSFAA_INELIGIBLE,
       });
   });
 
