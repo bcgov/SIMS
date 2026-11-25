@@ -136,8 +136,7 @@ import {
 import { MSFAANumberService } from "@/services/MSFAANumberService";
 import { MSFAANumberAPIOutDTO } from "@/services/http/dto";
 import { MSFAAActivityHeaders } from "@/types/contracts/DataTableContract";
-import { ApiProcessError, Role } from "@/types";
-import { MSFAA_INELIGIBLE } from "@/constants";
+import { Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
@@ -226,15 +225,7 @@ const reissueMSFAACall = async (
     snackBar.success("The MSFAA has been successfully issued.");
     await loadMSFAAActivity();
     return true;
-  } catch (error: unknown) {
-    if (
-      error instanceof ApiProcessError &&
-      error.errorType === MSFAA_INELIGIBLE
-    ) {
-      snackBar.warn(error.message);
-      await loadMSFAAActivity();
-      return true;
-    }
+  } catch {
     snackBar.error("An unexpected error happened while issuing the MSFAA.");
     return false;
   }
