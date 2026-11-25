@@ -1,12 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import {
-  Any,
-  DataSource,
-  EntityManager,
-  IsNull,
-  Not,
-  Repository,
-} from "typeorm";
+import { DataSource, EntityManager, IsNull, Repository } from "typeorm";
 import {
   MSFAANumber,
   Student,
@@ -15,7 +8,6 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   User,
-  ApplicationStatus,
 } from "@sims/sims-db";
 import {
   SFASSignedMSFAA,
@@ -27,21 +19,14 @@ import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   APPLICATION_NOT_FOUND,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
   MSFAA_NUMBER_INVALID_OPERATION,
   MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
 
 /**
- * Application statuses where an MSFAA must not be created or reissued.
+ * Application statuses where an MSFAA must not be created.
  */
-const MSFAA_NOT_ALLOWED_APPLICATION_STATUSES = [
-  ApplicationStatus.Draft,
-  ApplicationStatus.Cancelled,
-  ApplicationStatus.Edited,
-];
-
 /**
  * MSFAA record that can be reissued.
  */
@@ -96,9 +81,9 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Gets the most recent MSFAA of each offering intensity that can be reissued.
-   * Only cancelled MSFAAs that are associated with at least one pending disbursement are
-   * considered, even when a newer MSFAA was already issued for the same intensity.
+   * Gets the MSFAAs that can be reissued.
+   * The most recent MSFAA of each offering intensity is eligible when it is
+   * cancelled and is associated with at least one pending disbursement.
    * @param studentId student to have the MSFAA records checked.
    * @param entityManager entity manager to be used instead of the default one, when provided.
    * @returns MSFAA records eligible to be reissued.
@@ -108,67 +93,54 @@ export class MSFAANumberSharedService {
     entityManager?: EntityManager,
   ): Promise<MSFAAEligibleForReissue[]> {
     const manager = entityManager ?? this.dataSource.manager;
-    // Records are sorted from the newest to the oldest.
-    const cancelledMSFAAs = await manager.getRepository(MSFAANumber).find({
-      select: { id: true, offeringIntensity: true },
-      where: { student: { id: studentId }, cancelledDate: Not(IsNull()) },
-      order: { createdAt: "DESC", id: "DESC" },
-    });
+    // Latest MSFAA of each offering intensity.
+    const msfaaRepo = manager.getRepository(MSFAANumber);
+    const latestMSFAAs = await Promise.all(
+      [OfferingIntensity.fullTime, OfferingIntensity.partTime].map(
+        (offeringIntensity) =>
+          msfaaRepo.findOne({
+            select: { id: true, cancelledDate: true },
+            where: { student: { id: studentId }, offeringIntensity },
+            order: { createdAt: "DESC", id: "DESC" },
+          }),
+      ),
+    );
+    // Only cancelled MSFAAs are eligible for reissue.
+    const cancelledMSFAAs = latestMSFAAs.filter(
+      (msfaa) => msfaa?.cancelledDate,
+    );
     if (!cancelledMSFAAs.length) {
       return [];
     }
-    const disbursements = await manager
-      .getRepository(DisbursementSchedule)
-      .find({
-        select: {
-          id: true,
-          msfaaNumber: { id: true },
-          studentAssessment: { id: true, application: { id: true } },
-        },
-        relations: {
-          msfaaNumber: true,
-          studentAssessment: { application: true },
-        },
-        where: {
-          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-          msfaaNumber: { id: Any(cancelledMSFAAs.map((msfaa) => msfaa.id)) },
-          studentAssessment: {
-            application: {
-              applicationStatus: Not(
-                Any(MSFAA_NOT_ALLOWED_APPLICATION_STATUSES),
-              ),
-            },
+
+    // Only cancelled MSFAAs with at least one pending disbursement are eligible for reissue.
+    const disbursementRepo = manager.getRepository(DisbursementSchedule);
+    const eligibleMSFAAs = await Promise.all(
+      cancelledMSFAAs.map(async (msfaa) => {
+        // The reference application is the one from the most recent pending disbursement.
+        const latestPendingDisbursement = await disbursementRepo.findOne({
+          select: {
+            id: true,
+            studentAssessment: { id: true, application: { id: true } },
           },
-        },
-        order: { id: "DESC" },
-      });
-    // The reference application is the one from the most recent disbursement.
-    const referenceApplicationByMSFAA = new Map<number, number>();
-    for (const disbursement of disbursements) {
-      if (!referenceApplicationByMSFAA.has(disbursement.msfaaNumber.id)) {
-        referenceApplicationByMSFAA.set(
-          disbursement.msfaaNumber.id,
-          disbursement.studentAssessment.application.id,
-        );
-      }
-    }
-    const eligibleByIntensity = new Map<
-      OfferingIntensity,
-      MSFAAEligibleForReissue
-    >();
-    for (const msfaa of cancelledMSFAAs) {
-      const referenceApplicationId = referenceApplicationByMSFAA.get(msfaa.id);
-      if (
-        referenceApplicationId &&
-        !eligibleByIntensity.has(msfaa.offeringIntensity)
-      ) {
-        eligibleByIntensity.set(msfaa.offeringIntensity, {
-          id: msfaa.id,
-          referenceApplicationId,
+          relations: { studentAssessment: { application: true } },
+          where: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            msfaaNumber: { id: msfaa.id },
+          },
+          order: { id: "DESC" },
         });
-      }
-    }
-    return [...eligibleByIntensity.values()];
+        if (!latestPendingDisbursement) {
+          return null;
+        }
+        return {
+          id: msfaa.id,
+          referenceApplicationId:
+            latestPendingDisbursement.studentAssessment.application.id,
+        };
+      }),
+    );
+    return eligibleMSFAAs.filter(Boolean);
   }
 
   /**
@@ -463,16 +435,6 @@ export class MSFAANumberSharedService {
       throw new CustomNamedError(
         `Application id ${applicationId} was not found.`,
         APPLICATION_NOT_FOUND,
-      );
-    }
-    if (
-      MSFAA_NOT_ALLOWED_APPLICATION_STATUSES.includes(
-        application.applicationStatus,
-      )
-    ) {
-      throw new CustomNamedError(
-        `Not possible to create an MSFAA when the application status is '${application.applicationStatus}'.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
     if (!application.currentAssessment?.offering) {
