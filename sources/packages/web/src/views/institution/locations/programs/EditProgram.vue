@@ -65,11 +65,6 @@ interface EditProgramProps {
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-/**
- * The user must be allowed to modify programs, matching the API authorization.
- * The route authorization does not prevent read-only users from accessing
- * routes without a location.
- */
 const { canModifyPrograms } = useInstitutionAuth();
 const processing = ref(false);
 const loading = ref(true);

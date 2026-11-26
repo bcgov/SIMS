@@ -4,7 +4,7 @@
       <v-btn
         color="primary"
         v-bind="menuProps"
-        :disabled="!canModifyPrograms || !activeProgramYears.length"
+        :disabled="!activeProgramYears.length"
         :loading="loadingEducationProgramYears"
         prepend-icon="fa:fa fa-plus-circle"
         append-icon="mdi-menu-down"

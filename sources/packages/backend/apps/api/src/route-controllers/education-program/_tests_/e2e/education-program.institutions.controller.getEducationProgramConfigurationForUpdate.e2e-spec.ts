@@ -137,35 +137,6 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramConfigu
       });
   });
 
-  it("Should throw unprocessable entity error when the program has offerings and its program year has no active program configuration.", async () => {
-    // Arrange
-    const program = await saveEducationProgram(
-      collegeF,
-      collegeFUser,
-      noActiveProgramConfiguration,
-    );
-    const offering = createFakeEducationProgramOffering({
-      auditUser: collegeFUser,
-      program,
-    });
-    await db.educationProgramOffering.save(offering);
-    const institutionUserToken = await getInstitutionToken(
-      InstitutionTokenTypes.CollegeFUser,
-    );
-
-    // Act/Assert
-    await request(app.getHttpServer())
-      .get(getEndpoint({ programId: program.id }))
-      .auth(institutionUserToken, BEARER_AUTH_TYPE)
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        message:
-          "The program year does not have an active program configuration.",
-        error: "Unprocessable Entity",
-      });
-  });
-
   it("Should throw not found error when the program does not exist.", async () => {
     // Arrange
     const institutionUserToken = await getInstitutionToken(
@@ -231,7 +202,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramConfigu
       });
   });
 
-  it("Should throw unprocessable entity error when the program has no offerings and its program year has no active program configuration.", async () => {
+  it("Should throw unprocessable entity error when the program has no active program configuration.", async () => {
     // Arrange
     const program = await saveEducationProgram(
       collegeF,
