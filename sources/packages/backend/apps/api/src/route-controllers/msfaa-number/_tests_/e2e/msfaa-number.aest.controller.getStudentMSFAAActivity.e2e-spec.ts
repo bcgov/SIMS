@@ -104,10 +104,10 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
       ]);
   });
 
-  it("Should indicate that only the most recent cancelled MSFAA with disbursements of each offering intensity can be reissued.", async () => {
+  it("Should indicate that only the MSFAA of the oldest pending disbursement of each offering intensity can be reissued.", async () => {
     // Arrange.
     const student = await saveFakeStudent(db.dataSource);
-    // Older cancelled full-time MSFAA with disbursement, replaced by a newer one.
+    // Cancelled full-time MSFAA with pending disbursement.
     const olderFullTimeMSFAA = createFakeMSFAANumber(
       { student },
       {
@@ -115,7 +115,7 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
         msfaaInitialValues: { createdAt: addDays(-3) },
       },
     );
-    // Most recent cancelled full-time MSFAA with disbursement.
+    // Another cancelled full-time MSFAA with pending disbursement.
     const latestFullTimeMSFAA = createFakeMSFAANumber(
       { student },
       {
@@ -123,7 +123,7 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
         msfaaInitialValues: { createdAt: addDays(-2) },
       },
     );
-    // Most recent cancelled part-time MSFAA without disbursement.
+    // Cancelled part-time MSFAA without disbursement.
     const partTimeMSFAAWithoutDisbursement = createFakeMSFAANumber(
       { student },
       {
@@ -162,11 +162,11 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
           expect.arrayContaining([
             expect.objectContaining({
               id: olderFullTimeMSFAA.id,
-              canBeReissued: false,
+              canBeReissued: true,
             }),
             expect.objectContaining({
               id: latestFullTimeMSFAA.id,
-              canBeReissued: true,
+              canBeReissued: false,
             }),
             expect.objectContaining({
               id: partTimeMSFAAWithoutDisbursement.id,

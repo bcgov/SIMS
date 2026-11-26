@@ -3,15 +3,9 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import {
-  Application,
-  DisbursementSchedule,
-  OfferingIntensity,
-  Student,
-} from ".";
+import { Application, OfferingIntensity, Student } from ".";
 import { ColumnNames, TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
@@ -112,12 +106,4 @@ export class MSFAANumber extends RecordDataModel {
     referencedColumnName: ColumnNames.ID,
   })
   referenceApplication: Application;
-  /**
-   * Disbursements associated with this MSFAA.
-   */
-  @OneToMany(
-    () => DisbursementSchedule,
-    (disbursementSchedule) => disbursementSchedule.msfaaNumber,
-  )
-  disbursementSchedules?: DisbursementSchedule[];
 }

@@ -29,7 +29,7 @@ import { In } from "typeorm";
 import { MSFAA_INELIGIBLE } from "@sims/services/constants";
 
 const INVALID_REISSUE_MESSAGE =
-  "Not possible to reissue an MSFAA that is not the most recent one, is not cancelled, or has no pending disbursements associated.";
+  "Not possible to reissue an MSFAA that is not cancelled or has no pending disbursements associated.";
 
 describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
   let app: INestApplication;
@@ -50,7 +50,7 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
     configServiceMockHelper.bypassMSFAASigning(false);
   });
 
-  it("Should reissue an MSFAA, associate it with the pending disbursement, and create a general student note when the MSFAA is the most recent, cancelled and has disbursements.", async () => {
+  it("Should reissue an MSFAA, associate it with the pending disbursement, and create a general student note when the MSFAA is cancelled and has pending disbursements.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const cancelledMSFAA = await db.msfaaNumber.save(
@@ -170,20 +170,22 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       });
   });
 
-  it("Should return unprocessable entity when a newer cancelled MSFAA with disbursements exists for the same offering intensity.", async () => {
+  it("Should reissue a cancelled MSFAA using the oldest pending disbursement application as reference when another cancelled MSFAA with older pending disbursements exists for the same offering intensity.", async () => {
     // Arrange
     const student = await saveFakeStudent(db.dataSource);
     const olderCancelledMSFAA = createFakeMSFAANumber(
       { student },
-      { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+      {
+        msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem,
+        msfaaInitialValues: { createdAt: addDays(-10) },
+      },
     );
-    olderCancelledMSFAA.createdAt = addDays(-10);
     const newerCancelledMSFAA = createFakeMSFAANumber(
       { student },
       { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
     );
     await db.msfaaNumber.save([olderCancelledMSFAA, newerCancelledMSFAA]);
-    await saveFakeApplicationDisbursements(
+    const olderApplication = await saveFakeApplicationDisbursements(
       db.dataSource,
       { student, msfaaNumber: olderCancelledMSFAA },
       { applicationStatus: ApplicationStatus.Completed },
@@ -195,17 +197,22 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
     );
     await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
+    let createdMSFAAId: number;
 
     // Act/Assert
     await request(app.getHttpServer())
-      .post(getEndpoint(olderCancelledMSFAA.id))
+      .post(getEndpoint(newerCancelledMSFAA.id))
       .auth(token, BEARER_AUTH_TYPE)
-      .send({ noteDescription: "Not the most recent MSFAA." })
-      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
-      .expect({
-        message: INVALID_REISSUE_MESSAGE,
-        errorType: MSFAA_INELIGIBLE,
-      });
+      .send({ noteDescription: "Newer cancelled MSFAA." })
+      .expect(HttpStatus.CREATED)
+      .then((response) => (createdMSFAAId = +response.body.id));
+
+    const createdMSFAA = await db.msfaaNumber.findOne({
+      select: { id: true, referenceApplication: { id: true } },
+      relations: { referenceApplication: true },
+      where: { id: createdMSFAAId },
+    });
+    expect(createdMSFAA.referenceApplication.id).toBe(olderApplication.id);
   });
 
   it("Should return unprocessable entity when the same MSFAA is reissued twice.", async () => {
