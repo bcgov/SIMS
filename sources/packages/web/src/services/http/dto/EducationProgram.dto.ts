@@ -185,14 +185,15 @@ export interface CreateEducationProgramAPIInDTO {
 }
 
 /**
- * Dynamic program data used to update an education program
+ * Dynamic program data used to update an education program,
+ * and the configuration it was filled in against.
  */
 export interface UpdateEducationProgramAPIInDTO {
   /**
    * Program configuration ID against which the program is being updated.
    * If the program can be fully edited, this should match the active program
    * configuration for the program year.
-   * If the program cannot be fully edited, this is be the configuration
+   * If the program cannot be fully edited, this is the configuration
    * against which the program was updated previously.
    */
   programConfigurationId: number;
@@ -202,10 +203,10 @@ export interface UpdateEducationProgramAPIInDTO {
    */
   isFullUpdateRestricted: boolean;
   /**
-   * Dynamic program data, whose shape is defined by the program
-   * configuration schemas.
+   * Dynamic program data, validated later against the configuration's
+   * validation schema (AJV). Only the shape and size are checked here.
    */
-  programData: Record<string, unknown>;
+  programData: { [key: string]: unknown };
 }
 
 export interface StudentEducationProgramAPIOutDTO {
