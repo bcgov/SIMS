@@ -84,6 +84,8 @@ export const TableNames = {
   EducationProgramsConfigurations: "education_programs_configurations",
   BatchRestrictions: "batch_restrictions",
   BatchRestrictionStudents: "batch_restriction_students",
+  ReturnedLoanCustomers: "returned_loan_customers",
+  ReturnedLoanEvents: "returned_loan_events",
 };
 
 export const INSTITUTION_TYPE_BC_PUBLIC = 1;

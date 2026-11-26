@@ -77,6 +77,8 @@ import {
   StudentDisabilityProfile,
   StudentDisabilityProfileDisability,
   EducationProgramConfiguration,
+  ReturnedLoanCustomer,
+  ReturnedLoanEvent,
 } from "./entities";
 import { ClusterNode, ClusterOptions, RedisOptions } from "ioredis";
 import {
@@ -265,4 +267,6 @@ export const DBEntities = [
   FormSubmissionItemDecision,
   StudentDisabilityProfileDisability,
   StudentDisabilityProfile,
+  ReturnedLoanCustomer,
+  ReturnedLoanEvent,
 ];

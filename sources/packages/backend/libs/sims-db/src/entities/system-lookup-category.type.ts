@@ -42,4 +42,12 @@ export enum SystemLookupCategory {
    * Program aviation credential lookup values.
    */
   ProgramAviationCredential = "Program aviation credential",
+  /**
+   * Returned loan customer gender lookup values.
+   */
+  ReturnedLoanCustomerGender = "Returned loan customer gender",
+  /**
+   * Returned loan reasons lookup values.
+   */
+  ReturnedLoanReasons = "Returned loan reasons",
 }

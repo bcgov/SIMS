@@ -134,3 +134,6 @@ export * from "./disability-profile-status.type";
 export * from "./student-disability-profile.model";
 export * from "./student-disability-profile-disability.model";
 export * from "./education-program-configuration.model";
+export * from "./returned-loan-event-status.type";
+export * from "./returned-loan-customer.model";
+export * from "./returned-loan-event.model";
