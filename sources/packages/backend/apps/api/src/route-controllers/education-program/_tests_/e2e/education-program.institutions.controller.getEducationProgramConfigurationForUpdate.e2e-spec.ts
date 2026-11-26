@@ -122,7 +122,7 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramConfigu
         configurationId: outdatedProgramConfiguration.id,
         programYearId: outdatedProgramConfiguration.programYear.id,
         programYearName: outdatedProgramConfiguration.programYear.programYear,
-        // The program year still has an active configuration, other than the program one.
+        // The program year still has an active configuration, other than the one the program was saved with.
         hasActiveProgramYearConfiguration: true,
         programData: {
           ...program.programData,

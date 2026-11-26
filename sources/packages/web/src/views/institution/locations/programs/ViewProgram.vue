@@ -60,7 +60,7 @@ const formTitle = computed(() => {
 });
 
 /**
- * Route back to the manage programs, selecting the program year of the
+ * Route back to the manage programs page, selecting the program year of the
  * program once it is loaded.
  */
 const manageProgramsRoute = computed<RouteLocationRaw>(() => ({

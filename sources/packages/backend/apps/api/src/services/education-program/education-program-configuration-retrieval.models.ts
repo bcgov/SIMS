@@ -31,7 +31,7 @@ export enum RequiredProgramConfiguration {
 /**
  * Criteria to retrieve the program configuration, based on the required configuration.
  * Each required configuration accepts only the data needed to resolve it, ensuring
- * a maximum of one configuration will be resolved.
+ * at most one configuration is resolved.
  */
 export type ProgramConfigurationCriteria =
   | {

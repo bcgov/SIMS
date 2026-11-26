@@ -58,7 +58,7 @@ export class EducationProgramConfigurationRetrievalService {
 
   /**
    * Get the program configuration including visual schema, validation schema, and context.
-   * Allows ensuring the program configuration is retrieved consistently from the same place
+   * Ensures the program configuration is retrieved consistently from the same place
    * for creation, renewal, view, and update operations.
    * @param institutionId ID of the institution requesting the configuration.
    * @param programConfigurationCriteria the criteria to retrieve the program configuration,
@@ -87,8 +87,8 @@ export class EducationProgramConfigurationRetrievalService {
         EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
       );
     }
-    // An active configuration is the active one for its program year, otherwise
-    // check if another configuration is active for the program year.
+    // If the configuration is active, it is the active one for its program year;
+    // otherwise, check if another configuration is active for the program year.
     const hasActiveProgramYearConfiguration =
       programConfiguration.isActive ||
       (await this.hasActiveProgramYearConfiguration(
@@ -204,11 +204,11 @@ export class EducationProgramConfigurationRetrievalService {
   }
 
   /**
-   * Get the basic program information required to resolve its configurations,
-   * which are the configuration the program was saved with and its program year.
+   * Get the basic program information (the configuration it was saved with and
+   * its program year) required to resolve its configurations.
    * The program is expected to exist, since its existence must be validated by the callers.
    * @param programId ID of the program.
-   * @returns the program basic information.
+   * @returns the basic program information.
    */
   private getProgramBasicInfo(programId: number): Promise<EducationProgram> {
     return this.educationProgramRepo.findOneOrFail({

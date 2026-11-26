@@ -471,7 +471,7 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
           return {
             programYearId: Number.parseInt(programYearId),
             // Navigate back to the program info request the program was created from,
-            // when provided, otherwise to the manage programs for the program year.
+            // when provided; otherwise, to the manage programs page for the program year.
             backTarget:
               locationId && applicationId
                 ? {

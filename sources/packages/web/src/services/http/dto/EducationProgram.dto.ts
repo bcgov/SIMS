@@ -194,7 +194,7 @@ export interface UpdateEducationProgramAPIInDTO {
    * If the program can be fully edited, this should match the active program
    * configuration for the program year.
    * If the program cannot be fully edited, this is the configuration
-   * against which the program was updated previously.
+   * the program was saved with.
    */
   programConfigurationId: number;
   /**

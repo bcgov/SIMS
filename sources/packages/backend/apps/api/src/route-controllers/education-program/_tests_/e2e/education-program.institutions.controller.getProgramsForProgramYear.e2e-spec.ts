@@ -39,8 +39,8 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
    */
   let renewableProgramConfiguration: EducationProgramConfiguration;
   /**
-   * Active configuration of the same program year as the renewable configuration,
-   * which is inactive.
+   * Active configuration of the same program year as the renewable configuration
+   * (the renewable configuration is inactive).
    */
   let renewableActiveProgramConfiguration: EducationProgramConfiguration;
   /**

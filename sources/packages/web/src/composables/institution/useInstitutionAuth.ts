@@ -70,7 +70,7 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
 
   /**
    * Indicates if the user is allowed to create or modify programs, which
-   * requires the user to be an admin or a non read-only user in at least
+   * requires the user to be an admin, or a non-read-only user in at least
    * one location, matching the API authorization.
    */
   const canModifyPrograms = computed(
