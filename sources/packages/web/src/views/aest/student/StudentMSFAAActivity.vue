@@ -115,11 +115,11 @@
       notes-label="Note"
     >
       <template #content="{ showParameter }">
-        <p>
+        <div>
           <strong>Intensity:</strong>
           {{ mapOfferingIntensity(showParameter.offeringIntensity) }}
-        </p>
-        <p><strong>MSFAA:</strong> {{ showParameter.msfaaNumber }}</p>
+        </div>
+        <div><strong>MSFAA:</strong> {{ showParameter.msfaaNumber }}</div>
       </template>
     </user-note-confirm-modal>
   </tab-container>

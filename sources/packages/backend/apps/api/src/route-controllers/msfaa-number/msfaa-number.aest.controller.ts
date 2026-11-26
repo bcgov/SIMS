@@ -66,8 +66,11 @@ export class MSFAANumberAESTController extends BaseController {
     if (!studentExists) {
       throw new NotFoundException("Student not found.");
     }
-    const msfaaActivity =
-      await this.msfaaNumberService.getStudentMSFAAActivity(studentId);
+    const [msfaaActivity, eligibleForReissue] = await Promise.all([
+      this.msfaaNumberService.getStudentMSFAAActivity(studentId),
+      this.msfaaNumberService.getMSFAAsEligibleForReissue(studentId),
+    ]);
+    const eligibleIds = new Set(eligibleForReissue.map((msfaa) => msfaa.id));
     return msfaaActivity.map((msfaa) => ({
       id: msfaa.id,
       createdAt: msfaa.createdAt,
@@ -77,7 +80,7 @@ export class MSFAANumberAESTController extends BaseController {
       dateSigned: msfaa.dateSigned,
       cancelledDate: msfaa.cancelledDate,
       newIssuingProvince: msfaa.newIssuingProvince,
-      canBeReissued: msfaa.canBeReissued,
+      canBeReissued: eligibleIds.has(msfaa.id),
     }));
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <formio-container formName="noticeOfAssessment" :formData="initialData" />
+  <formio-container form-name="noticeOfAssessment" :form-data="initialData" />
 </template>
 
 <script lang="ts">
@@ -70,10 +70,12 @@ export default defineComponent({
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     applicationId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props, { emit }) {

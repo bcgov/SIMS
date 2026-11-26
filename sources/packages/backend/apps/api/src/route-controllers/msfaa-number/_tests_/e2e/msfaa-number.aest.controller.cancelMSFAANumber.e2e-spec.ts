@@ -126,14 +126,12 @@ describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
 
   it("Should return bad request when the note is not provided.", async () => {
     // Arrange
-    const student = await saveFakeStudent(db.dataSource);
-    const msfaa = await db.msfaaNumber.save(createFakeMSFAANumber({ student }));
     await addJWTUserRoles(appModule, [Role.StudentCancelMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
     await request(app.getHttpServer())
-      .patch(getEndpoint(msfaa.id))
+      .patch(getEndpoint(1))
       .auth(token, BEARER_AUTH_TYPE)
       .send({})
       .expect(HttpStatus.BAD_REQUEST);

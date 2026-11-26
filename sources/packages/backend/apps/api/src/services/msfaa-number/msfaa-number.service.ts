@@ -2,20 +2,17 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MSFAANumber, NoteType, User } from "@sims/sims-db";
 import { DataSource, IsNull, Repository } from "typeorm";
-import { MSFAANumberSharedService, NoteSharedService } from "@sims/services";
+import {
+  MSFAAEligibleForReissue,
+  MSFAANumberSharedService,
+  NoteSharedService,
+} from "@sims/services";
 import {
   MSFAA_MINISTRY_CANCELLATION_PROVINCE,
   MSFAA_NUMBER_INVALID_OPERATION,
   MSFAA_NUMBER_NOT_FOUND,
 } from "@sims/services/constants";
 import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
-
-/**
- * MSFAA activity record with the indication if it can be reissued.
- */
-export interface StudentMSFAAActivity extends MSFAANumber {
-  canBeReissued: boolean;
-}
 
 /**
  * Service for MSFAA (Master Student Financial Aid Agreement)
@@ -36,31 +33,32 @@ export class MSFAANumberService {
    * @param studentId student id to filter the MSFAA records.
    * @returns list of MSFAA number records for the student.
    */
-  async getStudentMSFAAActivity(
+  getStudentMSFAAActivity(studentId: number): Promise<MSFAANumber[]> {
+    return this.msfaaNumberRepo.find({
+      select: {
+        id: true,
+        createdAt: true,
+        offeringIntensity: true,
+        msfaaNumber: true,
+        dateRequested: true,
+        dateSigned: true,
+        cancelledDate: true,
+        newIssuingProvince: true,
+      },
+      where: { student: { id: studentId } },
+      order: { createdAt: "DESC" },
+    });
+  }
+
+  /**
+   * Gets the student MSFAAs that can be reissued.
+   * @param studentId student id to check the MSFAA records.
+   * @returns MSFAA records eligible to be reissued.
+   */
+  getMSFAAsEligibleForReissue(
     studentId: number,
-  ): Promise<StudentMSFAAActivity[]> {
-    const [msfaaNumbers, eligibleForReissue] = await Promise.all([
-      this.msfaaNumberRepo.find({
-        select: {
-          id: true,
-          createdAt: true,
-          offeringIntensity: true,
-          msfaaNumber: true,
-          dateRequested: true,
-          dateSigned: true,
-          cancelledDate: true,
-          newIssuingProvince: true,
-        },
-        where: { student: { id: studentId } },
-        order: { createdAt: "DESC" },
-      }),
-      this.msfaaNumberSharedService.getMSFAAsEligibleForReissue(studentId),
-    ]);
-    const eligibleIds = new Set(eligibleForReissue.map((msfaa) => msfaa.id));
-    return msfaaNumbers.map((msfaa) => ({
-      ...msfaa,
-      canBeReissued: eligibleIds.has(msfaa.id),
-    }));
+  ): Promise<MSFAAEligibleForReissue[]> {
+    return this.msfaaNumberSharedService.getMSFAAsEligibleForReissue(studentId);
   }
 
   /**
@@ -88,28 +86,31 @@ export class MSFAANumberService {
         );
       }
       const now = new Date();
-      const updateResult = await msfaaNumberRepo.update(
-        { id: msfaaNumberId, cancelledDate: IsNull() },
-        {
-          cancelledDate: getISODateOnlyString(now),
-          newIssuingProvince: MSFAA_MINISTRY_CANCELLATION_PROVINCE,
-          modifier: { id: auditUserId } as User,
-          updatedAt: now,
-        },
-      );
+      // Both operations run in parallel, any failure reverts the entire transaction.
+      const [updateResult] = await Promise.all([
+        msfaaNumberRepo.update(
+          { id: msfaaNumberId, cancelledDate: IsNull() },
+          {
+            cancelledDate: getISODateOnlyString(now),
+            newIssuingProvince: MSFAA_MINISTRY_CANCELLATION_PROVINCE,
+            modifier: { id: auditUserId } as User,
+            updatedAt: now,
+          },
+        ),
+        this.noteSharedService.createStudentNote(
+          msfaaNumber.student.id,
+          NoteType.General,
+          noteDescription,
+          auditUserId,
+          entityManager,
+        ),
+      ]);
       if (!updateResult.affected) {
         throw new CustomNamedError(
           "Not possible to cancel an MSFAA that is already cancelled.",
           MSFAA_NUMBER_INVALID_OPERATION,
         );
       }
-      await this.noteSharedService.createStudentNote(
-        msfaaNumber.student.id,
-        NoteType.General,
-        noteDescription,
-        auditUserId,
-        entityManager,
-      );
     });
   }
 
@@ -120,7 +121,7 @@ export class MSFAANumberService {
    * @param auditUserId user causing the change.
    * @returns the newly created MSFAA.
    */
-  async reissueMSFAANumber(
+  reissueMSFAANumber(
     msfaaNumberId: number,
     noteDescription: string,
     auditUserId: number,

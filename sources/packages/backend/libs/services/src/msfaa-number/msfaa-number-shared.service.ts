@@ -23,23 +23,7 @@ import {
   MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
-
-/**
- * Application statuses where an MSFAA must not be created.
- */
-/**
- * MSFAA record that can be reissued.
- */
-export interface MSFAAEligibleForReissue {
-  /**
-   * MSFAA id.
-   */
-  id: number;
-  /**
-   * Application to be used as the reference for the new MSFAA.
-   */
-  referenceApplicationId: number;
-}
+import { MSFAAEligibleForReissue } from "./msfaa-number.models";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -93,45 +77,50 @@ export class MSFAANumberSharedService {
     entityManager?: EntityManager,
   ): Promise<MSFAAEligibleForReissue[]> {
     const manager = entityManager ?? this.dataSource.manager;
-    // For each offering intensity, gets the latest MSFAA with its disbursements in a single query.
+    // For each offering intensity, gets the latest MSFAA with its pending disbursements in a single query.
     const msfaaRepo = manager.getRepository(MSFAANumber);
     const eligibleMSFAAs = await Promise.all(
       [OfferingIntensity.fullTime, OfferingIntensity.partTime].map(
         async (offeringIntensity) => {
-          const latestMSFAA = await msfaaRepo.findOne({
-            select: {
-              id: true,
-              createdAt: true,
-              cancelledDate: true,
-              disbursementSchedules: {
-                id: true,
-                disbursementScheduleStatus: true,
-                studentAssessment: { id: true, application: { id: true } },
-              },
-            },
-            relations: {
-              disbursementSchedules: {
-                studentAssessment: { application: true },
-              },
-            },
-            where: { student: { id: studentId }, offeringIntensity },
-            order: {
-              createdAt: "DESC",
-              id: "DESC",
-              // The reference application is the one from the oldest pending disbursement.
-              disbursementSchedules: { id: "ASC" },
-            },
-          });
+          const latestMSFAA = await msfaaRepo
+            .createQueryBuilder("msfaaNumber")
+            .select([
+              "msfaaNumber.id",
+              "msfaaNumber.createdAt",
+              "msfaaNumber.cancelledDate",
+              "disbursementSchedule.id",
+              "studentAssessment.id",
+              "application.id",
+            ])
+            .innerJoin("msfaaNumber.student", "student")
+            // Pending condition in the join (not in the where) ensures the MSFAA
+            // is still returned even when no pending disbursement is associated.
+            .leftJoin(
+              "msfaaNumber.disbursementSchedules",
+              "disbursementSchedule",
+              "disbursementSchedule.disbursementScheduleStatus = :pendingStatus",
+              { pendingStatus: DisbursementScheduleStatus.Pending },
+            )
+            .leftJoin(
+              "disbursementSchedule.studentAssessment",
+              "studentAssessment",
+            )
+            .leftJoin("studentAssessment.application", "application")
+            .where("student.id = :studentId", { studentId })
+            .andWhere("msfaaNumber.offeringIntensity = :offeringIntensity", {
+              offeringIntensity,
+            })
+            .orderBy("msfaaNumber.createdAt", "DESC")
+            .addOrderBy("msfaaNumber.id", "DESC")
+            // The reference application is the one from the oldest pending disbursement.
+            .addOrderBy("disbursementSchedule.id", "ASC")
+            .take(1)
+            .getOne();
           // Only cancelled MSFAAs with at least one pending disbursement are eligible for reissue.
           if (!latestMSFAA?.cancelledDate) {
             return null;
           }
-          const oldestPendingDisbursement =
-            latestMSFAA.disbursementSchedules.find(
-              (disbursement) =>
-                disbursement.disbursementScheduleStatus ===
-                DisbursementScheduleStatus.Pending,
-            );
+          const [oldestPendingDisbursement] = latestMSFAA.disbursementSchedules;
           // No pending disbursement found, so this MSFAA is not eligible for reissue.
           if (!oldestPendingDisbursement) {
             return null;
@@ -169,7 +158,12 @@ export class MSFAANumberSharedService {
         student: { id: true },
       },
       relations: { student: true },
+      // Loading the relation in a separate query allows to lock only the MSFAA record.
+      relationLoadStrategy: "query",
       where: { id: msfaaNumberId },
+      // Serializes concurrent reissues of the same MSFAA, so the eligibility
+      // is checked again after any in-flight reissue has been committed.
+      lock: { mode: "pessimistic_write" },
     });
     if (!msfaaNumber) {
       throw new CustomNamedError(
@@ -177,15 +171,6 @@ export class MSFAANumberSharedService {
         MSFAA_NUMBER_NOT_FOUND,
       );
     }
-    // Serializes concurrent reissues for the student, so the eligibility
-    // is checked again after any in-flight reissue has been committed.
-    await entityManager
-      .getRepository(Student)
-      .createQueryBuilder("student")
-      .select("student.id")
-      .where("student.id = :studentId", { studentId: msfaaNumber.student.id })
-      .setLock("pessimistic_write")
-      .getOne();
     const eligibleMSFAAs = await this.getMSFAAsEligibleForReissue(
       msfaaNumber.student.id,
       entityManager,
@@ -402,7 +387,6 @@ export class MSFAANumberSharedService {
     const application = await this.applicationRepo.findOne({
       select: {
         id: true,
-        applicationStatus: true,
         student: {
           id: true,
         },
@@ -411,23 +395,12 @@ export class MSFAANumberSharedService {
           offering: {
             offeringIntensity: true,
           },
-          disbursementSchedules: {
-            id: true,
-            disbursementScheduleStatus: true,
-            msfaaNumber: {
-              id: true,
-              cancelledDate: true,
-            },
-          },
         },
       },
       relations: {
         student: true,
         currentAssessment: {
           offering: true,
-          disbursementSchedules: {
-            msfaaNumber: true,
-          },
         },
       },
       where: {
