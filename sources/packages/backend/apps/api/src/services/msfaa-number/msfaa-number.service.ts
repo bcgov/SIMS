@@ -72,23 +72,22 @@ export class MSFAANumberService {
     noteDescription: string,
     auditUserId: number,
   ): Promise<void> {
+    const msfaaNumber = await this.msfaaNumberRepo.findOne({
+      select: { id: true, student: { id: true } },
+      relations: { student: true },
+      where: { id: msfaaNumberId },
+    });
+    if (!msfaaNumber) {
+      throw new CustomNamedError(
+        `MSFAA number id ${msfaaNumberId} was not found.`,
+        MSFAA_NUMBER_NOT_FOUND,
+      );
+    }
     await this.dataSource.transaction(async (entityManager) => {
-      const msfaaNumberRepo = entityManager.getRepository(MSFAANumber);
-      const msfaaNumber = await msfaaNumberRepo.findOne({
-        select: { id: true, student: { id: true } },
-        relations: { student: true },
-        where: { id: msfaaNumberId },
-      });
-      if (!msfaaNumber) {
-        throw new CustomNamedError(
-          `MSFAA number id ${msfaaNumberId} was not found.`,
-          MSFAA_NUMBER_NOT_FOUND,
-        );
-      }
       const now = new Date();
       // Both operations run in parallel, any failure reverts the entire transaction.
       const [updateResult] = await Promise.all([
-        msfaaNumberRepo.update(
+        entityManager.getRepository(MSFAANumber).update(
           { id: msfaaNumberId, cancelledDate: IsNull() },
           {
             cancelledDate: getISODateOnlyString(now),
