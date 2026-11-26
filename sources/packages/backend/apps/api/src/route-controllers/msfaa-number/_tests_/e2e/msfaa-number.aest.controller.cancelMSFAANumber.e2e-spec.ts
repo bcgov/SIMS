@@ -18,6 +18,7 @@ import {
 import { NoteType } from "@sims/sims-db";
 import { getISODateOnlyString } from "@sims/utilities";
 import { Role } from "../../../../auth";
+import { MSFAA_MINISTRY_CANCELLATION_PROVINCE } from "@sims/services/constants";
 import MockDate from "mockdate";
 
 describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
@@ -63,7 +64,7 @@ describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
     });
     expect(updatedMSFAA).toEqual({
       cancelledDate: getISODateOnlyString(now),
-      newIssuingProvince: "BC",
+      newIssuingProvince: MSFAA_MINISTRY_CANCELLATION_PROVINCE,
     });
     const studentWithNotes = await db.student.findOne({
       select: { id: true, notes: { noteType: true, description: true } },
