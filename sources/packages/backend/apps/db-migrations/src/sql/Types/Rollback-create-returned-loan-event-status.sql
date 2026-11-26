@@ -1,0 +1,1 @@
+DROP TYPE sims.returned_loan_event_status;
