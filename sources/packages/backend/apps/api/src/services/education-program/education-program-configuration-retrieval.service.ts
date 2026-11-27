@@ -14,7 +14,7 @@ import { EducationProgramDynamicConfiguration } from "./education-program-save.m
 import {
   ProgramConfigurationCriteria,
   RequiredProgramConfiguration,
-  RequiredProgramConfigurationResult,
+  ResolvedProgramConfiguration,
 } from "./education-program-configuration-retrieval.models";
 
 /**
@@ -70,38 +70,27 @@ export class EducationProgramConfigurationRetrievalService {
     institutionId: number,
     programConfigurationCriteria: ProgramConfigurationCriteria,
   ): Promise<EducationProgramDynamicConfiguration> {
-    const institutionPromise =
-      this.institutionService.getInstitutionTypeById(institutionId);
     const hasOfferingsPromise = this.hasExistingOffering(
       programConfigurationCriteria,
     );
-    const requiredProgramConfigurationPromise =
-      this.getRequiredProgramConfiguration(
+    const [
+      institution,
+      hasOfferings,
+      { programConfiguration, hasActiveProgramYearConfiguration },
+    ] = await Promise.all([
+      this.institutionService.getInstitutionTypeById(institutionId),
+      hasOfferingsPromise,
+      this.resolveProgramConfiguration(
         programConfigurationCriteria,
         hasOfferingsPromise,
-      );
-    const [institution, hasOfferings, requiredProgramConfiguration] =
-      await Promise.all([
-        institutionPromise,
-        hasOfferingsPromise,
-        requiredProgramConfigurationPromise,
-      ]);
-    const { programConfiguration } = requiredProgramConfiguration;
+      ),
+    ]);
     if (!programConfiguration) {
       throw new CustomNamedError(
         "Education program configuration not found.",
         EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
       );
     }
-    // If the configuration is active, it is the active one for its program year;
-    // otherwise, use the check already executed while resolving the configuration,
-    // if any, or check if another configuration is active for the program year.
-    const hasActiveProgramYearConfiguration =
-      programConfiguration.isActive ||
-      (requiredProgramConfiguration.hasActiveProgramYearConfiguration ??
-        (await this.hasActiveProgramYearConfiguration(
-          programConfiguration.programYear.id,
-        )));
     return {
       configurationId: programConfiguration.id,
       programYearId: programConfiguration.programYear.id,
@@ -143,66 +132,70 @@ export class EducationProgramConfigurationRetrievalService {
   }
 
   /**
-   * Get the program configuration required by the criteria.
+   * Resolves the program configuration required by the criteria.
    * @param programConfigurationCriteria the criteria to retrieve the program configuration.
    * @param hasOfferingsPromise indicates if the program associated with the criteria has offerings.
    * Shared with the caller to avoid checking the offerings more than once.
    * @returns the required program configuration, or null if it was not found,
-   * along with the program year active configuration check, when executed.
+   * along with the indication if its program year has an active configuration.
    */
-  private async getRequiredProgramConfiguration(
+  private async resolveProgramConfiguration(
     programConfigurationCriteria: ProgramConfigurationCriteria,
     hasOfferingsPromise: Promise<boolean>,
-  ): Promise<RequiredProgramConfigurationResult> {
+  ): Promise<ResolvedProgramConfiguration> {
     switch (programConfigurationCriteria.requiredConfiguration) {
-      case RequiredProgramConfiguration.ProgramYearActiveConfiguration:
-        return {
-          programConfiguration: await this.getActiveProgramYearConfiguration(
+      case RequiredProgramConfiguration.ProgramYearActiveConfiguration: {
+        const programConfiguration =
+          await this.getActiveProgramYearConfiguration(
             programConfigurationCriteria.programYearId,
-          ),
-        };
-      case RequiredProgramConfiguration.NextProgramYearActiveConfiguration:
+          );
         return {
-          programConfiguration: await this.getActiveProgramYearConfiguration(
+          programConfiguration,
+          hasActiveProgramYearConfiguration: !!programConfiguration,
+        };
+      }
+      case RequiredProgramConfiguration.NextProgramYearActiveConfiguration: {
+        const programConfiguration =
+          await this.getActiveProgramYearConfiguration(
             this.getNextProgramYearIdCondition(
               programConfigurationCriteria.currentProgramYearId,
             ),
-          ),
+          );
+        return {
+          programConfiguration,
+          hasActiveProgramYearConfiguration: !!programConfiguration,
         };
+      }
       case RequiredProgramConfiguration.ProgramAssociatedConfiguration: {
         const program = await this.getProgramBasicInfo(
           programConfigurationCriteria.programId,
         );
         // The configuration the program was saved with must be returned regardless of
         // its active status (e.g. an existing program associated with an inactive configuration).
-        return {
-          programConfiguration: await this.getProgramConfigurationById(
-            program.programConfiguration.id,
-          ),
-        };
+        return this.getProgramSavedConfiguration(program);
       }
       case RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate: {
         const [hasOfferings, program] = await Promise.all([
           hasOfferingsPromise,
           this.getProgramBasicInfo(programConfigurationCriteria.programId),
         ]);
-        const programYearId = program.programConfiguration.programYear.id;
         if (!hasOfferings) {
           // A full update is allowed, hence the active configuration
           // of the program year must be used.
+          const programConfiguration =
+            await this.getActiveProgramYearConfiguration(
+              program.programConfiguration.programYear.id,
+            );
           return {
-            programConfiguration:
-              await this.getActiveProgramYearConfiguration(programYearId),
+            programConfiguration,
+            hasActiveProgramYearConfiguration: !!programConfiguration,
           };
         }
         // Only a partial update is allowed, hence the configuration
         // the program was saved with must be used, as long as the
         // program year still has an active configuration.
-        const [hasActiveProgramYearConfiguration, programConfiguration] =
-          await Promise.all([
-            this.hasActiveProgramYearConfiguration(programYearId),
-            this.getProgramConfigurationById(program.programConfiguration.id),
-          ]);
+        const { programConfiguration, hasActiveProgramYearConfiguration } =
+          await this.getProgramSavedConfiguration(program);
         return {
           programConfiguration: hasActiveProgramYearConfiguration
             ? programConfiguration
@@ -214,21 +207,35 @@ export class EducationProgramConfigurationRetrievalService {
   }
 
   /**
-   * Checks if the program year has an active program configuration.
-   * @param programYearId ID of the program year.
-   * @returns true if the program year has an active configuration, otherwise false.
+   * Get the configuration the program was saved with, regardless of its
+   * active status, along with the indication if its program year has an
+   * active configuration.
+   * @param program program with the basic information of its saved configuration.
+   * @returns the configuration the program was saved with, and the indication
+   * if its program year has an active configuration.
    */
-  private hasActiveProgramYearConfiguration(
-    programYearId: number,
-  ): Promise<boolean> {
-    return this.educationProgramConfigurationRepo.exists({
-      where: { programYear: { id: programYearId }, isActive: true },
-    });
+  private async getProgramSavedConfiguration(
+    program: EducationProgram,
+  ): Promise<ResolvedProgramConfiguration> {
+    // If the saved configuration is active, it is the active one for its program year;
+    // otherwise, check if another configuration is active for the program year.
+    const [programConfiguration, hasActiveProgramYearConfiguration] =
+      await Promise.all([
+        this.getProgramConfigurationById(program.programConfiguration.id),
+        program.programConfiguration.isActive ||
+          this.educationProgramConfigurationRepo.exists({
+            where: {
+              isActive: true,
+              programYear: { id: program.programConfiguration.programYear.id },
+            },
+          }),
+      ]);
+    return { programConfiguration, hasActiveProgramYearConfiguration };
   }
 
   /**
-   * Get the basic program information (the configuration it was saved with and
-   * its program year) required to resolve its configurations.
+   * Get the basic program information (the configuration it was saved with,
+   * its active status, and its program year) required to resolve its configurations.
    * The program is expected to exist, since its existence must be validated by the callers.
    * @param programId ID of the program.
    * @returns the basic program information.
@@ -239,6 +246,7 @@ export class EducationProgramConfigurationRetrievalService {
         id: true,
         programConfiguration: {
           id: true,
+          isActive: true,
           programYear: {
             id: true,
           },

@@ -59,15 +59,14 @@ export type ProgramConfigurationCriteria =
 /**
  * Program configuration resolved for the required configuration.
  */
-export interface RequiredProgramConfigurationResult {
+export interface ResolvedProgramConfiguration {
   /**
    * Required program configuration, or null if it was not found.
    */
   programConfiguration: EducationProgramConfiguration | null;
   /**
-   * Indicates if the program year of the configuration has an active configuration.
-   * Present only when it was already checked while resolving the configuration,
-   * to avoid checking it more than once.
+   * Indicates if the program year of the required configuration
+   * has an active configuration.
    */
-  hasActiveProgramYearConfiguration?: boolean;
+  hasActiveProgramYearConfiguration: boolean;
 }
