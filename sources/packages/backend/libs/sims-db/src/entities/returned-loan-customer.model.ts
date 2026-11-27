@@ -3,7 +3,7 @@ import { TableNames } from "../constant";
 import { RecordDataModel } from "./record.model";
 
 /**
- * Customers associated with returned loans.
+ * Customer associated with returned loans.
  */
 @Entity({ name: TableNames.ReturnedLoanCustomers })
 export class ReturnedLoanCustomer extends RecordDataModel {
@@ -18,7 +18,6 @@ export class ReturnedLoanCustomer extends RecordDataModel {
   @Column({
     name: "sin",
     type: "char",
-    nullable: false,
   })
   sin: string;
   /**
@@ -26,7 +25,6 @@ export class ReturnedLoanCustomer extends RecordDataModel {
    */
   @Column({
     name: "last_name",
-    nullable: false,
   })
   lastName: string;
   /**
@@ -59,7 +57,6 @@ export class ReturnedLoanCustomer extends RecordDataModel {
   @Column({
     name: "date_of_birth",
     type: "date",
-    nullable: false,
   })
   dateOfBirth: string;
   /**
@@ -68,7 +65,6 @@ export class ReturnedLoanCustomer extends RecordDataModel {
    */
   @Column({
     name: "gender",
-    nullable: false,
   })
   gender: string;
   /**

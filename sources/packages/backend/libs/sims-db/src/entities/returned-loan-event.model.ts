@@ -164,7 +164,6 @@ export class ReturnedLoanEvent extends RecordDataModel {
    */
   @Column({
     name: "loan_identification_loan_number",
-    nullable: false,
   })
   loanIdentificationLoanNumber: number;
   /**
@@ -172,7 +171,6 @@ export class ReturnedLoanEvent extends RecordDataModel {
    */
   @Column({
     name: "contract_number",
-    nullable: false,
   })
   contractNumber: number;
   /**
@@ -190,27 +188,24 @@ export class ReturnedLoanEvent extends RecordDataModel {
   @Column({
     name: "event_date",
     type: "date",
-    nullable: true,
   })
-  eventDate?: string;
+  eventDate: string;
   /**
    * The final limitation start date provided by ministry user.
    */
   @Column({
     name: "original_due_date",
     type: "date",
-    nullable: true,
   })
-  originalDueDate?: string;
+  originalDueDate: string;
   /**
    * The limitation start date calculated based on event date.
    */
   @Column({
     name: "calculated_limitation_start_date",
     type: "date",
-    nullable: true,
   })
-  calculatedLimitationStartDate?: string;
+  calculatedLimitationStartDate: string;
   /**
    * Threshold date which is calculated based on file creation date to identify
    * if calculated limitation start date falls within this date.
@@ -218,9 +213,8 @@ export class ReturnedLoanEvent extends RecordDataModel {
   @Column({
     name: "review_threshold_date",
     type: "date",
-    nullable: true,
   })
-  reviewThresholdDate?: string;
+  reviewThresholdDate: string;
   /**
    * Study end month stored as a date using first day of the month
    * (e.g. 2026-10 is stored as 2026-10-01).
