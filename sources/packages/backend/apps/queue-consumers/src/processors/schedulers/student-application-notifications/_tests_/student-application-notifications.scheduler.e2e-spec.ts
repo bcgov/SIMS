@@ -29,6 +29,7 @@ import {
   saveFakeInstitutionRestriction,
   saveFakeStudent,
   getMostRecentEducationProgramConfiguration,
+  RestrictionCode,
 } from "@sims/test-utils";
 import {
   Application,
@@ -50,14 +51,10 @@ import {
   StudentAssessmentStatus,
   WorkflowData,
 } from "@sims/sims-db";
-import { IsNull, Not } from "typeorm";
+import { IsNull } from "typeorm";
 import MockDate from "mockdate";
 import { StudentApplicationNotificationsScheduler } from "../../student-application-notifications/student-application-notifications.scheduler";
-import {
-  FileProcessingIssueType,
-  RestrictionCode,
-  SystemUsersService,
-} from "@sims/services";
+import { FileProcessingIssueType, SystemUsersService } from "@sims/services";
 import {
   GC_NOTIFY_TEMPLATE_IDS,
   NOTIFY_TEMPLATE_IDS,
@@ -101,11 +98,6 @@ describe(
 
     beforeEach(async () => {
       MockDate.reset();
-      // Cancel all applications to ensure that existing data will not affect these tests.
-      await db.application.update(
-        { applicationStatus: Not(ApplicationStatus.Cancelled) },
-        { applicationStatus: ApplicationStatus.Cancelled },
-      );
       // Mark all notifications as sent to ensure that existing data will not affect these tests.
       await db.notification.update(
         {
@@ -1367,8 +1359,8 @@ describe(
       });
     });
 
-    describe("ProgramSuspensionBlockingAssessmentNotification", () => {
-      it(`Should generate program suspension blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction.`, async () => {
+    describe("InstitutionRestrictionBlockingApplicationNotification", () => {
+      it(`Should generate institution restriction blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction and a notification has not been sent yet.`, async () => {
         // Arrange
         // Create an application pending assessment confirmation.
         const application = await createApplicationPendingAcceptAssessment();
@@ -1395,11 +1387,11 @@ describe(
         // Assert
         expect(
           mockedJob.containLogMessages([
-            `Program suspension blocking application notifications created for the assessments: ${application.currentAssessment.id}`,
+            `Institution restriction blocking application notifications created for the assessments: ${application.currentAssessment.id}`,
           ]),
         ).toBe(true);
         const notification = await findNotification(
-          NotificationMessageType.ProgramSuspensionBlockingApplication,
+          NotificationMessageType.InstitutionRestrictionBlockingApplication,
         );
         expect(notification).toBeDefined();
         const student = application.student;
@@ -1407,7 +1399,7 @@ describe(
           id: expect.any(Number),
           messagePayload: {
             email_address: MINISTRY_EMAIL_ADDRESS,
-            template_id: "0f756338-670d-4fee-bba4-fd69f8210d17",
+            template_id: "7bfb8b35-fdf9-4b11-862a-4fc55397bc8c",
             personalisation: {
               dateTime: getPCTDateTimeWithTimezone(now),
               lastName: student.user.lastName,
@@ -1435,13 +1427,14 @@ describe(
           },
           metadata: {
             assessmentId: application.currentAssessment.id,
+            restrictionCode: RestrictionCode.SUS,
           },
         });
       });
 
       it(
-        `Should not generate program suspension blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction` +
-          " and a notification has already been sent for the assessment.",
+        `Should not generate institution restriction blocking application notification when an application is blocked from confirming assessment due to effective ${RestrictionCode.SUS} restriction` +
+          " and a notification has already been sent for this assessment and restriction.",
         async () => {
           // Arrange
           // Create an application pending assessment confirmation.
@@ -1463,13 +1456,14 @@ describe(
               user: systemUsersService.systemUser,
               auditUser: systemUsersService.systemUser,
               notificationMessage: {
-                id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+                id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
               } as NotificationMessage,
             },
             {
               initialValue: {
                 metadata: {
                   assessmentId: application.currentAssessment!.id,
+                  restrictionCode: RestrictionCode.SUS,
                 },
                 dateSent: new Date(),
               },
@@ -1485,18 +1479,18 @@ describe(
           // Assert
           expect(
             mockedJob.containLogMessages([
-              "No applications blocked by the program suspension restriction without an existing notification were found.",
+              "No applications blocked by the institution restriction without an existing notification were found.",
             ]),
           ).toBe(true);
           const isNewNotificationCreated = await notificationExists(
-            NotificationMessageType.ProgramSuspensionBlockingApplication,
+            NotificationMessageType.InstitutionRestrictionBlockingApplication,
           );
           expect(isNewNotificationCreated).toBe(false);
         },
       );
 
       it(
-        `Should not generate program suspension blocking application notification when an application is blocked from confirming assessment due to ${RestrictionCode.SUS} restriction` +
+        `Should not generate institution restriction blocking application notification when an application is blocked from confirming assessment due to ${RestrictionCode.SUS} restriction` +
           " and the restriction is bypassed.",
         async () => {
           // Arrange
@@ -1530,13 +1524,146 @@ describe(
           // Assert
           expect(
             mockedJob.containLogMessages([
-              "No applications blocked by the program suspension restriction without an existing notification were found.",
+              "No applications blocked by the institution restriction without an existing notification were found.",
             ]),
           ).toBe(true);
           const isNewNotificationCreated = await notificationExists(
-            NotificationMessageType.ProgramSuspensionBlockingApplication,
+            NotificationMessageType.InstitutionRestrictionBlockingApplication,
           );
           expect(isNewNotificationCreated).toBe(false);
+        },
+      );
+
+      it(
+        `Should send notification for ${RestrictionCode.LSC} restriction when both ${RestrictionCode.SUS} and ${RestrictionCode.LSC} restrictions are active` +
+          ` and a notification has already been sent for ${RestrictionCode.SUS}.`,
+        async () => {
+          // Arrange
+          // Create an application pending assessment confirmation.
+          const application = await createApplicationPendingAcceptAssessment();
+          const offering = application.currentAssessment.offering;
+          const location = offering.institutionLocation;
+          const program = offering.educationProgram;
+          const institution = location.institution;
+
+          // Get the LSC restriction.
+          const lscRestriction = await db.restriction.findOne({
+            select: { id: true },
+            where: {
+              restrictionCode: RestrictionCode.LSC,
+            },
+          });
+          expect(lscRestriction).toBeDefined();
+
+          // Add both SUS and LSC institution restrictions for the application location and program.
+          await saveFakeInstitutionRestriction(db, {
+            restriction: susRestriction,
+            institution,
+            program,
+            location,
+          });
+          await saveFakeInstitutionRestriction(db, {
+            restriction: lscRestriction,
+            institution,
+            location,
+          });
+
+          // Create an existing SUS notification for the assessment.
+          const existingSusNotification = createFakeNotification(
+            {
+              user: systemUsersService.systemUser,
+              auditUser: systemUsersService.systemUser,
+              notificationMessage: {
+                id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
+              } as NotificationMessage,
+            },
+            {
+              initialValue: {
+                metadata: {
+                  assessmentId: application.currentAssessment!.id,
+                  restrictionCode: RestrictionCode.SUS,
+                },
+                dateSent: new Date(),
+              },
+            },
+          );
+          await db.notification.save(existingSusNotification);
+
+          // Queued job.
+          const mockedJob = mockBullMQJob<void>();
+          const now = new Date();
+          MockDate.set(now);
+
+          // Act
+          await processor.process(mockedJob.job);
+
+          // Assert
+          expect(
+            mockedJob.containLogMessages([
+              `Institution restriction blocking application notifications created for the assessments: ${application.currentAssessment.id}`,
+            ]),
+          ).toBe(true);
+
+          // Find all unsent notifications for this assessment.
+          const allNotifications = await db.notification.find({
+            select: {
+              id: true,
+              messagePayload: true,
+              templateId: true,
+              recipients: true,
+              messageContent: true,
+              metadata: true,
+            },
+            where: {
+              notificationMessage: {
+                id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
+              },
+              dateSent: IsNull(),
+              user: { id: systemUsersService.systemUser.id },
+            },
+          });
+
+          // Should have exactly one unsent notification for LSC restriction.
+          expect(allNotifications).toHaveLength(1);
+          const [notification] = allNotifications;
+          const student = application.student;
+          expect(notification).toEqual({
+            id: expect.any(Number),
+            messagePayload: {
+              email_address: MINISTRY_EMAIL_ADDRESS,
+              template_id: expect.any(String),
+              personalisation: {
+                dateTime: getPCTDateTimeWithTimezone(now),
+                lastName: student.user.lastName,
+                birthDate: getDateOnlyFormat(student.birthDate),
+                givenNames: student.user.firstName,
+                programName: program.name,
+                studentEmail: student.user.email,
+                applicationNumber: application.applicationNumber,
+                institutionOperatingName: institution.operatingName,
+                locationName: location.name,
+              },
+            },
+            templateId: "b9b0023d-68cb-4623-81d3-7064682d5d5e",
+            recipients: [MINISTRY_EMAIL_ADDRESS],
+            messageContent: {
+              params: {
+                dateTime: getPCTDateTimeWithTimezone(now),
+                lastName: student.user.lastName,
+                birthDate: getDateOnlyFormat(student.birthDate),
+                givenNames: student.user.firstName,
+                programName: program.name,
+                studentEmail: student.user.email,
+                applicationNumber: application.applicationNumber,
+                institutionOperatingName: institution.operatingName,
+                locationName: location.name,
+              },
+            },
+            metadata: {
+              assessmentId: application.currentAssessment.id,
+              restrictionCode: RestrictionCode.LSC,
+            },
+          });
         },
       );
     });

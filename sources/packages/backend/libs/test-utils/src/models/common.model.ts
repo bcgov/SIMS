@@ -164,6 +164,10 @@ export enum RestrictionCode {
    */
   SUS = "SUS",
   /**
+   * Institution location suspension restriction.
+   */
+  LSC = "LSC",
+  /**
    * Institution block remittance request restriction.
    */
   REMIT = "REMIT",
@@ -175,4 +179,16 @@ export enum RestrictionCode {
    * Institution activity suspended restriction.
    */
   ISR = "ISR",
+  /**
+   * SIN restriction.
+   */
+  SINR = "SINR",
+  /**
+   * Hold restriction.
+   */
+  HOLD = "HOLD",
+  /**
+   * SFAS aviation restriction.
+   */
+  SFAS_AV = "SFAS_AV",
 }

@@ -497,7 +497,7 @@ export class ApplicationService {
       {
         assessmentMetadata: { parentQueryAssessmentAlias: "currentAssessment" },
         restrictionMetadata: {
-          parentQueryRestrictionAlias: "restriction.code",
+          parentQueryRestrictionAlias: "restriction.restrictionCode",
         },
       },
     );
@@ -507,10 +507,12 @@ export class ApplicationService {
     // applications from institutions having active restrictions only are considered to be more relevant for the validation.
     const applicationsPendingAcceptAssessment =
       await this.getPendingAcceptAssessmentBaseQuery()
-        .addSelect(["restriction.id", "restriction.restrictionCode"])
-        .innerJoin("institution.restrictions", "institutionRestriction")
-        .innerJoin("institutionRestriction.restriction", "restriction")
-        .andWhere("institutionRestriction.isActive = true")
+        .innerJoinAndSelect(
+          "institution.restrictions",
+          "institutionRestriction",
+          "institutionRestriction.isActive = true",
+        )
+        .innerJoinAndSelect("institutionRestriction.restriction", "restriction")
         .andWhere("application.isArchived = false")
         .andWhere(
           `NOT EXISTS (${notificationExistsQuery})`,
@@ -697,6 +699,7 @@ export class ApplicationService {
         "program.id",
         "program.name",
         "location.id",
+        "location.name",
         "institution.id",
         "institution.operatingName",
       ])

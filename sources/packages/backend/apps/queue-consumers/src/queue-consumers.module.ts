@@ -91,9 +91,9 @@ import {
   MinistryCRAFileProcessingIssueNotification,
   MinistrySINFileProcessingIssueNotification,
   StudentAssessmentReminderNotification,
+  InstitutionRestrictionsBlockingAssessmentNotification,
   CASInvoiceBatchService,
   CASInvoiceService,
-  ProgramSuspensionBlockingAssessmentNotification,
 } from "./services";
 import { SFASIntegrationModule } from "@sims/integrations/sfas-integration";
 import { ATBCIntegrationModule } from "@sims/integrations/atbc-integration";
@@ -205,9 +205,9 @@ import { Queue } from "bullmq";
     StudentSecondDisbursementReminderNotification,
     StudentCOERequiredNearEndDateReminderNotification,
     StudentAssessmentReminderNotification,
-    ProgramSuspensionBlockingAssessmentNotification,
     MinistryCRAFileProcessingIssueNotification,
     MinistrySINFileProcessingIssueNotification,
+    InstitutionRestrictionsBlockingAssessmentNotification,
     CASInvoiceBatchService,
     CASInvoiceService,
     CASInvoicesBatchesCreationScheduler,
