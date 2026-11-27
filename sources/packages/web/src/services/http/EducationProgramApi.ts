@@ -23,25 +23,6 @@ import {
 
 export class EducationProgramApi extends HttpBaseClient {
   /**
-   * Get programs for a particular location with pagination.
-   * @param locationId id of the location.
-   * @param paginationOptions pagination options.
-   * @returns paginated programs summary.
-   */
-  async getProgramsSummaryByLocationId(
-    locationId: number,
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>> {
-    const url = `education-program/location/${locationId}/summary?${getPaginationQueryString(
-      paginationOptions,
-    )}`;
-
-    return this.getCall<
-      PaginatedResultsAPIOutDTO<EducationProgramsSummaryAPIOutDTO>
-    >(this.addClientRoot(url));
-  }
-
-  /**
    * Get the programs summary of an institution with pagination.
    * @param institutionId id of the institution.
    * @param paginationOptions pagination options.

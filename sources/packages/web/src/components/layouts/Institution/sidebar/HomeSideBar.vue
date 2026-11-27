@@ -18,14 +18,13 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import { InstitutionUserAuthRolesAndLocation } from "@/types/contracts/institution/InstitutionUser";
 import { useInstitutionAuth } from "@/composables/institution/useInstitutionAuth";
 import { MenuItemModel } from "@/types";
-import { useFeatureToggles, useInstitutionState } from "@/composables";
+import { useInstitutionState } from "@/composables";
 
 export default defineComponent({
   setup() {
     const store = useStore();
     const { isAdmin, userAuth } = useInstitutionAuth();
     const { institutionState } = useInstitutionState();
-    const { isManageProgramsEnabled } = useFeatureToggles();
     const userLocationList = computed(
       () => store.state.institution.locationState,
     );
@@ -53,19 +52,15 @@ export default defineComponent({
             },
           ]
         : []),
-      ...(isManageProgramsEnabled.value
-        ? [
-            {
-              title: "Manage Programs",
-              props: {
-                prependIcon: "mdi-folder-open-outline",
-                to: {
-                  name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-                },
-              },
-            },
-          ]
-        : []),
+      {
+        title: "Manage Programs",
+        props: {
+          prependIcon: "mdi-folder-open-outline",
+          to: {
+            name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+          },
+        },
+      },
     ]);
     const locationItems = ref<MenuItemModel[]>([]);
     const items = computed<MenuItemModel[]>(() => [
@@ -95,11 +90,11 @@ export default defineComponent({
             },
             children: [
               {
-                title: "Programs",
+                title: "Manage Offerings",
                 props: {
                   prependIcon: "fa:far fa-folder-open",
                   to: {
-                    name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+                    name: InstitutionRoutesConst.MANAGE_OFFERINGS,
                     params: {
                       locationId: data.id,
                     },

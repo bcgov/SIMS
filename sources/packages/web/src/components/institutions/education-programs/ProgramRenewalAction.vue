@@ -27,22 +27,35 @@ interface ProgramRenewalActionProps {
    */
   renewalStatus: ProgramRenewalStatus;
   /**
+   * Indicates if the program is currently active.
+   */
+  isActive: boolean;
+  /**
    * Program year currently selected, used to allow the renew page to
    * navigate back keeping the same program year selected.
    */
   programYearId: number;
+  /**
+   * Indicates if the renew action can be displayed. When not allowed, only the
+   * renewal status is displayed, as for users not allowed to modify programs.
+   */
+  allowRenewal?: boolean;
 }
 
-const props = defineProps<ProgramRenewalActionProps>();
+const props = withDefaults(defineProps<ProgramRenewalActionProps>(), {
+  allowRenewal: false,
+});
 const { canModifyPrograms } = useInstitutionAuth();
 
 /**
- * Indicates if the renew action is displayed, which requires the program
- * to be available for renewal and the user to be allowed to modify programs.
+ * Indicates if the renew action is displayed, which requires the renewal
+ * to be allowed, the program to be available for renewal, and the user to
+ * be allowed to modify programs.
  * Otherwise, only the renewal status is displayed.
  */
 const canRenew = computed(
   () =>
+    props.allowRenewal &&
     props.renewalStatus === ProgramRenewalStatus.Available &&
     canModifyPrograms.value,
 );
@@ -50,6 +63,8 @@ const canRenew = computed(
 /**
  * Icon displayed along with the renewal status when the renew action
  * is not displayed.
+ * Inactive programs not renewed cannot be renewed, hence the "X" icon
+ * instead of the one used while the renewal is not yet available.
  */
 const renewalStatusIcon = computed(() => {
   switch (props.renewalStatus) {
@@ -58,7 +73,7 @@ const renewalStatusIcon = computed(() => {
     case ProgramRenewalStatus.Available:
       return "fa:fas fa-rotate";
     case ProgramRenewalStatus.NotAvailable:
-      return "fa:fas fa-clock";
+      return props.isActive ? "fa:fas fa-clock" : "fa:fas fa-xmark";
     default:
       return undefined;
   }

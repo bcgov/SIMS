@@ -330,6 +330,29 @@ describe("EducationProgramInstitutionsController(e2e)-renewEducationProgram", ()
       });
   });
 
+  it("Should throw unprocessable entity error when the program to be renewed is inactive.", async () => {
+    // Arrange
+    const programToRenew = await saveEducationProgram(
+      firstProgramConfiguration,
+      { isActive: false },
+    );
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .post(getEndpoint({ programId: programToRenew.id }))
+      .send(getCreationPayload(secondProgramConfiguration.id))
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: "Education program cannot be renewed when inactive.",
+        error: "Unprocessable Entity",
+      });
+  });
+
   it("Should throw unprocessable entity error when the next program year has no active program configuration.", async () => {
     // Arrange
     const programToRenew = await saveEducationProgram(
@@ -435,6 +458,7 @@ describe("EducationProgramInstitutionsController(e2e)-renewEducationProgram", ()
    * - `institution` institution the program belongs to. Defaults to College F.
    * - `auditUser` user creating the program. Defaults to the College F user.
    * - `sabcCode` SABC code of the program.
+   * - `isActive` indicates if the program is active. Defaults to active.
    * - `parentProgram` first program in the renewal chain. When not provided,
    * the saved program is associated as its own parent program.
    * - `precedingProgram` program from which the saved program was renewed.
@@ -446,6 +470,7 @@ describe("EducationProgramInstitutionsController(e2e)-renewEducationProgram", ()
       institution?: Institution;
       auditUser?: User;
       sabcCode?: string;
+      isActive?: boolean;
       parentProgram?: EducationProgram;
       precedingProgram?: EducationProgram;
     },
@@ -456,7 +481,12 @@ describe("EducationProgramInstitutionsController(e2e)-renewEducationProgram", ()
         auditUser: options?.auditUser ?? collegeFUser,
         programConfiguration,
       },
-      { initialValues: { sabcCode: options?.sabcCode } },
+      {
+        initialValues: {
+          sabcCode: options?.sabcCode,
+          isActive: options?.isActive,
+        },
+      },
     );
     program.parentProgram = options?.parentProgram;
     program.precedingProgram = options?.precedingProgram;

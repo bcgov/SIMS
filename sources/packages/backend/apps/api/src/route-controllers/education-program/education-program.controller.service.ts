@@ -14,7 +14,9 @@ import {
 import {
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
+  ProgramRenewalStatus,
 } from "./models/education-program.dto";
+import { EducationProgram } from "@sims/sims-db";
 import { credentialTypeToDisplay, getUserFullName } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import {
@@ -242,5 +244,26 @@ export class EducationProgramControllerService {
       id: program.id,
       description: program.name,
     }));
+  }
+
+  /**
+   * Gets the renewal status of an education program into the next program year.
+   * Only active programs can be renewed.
+   * @param program education program to get the renewal status for.
+   * @param hasNextProgramConfigurationForRenewal indicates if the next program
+   * year has an active configuration for the renewal.
+   * @returns renewal status of the education program.
+   */
+  getProgramRenewalStatus(
+    program: Pick<EducationProgram, "isActive" | "renewedProgram">,
+    hasNextProgramConfigurationForRenewal: boolean,
+  ): ProgramRenewalStatus {
+    if (program.renewedProgram) {
+      return ProgramRenewalStatus.Renewed;
+    }
+    if (program.isActive && hasNextProgramConfigurationForRenewal) {
+      return ProgramRenewalStatus.Available;
+    }
+    return ProgramRenewalStatus.NotAvailable;
   }
 }

@@ -4,7 +4,6 @@ import { computed, ref } from "vue";
 
 const FORMS_SUBMISSION_FEATURE_TOGGLE = "FORMS_SUBMISSION";
 const BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE = "BULK_WITHDRAWAL_UPLOAD";
-export const MANAGE_PROGRAMS_FEATURE_TOGGLE = "MANAGE_PROGRAMS";
 
 /**
  * App config shared across all composable instances.
@@ -48,18 +47,10 @@ export function useFeatureToggles() {
     isFeatureToggleEnabled(BULK_WITHDRAWAL_UPLOAD_FEATURE_TOGGLE),
   );
 
-  /**
-   * Manage programs feature toggle.
-   */
-  const isManageProgramsEnabled = computed(() =>
-    isFeatureToggleEnabled(MANAGE_PROGRAMS_FEATURE_TOGGLE),
-  );
-
   return {
     loadConfig,
     isFormSubmissionEnabled,
     isBulkWithdrawalUploadEnabled,
-    isManageProgramsEnabled,
     isFeatureToggleEnabled,
   };
 }

@@ -57,7 +57,9 @@
             v-if="selectedProgramYearId"
             :program-id="item.id"
             :renewal-status="item.renewalStatus"
+            :is-active="item.isActive"
             :program-year-id="selectedProgramYearId"
+            :allow-renewal="allowRenewal"
           />
         </template>
         <template #[`item.programId`]="{ item }">
@@ -69,7 +71,7 @@
               >View</v-btn
             >
             <v-btn
-              v-if="allowProgramChanges && item.isActive"
+              v-if="allowEdit && allowProgramChanges && item.isActive"
               color="primary"
               variant="outlined"
               :disabled="!canModifyPrograms"
@@ -117,9 +119,29 @@ interface ManageProgramsTableProps {
    * Program year to be selected by default, when provided.
    */
   programYearId?: number;
+  /**
+   * Route to the page where the program is viewed.
+   * Used as a link target to allow the page to be opened in a new tab.
+   * @param programId program to be viewed.
+   * @returns view program route location.
+   */
+  getViewProgramRoute: (programId: number) => RouteLocationRaw;
+  /**
+   * Indicates if the renew action can be displayed. When not allowed, only the
+   * renewal status is displayed, as for users not allowed to modify programs.
+   */
+  allowRenewal?: boolean;
+  /**
+   * Indicates if the edit action can be displayed.
+   */
+  allowEdit?: boolean;
 }
 
-const props = defineProps<ManageProgramsTableProps>();
+const props = withDefaults(defineProps<ManageProgramsTableProps>(), {
+  programYearId: undefined,
+  allowRenewal: false,
+  allowEdit: false,
+});
 
 const emit = defineEmits<{
   // Program year or status filters changed by the user.
@@ -176,6 +198,18 @@ const selectedProgramYear = ref<EducationProgramYearAPIOutDTO>();
  */
 const allowProgramChanges = computed(
   () => !!selectedProgramYear.value?.hasActiveProgramConfiguration,
+);
+
+// Selects the provided program year when it changes, for instance, when the
+// route changes while the page is reused. When no program year is provided,
+// the current selection is kept.
+watch(
+  () => props.programYearId,
+  (programYearId) => {
+    if (programYearId) {
+      selectedProgramYearId.value = programYearId;
+    }
+  },
 );
 
 // Keeps the records count in sync with the programs loaded.
@@ -278,17 +312,6 @@ const searchProgramTable = async () => {
     sortByOptions?.order,
   );
 };
-
-/**
- * Route to the view program page.
- * Used as a link target to allow the page to be opened in a new tab.
- * @param programId program to be viewed.
- * @returns view program route location.
- */
-const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
-  name: InstitutionRoutesConst.VIEW_PROGRAM,
-  params: { programId },
-});
 
 /**
  * Route to the edit program page.

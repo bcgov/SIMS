@@ -201,12 +201,13 @@ export enum ProgramRenewalStatus {
    */
   Renewed = "Renewed",
   /**
-   * Program is not renewed yet and a next program configuration is available for the renewal.
+   * Program is active, not renewed yet, and a next program configuration is available for the renewal.
    */
   Available = "Available",
   /**
-   * Program is not renewed yet and there is no next program configuration available for the renewal.
-   * It can happen for a newly created program year that has not yet been configured for the next program year
+   * Program is not renewed yet and it cannot be renewed, either because it is inactive
+   * or because there is no next program configuration available for the renewal.
+   * The latter can happen for a newly created program year that has not yet been configured for the next program year
    * or for an education program year that has reached the end of its lifecycle and it was marked as inactive.
    */
   NotAvailable = "Not available",
@@ -228,24 +229,10 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   isActive: boolean;
   /**
    * Renewal status of the education program into the next program year.
-   * All programs are available for renewal into the next program year,
-   * independently of their current status or being active.
+   * Only active programs are available for renewal into the next program year,
+   * independently of their current status.
    */
   renewalStatus: ProgramRenewalStatus;
-}
-
-export class EducationProgramsSummaryLocationAPIOutDTO {
-  programId: number;
-  programName: string;
-  cipCode: string;
-  sabcCode?: string;
-  credentialType: string;
-  totalOfferings: number;
-  credentialTypeToDisplay: string;
-  locationName: string;
-  locationId: number;
-  programStatus: ProgramStatus;
-  isActive: boolean;
 }
 
 export class ProgramEvaluationDataAPIInDTO {

@@ -15,20 +15,14 @@ import {
 } from "@nestjs/common";
 import { IInstitutionUserToken } from "../../auth/userToken.interface";
 import { AuthorizedParties } from "../../auth/authorized-parties.enum";
-import {
-  AllowAuthorizedParty,
-  HasLocationAccess,
-  UserToken,
-} from "../../auth/decorators";
+import { AllowAuthorizedParty, UserToken } from "../../auth/decorators";
 import {
   CreateEducationProgramAPIInDTO,
   EducationProgramAPIOutDTO,
   EducationProgramConfigurationAPIOutDTO,
   EducationProgramManagerDetailsAPIOutDTO,
-  EducationProgramsSummaryLocationAPIOutDTO,
   EducationProgramYearAPIOutDTO,
   ProgramEvaluationAPIInDTO,
-  ProgramRenewalStatus,
   ProgramEvaluationAPIOutDTO,
   UpdateEducationProgramAPIInDTO,
 } from "./models/education-program.dto";
@@ -43,14 +37,12 @@ import {
 import BaseController from "../BaseController";
 import {
   PaginatedResultsAPIOutDTO,
-  ProgramsLocationPaginationOptionsAPIInDTO,
   ProgramsManagementPaginationOptionsAPIInDTO,
 } from "../models/pagination.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { OptionItemAPIOutDTO } from "../models/common.dto";
 import { EducationProgramService } from "../../services/education-program/education-program.service";
 import { EducationProgramControllerService } from "../../route-controllers/education-program/education-program.controller.service";
-import { OfferingTypes } from "@sims/sims-db/entities/offering.type";
 import { credentialTypeToDisplay } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
@@ -86,49 +78,6 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly programYearService: ProgramYearService,
   ) {
     super();
-  }
-
-  /**
-   * Get programs for a particular location with pagination.
-   * @param locationId id of the location.
-   * @param paginationOptions pagination options.
-   * @returns paginated programs summary.
-   */
-  @HasLocationAccess("locationId")
-  @Get("location/:locationId/summary")
-  async getProgramsSummaryByLocationId(
-    @Param("locationId", ParseIntPipe) locationId: number,
-    @Query() paginationOptions: ProgramsLocationPaginationOptionsAPIInDTO,
-    @UserToken() userToken: IInstitutionUserToken,
-  ): Promise<
-    PaginatedResultsAPIOutDTO<EducationProgramsSummaryLocationAPIOutDTO>
-  > {
-    const programsSummary =
-      await this.educationProgramService.getProgramsSummaryForLocation(
-        userToken.authorizations.institutionId,
-        [OfferingTypes.Public, OfferingTypes.Private],
-        paginationOptions,
-        locationId,
-      );
-
-    return {
-      results: programsSummary.results.map((program) => ({
-        programId: program.programId,
-        programName: program.programName,
-        sabcCode: program.sabcCode,
-        cipCode: program.cipCode,
-        credentialType: program.credentialType,
-        programStatus: program.programStatus,
-        isActive: program.isActive,
-        totalOfferings: program.totalOfferings,
-        locationId: program.locationId,
-        locationName: program.locationName,
-        credentialTypeToDisplay: credentialTypeToDisplay(
-          program.credentialType,
-        ),
-      })),
-      count: programsSummary.count,
-    };
   }
 
   /**
@@ -273,6 +222,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Education program has already been renewed or " +
+      "education program cannot be renewed when inactive or " +
       "next education program configuration for renewal not found or " +
       "education program configuration outdated (not the expected one for the renewal) or " +
       "duplicate SABC code.",
@@ -483,11 +433,11 @@ export class EducationProgramInstitutionsController extends BaseController {
         sabcCode: program.sabcCode,
         programStatus: program.programStatus,
         isActive: program.isActive,
-        renewalStatus: program.renewedProgram
-          ? ProgramRenewalStatus.Renewed
-          : hasNextProgramConfigurationForRenewal
-            ? ProgramRenewalStatus.Available
-            : ProgramRenewalStatus.NotAvailable,
+        renewalStatus:
+          this.educationProgramControllerService.getProgramRenewalStatus(
+            program,
+            hasNextProgramConfigurationForRenewal,
+          ),
       })),
     };
   }
@@ -525,7 +475,8 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "The next program configuration for renewal could not be found or " +
-      "the program has already been renewed.",
+      "the program has already been renewed or " +
+      "the program cannot be renewed when inactive.",
   })
   @ApiForbiddenResponse({
     description: "You are not authorized to create or modify a program.",
@@ -549,6 +500,11 @@ export class EducationProgramInstitutionsController extends BaseController {
     if (program.renewedProgram?.id) {
       throw new UnprocessableEntityException(
         "The program has already been renewed.",
+      );
+    }
+    if (!program.isActive) {
+      throw new UnprocessableEntityException(
+        "The program cannot be renewed when inactive.",
       );
     }
     try {

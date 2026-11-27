@@ -128,7 +128,8 @@ export class EducationProgramSaveService {
 
   /**
    * Renew an existing education program into the next program year.
-   * Renewals are possible only between sequential program years.
+   * Renewals are possible only between sequential program years
+   * and only for active programs.
    * @param renewFromProgramId the ID of the program to renew from. Used to enforce sequential renewal
    * and to create a relationship between the old and new programs.
    * @param updatedProgramData the updated data for the new program.
@@ -159,6 +160,12 @@ export class EducationProgramSaveService {
     if (programToRenew.renewedProgram) {
       throw new CustomNamedError(
         "The education program has already been renewed.",
+        EDUCATION_PROGRAM_INVALID_OPERATION,
+      );
+    }
+    if (!programToRenew.isActive) {
+      throw new CustomNamedError(
+        "Education program cannot be renewed when inactive.",
         EDUCATION_PROGRAM_INVALID_OPERATION,
       );
     }

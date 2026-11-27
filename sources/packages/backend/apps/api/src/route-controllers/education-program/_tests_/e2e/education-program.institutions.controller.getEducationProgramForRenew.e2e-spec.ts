@@ -140,6 +140,30 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramForRene
       });
   });
 
+  it("Should throw unprocessable entity error when the program is inactive.", async () => {
+    // Arrange
+    const program = await saveEducationProgram(
+      collegeF,
+      collegeFUser,
+      renewableProgramConfiguration,
+      { isActive: false },
+    );
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(getEndpoint({ programId: program.id }))
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message: "The program cannot be renewed when inactive.",
+        error: "Unprocessable Entity",
+      });
+  });
+
   it("Should throw unprocessable entity error when the next program year has no active program configuration.", async () => {
     // Arrange
     const program = await saveEducationProgram(
@@ -169,18 +193,23 @@ describe("EducationProgramInstitutionsController(e2e)-getEducationProgramForRene
    * @param institution institution the program belongs to.
    * @param auditUser user creating the program.
    * @param programConfiguration configuration associated with the program.
+   * @param initialValues optional initial values for the program.
    * @returns the saved education program.
    */
   function saveEducationProgram(
     institution: Institution,
     auditUser: User,
     programConfiguration: EducationProgramConfiguration,
+    initialValues?: Partial<EducationProgram>,
   ): Promise<EducationProgram> {
-    const program = createFakeEducationProgram({
-      institution,
-      auditUser,
-      programConfiguration,
-    });
+    const program = createFakeEducationProgram(
+      {
+        institution,
+        auditUser,
+        programConfiguration,
+      },
+      { initialValues },
+    );
     return db.educationProgram.save(program);
   }
 

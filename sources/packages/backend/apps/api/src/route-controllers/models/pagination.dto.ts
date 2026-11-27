@@ -150,28 +150,6 @@ export class ProgramsPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO
   inactiveProgramSearch?: boolean;
 }
 
-export class ProgramsLocationPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
-  @IsOptional()
-  @IsIn([
-    "programName",
-    "locationName",
-    "programStatus",
-    "cipCode",
-    "sabcCode",
-    "totalOfferings",
-  ])
-  sortField?: string;
-  @IsArray()
-  @IsOptional()
-  @Transform(({ value }) => value.split(","))
-  @IsEnum(ProgramStatus, { each: true })
-  statusSearch?: ProgramStatus[];
-  @IsOptional()
-  @IsBoolean()
-  @ToBoolean()
-  inactiveProgramSearch?: boolean;
-}
-
 export class ProgramsManagementPaginationOptionsAPIInDTO extends PaginationOptionsAPIInDTO {
   @IsOptional()
   @IsIn([

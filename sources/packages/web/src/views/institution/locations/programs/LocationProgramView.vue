@@ -2,11 +2,8 @@
   <full-page-container :full-width="true" layout-template="centered-card">
     <template #header>
       <header-navigator
-        title="Programs"
-        :route-location="{
-          name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-          params: { locationId: locationId },
-        }"
+        title="Manage Offerings"
+        :route-location="manageOfferingsRoute"
         sub-title="Program Detail"
         data-cy="programDetailHeader"
       />
@@ -40,6 +37,7 @@
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramAndOfferingSummary from "@/components/common/ManageProgramAndOfferingSummary.vue";
 import { ref, onMounted, defineComponent, computed } from "vue";
+import type { RouteLocationRaw } from "vue-router";
 import { EducationProgramService } from "@/services/EducationProgramService";
 import { EducationProgramAPIOutDTO } from "@/services/http/dto";
 import ProgramOfferingDetailHeader from "@/components/common/ProgramOfferingDetailHeader.vue";
@@ -90,11 +88,25 @@ export default defineComponent({
       return isReadOnlyUser(props.locationId);
     });
 
+    /**
+     * Route back to the manage offerings page, selecting the program year
+     * of the program once it is loaded.
+     */
+    const manageOfferingsRoute = computed<RouteLocationRaw>(() => ({
+      name: InstitutionRoutesConst.MANAGE_OFFERINGS,
+      params: {
+        locationId: props.locationId,
+        ...(educationProgram.value.programYearId
+          ? { programYearId: educationProgram.value.programYearId }
+          : {}),
+      },
+    }));
+
     onMounted(loadInitialData);
 
     return {
       educationProgram,
-      InstitutionRoutesConst,
+      manageOfferingsRoute,
       isReadOnly,
       effectiveRestrictionState,
       InstitutionRestrictionDisplayScope,

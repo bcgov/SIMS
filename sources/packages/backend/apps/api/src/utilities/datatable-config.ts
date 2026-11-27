@@ -55,14 +55,6 @@ export interface ProgramsManagementPaginationOptions extends PaginationOptions {
 }
 
 /**
- * Program pagination option allowing for multiple criteria search.
- */
-export interface ProgramLocationPaginationOptions extends PaginationOptions {
-  statusSearch?: ProgramStatus[];
-  inactiveProgramSearch?: boolean;
-}
-
-/**
  * CAS invoices specific parameters.
  */
 export interface CASInvoicePaginationOptions extends BasePaginationOptions {

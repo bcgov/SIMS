@@ -6,7 +6,7 @@ import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.v
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
 import ApplicationDetails from "@/views/institution/ApplicationDetails.vue";
-import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
+import ManageOfferings from "@/views/institution/locations/programs/ManageOfferings.vue";
 import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
 import ActiveApplicationEdit from "@/views/institution/locations/active-applications/ActiveApplicationReportAChange.vue";
@@ -66,7 +66,6 @@ import InProgress from "@/views/institution/locations/request-a-change/request-a
 import Completed from "@/views/institution/locations/request-a-change/request-a-change/Completed.vue";
 import Reports from "@/views/institution/Reports.vue";
 import StudentFormSubmissionHistory from "@/views/institution/student/StudentFormSubmissionHistory.vue";
-import { MANAGE_PROGRAMS_FEATURE_TOGGLE } from "@/composables/useFeatureToggles";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -157,7 +156,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -186,7 +184,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -212,7 +209,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -228,7 +224,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -245,7 +240,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -253,15 +247,18 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LocationPrograms,
-        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+        path: AppRoutes.ManageOfferings,
+        name: InstitutionRoutesConst.MANAGE_OFFERINGS,
         components: {
-          default: LocationPrograms,
+          default: ManageOfferings,
           sidebar: InstitutionHomeSideBar,
         },
         props: {
           default: (route) => ({
-            locationId: parseInt(route.params.locationId as string),
+            locationId: Number.parseInt(route.params.locationId as string),
+            programYearId: route.params.programYearId
+              ? Number.parseInt(route.params.programYearId as string)
+              : undefined,
           }),
         },
         meta: {
@@ -492,7 +489,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -642,8 +638,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LocationProgramsView,
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        path: AppRoutes.ManageOfferingsProgramView,
+        name: InstitutionRoutesConst.MANAGE_OFFERINGS_PROGRAM_VIEW,
         component: LocationProgramView,
         props: (route) => ({
           locationId: Number.parseInt(route.params.locationId as string),
