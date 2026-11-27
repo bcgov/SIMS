@@ -66,7 +66,6 @@ import InProgress from "@/views/institution/locations/request-a-change/request-a
 import Completed from "@/views/institution/locations/request-a-change/request-a-change/Completed.vue";
 import Reports from "@/views/institution/Reports.vue";
 import StudentFormSubmissionHistory from "@/views/institution/student/StudentFormSubmissionHistory.vue";
-import { MANAGE_PROGRAMS_FEATURE_TOGGLE } from "@/composables/useFeatureToggles";
 
 export const institutionRoutes: Array<RouteRecordRaw> = [
   {
@@ -157,7 +156,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -186,7 +184,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -212,7 +209,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -228,7 +224,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -245,7 +240,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         }),
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
@@ -492,7 +486,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         meta: {
           clientType: ClientIdType.Institution,
-          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
           institutionUserTypes: [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,

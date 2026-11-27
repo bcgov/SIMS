@@ -33,7 +33,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watchEffect } from "vue";
-import { useFeatureToggles, useSnackBar } from "@/composables";
+import { useSnackBar } from "@/composables";
 import type { RouteLocationRaw } from "vue-router";
 import { BannerTypes } from "@/types";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -49,15 +49,11 @@ const props = defineProps<ViewProgramProps>();
 const snackBar = useSnackBar();
 const loading = ref(true);
 const educationProgram = ref<EducationProgramAPIOutDTO>();
-const { isManageProgramsEnabled } = useFeatureToggles();
-const formTitle = computed(() => {
-  if (!isManageProgramsEnabled.value) {
-    return "Program";
-  }
-  return educationProgram.value
+const formTitle = computed(() =>
+  educationProgram.value
     ? `${educationProgram.value.programYearName} Program`
-    : "Program";
-});
+    : "Program",
+);
 
 /**
  * Route back to the manage programs page, selecting the program year of the
