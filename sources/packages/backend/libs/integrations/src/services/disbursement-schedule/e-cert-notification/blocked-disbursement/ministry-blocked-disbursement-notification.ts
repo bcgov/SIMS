@@ -23,20 +23,22 @@ export class MinistryBlockedDisbursementNotification extends ECertNotification {
   }
 
   /**
-   * Determines whether a notification should be created or not.
+   * Determines if a notification should be created.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager entity manager to execute in transaction.
-   * @returns true if a notification should be created, false otherwise.
+   * @returns whether a notification should be created.
    */
   protected async shouldCreateNotification(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
-  ): Promise<boolean> {
+  ): Promise<{ shouldCreateNotification: boolean }> {
     const hasNotification = await this.getExistingDisbursementNotification(
       eCertDisbursement,
       entityManager,
     );
-    return !hasNotification;
+    return {
+      shouldCreateNotification: !hasNotification,
+    };
   }
 
   /**

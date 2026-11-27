@@ -26,7 +26,10 @@ import {
   STUDENT_COE_REQUIRED_NOTIFICATION_END_DATE_DAYS,
 } from "@sims/utilities";
 import { STUDENT_ASSESSMENT_NOTIFICATION_OVERDUE_DAYS } from "@sims/services/constants";
-import { ECertPreValidationService } from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
+import {
+  ECertPreValidationService,
+  ApplicationECertPreValidatorResult,
+} from "@sims/integrations/services/disbursement-schedule/e-cert-calculation";
 import { ECertFailedValidation } from "@sims/integrations/services";
 import { RestrictionCode } from "@sims/services";
 
@@ -49,6 +52,22 @@ interface COERequiredNearEndDate {
   email: string;
   applicationNumber: string;
 }
+
+/**
+ * Represents an application blocked by institution restrictions with matched restriction codes.
+ */
+interface ApplicationBlockedByRestriction {
+  application: Application;
+  restrictionCodes: RestrictionCode[];
+}
+
+/**
+ * Restriction codes that block assessment acceptance.
+ */
+const APPLICATION_ASSESSMENT_BLOCKING_RESTRICTION_CODES = new Set([
+  RestrictionCode.SUS,
+  RestrictionCode.LSC,
+]);
 
 @Injectable()
 export class ApplicationService {
@@ -463,28 +482,37 @@ export class ApplicationService {
   }
 
   /**
-   * Get application that are blocked at accept assessment due to program suspension restriction.
-   * @returns applications with assessments blocked by program suspension restriction.
+   * Get application that are blocked at accept assessment due to institution restrictions.
+   * @returns map of application id to application and matched restriction codes that blocked the assessment.
    */
-  async getApplicationsBlockedByProgramSuspension(): Promise<Application[]> {
-    // Sub query to defined if a notification was already sent to the current assessment.
+  async getApplicationsBlockedByInstitutionRestrictions(): Promise<
+    Map<number, ApplicationBlockedByRestriction>
+  > {
+    // Sub query to check if a notification has been sent for the current assessment and restriction code.
     const {
       query: notificationExistsQuery,
       parameters: notificationExistsParameters,
     } = this.getNotificationExistsSubQuery(
-      NotificationMessageType.ProgramSuspensionBlockingApplication,
+      NotificationMessageType.InstitutionRestrictionBlockingApplication,
       {
         assessmentMetadata: { parentQueryAssessmentAlias: "currentAssessment" },
+        restrictionMetadata: {
+          parentQueryRestrictionAlias: "restriction.restrictionCode",
+        },
       },
     );
-    // Get all applications pending for accept assessment and that have not been notified yet
-    // about the program suspension restriction blocking the assessment acceptance.
-    // As these applications are retrieved to be validated further for effective program suspension restriction
+    // Get all applications pending for accept assessment from institutions with active restrictions
+    // that have not had any notifications sent yet.
+    // As these applications are retrieved to be validated further for effective institution restriction
     // applications from institutions having active restrictions only are considered to be more relevant for the validation.
     const applicationsPendingAcceptAssessment =
       await this.getPendingAcceptAssessmentBaseQuery()
-        .innerJoin("institution.restrictions", "institutionRestriction")
-        .andWhere("institutionRestriction.isActive = true")
+        .innerJoinAndSelect(
+          "institution.restrictions",
+          "institutionRestriction",
+          "institutionRestriction.isActive = true",
+        )
+        .innerJoinAndSelect("institutionRestriction.restriction", "restriction")
         .andWhere("application.isArchived = false")
         .andWhere(
           `NOT EXISTS (${notificationExistsQuery})`,
@@ -492,7 +520,7 @@ export class ApplicationService {
         )
         .getMany();
     if (!applicationsPendingAcceptAssessment.length) {
-      return [];
+      return new Map();
     }
     this.logger.log(
       `Number of applications from restricted institutions pending accept assessment: ${applicationsPendingAcceptAssessment.length}`,
@@ -501,38 +529,122 @@ export class ApplicationService {
     const applicationIds = applicationsPendingAcceptAssessment.map(
       (application) => application.id,
     );
-    const acceptAssessmentValidationResults =
+    // Map of applicationId to restrictionCodes from applicationsPendingAcceptAssessment.
+    const applicationIdToRestrictionCodesMap = new Map<
+      number,
+      RestrictionCode[]
+    >(
+      applicationsPendingAcceptAssessment.map((application) => [
+        application.id,
+        application.currentAssessment.offering.institutionLocation.institution.restrictions.map(
+          (institutionRestriction) =>
+            institutionRestriction.restriction
+              .restrictionCode as RestrictionCode,
+        ),
+      ]),
+    );
+    const applicationIdsBlockedByInstitutionRestriction =
+      await this.getApplicationsBlockedByInstitutionRestriction(
+        applicationIds,
+        applicationIdToRestrictionCodesMap,
+      );
+    if (!applicationIdsBlockedByInstitutionRestriction.size) {
+      return new Map();
+    }
+    // Extract the applications to be returned.
+    const applicationsToReturn = applicationsPendingAcceptAssessment.filter(
+      (application) =>
+        applicationIdsBlockedByInstitutionRestriction.has(application.id),
+    );
+    // Return the filtered applications along with their associated restriction codes as a Map.
+    return new Map<number, ApplicationBlockedByRestriction>(
+      applicationsToReturn.map((application) => [
+        application.id,
+        {
+          application,
+          restrictionCodes: applicationIdsBlockedByInstitutionRestriction.get(
+            application.id,
+          ),
+        },
+      ]),
+    );
+  }
+
+  /**
+   * Get applications that are blocked by institution restrictions based on the provided validation results and restriction codes mapping.
+   * @param applicationIds Array of application IDs to check for institution restrictions.
+   * @param applicationIdToRestrictionCodesMap Map of application ID to associated restriction codes.
+   * @returns Map of application ID to restriction codes that block the application from accepting assessment.
+   */
+  private async getApplicationsBlockedByInstitutionRestriction(
+    applicationIds: number[],
+    applicationIdToRestrictionCodesMap: Map<number, RestrictionCode[]>,
+  ): Promise<Map<number, RestrictionCode[]>> {
+    const validationResults =
       await this.eCertPreValidationService.executeAcceptAssessmentValidations(
         applicationIds,
       );
-    const applicationIdsBlockedByProgramSuspension =
-      acceptAssessmentValidationResults
-        .filter(
-          (validation) =>
-            !validation.validationResult.canAcceptAssessment &&
-            validation.validationResult.failedValidations.some(
-              (failedValidation) =>
-                failedValidation.resultType ===
-                  ECertFailedValidation.HasStopDisbursementInstitutionRestriction &&
-                failedValidation.additionalInfo.restrictions.some(
-                  (restriction) => restriction.code === RestrictionCode.SUS,
-                ),
-            ),
-        )
-        .map((validationResult) => validationResult.applicationId);
-    if (!applicationIdsBlockedByProgramSuspension.length) {
-      return [];
+    const blockedApplications = new Map<number, RestrictionCode[]>();
+    for (const validation of validationResults) {
+      if (validation.validationResult.canAcceptAssessment) {
+        continue;
+      }
+      const matchedRestrictions = this.getMatchedInstitutionRestrictionCodes(
+        validation,
+        applicationIdToRestrictionCodesMap,
+      );
+      if (matchedRestrictions.length) {
+        blockedApplications.set(validation.applicationId, matchedRestrictions);
+      }
     }
-    return applicationsPendingAcceptAssessment.filter((application) =>
-      applicationIdsBlockedByProgramSuspension.includes(application.id),
-    );
+    return blockedApplications;
+  }
+
+  /**
+   * Get matched institution restriction codes for a specific validation result based on the provided restriction codes mapping.
+   * @param validation Validation result for an application.
+   * @param applicationIdToRestrictionCodesMap Map of application ID to associated restriction codes.
+   * @returns Array of restriction codes that match the failed validation and are blocking the application.
+   */
+  private getMatchedInstitutionRestrictionCodes(
+    validation: ApplicationECertPreValidatorResult,
+    applicationIdToRestrictionCodesMap: Map<number, RestrictionCode[]>,
+  ): RestrictionCode[] {
+    const matchedRestrictions: RestrictionCode[] = [];
+    for (const failedValidation of validation.validationResult
+      .failedValidations) {
+      if (
+        failedValidation.resultType !==
+        ECertFailedValidation.HasStopDisbursementInstitutionRestriction
+      ) {
+        continue;
+      }
+      for (const restriction of failedValidation.additionalInfo.restrictions) {
+        const restrictionCode = restriction.code as RestrictionCode;
+        if (
+          APPLICATION_ASSESSMENT_BLOCKING_RESTRICTION_CODES.has(
+            restrictionCode,
+          ) &&
+          applicationIdToRestrictionCodesMap
+            .get(validation.applicationId)
+            ?.includes(restrictionCode) &&
+          !matchedRestrictions.includes(restrictionCode)
+        ) {
+          matchedRestrictions.push(restrictionCode);
+        }
+      }
+    }
+    return matchedRestrictions;
   }
 
   /**
    * Get existing notification sub query for a specific notification message type and options if provided.
    * @param notificationMessageId notification message type id to check for existing notifications.
-   * @param options optional parameters to customize the sub query, such as assessment parent alias.
-   * - `parentQueryAssessmentAlias` student id for the student.
+   * @param options optional parameters to customize the sub query, such as assessment parent alias and restriction code.
+   * - `assessmentMetadata` assessment id reference for the assessment.
+   * - `assessmentMetadata.parentQueryAssessmentAlias` alias of the assessment in the parent query.
+   * - `restrictionMetadata` restriction code reference for the restriction.
+   * - `restrictionMetadata.parentQueryRestrictionAlias` alias of the restriction code in the parent query.
    * @returns query and parameters to be used in the parent query builder.
    */
   private getNotificationExistsSubQuery(
@@ -540,6 +652,9 @@ export class ApplicationService {
     options?: {
       assessmentMetadata?: {
         parentQueryAssessmentAlias: string;
+      };
+      restrictionMetadata?: {
+        parentQueryRestrictionAlias: string;
       };
     },
   ): QueryAndParamsForExecution {
@@ -550,6 +665,11 @@ export class ApplicationService {
     if (options?.assessmentMetadata?.parentQueryAssessmentAlias) {
       notificationExistsQuery.andWhere(
         `notification.metadata->>'assessmentId' = ${options.assessmentMetadata.parentQueryAssessmentAlias}.id :: text`,
+      );
+    }
+    if (options?.restrictionMetadata?.parentQueryRestrictionAlias) {
+      notificationExistsQuery.andWhere(
+        `notification.metadata->>'restrictionCode' = ${options.restrictionMetadata.parentQueryRestrictionAlias} :: text`,
       );
     }
     return {
@@ -579,6 +699,7 @@ export class ApplicationService {
         "program.id",
         "program.name",
         "location.id",
+        "location.name",
         "institution.id",
         "institution.operatingName",
       ])

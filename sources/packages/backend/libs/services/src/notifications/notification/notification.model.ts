@@ -1,6 +1,7 @@
 import { FormCategory, NotificationMessageType } from "@sims/sims-db";
 import { NotificationEmailMessage } from "./gc-notify.model";
 import { NotificationMetadata } from "@sims/sims-db/entities/notification-metadata.type";
+import { RestrictionCode } from "@sims/services/restriction/model/restriction.model";
 
 export interface SaveNotificationModel {
   userId?: number;
@@ -334,16 +335,19 @@ export interface StudentAcceptAssessmentReminderNotification {
 }
 
 /**
- * Notification sent to the ministry when a program suspension restriction
+ * Notification sent to the ministry when an institution restriction
  * is blocking an application at accept assessment or at e-Cert.
  */
-export interface ProgramSuspensionBlockingApplicationNotification {
+export interface InstitutionRestrictionBlockingApplicationNotification {
   givenNames?: string;
   lastName: string;
   studentEmail: string;
   birthDate: string;
   applicationNumber: string;
   institutionOperatingName: string;
+  locationName: string;
   programName: string;
-  metadata: { assessmentId: number } | { disbursementId: number };
+  metadata:
+    | { assessmentId: number; restrictionCode: RestrictionCode }
+    | { disbursementId: number; restrictionCode: RestrictionCode };
 }

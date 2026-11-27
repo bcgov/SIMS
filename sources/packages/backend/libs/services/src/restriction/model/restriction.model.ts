@@ -83,6 +83,10 @@ export enum RestrictionCode {
    * Institution program suspension restriction.
    */
   SUS = "SUS",
+  /**
+   * Institution location restriction suspension.
+   */
+  LSC = "LSC",
 }
 
 /**

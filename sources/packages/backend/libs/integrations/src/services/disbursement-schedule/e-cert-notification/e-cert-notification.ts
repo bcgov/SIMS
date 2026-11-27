@@ -21,26 +21,28 @@ export abstract class ECertNotification {
   ) {}
 
   /**
-   * Determines whether a notification should be created or not.
+   * Determines if a notification should be created and returns any additional information needed.
    * This method must be implemented by derived classes.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager entity manager to execute in transaction.
-   * @returns true if a notification should be created, false otherwise.
+   * @returns object indicating whether to create notification and any additional info required; additional info can be of any type.
    */
-  protected abstract shouldCreateNotification(
+  protected abstract shouldCreateNotification<T = unknown>(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
-  ): Promise<boolean> | boolean;
+  ): Promise<{ shouldCreateNotification: boolean; additionalInfo?: T }>;
 
   /**
    * Creates a notification for the given e-Cert disbursement.
    * This method must be implemented by derived classes.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager entity manager to execute in transaction.
+   * @param additionalInfo additional information required to create the notification; can be any type as defined by the subclass.
    */
   protected abstract createNotification(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
+    additionalInfo?: unknown,
   ): Promise<void>;
 
   /**
@@ -80,10 +82,8 @@ export abstract class ECertNotification {
   ): Promise<boolean> {
     const notificationLog = new ProcessSummary();
     log.children(notificationLog);
-    const shouldCreateNotification = await this.shouldCreateNotification(
-      eCertDisbursement,
-      entityManager,
-    );
+    const { shouldCreateNotification, additionalInfo } =
+      await this.shouldCreateNotification(eCertDisbursement, entityManager);
     if (!shouldCreateNotification) {
       notificationLog.info(
         `${this.notificationName} notification should not be created at this moment for disbursement ID ${eCertDisbursement.disbursement.id}.`,
@@ -91,7 +91,11 @@ export abstract class ECertNotification {
       return false;
     }
     try {
-      await this.createNotification(eCertDisbursement, entityManager);
+      await this.createNotification(
+        eCertDisbursement,
+        entityManager,
+        additionalInfo,
+      );
     } catch (error: unknown) {
       // Log process summary warning to create alerts when email contacts are missing for the notification
       // without failing the entire process.

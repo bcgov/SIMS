@@ -44,8 +44,8 @@ import {
   MinistryFileProcessingIssueNotification,
   SaveNotificationModel,
   StudentAcceptAssessmentReminderNotification,
-  ProgramSuspensionBlockingApplicationNotification,
   EmailNotification,
+  InstitutionRestrictionBlockingApplicationNotification,
 } from "./notification.model";
 import { NotificationService } from "./notification.service";
 import { LoggerService } from "@sims/utilities/logger";
@@ -1840,19 +1840,19 @@ export class NotificationActionsService {
   }
 
   /**
-   * Creates a ministry notification when a program suspension restriction is blocking an application
+   * Creates a ministry notification when an institution restriction is blocking an application
    * at accept assessment or at e-Cert.
    * @param notifications notification details.
    * @param entityManager entity manager to execute in transaction.
    */
-  async saveProgramSuspensionBlockingApplicationNotification(
-    notifications: ProgramSuspensionBlockingApplicationNotification[],
+  async saveInstitutionRestrictionBlockingApplicationNotification(
+    notifications: InstitutionRestrictionBlockingApplicationNotification[],
     entityManager?: EntityManager,
   ): Promise<void> {
     const auditUser = this.systemUsersService.systemUser;
     const { templateId, notifyTemplateId, emailContacts } =
       await this.assertNotificationMessageDetails(
-        NotificationMessageType.ProgramSuspensionBlockingApplication,
+        NotificationMessageType.InstitutionRestrictionBlockingApplication,
         { throwOnMissingEmailContacts: true },
       );
     if (!emailContacts?.length) {
@@ -1864,7 +1864,7 @@ export class NotificationActionsService {
           userId: auditUser.id,
           notifyTemplateId,
           messageType:
-            NotificationMessageType.ProgramSuspensionBlockingApplication,
+            NotificationMessageType.InstitutionRestrictionBlockingApplication,
           messagePayload: {
             email_address: emailContact,
             template_id: templateId,
@@ -1876,6 +1876,7 @@ export class NotificationActionsService {
               applicationNumber: notification.applicationNumber,
               dateTime: getPCTDateTimeWithTimezone(),
               institutionOperatingName: notification.institutionOperatingName,
+              locationName: notification.locationName,
               programName: notification.programName,
             },
           },

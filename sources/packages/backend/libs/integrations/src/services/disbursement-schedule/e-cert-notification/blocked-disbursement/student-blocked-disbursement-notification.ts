@@ -36,12 +36,12 @@ export class StudentBlockedDisbursementNotification extends ECertNotification {
    * Determines whether a notification should be created or not.
    * @param eCertDisbursement eligible disbursement to be potentially added to an e-Cert.
    * @param entityManager entity manager to execute in transaction.
-   * @returns true if a notification should be created, false otherwise.
+   * @returns whether a notification should be created.
    */
   protected async shouldCreateNotification(
     eCertDisbursement: EligibleECertDisbursement,
     entityManager: EntityManager,
-  ): Promise<boolean> {
+  ): Promise<{ shouldCreateNotification: boolean }> {
     const notification = await entityManager
       .getRepository(Notification)
       .createQueryBuilder("notification")
@@ -60,12 +60,13 @@ export class StudentBlockedDisbursementNotification extends ECertNotification {
       BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL;
     // Condition check to create notifications: Less than BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND notifications are created previously and there are no failures in sending those created notifications.
     // Plus, it has been at least BLOCKED_DISBURSEMENT_NOTIFICATION_MIN_DAYS_INTERVAL days from the last created notification for this disbursement.
-    return (
-      !notification.notificationCount ||
-      (notification.notificationCount <
-        BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND &&
-        canSendNewNotification)
-    );
+    return {
+      shouldCreateNotification:
+        !notification.notificationCount ||
+        (notification.notificationCount <
+          BLOCKED_DISBURSEMENT_MAXIMUM_NOTIFICATIONS_TO_SEND &&
+          canSendNewNotification),
+    };
   }
 
   /**

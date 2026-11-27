@@ -4,8 +4,8 @@ import { EntityManager } from "typeorm";
 import { EligibleECertDisbursement } from "../disbursement-schedule.models";
 import {
   MinistryBlockedDisbursementNotification,
-  ProgramSuspensionBlockingDisbursementNotification,
   StudentBlockedDisbursementNotification,
+  InstitutionRestrictionsBlockingDisbursementNotification,
 } from ".";
 
 @Injectable()
@@ -13,7 +13,7 @@ export class ECertNotificationService {
   constructor(
     private readonly ministryBlockedDisbursementNotification: MinistryBlockedDisbursementNotification,
     private readonly studentBlockedDisbursementNotification: StudentBlockedDisbursementNotification,
-    private readonly programSuspensionBlockingDisbursementNotification: ProgramSuspensionBlockingDisbursementNotification,
+    private readonly institutionRestrictionsBlockingDisbursementNotification: InstitutionRestrictionsBlockingDisbursementNotification,
   ) {}
 
   /**
@@ -30,7 +30,7 @@ export class ECertNotificationService {
     const notifications = [
       this.ministryBlockedDisbursementNotification,
       this.studentBlockedDisbursementNotification,
-      this.programSuspensionBlockingDisbursementNotification,
+      this.institutionRestrictionsBlockingDisbursementNotification,
     ].map((notification) =>
       notification.notify(eCertDisbursement, entityManager, log),
     );

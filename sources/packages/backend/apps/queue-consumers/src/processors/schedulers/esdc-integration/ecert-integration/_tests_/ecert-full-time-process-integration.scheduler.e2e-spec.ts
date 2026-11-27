@@ -110,7 +110,7 @@ describe(
         {
           id: In([
             NotificationMessageType.MinistryNotificationDisbursementBlocked,
-            NotificationMessageType.ProgramSuspensionBlockingApplication,
+            NotificationMessageType.InstitutionRestrictionBlockingApplication,
           ]),
         },
         { emailContacts: [MINISTRY_NOTIFICATION_EMAIL] },
@@ -2605,7 +2605,7 @@ describe(
           where: {
             dateSent: IsNull(),
             notificationMessage: {
-              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+              id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
             },
             metadata: { disbursementId: disbursement.id },
           },
@@ -2707,7 +2707,7 @@ describe(
           where: {
             dateSent: IsNull(),
             notificationMessage: {
-              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+              id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
             },
             metadata: { disbursementId: disbursement.id },
           },
@@ -2777,7 +2777,7 @@ describe(
             user: systemUsersService.systemUser,
             auditUser: systemUsersService.systemUser,
             notificationMessage: {
-              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+              id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
             } as NotificationMessage,
           },
           {
@@ -2800,7 +2800,7 @@ describe(
         // Assert log messages for the blocked disbursement.
         expect(
           mockedJob.containLogMessages([
-            `Program suspension blocking application notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
+            `Institution restriction blocking application notification should not be created at this moment for disbursement ID ${disbursement.id}.`,
           ]),
         ).toBe(true);
         // Assert that the disbursement is still in status 'Pending' with date sent null.
@@ -2817,7 +2817,7 @@ describe(
           where: {
             dateSent: IsNull(),
             notificationMessage: {
-              id: NotificationMessageType.ProgramSuspensionBlockingApplication,
+              id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
             },
             metadata: { disbursementId: disbursement.id },
           },
