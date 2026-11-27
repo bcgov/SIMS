@@ -1,12 +1,12 @@
 <template>
-  <v-btn
-    v-if="canRenew"
-    color="primary"
-    :to="renewProgramRoute"
-    >Renew</v-btn
-  >
+  <v-btn v-if="canRenew" color="primary" :to="renewProgramRoute">Renew</v-btn>
   <span v-else class="text-body-2 text-medium-emphasis text-no-wrap">
-    <v-icon :icon="renewalStatusIcon" size="14" class="mr-1" />
+    <v-icon
+      v-if="renewalStatusIcon"
+      :icon="renewalStatusIcon"
+      size="14"
+      class="mr-1"
+    />
     {{ renewalStatus }}
   </span>
 </template>
@@ -57,8 +57,10 @@ const renewalStatusIcon = computed(() => {
       return "fa:fas fa-check";
     case ProgramRenewalStatus.Available:
       return "fa:fas fa-rotate";
-    default:
+    case ProgramRenewalStatus.NotAvailable:
       return "fa:fas fa-clock";
+    default:
+      return undefined;
   }
 });
 

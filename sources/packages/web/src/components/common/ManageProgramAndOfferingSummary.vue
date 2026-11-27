@@ -40,7 +40,6 @@ export default defineComponent({
     educationProgram: {
       type: Object as PropType<EducationProgramAPIOutDTO>,
       required: true,
-      default: {} as EducationProgramAPIOutDTO,
     },
     institutionId: {
       type: Number,
