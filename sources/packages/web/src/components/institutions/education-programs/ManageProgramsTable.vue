@@ -57,6 +57,7 @@
             v-if="selectedProgramYearId"
             :program-id="item.id"
             :renewal-status="item.renewalStatus"
+            :is-active="item.isActive"
             :program-year-id="selectedProgramYearId"
           />
         </template>

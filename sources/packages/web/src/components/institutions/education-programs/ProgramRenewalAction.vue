@@ -27,6 +27,10 @@ interface ProgramRenewalActionProps {
    */
   renewalStatus: ProgramRenewalStatus;
   /**
+   * Indicates if the program is currently active.
+   */
+  isActive: boolean;
+  /**
    * Program year currently selected, used to allow the renew page to
    * navigate back keeping the same program year selected.
    */
@@ -50,6 +54,8 @@ const canRenew = computed(
 /**
  * Icon displayed along with the renewal status when the renew action
  * is not displayed.
+ * Inactive programs not renewed cannot be renewed, hence the "X" icon
+ * instead of the one used while the renewal is not yet available.
  */
 const renewalStatusIcon = computed(() => {
   switch (props.renewalStatus) {
@@ -58,7 +64,7 @@ const renewalStatusIcon = computed(() => {
     case ProgramRenewalStatus.Available:
       return "fa:fas fa-rotate";
     case ProgramRenewalStatus.NotAvailable:
-      return "fa:fas fa-clock";
+      return props.isActive ? "fa:fas fa-clock" : "fa:fas fa-xmark";
     default:
       return undefined;
   }

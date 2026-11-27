@@ -233,7 +233,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
           ),
           getExpectedProgram(approvedProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(declinedProgram, ProgramRenewalStatus.Available),
-          getExpectedProgram(inactiveProgram, ProgramRenewalStatus.Available),
+          // Inactive programs cannot be renewed.
+          getExpectedProgram(
+            inactiveProgram,
+            ProgramRenewalStatus.NotAvailable,
+          ),
         ],
       });
   });
@@ -314,7 +318,50 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       .expect({
         count: 1,
         results: [
-          getExpectedProgram(inactiveProgram, ProgramRenewalStatus.Available),
+          getExpectedProgram(inactiveProgram, ProgramRenewalStatus.NotAvailable),
+        ],
+      });
+  });
+
+  it(`Should return the inactive programs with renewal status "${ProgramRenewalStatus.NotAvailable}" when not renewed and "${ProgramRenewalStatus.Renewed}" when already renewed, even when the next program year has an active configuration.`, async () => {
+    // Arrange
+    const searchCriteria = faker.string.uuid();
+    const inactiveNotRenewedProgram = await saveEducationProgram(
+      renewableProgramConfiguration,
+      { initialValues: { name: `Alpha ${searchCriteria}`, isActive: false } },
+    );
+    const inactiveRenewedProgram = await saveEducationProgram(
+      renewableProgramConfiguration,
+      { initialValues: { name: `Bravo ${searchCriteria}`, isActive: false } },
+    );
+    await saveEducationProgram(nextProgramConfiguration, {
+      precedingProgram: inactiveRenewedProgram,
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+    const endpoint = getEndpoint(renewableProgramConfiguration.programYear.id, {
+      searchCriteria,
+      sortField: "programName",
+      sortOrder: "ASC",
+    });
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .expect({
+        count: 2,
+        results: [
+          getExpectedProgram(
+            inactiveNotRenewedProgram,
+            ProgramRenewalStatus.NotAvailable,
+          ),
+          getExpectedProgram(
+            inactiveRenewedProgram,
+            ProgramRenewalStatus.Renewed,
+          ),
         ],
       });
   });

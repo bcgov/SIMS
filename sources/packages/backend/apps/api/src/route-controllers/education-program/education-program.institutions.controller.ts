@@ -28,7 +28,6 @@ import {
   EducationProgramsSummaryLocationAPIOutDTO,
   EducationProgramYearAPIOutDTO,
   ProgramEvaluationAPIInDTO,
-  ProgramRenewalStatus,
   ProgramEvaluationAPIOutDTO,
   UpdateEducationProgramAPIInDTO,
 } from "./models/education-program.dto";
@@ -273,6 +272,7 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Education program has already been renewed or " +
+      "education program cannot be renewed when inactive or " +
       "next education program configuration for renewal not found or " +
       "education program configuration outdated (not the expected one for the renewal) or " +
       "duplicate SABC code.",
@@ -483,11 +483,11 @@ export class EducationProgramInstitutionsController extends BaseController {
         sabcCode: program.sabcCode,
         programStatus: program.programStatus,
         isActive: program.isActive,
-        renewalStatus: program.renewedProgram
-          ? ProgramRenewalStatus.Renewed
-          : hasNextProgramConfigurationForRenewal
-            ? ProgramRenewalStatus.Available
-            : ProgramRenewalStatus.NotAvailable,
+        renewalStatus:
+          this.educationProgramControllerService.getProgramRenewalStatus(
+            program,
+            hasNextProgramConfigurationForRenewal,
+          ),
       })),
     };
   }
@@ -525,7 +525,8 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "The next program configuration for renewal could not be found or " +
-      "the program has already been renewed.",
+      "the program has already been renewed or " +
+      "the program cannot be renewed when inactive.",
   })
   @ApiForbiddenResponse({
     description: "You are not authorized to create or modify a program.",
@@ -549,6 +550,11 @@ export class EducationProgramInstitutionsController extends BaseController {
     if (program.renewedProgram?.id) {
       throw new UnprocessableEntityException(
         "The program has already been renewed.",
+      );
+    }
+    if (!program.isActive) {
+      throw new UnprocessableEntityException(
+        "The program cannot be renewed when inactive.",
       );
     }
     try {
