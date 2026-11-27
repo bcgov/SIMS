@@ -1,45 +1,17 @@
 <template>
-  <formio-container
-    formName="noticeOfAssessment"
-    @customEvent="customEvent"
-    :formData="initialData"
-  />
-  <confirm-modal
-    title="Reissue MSFAA number"
-    ref="confirmReissueMSFAA"
-    okLabel="Reissue MSFAA number now"
-    cancelLabel="Cancel"
-    :loading="msfaaReissueProcessing"
-    ><template #content>
-      <p>
-        <strong>Are you sure you want to proceed?</strong> Reissuing an MSFAA
-        number will impact the student's pending disbursements meaning a new
-        number will be provided for the pending disbursements. The student will
-        still be able to see their cancelled MSFAA number on their Notice of
-        Assessment.
-      </p>
-    </template></confirm-modal
-  >
+  <formio-container form-name="noticeOfAssessment" :form-data="initialData" />
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
 import { StudentAssessmentsService } from "@/services/StudentAssessmentsService";
 import { AssessmentNOAAPIOutDTO } from "@/services/http/dto";
-import { ModalDialog, useFormatters } from "@/composables";
-import ConfirmModal from "@/components/common/modals/ConfirmModal.vue";
+import { useFormatters } from "@/composables";
 import {
   ApplicationStatus,
   AssessmentStatus,
   DisbursementScheduleStatus,
-  FormIOCustomEvent,
-  FormIOCustomEventTypes,
-  FormIOForm,
 } from "@/types";
-
-interface NoticeOfAssessment extends AssessmentNOAAPIOutDTO {
-  canReissueMSFAA: boolean;
-}
 
 enum MSFAAStatus {
   Pending = "pending",
@@ -89,38 +61,26 @@ export default defineComponent({
         !!applicationCurrentAssessmentId
       );
     },
-    reissueMSFAA: (
-      applicationId: number,
-      loadNOA: () => Promise<void>,
-      processing: (processing: boolean) => void,
-    ) => {
-      return !!applicationId && !!loadNOA && !!processing;
-    },
   },
-  components: { ConfirmModal },
   props: {
     assessmentId: {
       type: Number,
       required: true,
     },
-    canReissueMSFAA: {
-      type: Boolean,
-      default: false,
-    },
     studentId: {
       type: Number,
       required: false,
+      default: undefined,
     },
     applicationId: {
       type: Number,
       required: false,
+      default: undefined,
     },
   },
   setup(props, { emit }) {
     const { dateOnlyLongString } = useFormatters();
-    const confirmReissueMSFAA = ref({} as ModalDialog<boolean>);
-    const initialData = ref({} as NoticeOfAssessment);
-    const msfaaReissueProcessing = ref(false);
+    const initialData = ref({} as AssessmentNOAAPIOutDTO);
 
     /**
      * Defines the MSFAA status based on the signed date and cancelled dates.
@@ -183,20 +143,7 @@ export default defineComponent({
         );
       noaDisbursementSchedule.disbursement2MSFAAStatusClass =
         getMSFAAStatusClass(secondMSFAAStatus);
-      // Checks if the component allows the MSFAA reissue and if there is
-      // one pending disbursement with a cancelled MSFAA.
-      const canReissueMSFAA =
-        props.canReissueMSFAA &&
-        ((noaDisbursementSchedule.disbursement1Status ===
-          DisbursementScheduleStatus.Pending &&
-          !!noaDisbursementSchedule.disbursement1MSFAACancelledDate) ||
-          (noaDisbursementSchedule.disbursement2Status ===
-            DisbursementScheduleStatus.Pending &&
-            !!noaDisbursementSchedule.disbursement2MSFAACancelledDate));
-      initialData.value = {
-        ...assessment,
-        canReissueMSFAA,
-      };
+      initialData.value = assessment;
       emit(
         "assessmentDataLoaded",
         initialData.value.applicationStatus,
@@ -207,26 +154,7 @@ export default defineComponent({
 
     onMounted(loadNOA);
 
-    const setMSFAAReissueProcessing = (processing: boolean) => {
-      msfaaReissueProcessing.value = processing;
-    };
-
-    const customEvent = async (_form: FormIOForm, event: FormIOCustomEvent) => {
-      if (event.type === FormIOCustomEventTypes.ReissueMSFAA)
-        if (await confirmReissueMSFAA.value.showModal()) {
-          emit(
-            "reissueMSFAA",
-            initialData.value.applicationId,
-            () => loadNOA(),
-            (processing) => setMSFAAReissueProcessing(processing),
-          );
-        }
-    };
-
     return {
-      confirmReissueMSFAA,
-      msfaaReissueProcessing,
-      customEvent,
       initialData,
     };
   },

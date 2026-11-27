@@ -229,7 +229,9 @@ export const aestRoutes: Array<RouteRecordRaw> = [
           {
             path: AppRoutes.MSFAAActivity,
             name: AESTRoutesConst.STUDENT_MSFAA,
-            props: true,
+            props: (route) => ({
+              studentId: Number.parseInt(route.params.studentId as string),
+            }),
             component: StudentMSFAAActivity,
             meta: {
               clientType: ClientIdType.AEST,

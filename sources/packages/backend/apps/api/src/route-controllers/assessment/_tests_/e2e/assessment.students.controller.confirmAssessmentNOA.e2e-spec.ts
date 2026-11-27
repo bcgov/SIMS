@@ -207,6 +207,39 @@ describe("AssessmentStudentsController(e2e)-confirmAssessmentNOA", () => {
       });
   });
 
+  it("Should not allow NOA approval when the MSFAA associated with the current assessment was cancelled.", async () => {
+    // Arrange
+    const student = await saveFakeStudent(db.dataSource);
+    await mockUserLoginInfo(appModule, student);
+    const cancelledMSFAA = await db.msfaaNumber.save(
+      createFakeMSFAANumber(
+        { student },
+        { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+      ),
+    );
+    const application = await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: cancelledMSFAA },
+      { applicationStatus: ApplicationStatus.Assessment },
+    );
+    const studentUserToken = await getStudentToken(
+      FakeStudentUsersTypes.FakeStudentUserType1,
+    );
+    const endpoint = `/students/assessment/${application.currentAssessment.id}/confirm-assessment`;
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(endpoint)
+      .auth(studentUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        statusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        message:
+          "There is at least one e-Cert validation failed preventing the assessment from being accepted.",
+        error: "Unprocessable Entity",
+      });
+  });
+
   [OfferingIntensity.fullTime, OfferingIntensity.partTime].forEach(
     (intensity) => {
       it(`Should not allow NOA approval of a ${intensity} application when the current assessment is associated with an institution that has some restriction with an 'Stop accept assessment' action.`, async () => {

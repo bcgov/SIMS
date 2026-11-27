@@ -52,6 +52,9 @@ export function createFakeMSFAANumber(
     OfferingIntensity.fullTime;
   msfaaNumber.student = relations.student;
   msfaaNumber.referenceApplication = relations?.referenceApplication;
+  if (options?.msfaaInitialValues?.createdAt) {
+    msfaaNumber.createdAt = options.msfaaInitialValues.createdAt;
+  }
   msfaaNumber.msfaaNumber =
     options?.msfaaInitialValues?.msfaaNumber ??
     faker.number

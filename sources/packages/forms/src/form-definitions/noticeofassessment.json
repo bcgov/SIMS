@@ -25,15 +25,6 @@
       "tableView": false
     },
     {
-      "label": "Can Reissue MSFAA",
-      "customDefaultValue": "value=data.offeringIntensity;",
-      "key": "canReissueMSFAA",
-      "type": "hidden",
-      "input": true,
-      "tableView": false,
-      "lockKey": true
-    },
-    {
       "input": true,
       "components": [
         {
@@ -6031,21 +6022,6 @@
                   "hideLabel": true,
                   "customClass": "formio-panel-unset",
                   "label": "Panel"
-                },
-                {
-                  "input": true,
-                  "label": "Reissue MSFAA number",
-                  "tableView": false,
-                  "key": "panel1ColumnsReissueMsfaAnumber",
-                  "action": "custom",
-                  "type": "button",
-                  "conditional": {
-                    "show": "true",
-                    "when": "canReissueMSFAA",
-                    "eq": "true"
-                  },
-                  "event": "reissueMSFAA",
-                  "custom": "form.emit('customEvent', { type: \"reissueMSFAA\" });"
                 }
               ],
               "width": 6,

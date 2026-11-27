@@ -33,6 +33,7 @@ import Client from "ssh2-sftp-client";
 import { join } from "node:path";
 import { FULL_TIME_SAMPLE_MSFAA_NUMBER } from "./msfaa-process-integration.scheduler.models";
 import { IsNull } from "typeorm";
+import { MSFAA_MINISTRY_CANCELLATION_PROVINCE } from "@sims/services/constants";
 
 describe(
   describeProcessorRootTest(QueueNames.FullTimeMSFAAProcessResponseIntegration),
@@ -186,6 +187,12 @@ describe(
       );
       expect(msfaaReactivatedRecord.cancelledDate).toBe(null);
       expect(msfaaReactivatedRecord.newIssuingProvince).toBe(null);
+      // The reactivated MSFAA must be the only valid one, hence the unsigned current MSFAA is cancelled.
+      const currentMSFAAAfterResponse = await db.msfaaNumber.findOne({
+        select: { cancelledDate: true },
+        where: { id: currentMSFAA.id },
+      });
+      expect(currentMSFAAAfterResponse.cancelledDate).not.toBeNull();
       // Validate msfaa updated to the reactivated msfaa for all pending disbursements.
       const [appAFirstDisbursementSchedule, appASecondDisbursementSchedule] =
         applicationA.currentAssessment.disbursementSchedules;
@@ -243,6 +250,87 @@ describe(
       );
       expect(appBFirstDisbursementScheduleMsfaaNumberId.msfaaNumber.id).toBe(
         currentMSFAA.id,
+      );
+    });
+
+    it("Should reactivate an MSFAA cancelled by the Ministry when the same MSFAA is received as signed in the response file and re-associate it with the pending disbursements.", async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const ministryCancelledMSFAA = createFakeMSFAANumber(
+        { student },
+        {
+          msfaaState: MSFAAStates.CancelledSystem,
+          msfaaInitialValues: {
+            msfaaNumber: FULL_TIME_SAMPLE_MSFAA_NUMBER,
+            offeringIntensity: OfferingIntensity.fullTime,
+          },
+        },
+      );
+      ministryCancelledMSFAA.newIssuingProvince =
+        MSFAA_MINISTRY_CANCELLATION_PROVINCE;
+      await db.msfaaNumber.save(ministryCancelledMSFAA);
+      // Pending disbursement associated with a different, active, MSFAA.
+      const activeMSFAA = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          {
+            msfaaState: MSFAAStates.Pending,
+            msfaaInitialValues: {
+              offeringIntensity: OfferingIntensity.fullTime,
+            },
+          },
+        ),
+      );
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber: activeMSFAA },
+        {
+          applicationStatus: ApplicationStatus.Completed,
+          offeringIntensity: OfferingIntensity.fullTime,
+        },
+      );
+      const mockedJob = mockBullMQJob<void>();
+      mockDownloadFiles(sftpClientMock, [
+        MSFAA_FULL_TIME_RECEIVE_FILE_WITH_REACTIVATION_RECORD,
+      ]);
+
+      // Act
+      const result = await processor.process(mockedJob.job);
+
+      // Assert
+      expect(result).toStrictEqual([
+        "MSFAA full-time response files processed.",
+      ]);
+      const msfaaAfterResponse = await db.msfaaNumber.findOne({
+        select: {
+          dateSigned: true,
+          serviceProviderReceivedDate: true,
+          cancelledDate: true,
+          newIssuingProvince: true,
+        },
+        where: { id: ministryCancelledMSFAA.id },
+      });
+      expect(msfaaAfterResponse).toEqual({
+        dateSigned: "2023-05-02",
+        serviceProviderReceivedDate: "2023-05-03",
+        cancelledDate: null,
+        newIssuingProvince: null,
+      });
+      // The reactivated MSFAA must be the only valid one, hence the unsigned active MSFAA is cancelled.
+      const activeMSFAAAfterResponse = await db.msfaaNumber.findOne({
+        select: { cancelledDate: true },
+        where: { id: activeMSFAA.id },
+      });
+      expect(activeMSFAAAfterResponse.cancelledDate).not.toBeNull();
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const disbursementAfterResponse = await db.disbursementSchedule.findOne({
+        select: { id: true, msfaaNumber: { id: true } },
+        relations: { msfaaNumber: true },
+        where: { id: disbursement.id },
+      });
+      expect(disbursementAfterResponse.msfaaNumber.id).toBe(
+        ministryCancelledMSFAA.id,
       );
     });
 

@@ -29,6 +29,7 @@ export * from "./confirmation-of-enrollment/confirmation-of-enrollment.service";
 export * from "./disbursement-schedule/disbursement-schedule-shared.service";
 export * from "./restriction/student-restriction-shared.service";
 export * from "./msfaa-number/msfaa-number-shared.service";
+export * from "./msfaa-number/msfaa-number.models";
 export * from "./global-http/global-http.module";
 export * from "./application/application-shared.service";
 export * from "./students-assessments/assessment-sequential-processing.service.models";

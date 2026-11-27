@@ -13,9 +13,10 @@ import {
   createFakeMSFAANumber,
   E2EDataSources,
   MSFAAStates,
+  saveFakeApplicationDisbursements,
   saveFakeStudent,
 } from "@sims/test-utils";
-import { OfferingIntensity } from "@sims/sims-db";
+import { ApplicationStatus, OfferingIntensity } from "@sims/sims-db";
 import { addDays } from "@sims/utilities";
 
 describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
@@ -32,14 +33,18 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
     // Arrange.
     const student = await saveFakeStudent(db.dataSource);
     // Pending full-time MSFAA (earliest - two days ago).
-    const pendingFullTimeMSFAA = createFakeMSFAANumber({ student });
-    pendingFullTimeMSFAA.createdAt = addDays(-2);
+    const pendingFullTimeMSFAA = createFakeMSFAANumber(
+      { student },
+      { msfaaInitialValues: { createdAt: addDays(-2) } },
+    );
     // Signed full-time MSFAA (middle - yesterday).
     const signedFullTimeMSFAA = createFakeMSFAANumber(
       { student },
-      { msfaaState: MSFAAStates.Signed },
+      {
+        msfaaState: MSFAAStates.Signed,
+        msfaaInitialValues: { createdAt: addDays(-1) },
+      },
     );
-    signedFullTimeMSFAA.createdAt = addDays(-1);
     // Part-time MSFAA cancelled due to another province (most recent - today).
     const cancelledPartTimeMSFAA = createFakeMSFAANumber(
       { student },
@@ -64,6 +69,7 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
       .expect(HttpStatus.OK)
       .expect([
         {
+          id: cancelledPartTimeMSFAA.id,
           createdAt: cancelledPartTimeMSFAA.createdAt.toISOString(),
           offeringIntensity: OfferingIntensity.partTime,
           msfaaNumber: cancelledPartTimeMSFAA.msfaaNumber,
@@ -71,8 +77,10 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
           dateSigned: cancelledPartTimeMSFAA.dateSigned,
           cancelledDate: cancelledPartTimeMSFAA.cancelledDate,
           newIssuingProvince: cancelledPartTimeMSFAA.newIssuingProvince,
+          canBeReissued: false,
         },
         {
+          id: signedFullTimeMSFAA.id,
           createdAt: signedFullTimeMSFAA.createdAt.toISOString(),
           offeringIntensity: OfferingIntensity.fullTime,
           msfaaNumber: signedFullTimeMSFAA.msfaaNumber,
@@ -80,8 +88,10 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
           dateSigned: signedFullTimeMSFAA.dateSigned,
           cancelledDate: null,
           newIssuingProvince: null,
+          canBeReissued: false,
         },
         {
+          id: pendingFullTimeMSFAA.id,
           createdAt: pendingFullTimeMSFAA.createdAt.toISOString(),
           offeringIntensity: OfferingIntensity.fullTime,
           msfaaNumber: pendingFullTimeMSFAA.msfaaNumber,
@@ -89,8 +99,82 @@ describe("MSFAANumberAESTController(e2e)-getStudentMSFAAActivity", () => {
           dateSigned: null,
           cancelledDate: null,
           newIssuingProvince: null,
+          canBeReissued: false,
         },
       ]);
+  });
+
+  it("Should indicate that only the MSFAA of the oldest pending disbursement of each offering intensity can be reissued.", async () => {
+    // Arrange.
+    const student = await saveFakeStudent(db.dataSource);
+    // Cancelled full-time MSFAA with pending disbursement.
+    const olderFullTimeMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem,
+        msfaaInitialValues: { createdAt: addDays(-3) },
+      },
+    );
+    // Another cancelled full-time MSFAA with pending disbursement.
+    const latestFullTimeMSFAA = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem,
+        msfaaInitialValues: { createdAt: addDays(-2) },
+      },
+    );
+    // Cancelled part-time MSFAA without disbursement.
+    const partTimeMSFAAWithoutDisbursement = createFakeMSFAANumber(
+      { student },
+      {
+        msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem,
+        msfaaInitialValues: {
+          offeringIntensity: OfferingIntensity.partTime,
+          createdAt: addDays(-1),
+        },
+      },
+    );
+    await db.msfaaNumber.save([
+      olderFullTimeMSFAA,
+      latestFullTimeMSFAA,
+      partTimeMSFAAWithoutDisbursement,
+    ]);
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: olderFullTimeMSFAA },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    await saveFakeApplicationDisbursements(
+      db.dataSource,
+      { student, msfaaNumber: latestFullTimeMSFAA },
+      { applicationStatus: ApplicationStatus.Completed },
+    );
+    const aestUserToken = await getAESTToken(AESTGroups.BusinessAdministrators);
+    const endpoint = `/aest/msfaa-number/student/${student.id}`;
+
+    // Act/Assert.
+    await request(app.getHttpServer())
+      .get(endpoint)
+      .auth(aestUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK)
+      .then((response) => {
+        expect(response.body).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: olderFullTimeMSFAA.id,
+              canBeReissued: true,
+            }),
+            expect.objectContaining({
+              id: latestFullTimeMSFAA.id,
+              canBeReissued: false,
+            }),
+            expect.objectContaining({
+              id: partTimeMSFAAWithoutDisbursement.id,
+              canBeReissued: false,
+            }),
+          ]),
+        );
+      });
   });
 
   it("Should return an empty array when the student has no MSFAA records.", async () => {

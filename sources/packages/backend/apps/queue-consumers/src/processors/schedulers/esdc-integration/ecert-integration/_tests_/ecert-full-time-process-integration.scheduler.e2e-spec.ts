@@ -1484,6 +1484,87 @@ describe(
       expect(isScheduleNotSent).toBe(true);
     });
 
+    it("Should not generate disbursement when the MSFAA associated with the pending disbursement was cancelled after the confirmation of enrolment.", async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const cancelledMSFAA = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+        ),
+      );
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber: cancelledMSFAA },
+        {
+          offeringIntensity: OFFERING_INTENSITY,
+          applicationStatus: ApplicationStatus.Completed,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      const mockedJob = mockBullMQJob<void>();
+
+      // Act
+      const result = await processor.process(mockedJob.job);
+
+      // Assert
+      expect(result).toContain("Uploaded records: 0");
+      const [disbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isScheduleNotSent = await db.disbursementSchedule.exists({
+        where: {
+          id: disbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
+      expect(isScheduleNotSent).toBe(true);
+    });
+
+    it("Should not generate the second disbursement when the MSFAA was cancelled after the first disbursement was sent.", async () => {
+      // Arrange
+      const student = await saveFakeStudent(db.dataSource);
+      const cancelledMSFAA = await db.msfaaNumber.save(
+        createFakeMSFAANumber(
+          { student },
+          { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
+        ),
+      );
+      const application = await saveFakeApplicationDisbursements(
+        db.dataSource,
+        { student, msfaaNumber: cancelledMSFAA },
+        {
+          offeringIntensity: OFFERING_INTENSITY,
+          applicationStatus: ApplicationStatus.Completed,
+          createSecondDisbursement: true,
+          firstDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+            disbursementScheduleStatus: DisbursementScheduleStatus.Sent,
+          },
+          secondDisbursementInitialValues: {
+            coeStatus: COEStatus.completed,
+          },
+        },
+      );
+      const mockedJob = mockBullMQJob<void>();
+
+      // Act
+      const result = await processor.process(mockedJob.job);
+
+      // Assert
+      expect(result).toContain("Uploaded records: 0");
+      const [, secondDisbursement] =
+        application.currentAssessment.disbursementSchedules;
+      const isSecondScheduleNotSent = await db.disbursementSchedule.exists({
+        where: {
+          id: secondDisbursement.id,
+          disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+        },
+      });
+      expect(isSecondScheduleNotSent).toBe(true);
+    });
+
     it("Should not generate disbursement when the Student answered application question 'estranged from the parents' as 'yes' and profile does not have an approved modified independent status.", async () => {
       // Arrange
       const modifiedIndependentStatus = ModifiedIndependentStatus.NotRequested;

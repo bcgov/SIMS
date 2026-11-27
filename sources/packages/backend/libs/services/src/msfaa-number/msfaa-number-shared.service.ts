@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DataSource, IsNull, Repository } from "typeorm";
+import { DataSource, EntityManager, IsNull, Not, Repository } from "typeorm";
 import {
   MSFAANumber,
   Student,
@@ -8,7 +8,6 @@ import {
   DisbursementSchedule,
   DisbursementScheduleStatus,
   User,
-  ApplicationStatus,
 } from "@sims/sims-db";
 import {
   SFASSignedMSFAA,
@@ -20,9 +19,12 @@ import { CustomNamedError, getISODateOnlyString } from "@sims/utilities";
 import {
   APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
   APPLICATION_NOT_FOUND,
-  INVALID_OPERATION_IN_THE_CURRENT_STATUS,
+  MSFAA_INELIGIBLE,
+  MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
+import { TableNames } from "@sims/sims-db/constant";
+import { MSFAAEligibleForReissue } from "./msfaa-number.models";
 
 /**
  * Service layer for MSFAA (Master Student Financial Aid Agreement)
@@ -64,47 +66,115 @@ export class MSFAANumberSharedService {
   }
 
   /**
-   * Reissues a new MSFAA number to be associated with the student, cancelling any
+   * Gets the MSFAAs that can be reissued.
+   * For each offering intensity, when there is any pending disbursement associated with
+   * a cancelled MSFAA, the MSFAA of the oldest pending disbursement is returned and the
+   * application of that disbursement is the reference for the new MSFAA.
+   * @param studentId student to have the MSFAA records checked.
+   * @param entityManager entity manager to be used instead of the default one, when provided.
+   * @param options method options.
+   * - `intensity` when provided, only this offering intensity is checked.
+   * @returns MSFAA records eligible to be reissued.
+   */
+  async getMSFAAsEligibleForReissue(
+    studentId: number,
+    entityManager?: EntityManager,
+    options?: { intensity?: OfferingIntensity },
+  ): Promise<MSFAAEligibleForReissue[]> {
+    const manager = entityManager ?? this.dataSource.manager;
+    const disbursementRepo = manager.getRepository(DisbursementSchedule);
+    const intensities = options?.intensity
+      ? [options.intensity]
+      : [OfferingIntensity.fullTime, OfferingIntensity.partTime];
+    const eligibleMSFAAs = await Promise.all(
+      intensities.map(async (offeringIntensity) => {
+        const oldestPendingDisbursement = await disbursementRepo.findOne({
+          select: {
+            id: true,
+            msfaaNumber: { id: true },
+            studentAssessment: { id: true, application: { id: true } },
+          },
+          relations: {
+            msfaaNumber: true,
+            studentAssessment: { application: true },
+          },
+          where: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            msfaaNumber: {
+              student: { id: studentId },
+              offeringIntensity,
+              cancelledDate: Not(IsNull()),
+            },
+          },
+          order: { id: "ASC" },
+        });
+        if (!oldestPendingDisbursement) {
+          return null;
+        }
+        return {
+          id: oldestPendingDisbursement.msfaaNumber.id,
+          referenceApplicationId:
+            oldestPendingDisbursement.studentAssessment.application.id,
+        };
+      }),
+    );
+    return eligibleMSFAAs.filter((msfaa) => !!msfaa);
+  }
+
+  /**
+   * Reissues a new MSFAA number to replace a cancelled one, cancelling any
    * pending MSFAA for the particular offering intensity and also associating the
    * new MSFAA number to any pending disbursement for the same offering intensity.
-   * Reissuing an MSFAA is only valid for an application with pending disbursement
-   * where the MSFAA is cancelled.
-   * @param referenceApplicationId reference application id.
+   * @param msfaaNumberId cancelled MSFAA to be reissued.
    * @param auditUserId user that should be considered the one that is causing the changes.
+   * @param entityManager transactional entity manager, allowing the reissue to be
+   * part of a larger transaction.
    * @returns the newly created MSFAA.
    */
-  async reissueMSFAA(
-    referenceApplicationId: number,
+  async reissueMSFAANumber(
+    msfaaNumberId: number,
     auditUserId: number,
+    entityManager: EntityManager,
   ): Promise<MSFAANumber> {
-    const application = await this.getApplicationForMSFAACreation(
-      referenceApplicationId,
-    );
-    // If multiple disbursements are pending they must be associated with the same
-    // MSFAA hence selecting the first one should be enough for the validations.
-    const [pendingDisbursement] =
-      application.currentAssessment.disbursementSchedules.filter(
-        (schedule) =>
-          schedule.disbursementScheduleStatus ===
-          DisbursementScheduleStatus.Pending,
-      );
-    if (!pendingDisbursement) {
+    const msfaaNumber = await entityManager.getRepository(MSFAANumber).findOne({
+      select: {
+        id: true,
+        offeringIntensity: true,
+        cancelledDate: true,
+        student: { id: true },
+      },
+      relations: { student: true },
+      where: { id: msfaaNumberId },
+      // Serializes concurrent reissues of the same MSFAA, so the eligibility
+      // is checked again after any in-flight reissue has been committed.
+      lock: { mode: "pessimistic_write", tables: [TableNames.MSFAANumbers] },
+    });
+    if (!msfaaNumber) {
       throw new CustomNamedError(
-        "Not possible to reissue an MSFAA when there is no pending disbursements for the application.",
-        APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
+        `MSFAA number id ${msfaaNumberId} was not found.`,
+        MSFAA_NUMBER_NOT_FOUND,
       );
     }
-    if (!pendingDisbursement.msfaaNumber.cancelledDate) {
+    // A cancelled MSFAA can be reissued when there are pending disbursements to be associated with the new MSFAA.
+    const [eligibleMSFAA] = msfaaNumber.cancelledDate
+      ? await this.getMSFAAsEligibleForReissue(
+          msfaaNumber.student.id,
+          entityManager,
+          { intensity: msfaaNumber.offeringIntensity },
+        )
+      : [];
+    if (!eligibleMSFAA) {
       throw new CustomNamedError(
-        "Not possible to reissue an MSFAA when the current associated MSFAA is not cancelled.",
-        APPLICATION_INVALID_DATA_TO_CREATE_MSFAA_ERROR,
+        "Not possible to reissue an MSFAA that is not cancelled or has no pending disbursements associated.",
+        MSFAA_INELIGIBLE,
       );
     }
     return this.internalActivateMSFAANumber(
-      application.student.id,
-      application.id,
-      application.currentAssessment.offering.offeringIntensity,
+      msfaaNumber.student.id,
+      eligibleMSFAA.referenceApplicationId,
+      msfaaNumber.offeringIntensity,
       auditUserId,
+      { entityManager },
     );
   }
 
@@ -158,6 +228,8 @@ export class MSFAANumberSharedService {
    * msfaaNumber as the msfaaNumber of the msfaa record,
    * dateSigned as the date the msfaaNumber got signed,
    * and serviceProviderReceivedDate as the serviceProviderReceivedDate of the msfaa record to be reactivated.
+   * - `entityManager` transactional entity manager to be used when the activation must be
+   * part of an existing transaction. When not provided, a new transaction is created.
    * @returns created MSFAA record.
    */
   private async internalActivateMSFAANumber(
@@ -166,13 +238,16 @@ export class MSFAANumberSharedService {
     offeringIntensity: OfferingIntensity,
     auditUserId: number,
     options?: {
-      existingMSFAA: Pick<
+      existingMSFAA?: Pick<
         MSFAANumber,
         "id" | "msfaaNumber" | "dateSigned" | "serviceProviderReceivedDate"
       >;
+      entityManager?: EntityManager;
     },
   ): Promise<MSFAANumber> {
-    return this.dataSource.transaction(async (entityManager) => {
+    const activate = async (
+      entityManager: EntityManager,
+    ): Promise<MSFAANumber> => {
       const auditUser = this.systemUsersService.systemUser;
       const now = new Date();
       const nowISODate = getISODateOnlyString(now);
@@ -259,7 +334,11 @@ export class MSFAANumberSharedService {
         });
       }
       return newActiveMSFAA;
-    });
+    };
+    if (options?.entityManager) {
+      return activate(options.entityManager);
+    }
+    return this.dataSource.transaction(activate);
   }
 
   /**
@@ -293,7 +372,6 @@ export class MSFAANumberSharedService {
     const application = await this.applicationRepo.findOne({
       select: {
         id: true,
-        applicationStatus: true,
         student: {
           id: true,
         },
@@ -302,23 +380,12 @@ export class MSFAANumberSharedService {
           offering: {
             offeringIntensity: true,
           },
-          disbursementSchedules: {
-            id: true,
-            disbursementScheduleStatus: true,
-            msfaaNumber: {
-              id: true,
-              cancelledDate: true,
-            },
-          },
         },
       },
       relations: {
         student: true,
         currentAssessment: {
           offering: true,
-          disbursementSchedules: {
-            msfaaNumber: true,
-          },
         },
       },
       where: {
@@ -330,17 +397,6 @@ export class MSFAANumberSharedService {
       throw new CustomNamedError(
         `Application id ${applicationId} was not found.`,
         APPLICATION_NOT_FOUND,
-      );
-    }
-    const nowAllowedApplicationStatuses = [
-      ApplicationStatus.Draft,
-      ApplicationStatus.Cancelled,
-      ApplicationStatus.Edited,
-    ];
-    if (nowAllowedApplicationStatuses.includes(application.applicationStatus)) {
-      throw new CustomNamedError(
-        `Not possible to create an MSFAA when the application status is '${application.applicationStatus}'.`,
-        INVALID_OPERATION_IN_THE_CURRENT_STATUS,
       );
     }
     if (!application.currentAssessment?.offering) {
