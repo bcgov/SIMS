@@ -70,7 +70,7 @@ export class EducationProgramApi extends HttpBaseClient {
   async getEducationProgramConfigurationForCreate(
     programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
+    return this.getCall(
       this.addClientRoot(
         `education-program/program-year/${programYearId}/create`,
       ),
@@ -111,7 +111,7 @@ export class EducationProgramApi extends HttpBaseClient {
   async getEducationProgramConfigurationForRenew(
     programId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
+    return this.getCall(
       this.addClientRoot(`education-program/${programId}/renew`),
     );
   }
