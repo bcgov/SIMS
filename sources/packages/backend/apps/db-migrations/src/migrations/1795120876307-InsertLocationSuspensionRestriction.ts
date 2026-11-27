@@ -4,6 +4,13 @@ import { getSQLFileData } from "../utilities/sqlLoader";
 export class InsertLocationSuspensionRestriction1795120876307 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      getSQLFileData(
+        "Update-notifications-metadata-insert-restriction-code.sql",
+        "Notifications",
+      ),
+    );
+
+    await queryRunner.query(
       getSQLFileData("Insert-lsc-restriction.sql", "Restrictions"),
     );
 
@@ -25,6 +32,13 @@ export class InsertLocationSuspensionRestriction1795120876307 implements Migrati
 
     await queryRunner.query(
       getSQLFileData("Rollback-insert-lsc-restriction.sql", "Restrictions"),
+    );
+
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-update-notifications-metadata-insert-restriction-code.sql",
+        "Notifications",
+      ),
     );
   }
 }
