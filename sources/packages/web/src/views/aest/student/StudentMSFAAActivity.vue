@@ -140,6 +140,7 @@ import { MSFAANumberAPIOutDTO } from "@/services/http/dto";
 import { MSFAAActivityHeaders } from "@/types/contracts/DataTableContract";
 import { Role } from "@/types";
 import CheckPermissionRole from "@/components/generic/CheckPermissionRole.vue";
+import DetailHeader from "@/components/generic/DetailHeader.vue";
 import UserNoteConfirmModal, {
   UserNoteModal,
 } from "@/components/common/modals/UserNoteConfirmModal.vue";
