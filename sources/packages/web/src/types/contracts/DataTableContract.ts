@@ -65,44 +65,6 @@ export enum ProgramSummaryFields {
   IsActive = "isActive",
 }
 
-export const ProgramSummaryHeaders = [
-  {
-    title: "Program name",
-    sortable: true,
-    key: "programName",
-  },
-  {
-    title: "Credential",
-    sortable: true,
-    key: "credentialType",
-  },
-  {
-    title: "CIP",
-    sortable: true,
-    key: "cipCode",
-  },
-  {
-    title: "SABC program code",
-    sortable: true,
-    key: "sabcCode",
-  },
-  {
-    title: "Study periods",
-    sortable: true,
-    key: "totalOfferings",
-  },
-  {
-    title: "Status",
-    sortable: true,
-    key: "programStatus",
-  },
-  {
-    title: "Action",
-    sortable: false,
-    key: "programId",
-  },
-];
-
 export const ManageProgramSummaryHeaders = [
   {
     title: "Program name",

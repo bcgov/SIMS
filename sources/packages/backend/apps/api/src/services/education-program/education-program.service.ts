@@ -34,7 +34,6 @@ import {
   PaginatedResults,
   ProgramPaginationOptions,
   PaginationOptions,
-  ProgramLocationPaginationOptions,
 } from "../../utilities";
 import { CustomNamedError, FieldSortOrder } from "@sims/utilities";
 import {
@@ -160,64 +159,6 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         programQuery,
         paginationOptions,
         queryParams,
-      );
-
-    return {
-      results: programsQueryResults,
-      count: totalCount,
-    };
-  }
-
-  /**
-   * Gets all the programs that are associated with
-   * an institution and the location alongside with
-   * the total of offerings on locations.
-   * @param institutionId id of the institution.
-   * @param offeringTypes offering types.
-   * @param paginationOptions pagination options.
-   * @param locationId related location id.
-   * @returns paginated summary for the institution location.
-   */
-  async getProgramsSummaryForLocation(
-    institutionId: number,
-    offeringTypes: OfferingTypes[],
-    paginationOptions: ProgramLocationPaginationOptions,
-    locationId: number,
-  ): Promise<PaginatedResults<EducationProgramSummary>> {
-    const { programQuery, queryParams } = this.getProgramsQueryWithQueryParams(
-      offeringTypes,
-      institutionId,
-    );
-    programQuery.andWhere("location.id = :locationId", {
-      locationId,
-    });
-    queryParams.push(locationId);
-    if (paginationOptions.searchCriteria) {
-      programQuery.andWhere(
-        new Brackets((qb) =>
-          qb
-            .where("programs.name Ilike :searchCriteria", {
-              searchCriteria: `%${paginationOptions.searchCriteria}%`,
-            })
-            .orWhere("programs.cipCode like :searchCriteria", {
-              searchCriteria: `%${paginationOptions.searchCriteria}%`,
-            })
-            .orWhere("programs.sabcCode like :searchCriteria", {
-              searchCriteria: `%${paginationOptions.searchCriteria.toUpperCase()}%`,
-            }),
-        ),
-      );
-      queryParams.push(`%${paginationOptions.searchCriteria.toUpperCase()}%`);
-    }
-
-    this.addProgramStatusSearch(programQuery, paginationOptions, queryParams);
-
-    const [totalCount, programsQueryResults] =
-      await this.preparePaginatedProgramQuery(
-        programQuery,
-        paginationOptions,
-        queryParams,
-        "programs.name",
       );
 
     return {
@@ -700,14 +641,12 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
    * @param paginatedProgramQuery paginated program query.
    * @param paginationOptions pagination options.
    * @param queryParams query parameters for the count query.
-   * @param defaultSortField default sort field.
    * @returns A tuple containing the total count and the paginated programs.
    */
   private async preparePaginatedProgramQuery(
     paginatedProgramQuery: SelectQueryBuilder<EducationProgram>,
     paginationOptions: PaginationOptions,
     queryParams: unknown[],
-    defaultSortField?: string,
   ): Promise<[number, EducationProgramSummary[]]> {
     const sqlQuery = paginatedProgramQuery.getSql();
     if (paginationOptions.pageLimit) {
@@ -729,11 +668,10 @@ export class EducationProgramService extends RecordDataModelService<EducationPro
         sortProgramsColumnMap(paginationOptions.sortField),
         paginationOptions.sortOrder,
       );
-    } else if (defaultSortField) {
-      paginatedProgramQuery.orderBy(defaultSortField, "ASC");
-    } else
+    } else {
       // Default sort and order.
       paginatedProgramQuery.orderBy(getProgramStatusSortExpression("programs"));
+    }
 
     // Total count and summary.
     return await Promise.all([

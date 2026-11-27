@@ -59,6 +59,7 @@
             :renewal-status="item.renewalStatus"
             :is-active="item.isActive"
             :program-year-id="selectedProgramYearId"
+            :allow-renewal="allowRenewal"
           />
         </template>
         <template #[`item.programId`]="{ item }">
@@ -70,7 +71,7 @@
               >View</v-btn
             >
             <v-btn
-              v-if="allowProgramChanges && item.isActive"
+              v-if="allowEdit && allowProgramChanges && item.isActive"
               color="primary"
               variant="outlined"
               :disabled="!canModifyPrograms"
@@ -118,9 +119,29 @@ interface ManageProgramsTableProps {
    * Program year to be selected by default, when provided.
    */
   programYearId?: number;
+  /**
+   * Route to the page where the program is viewed.
+   * Used as a link target to allow the page to be opened in a new tab.
+   * @param programId program to be viewed.
+   * @returns view program route location.
+   */
+  getViewProgramRoute: (programId: number) => RouteLocationRaw;
+  /**
+   * Indicates if the renew action can be displayed. When not allowed, only the
+   * renewal status is displayed, as for users not allowed to modify programs.
+   */
+  allowRenewal?: boolean;
+  /**
+   * Indicates if the edit action can be displayed.
+   */
+  allowEdit?: boolean;
 }
 
-const props = defineProps<ManageProgramsTableProps>();
+const props = withDefaults(defineProps<ManageProgramsTableProps>(), {
+  programYearId: undefined,
+  allowRenewal: false,
+  allowEdit: false,
+});
 
 const emit = defineEmits<{
   // Program year or status filters changed by the user.
@@ -279,17 +300,6 @@ const searchProgramTable = async () => {
     sortByOptions?.order,
   );
 };
-
-/**
- * Route to the view program page.
- * Used as a link target to allow the page to be opened in a new tab.
- * @param programId program to be viewed.
- * @returns view program route location.
- */
-const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
-  name: InstitutionRoutesConst.VIEW_PROGRAM,
-  params: { programId },
-});
 
 /**
  * Route to the edit program page.

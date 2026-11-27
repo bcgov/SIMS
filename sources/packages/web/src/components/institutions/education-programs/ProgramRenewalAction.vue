@@ -35,18 +35,27 @@ interface ProgramRenewalActionProps {
    * navigate back keeping the same program year selected.
    */
   programYearId: number;
+  /**
+   * Indicates if the renew action can be displayed. When not allowed, only the
+   * renewal status is displayed, as for users not allowed to modify programs.
+   */
+  allowRenewal?: boolean;
 }
 
-const props = defineProps<ProgramRenewalActionProps>();
+const props = withDefaults(defineProps<ProgramRenewalActionProps>(), {
+  allowRenewal: true,
+});
 const { canModifyPrograms } = useInstitutionAuth();
 
 /**
- * Indicates if the renew action is displayed, which requires the program
- * to be available for renewal and the user to be allowed to modify programs.
+ * Indicates if the renew action is displayed, which requires the renewal
+ * to be allowed, the program to be available for renewal, and the user to
+ * be allowed to modify programs.
  * Otherwise, only the renewal status is displayed.
  */
 const canRenew = computed(
   () =>
+    props.allowRenewal &&
     props.renewalStatus === ProgramRenewalStatus.Available &&
     canModifyPrograms.value,
 );

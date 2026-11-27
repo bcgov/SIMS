@@ -255,7 +255,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
         props: {
           default: (route) => ({
-            locationId: parseInt(route.params.locationId as string),
+            locationId: Number.parseInt(route.params.locationId as string),
+            programYearId: route.params.programYearId
+              ? Number.parseInt(route.params.programYearId as string)
+              : undefined,
           }),
         },
         meta: {

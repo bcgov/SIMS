@@ -235,20 +235,6 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   renewalStatus: ProgramRenewalStatus;
 }
 
-export class EducationProgramsSummaryLocationAPIOutDTO {
-  programId: number;
-  programName: string;
-  cipCode: string;
-  sabcCode?: string;
-  credentialType: string;
-  totalOfferings: number;
-  credentialTypeToDisplay: string;
-  locationName: string;
-  locationId: number;
-  programStatus: ProgramStatus;
-  isActive: boolean;
-}
-
 export class ProgramEvaluationDataAPIInDTO {
   @IsOptional()
   @MaxLength(CREDENTIAL_TYPE_MAX_LENGTH)

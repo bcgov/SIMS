@@ -34,24 +34,6 @@ export class EducationProgramService {
   }
 
   /**
-   * Get programs for a particular location with pagination.
-   * @param locationId id of the location.
-   * @param paginationOptions pagination options.
-   * @returns paginated programs summary.
-   */
-  async getProgramsSummaryByLocationId(
-    locationId: number,
-    paginationOptions: PaginationOptions,
-  ): Promise<PaginatedResults<EducationProgramsSummary>> {
-    const programs =
-      await ApiClient.EducationProgram.getProgramsSummaryByLocationId(
-        locationId,
-        paginationOptions,
-      );
-    return this.formatProgramsSummary(programs);
-  }
-
-  /**
    * Get the programs summary of an institution with pagination.
    * @param institutionId id of the institution.
    * @param paginationOptions pagination options.

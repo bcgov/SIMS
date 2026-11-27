@@ -71,10 +71,6 @@ export const sortProgramsColumnMap = (fieldName: string): string => {
   const programSortOptions = {
     submittedDate: "programs.createdAt",
     programName: "programs.name",
-    credentialType: "programs.credentialType",
-    cipCode: "programs.cipCode",
-    sabcCode: "programs.sabcCode",
-    totalOfferings: `"totalOfferings"`,
     locationName: "location.name",
   };
   return programSortOptions[fieldName] ?? null;
