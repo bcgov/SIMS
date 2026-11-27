@@ -43,7 +43,7 @@ interface ProgramRenewalActionProps {
 }
 
 const props = withDefaults(defineProps<ProgramRenewalActionProps>(), {
-  allowRenewal: true,
+  allowRenewal: false,
 });
 const { canModifyPrograms } = useInstitutionAuth();
 
