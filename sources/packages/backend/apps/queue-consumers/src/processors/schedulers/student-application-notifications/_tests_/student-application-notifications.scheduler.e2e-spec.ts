@@ -67,7 +67,7 @@ describe(
     let processor: StudentApplicationNotificationsScheduler;
     let db: E2EDataSources;
     let systemUsersService: SystemUsersService;
-    let susRestriction: Restriction;
+    let susRestriction, lscRestriction: Restriction;
     let mostRecentProgramConfiguration: EducationProgramConfiguration;
     const MINISTRY_EMAIL_ADDRESS = "dummy@some.domain";
 
@@ -92,6 +92,12 @@ describe(
         select: { id: true },
         where: {
           restrictionCode: RestrictionCode.SUS,
+        },
+      });
+      lscRestriction = await db.restriction.findOne({
+        select: { id: true },
+        where: {
+          restrictionCode: RestrictionCode.LSC,
         },
       });
     });
@@ -1395,7 +1401,7 @@ describe(
         );
         expect(notification).toBeDefined();
         const student = application.student;
-        expect(notification).toEqual({
+        expect(notification).toMatchObject({
           id: expect.any(Number),
           messagePayload: {
             email_address: MINISTRY_EMAIL_ADDRESS,
@@ -1409,6 +1415,7 @@ describe(
               studentEmail: student.user.email,
               applicationNumber: application.applicationNumber,
               institutionOperatingName: institution.operatingName,
+              locationName: location.name,
             },
           },
           templateId: "b9b0023d-68cb-4623-81d3-7064682d5d5e",
@@ -1423,6 +1430,7 @@ describe(
               studentEmail: student.user.email,
               applicationNumber: application.applicationNumber,
               institutionOperatingName: institution.operatingName,
+              locationName: location.name,
             },
           },
           metadata: {
@@ -1479,7 +1487,7 @@ describe(
           // Assert
           expect(
             mockedJob.containLogMessages([
-              "No applications blocked by the institution restriction without an existing notification were found.",
+              "No applications blocked by institution restrictions without an existing notification were found.",
             ]),
           ).toBe(true);
           const isNewNotificationCreated = await notificationExists(
@@ -1524,7 +1532,7 @@ describe(
           // Assert
           expect(
             mockedJob.containLogMessages([
-              "No applications blocked by the institution restriction without an existing notification were found.",
+              "No applications blocked by institution restrictions without an existing notification were found.",
             ]),
           ).toBe(true);
           const isNewNotificationCreated = await notificationExists(
@@ -1545,15 +1553,6 @@ describe(
           const location = offering.institutionLocation;
           const program = offering.educationProgram;
           const institution = location.institution;
-
-          // Get the LSC restriction.
-          const lscRestriction = await db.restriction.findOne({
-            select: { id: true },
-            where: {
-              restrictionCode: RestrictionCode.LSC,
-            },
-          });
-          expect(lscRestriction).toBeDefined();
 
           // Add both SUS and LSC institution restrictions for the application location and program.
           await saveFakeInstitutionRestriction(db, {
@@ -1631,7 +1630,158 @@ describe(
             id: expect.any(Number),
             messagePayload: {
               email_address: MINISTRY_EMAIL_ADDRESS,
-              template_id: expect.any(String),
+              template_id: "7bfb8b35-fdf9-4b11-862a-4fc55397bc8c",
+              personalisation: {
+                dateTime: getPCTDateTimeWithTimezone(now),
+                lastName: student.user.lastName,
+                birthDate: getDateOnlyFormat(student.birthDate),
+                givenNames: student.user.firstName,
+                programName: program.name,
+                studentEmail: student.user.email,
+                applicationNumber: application.applicationNumber,
+                institutionOperatingName: institution.operatingName,
+                locationName: location.name,
+              },
+            },
+            templateId: "b9b0023d-68cb-4623-81d3-7064682d5d5e",
+            recipients: [MINISTRY_EMAIL_ADDRESS],
+            messageContent: {
+              params: {
+                dateTime: getPCTDateTimeWithTimezone(now),
+                lastName: student.user.lastName,
+                birthDate: getDateOnlyFormat(student.birthDate),
+                givenNames: student.user.firstName,
+                programName: program.name,
+                studentEmail: student.user.email,
+                applicationNumber: application.applicationNumber,
+                institutionOperatingName: institution.operatingName,
+                locationName: location.name,
+              },
+            },
+            metadata: {
+              assessmentId: application.currentAssessment.id,
+              restrictionCode: RestrictionCode.LSC,
+            },
+          });
+        },
+      );
+
+      it(
+        `Should send notifications for both restrictions when both ${RestrictionCode.SUS} and ${RestrictionCode.LSC} restrictions are active` +
+          ` and no notification has already been sent out for either of the restrictions.`,
+        async () => {
+          // Arrange
+          // Create an application pending assessment confirmation.
+          const application = await createApplicationPendingAcceptAssessment();
+          const offering = application.currentAssessment.offering;
+          const location = offering.institutionLocation;
+          const program = offering.educationProgram;
+          const institution = location.institution;
+
+          // Add both SUS and LSC institution restrictions for the application location and program.
+          await saveFakeInstitutionRestriction(db, {
+            restriction: susRestriction,
+            institution,
+            program,
+            location,
+          });
+          await saveFakeInstitutionRestriction(db, {
+            restriction: lscRestriction,
+            institution,
+            location,
+          });
+
+          // No existing notifications - both SUS and LSC notifications should be created.
+
+          // Queued job.
+          const mockedJob = mockBullMQJob<void>();
+          const now = new Date();
+          MockDate.set(now);
+
+          // Act
+          await processor.process(mockedJob.job);
+
+          // Assert
+          expect(
+            mockedJob.containLogMessages([
+              `Institution restriction blocking application notifications created for the assessments: ${application.currentAssessment.id}`,
+            ]),
+          ).toBe(true);
+
+          // Find all unsent notifications for this assessment.
+          const allNotifications = await db.notification.find({
+            select: {
+              id: true,
+              messagePayload: true,
+              templateId: true,
+              recipients: true,
+              messageContent: true,
+              metadata: true,
+            },
+            where: {
+              notificationMessage: {
+                id: NotificationMessageType.InstitutionRestrictionBlockingApplication,
+              },
+              dateSent: IsNull(),
+              user: { id: systemUsersService.systemUser.id },
+            },
+          });
+
+          // Should have exactly two unsent notifications - one for SUS and one for LSC.
+          expect(allNotifications).toHaveLength(2);
+          const student = application.student;
+
+          // Find SUS notification.
+          const susNotification = allNotifications.find(
+            (n) => n.metadata.restrictionCode === RestrictionCode.SUS,
+          );
+          expect(susNotification).toEqual({
+            id: expect.any(Number),
+            messagePayload: {
+              email_address: MINISTRY_EMAIL_ADDRESS,
+              template_id: "7bfb8b35-fdf9-4b11-862a-4fc55397bc8c",
+              personalisation: {
+                dateTime: getPCTDateTimeWithTimezone(now),
+                lastName: student.user.lastName,
+                birthDate: getDateOnlyFormat(student.birthDate),
+                givenNames: student.user.firstName,
+                programName: program.name,
+                studentEmail: student.user.email,
+                applicationNumber: application.applicationNumber,
+                institutionOperatingName: institution.operatingName,
+                locationName: location.name,
+              },
+            },
+            templateId: "b9b0023d-68cb-4623-81d3-7064682d5d5e",
+            recipients: [MINISTRY_EMAIL_ADDRESS],
+            messageContent: {
+              params: {
+                dateTime: getPCTDateTimeWithTimezone(now),
+                lastName: student.user.lastName,
+                birthDate: getDateOnlyFormat(student.birthDate),
+                givenNames: student.user.firstName,
+                programName: program.name,
+                studentEmail: student.user.email,
+                applicationNumber: application.applicationNumber,
+                institutionOperatingName: institution.operatingName,
+                locationName: location.name,
+              },
+            },
+            metadata: {
+              assessmentId: application.currentAssessment.id,
+              restrictionCode: RestrictionCode.SUS,
+            },
+          });
+
+          // Find LSC notification.
+          const lscNotification = allNotifications.find(
+            (n) => n.metadata.restrictionCode === RestrictionCode.LSC,
+          );
+          expect(lscNotification).toEqual({
+            id: expect.any(Number),
+            messagePayload: {
+              email_address: MINISTRY_EMAIL_ADDRESS,
+              template_id: "7bfb8b35-fdf9-4b11-862a-4fc55397bc8c",
               personalisation: {
                 dateTime: getPCTDateTimeWithTimezone(now),
                 lastName: student.user.lastName,
