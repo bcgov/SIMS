@@ -68,6 +68,20 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     );
   };
 
+  /**
+   * Indicates if the user is allowed to create or modify programs, which
+   * requires the user to be an admin, or a non-read-only user in at least
+   * one location, matching the API authorization.
+   */
+  const canModifyPrograms = computed(
+    () =>
+      isAdmin.value ||
+      userAuth.value.some(
+        (auth: InstitutionUserAuthRolesAndLocation) =>
+          auth.userType === InstitutionUserTypes.user,
+      ),
+  );
+
   return {
     isAdmin,
     isAuthenticated,
@@ -81,5 +95,6 @@ export function useInstitutionAuth(rootStore?: Store<any>) {
     userType,
     isBCPublic,
     isReadOnlyUser,
+    canModifyPrograms,
   };
 }

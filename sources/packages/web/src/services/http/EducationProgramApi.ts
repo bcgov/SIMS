@@ -70,7 +70,7 @@ export class EducationProgramApi extends HttpBaseClient {
   async getEducationProgramConfigurationForCreate(
     programYearId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
+    return this.getCall(
       this.addClientRoot(
         `education-program/program-year/${programYearId}/create`,
       ),
@@ -111,8 +111,24 @@ export class EducationProgramApi extends HttpBaseClient {
   async getEducationProgramConfigurationForRenew(
     programId: number,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
-    return this.getCall<EducationProgramConfigurationAPIOutDTO>(
+    return this.getCall(
       this.addClientRoot(`education-program/${programId}/renew`),
+    );
+  }
+
+  /**
+   * Get the program configuration for update, including the program data.
+   * - When the program has offerings, the configuration the program was saved with is used.
+   * - When the program has no offerings, the active configuration for the program year is used.
+   * Paired with the update endpoint ({@link updateEducationProgram}).
+   * @param programId the ID of the education program to be updated.
+   * @returns the program configuration for update.
+   */
+  async getEducationProgramConfigurationForUpdate(
+    programId: number,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    return this.getCall(
+      this.addClientRoot(`education-program/${programId}/update`),
     );
   }
 
@@ -157,6 +173,8 @@ export class EducationProgramApi extends HttpBaseClient {
 
   /**
    * Updates an existing education program.
+   * Paired with the endpoint that provides the update configuration
+   * ({@link getEducationProgramConfigurationForUpdate}).
    * @param programId program to be updated.
    * @param payload information to be updated.
    */

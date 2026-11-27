@@ -19,7 +19,7 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { useFeatureToggles, useSnackBar } from "@/composables";
+import { useSnackBar } from "@/composables";
 import { computed, ref, watch } from "vue";
 import type { BackTarget } from "@/types";
 import { ApiProcessError } from "@/types";
@@ -29,38 +29,34 @@ import { EducationProgramConfigurationAPIOutDTO } from "@/services/http/dto";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface CreateProgramProps {
-  programYearId?: number;
+  /**
+   * Program year the program is being created for.
+   */
+  programYearId: number;
   backTarget: BackTarget;
 }
 
 const snackBar = useSnackBar();
 const props = defineProps<CreateProgramProps>();
 const router = useRouter();
-const { isManageProgramsEnabled } = useFeatureToggles();
 const processing = ref(false);
 const loading = ref(true);
 const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
-// Program year used to load the program configuration, either the one
-// provided or the active program year used as a fallback.
-const resolvedProgramYearId = ref<number>();
-const formTitle = computed(() => {
-  if (!isManageProgramsEnabled.value) {
-    return "Program";
-  }
-  return programConfiguration.value
+const formTitle = computed(() =>
+  programConfiguration.value
     ? `Program Creation for ${programConfiguration.value.programYearName}`
-    : "Program";
-});
+    : "Program",
+);
 
 const submit = async (programData: Record<string, unknown>) => {
-  if (!programConfiguration.value || !resolvedProgramYearId.value) {
+  if (!programConfiguration.value) {
     snackBar.error("Unable to create program: missing program configuration.");
     return;
   }
   processing.value = true;
   try {
     await EducationProgramService.shared.createEducationProgram(
-      resolvedProgramYearId.value,
+      props.programYearId,
       {
         programData,
         programConfigurationId: programConfiguration.value.configurationId,
@@ -84,38 +80,19 @@ const goBack = (): void => {
 };
 
 /**
- * Loads the program configuration for the given program year,
- * falling back to the currently active program year when none is provided.
+ * Loads the program configuration for the given program year.
  * @param programYearId program year to load the configuration for.
  */
 const loadProgramConfiguration = async (
-  programYearId?: number,
+  programYearId: number,
 ): Promise<void> => {
   loading.value = true;
   programConfiguration.value = undefined;
-  resolvedProgramYearId.value = undefined;
   try {
-    if (!programYearId) {
-      // Temporarily fall back to the active program year if none is provided to
-      // allow the current program creation path to continue to work.
-      const currentProgramYears =
-        await EducationProgramService.shared.getProgramYearsList();
-      const activeProgramYear = currentProgramYears.find(
-        (year) => year.hasActiveProgramConfiguration,
-      );
-      if (!activeProgramYear) {
-        snackBar.error(
-          "Programs cannot be created at this time because no program year is currently active.",
-        );
-        return;
-      }
-      programYearId = activeProgramYear.id;
-    }
     programConfiguration.value =
       await EducationProgramService.shared.getEducationProgramConfigurationForCreate(
         programYearId,
       );
-    resolvedProgramYearId.value = programYearId;
   } catch {
     snackBar.error("Unexpected error while loading program data.");
   } finally {

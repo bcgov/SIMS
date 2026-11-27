@@ -61,12 +61,22 @@
           />
         </template>
         <template #[`item.programId`]="{ item }">
-          <v-btn
-            color="primary"
-            variant="outlined"
-            :to="getViewProgramRoute(item.id)"
-            >View</v-btn
-          >
+          <div class="d-flex flex-nowrap gc-2">
+            <v-btn
+              color="primary"
+              variant="outlined"
+              :to="getViewProgramRoute(item.id)"
+              >View</v-btn
+            >
+            <v-btn
+              v-if="allowProgramChanges && item.isActive"
+              color="primary"
+              variant="outlined"
+              :disabled="!canModifyPrograms"
+              :to="getEditProgramRoute(item.id)"
+              >Edit</v-btn
+            >
+          </div>
         </template>
       </v-data-table-server>
     </toggle-content>
@@ -98,6 +108,7 @@ import type {
 import {
   useEducationProgramYears,
   useFormatters,
+  useInstitutionAuth,
   useSnackBar,
 } from "@/composables";
 
@@ -124,6 +135,7 @@ const recordsCount = defineModel<number | undefined>("recordsCount");
 const { emptyStringFiller } = useFormatters();
 const snackBar = useSnackBar();
 const { loadEducationProgramYears } = useEducationProgramYears();
+const { canModifyPrograms } = useInstitutionAuth();
 const { mobile: isMobile } = useDisplay();
 const programAndCount = ref(
   {} as
@@ -158,6 +170,13 @@ const selectedProgramYearId = ref<number | null | undefined>(
  * Program year selected in the filters component.
  */
 const selectedProgramYear = ref<EducationProgramYearAPIOutDTO>();
+/**
+ * Programs listed are all from the selected program year, which must have an active
+ * program configuration for its programs to be edited, matching the API validation.
+ */
+const allowProgramChanges = computed(
+  () => !!selectedProgramYear.value?.hasActiveProgramConfiguration,
+);
 
 // Keeps the records count in sync with the programs loaded.
 watch(
@@ -269,10 +288,17 @@ const searchProgramTable = async () => {
 const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
   name: InstitutionRoutesConst.VIEW_PROGRAM,
   params: { programId },
-  // Allows the view page to navigate back keeping the current program year selected.
-  query: {
-    programYearId: selectedProgramYearId.value,
-  },
+});
+
+/**
+ * Route to the edit program page.
+ * Used as a link target to allow the page to be opened in a new tab.
+ * @param programId program to be edited.
+ * @returns edit program route location.
+ */
+const getEditProgramRoute = (programId: number): RouteLocationRaw => ({
+  name: InstitutionRoutesConst.EDIT_PROGRAM,
+  params: { programId },
 });
 
 /**

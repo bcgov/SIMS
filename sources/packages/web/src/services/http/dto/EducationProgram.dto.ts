@@ -43,7 +43,16 @@ export interface EducationProgramDataAPIOutDTO {
  */
 export interface EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  /**
+   * Program year of the configuration.
+   */
+  programYearId: number;
   programYearName: string;
+  /**
+   * Indicates if the program year of the configuration has an active configuration,
+   * which is required for programs from the program year to be edited.
+   */
+  hasActiveProgramYearConfiguration: boolean;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -140,13 +149,16 @@ export enum ProgramRenewalStatus {
 /**
  * Education program summary details for management purposes.
  */
-export class EducationProgramManagerDetailsAPIOutDTO {
+export interface EducationProgramManagerDetailsAPIOutDTO {
   id: number;
   name: string;
   credentialTypeToDisplay: string;
   cipCode: string;
   sabcCode?: string;
   programStatus: ProgramStatus;
+  /**
+   * Indicates if the education program is currently active.
+   */
   isActive: boolean;
   /**
    * Renewal status of the education program into the next program year.
@@ -173,14 +185,28 @@ export interface CreateEducationProgramAPIInDTO {
 }
 
 /**
- * Dynamic program data used to update an education program.
+ * Dynamic program data used to update an education program,
+ * and the configuration it was filled in against.
  */
 export interface UpdateEducationProgramAPIInDTO {
   /**
-   * Dynamic program data, whose shape is defined by the program
-   * configuration schemas.
+   * Program configuration ID against which the program is being updated.
+   * If the program can be fully edited, this should match the active program
+   * configuration for the program year.
+   * If the program cannot be fully edited, this is the configuration
+   * the program was saved with.
    */
-  programData: Record<string, unknown>;
+  programConfigurationId: number;
+  /**
+   * Indicates if the full update was restricted when the program data was retrieved
+   * for the update. The update is rejected if the full update became restricted since then.
+   */
+  isFullUpdateRestricted: boolean;
+  /**
+   * Dynamic program data, validated later against the configuration's
+   * validation schema (AJV). Only the shape and size are checked here.
+   */
+  programData: { [key: string]: unknown };
 }
 
 export interface StudentEducationProgramAPIOutDTO {

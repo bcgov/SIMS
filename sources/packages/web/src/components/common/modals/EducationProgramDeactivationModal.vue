@@ -1,16 +1,16 @@
 <template>
   <v-form ref="deactivateProgramForm">
     <modal-dialog-base
-      :showDialog="showDialog"
+      :show-dialog="showDialog"
       title="Confirm deactivation"
       ref="confirmDeactivationModal"
       ><template #content
-        ><span class="font-bold"
-          >Please confirm you no longer require this program?</span
-        >
-        <p class="mt-5">
+        ><p>
+          <strong>Please confirm you no longer require this program.</strong>
+        </p>
+        <p>
           Confirming deactivation means that this will no longer be visible to
-          students when starting an application. It wil not impact any students
+          students when starting an application. It will not impact any students
           with active applications for offerings under this program. This action
           cannot be undone.
         </p>
@@ -27,10 +27,10 @@
       </template>
       <template #footer>
         <footer-buttons
-          primaryLabel="Confirm deactivation"
-          primaryButtonColor="danger"
-          @primaryClick="submit"
-          @secondaryClick="cancel"
+          primary-label="Confirm deactivation"
+          primary-button-color="danger"
+          @primary-click="submit"
+          @secondary-click="cancel"
           :processing="loading"
         />
       </template>

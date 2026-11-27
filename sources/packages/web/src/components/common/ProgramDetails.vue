@@ -10,7 +10,7 @@
           ></status-chip-program>
         </template>
         <template #actions>
-          <v-menu class="label-bold-menu">
+          <v-menu v-if="showProgramActions" class="label-bold-menu">
             <template #activator="{ props }">
               <v-btn
                 color="primary"
@@ -27,7 +27,7 @@
               bg-color="default"
               color="primary"
             >
-              <v-list-item @click="goToProgram" :title="programActionLabel" />
+              <v-list-item @click="goToProgram" title="View Program" />
               <v-divider-inset-opaque />
               <check-permission-role
                 :role="Role.InstitutionDeactivateEducationProgram"
@@ -45,7 +45,7 @@
           </v-menu>
           <v-btn
             v-if="allowEdit"
-            class="mr-4 float-right"
+            class="float-right"
             @click="goToAddNewOffering()"
             color="primary"
             prepend-icon="fa:fa fa-plus-circle"
@@ -125,13 +125,13 @@
 
   <education-program-deactivation-modal
     ref="deactivateEducationProgramModal"
-    :notes-required="notesRequired"
+    :notes-required="true"
   />
 </template>
 
 <script lang="ts">
 import { useRouter } from "vue-router";
-import { computed, defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType, ref } from "vue";
 import {
   InstitutionRoutesConst,
   AESTRoutesConst,
@@ -174,7 +174,6 @@ export default defineComponent({
     educationProgram: {
       type: Object as PropType<EducationProgramAPIOutDTO>,
       required: true,
-      default: {} as EducationProgramAPIOutDTO,
     },
     allowEdit: {
       type: Boolean,
@@ -182,6 +181,15 @@ export default defineComponent({
       default: false,
     },
     allowDeactivate: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    /**
+     * Shows the program actions (view program and deactivate).
+     * Used only by the Ministry.
+     */
+    showProgramActions: {
       type: Boolean,
       required: false,
       default: false,
@@ -200,30 +208,10 @@ export default defineComponent({
       {} as ModalDialog<DeactivateProgramAPIInDTO | boolean>,
     );
 
-    const programActionLabel = computed(() => {
-      if (!props.allowEdit) {
-        return "View Program";
-      }
-      return "Edit";
-    });
-
-    const notesRequired = computed(
-      () => AuthService.shared.authClientType === ClientIdType.AEST,
-    );
-
     /**
      * Navigates to the program details page.
      */
     const goToProgram = () => {
-      if (AuthService.shared.authClientType === ClientIdType.Institution) {
-        return router.push({
-          name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-          params: {
-            programId: props.programId,
-            locationId: props.locationId,
-          },
-        });
-      }
       return router.push({
         name: AESTRoutesConst.VIEW_PROGRAM,
         params: {
@@ -288,10 +276,8 @@ export default defineComponent({
       goToProgram,
       goToAddNewOffering,
       ProgramIntensity,
-      programActionLabel,
       deactivateEducationProgramModal,
       deactivate,
-      notesRequired,
       Role,
       mapOfferingIntensity,
       OfferingIntensity,

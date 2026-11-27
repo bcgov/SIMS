@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -58,7 +59,16 @@ export class EducationProgramDataAPIOutDTO {
  */
 export class EducationProgramConfigurationAPIOutDTO {
   configurationId: number;
+  /**
+   * Program year of the configuration.
+   */
+  programYearId: number;
   programYearName: string;
+  /**
+   * Indicates if the program year of the configuration has an active configuration,
+   * which is required for programs from the program year to be edited.
+   */
+  hasActiveProgramYearConfiguration: boolean;
   programData: EducationProgramDataAPIOutDTO;
   visualSchema: unknown;
   validationSchema: unknown;
@@ -116,6 +126,21 @@ export class CreateEducationProgramAPIInDTO {
  * and the configuration it was filled in against.
  */
 export class UpdateEducationProgramAPIInDTO {
+  /**
+   * Program configuration ID against which the program is being updated.
+   * If the program can be fully edited, this should match the active program
+   * configuration for the program year.
+   * If the program cannot be fully edited, this is the configuration
+   * the program was saved with.
+   */
+  @IsPositive()
+  programConfigurationId: number;
+  /**
+   * Indicates if the full update was restricted when the program data was retrieved
+   * for the update. The update is rejected if the full update became restricted since then.
+   */
+  @IsBoolean()
+  isFullUpdateRestricted: boolean;
   /**
    * Dynamic program data, validated later against the configuration's
    * validation schema (AJV). Only the shape and size are checked here.
@@ -197,6 +222,9 @@ export class EducationProgramManagerDetailsAPIOutDTO {
   cipCode: string;
   sabcCode?: string;
   programStatus: ProgramStatus;
+  /**
+   * Indicates if the education program is currently active.
+   */
   isActive: boolean;
   /**
    * Renewal status of the education program into the next program year.

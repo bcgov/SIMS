@@ -10,6 +10,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeEducationProgram,
+  ensureEducationProgramConfigurationExists,
 } from "@sims/test-utils";
 import {
   createTestingAppModule,
@@ -37,6 +38,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
    * Configuration of the program year whose programs can be renewed.
    */
   let renewableProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Active configuration of the same program year as the renewable configuration
+   * (the renewable configuration is inactive).
+   */
+  let renewableActiveProgramConfiguration: EducationProgramConfiguration;
   /**
    * Active configuration of the program year immediately after the renewable one.
    */
@@ -66,6 +72,11 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       nextProgramConfiguration,
       notRenewableProgramConfiguration,
     } = await ensureGetProgramsForProgramYearConfigurations(db));
+    renewableActiveProgramConfiguration =
+      await ensureEducationProgramConfigurationExists(
+        db,
+        renewableProgramConfiguration.programYear,
+      );
   });
 
   it("Should return only the institution programs for the program year with their renewal status when the next program year has an active configuration.", async () => {
@@ -77,8 +88,9 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       renewableProgramConfiguration,
       { initialValues: { name: `Alpha ${searchCriteria}` } },
     );
+    // Program associated with the active configuration of the same program year.
     const renewedProgram = await saveEducationProgram(
-      renewableProgramConfiguration,
+      renewableActiveProgramConfiguration,
       { initialValues: { name: `Beta ${searchCriteria}` } },
     );
     // Program from the next program year, renewed from the program above,
@@ -168,8 +180,10 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
         },
       },
     );
+    // Programs associated with the active configuration of the same program year
+    // are expected to be sorted along with the other programs.
     const approvedProgram = await saveEducationProgram(
-      renewableProgramConfiguration,
+      renewableActiveProgramConfiguration,
       {
         initialValues: {
           name: `Charlie ${searchCriteria}`,
@@ -189,7 +203,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       },
     );
     const firstPendingProgram = await saveEducationProgram(
-      renewableProgramConfiguration,
+      renewableActiveProgramConfiguration,
       {
         initialValues: {
           name: `Delta ${searchCriteria}`,
@@ -212,10 +226,7 @@ describe("EducationProgramInstitutionsController(e2e)-getProgramsForProgramYear"
       .expect({
         count: 5,
         results: [
-          getExpectedProgram(
-            firstPendingProgram,
-            ProgramRenewalStatus.Available,
-          ),
+          getExpectedProgram(firstPendingProgram, ProgramRenewalStatus.Available),
           getExpectedProgram(
             secondPendingProgram,
             ProgramRenewalStatus.Available,

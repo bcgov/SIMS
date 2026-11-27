@@ -5,6 +5,7 @@
     :education-program="educationProgram"
     :allow-edit="allowEdit && educationProgram.isActive"
     :allow-deactivate="allowDeactivate && educationProgram.isActive"
+    :show-program-actions="showProgramActions"
     :can-create-offering="canCreateOffering"
     @program-data-updated="$emit('programDataUpdated')"
   />
@@ -39,7 +40,6 @@ export default defineComponent({
     educationProgram: {
       type: Object as PropType<EducationProgramAPIOutDTO>,
       required: true,
-      default: {} as EducationProgramAPIOutDTO,
     },
     institutionId: {
       type: Number,
@@ -55,6 +55,15 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: true,
+    },
+    /**
+     * Shows the program actions (view program and deactivate).
+     * Used only by the Ministry.
+     */
+    showProgramActions: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
     canCreateOffering: {
       type: Boolean,

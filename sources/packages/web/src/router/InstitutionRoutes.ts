@@ -44,7 +44,7 @@ import WithdrawalUpload from "@/views/institution/WithdrawalUpload.vue";
 import InstitutionSearchStudents from "@/views/institution/student/InstitutionSearchStudents.vue";
 import ManagePrograms from "@/views/institution/ManagePrograms.vue";
 import RenewProgram from "@/views/institution/locations/programs/RenewProgram.vue";
-import ViewProgram from "@/views/aest/institution/ViewProgram.vue";
+import ViewProgram from "@/views/institution/locations/programs/ViewProgram.vue";
 import InstitutionStudentDetails from "@/views/institution/student/InstitutionStudentDetails.vue";
 import InstitutionStudentProfile from "@/views/institution/student/InstitutionStudentProfile.vue";
 import InstitutionStudentApplications from "@/views/institution/student/InstitutionStudentApplications.vue";
@@ -225,18 +225,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         component: ViewProgram,
         props: (route) => ({
           programId: Number.parseInt(route.params.programId as string),
-          // Keep the program year selected when navigating back to the manage programs.
-          backTarget: {
-            name: "Manage Programs",
-            to: {
-              name: InstitutionRoutesConst.MANAGE_PROGRAMS,
-              params: route.query.programYearId
-                ? {
-                    programYearId: route.query.programYearId as string,
-                  }
-                : undefined,
-            },
-          },
         }),
         meta: {
           clientType: ClientIdType.Institution,
@@ -245,6 +233,22 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
             InstitutionUserTypes.admin,
             InstitutionUserTypes.user,
             InstitutionUserTypes.readOnlyUser,
+          ],
+        },
+      },
+      {
+        path: AppRoutes.InstitutionManageProgramsEdit,
+        name: InstitutionRoutesConst.EDIT_PROGRAM,
+        component: EditProgram,
+        props: (route) => ({
+          programId: Number.parseInt(route.params.programId as string),
+        }),
+        meta: {
+          clientType: ClientIdType.Institution,
+          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
           ],
         },
       },
@@ -455,6 +459,47 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: AppRoutes.LocationProgramInfoRequestCreateProgram,
+        name: InstitutionRoutesConst.CREATE_PROGRAM_FROM_PIR,
+        component: CreateProgram,
+        props: (route) => {
+          const programYearId = route.params.programYearId as string;
+          const locationId = route.query.locationId as string | undefined;
+          const applicationId = route.query.applicationId as
+            | string
+            | undefined;
+          return {
+            programYearId: Number.parseInt(programYearId),
+            // Navigate back to the program info request the program was created from,
+            // when provided; otherwise, to the manage programs page for the program year.
+            backTarget:
+              locationId && applicationId
+                ? {
+                    name: "Program info request",
+                    to: {
+                      name: InstitutionRoutesConst.PROGRAM_INFO_REQUEST_EDIT,
+                      params: { locationId, applicationId },
+                    },
+                  }
+                : {
+                    name: "Manage Programs",
+                    to: {
+                      name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+                      params: { programYearId },
+                    },
+                  },
+          };
+        },
+        meta: {
+          clientType: ClientIdType.Institution,
+          featureToggle: MANAGE_PROGRAMS_FEATURE_TOGGLE,
+          institutionUserTypes: [
+            InstitutionUserTypes.admin,
+            InstitutionUserTypes.user,
+          ],
+        },
+      },
+      {
         path: AppRoutes.LocationCOEDetails,
         name: InstitutionRoutesConst.COE_EDIT,
         component: LocationCOERequest,
@@ -603,56 +648,6 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         props: (route) => ({
           locationId: Number.parseInt(route.params.locationId as string),
           programId: Number.parseInt(route.params.programId as string),
-        }),
-        meta: {
-          clientType: ClientIdType.Institution,
-          institutionUserTypes: [
-            InstitutionUserTypes.admin,
-            InstitutionUserTypes.user,
-            InstitutionUserTypes.readOnlyUser,
-          ],
-        },
-      },
-      {
-        path: AppRoutes.LocationProgramsCreate,
-        name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-        component: CreateProgram,
-        props: (route) => ({
-          backTarget: {
-            name: "Programs",
-            to: {
-              name: InstitutionRoutesConst.LOCATION_PROGRAMS,
-              params: {
-                locationId: Number.parseInt(route.params.locationId as string),
-              },
-            },
-          },
-        }),
-        meta: {
-          clientType: ClientIdType.Institution,
-          institutionUserTypes: [
-            InstitutionUserTypes.admin,
-            InstitutionUserTypes.user,
-          ],
-        },
-      },
-      {
-        path: AppRoutes.LocationProgramsEdit,
-        name: InstitutionRoutesConst.EDIT_LOCATION_PROGRAMS,
-        component: EditProgram,
-        props: (route) => ({
-          programId: Number.parseInt(route.params.programId as string),
-          locationId: Number.parseInt(route.params.locationId as string),
-          backTarget: {
-            name: "View Program",
-            to: {
-              name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
-              params: {
-                programId: Number.parseInt(route.params.programId as string),
-                locationId: Number.parseInt(route.params.locationId as string),
-              },
-            },
-          },
         }),
         meta: {
           clientType: ClientIdType.Institution,

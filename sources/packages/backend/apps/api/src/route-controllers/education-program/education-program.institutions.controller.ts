@@ -55,10 +55,12 @@ import { credentialTypeToDisplay } from "../../utilities";
 import { CustomNamedError } from "@sims/utilities";
 import { EducationProgramEvaluationService } from "../../services/education-program/education-program-evaluator";
 import {
+  EducationProgramConfigurationRetrievalService,
   EducationProgramData,
   EducationProgramManagerService,
   EducationProgramSaveService,
   ProgramYearService,
+  RequiredProgramConfiguration,
 } from "../../services";
 import {
   EDUCATION_PROGRAM_INVALID_OPERATION,
@@ -67,6 +69,7 @@ import {
   EDUCATION_PROGRAM_DATA_INVALID,
   EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND,
   EDUCATION_PROGRAM_CONFIGURATION_OUTDATED,
+  EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED,
 } from "../../constants";
 
 @AllowAuthorizedParty(AuthorizedParties.institution)
@@ -79,6 +82,7 @@ export class EducationProgramInstitutionsController extends BaseController {
     private readonly educationProgramControllerService: EducationProgramControllerService,
     private readonly educationProgramEvaluationService: EducationProgramEvaluationService,
     private readonly educationProgramManagerService: EducationProgramManagerService,
+    private readonly educationProgramConfigurationRetrievalService: EducationProgramConfigurationRetrievalService,
     private readonly programYearService: ProgramYearService,
   ) {
     super();
@@ -139,15 +143,25 @@ export class EducationProgramInstitutionsController extends BaseController {
     description:
       "The provided program year does not have an active program configuration.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Get("program-year/:programYearId/create")
   async getEducationProgramConfigurationForCreate(
     @Param("programYearId", ParseIntPipe) programYearId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     try {
       return await this.educationProgramControllerService.getEducationProgramConfiguration(
         userToken.authorizations.institutionId,
-        { programYearId },
+        {
+          requiredConfiguration:
+            RequiredProgramConfiguration.ProgramYearActiveConfiguration,
+          programYearId,
+        },
       );
     } catch (error: unknown) {
       if (
@@ -306,7 +320,10 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Updates the main information for an existing education program.
+   * Updates an education program. The updates can be partial or full depending
+   * on the details provided in the payload and the program configuration.
+   * Paired with the endpoint that provides the update configuration
+   * ({@link getEducationProgramConfigurationForUpdate}).
    * @param programId program to be updated.
    * @param payload information to be updated.
    */
@@ -316,6 +333,8 @@ export class EducationProgramInstitutionsController extends BaseController {
   @ApiUnprocessableEntityResponse({
     description:
       "Education program configuration not found or not active or " +
+      "education program configuration outdated (not the expected one for the update) or " +
+      "education program full update became restricted since the program data was retrieved or " +
       "education program cannot be edited when inactive or " +
       "duplicate SABC code.",
   })
@@ -338,6 +357,8 @@ export class EducationProgramInstitutionsController extends BaseController {
       await this.educationProgramSaveService.updateProgram(
         programId,
         payload.programData as EducationProgramData,
+        payload.programConfigurationId,
+        payload.isFullUpdateRestricted,
         userToken.authorizations.institutionId,
         userToken.userId,
       );
@@ -351,6 +372,8 @@ export class EducationProgramInstitutionsController extends BaseController {
           case EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND:
           case EDUCATION_PROGRAM_INVALID_OPERATION:
             throw new UnprocessableEntityException(error.message);
+          case EDUCATION_PROGRAM_CONFIGURATION_OUTDATED:
+          case EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED:
           case DUPLICATE_SABC_CODE:
             throw new UnprocessableEntityException(
               new ApiProcessError(error.message, error.name),
@@ -437,9 +460,9 @@ export class EducationProgramInstitutionsController extends BaseController {
     if (!programYearExists) {
       throw new NotFoundException("Program year not found.");
     }
-    const [nextProgramConfigurationForRenewal, paginatedPrograms] =
+    const [hasNextProgramConfigurationForRenewal, paginatedPrograms] =
       await Promise.all([
-        this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
+        this.educationProgramConfigurationRetrievalService.hasNextProgramConfigurationForRenewal(
           programYearId,
         ),
         this.educationProgramManagerService.getEducationProgramsManagerDetails(
@@ -462,7 +485,7 @@ export class EducationProgramInstitutionsController extends BaseController {
         isActive: program.isActive,
         renewalStatus: program.renewedProgram
           ? ProgramRenewalStatus.Renewed
-          : nextProgramConfigurationForRenewal
+          : hasNextProgramConfigurationForRenewal
             ? ProgramRenewalStatus.Available
             : ProgramRenewalStatus.NotAvailable,
       })),
@@ -504,11 +527,17 @@ export class EducationProgramInstitutionsController extends BaseController {
       "The next program configuration for renewal could not be found or " +
       "the program has already been renewed.",
   })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
   @Get(":programId/renew")
   async getEducationProgramConfigurationForRenew(
     @Param("programId", ParseIntPipe) programId: number,
     @UserToken() userToken: IInstitutionUserToken,
   ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
     const program =
       await this.educationProgramService.getEducationProgramDetails(
         programId,
@@ -522,20 +551,91 @@ export class EducationProgramInstitutionsController extends BaseController {
         "The program has already been renewed.",
       );
     }
-    const nextProgramConfigurationForRenewal =
-      await this.educationProgramManagerService.getNextProgramConfigurationForRenewal(
-        program.programConfiguration.programYear.id,
+    try {
+      return await this.educationProgramControllerService.getEducationProgramConfiguration(
+        userToken.authorizations.institutionId,
+        {
+          requiredConfiguration:
+            RequiredProgramConfiguration.NextProgramYearActiveConfiguration,
+          currentProgramYearId: program.programConfiguration.programYear.id,
+        },
+        { overrideProgramData: program.programData },
       );
-    if (!nextProgramConfigurationForRenewal) {
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND
+      ) {
+        throw new UnprocessableEntityException(
+          "The next program configuration for renewal could not be found.",
+        );
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Get the program configuration for update, including the program data.
+   * - When the program has offerings, the configuration the program was saved with is used.
+   * - When the program has no offerings, the active configuration for the program year is used.
+   * Paired with the update endpoint ({@link updateEducationProgram}).
+   * @param programId the ID of the education program to be updated.
+   * @param userToken the token of the user making the request.
+   * @returns the program configuration for update.
+   */
+  @ApiNotFoundResponse({
+    description: "Not able to find the requested program.",
+  })
+  @ApiUnprocessableEntityResponse({
+    description:
+      "Education program cannot be edited when inactive or " +
+      "the program year does not have an active program configuration.",
+  })
+  @ApiForbiddenResponse({
+    description: "You are not authorized to create or modify a program.",
+  })
+  @Get(":programId/update")
+  async getEducationProgramConfigurationForUpdate(
+    @Param("programId", ParseIntPipe) programId: number,
+    @UserToken() userToken: IInstitutionUserToken,
+  ): Promise<EducationProgramConfigurationAPIOutDTO> {
+    this.educationProgramControllerService.checkInstitutionAuthorization(
+      userToken.authorizations,
+    );
+    const program =
+      await this.educationProgramService.getEducationProgramDetails(
+        programId,
+        userToken.authorizations.institutionId,
+      );
+    if (!program) {
+      throw new NotFoundException("Not able to find the requested program.");
+    }
+    if (!program.isActive) {
       throw new UnprocessableEntityException(
-        "The next program configuration for renewal could not be found.",
+        "Education program cannot be edited when inactive.",
       );
     }
-    return this.educationProgramControllerService.getEducationProgramConfiguration(
-      userToken.authorizations.institutionId,
-      { programConfigurationId: nextProgramConfigurationForRenewal.id },
-      { overrideProgramData: program.programData },
-    );
+    try {
+      return await this.educationProgramControllerService.getEducationProgramConfiguration(
+        userToken.authorizations.institutionId,
+        {
+          requiredConfiguration:
+            RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate,
+          programId: program.id,
+        },
+        { overrideProgramData: program.programData },
+      );
+    } catch (error: unknown) {
+      if (
+        error instanceof CustomNamedError &&
+        error.name === EDUCATION_PROGRAM_CONFIGURATION_NOT_FOUND
+      ) {
+        throw new UnprocessableEntityException(
+          "The program year does not have an active program configuration.",
+        );
+      }
+      throw error;
+    }
   }
 
   /**

@@ -57,6 +57,7 @@
       :institution-id="institutionId"
       :allow-edit="false"
       :allow-deactivate="true"
+      :show-program-actions="true"
       @program-data-updated="programDataUpdated"
     />
     <!-- approve program modal -->

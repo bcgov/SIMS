@@ -2,8 +2,8 @@
   <full-page-container>
     <template #header>
       <header-navigator
-        :title="backTarget.name"
-        :route-location="backTarget.to"
+        title="Manage Programs"
+        :route-location="manageProgramsRoute"
         sub-title="Edit Program"
       />
     </template>
@@ -17,9 +17,10 @@
         <template #actions>
           <v-btn
             color="success"
-            @click="createNewProgram"
+            :to="createProgramRoute"
             class="btn-font-color-light"
-            v-if="!readOnly"
+            v-if="createProgramRoute"
+            :disabled="!canModifyPrograms"
           >
             Create program
           </v-btn>
@@ -27,15 +28,14 @@
       </banner>
       <institution-restriction-banner
         :scope="InstitutionRestrictionDisplayScope.Program"
-        :location-id="locationId"
         :program-id="programId"
       />
     </template>
     <program-form
       :title="formTitle"
-      :program-configuration="educationProgram"
+      :program-configuration="programConfiguration"
       :is-loading="loading"
-      :is-read-only="isFormReadOnly"
+      :is-read-only="!canModifyPrograms"
       :is-processing="processing"
       @submit="submit"
       @cancel="goBack"
@@ -43,68 +43,59 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import {
-  useFeatureToggles,
-  useInstitutionAuth,
-  useSnackBar,
-} from "@/composables";
+import { useInstitutionAuth, useSnackBar } from "@/composables";
 import { computed, ref, watch } from "vue";
-import type { BackTarget } from "@/types";
 import {
   ApiProcessError,
   BannerTypes,
   InstitutionRestrictionDisplayScope,
 } from "@/types";
 import { useRouter } from "vue-router";
+import type { RouteLocationRaw } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ProgramForm from "@/components/common/program/ProgramForm.vue";
-import { EducationProgramAPIOutDTO } from "@/services/http/dto";
+import { EducationProgramConfigurationAPIOutDTO } from "@/services/http/dto";
 import InstitutionRestrictionBanner from "@/components/institutions/banners/InstitutionRestrictionBanner.vue";
 import { EducationProgramService } from "@/services/EducationProgramService";
 
 interface EditProgramProps {
-  locationId: number;
   programId: number;
-  backTarget: BackTarget;
 }
 
 const snackBar = useSnackBar();
 const props = defineProps<EditProgramProps>();
 const router = useRouter();
-const { isReadOnlyUser } = useInstitutionAuth();
-const { isManageProgramsEnabled } = useFeatureToggles();
-const readOnly = computed(() => isReadOnlyUser(props.locationId));
+const { canModifyPrograms } = useInstitutionAuth();
 const processing = ref(false);
 const loading = ref(true);
-const educationProgram = ref<EducationProgramAPIOutDTO>();
-const formTitle = computed(() => {
-  if (!isManageProgramsEnabled.value) {
-    return "Program";
-  }
-  return educationProgram.value
-    ? `Program Edit for ${educationProgram.value.programYearName}`
-    : "Program";
-});
+const programConfiguration = ref<EducationProgramConfigurationAPIOutDTO>();
+const formTitle = computed(() =>
+  programConfiguration.value
+    ? `Program Edit for ${programConfiguration.value.programYearName}`
+    : "Program",
+);
 
 const isFullUpdateRestricted = computed(
-  () => !!educationProgram.value?.programData.context.isFullUpdateRestricted,
+  () =>
+    !!programConfiguration.value?.programData.context.isFullUpdateRestricted,
 );
-/**
- * Inactive programs can no longer be edited.
- */
-const isFormReadOnly = computed(
-  () => readOnly.value || !educationProgram.value?.isActive,
-);
-
 const submit = async (programData: Record<string, unknown>) => {
+  if (!programConfiguration.value) {
+    snackBar.error("Program data was not loaded.");
+    return;
+  }
   processing.value = true;
   try {
     await EducationProgramService.shared.updateEducationProgram(
       props.programId,
-      { programData },
+      {
+        programData,
+        programConfigurationId: programConfiguration.value.configurationId,
+        isFullUpdateRestricted: isFullUpdateRestricted.value,
+      },
     );
     snackBar.success("Education Program updated successfully!");
-    goBack();
+    await goBack();
   } catch (error: unknown) {
     if (error instanceof ApiProcessError) {
       snackBar.error(error.message);
@@ -116,26 +107,43 @@ const submit = async (programData: Record<string, unknown>) => {
   }
 };
 
-const goBack = (): void => {
-  router.push(props.backTarget.to);
+/**
+ * Route back to the manage programs page, selecting the program year of the
+ * program once it is loaded.
+ */
+const manageProgramsRoute = computed<RouteLocationRaw>(() => ({
+  name: InstitutionRoutesConst.MANAGE_PROGRAMS,
+  params: programConfiguration.value
+    ? { programYearId: programConfiguration.value.programYearId }
+    : undefined,
+}));
+
+const goBack = async (): Promise<void> => {
+  await router.push(manageProgramsRoute.value);
 };
 
-const createNewProgram = () => {
-  router.push({
-    name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
-    params: {
-      locationId: props.locationId,
-    },
-  });
-};
+/**
+ * Route to create a new program for the program year of the program being edited.
+ */
+const createProgramRoute = computed<RouteLocationRaw | undefined>(() => {
+  if (!programConfiguration.value) {
+    return undefined;
+  }
+  return {
+    name: InstitutionRoutesConst.CREATE_PROGRAM,
+    params: { programYearId: programConfiguration.value.programYearId },
+  };
+});
 
 watch(
   () => props.programId,
   async (programId) => {
     try {
       loading.value = true;
-      educationProgram.value =
-        await EducationProgramService.shared.getEducationProgram(programId);
+      programConfiguration.value =
+        await EducationProgramService.shared.getEducationProgramConfigurationForUpdate(
+          programId,
+        );
     } catch {
       snackBar.error("Unexpected error while loading program data.");
     } finally {

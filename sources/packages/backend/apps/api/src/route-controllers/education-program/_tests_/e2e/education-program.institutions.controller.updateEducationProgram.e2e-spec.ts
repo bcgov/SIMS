@@ -8,6 +8,7 @@ import {
   E2EDataSources,
   createE2EDataSources,
   createFakeEducationProgram,
+  createFakeEducationProgramOffering,
   getMostRecentEducationProgramConfiguration,
 } from "@sims/test-utils";
 import {
@@ -19,7 +20,10 @@ import {
 } from "../../../../testHelpers";
 import request from "supertest";
 import MockDate from "mockdate";
-import { getUpdatePayload } from "./education-program.utils";
+import {
+  ensureUpdateEducationProgramConfigurations,
+  getUpdatePayload,
+} from "./education-program.utils";
 
 describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", () => {
   let app: INestApplication;
@@ -27,6 +31,14 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
   let collegeF: Institution;
   let collegeFUser: User;
   let mostRecentProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Inactive configuration of a program year that also has an active configuration.
+   */
+  let outdatedProgramConfiguration: EducationProgramConfiguration;
+  /**
+   * Active configuration of the same program year as the outdated configuration.
+   */
+  let activeProgramConfiguration: EducationProgramConfiguration;
 
   beforeAll(async () => {
     const { nestApplication, dataSource } = await createTestingAppModule();
@@ -34,6 +46,8 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
     db = createE2EDataSources(dataSource);
     mostRecentProgramConfiguration =
       await getMostRecentEducationProgramConfiguration({ db });
+    ({ outdatedProgramConfiguration, activeProgramConfiguration } =
+      await ensureUpdateEducationProgramConfigurations(db));
     const { institution, user } = await getAuthRelatedEntities(
       db.dataSource,
       InstitutionTokenTypes.CollegeFUser,
@@ -54,7 +68,7 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
       programConfiguration: mostRecentProgramConfiguration,
     });
     await db.educationProgram.save(program);
-    const payload = getUpdatePayload();
+    const payload = getUpdatePayload(mostRecentProgramConfiguration.id);
     const institutionUserToken = await getInstitutionToken(
       InstitutionTokenTypes.CollegeFUser,
     );
@@ -152,13 +166,111 @@ describe("EducationProgramInstitutionsController(e2e)-updateEducationProgram", (
     // Act/Assert
     await request(app.getHttpServer())
       .patch(getEndpoint(999999))
-      .send(getUpdatePayload())
+      .send(getUpdatePayload(mostRecentProgramConfiguration.id))
       .auth(institutionUserToken, BEARER_AUTH_TYPE)
       .expect(HttpStatus.NOT_FOUND)
       .expect({
         statusCode: HttpStatus.NOT_FOUND,
         message: "Not able to find the education program.",
         error: "Not Found",
+      });
+  });
+
+  it("Should update the education program associating it with the active program configuration of the program year when the program has no offerings and was saved with an inactive configuration.", async () => {
+    // Arrange
+    const program = createFakeEducationProgram({
+      institution: collegeF,
+      auditUser: collegeFUser,
+      programConfiguration: outdatedProgramConfiguration,
+    });
+    await db.educationProgram.save(program);
+    const payload = getUpdatePayload(activeProgramConfiguration.id);
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(getEndpoint(program.id))
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.OK);
+
+    const updatedProgram = await db.educationProgram.findOne({
+      select: {
+        id: true,
+        name: true,
+        programConfiguration: { id: true },
+      },
+      relations: { programConfiguration: true },
+      where: { id: program.id },
+      loadEagerRelations: false,
+    });
+    expect(updatedProgram).toEqual({
+      id: program.id,
+      name: payload.programData.programName,
+      programConfiguration: { id: activeProgramConfiguration.id },
+    });
+  });
+
+  it("Should throw unprocessable entity error when the program has no offerings and the program configuration provided is not the active one for the program year.", async () => {
+    // Arrange
+    const program = createFakeEducationProgram({
+      institution: collegeF,
+      auditUser: collegeFUser,
+      programConfiguration: outdatedProgramConfiguration,
+    });
+    await db.educationProgram.save(program);
+    // Program data filled using the configuration the program was saved with,
+    // instead of the active configuration expected for a full update.
+    const payload = getUpdatePayload(outdatedProgramConfiguration.id);
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(getEndpoint(program.id))
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        errorType: "EDUCATION_PROGRAM_CONFIGURATION_OUTDATED",
+        message:
+          "The program configuration has changed since the program data was retrieved.",
+      });
+  });
+
+  it("Should throw unprocessable entity error when the program data was retrieved for a full update and the program has offerings now.", async () => {
+    // Arrange
+    const program = createFakeEducationProgram({
+      institution: collegeF,
+      auditUser: collegeFUser,
+      programConfiguration: activeProgramConfiguration,
+    });
+    await db.educationProgram.save(program);
+    // Offering added after the program data was retrieved for a full update.
+    const offering = createFakeEducationProgramOffering({
+      auditUser: collegeFUser,
+      program,
+    });
+    await db.educationProgramOffering.save(offering);
+    const payload = getUpdatePayload(activeProgramConfiguration.id, {
+      isFullUpdateRestricted: false,
+    });
+    const institutionUserToken = await getInstitutionToken(
+      InstitutionTokenTypes.CollegeFUser,
+    );
+
+    // Act/Assert
+    await request(app.getHttpServer())
+      .patch(getEndpoint(program.id))
+      .send(payload)
+      .auth(institutionUserToken, BEARER_AUTH_TYPE)
+      .expect(HttpStatus.UNPROCESSABLE_ENTITY)
+      .expect({
+        errorType: "EDUCATION_PROGRAM_UPDATE_RESTRICTION_CHANGED",
+        message: "This program can no longer be fully edited.",
       });
   });
 

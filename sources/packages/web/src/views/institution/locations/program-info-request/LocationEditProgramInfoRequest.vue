@@ -257,10 +257,15 @@ export default defineComponent({
       event: FormIOCustomEvent,
     ) => {
       if (event.type === FormIOCustomEventTypes.RouteToCreateProgram) {
+        // Create the program for the PIR program year, then navigate back to the PIR.
         router.push({
-          name: InstitutionRoutesConst.ADD_LOCATION_PROGRAMS,
+          name: InstitutionRoutesConst.CREATE_PROGRAM_FROM_PIR,
           params: {
+            programYearId: programRequestData.value.programYearId,
+          },
+          query: {
             locationId: props.locationId,
+            applicationId: props.applicationId,
           },
         });
         return;

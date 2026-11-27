@@ -54,19 +54,21 @@ const formTitle = computed(() => {
     : "Program";
 });
 
-watch(
-  () => props.programId,
-  async (programId) => {
-    try {
-      loading.value = true;
-      educationProgram.value =
-        await EducationProgramService.shared.getEducationProgram(programId);
-    } catch {
-      snackBar.error("Unexpected error while loading program data.");
-    } finally {
-      loading.value = false;
-    }
-  },
-  { immediate: true },
-);
+/**
+ * Loads the education program to be displayed.
+ * @param programId program to be loaded.
+ */
+const loadProgram = async (programId: number): Promise<void> => {
+  try {
+    loading.value = true;
+    educationProgram.value =
+      await EducationProgramService.shared.getEducationProgram(programId);
+  } catch {
+    snackBar.error("Unexpected error while loading program data.");
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(() => props.programId, loadProgram, { immediate: true });
 </script>
