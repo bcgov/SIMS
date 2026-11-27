@@ -31,6 +31,7 @@ import {
 } from "./models/msfaa-number.dto";
 import { PrimaryIdentifierAPIOutDTO } from "../models/primary.identifier.dto";
 import { CustomNamedError } from "@sims/utilities";
+import { MSFAANumberSharedService } from "@sims/services";
 import {
   MSFAA_INELIGIBLE,
   MSFAA_NUMBER_INVALID_OPERATION,
@@ -48,6 +49,7 @@ export class MSFAANumberAESTController extends BaseController {
   constructor(
     private readonly studentService: StudentService,
     private readonly msfaaNumberService: MSFAANumberService,
+    private readonly msfaaNumberSharedService: MSFAANumberSharedService,
   ) {
     super();
   }
@@ -68,7 +70,7 @@ export class MSFAANumberAESTController extends BaseController {
     }
     const [msfaaActivity, eligibleForReissue] = await Promise.all([
       this.msfaaNumberService.getStudentMSFAAActivity(studentId),
-      this.msfaaNumberService.getMSFAAsEligibleForReissue(studentId),
+      this.msfaaNumberSharedService.getMSFAAsEligibleForReissue(studentId),
     ]);
     const eligibleIds = new Set(eligibleForReissue.map((msfaa) => msfaa.id));
     return msfaaActivity.map((msfaa) => ({

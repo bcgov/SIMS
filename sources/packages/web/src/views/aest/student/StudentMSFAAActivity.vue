@@ -115,11 +115,13 @@
       notes-label="Note"
     >
       <template #content="{ showParameter }">
-        <div>
-          <strong>Intensity:</strong>
-          {{ mapOfferingIntensity(showParameter.offeringIntensity) }}
-        </div>
-        <div><strong>MSFAA:</strong> {{ showParameter.msfaaNumber }}</div>
+        <detail-header
+          class="mb-2"
+          :header-map="{
+            Intensity: mapOfferingIntensity(showParameter.offeringIntensity),
+            MSFAA: showParameter.msfaaNumber,
+          }"
+        />
       </template>
     </user-note-confirm-modal>
   </tab-container>

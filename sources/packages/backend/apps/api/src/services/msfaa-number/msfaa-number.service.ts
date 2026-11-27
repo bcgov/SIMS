@@ -2,11 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MSFAANumber, NoteType, User } from "@sims/sims-db";
 import { DataSource, IsNull, Repository } from "typeorm";
-import {
-  MSFAAEligibleForReissue,
-  MSFAANumberSharedService,
-  NoteSharedService,
-} from "@sims/services";
+import { MSFAANumberSharedService, NoteSharedService } from "@sims/services";
 import {
   MSFAA_MINISTRY_CANCELLATION_PROVINCE,
   MSFAA_NUMBER_INVALID_OPERATION,
@@ -48,17 +44,6 @@ export class MSFAANumberService {
       where: { student: { id: studentId } },
       order: { createdAt: "DESC" },
     });
-  }
-
-  /**
-   * Gets the student MSFAAs that can be reissued.
-   * @param studentId student id to check the MSFAA records.
-   * @returns MSFAA records eligible to be reissued.
-   */
-  getMSFAAsEligibleForReissue(
-    studentId: number,
-  ): Promise<MSFAAEligibleForReissue[]> {
-    return this.msfaaNumberSharedService.getMSFAAsEligibleForReissue(studentId);
   }
 
   /**

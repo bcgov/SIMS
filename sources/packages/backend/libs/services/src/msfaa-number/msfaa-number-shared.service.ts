@@ -23,6 +23,7 @@ import {
   MSFAA_NUMBER_NOT_FOUND,
 } from "../constants";
 import { ConfigService } from "@sims/utilities/config";
+import { TableNames } from "@sims/sims-db/constant";
 import { MSFAAEligibleForReissue } from "./msfaa-number.models";
 
 /**
@@ -71,48 +72,51 @@ export class MSFAANumberSharedService {
    * application of that disbursement is the reference for the new MSFAA.
    * @param studentId student to have the MSFAA records checked.
    * @param entityManager entity manager to be used instead of the default one, when provided.
+   * @param options method options.
+   * - `intensity` when provided, only this offering intensity is checked.
    * @returns MSFAA records eligible to be reissued.
    */
   async getMSFAAsEligibleForReissue(
     studentId: number,
     entityManager?: EntityManager,
+    options?: { intensity?: OfferingIntensity },
   ): Promise<MSFAAEligibleForReissue[]> {
     const manager = entityManager ?? this.dataSource.manager;
     const disbursementRepo = manager.getRepository(DisbursementSchedule);
+    const intensities = options?.intensity
+      ? [options.intensity]
+      : [OfferingIntensity.fullTime, OfferingIntensity.partTime];
     const eligibleMSFAAs = await Promise.all(
-      [OfferingIntensity.fullTime, OfferingIntensity.partTime].map(
-        async (offeringIntensity) => {
-          const oldestPendingDisbursement = await disbursementRepo.findOne({
-            select: {
-              id: true,
-              msfaaNumber: { id: true },
-              studentAssessment: { id: true, application: { id: true } },
+      intensities.map(async (offeringIntensity) => {
+        const oldestPendingDisbursement = await disbursementRepo.findOne({
+          select: {
+            id: true,
+            msfaaNumber: { id: true },
+            studentAssessment: { id: true, application: { id: true } },
+          },
+          relations: {
+            msfaaNumber: true,
+            studentAssessment: { application: true },
+          },
+          where: {
+            disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
+            msfaaNumber: {
+              student: { id: studentId },
+              offeringIntensity,
+              cancelledDate: Not(IsNull()),
             },
-            relations: {
-              msfaaNumber: true,
-              studentAssessment: { application: true },
-            },
-            where: {
-              disbursementScheduleStatus: DisbursementScheduleStatus.Pending,
-              msfaaNumber: {
-                student: { id: studentId },
-                offeringIntensity,
-                cancelledDate: Not(IsNull()),
-              },
-            },
-            order: { id: "ASC" },
-          });
-          if (!oldestPendingDisbursement) {
-            return null;
-          }
-          return {
-            id: oldestPendingDisbursement.msfaaNumber.id,
-            offeringIntensity,
-            referenceApplicationId:
-              oldestPendingDisbursement.studentAssessment.application.id,
-          };
-        },
-      ),
+          },
+          order: { id: "ASC" },
+        });
+        if (!oldestPendingDisbursement) {
+          return null;
+        }
+        return {
+          id: oldestPendingDisbursement.msfaaNumber.id,
+          referenceApplicationId:
+            oldestPendingDisbursement.studentAssessment.application.id,
+        };
+      }),
     );
     return eligibleMSFAAs.filter((msfaa) => !!msfaa);
   }
@@ -140,12 +144,10 @@ export class MSFAANumberSharedService {
         student: { id: true },
       },
       relations: { student: true },
-      // Loading the relation in a separate query allows to lock only the MSFAA record.
-      relationLoadStrategy: "query",
       where: { id: msfaaNumberId },
       // Serializes concurrent reissues of the same MSFAA, so the eligibility
       // is checked again after any in-flight reissue has been committed.
-      lock: { mode: "pessimistic_write" },
+      lock: { mode: "pessimistic_write", tables: [TableNames.MSFAANumbers] },
     });
     if (!msfaaNumber) {
       throw new CustomNamedError(
@@ -153,17 +155,14 @@ export class MSFAANumberSharedService {
         MSFAA_NUMBER_NOT_FOUND,
       );
     }
-    const eligibleMSFAAs = await this.getMSFAAsEligibleForReissue(
-      msfaaNumber.student.id,
-      entityManager,
-    );
     // A cancelled MSFAA can be reissued when there are pending disbursements to be associated with the new MSFAA.
-    const eligibleMSFAA = msfaaNumber.cancelledDate
-      ? eligibleMSFAAs.find(
-          (eligible) =>
-            eligible.offeringIntensity === msfaaNumber.offeringIntensity,
+    const [eligibleMSFAA] = msfaaNumber.cancelledDate
+      ? await this.getMSFAAsEligibleForReissue(
+          msfaaNumber.student.id,
+          entityManager,
+          { intensity: msfaaNumber.offeringIntensity },
         )
-      : undefined;
+      : [];
     if (!eligibleMSFAA) {
       throw new CustomNamedError(
         "Not possible to reissue an MSFAA that is not cancelled or has no pending disbursements associated.",

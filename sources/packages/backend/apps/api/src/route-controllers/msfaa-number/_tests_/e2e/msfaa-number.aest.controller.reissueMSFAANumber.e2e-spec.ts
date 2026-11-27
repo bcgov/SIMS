@@ -1,10 +1,8 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  addJWTUserRoles,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
@@ -33,15 +31,12 @@ const INVALID_REISSUE_MESSAGE =
 
 describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
   let app: INestApplication;
-  let appModule: TestingModule;
   let db: E2EDataSources;
   let configServiceMockHelper: ConfigServiceMockHelper;
 
   beforeAll(async () => {
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appModule = module;
     db = createE2EDataSources(dataSource);
     configServiceMockHelper = new ConfigServiceMockHelper(app);
   });
@@ -72,7 +67,6 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
     sentSchedule.disbursementScheduleStatus = DisbursementScheduleStatus.Sent;
     await db.disbursementSchedule.save(sentSchedule);
     const noteDescription = `Reissuing MSFAA ${cancelledMSFAA.msfaaNumber}.`;
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     let createdMSFAAId: number;
 
@@ -131,7 +125,6 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       { student, msfaaNumber: msfaa },
       { applicationStatus: ApplicationStatus.Completed },
     );
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -155,7 +148,6 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
         { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
       ),
     );
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -195,7 +187,6 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       { student, msfaaNumber: newerCancelledMSFAA },
       { applicationStatus: ApplicationStatus.Completed },
     );
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
     let createdMSFAAId: number;
 
@@ -230,13 +221,11 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
       { applicationStatus: ApplicationStatus.Completed },
     );
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     await request(app.getHttpServer())
       .post(getEndpoint(cancelledMSFAA.id))
       .auth(token, BEARER_AUTH_TYPE)
       .send({ noteDescription: "First reissue." })
       .expect(HttpStatus.CREATED);
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
 
     // Act/Assert
     await request(app.getHttpServer())
@@ -252,7 +241,6 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
 
   it("Should return not found when the MSFAA does not exist.", async () => {
     // Arrange
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -270,7 +258,6 @@ describe("MSFAANumberAESTController(e2e)-reissueMSFAANumber", () => {
 
   it("Should return bad request when the note is not provided.", async () => {
     // Arrange
-    await addJWTUserRoles(appModule, [Role.StudentReissueMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert

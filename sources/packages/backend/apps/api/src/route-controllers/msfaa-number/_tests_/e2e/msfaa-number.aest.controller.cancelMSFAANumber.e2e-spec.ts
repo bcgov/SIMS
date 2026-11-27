@@ -1,10 +1,8 @@
 import { HttpStatus, INestApplication } from "@nestjs/common";
-import { TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import {
   AESTGroups,
   BEARER_AUTH_TYPE,
-  addJWTUserRoles,
   createTestingAppModule,
   getAESTToken,
 } from "../../../../testHelpers";
@@ -23,14 +21,11 @@ import MockDate from "mockdate";
 
 describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
   let app: INestApplication;
-  let appModule: TestingModule;
   let db: E2EDataSources;
 
   beforeAll(async () => {
-    const { nestApplication, module, dataSource } =
-      await createTestingAppModule();
+    const { nestApplication, dataSource } = await createTestingAppModule();
     app = nestApplication;
-    appModule = module;
     db = createE2EDataSources(dataSource);
   });
 
@@ -47,7 +42,6 @@ describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
     const noteDescription = `Cancelling MSFAA ${msfaa.msfaaNumber}.`;
     const now = new Date();
     MockDate.set(now);
-    await addJWTUserRoles(appModule, [Role.StudentCancelMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -85,7 +79,6 @@ describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
         { msfaaState: MSFAAStates.Signed | MSFAAStates.CancelledSystem },
       ),
     );
-    await addJWTUserRoles(appModule, [Role.StudentCancelMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -109,7 +102,6 @@ describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
 
   it("Should return not found when the MSFAA does not exist.", async () => {
     // Arrange
-    await addJWTUserRoles(appModule, [Role.StudentCancelMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
@@ -127,7 +119,6 @@ describe("MSFAANumberAESTController(e2e)-cancelMSFAANumber", () => {
 
   it("Should return bad request when the note is not provided.", async () => {
     // Arrange
-    await addJWTUserRoles(appModule, [Role.StudentCancelMSFAA]);
     const token = await getAESTToken(AESTGroups.BusinessAdministrators);
 
     // Act/Assert
