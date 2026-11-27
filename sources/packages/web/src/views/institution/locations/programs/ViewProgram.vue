@@ -32,7 +32,7 @@
   </full-page-container>
 </template>
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { useFeatureToggles, useSnackBar } from "@/composables";
 import type { RouteLocationRaw } from "vue-router";
 import { BannerTypes } from "@/types";
@@ -95,5 +95,5 @@ const loadProgram = async (programId: number): Promise<void> => {
   }
 };
 
-watch(() => props.programId, loadProgram, { immediate: true });
+watchEffect(() => loadProgram(props.programId));
 </script>

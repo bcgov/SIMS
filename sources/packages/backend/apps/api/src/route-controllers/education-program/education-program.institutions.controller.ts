@@ -320,7 +320,8 @@ export class EducationProgramInstitutionsController extends BaseController {
   }
 
   /**
-   * Updates the main information for an existing education program.
+   * Updates an education program. The updates can be partial or full depending
+   * on the details provided in the payload and the program configuration.
    * Paired with the endpoint that provides the update configuration
    * ({@link getEducationProgramConfigurationForUpdate}).
    * @param programId program to be updated.
