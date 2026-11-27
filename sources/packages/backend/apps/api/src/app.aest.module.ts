@@ -78,6 +78,9 @@ import {
   SupplementaryDataLoader,
   SupplementaryDataScholasticStandingWithdrawals,
   SupplementaryDataUnderservedCommunities,
+  SupplementaryDataEmployers,
+  SupplementaryDataWorksWithChildrenOccupations,
+  SupplementaryDataUnderservedCommunityOccupations,
 } from "./services/form-submission/form-supplementary-data";
 import {
   SupportingUserAESTController,
@@ -299,6 +302,9 @@ import {
     SupplementaryDataParents,
     SupplementaryDataScholasticStandingWithdrawals,
     SupplementaryDataUnderservedCommunities,
+    SupplementaryDataEmployers,
+    SupplementaryDataWorksWithChildrenOccupations,
+    SupplementaryDataUnderservedCommunityOccupations,
     SupplementaryDataLoader,
     FormSubmissionService,
     FormSubmissionCancellationService,

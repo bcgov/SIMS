@@ -15,9 +15,45 @@ export class InsertBCLoanForgivenessApplicationForm1795464130413 implements Migr
         "SystemLookupConfigurations",
       ),
     );
+    await queryRunner.query(
+      getSQLFileData(
+        "Insert-employers-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Insert-works-with-children-occupations-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Insert-underserved-community-occupations-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-insert-underserved-community-occupations-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-insert-works-with-children-occupations-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
+    );
+    await queryRunner.query(
+      getSQLFileData(
+        "Rollback-insert-employers-system-lookup.sql",
+        "SystemLookupConfigurations",
+      ),
+    );
     await queryRunner.query(
       getSQLFileData(
         "Rollback-insert-underserved-communities-system-lookup.sql",

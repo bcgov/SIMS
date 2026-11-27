@@ -108,6 +108,9 @@ import {
   SupplementaryDataLoader,
   SupplementaryDataScholasticStandingWithdrawals,
   SupplementaryDataUnderservedCommunities,
+  SupplementaryDataEmployers,
+  SupplementaryDataWorksWithChildrenOccupations,
+  SupplementaryDataUnderservedCommunityOccupations,
 } from "./services/form-submission/form-supplementary-data";
 import {
   EducationProgramFieldOfStudyCodeEvaluator,
@@ -207,6 +210,9 @@ import {
     SupplementaryDataParents,
     SupplementaryDataScholasticStandingWithdrawals,
     SupplementaryDataUnderservedCommunities,
+    SupplementaryDataEmployers,
+    SupplementaryDataWorksWithChildrenOccupations,
+    SupplementaryDataUnderservedCommunityOccupations,
     SupplementaryDataLoader,
     // Form Submission Service.
     FormSubmissionSubmitService,

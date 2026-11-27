@@ -8,7 +8,10 @@ export interface ApplicationWithdrawal {
   scholasticStandingId: number;
 }
 
-export interface UnderservedCommunity {
+/**
+ * System lookup item, as loaded by the supplementary data loaders.
+ */
+export interface SystemLookupItem {
   lookupKey: string;
   lookupValue: string;
 }

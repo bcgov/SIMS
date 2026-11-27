@@ -52,7 +52,7 @@ FROM
             (
                 'Underserved community',
                 'Alexis Creek / Tl''etinqox-T''in Government / Yeneskit''in Government / Yunesti''in',
-                'alexisCreekTletinqoxTinGovernmentYeneskitinGovernmentYunestiin',
+                'alexisCreekTletinqoxTinGovernmentYeneskitin',
                 1
             ),
             (
@@ -64,7 +64,7 @@ FROM
             (
                 'Underserved community',
                 'Ashcroft / Cache Creek / Ashcroft Indian Band / Bonaparte Indian Band / Oregon Jack Creek Indian Band',
-                'ashcroftCacheCreekAshcroftIndianBandBonaparteIndianBandOregonJackCreekIndianBand',
+                'ashcroftCacheCreekAshcroftIndianBandBonaparte',
                 1
             ),
             (
@@ -88,7 +88,7 @@ FROM
             (
                 'Underserved community',
                 'Barriere / Simpcw First Nation / Whispering Pines Indian Band (Clinton Indian Band)',
-                'barriereSimpcwFirstNationWhisperingPinesIndianBandClintonIndianBand',
+                'barriereSimpcwFirstNationWhisperingPinesIndianBand',
                 1
             ),
             (
@@ -166,7 +166,7 @@ FROM
             (
                 'Underserved community',
                 'Chase / Scotch Creek / Adams Lake Indian Band / Anglemont / Little Shuswap Indian Band / Neskonlith Indian Band',
-                'chaseScotchCreekAdamsLakeIndianBandAnglemontLittleShuswapIndianBandNeskonlithIndianBand',
+                'chaseScotchCreekAdamsLakeIndianBandAnglemontLittle',
                 1
             ),
             (
@@ -388,7 +388,7 @@ FROM
             (
                 'Underserved community',
                 'Hazelton / Gitanmaax Band / Glen Vowell (Sik-e-Dakh) / Hagwilget Village (Tse-kya) / Kispiox Band (Anspayaxw)',
-                'hazeltonGitanmaaxBandGlenVowellSikEDakhHagwilgetVillageTseKyaKispioxBandAnspayaxw',
+                'hazeltonGitanmaaxBandGlenVowellSikEDakhHagwilget',
                 1
             ),
             (
@@ -520,7 +520,7 @@ FROM
             (
                 'Underserved community',
                 'Lillooet / Bridge River / Cayoose Creek Indian Band (Sekw''el''was) / Lillooet Indian Band (T''it''q''et) / Xaxli''p First Nation / Xwisten',
-                'lillooetBridgeRiverCayooseCreekIndianBandSekwelwasLillooetIndianBandTitqetXaxlipFirstNationXwisten',
+                'lillooetBridgeRiverCayooseCreekIndianBandSekwelwas',
                 1
             ),
             (
@@ -532,7 +532,7 @@ FROM
             (
                 'Underserved community',
                 'Lytton / Lytton First Nation / Kanaka Bar (T''eqt''''aqtn''mux) / Nicomen Indian Band / Siska Indian Band / Skuppah Indian Band',
-                'lyttonLyttonFirstNationKanakaBarTeqtaqtnmuxNicomenIndianBandSiskaIndianBandSkuppahIndianBand',
+                'lyttonLyttonFirstNationKanakaBarTeqtaqtnmuxNicomen',
                 1
             ),
             (
@@ -568,7 +568,7 @@ FROM
             (
                 'Underserved community',
                 'Merritt / Coldwater Indian Band / Lower Nicola Indian Band / Upper Nicola Band',
-                'merrittColdwaterIndianBandLowerNicolaIndianBandUpperNicolaBand',
+                'merrittColdwaterIndianBandLowerNicolaIndianBand',
                 1
             ),
             (
@@ -628,7 +628,7 @@ FROM
             (
                 'Underserved community',
                 'New Aiyansh (Nisga’a Village of Gitlaxt’aamiks) / Canyon City (Nisga’a Village of Gitwinksihlkw)',
-                'newAiyanshNisgaaVillageOfGitlaxtaamiksCanyonCityNisgaaVillageOfGitwinksihlkw',
+                'newAiyanshNisgaaVillageOfGitlaxtaamiksCanyonCity',
                 1
             ),
             (
@@ -670,7 +670,7 @@ FROM
             (
                 'Underserved community',
                 'Port Hardy / Gwa''sala-Nakwazda''xw / Kwakiutl First Nation (Kwakwaka''wakw) / Tlatlasikwala First Nation',
-                'portHardyGwasalaNakwazdaxwKwakiutlFirstNationKwakwakawakwTlatlasikwalaFirstNation',
+                'portHardyGwasalaNakwazdaxwKwakiutlFirstNation',
                 1
             ),
             (
@@ -796,7 +796,7 @@ FROM
             (
                 'Underserved community',
                 'Seton Portage / Seton Lake / N''Quatqua First Nation / Shalalth / Tsal''alh',
-                'setonPortageSetonLakeNQuatquaFirstNationShalalthTsalalh',
+                'setonPortageSetonLakeNQuatquaFirstNationShalalth',
                 1
             ),
             (

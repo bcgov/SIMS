@@ -10,10 +10,54 @@
   "components": [
     {
       "label": "Underserved communities",
+      "persistent": "client-only",
       "key": "underservedCommunities",
       "tags": [
         "supplementary-data"
       ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Employers",
+      "persistent": "client-only",
+      "key": "employers",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Works with children occupations",
+      "persistent": "client-only",
+      "key": "worksWithChildrenOccupations",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Works in underserved communities occupations",
+      "persistent": "client-only",
+      "key": "worksInUnderservedCommunitiesOccupations",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Max uploaded files",
+      "persistent": false,
+      "calculateValue": "value = 25;",
+      "calculateServer": true,
+      "key": "maxUploadedFiles",
       "type": "hidden",
       "input": true,
       "tableView": false
@@ -45,34 +89,6 @@
       "input": false,
       "tableView": false,
       "components": [
-        {
-          "label": "Data: Works with children occupations",
-          "persistent": false,
-          "customDefaultValue": "value = [\n  \"Audiologist\",\n  \"Occupational therapist\",\n  \"Physiotherapist\",\n  \"School psychologist\",\n  \"Speech language pathologist\",\n  \"Teacher of the deaf/hard of hearing or the visually impaired\",\n  \"Technology educator\",\n];",
-          "key": "worksWithChildrenOccupations",
-          "type": "hidden",
-          "input": true,
-          "tableView": false
-        },
-        {
-          "label": "Data: Works with underserved communities occupations",
-          "persistent": false,
-          "calculateValue": "value = [\n  \"Audiologist\",\n  \"Diagnostic medical sonographer\",\n  \"Medical laboratory technologist\",\n  \"Midwifery\",\n  \"Nursing (including licensed practical nursing, nurse practitioners, registered psychiatric nurses and registered nurses)\",\n  \"Occupational therapist\",\n  \"Physician, including residents\",\n  \"Physiotherapist\",\n  \"Polysomnographer\",\n  \"Radiation therapist\",\n  \"Respiratory therapist\",\n  \"Speech language pathologist\",\n];\n",
-          "key": "worksInUnderservedCommunitiesOccupations",
-          "type": "hidden",
-          "input": true,
-          "tableView": false
-        },
-        {
-          "label": "Max uploaded files",
-          "persistent": false,
-          "calculateValue": "value = 25;",
-          "calculateServer": true,
-          "key": "maxUploadedFiles",
-          "type": "hidden",
-          "input": true,
-          "tableView": false
-        },
         {
           "label": "HTML",
           "attrs": [
@@ -132,42 +148,21 @@
         },
         {
           "label": "Please select the appropriate option below that matches your employer.",
-          "optionsLabelPosition": "right",
-          "inline": false,
-          "tableView": false,
-          "values": [
-            {
-              "label": "Health authority",
-              "value": "healthAuthority",
-              "shortcut": ""
-            },
-            {
-              "label": " Public school",
-              "value": "publicSchool",
-              "shortcut": ""
-            },
-            {
-              "label": " First nations",
-              "value": "firstNations",
-              "shortcut": ""
-            },
-            {
-              "label": "Private employer",
-              "value": "privateEmployer",
-              "shortcut": ""
-            },
-            {
-              "label": "Health authority affiliate",
-              "value": "healthAuthorityAffiliate",
-              "shortcut": ""
-            }
-          ],
+          "widget": "choicesjs",
+          "placeholder": "Select employer",
+          "tableView": true,
+          "dataSrc": "custom",
+          "data": {
+            "custom": "values = (data.employers || []).map((employer) => ({\r\n  label: employer.lookupValue,\r\n  value: employer.lookupKey,\r\n}));"
+          },
+          "valueProperty": "value",
+          "refreshOn": "employers",
           "validate": {
             "required": true
           },
           "validateWhenHidden": false,
-          "key": "emloyerCategory",
-          "type": "radio",
+          "key": "employerCategory",
+          "type": "select",
           "input": true
         },
         {
@@ -271,7 +266,8 @@
             }
           ],
           "validate": {
-            "required": true
+            "required": true,
+            "custom": "const atLeastOneYes =\r\n  data.worksWithChildren === \"yes\" || data.worksInUnderservedCommunity === \"yes\";\r\nvalid = atLeastOneYes\r\n  ? true\r\n  : \"At least one “Yes” response is required for the Working with Children or Underserved Community questions.\";"
           },
           "validateWhenHidden": false,
           "key": "worksInUnderservedCommunity",
@@ -285,9 +281,10 @@
           "tableView": true,
           "dataSrc": "custom",
           "data": {
-            "custom": "let occupations = [];\r\nif (data.worksWithChildren === \"yes\") {\r\n  occupations = data.worksWithChildrenOccupations;\r\n} else if (data.worksInUnderservedCommunity === \"yes\") {\r\n  occupations = data.worksInUnderservedCommunitiesOccupations;\r\n}\r\n\r\nvalues = [...occupations].sort((a, b) => a.localeCompare(b));"
+            "custom": "let occupations = [];\r\nif (data.worksWithChildren === \"yes\") {\r\n  occupations = data.worksWithChildrenOccupations;\r\n} else if (data.worksInUnderservedCommunity === \"yes\") {\r\n  occupations = data.worksInUnderservedCommunitiesOccupations;\r\n}\r\n\r\nvalues = (occupations || []).map((occupation) => ({\r\n  label: occupation.lookupValue,\r\n  value: occupation.lookupKey,\r\n}));"
           },
           "valueProperty": "value",
+          "refreshOn": "worksInUnderservedCommunitiesOccupations",
           "customOptions": {
             "searchResultLimit": -1
           },
@@ -535,7 +532,7 @@
       "hideLabel": true,
       "disabled": true,
       "tableView": true,
-      "defaultValue": "PLACEHOLDER FIELD ------- awaiting confirmed wording from policy and legal.\n\n<strong>Collection and use of information.</strong> The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post- Secondary Education and Future Skills, PO Box 9173, Stn Prov Govt, Victoria B.C., V8W 9H7, or <a href=\"mailto:StudentAidBC@gov.bc.ca\">StudentAidBC@gov.bc.ca.</a>",
+      "defaultValue": "PLACEHOLDER FIELD ------- awaiting confirmed wording from policy and legal.\n\n<strong>Collection and use of information.</strong> The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post- Secondary Education and Labour, PO Box 9173, Stn Prov Govt, Victoria B.C., V8W 9H7, or <a href=\"mailto:StudentAidBC@gov.bc.ca\">StudentAidBC@gov.bc.ca.</a>",
       "persistent": false,
       "validateWhenHidden": false,
       "key": "textArea",

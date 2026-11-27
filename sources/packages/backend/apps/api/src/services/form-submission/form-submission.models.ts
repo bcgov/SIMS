@@ -5,7 +5,7 @@ import {
 import {
   ApplicationWithdrawal,
   Parent,
-  UnderservedCommunity,
+  SystemLookupItem,
 } from "../../types";
 
 /**
@@ -16,6 +16,9 @@ export enum KnownSupplementaryDataKey {
   Parents = "parents",
   ScholasticStandingWithdrawals = "scholasticStandingWithdrawals",
   UnderservedCommunities = "underservedCommunities",
+  Employers = "employers",
+  WorksWithChildrenOccupations = "worksWithChildrenOccupations",
+  UnderservedCommunityOccupations = "worksInUnderservedCommunitiesOccupations",
 }
 
 /**
@@ -26,7 +29,10 @@ export interface KnownSupplementaryData {
   [KnownSupplementaryDataKey.ProgramYear]?: string;
   [KnownSupplementaryDataKey.Parents]?: Parent[];
   [KnownSupplementaryDataKey.ScholasticStandingWithdrawals]?: ApplicationWithdrawal[];
-  [KnownSupplementaryDataKey.UnderservedCommunities]?: UnderservedCommunity[];
+  [KnownSupplementaryDataKey.UnderservedCommunities]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.Employers]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.WorksWithChildrenOccupations]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.UnderservedCommunityOccupations]?: SystemLookupItem[];
 }
 
 /**
