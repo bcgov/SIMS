@@ -4,7 +4,7 @@ export * from "./form-supplementary-data-program-year";
 export * from "./form-supplementary-data-scholastic-standing-withdrawals";
 export * from "./form-supplementary-data-system-lookup-base-loader";
 export * from "./form-supplementary-data-underserved-communities";
-export * from "./form-supplementary-data-employers";
+export * from "./form-supplementary-data-employer-categories";
 export * from "./form-supplementary-data-works-with-children-occupations";
 export * from "./form-supplementary-data-underserved-community-occupations";
 export * from "./form-supplementary-data-loader";

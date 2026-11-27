@@ -404,6 +404,130 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
     );
   });
 
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.UnderservedCommunities}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.UnderservedCommunities} when the data key is requested and no application is provided.`, async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.UnderservedCommunities}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      // Assert
+      const communities = response.body.formData.underservedCommunities;
+      expect(communities).toEqual(
+        expect.arrayContaining([
+          { lookupKey: "100MileHouse", lookupValue: "100 Mile House" },
+        ]),
+      );
+      // Lookup keys must be unique and have at most 50 characters.
+      const lookupKeys = communities.map(
+        (community: { lookupKey: string }) => community.lookupKey,
+      );
+      expect(new Set(lookupKeys).size).toBe(lookupKeys.length);
+      expect(
+        lookupKeys.every((lookupKey: string) => lookupKey.length <= 50),
+      ).toBe(true);
+    });
+  });
+
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.EmployerCategories}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.EmployerCategories} ordered by priority when the data key is requested and no application is provided.`, async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.EmployerCategories}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act/Assert
+      await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK)
+        .expect({
+          formData: {
+            employerCategories: [
+              { lookupKey: "healthAuthority", lookupValue: "Health authority" },
+              { lookupKey: "publicSchool", lookupValue: "Public school" },
+              { lookupKey: "firstNations", lookupValue: "First nations" },
+              {
+                lookupKey: "privateEmployer",
+                lookupValue: "Private employer",
+              },
+              {
+                lookupKey: "healthAuthorityAffiliate",
+                lookupValue: "Health authority affiliate",
+              },
+            ],
+          },
+        });
+    });
+  });
+
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.WorksWithChildrenOccupations}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.WorksWithChildrenOccupations} when the data key is requested and no application is provided.`, async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.WorksWithChildrenOccupations}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      // Assert
+      const occupations = response.body.formData.worksWithChildrenOccupations;
+      expect(occupations).toHaveLength(7);
+      expect(occupations).toEqual(
+        expect.arrayContaining([
+          { lookupKey: "audiologist", lookupValue: "Audiologist" },
+          {
+            lookupKey: "schoolPsychologist",
+            lookupValue: "School psychologist",
+          },
+        ]),
+      );
+    });
+  });
+
+  describe(`Supplementary data validations for ${KnownSupplementaryDataKey.UnderservedCommunityOccupations}.`, () => {
+    it(`Should get supplementary data for ${KnownSupplementaryDataKey.UnderservedCommunityOccupations} when the data key is requested and no application is provided.`, async () => {
+      // Arrange
+      const endpoint = `/students/form-submission/supplementary-data?dataKeys=${KnownSupplementaryDataKey.UnderservedCommunityOccupations}`;
+      const studentToken = await getStudentToken(
+        FakeStudentUsersTypes.FakeStudentUserType1,
+      );
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .get(endpoint)
+        .auth(studentToken, BEARER_AUTH_TYPE)
+        .expect(HttpStatus.OK);
+
+      // Assert
+      const occupations =
+        response.body.formData.worksInUnderservedCommunitiesOccupations;
+      expect(occupations).toHaveLength(12);
+      expect(occupations).toEqual(
+        expect.arrayContaining([
+          { lookupKey: "audiologist", lookupValue: "Audiologist" },
+          {
+            lookupKey: "physicianIncludingResidents",
+            lookupValue: "Physician, including residents",
+          },
+        ]),
+      );
+    });
+  });
+
   describe(`Supplementary data validations common for all data keys.`, () => {
     it("Should get supplementary data for two different data keys when two data keys are provided and the data is available.", async () => {
       // Arrange
@@ -454,7 +578,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message: [
-            "each value in dataKeys must be one of the following values: programYear, parents, scholasticStandingWithdrawals",
+            "each value in dataKeys must be one of the following values: programYear, parents, scholasticStandingWithdrawals, underservedCommunities, employerCategories, worksWithChildrenOccupations, worksInUnderservedCommunitiesOccupations",
             "dataKeys must contain no more than 10 elements",
             "dataKeys must contain at least 1 elements",
           ],
@@ -477,7 +601,7 @@ describe("FormSubmissionStudentsController(e2e)-getSupplementaryData", () => {
         .expect(HttpStatus.BAD_REQUEST)
         .expect({
           message: [
-            "each value in dataKeys must be one of the following values: programYear, parents, scholasticStandingWithdrawals",
+            "each value in dataKeys must be one of the following values: programYear, parents, scholasticStandingWithdrawals, underservedCommunities, employerCategories, worksWithChildrenOccupations, worksInUnderservedCommunitiesOccupations",
           ],
           error: "Bad Request",
           statusCode: HttpStatus.BAD_REQUEST,

@@ -10,7 +10,7 @@ import {
   SupplementaryDataBaseLoader,
   SupplementaryDataScholasticStandingWithdrawals,
   SupplementaryDataUnderservedCommunities,
-  SupplementaryDataEmployers,
+  SupplementaryDataEmployerCategories,
   SupplementaryDataWorksWithChildrenOccupations,
   SupplementaryDataUnderservedCommunityOccupations,
 } from ".";
@@ -31,7 +31,7 @@ export class SupplementaryDataLoader {
     private readonly supplementaryDataProgramYear: SupplementaryDataProgramYear,
     private readonly supplementaryDataScholasticStandingWithdrawals: SupplementaryDataScholasticStandingWithdrawals,
     private readonly supplementaryDataUnderservedCommunities: SupplementaryDataUnderservedCommunities,
-    private readonly supplementaryDataEmployers: SupplementaryDataEmployers,
+    private readonly supplementaryDataEmployerCategories: SupplementaryDataEmployerCategories,
     private readonly supplementaryDataWorksWithChildrenOccupations: SupplementaryDataWorksWithChildrenOccupations,
     private readonly supplementaryDataUnderservedCommunityOccupations: SupplementaryDataUnderservedCommunityOccupations,
   ) {
@@ -40,7 +40,7 @@ export class SupplementaryDataLoader {
       this.supplementaryDataProgramYear,
       this.supplementaryDataScholasticStandingWithdrawals,
       this.supplementaryDataUnderservedCommunities,
-      this.supplementaryDataEmployers,
+      this.supplementaryDataEmployerCategories,
       this.supplementaryDataWorksWithChildrenOccupations,
       this.supplementaryDataUnderservedCommunityOccupations,
     ];

@@ -78,7 +78,7 @@ import {
   SupplementaryDataLoader,
   SupplementaryDataScholasticStandingWithdrawals,
   SupplementaryDataUnderservedCommunities,
-  SupplementaryDataEmployers,
+  SupplementaryDataEmployerCategories,
   SupplementaryDataWorksWithChildrenOccupations,
   SupplementaryDataUnderservedCommunityOccupations,
 } from "./services/form-submission/form-supplementary-data";
@@ -302,7 +302,7 @@ import {
     SupplementaryDataParents,
     SupplementaryDataScholasticStandingWithdrawals,
     SupplementaryDataUnderservedCommunities,
-    SupplementaryDataEmployers,
+    SupplementaryDataEmployerCategories,
     SupplementaryDataWorksWithChildrenOccupations,
     SupplementaryDataUnderservedCommunityOccupations,
     SupplementaryDataLoader,

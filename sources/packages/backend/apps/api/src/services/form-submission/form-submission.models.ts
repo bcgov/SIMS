@@ -16,7 +16,7 @@ export enum KnownSupplementaryDataKey {
   Parents = "parents",
   ScholasticStandingWithdrawals = "scholasticStandingWithdrawals",
   UnderservedCommunities = "underservedCommunities",
-  Employers = "employers",
+  EmployerCategories = "employerCategories",
   WorksWithChildrenOccupations = "worksWithChildrenOccupations",
   UnderservedCommunityOccupations = "worksInUnderservedCommunitiesOccupations",
 }
@@ -30,7 +30,7 @@ export interface KnownSupplementaryData {
   [KnownSupplementaryDataKey.Parents]?: Parent[];
   [KnownSupplementaryDataKey.ScholasticStandingWithdrawals]?: ApplicationWithdrawal[];
   [KnownSupplementaryDataKey.UnderservedCommunities]?: SystemLookupItem[];
-  [KnownSupplementaryDataKey.Employers]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.EmployerCategories]?: SystemLookupItem[];
   [KnownSupplementaryDataKey.WorksWithChildrenOccupations]?: SystemLookupItem[];
   [KnownSupplementaryDataKey.UnderservedCommunityOccupations]?: SystemLookupItem[];
 }

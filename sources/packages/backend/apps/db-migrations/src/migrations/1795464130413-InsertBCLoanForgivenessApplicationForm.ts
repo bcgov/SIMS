@@ -17,7 +17,7 @@ export class InsertBCLoanForgivenessApplicationForm1795464130413 implements Migr
     );
     await queryRunner.query(
       getSQLFileData(
-        "Insert-employers-system-lookup.sql",
+        "Insert-employer-categories-system-lookup.sql",
         "SystemLookupConfigurations",
       ),
     );
@@ -50,7 +50,7 @@ export class InsertBCLoanForgivenessApplicationForm1795464130413 implements Migr
     );
     await queryRunner.query(
       getSQLFileData(
-        "Rollback-insert-employers-system-lookup.sql",
+        "Rollback-insert-employer-categories-system-lookup.sql",
         "SystemLookupConfigurations",
       ),
     );

@@ -20,9 +20,9 @@
       "tableView": false
     },
     {
-      "label": "Employers",
+      "label": "Employer categories",
       "persistent": "client-only",
-      "key": "employers",
+      "key": "employerCategories",
       "tags": [
         "supplementary-data"
       ],
@@ -121,7 +121,8 @@
           "applyMaskOn": "change",
           "tableView": true,
           "validate": {
-            "required": true
+            "required": true,
+            "maxLength": 50
           },
           "validateWhenHidden": false,
           "key": "employerName",
@@ -132,6 +133,9 @@
           "label": "Please provide your Professional Designation if applicable (Audiologist, nurse, etc.).",
           "applyMaskOn": "change",
           "tableView": true,
+          "validate": {
+            "maxLength": 50
+          },
           "validateWhenHidden": false,
           "key": "professionalDesignation",
           "type": "textfield",
@@ -141,6 +145,9 @@
           "label": "Please provide your Practitioner Number if applicable.",
           "applyMaskOn": "change",
           "tableView": true,
+          "validate": {
+            "maxLength": 50
+          },
           "validateWhenHidden": false,
           "key": "practitionerNumber",
           "type": "textfield",
@@ -153,10 +160,10 @@
           "tableView": true,
           "dataSrc": "custom",
           "data": {
-            "custom": "values = (data.employers || []).map((employer) => ({\r\n  label: employer.lookupValue,\r\n  value: employer.lookupKey,\r\n}));"
+            "custom": "values = (data.employerCategories || []).map((employerCategory) => ({\r\n  label: employerCategory.lookupValue,\r\n  value: employerCategory.lookupKey,\r\n}));"
           },
           "valueProperty": "value",
-          "refreshOn": "employers",
+          "refreshOn": "employerCategories",
           "validate": {
             "required": true
           },
