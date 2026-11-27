@@ -14,6 +14,7 @@ import { EducationProgramDynamicConfiguration } from "./education-program-save.m
 import {
   ProgramConfigurationCriteria,
   RequiredProgramConfiguration,
+  RequiredProgramConfigurationResult,
 } from "./education-program-configuration-retrieval.models";
 
 /**
@@ -74,13 +75,18 @@ export class EducationProgramConfigurationRetrievalService {
     const hasOfferingsPromise = this.hasExistingOffering(
       programConfigurationCriteria,
     );
-    const programConfigurationPromise = this.getRequiredProgramConfiguration(
-      programConfigurationCriteria,
-      hasOfferingsPromise,
-    );
-    const [institution, hasOfferings, programConfiguration] = await Promise.all(
-      [institutionPromise, hasOfferingsPromise, programConfigurationPromise],
-    );
+    const requiredProgramConfigurationPromise =
+      this.getRequiredProgramConfiguration(
+        programConfigurationCriteria,
+        hasOfferingsPromise,
+      );
+    const [institution, hasOfferings, requiredProgramConfiguration] =
+      await Promise.all([
+        institutionPromise,
+        hasOfferingsPromise,
+        requiredProgramConfigurationPromise,
+      ]);
+    const { programConfiguration } = requiredProgramConfiguration;
     if (!programConfiguration) {
       throw new CustomNamedError(
         "Education program configuration not found.",
@@ -88,12 +94,14 @@ export class EducationProgramConfigurationRetrievalService {
       );
     }
     // If the configuration is active, it is the active one for its program year;
-    // otherwise, check if another configuration is active for the program year.
+    // otherwise, use the check already executed while resolving the configuration,
+    // if any, or check if another configuration is active for the program year.
     const hasActiveProgramYearConfiguration =
       programConfiguration.isActive ||
-      (await this.hasActiveProgramYearConfiguration(
-        programConfiguration.programYear.id,
-      ));
+      (requiredProgramConfiguration.hasActiveProgramYearConfiguration ??
+        (await this.hasActiveProgramYearConfiguration(
+          programConfiguration.programYear.id,
+        )));
     return {
       configurationId: programConfiguration.id,
       programYearId: programConfiguration.programYear.id,
@@ -139,32 +147,39 @@ export class EducationProgramConfigurationRetrievalService {
    * @param programConfigurationCriteria the criteria to retrieve the program configuration.
    * @param hasOfferingsPromise indicates if the program associated with the criteria has offerings.
    * Shared with the caller to avoid checking the offerings more than once.
-   * @returns the required program configuration, or null if it was not found.
+   * @returns the required program configuration, or null if it was not found,
+   * along with the program year active configuration check, when executed.
    */
   private async getRequiredProgramConfiguration(
     programConfigurationCriteria: ProgramConfigurationCriteria,
     hasOfferingsPromise: Promise<boolean>,
-  ): Promise<EducationProgramConfiguration | null> {
+  ): Promise<RequiredProgramConfigurationResult> {
     switch (programConfigurationCriteria.requiredConfiguration) {
       case RequiredProgramConfiguration.ProgramYearActiveConfiguration:
-        return this.getActiveProgramYearConfiguration(
-          programConfigurationCriteria.programYearId,
-        );
-      case RequiredProgramConfiguration.NextProgramYearActiveConfiguration:
-        return this.getActiveProgramYearConfiguration(
-          this.getNextProgramYearIdCondition(
-            programConfigurationCriteria.currentProgramYearId,
+        return {
+          programConfiguration: await this.getActiveProgramYearConfiguration(
+            programConfigurationCriteria.programYearId,
           ),
-        );
+        };
+      case RequiredProgramConfiguration.NextProgramYearActiveConfiguration:
+        return {
+          programConfiguration: await this.getActiveProgramYearConfiguration(
+            this.getNextProgramYearIdCondition(
+              programConfigurationCriteria.currentProgramYearId,
+            ),
+          ),
+        };
       case RequiredProgramConfiguration.ProgramAssociatedConfiguration: {
         const program = await this.getProgramBasicInfo(
           programConfigurationCriteria.programId,
         );
         // The configuration the program was saved with must be returned regardless of
         // its active status (e.g. an existing program associated with an inactive configuration).
-        return this.getProgramConfigurationById(
-          program.programConfiguration.id,
-        );
+        return {
+          programConfiguration: await this.getProgramConfigurationById(
+            program.programConfiguration.id,
+          ),
+        };
       }
       case RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate: {
         const [hasOfferings, program] = await Promise.all([
@@ -175,7 +190,10 @@ export class EducationProgramConfigurationRetrievalService {
         if (!hasOfferings) {
           // A full update is allowed, hence the active configuration
           // of the program year must be used.
-          return this.getActiveProgramYearConfiguration(programYearId);
+          return {
+            programConfiguration:
+              await this.getActiveProgramYearConfiguration(programYearId),
+          };
         }
         // Only a partial update is allowed, hence the configuration
         // the program was saved with must be used, as long as the
@@ -185,7 +203,12 @@ export class EducationProgramConfigurationRetrievalService {
             this.hasActiveProgramYearConfiguration(programYearId),
             this.getProgramConfigurationById(program.programConfiguration.id),
           ]);
-        return hasActiveProgramYearConfiguration ? programConfiguration : null;
+        return {
+          programConfiguration: hasActiveProgramYearConfiguration
+            ? programConfiguration
+            : null,
+          hasActiveProgramYearConfiguration,
+        };
       }
     }
   }

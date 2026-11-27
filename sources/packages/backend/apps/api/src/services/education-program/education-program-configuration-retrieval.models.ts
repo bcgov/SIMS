@@ -1,3 +1,5 @@
+import { EducationProgramConfiguration } from "@sims/sims-db";
+
 /**
  * Program configuration required by each scenario where a configuration is retrieved.
  */
@@ -53,3 +55,19 @@ export type ProgramConfigurationCriteria =
       requiredConfiguration: RequiredProgramConfiguration.ProgramAssociatedConfigurationForUpdate;
       programId: number;
     };
+
+/**
+ * Program configuration resolved for the required configuration.
+ */
+export interface RequiredProgramConfigurationResult {
+  /**
+   * Required program configuration, or null if it was not found.
+   */
+  programConfiguration: EducationProgramConfiguration | null;
+  /**
+   * Indicates if the program year of the configuration has an active configuration.
+   * Present only when it was already checked while resolving the configuration,
+   * to avoid checking it more than once.
+   */
+  hasActiveProgramYearConfiguration?: boolean;
+}
