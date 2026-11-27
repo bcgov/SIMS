@@ -6,7 +6,7 @@ import InstitutionUserProfile from "@/views/institution/InstitutionUserProfile.v
 import AppInstitution from "@/views/institution/AppInstitution.vue";
 import ManageLocation from "@/views/institution/ManageLocations.vue";
 import ApplicationDetails from "@/views/institution/ApplicationDetails.vue";
-import LocationPrograms from "@/views/institution/locations/programs/LocationPrograms.vue";
+import ManageOfferings from "@/views/institution/locations/programs/ManageOfferings.vue";
 import LocationProgramInfoRequestSummary from "@/views/institution/locations/program-info-request/LocationProgramInfoRequestSummary.vue";
 import ActiveApplicationsSummary from "@/views/institution/locations/active-applications/LocationActiveApplicationSummary.vue";
 import ActiveApplicationEdit from "@/views/institution/locations/active-applications/ActiveApplicationReportAChange.vue";
@@ -247,10 +247,10 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LocationPrograms,
-        name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+        path: AppRoutes.ManageOfferings,
+        name: InstitutionRoutesConst.MANAGE_OFFERINGS,
         components: {
-          default: LocationPrograms,
+          default: ManageOfferings,
           sidebar: InstitutionHomeSideBar,
         },
         props: {
@@ -638,8 +638,8 @@ export const institutionRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: AppRoutes.LocationProgramsView,
-        name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+        path: AppRoutes.ManageOfferingsProgramView,
+        name: InstitutionRoutesConst.MANAGE_OFFERINGS_PROGRAM_VIEW,
         component: LocationProgramView,
         props: (route) => ({
           locationId: Number.parseInt(route.params.locationId as string),

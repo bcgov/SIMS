@@ -90,11 +90,11 @@ export default defineComponent({
             },
             children: [
               {
-                title: "Programs",
+                title: "Manage Offerings",
                 props: {
                   prependIcon: "fa:far fa-folder-open",
                   to: {
-                    name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+                    name: InstitutionRoutesConst.MANAGE_OFFERINGS,
                     params: {
                       locationId: data.id,
                     },

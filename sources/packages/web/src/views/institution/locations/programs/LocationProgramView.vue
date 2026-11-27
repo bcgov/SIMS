@@ -2,8 +2,8 @@
   <full-page-container :full-width="true" layout-template="centered-card">
     <template #header>
       <header-navigator
-        title="Programs"
-        :route-location="locationProgramsRoute"
+        title="Manage Offerings"
+        :route-location="manageOfferingsRoute"
         sub-title="Program Detail"
         data-cy="programDetailHeader"
       />
@@ -89,11 +89,11 @@ export default defineComponent({
     });
 
     /**
-     * Route back to the location programs page, selecting the program year
+     * Route back to the manage offerings page, selecting the program year
      * of the program once it is loaded.
      */
-    const locationProgramsRoute = computed<RouteLocationRaw>(() => ({
-      name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+    const manageOfferingsRoute = computed<RouteLocationRaw>(() => ({
+      name: InstitutionRoutesConst.MANAGE_OFFERINGS,
       params: {
         locationId: props.locationId,
         ...(educationProgram.value.programYearId
@@ -106,7 +106,7 @@ export default defineComponent({
 
     return {
       educationProgram,
-      locationProgramsRoute,
+      manageOfferingsRoute,
       isReadOnly,
       effectiveRestrictionState,
       InstitutionRestrictionDisplayScope,

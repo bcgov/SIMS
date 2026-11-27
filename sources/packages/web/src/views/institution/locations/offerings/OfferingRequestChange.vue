@@ -112,7 +112,7 @@ export default defineComponent({
         );
         snackBar.success("Offering change requested.");
         router.push({
-          name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+          name: InstitutionRoutesConst.MANAGE_OFFERINGS_PROGRAM_VIEW,
           params: {
             programId: props.programId,
             locationId: props.locationId,

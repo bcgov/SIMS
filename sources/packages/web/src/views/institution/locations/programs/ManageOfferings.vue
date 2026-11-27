@@ -1,7 +1,7 @@
 <template>
   <full-page-container :full-width="true">
     <template #header>
-      <header-navigator :title="locationName" sub-title="Programs" />
+      <header-navigator :title="locationName" sub-title="Manage Offerings" />
     </template>
     <body-header-container>
       <template #header>
@@ -25,13 +25,13 @@ import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
 import ManageProgramsTable from "@/components/institutions/education-programs/ManageProgramsTable.vue";
 import { useInstitutionState } from "@/composables";
 
-interface LocationProgramsProps {
+interface ManageOfferingsProps {
   locationId: number;
   // Program year to be selected by default, when provided.
   programYearId?: number;
 }
 
-const props = defineProps<LocationProgramsProps>();
+const props = defineProps<ManageOfferingsProps>();
 const { getLocationName } = useInstitutionState();
 const router = useRouter();
 // Total of programs listed for the selected program year and filters.
@@ -45,7 +45,7 @@ const locationName = computed(() => getLocationName(props.locationId));
  * @returns view location program route location.
  */
 const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
-  name: InstitutionRoutesConst.VIEW_LOCATION_PROGRAMS,
+  name: InstitutionRoutesConst.MANAGE_OFFERINGS_PROGRAM_VIEW,
   params: { programId, locationId: props.locationId },
 });
 
@@ -55,7 +55,7 @@ const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
  */
 const filtersChanged = async (programYearId?: number | null) => {
   await router.replace({
-    name: InstitutionRoutesConst.LOCATION_PROGRAMS,
+    name: InstitutionRoutesConst.MANAGE_OFFERINGS,
     params: { locationId: props.locationId, programYearId },
   });
 };
