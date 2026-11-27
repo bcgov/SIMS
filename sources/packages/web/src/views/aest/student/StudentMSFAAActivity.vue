@@ -165,7 +165,7 @@ const reissueOptions = computed(() =>
   msfaaActivity.value
     .filter((msfaa) => msfaa.canBeReissued)
     .map((msfaa) => ({
-      title: msfaa.msfaaNumber,
+      title: `${mapOfferingIntensity(msfaa.offeringIntensity)} - ${msfaa.msfaaNumber}`,
       value: msfaa.id,
     })),
 );
