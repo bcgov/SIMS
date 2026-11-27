@@ -97,6 +97,13 @@ export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansRespons
   }
 
   /**
+   * Customer other phone number(Business or overseas).
+   */
+  get otherPhone(): string {
+    return this.line.substring(209, 229).trim();
+  }
+
+  /**
    * Date that the address information was last updated.
    */
   get addressEffectiveDate(): Date | null {
@@ -115,6 +122,9 @@ export class ReturnedLoansResponseFileAddressDetail extends ReturnedLoansRespons
     }
     if (!this.dateOfBirth) {
       errors.push("Invalid birth date");
+    }
+    if (!this.gender) {
+      errors.push("Invalid gender");
     }
     return errors;
   }

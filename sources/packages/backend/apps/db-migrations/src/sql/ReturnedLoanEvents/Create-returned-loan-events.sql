@@ -43,7 +43,15 @@ CREATE TABLE
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     creator INT NOT NULL REFERENCES sims.users (id),
-    modifier INT NULL DEFAULT NULL REFERENCES sims.users (id)
+    modifier INT NULL DEFAULT NULL REFERENCES sims.users (id),
+    -- Ensure event status updated fields are provided when the event status is completed.
+    CONSTRAINT returned_loan_events_status_updated_fields_required_constraint CHECK (
+      event_status != 'Completed'::sims.returned_loan_event_status
+      OR (
+        event_status_updated_by IS NOT NULL
+        AND event_status_updated_on IS NOT NULL
+      )
+    )
   );
 
 -- ## Comments

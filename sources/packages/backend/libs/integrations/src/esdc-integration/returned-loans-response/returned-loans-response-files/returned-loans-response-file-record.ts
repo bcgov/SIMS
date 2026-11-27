@@ -29,4 +29,6 @@ export abstract class ReturnedLoansResponseFileRecord {
       true,
     );
   }
+
+  abstract validate(context?: Record<string, unknown>): string[];
 }

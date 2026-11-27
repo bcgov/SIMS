@@ -20,6 +20,58 @@ export class ReturnedLoansResponseFileReturnedLoanDetail extends ReturnedLoansRe
   }
 
   /**
+   * Loan type.
+   * Field: RTG-DET-LOAN-TYPE.
+   */
+  get loanType(): string {
+    return this.line.substring(11, 13).trim();
+  }
+
+  /**
+   * Type of loan agreement.
+   * Field: RTG-DET-LOAN-AGMT.
+   */
+  get loanAgreementType(): string {
+    return this.line.substring(13, 19).trim();
+  }
+
+  /**
+   * Issuing province.
+   * Field: RTG-DET-PROVINCE.
+   */
+  get issuingProvince(): string {
+    return this.line.substring(19, 21).trim();
+  }
+
+  /**
+   * Education institution(EI) code.
+   * Field: RTG-DET-EDINST.
+   */
+  get educationInstitutionCode(): string {
+    return this.line.substring(21, 25).trim();
+  }
+
+  /**
+   * End of study date provided as month.
+   * Format: YYYYMM.
+   * Field: RTG-DET-PSED.
+   */
+  get studyEndMonth(): Date | null {
+    // Month string in YYYYMM.
+    const monthString = this.line.substring(25, 31) || null;
+    // Convert YYYYMM to a date record by appending '01' for the day.
+    return monthString ? this.convertToDateRecord(`${monthString}01`) : null;
+  }
+
+  /**
+   * Loan class.
+   * Field: RTG-DET-LOAN-STAT.
+   */
+  get loanClass(): string {
+    return this.line.substring(31, 32);
+  }
+
+  /**
    * Consolidation date.
    * Field: RTG-DET-CONS-DATE.
    */

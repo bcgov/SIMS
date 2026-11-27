@@ -39,24 +39,21 @@ export class ReturnedLoansResponseIntegrationService extends SFTPIntegrationBase
     // Read the first line which is the header. After reading it, it will be removed.
     const header = new ReturnedLoansResponseFileHeader(fileLines.shift());
     // Validate the header record type.
-    if (header.recordType !== ReturnedLoansResponseRecordType.Header) {
+    const headerValidationErrors = header.validate();
+    if (headerValidationErrors.length) {
       throw new CustomNamedError(
-        `The returned loans response file ${remoteFilePath} has an invalid record type on header ${header.recordType}.`,
+        `Header validation failed for file ${remoteFilePath}. Errors: ${headerValidationErrors.join(", ")}.`,
         FILE_PARSING_ERROR,
       );
     }
     // Read the last line which is the footer. After reading it, it will be removed.
     const footer = new ReturnedLoansResponseFileFooter(fileLines.pop());
-    if (footer.recordType !== ReturnedLoansResponseRecordType.Footer) {
+    const footerValidationErrors = footer.validate({
+      actualTotalDetailRecords: fileLines.length,
+    });
+    if (footerValidationErrors.length) {
       throw new CustomNamedError(
-        `The returned loans response file ${remoteFilePath} has an invalid record type on footer ${footer.recordType}.`,
-        FILE_PARSING_ERROR,
-      );
-    }
-    // Validate if the number of detail records in the footer matches the total count of detail records in the file.
-    if (footer.totalDetailRecords !== fileLines.length) {
-      throw new CustomNamedError(
-        `The total number of detail records ${footer.totalDetailRecords} in the footer does not match the total count of detail records ${fileLines.length} in the returned loans response file ${remoteFilePath}.`,
+        `Footer validation failed for file ${remoteFilePath}. Errors: ${footerValidationErrors.join(", ")}.`,
         FILE_PARSING_ERROR,
       );
     }

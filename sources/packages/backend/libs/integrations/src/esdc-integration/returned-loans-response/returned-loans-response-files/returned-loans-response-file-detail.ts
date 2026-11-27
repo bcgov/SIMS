@@ -19,7 +19,7 @@ export class ReturnedLoansResponseFileDetail extends ReturnedLoansResponseFileRe
   }
 
   /**
-   * Validate the data to sanitize the record.
+   * Validate the data.
    * @returns validation errors if any, otherwise an empty array.
    */
   validate(): string[] {
