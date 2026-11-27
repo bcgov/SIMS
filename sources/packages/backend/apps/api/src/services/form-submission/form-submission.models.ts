@@ -2,7 +2,11 @@ import {
   DynamicFormConfiguration,
   FormSubmissionDecisionStatus,
 } from "@sims/sims-db";
-import { ApplicationWithdrawal, Parent } from "../../types";
+import {
+  ApplicationWithdrawal,
+  Parent,
+  SystemLookupItem,
+} from "../../types";
 
 /**
  * Optional data that can be loaded as part of the form.
@@ -11,6 +15,10 @@ export enum KnownSupplementaryDataKey {
   ProgramYear = "programYear",
   Parents = "parents",
   ScholasticStandingWithdrawals = "scholasticStandingWithdrawals",
+  UnderservedCommunities = "underservedCommunities",
+  EmployerCategories = "employerCategories",
+  WorksWithChildrenOccupations = "worksWithChildrenOccupations",
+  UnderservedCommunityOccupations = "worksInUnderservedCommunitiesOccupations",
 }
 
 /**
@@ -21,6 +29,10 @@ export interface KnownSupplementaryData {
   [KnownSupplementaryDataKey.ProgramYear]?: string;
   [KnownSupplementaryDataKey.Parents]?: Parent[];
   [KnownSupplementaryDataKey.ScholasticStandingWithdrawals]?: ApplicationWithdrawal[];
+  [KnownSupplementaryDataKey.UnderservedCommunities]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.EmployerCategories]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.WorksWithChildrenOccupations]?: SystemLookupItem[];
+  [KnownSupplementaryDataKey.UnderservedCommunityOccupations]?: SystemLookupItem[];
 }
 
 /**

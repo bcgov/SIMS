@@ -42,4 +42,20 @@ export enum SystemLookupCategory {
    * Program aviation credential lookup values.
    */
   ProgramAviationCredential = "Program aviation credential",
+  /**
+   * Underserved communities in BC. This is not an exhaustive list of BC communities.
+   */
+  UnderservedCommunity = "Underserved community",
+  /**
+   * Employer categories for the BC Loan Forgiveness application.
+   */
+  EmployerCategory = "Employer category",
+  /**
+   * Occupations eligible for the BC Loan Forgiveness when working with children.
+   */
+  WorksWithChildrenOccupations = "Works with children occupations",
+  /**
+   * Occupations eligible for the BC Loan Forgiveness when working in underserved communities.
+   */
+  UnderservedCommunityOccupations = "Underserved community occupations",
 }

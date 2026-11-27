@@ -381,6 +381,19 @@
   }
 }
 
+.alert-banner-container.alert-banner-error {
+  .card-body {
+    color: $banner-color-error;
+    background: $banner-background-error;
+  }
+  .fa-ban:before {
+    color: $banner-color-error;
+  }
+  .alert {
+    background: $banner-background-error;
+  }
+}
+
 /**
 * When columns are displayed side by side and the labels
 * are long enough the columns have different heights.
@@ -668,6 +681,27 @@
 
 .flexible-width-formio-bordered table tbody tr td {
   max-width: 355px;
+}
+
+// Formio table with borders on every cell, for static tables inside HTML elements.
+// The class is applied directly to the table element.
+// Bootstrap Reboot is not loaded, so the cell border style must be set explicitly.
+.formio-grid-table {
+  border-collapse: collapse;
+  // Space between the table and the surrounding content, such as list items.
+  margin: 1rem 0;
+}
+
+.formio-grid-table th,
+.formio-grid-table td {
+  border: 1px solid $common-border-color;
+  padding: 8px 12px;
+  // Headers are centered by default, keep them aligned with the data cells.
+  text-align: left;
+}
+
+.formio-grid-table th {
+  background-color: $default-background;
 }
 
 // Custom tooltip for html component(or components without tooltip feature) in formio.

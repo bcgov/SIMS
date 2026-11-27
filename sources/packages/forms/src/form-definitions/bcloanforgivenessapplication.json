@@ -1,0 +1,562 @@
+{
+  "title": "BC Loan Forgiveness application",
+  "name": "bcloanforgivenessapplication",
+  "path": "bcloanforgivenessapplication",
+  "type": "form",
+  "display": "form",
+  "tags": [
+    "common"
+  ],
+  "components": [
+    {
+      "label": "Underserved communities",
+      "persistent": "client-only",
+      "key": "underservedCommunities",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Employer categories",
+      "persistent": "client-only",
+      "key": "employerCategories",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Works with children occupations",
+      "persistent": "client-only",
+      "key": "worksWithChildrenOccupations",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Works in underserved communities occupations",
+      "persistent": "client-only",
+      "key": "worksInUnderservedCommunitiesOccupations",
+      "tags": [
+        "supplementary-data"
+      ],
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "Max uploaded files",
+      "persistent": false,
+      "calculateValue": "value = 25;",
+      "calculateServer": true,
+      "key": "maxUploadedFiles",
+      "type": "hidden",
+      "input": true,
+      "tableView": false
+    },
+    {
+      "label": "HTML",
+      "tag": "p",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "This form allows you to apply for the BC Loan Forgiveness Program. Before submitting an application, please ensure you have read the below instructions thoroughly.",
+      "refreshOnChange": false,
+      "key": "html8",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "Program requirements and process",
+      "title": "Program requirements and process",
+      "customClass": "collapsible",
+      "collapsible": true,
+      "key": "programRequirementsAndProcessPanel",
+      "type": "panel",
+      "collapsed": false,
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<ol>\r\n  <li>You must not be in full-time studies.</li>\r\n  <li>You must be in repayment of your BC student loan.</li>\r\n  <li>Both your British Columbia and Canada (if applicable) student loans must not be restricted, in default, delinquent or impacted by bankruptcy.</li>\r\n  <li>If you do not achieve the minimum of 100 hours of service, you will be removed from the program and you will be responsible for payment.</li>\r\n  <li>The Province will forgive the outstanding B.C. portion of your Canada-B.C. integrated student loan debt at a rate of 20% per year for up to five years if you are employed in an eligible occupation at a publicly funded facility in British Columbia either in an eligible underserved community or working with children, and providing equal to or greater than 400 hours of in-person service. If you provide between 100 and 399 hours of in-person service in a given year, the outstanding portion of your loan will be forgiven at the prorated rate indicated below:</li>\r\n\r\n<table class=\"formio-grid-table\">\r\n  <thead>\r\n    <tr>\r\n      <th>Hours of In-Person Service</th>\r\n      <th>Percentage Debt Forgiveness</th>\r\n    </tr>\r\n  </thead>\r\n  <tbody>\r\n    <tr><td>0 to 99</td><td>0</td></tr>\r\n    <tr><td>100 to 249</td><td>10</td></tr>\r\n    <tr><td>250 to 399</td><td>15</td></tr>\r\n    <tr><td>400+</td><td>20</td></tr>\r\n  </tbody>\r\n</table>\r\n\r\n\r\n  <li>You may leave and re-enter the program if you still have B.C. Student Loan debt and meet all the program requirements. Upon re-entry the program restarts the 5 year program length and you will receive up to 20% of any remaining B.C. Student Loan debt per year.</li>\r\n  <li>One year after your initial program registration date (your “anniversary date”), you will be required to submit a signed employment letter from your employer, health authority or contractor documenting your hours of in-person service at a publicly funded facility in British Columbia either in an eligible underserved community or working with children. You will receive notification requesting your employment letter one month prior to your anniversary date, and you will have 45 days after your anniversary date to submit. Failure to submit a signed employment letter after 45 days will result in your removal from the program.</li>\r\n  <li>BC Loan Forgiveness will be paid on the B.C. portion of your Canada-B.C. integrated student loan principal amount for the one year period beginning the date you were approved and registered in the program by StudentAid BC. The amount will vary depending on the number of in-person service hours delivered as indicated above.</li>\r\n</ol>",
+          "refreshOnChange": false,
+          "customClass": "formio-bordered flexible-width-formio-bordered",
+          "key": "html2",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        }
+      ]
+    },
+    {
+      "label": "Employment Information",
+      "title": "Employment Information",
+      "collapsible": false,
+      "key": "employmentInformationPanel",
+      "type": "panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Please enter the name of your employer.",
+          "applyMaskOn": "change",
+          "tableView": true,
+          "validate": {
+            "required": true,
+            "maxLength": 50
+          },
+          "validateWhenHidden": false,
+          "key": "employerName",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Please provide your Professional Designation if applicable (Audiologist, nurse, etc.).",
+          "applyMaskOn": "change",
+          "tableView": true,
+          "validate": {
+            "maxLength": 50
+          },
+          "validateWhenHidden": false,
+          "key": "professionalDesignation",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Please provide your Practitioner Number if applicable.",
+          "applyMaskOn": "change",
+          "tableView": true,
+          "validate": {
+            "maxLength": 50
+          },
+          "validateWhenHidden": false,
+          "key": "practitionerNumber",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Please select the appropriate option below that matches your employer.",
+          "widget": "choicesjs",
+          "placeholder": "Select employer",
+          "tableView": true,
+          "dataSrc": "custom",
+          "data": {
+            "custom": "values = (data.employerCategories || []).map((employerCategory) => ({\r\n  label: employerCategory.lookupValue,\r\n  value: employerCategory.lookupKey,\r\n}));"
+          },
+          "valueProperty": "value",
+          "refreshOn": "employerCategories",
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "employerCategory",
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "Please select the date your employment started.",
+          "placeholder": "Select date",
+          "widget": {
+            "type": "calendar",
+            "allowInput": true,
+            "clickOpens": true,
+            "enableDate": true,
+            "enableTime": false,
+            "mode": "single",
+            "noCalendar": false,
+            "format": "yyyy-MM-dd",
+            "dateFormat": "yyyy-MM-dd",
+            "useLocaleSettings": false,
+            "hourIncrement": 1,
+            "minuteIncrement": 5,
+            "time_24hr": false,
+            "saveAs": "text",
+            "displayInTimezone": "viewer",
+            "locale": "en"
+          },
+          "applyMaskOn": "change",
+          "tableView": true,
+          "validateWhenHidden": false,
+          "key": "employmentStartDate",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "What is your employment status?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Full-time",
+              "value": "fullTime",
+              "shortcut": ""
+            },
+            {
+              "label": "Part-time",
+              "value": "partTime",
+              "shortcut": ""
+            },
+            {
+              "label": "Casual",
+              "value": "casual",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "employmentStatus",
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Do you work with children?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Yes",
+              "value": "yes",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "no",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true
+          },
+          "validateWhenHidden": false,
+          "key": "worksWithChildren",
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Do you work in an underserved community?",
+          "optionsLabelPosition": "right",
+          "inline": false,
+          "tableView": false,
+          "values": [
+            {
+              "label": "Yes",
+              "value": "yes",
+              "shortcut": ""
+            },
+            {
+              "label": "No",
+              "value": "no",
+              "shortcut": ""
+            }
+          ],
+          "validate": {
+            "required": true,
+            "custom": "const atLeastOneYes =\r\n  data.worksWithChildren === \"yes\" || data.worksInUnderservedCommunity === \"yes\";\r\nvalid = atLeastOneYes\r\n  ? true\r\n  : \"At least one “Yes” response is required for the Working with Children or Underserved Community questions.\";"
+          },
+          "validateWhenHidden": false,
+          "key": "worksInUnderservedCommunity",
+          "type": "radio",
+          "input": true
+        },
+        {
+          "label": "Please select one of the following eligible occupations.",
+          "widget": "choicesjs",
+          "placeholder": "<i class='fa fa-search'></i> Search or select an occupation",
+          "tableView": true,
+          "dataSrc": "custom",
+          "data": {
+            "custom": "let occupations = [];\r\nif (data.worksWithChildren === \"yes\") {\r\n  occupations = data.worksWithChildrenOccupations;\r\n} else if (data.worksInUnderservedCommunity === \"yes\") {\r\n  occupations = data.worksInUnderservedCommunitiesOccupations;\r\n}\r\n\r\nvalues = (occupations || []).map((occupation) => ({\r\n  label: occupation.lookupValue,\r\n  value: occupation.lookupKey,\r\n}));"
+          },
+          "valueProperty": "value",
+          "refreshOn": "worksInUnderservedCommunitiesOccupations",
+          "customOptions": {
+            "searchResultLimit": -1
+          },
+          "validateWhenHidden": false,
+          "key": "occupation",
+          "customConditional": "show = data.worksWithChildren === \"yes\" || data.worksInUnderservedCommunity === \"yes\";",
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "Please select the community you work in from the list below.",
+          "widget": "choicesjs",
+          "placeholder": "<i class='fa fa-search'></i> Search or select a community",
+          "tableView": true,
+          "dataSrc": "custom",
+          "data": {
+            "custom": "return (data.underservedCommunities || []).map((underservedCommunity) => ({\r\n  label: underservedCommunity.lookupValue,\r\n  value: underservedCommunity.lookupKey,\r\n}));"
+          },
+          "valueProperty": "value",
+          "refreshOn": "underservedCommunities",
+          "customOptions": {
+            "searchResultLimit": -1
+          },
+          "validateWhenHidden": false,
+          "key": "underservedCommunity",
+          "conditional": {
+            "show": true,
+            "when": "worksInUnderservedCommunity",
+            "eq": "yes"
+          },
+          "type": "select",
+          "input": true
+        },
+        {
+          "label": "Not eligible panel",
+          "title": "Not eligible panel",
+          "customClass": "alert-banner-container alert-banner-error",
+          "collapsible": false,
+          "hideLabel": true,
+          "key": "panel",
+          "customConditional": "show = data.worksWithChildren === \"no\" && data.worksInUnderservedCommunity === \"no\";",
+          "type": "panel",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Not eligible banner",
+              "className": "alert alert-error fa fa-ban w-100",
+              "attrs": [
+                {
+                  "attr": "",
+                  "value": ""
+                }
+              ],
+              "content": "<strong> Not eligible for BC Loan Forgiveness</strong>\r\n<br/>\r\nBased on your answers to the above questions you do not qualify for the BC Loan Forgiveness please cancel your application.",
+              "refreshOnChange": false,
+              "key": "html3",
+              "type": "htmlelement",
+              "input": false,
+              "tableView": false
+            }
+          ],
+          "breadcrumbClickable": true,
+          "buttonSettings": {
+            "previous": true,
+            "cancel": true,
+            "next": true
+          },
+          "navigateOnEnter": false,
+          "saveOnEnter": false,
+          "scrollToTop": false
+        }
+      ]
+    },
+    {
+      "label": "Upload supporting documents panel",
+      "title": "Upload supporting documents panel",
+      "collapsible": false,
+      "hideLabel": true,
+      "key": "panel1",
+      "type": "panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "HTML",
+          "tag": "h3",
+          "className": "category-header-medium primary-color",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Upload supporting documents",
+          "refreshOnChange": false,
+          "key": "html4",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "p",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "To confirm your eligibility for the BC Loan Forgiveness Program, upload the required supporting document(s). Please do not upload password protected files as they may delay your application.",
+          "refreshOnChange": false,
+          "key": "html9",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "h4",
+          "className": "category-header-medium-small",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Required document(s):",
+          "refreshOnChange": false,
+          "key": "html1",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<ul>\n  <li>A current employment letter written and signed by your employer</li>\n</ul>",
+          "refreshOnChange": false,
+          "key": "html5",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "tag": "h4",
+          "className": "category-header-medium-small",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "Your employment letter must contain all of the following:",
+          "refreshOnChange": false,
+          "key": "html6",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "HTML",
+          "attrs": [
+            {
+              "attr": "",
+              "value": ""
+            }
+          ],
+          "content": "<ul>\r\n  <li>must be on company letterhead;</li>\r\n  <li>current date (this date must be within one month of the date your application was received at StudentAid BC);</li>\r\n  <li>employer's signature;</li>\r\n  <li>applicant’s name and job title;</li>\r\n  <li>employment status (full-time/part-time/casual on-call);</li>\r\n  <li>hired/start date;</li>\r\n  <li>name of the publicly-funded facility;</li>\r\n  <li>name of the community; and</li>\r\n  <li>whether working with children (for specific occupations).</li>\r\n</ul>",
+          "refreshOnChange": false,
+          "key": "html7",
+          "type": "htmlelement",
+          "input": false,
+          "tableView": false
+        },
+        {
+          "label": "Upload supporting documents",
+          "hideLabel": true,
+          "tableView": false,
+          "storage": "url",
+          "dir": "BC Loan Forgiveness application - Supporting Documents",
+          "webcam": false,
+          "capture": false,
+          "fileTypes": [
+            {
+              "label": "",
+              "value": ""
+            }
+          ],
+          "filePattern": ".pdf,.doc,.docx,.jpg,.png,.txt",
+          "fileMaxSize": "",
+          "multiple": true,
+          "clearOnHide": false,
+          "validate": {
+            "required": true,
+            "customMessage": "You must upload at least one file, and the total number of uploaded files cannot exceed {{data.maxUploadedFiles}}.",
+            "custom": "const files = data[instance.key] || []; valid = files.length > data.maxUploadedFiles ? false : true;"
+          },
+          "validateWhenHidden": false,
+          "key": "requiredDocuments",
+          "type": "file",
+          "url": "student/files",
+          "input": true
+        },
+        {
+          "label": "Content",
+          "input": false,
+          "className": "file-upload-info-container",
+          "content": "<p>We accept <strong>JPG, PNG, DOC, DOCX, PDF, TXT</strong></p>\n<p>15MB file limit each</p>",
+          "type": "htmlelement",
+          "hideLabel": true,
+          "tableView": false,
+          "key": "content"
+        }
+      ]
+    },
+    {
+      "label": "Declaration",
+      "tag": "h3",
+      "className": "category-header-medium primary-color",
+      "attrs": [
+        {
+          "attr": "",
+          "value": ""
+        }
+      ],
+      "content": "Declaration",
+      "refreshOnChange": false,
+      "key": "html",
+      "type": "htmlelement",
+      "input": false,
+      "tableView": false
+    },
+    {
+      "label": "Declaration",
+      "applyMaskOn": "change",
+      "autoExpand": false,
+      "customClass": "fixed-height-declaration-large",
+      "hideLabel": true,
+      "disabled": true,
+      "tableView": true,
+      "defaultValue": "PLACEHOLDER FIELD ------- awaiting confirmed wording from policy and legal.\n\n<strong>Collection and use of information.</strong> The information included in this form and authorized above is collected under Sections 26c and 26e of the Freedom of Information and Protection of Privacy Act, and under the authority of the Canada Student Financial Assistance Act, R.S.C. 1994, Chapter C-28 and StudentAid BC. The information provided will be used to determine eligibility for a benefit through StudentAid BC and for statistical and evaluation purposes. If you have any questions about the collection and use of this information, contact the Executive Director, StudentAid BC, Ministry of Post- Secondary Education and Labour, PO Box 9173, Stn Prov Govt, Victoria B.C., V8W 9H7, or <a href=\"mailto:StudentAidBC@gov.bc.ca\">StudentAidBC@gov.bc.ca.</a>",
+      "persistent": false,
+      "validateWhenHidden": false,
+      "key": "textArea",
+      "type": "textarea",
+      "input": true
+    },
+    {
+      "label": "By clicking here, I declare I have read and accept all related terms, conditions, disclosures, and responsibilities stated above.",
+      "tableView": false,
+      "validate": {
+        "required": true
+      },
+      "validateWhenHidden": false,
+      "key": "declaration",
+      "type": "checkbox",
+      "input": true,
+      "defaultValue": false
+    }
+  ]
+}
