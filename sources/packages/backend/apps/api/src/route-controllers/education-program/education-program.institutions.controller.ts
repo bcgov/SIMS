@@ -460,9 +460,9 @@ export class EducationProgramInstitutionsController extends BaseController {
     if (!programYearExists) {
       throw new NotFoundException("Program year not found.");
     }
-    const [nextProgramConfigurationForRenewal, paginatedPrograms] =
+    const [hasNextProgramConfigurationForRenewal, paginatedPrograms] =
       await Promise.all([
-        this.educationProgramConfigurationRetrievalService.getNextProgramConfigurationForRenewal(
+        this.educationProgramConfigurationRetrievalService.hasNextProgramConfigurationForRenewal(
           programYearId,
         ),
         this.educationProgramManagerService.getEducationProgramsManagerDetails(
@@ -485,7 +485,7 @@ export class EducationProgramInstitutionsController extends BaseController {
         isActive: program.isActive,
         renewalStatus: program.renewedProgram
           ? ProgramRenewalStatus.Renewed
-          : nextProgramConfigurationForRenewal
+          : hasNextProgramConfigurationForRenewal
             ? ProgramRenewalStatus.Available
             : ProgramRenewalStatus.NotAvailable,
       })),

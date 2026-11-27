@@ -287,32 +287,17 @@ export class EducationProgramConfigurationRetrievalService {
   }
 
   /**
-   * Get the next active education program configuration for renewal based
-   * on the current program year.
-   * The next program year is the one immediately after the current program
-   * year, and its active configuration is the one expected to be used for
-   * renewals.
-   * @param currentProgramYearId the ID of the current program year to find
-   * the next education program configuration.
-   * @returns the active education program configuration of the next program
-   * year, or null if there is no next program year or it has no active
-   * configuration.
+   * Checks if the program year immediately after the current one has an
+   * active education program configuration, allowing programs of the
+   * current program year to be renewed.
+   * @param currentProgramYearId the ID of the current program year.
+   * @returns true if the next program year has an active configuration,
+   * otherwise false.
    */
-  getNextProgramConfigurationForRenewal(
+  hasNextProgramConfigurationForRenewal(
     currentProgramYearId: number,
-  ): Promise<EducationProgramConfiguration | null> {
-    return this.educationProgramConfigurationRepo.findOne({
-      select: {
-        id: true,
-        isActive: true,
-        programYear: {
-          id: true,
-          startDate: true,
-        },
-      },
-      relations: {
-        programYear: true,
-      },
+  ): Promise<boolean> {
+    return this.educationProgramConfigurationRepo.exists({
       where: {
         isActive: true,
         programYear: {

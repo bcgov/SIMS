@@ -95,7 +95,7 @@ const submit = async (programData: Record<string, unknown>) => {
       },
     );
     snackBar.success("Education Program updated successfully!");
-    goBack();
+    await goBack();
   } catch (error: unknown) {
     if (error instanceof ApiProcessError) {
       snackBar.error(error.message);
@@ -118,8 +118,8 @@ const manageProgramsRoute = computed<RouteLocationRaw>(() => ({
     : undefined,
 }));
 
-const goBack = (): void => {
-  router.push(manageProgramsRoute.value);
+const goBack = async (): Promise<void> => {
+  await router.push(manageProgramsRoute.value);
 };
 
 /**
