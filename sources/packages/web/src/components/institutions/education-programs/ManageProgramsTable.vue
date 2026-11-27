@@ -200,6 +200,18 @@ const allowProgramChanges = computed(
   () => !!selectedProgramYear.value?.hasActiveProgramConfiguration,
 );
 
+// Selects the provided program year when it changes, for instance, when the
+// route changes while the page is reused. When no program year is provided,
+// the current selection is kept.
+watch(
+  () => props.programYearId,
+  (programYearId) => {
+    if (programYearId) {
+      selectedProgramYearId.value = programYearId;
+    }
+  },
+);
+
 // Keeps the records count in sync with the programs loaded.
 watch(
   () => programAndCount.value?.count,

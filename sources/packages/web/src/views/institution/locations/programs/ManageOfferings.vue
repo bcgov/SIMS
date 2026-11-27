@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import type { RouteLocationRaw } from "vue-router";
 import { InstitutionRoutesConst } from "@/constants/routes/RouteConstants";
@@ -37,6 +37,9 @@ const router = useRouter();
 // Total of programs listed for the selected program year and filters.
 const programsCount = ref<number>();
 
+// Program year currently selected in the table, if any.
+let selectedProgramYearId: number | null | undefined = props.programYearId;
+
 const locationName = computed(() => getLocationName(props.locationId));
 
 /**
@@ -54,9 +57,22 @@ const getViewProgramRoute = (programId: number): RouteLocationRaw => ({
  * @param programYearId currently selected program year id, if any.
  */
 const filtersChanged = async (programYearId?: number | null) => {
+  selectedProgramYearId = programYearId;
   await router.replace({
     name: InstitutionRoutesConst.MANAGE_OFFERINGS,
     params: { locationId: props.locationId, programYearId },
   });
 };
+
+// The page is reused when navigating to another location, for instance, from
+// the sidebar, whose route does not provide the program year. The table keeps
+// the current selection, hence the route is updated to keep it in sync.
+watch(
+  () => props.locationId,
+  async () => {
+    if (!props.programYearId && selectedProgramYearId) {
+      await filtersChanged(selectedProgramYearId);
+    }
+  },
+);
 </script>

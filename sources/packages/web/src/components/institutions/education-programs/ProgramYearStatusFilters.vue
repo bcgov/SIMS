@@ -69,8 +69,8 @@ const emit = defineEmits<{
   // Program years loaded and the initial selection validated.
   // Provides the initially selected program year, if any.
   initialized: [programYear?: EducationProgramYearAPIOutDTO];
-  // Program year or status filters changed by the user.
-  // Provides the currently selected program year, if any.
+  // Program year or status filters changed by the user, or program year
+  // changed by the parent. Provides the currently selected program year, if any.
   filtersChanged: [programYear?: EducationProgramYearAPIOutDTO];
 }>();
 
@@ -209,4 +209,21 @@ watch(
   },
   { immediate: true },
 );
+
+// Keeps the selection in sync when the program year is changed by the parent,
+// for instance, when the route changes while the page is reused. Before the
+// program years are loaded, the initial validation handles the selection.
+watch(programYearId, (id) => {
+  if (
+    !educationProgramYearsLoaded.value ||
+    (id ?? undefined) === selectedProgramYear.value?.id
+  ) {
+    return;
+  }
+  selectedProgramYear.value = findProgramYear(id);
+  if (!selectedProgramYear.value) {
+    programYearId.value = undefined;
+  }
+  emitFiltersChanged();
+});
 </script>
